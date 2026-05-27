@@ -1,0 +1,207 @@
+{
+  "common": {
+    "appName": "Atlan",
+    "tagline": "Your Tourist GPS for Nicaragua",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "seeAll": "See all",
+    "seeMore": "See more",
+    "noResults": "No results",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "nav": {
+    "home": "Home",
+    "map": "Explore Map",
+    "login": "Sign In",
+    "register": "Sign Up",
+    "dashboard": "My Dashboard",
+    "myReservations": "My Reservations",
+    "logout": "Sign Out",
+    "language": "Language"
+  },
+  "landing": {
+    "hero": {
+      "title": "Discover Nicaragua.",
+      "titleHighlight": "Navigate without limits.",
+      "subtitle": "Your tourist GPS with voice guidance, community-verified destinations, and direct bookings with local businesses.",
+      "cta": "Explore the Map",
+      "ctaSecondary": "Own a business?"
+    },
+    "features": {
+      "title": "Everything you need for your adventure",
+      "subtitle": "Cutting-edge technology at the service of Nicaraguan tourism",
+      "gps": {
+        "title": "Voice-Guided GPS Navigation",
+        "description": "Step-by-step directions in your language. Like having a local guide in your pocket."
+      },
+      "community": {
+        "title": "Verified Destinations",
+        "description": "Places discovered and verified by the community. Authentic, local, and trustworthy."
+      },
+      "reservations": {
+        "title": "Direct Bookings",
+        "description": "Book a table, room, or tour directly with the business. No middlemen."
+      }
+    },
+    "featured": {
+      "title": "Featured Destinations",
+      "subtitle": "The most popular places in Nicaragua",
+      "viewOnMap": "View on Map",
+      "navigate": "Navigate Here"
+    },
+    "cta": {
+      "title": "Own a tourism business?",
+      "subtitle": "Register your restaurant, hotel, craft shop, or tourist activity. Reach thousands of travelers.",
+      "button": "Register as Owner",
+      "benefit1": "Manage bookings",
+      "benefit2": "Publish your menu",
+      "benefit3": "Receive reviews"
+    },
+    "footer": {
+      "description": "Nicaragua's tourism platform. Connecting travelers with authentic experiences.",
+      "links": "Links",
+      "contact": "Contact",
+      "legal": "Legal",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "rights": "All rights reserved."
+    }
+  },
+  "map": {
+    "searchPlaceholder": "Search places...",
+    "categories": "Categories",
+    "allCategories": "All",
+    "filters": "Filters",
+    "nearby": "Near you",
+    "navigateHere": "Navigate Here",
+    "startNavigation": "Start Navigation",
+    "addPoint": "Add Point",
+    "addPointTitle": "Add new place",
+    "demo": "Start Demo",
+    "demoStop": "Stop Demo",
+    "mute": "Mute Voice",
+    "unmute": "Unmute Voice",
+    "arrived": "You have arrived at your destination.",
+    "welcome": "Welcome to Atlan.",
+    "routeTo": "Starting route to your destination:",
+    "noRoute": "Could not get the route.",
+    "selectDestination": "Please select a destination first.",
+    "demoFinished": "Demo mode finished.",
+    "addedBy": "Added by",
+    "claimed": "Claimed",
+    "unclaimed": "Unclaimed",
+    "inVerification": "Under review"
+  },
+  "addPoint": {
+    "title": "Add Point",
+    "subtitle": "Discovered an amazing place? Share it with the community!",
+    "placeName": "Place name",
+    "placeNamePlaceholder": "e.g., Doña María's Kitchen",
+    "yourName": "Your name",
+    "yourNamePlaceholder": "e.g., Carlos Martinez",
+    "description": "Brief description",
+    "descriptionPlaceholder": "What makes this place special?",
+    "category": "Category",
+    "selectCategory": "Select a category",
+    "photo": "Photo (optional)",
+    "uploadPhoto": "Upload photo",
+    "tapMap": "Tap the map to place the pin",
+    "submit": "Share Point",
+    "success": "Thanks! Your point will appear on the map.",
+    "categories": {
+      "comideria": "Eatery",
+      "restaurante": "Restaurant",
+      "artesanal": "Craft Shop",
+      "playa": "Beach",
+      "familiar": "Family Activity",
+      "hotel": "Hotel",
+      "hostal": "Hostel",
+      "transporte": "Transport",
+      "tour": "Tour",
+      "tienda": "Shop",
+      "otro": "Other"
+    }
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "loginSubtitle": "Sign in to book and manage your business",
+    "registerTitle": "Create your account",
+    "registerSubtitle": "Join Nicaragua's tourism community",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "fullName": "Full name",
+    "loginButton": "Sign In",
+    "registerButton": "Create Account",
+    "googleButton": "Continue with Google",
+    "forgotPassword": "Forgot your password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "orContinueWith": "or continue with"
+  },
+  "dashboard": {
+    "title": "My Dashboard",
+    "overview": "Overview",
+    "business": "My Business",
+    "menu": "Menu",
+    "reservations": "Reservations",
+    "reviews": "Reviews",
+    "settings": "Settings",
+    "totalViews": "Views this month",
+    "pendingReservations": "Pending bookings",
+    "avgRating": "Average rating",
+    "newReviews": "New reviews"
+  },
+  "reviews": {
+    "title": "Reviews",
+    "writeReview": "Write a review",
+    "yourName": "Your name",
+    "yourComment": "Your comment",
+    "rating": "Rating",
+    "submit": "Submit Review",
+    "moderationNotice": "Your review will be checked before publishing.",
+    "approved": "Published",
+    "pending": "Under review",
+    "timeAgo": {
+      "justNow": "Just now",
+      "minutesAgo": "{n} minutes ago",
+      "hoursAgo": "{n} hours ago",
+      "daysAgo": "{n} days ago"
+    }
+  },
+  "reservations": {
+    "title": "Book",
+    "date": "Date",
+    "time": "Time",
+    "people": "Guests",
+    "notes": "Additional notes",
+    "type": "Booking type",
+    "types": {
+      "mesa": "Table",
+      "habitacion": "Room",
+      "tour": "Tour",
+      "transporte": "Transport"
+    },
+    "submit": "Confirm Booking",
+    "loginRequired": "Sign in to book",
+    "success": "Booking confirmed!",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  }
+}

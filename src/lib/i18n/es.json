@@ -1,0 +1,207 @@
+{
+  "common": {
+    "appName": "Atlan",
+    "tagline": "Tu GPS Turístico de Nicaragua",
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "retry": "Reintentar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "search": "Buscar",
+    "seeAll": "Ver todos",
+    "seeMore": "Ver más",
+    "noResults": "Sin resultados",
+    "yes": "Sí",
+    "no": "No"
+  },
+  "nav": {
+    "home": "Inicio",
+    "map": "Explorar Mapa",
+    "login": "Iniciar Sesión",
+    "register": "Registrarse",
+    "dashboard": "Mi Panel",
+    "myReservations": "Mis Reservas",
+    "logout": "Cerrar Sesión",
+    "language": "Idioma"
+  },
+  "landing": {
+    "hero": {
+      "title": "Descubre Nicaragua.",
+      "titleHighlight": "Navega sin límites.",
+      "subtitle": "Tu GPS turístico con voz, destinos verificados por la comunidad y reservas directas con negocios locales.",
+      "cta": "Explorar el Mapa",
+      "ctaSecondary": "¿Tienes un negocio?"
+    },
+    "features": {
+      "title": "Todo lo que necesitas para tu aventura",
+      "subtitle": "Tecnología de punta al servicio del turismo nicaragüense",
+      "gps": {
+        "title": "Navegación GPS con Voz",
+        "description": "Indicaciones paso a paso en español. Como tener un guía local en tu bolsillo."
+      },
+      "community": {
+        "title": "Destinos Verificados",
+        "description": "Lugares descubiertos y verificados por la comunidad. Auténticos, locales y confiables."
+      },
+      "reservations": {
+        "title": "Reservas Directas",
+        "description": "Reserva mesa, habitación o tour directamente con el negocio. Sin intermediarios."
+      }
+    },
+    "featured": {
+      "title": "Destinos Destacados",
+      "subtitle": "Los lugares más populares de Nicaragua",
+      "viewOnMap": "Ver en el Mapa",
+      "navigate": "Navegar Aquí"
+    },
+    "cta": {
+      "title": "¿Tienes un negocio turístico?",
+      "subtitle": "Registra tu restaurante, hotel, artesanía o actividad turística. Llega a miles de viajeros.",
+      "button": "Registrarme como Propietario",
+      "benefit1": "Gestiona reservas",
+      "benefit2": "Publica tu menú",
+      "benefit3": "Recibe reseñas"
+    },
+    "footer": {
+      "description": "La plataforma turística de Nicaragua. Conectando viajeros con experiencias auténticas.",
+      "links": "Enlaces",
+      "contact": "Contacto",
+      "legal": "Legal",
+      "privacy": "Privacidad",
+      "terms": "Términos",
+      "rights": "Todos los derechos reservados."
+    }
+  },
+  "map": {
+    "searchPlaceholder": "Buscar lugares...",
+    "categories": "Categorías",
+    "allCategories": "Todas",
+    "filters": "Filtros",
+    "nearby": "Cerca de ti",
+    "navigateHere": "Navegar Aquí",
+    "startNavigation": "Iniciar Navegación",
+    "addPoint": "Levantar Punto",
+    "addPointTitle": "Agregar nuevo lugar",
+    "demo": "Iniciar Demo",
+    "demoStop": "Detener Demo",
+    "mute": "Silenciar Voz",
+    "unmute": "Activar Voz",
+    "arrived": "Ha llegado a su destino.",
+    "welcome": "Bienvenido a Atlan.",
+    "routeTo": "Iniciando ruta hacia su destino:",
+    "noRoute": "No se pudo obtener la ruta.",
+    "selectDestination": "Por favor, seleccione un destino primero.",
+    "demoFinished": "Modo de prueba finalizado.",
+    "addedBy": "Agregado por",
+    "claimed": "Reclamado",
+    "unclaimed": "Sin reclamar",
+    "inVerification": "En verificación"
+  },
+  "addPoint": {
+    "title": "Levantar Punto",
+    "subtitle": "¿Descubriste un lugar genial? ¡Compártelo con la comunidad!",
+    "placeName": "Nombre del lugar",
+    "placeNamePlaceholder": "Ej: Comidería Doña María",
+    "yourName": "Tu nombre",
+    "yourNamePlaceholder": "Ej: Carlos Martínez",
+    "description": "Descripción breve",
+    "descriptionPlaceholder": "¿Qué hace especial este lugar?",
+    "category": "Categoría",
+    "selectCategory": "Selecciona una categoría",
+    "photo": "Foto (opcional)",
+    "uploadPhoto": "Subir foto",
+    "tapMap": "Toca el mapa para colocar el pin",
+    "submit": "Compartir Punto",
+    "success": "¡Gracias! Tu punto aparecerá en el mapa.",
+    "categories": {
+      "comideria": "Comidería",
+      "restaurante": "Restaurante",
+      "artesanal": "Artesanía",
+      "playa": "Playa",
+      "familiar": "Familiar",
+      "hotel": "Hotel",
+      "hostal": "Hostal",
+      "transporte": "Transporte",
+      "tour": "Tour",
+      "tienda": "Tienda",
+      "otro": "Otro"
+    }
+  },
+  "auth": {
+    "loginTitle": "Bienvenido de vuelta",
+    "loginSubtitle": "Inicia sesión para reservar y gestionar tu negocio",
+    "registerTitle": "Crea tu cuenta",
+    "registerSubtitle": "Únete a la comunidad turística de Nicaragua",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "fullName": "Nombre completo",
+    "loginButton": "Iniciar Sesión",
+    "registerButton": "Crear Cuenta",
+    "googleButton": "Continuar con Google",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes cuenta?",
+    "hasAccount": "¿Ya tienes cuenta?",
+    "orContinueWith": "o continúa con"
+  },
+  "dashboard": {
+    "title": "Mi Panel",
+    "overview": "Resumen",
+    "business": "Mi Negocio",
+    "menu": "Menú",
+    "reservations": "Reservas",
+    "reviews": "Reseñas",
+    "settings": "Configuración",
+    "totalViews": "Vistas del mes",
+    "pendingReservations": "Reservas pendientes",
+    "avgRating": "Rating promedio",
+    "newReviews": "Reseñas nuevas"
+  },
+  "reviews": {
+    "title": "Reseñas",
+    "writeReview": "Escribir reseña",
+    "yourName": "Tu nombre",
+    "yourComment": "Tu comentario",
+    "rating": "Calificación",
+    "submit": "Enviar Reseña",
+    "moderationNotice": "Tu reseña será revisada antes de publicarse.",
+    "approved": "Publicada",
+    "pending": "En revisión",
+    "timeAgo": {
+      "justNow": "Ahora mismo",
+      "minutesAgo": "hace {n} minutos",
+      "hoursAgo": "hace {n} horas",
+      "daysAgo": "hace {n} días"
+    }
+  },
+  "reservations": {
+    "title": "Reservar",
+    "date": "Fecha",
+    "time": "Hora",
+    "people": "Personas",
+    "notes": "Notas adicionales",
+    "type": "Tipo de reserva",
+    "types": {
+      "mesa": "Mesa",
+      "habitacion": "Habitación",
+      "tour": "Tour",
+      "transporte": "Transporte"
+    },
+    "submit": "Confirmar Reserva",
+    "loginRequired": "Inicia sesión para reservar",
+    "success": "¡Reserva confirmada!",
+    "status": {
+      "pending": "Pendiente",
+      "confirmed": "Confirmada",
+      "completed": "Completada",
+      "cancelled": "Cancelada"
+    }
+  }
+}

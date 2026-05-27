@@ -1,0 +1,1837 @@
+"use client";
+
+import React, { useEffect, useRef, useState } from 'react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
+import '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css';
+import { supabase } from '../lib/supabase';
+import { useTranslation } from '../hooks/useTranslation';
+import LanguageToggle from './ui/LanguageToggle';
+
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+
+// ─── CONFIGURACIÓN DE CATEGORÍAS (Colores y Emojis) ─────────────────────────
+const CATEGORIAS_CONFIG = {
+  comideria: { color: '#ff6b6b', emoji: '🍽️' },
+  restaurante: { color: '#ff9233', emoji: '🍲' },
+  artesanal: { color: '#8a2be2', emoji: '🎨' },
+  playa: { color: '#00bfff', emoji: '🏖️' },
+  familiar: { color: '#4caf50', emoji: '👨‍👩‍👧‍👦' },
+  hotel: { color: '#e040fb', emoji: '🏨' },
+  hostal: { color: '#9c27b0', emoji: '🏡' },
+  transporte: { color: '#607d8b', emoji: '🚌' },
+  tour: { color: '#009688', emoji: '🗺️' },
+  tienda: { color: '#795548', emoji: '🛒' },
+  otro: { color: '#ffc107', emoji: '📍' }
+};
+
+export default function MapaTuristico() {
+  const { t, lang } = useTranslation();
+  const mapContainerRef = useRef(null);
+
+  // --- REFS PRINCIPALES ---
+  const mapRef            = useRef(null);
+  const directionsRef     = useRef(null);
+  const rutaCoordenadasRef = useRef([]);
+  const demoIntervalRef   = useRef(null);
+  const userMarkerRef     = useRef(null);
+  const markersRef        = useRef([]);  // Lista de marcadores cargados en el mapa
+  const currentPosRef     = useRef([-86.2504, 12.1364]);  // Managua, Nicaragua
+  const isNavigatingRef   = useRef(false);
+  const isInteractionPausedRef = useRef(false);
+  const interactionTimeoutRef  = useRef(null);
+  const lugarDestinoRef   = useRef('');
+  const destinationRef    = useRef(null);
+  const isMutedRef        = useRef(false);
+  const lastSpokenRef     = useRef('');
+  const maneuversRef      = useRef([]);
+  const isDemoRunningRef  = useRef(false);
+  const lastAnnouncementTimeRef = useRef(0);
+  const isAddingPointRef  = useRef(false);
+  const cinematicTimeoutsRef = useRef([]);
+  const selectedPointRef = useRef(null);
+
+  // --- ESTADO DE REACT ---
+  const [isDemoRunning, setIsDemoRunning] = useState(false);
+  const [isMuted, setIsMuted]             = useState(false);
+  const [isSpeaking, setIsSpeaking]       = useState(false);
+  const [filtroCategoria, setFiltroCategoria] = useState(null);
+  const [showRecenterBtn, setShowRecenterBtn] = useState(false);
+  const [isMapLoading, setIsMapLoading]       = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  
+  // Agregar Punto
+  const [isAddingPoint, setIsAddingPoint] = useState(false);
+  const [showAddModal, setShowAddModal]   = useState(false);
+  const [tempPointCoords, setTempPointCoords] = useState(null);
+  
+  // Formulario nuevo punto
+  const [newPointNombre, setNewPointNombre] = useState('');
+  const [newPointCreador, setNewPointCreador] = useState('');
+  const [newPointDesc, setNewPointDesc] = useState('');
+  const [newPointCategoria, setNewPointCategoria] = useState('otro');
+  const [isSubmittingPoint, setIsSubmittingPoint] = useState(false);
+
+  // --- ESTADOS PANEL DETALLES LATERAL ---
+  const [selectedPoint, setSelectedPoint] = useState(null);
+  const [selectedPointDetails, setSelectedPointDetails] = useState(null);
+  const [pointReviews, setPointReviews] = useState([]);
+  const [pointMenu, setPointMenu] = useState([]);
+  const [userSession, setUserSession] = useState(null);
+
+  // Reservas
+  const [reservaFechaHora, setReservaFechaHora] = useState('');
+  const [reservaPersonas, setReservaPersonas] = useState(1);
+  const [reservaNotas, setReservaNotas] = useState('');
+  const [reservaTipo, setReservaTipo] = useState('mesa');
+  const [isSubmittingReserva, setIsSubmittingReserva] = useState(false);
+  const [reservaSuccess, setReservaSuccess] = useState(false);
+
+  // Reseñas
+  const [newReviewNombre, setNewReviewNombre] = useState('');
+  const [newReviewComment, setNewReviewComment] = useState('');
+  const [newReviewEstrellas, setNewReviewEstrellas] = useState(5);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewErrorMsg, setReviewErrorMsg] = useState('');
+
+  // --- EFECTOS DE SESIÓN Y DETALLES DEL PUNTO ---
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUserSession(session);
+      if (session?.user?.user_metadata?.nombre_completo) {
+        setNewReviewNombre(session.user.user_metadata.nombre_completo);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserSession(session);
+      if (session?.user?.user_metadata?.nombre_completo) {
+        setNewReviewNombre(session.user.user_metadata.nombre_completo);
+      }
+    });
+
+    return () => {
+      if (subscription) subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!selectedPoint) {
+      setSelectedPointDetails(null);
+      setPointReviews([]);
+      setPointMenu([]);
+      return;
+    }
+
+    const loadPointDetails = async () => {
+      // 1. Cargar reseñas
+      const { data: reviewsData } = await supabase
+        .from('resenas')
+        .select('*')
+        .eq('punto_id', selectedPoint.id)
+        .order('created_at', { ascending: false });
+      setPointReviews(reviewsData || []);
+
+      // 2. Cargar negocio asociado si existe
+      if (selectedPoint.negocio_id) {
+        const { data: bizData } = await supabase
+          .from('negocios')
+          .select('*')
+          .eq('id', selectedPoint.negocio_id)
+          .single();
+        
+        setSelectedPointDetails(bizData);
+
+        if (bizData?.servicios?.has_menu) {
+          const { data: menuData } = await supabase
+            .from('menu_items')
+            .select('*')
+            .eq('negocio_id', selectedPoint.negocio_id);
+          setPointMenu(menuData || []);
+        }
+      }
+    };
+
+    loadPointDetails();
+  }, [selectedPoint]);
+
+  // Sincronizar el ref del punto seleccionado y controlar el recentrado de navegación
+  useEffect(() => {
+    selectedPointRef.current = selectedPoint;
+
+    if (selectedPoint) {
+      // Si el usuario abre detalles, cancelamos cualquier animación inicial de aproximación
+      if (cinematicTimeoutsRef.current.length > 0) {
+        console.log('[Atlan] Cancelando animación cinematográfica inicial por apertura de punto');
+        cinematicTimeoutsRef.current.forEach(t => clearTimeout(t));
+        cinematicTimeoutsRef.current = [];
+      }
+    } else if (isNavigatingRef.current) {
+      // Si se cierra el panel de detalles y estamos en navegación activa,
+      // reanudamos el centrado de la cámara de manera inmediata.
+      isInteractionPausedRef.current = false;
+      if (mapRef.current) {
+        mapRef.current.flyTo({
+          center: currentPosRef.current,
+          zoom: 16.5,
+          pitch: 60,
+          duration: 2000,
+          essential: true
+        });
+      }
+    }
+  }, [selectedPoint]);
+
+  // Simular progreso de carga de 0 a 100 en 5 segundos
+  useEffect(() => {
+    if (isMapLoading) {
+      setLoadingProgress(0);
+      const startTime = Date.now();
+      const duration = 5000; // 5 segundos
+
+      const interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(Math.round((elapsed / duration) * 100), 100);
+        setLoadingProgress(progress);
+
+        if (progress >= 100) {
+          clearInterval(interval);
+        }
+      }, 30);
+
+      return () => clearInterval(interval);
+    }
+  }, [isMapLoading]);
+
+  // --- HANDLERS DE RESERVAS Y RESEÑAS ---
+  const handleCrearReserva = async (e) => {
+    e.preventDefault();
+    if (!userSession) return;
+    setIsSubmittingReserva(true);
+
+    try {
+      const { error } = await supabase
+        .from('reservas')
+        .insert([{
+          lugar_id: selectedPoint.id,
+          negocio_id: selectedPoint.negocio_id,
+          cliente_id: userSession.user.id,
+          fecha_hora: reservaFechaHora,
+          num_personas: parseInt(reservaPersonas),
+          notas: reservaNotas,
+          tipo_reserva: reservaTipo,
+          estado_reserva: 'pendiente'
+        }]);
+
+      if (error) throw error;
+      setReservaSuccess(true);
+      setReservaFechaHora('');
+      setReservaNotas('');
+      setTimeout(() => setReservaSuccess(false), 4000);
+    } catch (err) {
+      console.error("Error reservando:", err);
+      alert("Error al procesar reserva.");
+    } finally {
+      setIsSubmittingReserva(false);
+    }
+  };
+
+  const handleCrearResena = async (e) => {
+    e.preventDefault();
+    if (!newReviewComment) return;
+    setIsSubmittingReview(true);
+    setReviewErrorMsg('');
+
+    try {
+      // Filtrar usando la función RPC verificar_contenido
+      const { data: verifResult, error: verifError } = await supabase
+        .rpc('verificar_contenido', { texto: newReviewComment });
+
+      if (verifError) throw verifError;
+
+      if (!verifResult) {
+        setReviewErrorMsg(lang === 'en' 
+          ? 'Inappropriate language detected. Please review your comment.' 
+          : 'Contenido inapropiado detectado (palabras prohibidas). Por favor modifique su comentario.');
+        setIsSubmittingReview(false);
+        return;
+      }
+
+      const { error } = await supabase
+        .from('resenas')
+        .insert([{
+          punto_id: selectedPoint.id,
+          negocio_id: selectedPoint.negocio_id || null,
+          autor_nombre: newReviewNombre || (lang === 'en' ? 'Anonymous' : 'Anónimo'),
+          estrellas: newReviewEstrellas,
+          comentario: newReviewComment,
+          aprobada: true
+        }]);
+
+      if (error) throw error;
+
+      setNewReviewComment('');
+      
+      // Recargar comentarios localmente
+      const { data: updatedReviews } = await supabase
+        .from('resenas')
+        .select('*')
+        .eq('punto_id', selectedPoint.id)
+        .order('created_at', { ascending: false });
+      setPointReviews(updatedReviews || []);
+
+    } catch (err) {
+      console.error("Error al reseñar:", err);
+      setReviewErrorMsg("Error al enviar la reseña.");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  // ─── UTILIDADES DE VOZ ────────────────────────────────────────────────────
+  const speakInstruction = (text, interrupt = false) => {
+    if (!('speechSynthesis' in window)) return;
+    if (isMutedRef.current) return;
+
+    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+    if (window.speechSynthesis.speaking && !interrupt) return;
+
+    window.speechSynthesis.cancel();
+    setIsSpeaking(true);
+    setTimeout(() => setIsSpeaking(false), 2500);
+
+    setTimeout(() => {
+      try {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang === 'en' ? 'en-US' : 'es-ES';
+        window.speechSynthesis.speak(utterance);
+      } catch (err) {
+        console.error('[Atlan] speakInstruction exception:', err);
+      }
+    }, 100);
+  };
+
+  const toggleMute = () => {
+    isMutedRef.current = !isMutedRef.current;
+    setIsMuted(isMutedRef.current);
+  };
+
+  // ─── CARGAR PUNTOS DESDE SUPABASE ─────────────────────────────────────────
+  const cargarPuntosCercanos = async (lon, lat, categoria = null) => {
+    if (!mapRef.current) return;
+
+    // Limpiar marcadores anteriores de puntos turísticos
+    markersRef.current.forEach((marker) => marker.remove());
+    markersRef.current = [];
+
+    try {
+      console.log(`[Atlan] Cargando puntos cercanos. Categoría: ${categoria || 'Todas'}`);
+      const { data, error } = await supabase.rpc('buscar_puntos_cercanos', {
+        user_lon: lon,
+        user_lat: lat,
+        radio_metros: 60000,
+        filtro_categoria: categoria || null,
+        filtro_estado: 'aprobado' // solo cargamos puntos aprobados
+      });
+
+      if (error) {
+        console.error('[Atlan] Error RPC buscar_puntos_cercanos:', error);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        console.log('[Atlan] No se encontraron puntos en el área.');
+        return;
+      }
+
+      data.forEach((punto) => {
+        const config = CATEGORIAS_CONFIG[punto.categoria] || CATEGORIAS_CONFIG.otro;
+
+        // Crear contenedor HTML para el marcador personalizado
+        const el = document.createElement('div');
+        el.className = 'marker-custom-container';
+
+        // Elemento interno visual (evita que las transiciones de CSS interfieran con el posicionamiento transform de Mapbox)
+        const inner = document.createElement('div');
+        inner.className = 'marker-custom';
+        inner.style.backgroundColor = config.color;
+        inner.style.width = '38px';
+        inner.style.height = '38px';
+        inner.style.borderRadius = '50%';
+        inner.style.border = '2.5px solid white';
+        inner.style.boxShadow = `0 0 12px ${config.color}90, 0 4px 6px rgba(0,0,0,0.2)`;
+        inner.style.display = 'flex';
+        inner.style.justifyContent = 'center';
+        inner.style.alignItems = 'center';
+        inner.style.fontSize = '18px';
+        inner.style.cursor = 'pointer';
+        inner.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+        inner.innerHTML = config.emoji;
+        el.appendChild(inner);
+
+        // Efectos interactivos al pasar el mouse
+        el.addEventListener('mouseenter', () => {
+          inner.style.transform = 'scale(1.2) translateY(-2px)';
+          el.style.zIndex = '999';
+        });
+        el.addEventListener('mouseleave', () => {
+          inner.style.transform = 'scale(1) translateY(0)';
+          el.style.zIndex = 'auto';
+        });
+
+        // Estructura del Popup Premium
+        const isClaimed = !!punto.negocio_id;
+        const ratingText = punto.negocio_rating ? `⭐ ${punto.negocio_rating}` : '';
+        const statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
+        const statusColor = isClaimed ? '#10b981' : '#f59e0b';
+        const btnId = `btn-nav-${punto.id}`;
+        const btnInfoId = `btn-info-${punto.id}`;
+
+        const popupHTML = `
+          <div style="color:#0f172a; min-width:210px; max-width:260px; font-family:var(--font-outfit), sans-serif; padding:6px 4px 2px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1.5px solid #f1f5f9; padding-bottom:6px;">
+              <span style="font-size:10px; font-weight:800; text-transform:uppercase; color:${statusColor}; display:flex; align-items:center; gap:5px;">
+                <span style="width:6px; height:6px; border-radius:50%; background-color:${statusColor}; display:inline-block; animation: pulse 2s infinite;"></span>
+                ${statusText}
+              </span>
+              <span style="font-size:12px; font-weight:700; color:#475569;">${ratingText}</span>
+            </div>
+            <h3 style="margin:0 0 6px; font-size:15px; font-weight:850; color:#1e3a8a; line-height:1.2; letter-spacing:-0.01em;">${punto.nombre}</h3>
+            <p style="margin:0 0 10px; font-size:12.5px; color:#475569; line-height:1.4;">${punto.descripcion || ''}</p>
+            
+            ${punto.negocio_rango_precios ? `
+              <div style="margin-bottom:8px; font-size:11px; font-weight:600; color:#0f766e; background:#f0fdfa; padding:3px 6px; border-radius:4px; display:inline-block;">
+                💰 ${punto.negocio_rango_precios}
+              </div>
+            ` : ''}
+
+            <div style="font-size:11px; color:#94a3b8; margin-bottom:12px; border-top: 1px dashed #e2e8f0; padding-top:6px;">
+              ${t('map.addedBy')}: <span style="font-weight:700; color:#334155;">${punto.nombre_creador || 'Equipo Atlan'}</span>
+            </div>
+            
+            <button id="${btnId}" style="width:100%; padding:10px 14px; background:linear-gradient(135deg, #1a3a6e 0%, #10b981 100%); color:white; border:none; border-radius:10px; font-weight:800; font-size:12.5px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow: 0 4px 12px rgba(16,185,129,0.3); transition:all 0.2s ease-in-out;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              ${t('map.startNavigation')}
+            </button>
+
+            <button id="${btnInfoId}" style="width:100%; margin-top:8px; padding:10px 14px; background:rgba(255,255,255,0.05); color:#1e3a8a; border:1px solid rgba(30,58,138,0.2); border-radius:10px; font-weight:850; font-size:12px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:8px; transition:all 0.2s ease-in-out;">
+              ℹ️ ${lang === 'en' ? 'Details & Booking' : 'Detalles y Reservas'}
+            </button>
+          </div>
+        `;
+
+        const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(popupHTML);
+
+        el.addEventListener('click', () => {
+          lugarDestinoRef.current = punto.nombre;
+        });
+
+        popup.on('open', () => {
+          const btn = document.getElementById(btnId);
+          if (btn) {
+            btn.onclick = () => {
+              lugarDestinoRef.current = punto.nombre;
+
+              if ('speechSynthesis' in window) {
+                window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+              }
+              lastSpokenRef.current = '';
+              speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${punto.nombre}.`, true);
+
+              const [currLng, currLat] = currentPosRef.current;
+              isNavigatingRef.current = true;
+              isInteractionPausedRef.current = false;
+
+              destinationRef.current = [punto.lng, punto.lat];
+              rutaCoordenadasRef.current = [];
+
+              if (directionsRef.current) {
+                directionsRef.current.setOrigin([currLng, currLat]);
+                directionsRef.current.setDestination([punto.lng, punto.lat]);
+              }
+
+              mapRef.current.flyTo({ center: [currLng, currLat], zoom: 16.5, pitch: 60 });
+            };
+          }
+
+          const btnInfo = document.getElementById(btnInfoId);
+          if (btnInfo) {
+            btnInfo.onclick = () => {
+              setSelectedPoint(punto);
+              popup.remove();
+            };
+          }
+        });
+
+        const marker = new mapboxgl.Marker(el)
+          .setLngLat([punto.lng, punto.lat])
+          .setPopup(popup)
+          .addTo(mapRef.current);
+
+        markersRef.current.push(marker);
+      });
+    } catch (err) {
+      console.error('[Atlan] Error inesperado en cargarPuntosCercanos:', err);
+    }
+  };
+
+  // ─── ACTUALIZACIÓN DE POSICIÓN (GPS real + Demo) ───────────────────────────
+  const handlePositionUpdate = (longitude, latitude, bearing = null) => {
+    currentPosRef.current = [longitude, latitude];
+
+    if (mapRef.current) {
+      if (!userMarkerRef.current) {
+        const el = document.createElement('div');
+        el.className = 'nav-arrow-pulsing';
+        el.innerHTML = `
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="#007cbf" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 0 6px rgba(0,124,191,0.6));">
+            <path d="M12 2L4 20L12 17L20 20L12 2Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/>
+          </svg>
+        `;
+        userMarkerRef.current = new mapboxgl.Marker({ element: el, rotationAlignment: 'viewport' })
+          .setLngLat([longitude, latitude])
+          .addTo(mapRef.current);
+      } else {
+        userMarkerRef.current.setLngLat([longitude, latitude]);
+      }
+    }
+
+    if (directionsRef.current) {
+      directionsRef.current.setOrigin([longitude, latitude]);
+    }
+
+    if (isNavigatingRef.current && !isInteractionPausedRef.current && mapRef.current) {
+      const opts = {
+        center: [longitude, latitude],
+        zoom: 16.5,
+        pitch: 60,
+        duration: 1800,
+        essential: true,
+        padding: { top: 180 },
+      };
+      if (bearing !== null) opts.bearing = bearing;
+      mapRef.current.easeTo(opts);
+    }
+  };
+
+  const calcBearing = ([lng1, lat1], [lng2, lat2]) => {
+    const toRad = Math.PI / 180;
+    const toDeg = 180 / Math.PI;
+    const dLng  = (lng2 - lng1) * toRad;
+    const y = Math.sin(dLng) * Math.cos(lat2 * toRad);
+    const x = Math.cos(lat1 * toRad) * Math.sin(lat2 * toRad)
+            - Math.sin(lat1 * toRad) * Math.cos(lat2 * toRad) * Math.cos(dLng);
+    return (Math.atan2(y, x) * toDeg + 360) % 360;
+  };
+
+  const calcDistanceMeters = ([lng1, lat1], [lng2, lat2]) => {
+    const R = 6371000;
+    const toRad = Math.PI / 180;
+    const dLat = (lat2 - lat1) * toRad;
+    const dLng = (lng2 - lng1) * toRad;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*toRad) * Math.cos(lat2*toRad) * Math.sin(dLng/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  };
+
+  const buildManeuverList = (steps) => {
+    const list = [];
+    steps.forEach((step) => {
+      if (!step.maneuver?.instruction) return;
+      const [mLng, mLat] = step.maneuver.location;
+      list.push({
+        lng: mLng,
+        lat: mLat,
+        instruction: step.maneuver.instruction,
+        segmentDist: step.distance || 0,
+        announcedFar:    false,
+        announcedMid:    false,
+        announcedClose:  false,
+        announcedArrive: false,
+      });
+    });
+    return list;
+  };
+
+  const formatDistance = (meters) => {
+    if (meters >= 1000) {
+      const km = (meters / 1000).toFixed(1);
+      return km.endsWith('.0') ? `${parseInt(km)} ${lang === 'en' ? 'kilometers' : 'kilómetros'}` : `${km} ${lang === 'en' ? 'kilometers' : 'kilómetros'}`;
+    }
+    const rounded = Math.round(meters / 50) * 50;
+    return `${Math.max(50, rounded)} ${lang === 'en' ? 'meters' : 'metros'}`;
+  };
+
+  const checkDistanceAnnouncements = (currentLng, currentLat) => {
+    const maneuvers = maneuversRef.current;
+    if (!maneuvers.length) return;
+
+    const next = maneuvers[0];
+    if (!next) return;
+
+    const dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
+    const now  = Date.now();
+    const silenceSec = (now - lastAnnouncementTimeRef.current) / 1000;
+
+    if (dist < 50 && !next.announcedArrive) {
+      next.announcedArrive = true;
+      speakInstruction(next.instruction, true);
+      lastAnnouncementTimeRef.current = now;
+      maneuvers.shift();
+      return;
+    }
+
+    if (dist < 300 && !next.announcedClose) {
+      next.announcedClose = true;
+      const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
+      speakInstruction(msg, true);
+      lastAnnouncementTimeRef.current = now;
+      return;
+    }
+
+    if (dist < 600 && !next.announcedMid) {
+      next.announcedMid = true;
+      const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
+      speakInstruction(msg, true);
+      lastAnnouncementTimeRef.current = now;
+      return;
+    }
+
+    if (dist < 2000 && !next.announcedFar) {
+      next.announcedFar = true;
+      const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
+      speakInstruction(msg);
+      lastAnnouncementTimeRef.current = now;
+      return;
+    }
+
+    if (silenceSec >= 12 && dist > 300 && dist < 5000) {
+      const msg = lang === 'en' ? `Continue straight. In ${formatDistance(dist)}, ${next.instruction}` : `Continúe recto. En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
+      speakInstruction(msg);
+      lastAnnouncementTimeRef.current = now;
+    }
+  };
+
+  const fetchRouteCoords = async (origin, destination) => {
+    const [oLng, oLat] = origin;
+    const [dLng, dLat] = destination;
+    const directionsLang = lang === 'en' ? 'en' : 'es';
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&steps=true&language=${directionsLang}&access_token=${mapboxgl.accessToken}`;
+    const res  = await fetch(url);
+    const data = await res.json();
+    if (data.routes?.length > 0) {
+      const route  = data.routes[0];
+      const coords = route.geometry.coordinates;
+      const steps  = route.legs[0]?.steps || [];
+      rutaCoordenadasRef.current = coords;
+      maneuversRef.current       = buildManeuverList(steps);
+      return coords;
+    }
+    return [];
+  };
+
+  // ─── LÓGICA DEL DEMO SIMULADOR ───────────────────────────────────────────
+  const iniciarSimulacionDemo = async () => {
+    if (demoIntervalRef.current) {
+      clearInterval(demoIntervalRef.current);
+      demoIntervalRef.current  = null;
+      isDemoRunningRef.current = false;
+      setIsDemoRunning(false);
+      isNavigatingRef.current  = false;
+      setShowRecenterBtn(false);
+      const panel = document.querySelector('.mapboxgl-ctrl-directions');
+      if (panel) panel.style.display = '';
+      speakInstruction(t('map.demoFinished'), true);
+      return;
+    }
+
+    if (!destinationRef.current) {
+      speakInstruction(t('map.selectDestination'), true);
+      return;
+    }
+
+    let coords = rutaCoordenadasRef.current;
+
+    if (!coords || coords.length === 0) {
+      coords = await fetchRouteCoords(currentPosRef.current, destinationRef.current);
+      rutaCoordenadasRef.current = coords;
+    }
+
+    if (!coords || coords.length === 0) {
+      speakInstruction(t('map.noRoute'), true);
+      return;
+    }
+
+    setIsDemoRunning(true);
+    isDemoRunningRef.current  = true;
+    isNavigatingRef.current        = true;
+    isInteractionPausedRef.current = false;
+
+    const panel = document.querySelector('.mapboxgl-ctrl-directions');
+    if (panel) panel.style.display = 'none';
+
+    const destino = lugarDestinoRef.current || 'su destino';
+    speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${destino}.`, true);
+    lastAnnouncementTimeRef.current = Date.now();
+
+    let index = 0;
+    setTimeout(() => {
+      if (!isDemoRunningRef.current) return;
+
+      demoIntervalRef.current = setInterval(() => {
+        const pts = rutaCoordenadasRef.current;
+
+        if ('speechSynthesis' in window && window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
+
+        if (index >= pts.length - 1) {
+          clearInterval(demoIntervalRef.current);
+          demoIntervalRef.current  = null;
+          isDemoRunningRef.current = false;
+          setIsDemoRunning(false);
+          isNavigatingRef.current  = false;
+          setShowRecenterBtn(false);
+          if (panel) panel.style.display = '';
+          speakInstruction(t('map.arrived'), true);
+          return;
+        }
+
+        let target = index + 1;
+        while (target < pts.length - 1) {
+          const gap = calcDistanceMeters(pts[index], pts[target]);
+          if (gap >= 50) break;
+          target++;
+        }
+
+        const current = pts[index];
+        const next    = pts[target];
+        const bearing = calcBearing(current, next);
+
+        handlePositionUpdate(next[0], next[1], bearing);
+        checkDistanceAnnouncements(next[0], next[1]);
+
+        index = target;
+      }, 2000);
+    }, 4000);
+  };
+
+  // ─── ACTIVAR MODO LEVANTAR PUNTO ──────────────────────────────────────────
+  const activarLevantarPunto = () => {
+    if (isAddingPoint) {
+      setIsAddingPoint(false);
+      isAddingPointRef.current = false;
+      if (mapRef.current) mapRef.current.getCanvas().style.cursor = '';
+    } else {
+      setIsAddingPoint(true);
+      isAddingPointRef.current = true;
+      if (mapRef.current) mapRef.current.getCanvas().style.cursor = 'crosshair';
+      speakInstruction(t('addPoint.tapMap'), true);
+    }
+  };
+
+  // ─── GUARDAR NUEVO PUNTO EN SUPABASE ──────────────────────────────────────
+  const handleGuardarPunto = async (e) => {
+    e.preventDefault();
+    if (!newPointNombre || !newPointCategoria || !tempPointCoords) return;
+
+    setIsSubmittingPoint(true);
+
+    try {
+      const [lng, lat] = tempPointCoords;
+      const { error } = await supabase.from('puntos').insert([{
+        nombre: newPointNombre,
+        descripcion: newPointDesc,
+        nombre_creador: newPointCreador || 'Turista Anónimo',
+        categoria: newPointCategoria,
+        ubicacion: `POINT(${lng} ${lat})`,
+        estado: 'sin_reclamar' // por defecto los del usuario están sin reclamar
+      }]);
+
+      if (error) {
+        console.error('[Atlan] Error insertando punto:', error);
+        alert(lang === 'en' ? 'Could not save the place. Try again.' : 'No se pudo guardar el lugar. Reintente.');
+      } else {
+        setShowAddModal(false);
+        setNewPointNombre('');
+        setNewPointCreador('');
+        setNewPointDesc('');
+        setNewPointCategoria('otro');
+        setTempPointCoords(null);
+        
+        speakInstruction(t('addPoint.success'), true);
+        alert(t('addPoint.success'));
+        
+        // Recargar puntos locales
+        cargarPuntosCercanos(currentPosRef.current[0], currentPosRef.current[1], filtroCategoria);
+      }
+    } catch (err) {
+      console.error('[Atlan] Error inesperado guardando punto:', err);
+    } finally {
+      setIsSubmittingPoint(false);
+    }
+  };
+
+  // ─── EFECTO INICIAL: INICIALIZAR MAPBOX ──────────────────────────────────
+  // Límites de Latinoamérica (desde México hasta Tierra del Fuego + Caribe)
+  const LATAM_BOUNDS = [[-120, -60], [-30, 35]];
+
+  useEffect(() => {
+    if (mapRef.current) return;
+
+    mapRef.current = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: 'mapbox://styles/mapbox/outdoors-v12',
+      center: [-80, 15],
+      zoom: 3.8,
+      pitch: 0,
+      projection: 'mercator',
+      maxBounds: LATAM_BOUNDS,
+    });
+
+    mapRef.current.on('load', () => {
+      // Terreno 3D DEM
+      mapRef.current.addSource('mapbox-dem', {
+        type: 'raster-dem',
+        url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+        tileSize: 512,
+        maxzoom: 14,
+      });
+      mapRef.current.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
+
+      // Niebla estilo GPS de gama alta
+      mapRef.current.setFog({
+        range: [0.5, 10],
+        color: '#f0f4ff',
+        'high-color': '#1a3a6e',
+        'space-color': '#000000',
+        'star-intensity': 0.1,
+      });
+
+      // Estilización premium de carreteras
+      const roadStyles = [
+        ['road-motorway',       '#F5A623', 7  ],
+        ['road-motorway-link',  '#F5A623', 5  ],
+        ['road-trunk',          '#F9C950', 6  ],
+        ['road-trunk-link',     '#F9C950', 4.5],
+        ['road-primary',        '#FFFFFF',  5  ],
+        ['road-primary-link',   '#FFFFFF',  3.5],
+        ['road-secondary',      '#FFFFFF',  4  ],
+        ['road-secondary-link', '#FFFFFF',  3  ],
+        ['road-street',         '#F5F7FA',  3  ],
+        ['road-street-low',     '#F5F7FA',  2  ],
+      ];
+      roadStyles.forEach(([id, color, width]) => {
+        if (mapRef.current.getLayer(id)) {
+          mapRef.current.setPaintProperty(id, 'line-color', color);
+          mapRef.current.setPaintProperty(id, 'line-width', width);
+        }
+      });
+
+      const casingStyles = [
+        ['road-motorway-casing',  '#A0620A', 10 ],
+        ['road-trunk-casing',     '#A07C0A',  8.5],
+        ['road-primary-casing',   '#8A94A8',  7  ],
+        ['road-secondary-casing', '#9AA4B8',  6  ],
+      ];
+      casingStyles.forEach(([id, color, width]) => {
+        if (mapRef.current.getLayer(id)) {
+          mapRef.current.setPaintProperty(id, 'line-color', color);
+          mapRef.current.setPaintProperty(id, 'line-width', width);
+        }
+      });
+    });
+
+    // ── Capturar Click en el Mapa (Levantar Punto) ──────────────────────────
+    mapRef.current.on('click', (e) => {
+      if (isAddingPointRef.current) {
+        const { lng, lat } = e.lngLat;
+        setTempPointCoords([lng, lat]);
+        setShowAddModal(true);
+        setIsAddingPoint(false);
+        isAddingPointRef.current = false;
+        mapRef.current.getCanvas().style.cursor = '';
+      }
+    });
+
+    const clearCinematicTimeouts = () => {
+      if (cinematicTimeoutsRef.current.length > 0) {
+        console.log('[Atlan] Cancelando animación cinematográfica inicial por interacción del usuario');
+        cinematicTimeoutsRef.current.forEach(t => clearTimeout(t));
+        cinematicTimeoutsRef.current = [];
+      }
+    };
+
+    const pauseCamera = () => {
+      // Cancelar animaciones cinematográficas si el usuario interactúa con el mapa
+      clearCinematicTimeouts();
+
+      if (!isNavigatingRef.current) return;
+
+      // Si ya está pausada la interacción, no hacemos nada más
+      if (isInteractionPausedRef.current) return;
+
+      isInteractionPausedRef.current = true;
+      setShowRecenterBtn(true); // Mostrar el botón "Volver a centrar"
+
+      if (interactionTimeoutRef.current) {
+        clearTimeout(interactionTimeoutRef.current);
+      }
+    };
+    mapRef.current.on('dragstart', pauseCamera);
+    mapRef.current.on('touchstart', pauseCamera);
+    mapRef.current.on('wheel', pauseCamera);
+
+    // Controles nativos
+    const geolocate = new mapboxgl.GeolocateControl({
+      positionOptions: { enableHighAccuracy: true },
+      trackUserLocation: true,
+      showUserHeading: true,
+      showUserLocation: false,
+    });
+    mapRef.current.addControl(geolocate, 'top-right');
+    mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    // Directions
+    const directions = new MapboxDirections({
+      accessToken: mapboxgl.accessToken,
+      unit: 'metric',
+      profile: 'mapbox/driving-traffic',
+      interactive: false,
+      language: lang === 'en' ? 'en' : 'es',
+      controls: { inputs: true, instructions: true, profileSwitcher: true },
+    });
+    mapRef.current.addControl(directions, 'top-left');
+    directionsRef.current = directions;
+
+    directions.on('route', (e) => {
+      if (isDemoRunningRef.current) return;
+
+      if (e.route && e.route.length > 0 && e.route[0].geometry?.coordinates) {
+        const route  = e.route[0];
+        const coords = route.geometry.coordinates;
+        const steps  = route.legs[0]?.steps || [];
+
+        rutaCoordenadasRef.current = coords;
+        maneuversRef.current       = buildManeuverList(steps);
+
+        if (steps.length > 0) {
+          const instr = steps[0].maneuver.instruction;
+          if (instr && instr !== lastSpokenRef.current) {
+            lastSpokenRef.current = instr;
+            setTimeout(() => speakInstruction(instr), 600);
+          }
+        }
+      }
+    });
+
+    directions.on('clear', () => {
+      rutaCoordenadasRef.current = [];
+    });
+
+    // Geolocalización y animaciones de inicio
+    let isFirstPosition = true;
+    let watchId = null;
+
+    if ('geolocation' in navigator) {
+      watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          if (isDemoRunningRef.current) return;
+
+          const { longitude, latitude } = pos.coords;
+          handlePositionUpdate(longitude, latitude);
+
+          if (isFirstPosition && mapRef.current) {
+            isFirstPosition = false;
+
+            // Cargar marcadores iniciales en base a la ubicación detectada
+            cargarPuntosCercanos(longitude, latitude, filtroCategoria);
+
+            // Detectar si el usuario está dentro de Latinoamérica
+            const isInLatam = longitude >= -120 && longitude <= -30 && latitude >= -60 && latitude <= 35;
+
+            // Esperar 2.5 segundos para que los tiles iniciales carguen por completo en segundo plano
+            setTimeout(() => {
+              setIsMapLoading(false);
+
+              if (!mapRef.current) return;
+
+              if (!isInLatam) {
+                // Usuario fuera de Latinoamérica: levantar los límites del mapa para que pueda ver su ubicación
+                console.log('[Atlan] Usuario fuera de Latinoamérica, levantando límites del mapa');
+                mapRef.current.setMaxBounds(null);
+                mapRef.current.flyTo({
+                  center: [longitude, latitude],
+                  zoom: 14,
+                  pitch: 45,
+                  duration: 3000,
+                  essential: true,
+                });
+                cinematicTimeoutsRef.current = [];
+              } else {
+                // Secuencia cinematográfica fluida (3 pasos): Latam → ciudad → ubicación exacta
+                mapRef.current.flyTo({
+                  center: [-82, 12],
+                  zoom: 5.5,
+                  pitch: 10,
+                  bearing: 0,
+                  duration: 3500,
+                  essential: true,
+                });
+
+                const t1 = setTimeout(() => {
+                  if (!mapRef.current) return;
+                  // Paso 2: Acercamiento a la zona/ciudad del usuario
+                  mapRef.current.flyTo({
+                    center: [longitude, latitude],
+                    zoom: 10,
+                    pitch: 30,
+                    duration: 4500,
+                    essential: true,
+                  });
+                }, 4000);
+
+                const t2 = setTimeout(() => {
+                  if (!mapRef.current) return;
+                  // Paso 3: Zoom final a nivel de calle
+                  mapRef.current.flyTo({
+                    center: [longitude, latitude],
+                    zoom: 15,
+                    pitch: 55,
+                    duration: 4000,
+                    essential: true,
+                  });
+                }, 9000);
+
+                cinematicTimeoutsRef.current = [t1, t2];
+              }
+            }, 5000); // 5 segundos de retraso para carga de texturas y estilos
+          }
+        },
+        (err) => {
+          console.error('[Atlan] GPS error:', err);
+          setIsMapLoading(false);
+        },
+        { enableHighAccuracy: true, maximumAge: 0 }
+      );
+    } else {
+      setIsMapLoading(false);
+    }
+
+    return () => {
+      if (demoIntervalRef.current)  clearInterval(demoIntervalRef.current);
+      if (interactionTimeoutRef.current) clearTimeout(interactionTimeoutRef.current);
+      cinematicTimeoutsRef.current.forEach(t => clearTimeout(t));
+      if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+      if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
+    };
+  }, []);
+
+  // ─── EFECTO FILTROS: RECARGAR MARCADORES AL CAMBIAR CATEGORÍA ─────────────
+  const aplicarFiltro = (cat) => {
+    setFiltroCategoria(cat);
+    cargarPuntosCercanos(currentPosRef.current[0], currentPosRef.current[1], cat);
+  };
+
+  const handleRecenter = () => {
+    isInteractionPausedRef.current = false;
+    setShowRecenterBtn(false);
+
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: currentPosRef.current,
+        zoom: 16.5,
+        pitch: 60,
+        duration: 1500,
+        essential: true,
+      });
+    }
+  };
+
+  return (
+    <div style={{ width: '100vw', height: '100vh', margin: 0, padding: 0, position: 'relative', overflow: 'hidden' }}>
+      {/* Pantalla de Carga Premium */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: '#0a0f1c',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+          opacity: isMapLoading ? 1 : 0,
+          visibility: isMapLoading ? 'visible' : 'hidden',
+          transition: 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s',
+        }}
+      >
+        {/* Logo/Emblema Atlan */}
+        <div style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ 
+            fontSize: '32px', 
+            fontWeight: '900', 
+            color: 'var(--atlan-gold)', 
+            letterSpacing: '8px',
+            textShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
+            marginBottom: '8px',
+            fontFamily: 'var(--font-outfit), sans-serif',
+            animation: 'pulse 2s infinite ease-in-out'
+          }}>
+            ATLAN
+          </div>
+          <div style={{ fontSize: '12px', color: '#64748b', letterSpacing: '4px', textTransform: 'uppercase', fontWeight: '500' }}>
+            Nicaragua Turismo
+          </div>
+        </div>
+
+        {/* Mapa de Nicaragua animado que se llena al 100% */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '16px 0' }}>
+          <svg width="150" height="150" viewBox="0 0 100 100" style={{ filter: 'drop-shadow(0px 0px 8px rgba(212, 175, 55, 0.25))' }}>
+            <defs>
+              <clipPath id="nicaragua-loading-clip">
+                <rect x="0" y="0" width={loadingProgress} height="100" />
+              </clipPath>
+            </defs>
+
+            {/* Silueta de fondo (opaca) */}
+            <g>
+              <path
+                d="M 10 42 L 12 50 L 17 57 L 24 65 L 33 75 L 42 85 L 48 90 L 53 85 L 62 82 L 72 84 L 82 88 L 81 75 L 80 65 L 83 50 L 86 35 L 94 20 L 82 23 L 70 25 L 60 20 L 50 18 L 40 24 L 30 28 L 20 32 L 12 38 Z"
+                fill="rgba(255, 255, 255, 0.02)"
+                stroke="rgba(212, 175, 55, 0.2)"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+              {/* Lagos en silueta de fondo */}
+              <path d="M 36 68 Q 45 60 54 68 Q 50 78 36 68 Z" fill="#0a0f1c" stroke="rgba(212, 175, 55, 0.1)" strokeWidth="1" />
+              <path d="M 27 54 Q 32 48 38 53 Q 32 58 27 54 Z" fill="#0a0f1c" stroke="rgba(212, 175, 55, 0.1)" strokeWidth="1" />
+            </g>
+
+            {/* Silueta activa (se revela con el clipPath) */}
+            <g clipPath="url(#nicaragua-loading-clip)" style={{ transition: 'clip-path 0.1s linear' }}>
+              <path
+                d="M 10 42 L 12 50 L 17 57 L 24 65 L 33 75 L 42 85 L 48 90 L 53 85 L 62 82 L 72 84 L 82 88 L 81 75 L 80 65 L 83 50 L 86 35 L 94 20 L 82 23 L 70 25 L 60 20 L 50 18 L 40 24 L 30 28 L 20 32 L 12 38 Z"
+                fill="rgba(212, 175, 55, 0.15)"
+                stroke="var(--atlan-gold)"
+                strokeWidth="2"
+                strokeLinejoin="round"
+              />
+              {/* Lagos en silueta activa (borde dorado activo) */}
+              <path d="M 36 68 Q 45 60 54 68 Q 50 78 36 68 Z" fill="#0a0f1c" stroke="var(--atlan-gold)" strokeWidth="1.5" />
+              <path d="M 27 54 Q 32 48 38 53 Q 32 58 27 54 Z" fill="#0a0f1c" stroke="var(--atlan-gold)" strokeWidth="1.5" />
+            </g>
+          </svg>
+
+          {/* Porcentaje numérico */}
+          <div style={{
+            fontSize: '18px',
+            fontWeight: '800',
+            color: 'var(--atlan-gold)',
+            fontFamily: 'monospace',
+            letterSpacing: '2px',
+            marginTop: '8px',
+            textShadow: '0 0 10px rgba(212, 175, 55, 0.3)'
+          }}>
+            {loadingProgress}%
+          </div>
+        </div>
+
+        {/* Barra de progreso horizontal */}
+        <div style={{
+          width: '200px',
+          height: '4px',
+          backgroundColor: 'rgba(212, 175, 55, 0.1)',
+          borderRadius: '999px',
+          overflow: 'hidden',
+          marginBottom: '20px'
+        }}>
+          <div style={{
+            height: '100%',
+            width: `${loadingProgress}%`,
+            backgroundColor: 'var(--atlan-gold)',
+            boxShadow: '0 0 8px var(--atlan-gold)',
+            transition: 'width 0.1s linear'
+          }} />
+        </div>
+
+        <div style={{ fontSize: '13px', color: '#94a3b8', letterSpacing: '1px', fontWeight: '600' }}>
+          {lang === 'en' ? 'Preparing map experience...' : 'Preparando experiencia de mapa...'}
+        </div>
+      </div>
+
+      <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
+
+      {/* ─── CABECERA FLOTANTE PREMIUM ─── */}
+      <div className="map-header" style={{
+        position: 'absolute',
+        top: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '90%',
+        maxWidth: '700px',
+        background: 'rgba(10, 15, 28, 0.75)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        borderRadius: '20px',
+        padding: '12px 20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        zIndex: 10,
+        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.4)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '22px', fontWeight: '800', background: 'linear-gradient(135deg, #D4AF37 0%, #FFF 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: 'var(--font-outfit)' }}>
+            ATLAN
+          </span>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            onClick={activarLevantarPunto}
+            style={{
+              padding: '8px 16px',
+              background: isAddingPoint ? '#ef4444' : 'linear-gradient(135deg, #D4AF37 0%, #b89324 100%)',
+              color: isAddingPoint ? 'white' : '#0a0f1c',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: '800',
+              fontSize: '12px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 4px 10px rgba(212, 175, 55, 0.25)',
+              transition: 'all 0.25s ease'
+            }}
+          >
+            ➕ {isAddingPoint ? t('common.cancel') : t('map.addPoint')}
+          </button>
+          <LanguageToggle variant="pill" />
+        </div>
+      </div>
+
+      {/* ─── BANNER EXPLICATIVO MODO AGREGAR PUNTO ─── */}
+      {isAddingPoint && (
+        <div style={{
+          position: 'absolute',
+          top: '90px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '85%',
+          maxWidth: '450px',
+          background: 'rgba(239, 68, 68, 0.9)',
+          color: 'white',
+          padding: '10px 16px',
+          borderRadius: '12px',
+          fontWeight: '700',
+          fontSize: '13px',
+          textAlign: 'center',
+          boxShadow: '0 8px 24px rgba(239,68,68,0.4)',
+          zIndex: 10,
+          animation: 'pulse 1.5s infinite'
+        }}>
+          🎯 {t('addPoint.tapMap')}
+        </div>
+      )}
+
+      {/* ─── PANEL HORIZONTAL DE FILTROS ─── */}
+      <div className="filter-bar">
+        {/* Píldora "Todas" */}
+        <button
+          onClick={() => aplicarFiltro(null)}
+          style={{
+            flexShrink: 0,
+            padding: '8px 16px',
+            background: filtroCategoria === null ? 'var(--atlan-gold)' : 'rgba(10, 15, 28, 0.8)',
+            color: filtroCategoria === null ? '#0a0f1c' : 'white',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px',
+            fontWeight: '700',
+            fontSize: '12px',
+            cursor: 'pointer',
+            backdropFilter: 'blur(8px)',
+            transition: 'all 0.2s'
+          }}
+        >
+          🌍 {t('map.allCategories')}
+        </button>
+
+        {Object.entries(CATEGORIAS_CONFIG).map(([key, config]) => {
+          const isSelected = filtroCategoria === key;
+          return (
+            <button
+              key={key}
+              onClick={() => aplicarFiltro(key)}
+              style={{
+                flexShrink: 0,
+                padding: '8px 16px',
+                background: isSelected ? config.color : 'rgba(10, 15, 28, 0.8)',
+                color: isSelected ? 'white' : '#e2e8f0',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                fontWeight: '700',
+                fontSize: '12px',
+                cursor: 'pointer',
+                backdropFilter: 'blur(8px)',
+                transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <span>{config.emoji}</span>
+              <span>{t(`addPoint.categories.${key}`)}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ─── MODAL PREMIUM DE LEVANTAR PUNTO ─── */}
+      {showAddModal && tempPointCoords && (
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(10, 15, 28, 0.65)',
+          backdropFilter: 'blur(10px)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 20
+        }}>
+          <div className="add-point-modal">
+            <h2 style={{ margin: '0 0 4px', fontSize: '20px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
+              📍 {t('addPoint.title')}
+            </h2>
+            <p style={{ margin: '0 0 20px', fontSize: '13px', color: '#94a3b8' }}>
+              {t('addPoint.subtitle')}
+            </p>
+
+            <form onSubmit={handleGuardarPunto} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {/* Coordenadas informativas */}
+              <div style={{ background: 'rgba(255,255,255,0.05)', padding: '10px 14px', borderRadius: '10px', fontSize: '11px', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.08)' }}>
+                📍 Coords: {tempPointCoords[1].toFixed(5)}, {tempPointCoords[0].toFixed(5)}
+              </div>
+
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: '750', color: '#cbd5e1', display: 'block', marginBottom: '5px' }}>
+                  {t('addPoint.placeName')} *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder={t('addPoint.placeNamePlaceholder')}
+                  value={newPointNombre}
+                  onChange={(e) => setNewPointNombre(e.target.value)}
+                  style={{ width: '100%', padding: '11px 14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', outline: 'none', fontSize: '13.5px' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: '750', color: '#cbd5e1', display: 'block', marginBottom: '5px' }}>
+                  {t('addPoint.yourName')}
+                </label>
+                <input
+                  type="text"
+                  placeholder={t('addPoint.yourNamePlaceholder')}
+                  value={newPointCreador}
+                  onChange={(e) => setNewPointCreador(e.target.value)}
+                  style={{ width: '100%', padding: '11px 14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', outline: 'none', fontSize: '13.5px' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: '750', color: '#cbd5e1', display: 'block', marginBottom: '5px' }}>
+                  {t('addPoint.category')} *
+                </label>
+                <select
+                  value={newPointCategoria}
+                  onChange={(e) => setNewPointCategoria(e.target.value)}
+                  style={{ width: '100%', padding: '11px 14px', background: '#141b2d', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', outline: 'none', fontSize: '13.5px' }}
+                >
+                  {Object.keys(CATEGORIAS_CONFIG).map((key) => (
+                    <option key={key} value={key}>
+                      {CATEGORIAS_CONFIG[key].emoji} {t(`addPoint.categories.${key}`)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: '750', color: '#cbd5e1', display: 'block', marginBottom: '5px' }}>
+                  {t('addPoint.description')} *
+                </label>
+                <textarea
+                  required
+                  rows="3"
+                  placeholder={t('addPoint.descriptionPlaceholder')}
+                  value={newPointDesc}
+                  onChange={(e) => setNewPointDesc(e.target.value)}
+                  style={{ width: '100%', padding: '11px 14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', outline: 'none', fontSize: '13.5px', resize: 'none' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => { setShowAddModal(false); setTempPointCoords(null); }}
+                  style={{ flex: 1, padding: '12px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', color: 'white', fontWeight: '700', fontSize: '13px', cursor: 'pointer' }}
+                >
+                  {t('common.cancel')}
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingPoint}
+                  style={{ flex: 1, padding: '12px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', border: 'none', borderRadius: '12px', color: 'white', fontWeight: '800', fontSize: '13px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(16,185,129,0.25)' }}
+                >
+                  {isSubmittingPoint ? '...' : t('addPoint.submit')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Botón 🚗 Demo */}
+      <button
+        onClick={iniciarSimulacionDemo}
+        style={{
+          position: 'absolute',
+          bottom: '100px',
+          right: '20px',
+          backgroundColor: isDemoRunning ? '#f59e0b' : '#3b82f6',
+          color: 'white',
+          border: 'none',
+          borderRadius: '25px',
+          padding: '11px 18px',
+          fontWeight: '700',
+          fontSize: '14px',
+          letterSpacing: '0.3px',
+          boxShadow: '0 4px 14px rgba(0,0,0,0.35)',
+          cursor: 'pointer',
+          zIndex: 10,
+          transition: 'all 0.25s ease',
+        }}
+      >
+        🚗 {isDemoRunning ? t('map.demoStop') : t('map.demo')}
+      </button>
+
+      {/* Botón Volver a centrar (Waze-style) */}
+      {showRecenterBtn && (
+        <button
+          onClick={handleRecenter}
+          style={{
+            position: 'absolute',
+            bottom: '100px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: 'rgba(10, 15, 28, 0.9)',
+            color: 'var(--atlan-gold)',
+            border: '1.5px solid var(--atlan-gold-light)',
+            borderRadius: '30px',
+            padding: '12px 24px',
+            fontWeight: '700',
+            fontSize: '14px',
+            letterSpacing: '0.5px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.2)',
+            backdropFilter: 'blur(8px)',
+            cursor: 'pointer',
+            zIndex: 20,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            transition: 'all 0.2s ease',
+            textTransform: 'uppercase',
+          }}
+          className="recenter-btn animate-scale-in"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="3 11 22 2 13 21 11 13 3 11" />
+          </svg>
+          {lang === 'en' ? 'Re-center' : 'Volver a centrar'}
+        </button>
+      )}
+
+      {/* Botón Silenciar / Voz */}
+      <button
+        onClick={toggleMute}
+        title={isMuted ? t('map.unmute') : t('map.mute')}
+        style={{
+          position: 'absolute',
+          bottom: '30px',
+          right: '20px',
+          backgroundColor: isMuted ? '#ef4444' : '#10b981',
+          color: 'white',
+          border: isSpeaking && !isMuted ? '3px solid white' : 'none',
+          borderRadius: '50%',
+          width: '56px',
+          height: '56px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          boxShadow: isSpeaking && !isMuted
+            ? '0 0 20px 6px rgba(16,185,129,0.85)'
+            : '0 4px 12px rgba(0,0,0,0.3)',
+          transform: isSpeaking && !isMuted ? 'scale(1.15)' : 'scale(1)',
+          cursor: 'pointer',
+          zIndex: 10,
+          transition: 'all 0.3s ease',
+        }}
+      >
+        {isMuted ? (
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+          </svg>
+        ) : (
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+        )}
+      </button>
+
+      {/* ─── PANEL LATERAL DE DETALLES PREMIUM (DETAIL SHEET) ─── */}
+      {selectedPoint && (
+        <div className="detail-sheet">
+          {/* Cabecera del Panel */}
+          <div style={{
+            padding: '24px 20px 16px',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'start'
+          }}>
+            <div>
+              <span style={{
+                fontSize: '11px',
+                fontWeight: '800',
+                textTransform: 'uppercase',
+                color: selectedPoint.negocio_id ? '#10b981' : '#f59e0b',
+                background: selectedPoint.negocio_id ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)',
+                padding: '4px 8px',
+                borderRadius: '6px',
+                display: 'inline-block',
+                marginBottom: '8px'
+              }}>
+                {selectedPoint.negocio_id ? t('map.claimed') : t('map.unclaimed')}
+              </span>
+              <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '850', color: 'white', lineHeight: '1.2' }}>
+                {selectedPoint.nombre}
+              </h2>
+              <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#94a3b8' }}>
+                📍 {t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}
+              </p>
+            </div>
+            <button
+              onClick={() => setSelectedPoint(null)}
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: 'none',
+                color: 'white',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+                fontSize: '14px',
+                transition: 'all 0.2s'
+              }}
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Cuerpo Scrollable */}
+          <div style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px',
+            scrollbarWidth: 'thin',
+            scrollbarColor: 'rgba(255,255,255,0.1) transparent'
+          }}>
+            {/* Descripción */}
+            <div>
+              <h4 style={{ margin: '0 0 6px', fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                {lang === 'en' ? 'About' : 'Acerca de'}
+              </h4>
+              <p style={{ margin: 0, fontSize: '14px', color: '#94a3b8', lineHeight: '1.5' }}>
+                {selectedPoint.descripcion || (lang === 'en' ? 'No description available.' : 'Sin descripción disponible.')}
+              </p>
+            </div>
+
+            {/* Menú del Negocio */}
+            {selectedPointDetails?.servicios?.has_menu && (
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px' }}>
+                <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  🍽️ {t('dashboard.menu')}
+                </h4>
+                {pointMenu.length === 0 ? (
+                  <p style={{ margin: 0, fontSize: '13px', color: '#64748b', fontStyle: 'italic' }}>
+                    {lang === 'en' ? 'No menu items published yet.' : 'No hay platillos publicados aún.'}
+                  </p>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {pointMenu.map((item) => (
+                      <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '10px 14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div>
+                          <p style={{ margin: 0, fontSize: '14px', fontWeight: '700', color: 'white' }}>{item.nombre}</p>
+                          {item.descripcion && (
+                            <p style={{ margin: '2px 0 0', fontSize: '11.5px', color: '#64748b' }}>{item.descripcion}</p>
+                          )}
+                        </div>
+                        <span style={{ fontSize: '14px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
+                          C$ {item.precio}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Reservas directas */}
+            {selectedPointDetails?.servicios?.has_lodging && (
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px' }}>
+                <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  🏨 {t('reservations.title')}
+                </h4>
+
+                {reservaSuccess ? (
+                  <div style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid #10b981', color: '#34d399', padding: '14px', borderRadius: '12px', fontSize: '13px', fontWeight: '700', textAlign: 'center' }}>
+                    🎉 {t('reservations.success')}
+                  </div>
+                ) : !userSession ? (
+                  <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid #f59e0b', padding: '14px', borderRadius: '12px', textAlign: 'center' }}>
+                    <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#fbbf24', fontWeight: '600' }}>
+                      🔑 {t('reservations.loginRequired')}
+                    </p>
+                    <a
+                      href="/login"
+                      style={{
+                        display: 'inline-block',
+                        padding: '6px 14px',
+                        background: 'linear-gradient(135deg, #D4AF37 0%, #b89324 100%)',
+                        color: '#0a0f1c',
+                        borderRadius: '8px',
+                        fontWeight: '800',
+                        fontSize: '11px',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      {t('nav.login')}
+                    </a>
+                  </div>
+                ) : (
+                  <form onSubmit={handleCrearReserva} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div>
+                      <label style={{ fontSize: '11.5px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                        {t('reservations.type')}
+                      </label>
+                      <select
+                        value={reservaTipo}
+                        onChange={(e) => setReservaTipo(e.target.value)}
+                        style={{ width: '100%', padding: '10px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '13px', outline: 'none' }}
+                      >
+                        <option value="mesa">{t('reservations.types.mesa')}</option>
+                        <option value="habitacion">{t('reservations.types.habitacion')}</option>
+                        <option value="tour">{t('reservations.types.tour')}</option>
+                        <option value="transporte">{t('reservations.types.transporte')}</option>
+                      </select>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <div style={{ flex: 1 }}>
+                        <label style={{ fontSize: '11.5px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                          {t('reservations.date')} / {t('reservations.time')}
+                        </label>
+                        <input
+                          type="datetime-local"
+                          required
+                          value={reservaFechaHora}
+                          onChange={(e) => setReservaFechaHora(e.target.value)}
+                          style={{ width: '100%', padding: '9px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '13px', outline: 'none' }}
+                        />
+                      </div>
+                      <div style={{ width: '90px' }}>
+                        <label style={{ fontSize: '11.5px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                          🧑‍🤝‍🧑 {t('reservations.people')}
+                        </label>
+                        <input
+                          type="number"
+                          min="1"
+                          required
+                          value={reservaPersonas}
+                          onChange={(e) => setReservaPersonas(e.target.value)}
+                          style={{ width: '100%', padding: '9px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '13px', outline: 'none' }}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: '11.5px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                        📝 {t('reservations.notes')}
+                      </label>
+                      <textarea
+                        rows="2"
+                        value={reservaNotas}
+                        onChange={(e) => setReservaNotas(e.target.value)}
+                        placeholder="..."
+                        style={{ width: '100%', padding: '10px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '13.5px', outline: 'none', resize: 'none' }}
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isSubmittingReserva}
+                      style={{
+                        padding: '11px',
+                        background: 'linear-gradient(135deg, #D4AF37 0%, #b89324 100%)',
+                        color: '#0a0f1c',
+                        border: 'none',
+                        borderRadius: '10px',
+                        fontWeight: '800',
+                        fontSize: '12.5px',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(212,175,55,0.2)'
+                      }}
+                    >
+                      {isSubmittingReserva ? '...' : t('reservations.submit')}
+                    </button>
+                  </form>
+                )}
+              </div>
+            )}
+
+            {/* Panel de Reseñas */}
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px' }}>
+              <h4 style={{ margin: '0 0 16px', fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                ⭐ {t('reviews.title')}
+              </h4>
+
+              {/* Formulario de Reseña */}
+              <form onSubmit={handleCrearResena} style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: 'rgba(255,255,255,0.03)', padding: '14px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '20px' }}>
+                <p style={{ margin: 0, fontSize: '12.5px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
+                  {t('reviews.writeReview')}
+                </p>
+
+                {reviewErrorMsg && (
+                  <div style={{ color: '#ef4444', fontSize: '12px', fontWeight: '600', background: 'rgba(239,68,68,0.1)', padding: '8px 10px', borderRadius: '8px' }}>
+                    ⚠ {reviewErrorMsg}
+                  </div>
+                )}
+
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                    👤 {t('reviews.yourName')}
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    disabled={!!userSession}
+                    value={newReviewNombre}
+                    onChange={(e) => setNewReviewNombre(e.target.value)}
+                    placeholder="Ej: Carlos"
+                    style={{ width: '100%', padding: '9px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '12.5px', outline: 'none' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                    ⭐ {t('reviews.rating')}
+                  </label>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setNewReviewEstrellas(star)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          fontSize: '22px',
+                          cursor: 'pointer',
+                          padding: 0,
+                          color: star <= newReviewEstrellas ? '#fbbf24' : 'rgba(255,255,255,0.25)',
+                          transition: 'transform 0.1s'
+                        }}
+                      >
+                        ★
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                    💬 {t('reviews.yourComment')}
+                  </label>
+                  <textarea
+                    required
+                    rows="3"
+                    value={newReviewComment}
+                    onChange={(e) => setNewReviewComment(e.target.value)}
+                    placeholder="..."
+                    style={{ width: '100%', padding: '9px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '12.5px', outline: 'none', resize: 'none' }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmittingReview}
+                  style={{
+                    padding: '9px',
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontWeight: '800',
+                    fontSize: '12px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {isSubmittingReview ? '...' : t('reviews.submit')}
+                </button>
+              </form>
+
+              {/* Listado de Reseñas */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {pointReviews.length === 0 ? (
+                  <p style={{ margin: 0, fontSize: '13px', color: '#64748b', fontStyle: 'italic', textAlign: 'center', padding: '10px 0' }}>
+                    {lang === 'en' ? 'No reviews yet. Be the first!' : 'No hay reseñas aún. ¡Sé el primero!'}
+                  </p>
+                ) : (
+                  pointReviews.map((rev) => (
+                    <div key={rev.id} style={{ background: 'rgba(255,255,255,0.02)', padding: '12px 14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <span style={{ fontSize: '13px', fontWeight: '800', color: 'white' }}>{rev.autor_nombre}</span>
+                        <span style={{ fontSize: '12px', color: '#fbbf24' }}>
+                          {'★'.repeat(rev.estrellas)}{'☆'.repeat(5 - rev.estrellas)}
+                        </span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '12.5px', color: '#cbd5e1', lineHeight: '1.4' }}>{rev.comentario}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
