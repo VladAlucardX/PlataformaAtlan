@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
+import VideoIntro from "@/components/VideoIntro";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    LANDING PAGE — Plataforma Atlan
@@ -308,15 +309,30 @@ function Footer() {
 
 // ── MAIN PAGE ──────────────────────────────────────────────────────────────
 export default function Home() {
+  const [introDone, setIntroDone] = React.useState(false);
+
   return (
-    <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)" }}>
-      <Navbar />
-      <HeroSection />
-      <FeaturesSection />
-      <CategoriesSection />
-      <CTASection />
-      <Footer />
-    </div>
+    <>
+      {/* Video Intro Overlay */}
+      {!introDone && <VideoIntro onComplete={() => setIntroDone(true)} />}
+
+      {/* Landing Page Content */}
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "var(--atlan-bg-primary)",
+          opacity: introDone ? 1 : 0,
+          transition: "opacity 0.8s ease 0.2s",
+        }}
+      >
+        <Navbar />
+        <HeroSection />
+        <FeaturesSection />
+        <CategoriesSection />
+        <CTASection />
+        <Footer />
+      </div>
+    </>
   );
 }
 
