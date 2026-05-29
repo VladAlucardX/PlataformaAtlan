@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import VideoIntro from "@/components/VideoIntro";
+import { supabase } from "@/lib/supabase";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    LANDING PAGE — Plataforma Atlan
@@ -14,6 +15,64 @@ import VideoIntro from "@/components/VideoIntro";
 function Navbar() {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [session, setSession] = React.useState(null);
+  const [rol, setRol] = React.useState(null);
+
+  React.useEffect(() => {
+    // 1. Obtener sesión actual
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      if (currentSession?.user) {
+        fetchUserRol(currentSession.user.id);
+      }
+    }).catch(async (err) => {
+      console.warn("[Atlan] Fallo al recuperar sesión (token inválido). Limpiando almacenamiento:", err);
+      try {
+        await supabase.auth.signOut();
+      } catch (_) {}
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+      }
+      setSession(null);
+      setRol(null);
+    });
+
+    // 2. Suscribirse a cambios de autenticación
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, currentSession) => {
+      setSession(currentSession);
+      if (currentSession?.user) {
+        fetchUserRol(currentSession.user.id);
+      } else {
+        setRol(null);
+      }
+    });
+
+    return () => {
+      if (subscription) subscription.unsubscribe();
+    };
+  }, []);
+
+  const fetchUserRol = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from("perfiles")
+        .select("rol")
+        .eq("id", userId)
+        .single();
+      if (!error && data) {
+        setRol(data.rol);
+      }
+    } catch (err) {
+      console.error("Error fetching user rol in landing:", err);
+    }
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setSession(null);
+    setRol(null);
+    window.location.reload();
+  };
 
   return (
     <nav style={styles.nav}>
@@ -30,9 +89,32 @@ function Navbar() {
             {t("nav.map")}
           </Link>
           <LanguageToggle variant="pill" />
-          <Link href="/mapa" className="btn-primary" style={{ padding: "10px 24px", fontSize: "14px" }}>
-            {t("landing.hero.cta")}
-          </Link>
+          
+          {session ? (
+            <>
+              {rol === "dueno" || rol === "admin" ? (
+                <Link href="/dashboard" style={styles.navLink}>
+                  💼 {t("nav.dashboard")}
+                </Link>
+              ) : (
+                <Link href="/perfil" style={styles.navLink}>
+                  👤 {t("nav.myReservations")}
+                </Link>
+              )}
+              <button onClick={handleLogout} style={styles.logoutBtn}>
+                🚪 {t("nav.logout")}
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" style={styles.navLink}>
+                {t("nav.login")}
+              </Link>
+              <Link href="/registro" className="btn-primary" style={{ padding: "10px 24px", fontSize: "14px" }}>
+                {t("nav.register")}
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -64,14 +146,37 @@ function Navbar() {
           <Link href="/mapa" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
             🗺️ {t("nav.map")}
           </Link>
-          <Link
-            href="/mapa"
-            className="btn-primary"
-            style={{ width: "100%", textAlign: "center", padding: "14px" }}
-            onClick={() => setMenuOpen(false)}
-          >
-            {t("landing.hero.cta")}
-          </Link>
+          
+          {session ? (
+            <>
+              {rol === "dueno" || rol === "admin" ? (
+                <Link href="/dashboard" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+                  💼 {t("nav.dashboard")}
+                </Link>
+              ) : (
+                <Link href="/perfil" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+                  👤 {t("nav.myReservations")}
+                </Link>
+              )}
+              <button onClick={() => { setMenuOpen(false); handleLogout(); }} style={styles.mobileLogoutBtn}>
+                🚪 {t("nav.logout")}
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+                🔑 {t("nav.login")}
+              </Link>
+              <Link
+                href="/registro"
+                className="btn-primary"
+                style={{ width: "100%", textAlign: "center", padding: "14px" }}
+                onClick={() => setMenuOpen(false)}
+              >
+                ✨ {t("nav.register")}
+              </Link>
+            </>
+          )}
         </div>
       )}
     </nav>
@@ -410,6 +515,29 @@ const styles = {
     fontWeight: "500",
     textDecoration: "none",
     padding: "12px 0",
+  },
+  logoutBtn: {
+    background: "rgba(239, 68, 68, 0.1)",
+    border: "1px solid rgba(239, 68, 68, 0.2)",
+    color: "#ef4444",
+    padding: "8px 16px",
+    borderRadius: "10px",
+    fontSize: "13px",
+    fontWeight: "700",
+    cursor: "pointer",
+    transition: "all 0.2s",
+  },
+  mobileLogoutBtn: {
+    background: "rgba(239, 68, 68, 0.1)",
+    border: "1px solid rgba(239, 68, 68, 0.2)",
+    color: "#ef4444",
+    padding: "12px",
+    borderRadius: "10px",
+    fontSize: "14px",
+    fontWeight: "700",
+    cursor: "pointer",
+    width: "100%",
+    textAlign: "left",
   },
 
   // ── Hero

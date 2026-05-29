@@ -18,7 +18,18 @@ export default function DashboardPage() {
   const [negocio, setNegocio] = useState(null);
 
   // Estados de navegación interna (Pestañas)
-  const [activeTab, setActiveTab] = useState("general"); // general | excentricidades | menu | reservas | resenas
+  const [activeTab, setActiveTab] = useState("general"); // general | excentricidades | menu | reservas | resenas | horarios
+
+  // Horarios de atención
+  const [horarios, setHorarios] = useState({
+    lunes: { abierto: true, apertura: "08:00", cierre: "17:00" },
+    martes: { abierto: true, apertura: "08:00", cierre: "17:00" },
+    miercoles: { abierto: true, apertura: "08:00", cierre: "17:00" },
+    jueves: { abierto: true, apertura: "08:00", cierre: "17:00" },
+    viernes: { abierto: true, apertura: "08:00", cierre: "17:00" },
+    sabado: { abierto: true, apertura: "09:00", cierre: "14:00" },
+    domingo: { abierto: false, apertura: "08:00", cierre: "17:00" }
+  });
 
   // Formularios y edición
   const [nombre, setNombre] = useState("");
@@ -106,6 +117,18 @@ export default function DashboardPage() {
       setTelefono(negocioData.telefono || "");
       setWhatsapp(negocioData.whatsapp || "");
       setRangoPrecios(negocioData.rango_precios || "");
+
+      // Horarios
+      const hr = negocioData.horarios || {};
+      setHorarios({
+        lunes: hr.lunes || { abierto: true, apertura: "08:00", cierre: "17:00" },
+        martes: hr.martes || { abierto: true, apertura: "08:00", cierre: "17:00" },
+        miercoles: hr.miercoles || { abierto: true, apertura: "08:00", cierre: "17:00" },
+        jueves: hr.jueves || { abierto: true, apertura: "08:00", cierre: "17:00" },
+        viernes: hr.viernes || { abierto: true, apertura: "08:00", cierre: "17:00" },
+        sabado: hr.sabado || { abierto: true, apertura: "09:00", cierre: "14:00" },
+        domingo: hr.domingo || { abierto: false, apertura: "08:00", cierre: "17:00" }
+      });
 
       // Servicios (excentricidades)
       const serv = negocioData.servicios || {};
@@ -305,6 +328,29 @@ export default function DashboardPage() {
     }
   };
 
+  // Guardar horarios
+  const handleSaveHorarios = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setSaveSuccess(false);
+    try {
+      const { error } = await supabase
+        .from("negocios")
+        .update({ horarios })
+        .eq("id", negocio.id);
+
+      if (error) throw error;
+      setNegocio({ ...negocio, horarios });
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err) {
+      console.error("Error guardando horarios:", err);
+      alert("Error al guardar horarios.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   // Menú: Agregar plato
   const handleAddPlato = async (e) => {
     e.preventDefault();
@@ -483,6 +529,16 @@ export default function DashboardPage() {
                 ⚙️ {lang === "en" ? "Settings Checklist" : "Checklist de Servicios"}
               </button>
 
+              {hasHours && (
+                <button
+                  onClick={() => setActiveTab("horarios")}
+                  className={`dashboard-tab-btn ${activeTab === "horarios" ? "active" : ""}`}
+                  style={{ ...styles.tabBtn, ...(activeTab === "horarios" ? styles.tabBtnActive : {}) }}
+                >
+                  ⏰ {lang === "en" ? "Opening Hours" : "Horarios de Atención"}
+                </button>
+              )}
+
               {hasMenu && (
                 <button
                   onClick={() => setActiveTab("menu")}
@@ -657,6 +713,91 @@ export default function DashboardPage() {
                 <button onClick={handleSaveExcentricidades} disabled={isSaving} style={styles.saveBtn}>
                   {isSaving ? "..." : (lang === "en" ? "Save Services" : "Guardar Servicios")}
                 </button>
+              </div>
+            )}
+            {/* PESTAÑA DE HORARIOS DE ATENCIÓN */}
+            {activeTab === "horarios" && hasHours && (
+              <div style={styles.tabContent}>
+                <h3 style={styles.tabTitle}>{lang === "en" ? "Configure Opening Hours" : "Configurar Horarios de Atención"}</h3>
+                <form onSubmit={handleSaveHorarios} style={styles.form}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
+                    {Object.keys(horarios).map((day) => {
+                      const dayLabels = {
+                        lunes: lang === "en" ? "Monday" : "Lunes",
+                        martes: lang === "en" ? "Tuesday" : "Martes",
+                        miercoles: lang === "en" ? "Wednesday" : "Miércoles",
+                        jueves: lang === "en" ? "Thursday" : "Jueves",
+                        viernes: lang === "en" ? "Friday" : "Viernes",
+                        sabado: lang === "en" ? "Saturday" : "Sábado",
+                        domingo: lang === "en" ? "Sunday" : "Domingo",
+                      };
+                      return (
+                        <div key={day} style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.02)", padding: "12px 16px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.05)", gap: "10px" }}>
+                          <span style={{ fontWeight: "750", width: "120px" }}>{dayLabels[day]}</span>
+                          
+                          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+                            <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "13px" }}>
+                              <input
+                                type="checkbox"
+                                checked={horarios[day].abierto}
+                                onChange={(e) => setHorarios({
+                                  ...horarios,
+                                  [day]: { ...horarios[day], abierto: e.target.checked }
+                                })}
+                                style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                              />
+                              {lang === "en" ? "Open" : "Abierto"}
+                            </label>
+
+                            {horarios[day].abierto && (
+                              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                <input
+                                  type="time"
+                                  value={horarios[day].apertura}
+                                  onChange={(e) => setHorarios({
+                                    ...horarios,
+                                    [day]: { ...horarios[day], apertura: e.target.value }
+                                  })}
+                                  style={{
+                                    background: "rgba(255, 255, 255, 0.05)",
+                                    border: "1px solid rgba(255, 255, 255, 0.15)",
+                                    borderRadius: "8px",
+                                    color: "white",
+                                    fontSize: "13px",
+                                    padding: "6px 10px",
+                                    outline: "none"
+                                  }}
+                                />
+                                <span>-</span>
+                                <input
+                                  type="time"
+                                  value={horarios[day].cierre}
+                                  onChange={(e) => setHorarios({
+                                    ...horarios,
+                                    [day]: { ...horarios[day], cierre: e.target.value }
+                                  })}
+                                  style={{
+                                    background: "rgba(255, 255, 255, 0.05)",
+                                    border: "1px solid rgba(255, 255, 255, 0.15)",
+                                    borderRadius: "8px",
+                                    color: "white",
+                                    fontSize: "13px",
+                                    padding: "6px 10px",
+                                    outline: "none"
+                                  }}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <button type="submit" disabled={isSaving} style={styles.saveBtn}>
+                    {isSaving ? "..." : (lang === "en" ? "Save Hours" : "Guardar Horarios")}
+                  </button>
+                </form>
               </div>
             )}
 

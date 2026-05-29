@@ -5,6 +5,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 import '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css';
+import Link from 'next/link';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from '../hooks/useTranslation';
 import LanguageToggle from './ui/LanguageToggle';
@@ -94,6 +95,16 @@ export default function MapaTuristico() {
   const [newReviewEstrellas, setNewReviewEstrellas] = useState(5);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewErrorMsg, setReviewErrorMsg] = useState('');
+  
+  // Favoritos
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteId, setFavoriteId] = useState(null);
+
+  // Búsqueda y HUD Waze
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const [routeInfo, setRouteInfo] = useState(null);
 
   // --- EFECTOS DE SESIÓN Y DETALLES DEL PUNTO ---
   useEffect(() => {
@@ -102,6 +113,15 @@ export default function MapaTuristico() {
       if (session?.user?.user_metadata?.nombre_completo) {
         setNewReviewNombre(session.user.user_metadata.nombre_completo);
       }
+    }).catch(async (err) => {
+      console.warn("[Atlan] Fallo al recuperar sesión (token inválido). Limpiando almacenamiento:", err);
+      try {
+        await supabase.auth.signOut();
+      } catch (_) {}
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+      }
+      setUserSession(null);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -121,6 +141,8 @@ export default function MapaTuristico() {
       setSelectedPointDetails(null);
       setPointReviews([]);
       setPointMenu([]);
+      setIsFavorite(false);
+      setFavoriteId(null);
       return;
     }
 
@@ -151,10 +173,66 @@ export default function MapaTuristico() {
           setPointMenu(menuData || []);
         }
       }
+
+      // 3. Verificar favorito
+      if (userSession?.user) {
+        try {
+          const { data: favData, error: favError } = await supabase
+            .from('favoritos')
+            .select('id')
+            .eq('usuario_id', userSession.user.id)
+            .eq('punto_id', selectedPoint.id)
+            .maybeSingle();
+          
+          if (!favError && favData) {
+            setIsFavorite(true);
+            setFavoriteId(favData.id);
+          } else {
+            setIsFavorite(false);
+            setFavoriteId(null);
+          }
+        } catch (err) {
+          console.error("Error checking favorite:", err);
+          setIsFavorite(false);
+          setFavoriteId(null);
+        }
+      } else {
+        setIsFavorite(false);
+        setFavoriteId(null);
+      }
     };
 
     loadPointDetails();
-  }, [selectedPoint]);
+  }, [selectedPoint, userSession]);
+
+  const handleToggleFavorite = async () => {
+    if (!userSession) return;
+    try {
+      if (isFavorite && favoriteId) {
+        const { error } = await supabase
+          .from('favoritos')
+          .delete()
+          .eq('id', favoriteId);
+        if (error) throw error;
+        setIsFavorite(false);
+        setFavoriteId(null);
+      } else {
+        const { data, error } = await supabase
+          .from('favoritos')
+          .insert({
+            usuario_id: userSession.user.id,
+            punto_id: selectedPoint.id
+          })
+          .select('id')
+          .single();
+        if (error) throw error;
+        setIsFavorite(true);
+        setFavoriteId(data.id);
+      }
+    } catch (err) {
+      console.error("Error toggling favorite:", err);
+    }
+  };
 
   // Sincronizar el ref del punto seleccionado y controlar el recentrado de navegación
   useEffect(() => {
@@ -176,7 +254,8 @@ export default function MapaTuristico() {
           center: currentPosRef.current,
           zoom: 16.5,
           pitch: 60,
-          duration: 2000,
+          speed: 0.85,  // Velocidad óptima para renderizado
+          curve: 1.1,   // Trayectoria plana para transiciones fluidas
           essential: true
         });
       }
@@ -264,6 +343,7 @@ export default function MapaTuristico() {
           punto_id: selectedPoint.id,
           negocio_id: selectedPoint.negocio_id || null,
           autor_nombre: newReviewNombre || (lang === 'en' ? 'Anonymous' : 'Anónimo'),
+          autor_id: userSession?.user?.id || null,
           estrellas: newReviewEstrellas,
           comentario: newReviewComment,
           aprobada: true
@@ -286,6 +366,87 @@ export default function MapaTuristico() {
       setReviewErrorMsg("Error al enviar la reseña.");
     } finally {
       setIsSubmittingReview(false);
+    }
+  };
+
+  const isBusinessOpenNow = (horarios) => {
+    if (!horarios || Object.keys(horarios).length === 0) return null;
+    const daysEnToEs = { 0: 'domingo', 1: 'lunes', 2: 'martes', 3: 'miercoles', 4: 'jueves', 5: 'viernes', 6: 'sabado' };
+    const now = new Date();
+    const currentDay = daysEnToEs[now.getDay()];
+    const diaInfo = horarios[currentDay];
+    if (!diaInfo || !diaInfo.abierto) return false;
+    const [apHour, apMin] = diaInfo.apertura.split(':').map(Number);
+    const [ciHour, ciMin] = diaInfo.cierre.split(':').map(Number);
+    const currentHour = now.getHours();
+    const currentMin = now.getMinutes();
+    const apTime = apHour * 60 + apMin;
+    const ciTime = ciHour * 60 + ciMin;
+    const currTime = currentHour * 60 + currentMin;
+    if (ciTime < apTime) return currTime >= apTime || currTime <= ciTime;
+    return currTime >= apTime && currTime <= ciTime;
+  };
+
+  const calculateETA = (durationSeconds) => {
+    const now = new Date();
+    now.setSeconds(now.getSeconds() + durationSeconds);
+    return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const formatDurationDisplay = (seconds) => {
+    if (seconds < 60) return lang === 'en' ? '< 1 min' : '< 1 min';
+    const mins = Math.round(seconds / 60);
+    if (mins < 60) return `${mins} min`;
+    const hrs = Math.floor(mins / 60);
+    const remainingMins = mins % 60;
+    return `${hrs}h ${remainingMins}m`;
+  };
+
+  const formatDistanceDisplay = (meters) => {
+    if (meters < 1000) return `${Math.round(meters)} m`;
+    return `${(meters / 1000).toFixed(1)} km`;
+  };
+
+  const calcRemainingRouteDistance = (pts, currentIndex) => {
+    let dist = 0;
+    for (let i = currentIndex; i < pts.length - 1; i++) {
+      dist += calcDistanceMeters(pts[i], pts[i+1]);
+    }
+    return dist;
+  };
+
+  const handleSearch = async (query) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowResults(false);
+      return;
+    }
+    try {
+      const { data, error } = await supabase.rpc('buscar_puntos_por_nombre', {
+        query_text: query
+      });
+      if (error) throw error;
+      setSearchResults(data || []);
+      setShowResults(true);
+    } catch (err) {
+      console.error("Error searching points:", err);
+    }
+  };
+
+  const selectSearchResult = (punto) => {
+    setShowResults(false);
+    setSearchQuery('');
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: [punto.lng, punto.lat],
+        zoom: 16.5,
+        pitch: 45,
+        speed: 0.85,    // Velocidad optimizada para permitir la descarga de tiles en segundo plano
+        curve: 1.15,    // Trayectoria más plana que evita un zoom-out excesivo y recarga de texturas
+        essential: true
+      });
+      setSelectedPoint(punto);
     }
   };
 
@@ -451,7 +612,14 @@ export default function MapaTuristico() {
                 directionsRef.current.setDestination([punto.lng, punto.lat]);
               }
 
-              mapRef.current.flyTo({ center: [currLng, currLat], zoom: 16.5, pitch: 60 });
+              mapRef.current.flyTo({
+                center: [currLng, currLat],
+                zoom: 16.5,
+                pitch: 60,
+                speed: 0.9,
+                curve: 1.1,
+                essential: true
+              });
             };
           }
 
@@ -625,6 +793,14 @@ export default function MapaTuristico() {
       const steps  = route.legs[0]?.steps || [];
       rutaCoordenadasRef.current = coords;
       maneuversRef.current       = buildManeuverList(steps);
+
+      setRouteInfo({
+        distance: route.distance,
+        duration: route.duration,
+        eta: calculateETA(route.duration),
+        destinationName: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : 'Destino')
+      });
+
       return coords;
     }
     return [];
@@ -639,6 +815,7 @@ export default function MapaTuristico() {
       setIsDemoRunning(false);
       isNavigatingRef.current  = false;
       setShowRecenterBtn(false);
+      setRouteInfo(null);
       const panel = document.querySelector('.mapboxgl-ctrl-directions');
       if (panel) panel.style.display = '';
       speakInstruction(t('map.demoFinished'), true);
@@ -692,6 +869,7 @@ export default function MapaTuristico() {
           setIsDemoRunning(false);
           isNavigatingRef.current  = false;
           setShowRecenterBtn(false);
+          setRouteInfo(null);
           if (panel) panel.style.display = '';
           speakInstruction(t('map.arrived'), true);
           return;
@@ -711,6 +889,20 @@ export default function MapaTuristico() {
         handlePositionUpdate(next[0], next[1], bearing);
         checkDistanceAnnouncements(next[0], next[1]);
 
+        // Calcular distancia y tiempo restante
+        const remainingDist = calcRemainingRouteDistance(pts, target);
+        const totalDist = routeInfo?.distance || remainingDist || 1;
+        const totalDuration = routeInfo?.duration || (totalDist / 11) || 1;
+        const speed = totalDist / totalDuration;
+        const remainingDuration = speed > 0 ? remainingDist / speed : 0;
+
+        setRouteInfo({
+          distance: remainingDist,
+          duration: remainingDuration,
+          eta: calculateETA(remainingDuration),
+          destinationName: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : 'Destino')
+        });
+
         index = target;
       }, 2000);
     }, 4000);
@@ -718,6 +910,11 @@ export default function MapaTuristico() {
 
   // ─── ACTIVAR MODO LEVANTAR PUNTO ──────────────────────────────────────────
   const activarLevantarPunto = () => {
+    if (!userSession) {
+      alert(lang === 'en' ? 'Please log in to add points to the map.' : 'Por favor, inicia sesión para levantar un punto en el mapa.');
+      window.location.href = '/login';
+      return;
+    }
     if (isAddingPoint) {
       setIsAddingPoint(false);
       isAddingPointRef.current = false;
@@ -742,7 +939,7 @@ export default function MapaTuristico() {
       const { error } = await supabase.from('puntos').insert([{
         nombre: newPointNombre,
         descripcion: newPointDesc,
-        nombre_creador: newPointCreador || 'Turista Anónimo',
+        nombre_creador: userSession?.user?.user_metadata?.nombre_completo || newPointCreador || 'Turista Registrado',
         categoria: newPointCategoria,
         ubicacion: `POINT(${lng} ${lat})`,
         estado: 'sin_reclamar' // por defecto los del usuario están sin reclamar
@@ -779,9 +976,14 @@ export default function MapaTuristico() {
   useEffect(() => {
     if (mapRef.current) return;
 
+    // Precalentar los recursos compartidos de Mapbox (Web Workers) para acelerar inicialización y renderizado
+    if (typeof window !== 'undefined' && mapboxgl.prewarm) {
+      mapboxgl.prewarm();
+    }
+
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: 'mapbox://styles/mapbox/outdoors-v12',
+      style: 'mapbox://styles/mapbox/outdoors-v12?optimize=true',
       center: [-80, 15],
       zoom: 3.8,
       pitch: 0,
@@ -878,6 +1080,12 @@ export default function MapaTuristico() {
         clearTimeout(interactionTimeoutRef.current);
       }
     };
+    const handleMoveStart = (e) => {
+      if (e.originalEvent) {
+        pauseCamera();
+      }
+    };
+    mapRef.current.on('movestart', handleMoveStart);
     mapRef.current.on('dragstart', pauseCamera);
     mapRef.current.on('touchstart', pauseCamera);
     mapRef.current.on('wheel', pauseCamera);
@@ -915,6 +1123,13 @@ export default function MapaTuristico() {
         rutaCoordenadasRef.current = coords;
         maneuversRef.current       = buildManeuverList(steps);
 
+        setRouteInfo({
+          distance: route.distance,
+          duration: route.duration,
+          eta: calculateETA(route.duration),
+          destinationName: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : 'Destino')
+        });
+
         if (steps.length > 0) {
           const instr = steps[0].maneuver.instruction;
           if (instr && instr !== lastSpokenRef.current) {
@@ -927,6 +1142,7 @@ export default function MapaTuristico() {
 
     directions.on('clear', () => {
       rutaCoordenadasRef.current = [];
+      setRouteInfo(null);
     });
 
     // Geolocalización y animaciones de inicio
@@ -955,6 +1171,12 @@ export default function MapaTuristico() {
               setIsMapLoading(false);
 
               if (!mapRef.current) return;
+
+              // Si viene de un punto específico por URL, no hacemos la animación inicial de geolocalización
+              const params = new URLSearchParams(window.location.search);
+              if (params.get('id')) {
+                return;
+              }
 
               if (!isInLatam) {
                 // Usuario fuera de Latinoamérica: levantar los límites del mapa para que pueda ver su ubicación
@@ -1027,6 +1249,61 @@ export default function MapaTuristico() {
     };
   }, []);
 
+  // Centrar y cargar punto desde URL query
+  useEffect(() => {
+    if (typeof window !== 'undefined' && mapRef.current) {
+      const params = new URLSearchParams(window.location.search);
+      const puntoId = params.get('id');
+      if (puntoId) {
+        const cargarPuntoDesdeURL = async () => {
+          try {
+            const { data: punto, error } = await supabase
+              .from('puntos')
+              .select('*')
+              .eq('id', puntoId)
+              .single();
+            if (!error && punto) {
+              const match = punto.ubicacion.match(/POINT\(([-\d.]+) ([-\d.]+)\)/);
+              if (match) {
+                const lng = parseFloat(match[1]);
+                const lat = parseFloat(match[2]);
+                
+                // Centrar mapa de inmediato
+                mapRef.current.flyTo({
+                  center: [lng, lat],
+                  zoom: 16.5,
+                  pitch: 45,
+                  speed: 0.85,
+                  essential: true
+                });
+
+                const puntoEstructura = {
+                  id: punto.id,
+                  nombre: punto.nombre,
+                  descripcion: punto.descripcion,
+                  categoria: punto.categoria,
+                  lng,
+                  lat,
+                  negocio_id: punto.negocio_id,
+                  nombre_creador: punto.nombre_creador
+                };
+                setSelectedPoint(puntoEstructura);
+              }
+            }
+          } catch (err) {
+            console.error("Error loading point from URL query:", err);
+          }
+        };
+        
+        if (mapRef.current.loaded()) {
+          cargarPuntoDesdeURL();
+        } else {
+          mapRef.current.once('load', cargarPuntoDesdeURL);
+        }
+      }
+    }
+  }, [mapRef.current]);
+
   // ─── EFECTO FILTROS: RECARGAR MARCADORES AL CAMBIAR CATEGORÍA ─────────────
   const aplicarFiltro = (cat) => {
     setFiltroCategoria(cat);
@@ -1042,7 +1319,8 @@ export default function MapaTuristico() {
         center: currentPosRef.current,
         zoom: 16.5,
         pitch: 60,
-        duration: 1500,
+        speed: 0.9,
+        curve: 1.15,
         essential: true,
       });
     }
@@ -1191,7 +1469,126 @@ export default function MapaTuristico() {
           </span>
         </div>
 
+        {/* BUSCADOR GLOBAL */}
+        <div style={{ flex: 1, margin: '0 20px', position: 'relative' }}>
+          <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '6px 12px', gap: '8px' }}>
+            <span style={{ color: '#94a3b8' }}>🔍</span>
+            <input
+              type="text"
+              placeholder={lang === 'en' ? 'Search destinations...' : 'Buscar destinos...'}
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              onFocus={() => setShowResults(true)}
+              style={{
+                width: '100%',
+                background: 'transparent',
+                border: 'none',
+                color: 'white',
+                fontSize: '13px',
+                outline: 'none',
+              }}
+            />
+            {searchQuery && (
+              <button
+                onClick={() => handleSearch('')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#94a3b8',
+                  cursor: 'pointer',
+                  padding: '2px',
+                  fontSize: '12px'
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* Resultados de búsqueda */}
+          {showResults && searchResults.length > 0 && (
+            <div style={{
+              position: 'absolute',
+              top: '45px',
+              left: 0,
+              right: 0,
+              background: 'rgba(10, 15, 28, 0.95)',
+              backdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '12px',
+              maxHeight: '220px',
+              overflowY: 'auto',
+              zIndex: 99,
+              boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+              padding: '6px 0'
+            }}>
+              {searchResults.map((p) => (
+                <div
+                  key={p.id}
+                  onClick={() => selectSearchResult(p)}
+                  style={{
+                    padding: '10px 16px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    transition: 'background 0.2s',
+                  }}
+                  className="search-result-item"
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                >
+                  <span style={{ fontSize: '13.5px', fontWeight: '750', color: 'white' }}>{p.nombre}</span>
+                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>📍 {t(`addPoint.categories.${p.categoria || 'otro'}`)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {userSession ? (
+            <Link
+              href="/perfil"
+              style={{
+                padding: '8px 16px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                borderRadius: '12px',
+                fontWeight: '700',
+                fontSize: '12px',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.25s ease'
+              }}
+            >
+              👤 {lang === 'en' ? 'Profile' : 'Perfil'}
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              style={{
+                padding: '8px 16px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                borderRadius: '12px',
+                fontWeight: '700',
+                fontSize: '12px',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.25s ease'
+              }}
+            >
+              🔑 {lang === 'en' ? 'Login' : 'Ingresar'}
+            </Link>
+          )}
+
           <button
             onClick={activarLevantarPunto}
             style={{
@@ -1531,26 +1928,52 @@ export default function MapaTuristico() {
                 📍 {t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}
               </p>
             </div>
-            <button
-              onClick={() => setSelectedPoint(null)}
-              style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: 'none',
-                color: 'white',
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold',
-                fontSize: '14px',
-                transition: 'all 0.2s'
-              }}
-            >
-              ✕
-            </button>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              {/* Botón Favorito */}
+              {userSession && (
+                <button
+                  onClick={handleToggleFavorite}
+                  title={isFavorite ? (lang === 'en' ? 'Remove from Favorites' : 'Quitar de Favoritos') : (lang === 'en' ? 'Add to Favorites' : 'Guardar en Favoritos')}
+                  style={{
+                    background: isFavorite ? 'rgba(212, 175, 55, 0.15)' : 'rgba(255,255,255,0.06)',
+                    border: isFavorite ? '1px solid rgba(212,175,55,0.3)' : '1px solid transparent',
+                    color: isFavorite ? '#D4AF37' : '#94a3b8',
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '16px',
+                    transition: 'all 0.25s ease'
+                  }}
+                >
+                  {isFavorite ? '★' : '☆'}
+                </button>
+              )}
+
+              <button
+                onClick={() => setSelectedPoint(null)}
+                style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  border: 'none',
+                  color: 'white',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 'bold',
+                  fontSize: '14px',
+                  transition: 'all 0.2s'
+                }}
+              >
+                ✕
+              </button>
+            </div>
           </div>
 
           {/* Cuerpo Scrollable */}
@@ -1573,6 +1996,60 @@ export default function MapaTuristico() {
                 {selectedPoint.descripcion || (lang === 'en' ? 'No description available.' : 'Sin descripción disponible.')}
               </p>
             </div>
+
+            {/* Horarios del Negocio */}
+            {selectedPointDetails?.servicios?.has_hours && selectedPointDetails?.horarios && (
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    ⏰ {lang === 'en' ? 'Opening Hours' : 'Horarios de Atención'}
+                  </h4>
+                  {isBusinessOpenNow(selectedPointDetails.horarios) !== null && (
+                    <span style={{
+                      fontSize: '11px',
+                      fontWeight: '850',
+                      textTransform: 'uppercase',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      backgroundColor: isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)',
+                      color: isBusinessOpenNow(selectedPointDetails.horarios) ? '#10b981' : '#ef4444',
+                      border: `1px solid ${isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`
+                    }}>
+                      {isBusinessOpenNow(selectedPointDetails.horarios) 
+                        ? (lang === 'en' ? 'Open Now' : 'Abierto Ahora') 
+                        : (lang === 'en' ? 'Closed' : 'Cerrado')}
+                    </span>
+                  )}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                  {Object.entries(selectedPointDetails.horarios).map(([day, info]) => {
+                    const dayLabels = {
+                      lunes: lang === 'en' ? 'Monday' : 'Lunes',
+                      martes: lang === 'en' ? 'Tuesday' : 'Martes',
+                      miercoles: lang === 'en' ? 'Wednesday' : 'Miércoles',
+                      jueves: lang === 'en' ? 'Thursday' : 'Jueves',
+                      viernes: lang === 'en' ? 'Friday' : 'Viernes',
+                      sabado: lang === 'en' ? 'Saturday' : 'Sábado',
+                      domingo: lang === 'en' ? 'Sunday' : 'Domingo',
+                    };
+                    const isToday = new Date().getDay() === {
+                      domingo: 0, lunes: 1, martes: 2, miercoles: 3, jueves: 4, viernes: 5, sabado: 6
+                    }[day];
+
+                    return (
+                      <div key={day} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: isToday ? 'white' : '#94a3b8', fontWeight: isToday ? '750' : '400' }}>
+                        <span>{dayLabels[day]} {isToday && '•'}</span>
+                        <span>
+                          {info.abierto 
+                            ? `${info.apertura} - ${info.cierre}` 
+                            : (lang === 'en' ? 'Closed' : 'Cerrado')}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Menú del Negocio */}
             {selectedPointDetails?.servicios?.has_menu && (
@@ -1724,89 +2201,112 @@ export default function MapaTuristico() {
               </h4>
 
               {/* Formulario de Reseña */}
-              <form onSubmit={handleCrearResena} style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: 'rgba(255,255,255,0.03)', padding: '14px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '20px' }}>
-                <p style={{ margin: 0, fontSize: '12.5px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
-                  {t('reviews.writeReview')}
-                </p>
+              {!userSession ? (
+                <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid #f59e0b', padding: '14px', borderRadius: '12px', textAlign: 'center', marginBottom: '20px' }}>
+                  <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#fbbf24', fontWeight: '600' }}>
+                    🔑 {lang === 'en' ? 'Log in to write reviews & comments' : 'Inicia sesión para escribir reseñas y comentarios'}
+                  </p>
+                  <a
+                    href="/login"
+                    style={{
+                      display: 'inline-block',
+                      padding: '6px 14px',
+                      background: 'linear-gradient(135deg, #D4AF37 0%, #b89324 100%)',
+                      color: '#0a0f1c',
+                      borderRadius: '8px',
+                      fontWeight: '800',
+                      fontSize: '11px',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    {t('nav.login')}
+                  </a>
+                </div>
+              ) : (
+                <form onSubmit={handleCrearResena} style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: 'rgba(255,255,255,0.03)', padding: '14px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '20px' }}>
+                  <p style={{ margin: 0, fontSize: '12.5px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
+                    {t('reviews.writeReview')}
+                  </p>
 
-                {reviewErrorMsg && (
-                  <div style={{ color: '#ef4444', fontSize: '12px', fontWeight: '600', background: 'rgba(239,68,68,0.1)', padding: '8px 10px', borderRadius: '8px' }}>
-                    ⚠ {reviewErrorMsg}
+                  {reviewErrorMsg && (
+                    <div style={{ color: '#ef4444', fontSize: '12px', fontWeight: '600', background: 'rgba(239,68,68,0.1)', padding: '8px 10px', borderRadius: '8px' }}>
+                      ⚠ {reviewErrorMsg}
+                    </div>
+                  )}
+
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                      👤 {t('reviews.yourName')}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      disabled={!!userSession}
+                      value={newReviewNombre}
+                      onChange={(e) => setNewReviewNombre(e.target.value)}
+                      placeholder="Ej: Carlos"
+                      style={{ width: '100%', padding: '9px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '12.5px', outline: 'none' }}
+                    />
                   </div>
-                )}
 
-                <div>
-                  <label style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
-                    👤 {t('reviews.yourName')}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    disabled={!!userSession}
-                    value={newReviewNombre}
-                    onChange={(e) => setNewReviewNombre(e.target.value)}
-                    placeholder="Ej: Carlos"
-                    style={{ width: '100%', padding: '9px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '12.5px', outline: 'none' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
-                    ⭐ {t('reviews.rating')}
-                  </label>
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        type="button"
-                        onClick={() => setNewReviewEstrellas(star)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          fontSize: '22px',
-                          cursor: 'pointer',
-                          padding: 0,
-                          color: star <= newReviewEstrellas ? '#fbbf24' : 'rgba(255,255,255,0.25)',
-                          transition: 'transform 0.1s'
-                        }}
-                      >
-                        ★
-                      </button>
-                    ))}
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                      ⭐ {t('reviews.rating')}
+                    </label>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setNewReviewEstrellas(star)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            fontSize: '22px',
+                            cursor: 'pointer',
+                            padding: 0,
+                            color: star <= newReviewEstrellas ? '#fbbf24' : 'rgba(255,255,255,0.25)',
+                            transition: 'transform 0.1s'
+                          }}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <label style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
-                    💬 {t('reviews.yourComment')}
-                  </label>
-                  <textarea
-                    required
-                    rows="3"
-                    value={newReviewComment}
-                    onChange={(e) => setNewReviewComment(e.target.value)}
-                    placeholder="..."
-                    style={{ width: '100%', padding: '9px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '12.5px', outline: 'none', resize: 'none' }}
-                  />
-                </div>
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                      💬 {t('reviews.yourComment')}
+                    </label>
+                    <textarea
+                      required
+                      rows="3"
+                      value={newReviewComment}
+                      onChange={(e) => setNewReviewComment(e.target.value)}
+                      placeholder="..."
+                      style={{ width: '100%', padding: '9px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '12.5px', outline: 'none', resize: 'none' }}
+                    />
+                  </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmittingReview}
-                  style={{
-                    padding: '9px',
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '10px',
-                    fontWeight: '800',
-                    fontSize: '12px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  {isSubmittingReview ? '...' : t('reviews.submit')}
-                </button>
-              </form>
+                  <button
+                    type="submit"
+                    disabled={isSubmittingReview}
+                    style={{
+                      padding: '9px',
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontWeight: '800',
+                      fontSize: '12px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {isSubmittingReview ? '...' : t('reviews.submit')}
+                  </button>
+                </form>
+              )}
 
               {/* Listado de Reseñas */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -1829,6 +2329,64 @@ export default function MapaTuristico() {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* HUD Waze de Ruta */}
+      {routeInfo && (
+        <div style={{
+          position: 'absolute',
+          bottom: '30px',
+          left: '20px',
+          background: 'rgba(10, 15, 28, 0.85)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '24px',
+          padding: '16px 20px',
+          width: '280px',
+          boxShadow: '0 12px 40px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.15)',
+          zIndex: 15,
+          color: 'white',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontSize: '11px', fontWeight: '800', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '1px' }}>
+              🚗 {lang === 'en' ? 'Active Route' : 'Ruta Activa'}
+            </span>
+            <button
+              onClick={() => {
+                if (directionsRef.current) directionsRef.current.clean();
+                setRouteInfo(null);
+              }}
+              style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' }}
+            >
+              ✕
+            </button>
+          </div>
+          <div style={{ fontSize: '15px', fontWeight: '800', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '10px' }}>
+            {routeInfo.destinationName}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div>
+              <div style={{ fontSize: '11px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>
+                {lang === 'en' ? 'Duration' : 'Tiempo'}
+              </div>
+              <div style={{ fontSize: '20px', fontWeight: '900', color: '#10b981' }}>
+                {formatDurationDisplay(routeInfo.duration)}
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: '11px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>
+                {lang === 'en' ? 'Distance' : 'Distancia'}
+              </div>
+              <div style={{ fontSize: '20px', fontWeight: '900', color: 'var(--atlan-gold)' }}>
+                {formatDistanceDisplay(routeInfo.distance)}
+              </div>
+            </div>
+          </div>
+          <div style={{ marginTop: '10px', fontSize: '12px', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '8px' }}>
+            <span>{lang === 'en' ? 'Arrival ETA:' : 'Llegada (ETA):'}</span>
+            <span style={{ fontWeight: '800', color: 'white' }}>{routeInfo.eta}</span>
           </div>
         </div>
       )}
