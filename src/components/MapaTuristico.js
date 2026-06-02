@@ -106,6 +106,22 @@ export default function MapaTuristico() {
   const [showResults, setShowResults] = useState(false);
   const [routeInfo, setRouteInfo] = useState(null);
 
+  const [isOnline, setIsOnline] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsOnline(navigator.onLine);
+      const handleOnline = () => setIsOnline(true);
+      const handleOffline = () => setIsOnline(false);
+      window.addEventListener('online', handleOnline);
+      window.addEventListener('offline', handleOffline);
+      return () => {
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
+      };
+    }
+  }, []);
+
   // --- EFECTOS DE SESIÓN Y DETALLES DEL PUNTO ---
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -147,30 +163,61 @@ export default function MapaTuristico() {
     }
 
     const loadPointDetails = async () => {
-      // 1. Cargar reseñas
-      const { data: reviewsData } = await supabase
-        .from('resenas')
-        .select('*')
-        .eq('punto_id', selectedPoint.id)
-        .order('created_at', { ascending: false });
-      setPointReviews(reviewsData || []);
-
-      // 2. Cargar negocio asociado si existe
-      if (selectedPoint.negocio_id) {
-        const { data: bizData } = await supabase
-          .from('negocios')
+      const cacheKey = `atlan_point_details_${selectedPoint.id}`;
+      
+      try {
+        // 1. Cargar reseñas
+        const { data: reviewsData, error: revErr } = await supabase
+          .from('resenas')
           .select('*')
-          .eq('id', selectedPoint.negocio_id)
-          .single();
+          .eq('punto_id', selectedPoint.id)
+          .order('created_at', { ascending: false });
         
-        setSelectedPointDetails(bizData);
+        if (revErr) throw revErr;
+        const reviews = reviewsData || [];
+        setPointReviews(reviews);
 
-        if (bizData?.servicios?.has_menu) {
-          const { data: menuData } = await supabase
-            .from('menu_items')
+        let biz = null;
+        let menu = [];
+
+        // 2. Cargar negocio asociado si existe
+        if (selectedPoint.negocio_id) {
+          const { data: bizData, error: bizErr } = await supabase
+            .from('negocios')
             .select('*')
-            .eq('negocio_id', selectedPoint.negocio_id);
-          setPointMenu(menuData || []);
+            .eq('id', selectedPoint.negocio_id)
+            .single();
+          
+          if (bizErr) throw bizErr;
+          biz = bizData;
+          setSelectedPointDetails(biz);
+
+          if (bizData?.servicios?.has_menu) {
+            const { data: menuData, error: menuErr } = await supabase
+              .from('menu_items')
+              .select('*')
+              .eq('negocio_id', selectedPoint.negocio_id);
+            if (menuErr) throw menuErr;
+            menu = menuData || [];
+            setPointMenu(menu);
+          }
+        }
+
+        // Guardar en caché local
+        localStorage.setItem(cacheKey, JSON.stringify({
+          reviews,
+          biz,
+          menu
+        }));
+
+      } catch (err) {
+        console.warn("[Atlan Offline] Error cargando detalles online, intentando caché local:", err);
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          setPointReviews(parsed.reviews || []);
+          setSelectedPointDetails(parsed.biz || null);
+          setPointMenu(parsed.menu || []);
         }
       }
 
@@ -187,14 +234,23 @@ export default function MapaTuristico() {
           if (!favError && favData) {
             setIsFavorite(true);
             setFavoriteId(favData.id);
+            localStorage.setItem(`atlan_fav_${selectedPoint.id}`, JSON.stringify({ isFav: true, id: favData.id }));
+          } else {
+            setIsFavorite(false);
+            setFavoriteId(null);
+            localStorage.removeItem(`atlan_fav_${selectedPoint.id}`);
+          }
+        } catch (err) {
+          console.warn("[Atlan Offline] Error al verificar favorito en red, usando cache local:", err);
+          const cachedFav = localStorage.getItem(`atlan_fav_${selectedPoint.id}`);
+          if (cachedFav) {
+            const parsed = JSON.parse(cachedFav);
+            setIsFavorite(parsed.isFav);
+            setFavoriteId(parsed.id);
           } else {
             setIsFavorite(false);
             setFavoriteId(null);
           }
-        } catch (err) {
-          console.error("Error checking favorite:", err);
-          setIsFavorite(false);
-          setFavoriteId(null);
         }
       } else {
         setIsFavorite(false);
@@ -430,7 +486,17 @@ export default function MapaTuristico() {
       setSearchResults(data || []);
       setShowResults(true);
     } catch (err) {
-      console.error("Error searching points:", err);
+      console.warn("[Atlan Offline] Buscando en caché local debido a error de conexión:", err);
+      const cached = localStorage.getItem('atlan_puntos_cercanos');
+      if (cached) {
+        const cachedPoints = JSON.parse(cached);
+        const filtered = cachedPoints.filter(p => 
+          p.nombre.toLowerCase().includes(query.toLowerCase()) || 
+          (p.descripcion && p.descripcion.toLowerCase().includes(query.toLowerCase()))
+        );
+        setSearchResults(filtered);
+        setShowResults(true);
+      }
     }
   };
 
@@ -446,6 +512,7 @@ export default function MapaTuristico() {
         curve: 1.15,    // Trayectoria más plana que evita un zoom-out excesivo y recarga de texturas
         essential: true
       });
+      cargarPuntosCercanos(punto.lng, punto.lat, filtroCategoria);
       setSelectedPoint(punto);
     }
   };
@@ -488,25 +555,50 @@ export default function MapaTuristico() {
 
     try {
       console.log(`[Atlan] Cargando puntos cercanos. Categoría: ${categoria || 'Todas'}`);
-      const { data, error } = await supabase.rpc('buscar_puntos_cercanos', {
-        user_lon: lon,
-        user_lat: lat,
-        radio_metros: 60000,
-        filtro_categoria: categoria || null,
-        filtro_estado: 'aprobado' // solo cargamos puntos aprobados
-      });
+      
+      let data = [];
+      let error = null;
 
-      if (error) {
-        console.error('[Atlan] Error RPC buscar_puntos_cercanos:', error);
-        return;
+      try {
+        const res = await supabase.rpc('buscar_puntos_cercanos', {
+          user_lon: lon,
+          user_lat: lat,
+          radio_metros: 60000,
+          filtro_categoria: categoria || null,
+          filtro_estado: null // No filtramos por estado en BD para recibir 'aprobado' y 'sin_reclamar'
+        });
+        data = res.data;
+        error = res.error;
+      } catch (netErr) {
+        error = netErr;
       }
 
-      if (!data || data.length === 0) {
+      let pointsToRender = [];
+
+      if (error) {
+        console.warn('[Atlan Offline] Error cargando puntos online, intentando caché local:', error);
+        const cached = localStorage.getItem('atlan_puntos_cercanos');
+        if (cached) {
+          const allCached = JSON.parse(cached);
+          pointsToRender = categoria 
+            ? allCached.filter(p => p.categoria === categoria) 
+            : allCached;
+        }
+      } else {
+        // Filtrar en JavaScript para mostrar 'aprobado' y 'sin_reclamar'
+        const rawPoints = data || [];
+        pointsToRender = rawPoints.filter(p => p.estado === 'aprobado' || p.estado === 'sin_reclamar');
+        if (pointsToRender.length > 0) {
+          localStorage.setItem('atlan_puntos_cercanos', JSON.stringify(pointsToRender));
+        }
+      }
+
+      if (pointsToRender.length === 0) {
         console.log('[Atlan] No se encontraron puntos en el área.');
         return;
       }
 
-      data.forEach((punto) => {
+      pointsToRender.forEach((punto) => {
         const config = CATEGORIAS_CONFIG[punto.categoria] || CATEGORIAS_CONFIG.otro;
 
         // Crear contenedor HTML para el marcador personalizado
@@ -1277,6 +1369,8 @@ export default function MapaTuristico() {
                   essential: true
                 });
 
+                cargarPuntosCercanos(lng, lat, filtroCategoria);
+
                 const puntoEstructura = {
                   id: punto.id,
                   nombre: punto.nombre,
@@ -1323,11 +1417,39 @@ export default function MapaTuristico() {
         curve: 1.15,
         essential: true,
       });
+      cargarPuntosCercanos(currentPosRef.current[0], currentPosRef.current[1], filtroCategoria);
     }
   };
 
   return (
     <div style={{ width: '100vw', height: '100vh', margin: 0, padding: 0, position: 'relative', overflow: 'hidden' }}>
+      {/* Indicador Offline */}
+      {!isOnline && (
+        <div style={{
+          position: 'absolute',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          backgroundColor: 'rgba(7, 11, 20, 0.9)',
+          border: '1px solid #D4AF37',
+          borderRadius: '24px',
+          padding: '8px 16px',
+          color: '#cbd5e1',
+          fontSize: '12px',
+          fontWeight: '700',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.5), 0 0 10px rgba(212,175,55,0.2)',
+          zIndex: 9999,
+          fontFamily: 'var(--font-outfit), sans-serif',
+          backdropFilter: 'blur(8px)',
+          animation: 'pulse 2s infinite ease-in-out'
+        }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#D4AF37', display: 'inline-block' }}></span>
+          {lang === 'en' ? 'Offline Mode (Local Cache Active)' : 'Modo Offline (Datos Locales Activos)'}
+        </div>
+      )}
       {/* Pantalla de Carga Premium */}
       <div
         style={{
@@ -1907,26 +2029,41 @@ export default function MapaTuristico() {
             justifyContent: 'space-between',
             alignItems: 'start'
           }}>
-            <div>
-              <span style={{
-                fontSize: '11px',
-                fontWeight: '800',
-                textTransform: 'uppercase',
-                color: selectedPoint.negocio_id ? '#10b981' : '#f59e0b',
-                background: selectedPoint.negocio_id ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)',
-                padding: '4px 8px',
-                borderRadius: '6px',
-                display: 'inline-block',
-                marginBottom: '8px'
-              }}>
-                {selectedPoint.negocio_id ? t('map.claimed') : t('map.unclaimed')}
-              </span>
-              <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '850', color: 'white', lineHeight: '1.2' }}>
-                {selectedPoint.nombre}
-              </h2>
-              <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#94a3b8' }}>
-                📍 {t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}
-              </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              {selectedPointDetails?.logo_url && (
+                <img
+                  src={selectedPointDetails.logo_url}
+                  alt={selectedPoint.nombre}
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '1.5px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                />
+              )}
+              <div>
+                <span style={{
+                  fontSize: '11px',
+                  fontWeight: '800',
+                  textTransform: 'uppercase',
+                  color: selectedPoint.negocio_id ? '#10b981' : '#f59e0b',
+                  background: selectedPoint.negocio_id ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)',
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  display: 'inline-block',
+                  marginBottom: '8px'
+                }}>
+                  {selectedPoint.negocio_id ? t('map.claimed') : t('map.unclaimed')}
+                </span>
+                <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '850', color: 'white', lineHeight: '1.2' }}>
+                  {selectedPoint.nombre}
+                </h2>
+                <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#94a3b8' }}>
+                  📍 {t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}
+                </p>
+              </div>
             </div>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               {/* Botón Favorito */}
@@ -1997,6 +2134,39 @@ export default function MapaTuristico() {
               </p>
             </div>
 
+            {/* Galería de Fotos del Negocio */}
+            {selectedPointDetails?.fotos && selectedPointDetails.fotos.length > 0 && (
+              <div>
+                <h4 style={{ margin: '0 0 10px', fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  📸 {lang === 'en' ? 'Photos' : 'Fotos'}
+                </h4>
+                <div style={{
+                  display: 'flex',
+                  gap: '12px',
+                  overflowX: 'auto',
+                  paddingBottom: '8px',
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: 'rgba(255,255,255,0.1) transparent'
+                }}>
+                  {selectedPointDetails.fotos.map((url, i) => (
+                    <img
+                      key={i}
+                      src={url}
+                      alt={`${selectedPoint.nombre} - ${i + 1}`}
+                      style={{
+                        width: '180px',
+                        height: '120px',
+                        borderRadius: '12px',
+                        objectFit: 'cover',
+                        flexShrink: 0,
+                        border: '1px solid rgba(255, 255, 255, 0.08)'
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Horarios del Negocio */}
             {selectedPointDetails?.servicios?.has_hours && selectedPointDetails?.horarios && (
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px' }}>
@@ -2065,11 +2235,40 @@ export default function MapaTuristico() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {pointMenu.map((item) => (
                       <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '10px 14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                        <div>
-                          <p style={{ margin: 0, fontSize: '14px', fontWeight: '700', color: 'white' }}>{item.nombre}</p>
-                          {item.descripcion && (
-                            <p style={{ margin: '2px 0 0', fontSize: '11.5px', color: '#64748b' }}>{item.descripcion}</p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          {item.foto_url ? (
+                            <img
+                              src={item.foto_url}
+                              alt={item.nombre}
+                              style={{
+                                width: '44px',
+                                height: '44px',
+                                borderRadius: '8px',
+                                objectFit: 'cover',
+                                border: '1px solid rgba(255, 255, 255, 0.08)'
+                              }}
+                            />
+                          ) : (
+                            <div style={{
+                              width: '44px',
+                              height: '44px',
+                              borderRadius: '8px',
+                              background: 'rgba(255,255,255,0.03)',
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              fontSize: '18px',
+                              border: '1px solid rgba(255, 255, 255, 0.05)'
+                            }}>
+                              🍲
+                            </div>
                           )}
+                          <div>
+                            <p style={{ margin: 0, fontSize: '14px', fontWeight: '700', color: 'white' }}>{item.nombre}</p>
+                            {item.descripcion && (
+                              <p style={{ margin: '2px 0 0', fontSize: '11.5px', color: '#64748b' }}>{item.descripcion}</p>
+                            )}
+                          </div>
                         </div>
                         <span style={{ fontSize: '14px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
                           C$ {item.precio}

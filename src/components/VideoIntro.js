@@ -21,6 +21,23 @@ export default function VideoIntro({ onComplete }) {
     setPhase("fading");
   }, [phase]);
 
+  // ── Forzar reproducción en Chrome ────────────────────────────────────────
+  useEffect(() => {
+    if (videoRef.current) {
+      // Forzar mute por si React no lo aplica correctamente en el DOM
+      videoRef.current.muted = true;
+      videoRef.current.defaultMuted = true;
+      videoRef.current.play().catch((err) => {
+        console.warn("Autoplay bloqueado por el navegador:", err);
+        // Si falla el autoplay, igual mostramos la UI y esperamos el click
+      });
+
+      if (videoRef.current.readyState >= 3) {
+        setVideoReady(true);
+      }
+    }
+  }, []);
+
   // ── Cuando el fade-out termina, notificar al padre ──────────────────────
   useEffect(() => {
     if (phase === "fading") {
@@ -32,30 +49,20 @@ export default function VideoIntro({ onComplete }) {
     }
   }, [phase, onComplete]);
 
-  // ── Timeout de seguridad (si el video tarda mucho o no carga) ──────────
+  // ── Timeout de 9 segundos (transición automática) ──────────
   useEffect(() => {
     const safety = setTimeout(() => {
       startFadeOut();
-    }, 15000); // 15s máximo
+    }, 9000); // 9s
     return () => clearTimeout(safety);
   }, [startFadeOut]);
 
-  // ── Skip con click o tecla ─────────────────────────────────────────────
-  useEffect(() => {
-    const handleKey = (e) => {
-      if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
-        startFadeOut();
-      }
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [startFadeOut]);
+
 
   if (phase === "done") return null;
 
   return (
     <div
-      onClick={startFadeOut}
       style={{
         ...introStyles.overlay,
         opacity: phase === "fading" ? 0 : 1,
@@ -71,6 +78,11 @@ export default function VideoIntro({ onComplete }) {
         playsInline
         preload="auto"
         onCanPlayThrough={() => setVideoReady(true)}
+        onLoadedData={() => {
+          if (videoRef.current && videoRef.current.readyState >= 3) {
+            setVideoReady(true);
+          }
+        }}
         onEnded={startFadeOut}
         style={introStyles.video}
       />
@@ -81,36 +93,94 @@ export default function VideoIntro({ onComplete }) {
       {/* Logo central animado */}
       <div
         style={{
-          ...introStyles.logoContainer,
-          opacity: videoReady ? 1 : 0,
-          transform: videoReady ? "translate(-50%, -50%) scale(1)" : "translate(-50%, -50%) scale(0.85)",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 4,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "16px",
+          pointerEvents: "none",
         }}
       >
-        <span style={introStyles.logoEmoji}>🗺️</span>
-        <span style={introStyles.logoName}>Atlan</span>
-        <span style={introStyles.logoTagline}>Tu GPS Turístico</span>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "8px",
+            animation: "fadeIn 1.2s ease forwards",
+            textShadow: "0 4px 30px rgba(0,0,0,0.7)",
+          }}
+        >
+          <span style={introStyles.logoEmoji}>🗺️</span>
+          <span style={introStyles.logoName}>Atlan</span>
+          <span style={introStyles.logoTagline}>Tu GPS Turístico</span>
+        </div>
+
+        {/* Símbolo de Carga Animado */}
+        <div
+          style={{
+            marginTop: "32px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "12px",
+            animation: "fadeIn 1s ease 1s both",
+          }}
+        >
+          {/* Spinner */}
+          <div
+            style={{
+              width: "40px",
+              height: "40px",
+              border: "3px solid rgba(255,255,255,0.1)",
+              borderTopColor: "#D4AF37",
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "14px",
+              fontWeight: "500",
+              color: "rgba(255,255,255,0.7)",
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+            }}
+          >
+            Cargando
+          </span>
+        </div>
       </div>
 
-      {/* Indicador "Toca para continuar" */}
-      <div
-        style={{
-          ...introStyles.skipHint,
-          opacity: videoReady ? 1 : 0,
-        }}
-      >
-        <span style={introStyles.skipText}>Toca para continuar</span>
-        <div style={introStyles.skipPulse} />
-      </div>
-
-      {/* Barra de progreso del video */}
+      {/* Barra de progreso de 9 segundos */}
       <div style={introStyles.progressBar}>
         <div
           style={{
             ...introStyles.progressFill,
-            animation: videoReady ? "introProgress 12s linear forwards" : "none",
+            animation: "introProgress 9s linear forwards, shimmerProgress 2s linear infinite",
+            boxShadow: "0 0 10px rgba(212,175,55,0.5)",
           }}
         />
       </div>
+
+      {/* Estilos inyectados para las animaciones del spinner y la barra */}
+      <style>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+        @keyframes shimmerProgress {
+          0% { background-position: 100% 0; }
+          100% { background-position: -100% 0; }
+        }
+        @keyframes introProgress {
+          0% { width: 0%; }
+          100% { width: 100%; }
+        }
+      `}</style>
     </div>
   );
 }
@@ -127,7 +197,6 @@ const introStyles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    cursor: "pointer",
     transition: "opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1)",
     overflow: "hidden",
   },

@@ -58,11 +58,23 @@ export const metadata = {
   },
 };
 
+import PWARegister from "../components/PWARegister";
+
 export default function RootLayout({ children }) {
   return (
     <html lang="es" className={`${outfit.variable} ${inter.variable}`}>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#D4AF37" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Atlan" />
+      </head>
       <body>
-        <LanguageProvider>{children}</LanguageProvider>
+        <LanguageProvider>
+          <PWARegister />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

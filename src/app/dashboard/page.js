@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
+import { uploadMedia } from "@/lib/storage";
 
 export default function DashboardPage() {
   const { t, lang } = useTranslation();
@@ -40,6 +41,12 @@ export default function DashboardPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  // Estados para Imágenes (Supabase Storage)
+  const [logoUrl, setLogoUrl] = useState("");
+  const [fotos, setFotos] = useState([]);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingFoto, setUploadingFoto] = useState(false);
+
   // Excentricidades (Checklist dinámico)
   const [hasMenu, setHasMenu] = useState(false);
   const [hasHours, setHasHours] = useState(false);
@@ -51,6 +58,8 @@ export default function DashboardPage() {
   const [newPlatoNombre, setNewPlatoNombre] = useState("");
   const [newPlatoPrecio, setNewPlatoPrecio] = useState("");
   const [newPlatoDesc, setNewPlatoDesc] = useState("");
+  const [newPlatoFotoUrl, setNewPlatoFotoUrl] = useState("");
+  const [uploadingPlatoFoto, setUploadingPlatoFoto] = useState(false);
   const [isAddingPlato, setIsAddingPlato] = useState(false);
 
   // Reservas
@@ -117,6 +126,8 @@ export default function DashboardPage() {
       setTelefono(negocioData.telefono || "");
       setWhatsapp(negocioData.whatsapp || "");
       setRangoPrecios(negocioData.rango_precios || "");
+      setLogoUrl(negocioData.logo_url || "");
+      setFotos(negocioData.fotos || []);
 
       // Horarios
       const hr = negocioData.horarios || {};
@@ -204,12 +215,12 @@ export default function DashboardPage() {
 
       if (negocioError) throw negocioError;
 
-      // 2. Asociar el punto al negocio y actualizar estado a 'pendiente'
+      // 2. Asociar el punto al negocio y actualizar estado a 'en_verificacion'
       const { error: puntoError } = await supabase
         .from("puntos")
         .update({
           negocio_id: nuevoNegocio.id,
-          estado: "pendiente" // en espera de verificación presencial
+          estado: "en_verificacion" // en espera de verificación presencial
         })
         .eq("id", puntoId);
 
@@ -256,7 +267,7 @@ export default function DashboardPage() {
           nombre: "Mi Nuevo Negocio",
           categoria: "otro",
           ubicacion: "POINT(-86.2504 12.1364)",
-          estado: "pendiente",
+          estado: "en_verificacion",
           nombre_creador: perfil?.nombre_completo || "Propietario"
         }]);
 
@@ -266,6 +277,7 @@ export default function DashboardPage() {
       await loadNegocioData(user.id);
     } catch (err) {
       console.error("Error al crear negocio:", err);
+      alert(lang === "en" ? `Error creating business: ${err.message || err}` : `Error al crear negocio: ${err.message || err}`);
     } finally {
       setIsClaiming(false);
     }
@@ -285,7 +297,9 @@ export default function DashboardPage() {
           descripcion,
           telefono,
           whatsapp,
-          rango_precios: rangoPrecios
+          rango_precios: rangoPrecios,
+          logo_url: logoUrl,
+          fotos: fotos
         })
         .eq("id", negocio.id);
 
@@ -351,6 +365,76 @@ export default function DashboardPage() {
     }
   };
 
+  // Subida de imágenes a Supabase Storage
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingLogo(true);
+    try {
+      const url = await uploadMedia(file, "negocios/logos");
+      setLogoUrl(url);
+      if (negocio?.id) {
+        await supabase
+          .from("negocios")
+          .update({ logo_url: url })
+          .eq("id", negocio.id);
+      }
+    } catch (err) {
+      console.error("Error al subir logo:", err);
+      alert(lang === "en" ? "Error uploading logo" : "Error al subir el logo");
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
+  const handleFotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingFoto(true);
+    try {
+      const url = await uploadMedia(file, "negocios/fotos");
+      const updatedFotos = [...fotos, url];
+      setFotos(updatedFotos);
+      if (negocio?.id) {
+        await supabase
+          .from("negocios")
+          .update({ fotos: updatedFotos })
+          .eq("id", negocio.id);
+      }
+    } catch (err) {
+      console.error("Error al subir foto:", err);
+      alert(lang === "en" ? "Error uploading photo" : "Error al subir la foto");
+    } finally {
+      setUploadingFoto(false);
+    }
+  };
+
+  const handleRemoveFoto = async (urlToRemove) => {
+    const updatedFotos = fotos.filter(url => url !== urlToRemove);
+    setFotos(updatedFotos);
+    if (negocio?.id) {
+      await supabase
+        .from("negocios")
+        .update({ fotos: updatedFotos })
+        .eq("id", negocio.id);
+    }
+  };
+
+  const handlePlatoFotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingPlatoFoto(true);
+    try {
+      const url = await uploadMedia(file, "negocios/menu");
+      setNewPlatoFotoUrl(url);
+    } catch (err) {
+      console.error("Error al subir foto del platillo:", err);
+      alert(lang === "en" ? "Error uploading menu photo" : "Error al subir la foto del platillo");
+    } finally {
+      setUploadingPlatoFoto(false);
+    }
+  };
+
   // Menú: Agregar plato
   const handleAddPlato = async (e) => {
     e.preventDefault();
@@ -365,6 +449,7 @@ export default function DashboardPage() {
           nombre: newPlatoNombre,
           precio: parseFloat(newPlatoPrecio),
           descripcion: newPlatoDesc,
+          foto_url: newPlatoFotoUrl,
           disponible: true
         }]);
 
@@ -373,6 +458,7 @@ export default function DashboardPage() {
       setNewPlatoNombre("");
       setNewPlatoPrecio("");
       setNewPlatoDesc("");
+      setNewPlatoFotoUrl("");
       loadMenuItems(negocio.id);
     } catch (err) {
       console.error("Error agregando plato:", err);
@@ -635,6 +721,105 @@ export default function DashboardPage() {
                     />
                   </div>
 
+                  {/* Carga de Logo y Galería de Fotos */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px 0", borderTop: "1px dashed rgba(255,255,255,0.08)", paddingTop: "20px" }}>
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "var(--atlan-gold)", margin: 0 }}>
+                      📸 {lang === "en" ? "Business Media" : "Medios del Negocio"}
+                    </h4>
+                    
+                    <div style={{ display: "grid", gridTemplateColumns: "140px 1fr", gap: "20px", alignItems: "center" }} className="form-grid-2">
+                      {/* Logo Upload */}
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{
+                          width: "80px",
+                          height: "80px",
+                          borderRadius: "50%",
+                          border: "2px solid rgba(255,255,255,0.1)",
+                          background: logoUrl ? `url(${logoUrl}) center/cover no-repeat` : "rgba(255,255,255,0.02)",
+                          margin: "0 auto 10px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          fontSize: logoUrl ? "0px" : "24px",
+                          color: "#64748b"
+                        }}>
+                          {!logoUrl && "🏢"}
+                        </div>
+                        <label style={{
+                          display: "inline-block",
+                          padding: "6px 12px",
+                          background: "rgba(255,255,255,0.05)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          borderRadius: "8px",
+                          fontSize: "11px",
+                          fontWeight: "700",
+                          cursor: "pointer",
+                          color: "white"
+                        }}>
+                          {uploadingLogo ? "..." : (lang === "en" ? "Upload Logo" : "Subir Logo")}
+                          <input type="file" accept="image/*" onChange={handleLogoUpload} style={{ display: "none" }} />
+                        </label>
+                      </div>
+
+                      {/* Photo Gallery Upload */}
+                      <div>
+                        <label style={styles.label}>{lang === "en" ? "Photo Gallery" : "Galería de Fotos"}</label>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "8px" }}>
+                          {fotos.map((url, index) => (
+                            <div key={index} style={{
+                              width: "70px",
+                              height: "70px",
+                              borderRadius: "10px",
+                              border: "1px solid rgba(255,255,255,0.1)",
+                              background: `url(${url}) center/cover no-repeat`,
+                              position: "relative"
+                            }}>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveFoto(url)}
+                                style={{
+                                  position: "absolute",
+                                  top: "-6px",
+                                  right: "-6px",
+                                  background: "#ef4444",
+                                  color: "white",
+                                  border: "none",
+                                  borderRadius: "50%",
+                                  width: "18px",
+                                  height: "18px",
+                                  fontSize: "9px",
+                                  cursor: "pointer",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center"
+                                }}
+                              >
+                                ✗
+                              </button>
+                            </div>
+                          ))}
+                          
+                          <label style={{
+                            width: "70px",
+                            height: "70px",
+                            borderRadius: "10px",
+                            border: "1.5px dashed rgba(255,255,255,0.15)",
+                            background: "rgba(255,255,255,0.01)",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            fontSize: "18px",
+                            cursor: "pointer",
+                            color: "var(--atlan-gold)"
+                          }}>
+                            {uploadingFoto ? "..." : "+"}
+                            <input type="file" accept="image/*" onChange={handleFotoUpload} style={{ display: "none" }} />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <button type="submit" disabled={isSaving} style={styles.saveBtn}>
                     {isSaving ? "..." : (lang === "en" ? "Save Profile" : "Guardar Perfil")}
                   </button>
@@ -834,7 +1019,48 @@ export default function DashboardPage() {
                     onChange={(e) => setNewPlatoDesc(e.target.value)}
                     style={styles.input}
                   />
-                  <button type="submit" disabled={isAddingPlato} style={{ ...styles.saveBtn, margin: 0, padding: "10px" }}>
+
+                  {/* Selector de Foto para Plato */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "10px 0 16px 0" }}>
+                    {newPlatoFotoUrl ? (
+                      <div style={{
+                        width: "50px",
+                        height: "50px",
+                        borderRadius: "8px",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        background: `url(${newPlatoFotoUrl}) center/cover no-repeat`
+                      }} />
+                    ) : (
+                      <div style={{
+                        width: "50px",
+                        height: "50px",
+                        borderRadius: "8px",
+                        border: "1.5px dashed rgba(255,255,255,0.15)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        fontSize: "16px",
+                        color: "#64748b"
+                      }}>
+                        🍲
+                      </div>
+                    )}
+                    <label style={{
+                      padding: "8px 14px",
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: "8px",
+                      fontSize: "12px",
+                      fontWeight: "700",
+                      cursor: "pointer",
+                      color: "white"
+                    }}>
+                      {uploadingPlatoFoto ? "..." : (lang === "en" ? "📸 Add Dish Photo" : "📸 Agregar Foto del Plato")}
+                      <input type="file" accept="image/*" onChange={handlePlatoFotoUpload} style={{ display: "none" }} />
+                    </label>
+                  </div>
+
+                  <button type="submit" disabled={isAddingPlato || uploadingPlatoFoto} style={{ ...styles.saveBtn, margin: 0, padding: "10px" }}>
                     {isAddingPlato ? "..." : `➕ ${lang === "en" ? "Add Item" : "Agregar Platillo"}`}
                   </button>
                 </form>
@@ -846,9 +1072,34 @@ export default function DashboardPage() {
                   ) : (
                     menuItems.map((item) => (
                       <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "12px" }}>
-                        <div>
-                          <div style={{ fontWeight: "750", fontSize: "14px" }}>{item.nombre}</div>
-                          {item.descripcion && <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>{item.descripcion}</div>}
+                        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                          {item.foto_url ? (
+                            <div style={{
+                              width: "48px",
+                              height: "48px",
+                              borderRadius: "8px",
+                              background: `url(${item.foto_url}) center/cover no-repeat`,
+                              border: "1px solid rgba(255,255,255,0.08)"
+                            }} />
+                          ) : (
+                            <div style={{
+                              width: "48px",
+                              height: "48px",
+                              borderRadius: "8px",
+                              background: "rgba(255,255,255,0.03)",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              fontSize: "20px",
+                              border: "1px solid rgba(255,255,255,0.05)"
+                            }}>
+                              🍲
+                            </div>
+                          )}
+                          <div>
+                            <div style={{ fontWeight: "750", fontSize: "14px" }}>{item.nombre}</div>
+                            {item.descripcion && <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>{item.descripcion}</div>}
+                          </div>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
                           <span style={{ fontWeight: "800", color: "var(--atlan-gold)" }}>${item.precio}</span>

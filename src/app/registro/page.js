@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -10,6 +10,32 @@ import LanguageToggle from "@/components/ui/LanguageToggle";
 export default function RegisterPage() {
   const { t, lang } = useTranslation();
   const router = useRouter();
+
+
+  // Redireccionar si ya hay sesión activa
+  useEffect(() => {
+    const checkActiveSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const { data: perfilData } = await supabase
+            .from("perfiles")
+            .select("rol")
+            .eq("id", session.user.id)
+            .single();
+
+          if (perfilData?.rol === "dueno" || perfilData?.rol === "admin") {
+            router.push("/dashboard");
+          } else {
+            router.push("/mapa");
+          }
+        }
+      } catch (err) {
+        console.error("Session check error:", err);
+      }
+    };
+    checkActiveSession();
+  }, [router]);
 
   // Estados
   const [fullName, setFullName] = useState("");
