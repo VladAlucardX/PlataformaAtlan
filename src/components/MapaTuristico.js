@@ -712,6 +712,9 @@ export default function MapaTuristico() {
                 curve: 1.1,
                 essential: true
               });
+
+              // Cerrar la notificación (popup) al iniciar la ruta
+              popup.remove();
             };
           }
 

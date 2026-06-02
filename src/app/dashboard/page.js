@@ -16,10 +16,11 @@ export default function DashboardPage() {
   const [user, setUser] = useState(null);
   const [perfil, setPerfil] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [misNegocios, setMisNegocios] = useState([]);
   const [negocio, setNegocio] = useState(null);
 
   // Estados de navegación interna (Pestañas)
-  const [activeTab, setActiveTab] = useState("general"); // general | excentricidades | menu | reservas | resenas | horarios
+  const [activeTab, setActiveTab] = useState("overview"); // overview | general | excentricidades | menu | reservas | resenas | horarios
 
   // Horarios de atención
   const [horarios, setHorarios] = useState({
@@ -113,46 +114,24 @@ export default function DashboardPage() {
   }, []);
 
   const loadNegocioData = async (userId) => {
-    const { data: negocioData } = await supabase
+    const { data: negociosData } = await supabase
       .from("negocios")
       .select("*")
-      .eq("dueno_id", userId)
-      .maybeSingle();
+      .eq("dueno_id", userId);
 
-    if (negocioData) {
-      setNegocio(negocioData);
-      setNombre(negocioData.nombre || "");
-      setDescripcion(negocioData.descripcion || "");
-      setTelefono(negocioData.telefono || "");
-      setWhatsapp(negocioData.whatsapp || "");
-      setRangoPrecios(negocioData.rango_precios || "");
-      setLogoUrl(negocioData.logo_url || "");
-      setFotos(negocioData.fotos || []);
-
-      // Horarios
-      const hr = negocioData.horarios || {};
-      setHorarios({
-        lunes: hr.lunes || { abierto: true, apertura: "08:00", cierre: "17:00" },
-        martes: hr.martes || { abierto: true, apertura: "08:00", cierre: "17:00" },
-        miercoles: hr.miercoles || { abierto: true, apertura: "08:00", cierre: "17:00" },
-        jueves: hr.jueves || { abierto: true, apertura: "08:00", cierre: "17:00" },
-        viernes: hr.viernes || { abierto: true, apertura: "08:00", cierre: "17:00" },
-        sabado: hr.sabado || { abierto: true, apertura: "09:00", cierre: "14:00" },
-        domingo: hr.domingo || { abierto: false, apertura: "08:00", cierre: "17:00" }
-      });
-
-      // Servicios (excentricidades)
-      const serv = negocioData.servicios || {};
-      setHasMenu(!!serv.has_menu);
-      setHasHours(!!serv.has_hours);
-      setHasLodging(!!serv.has_lodging);
-      setHasTransport(!!serv.has_transport);
-
-      // Cargar detalles asociados
-      if (serv.has_menu) loadMenuItems(negocioData.id);
-      if (serv.has_lodging) loadReservas(negocioData.id);
-      loadResenas(negocioData.id);
+    if (negociosData && negociosData.length > 0) {
+      setMisNegocios(negociosData);
+      
+      // Auto-seleccionar si solo tiene 1
+      if (negociosData.length === 1) {
+        selectNegocio(negociosData[0]);
+      } else {
+        // Mantiene null si hay varios para mostrar el selector
+        setNegocio(null);
+      }
     } else {
+      setMisNegocios([]);
+      setNegocio(null);
       // Si no tiene negocio, cargar puntos libres para reclamar
       const { data: puntosLibres } = await supabase
         .from("puntos")
@@ -161,6 +140,42 @@ export default function DashboardPage() {
         .is("negocio_id", null);
       setPuntosDisponibles(puntosLibres || []);
     }
+  };
+
+  const selectNegocio = (negocioData) => {
+    setNegocio(negocioData);
+    setNombre(negocioData.nombre || "");
+    setDescripcion(negocioData.descripcion || "");
+    setTelefono(negocioData.telefono || "");
+    setWhatsapp(negocioData.whatsapp || "");
+    setRangoPrecios(negocioData.rango_precios || "");
+    setLogoUrl(negocioData.logo_url || "");
+    setFotos(negocioData.fotos || []);
+
+    // Horarios
+    const hr = negocioData.horarios || {};
+    setHorarios({
+      lunes: hr.lunes || { abierto: true, apertura: "08:00", cierre: "17:00" },
+      martes: hr.martes || { abierto: true, apertura: "08:00", cierre: "17:00" },
+      miercoles: hr.miercoles || { abierto: true, apertura: "08:00", cierre: "17:00" },
+      jueves: hr.jueves || { abierto: true, apertura: "08:00", cierre: "17:00" },
+      viernes: hr.viernes || { abierto: true, apertura: "08:00", cierre: "17:00" },
+      sabado: hr.sabado || { abierto: true, apertura: "09:00", cierre: "14:00" },
+      domingo: hr.domingo || { abierto: false, apertura: "08:00", cierre: "17:00" }
+    });
+
+    // Servicios (excentricidades)
+    const serv = negocioData.servicios || {};
+    setHasMenu(!!serv.has_menu);
+    setHasHours(!!serv.has_hours);
+    setHasLodging(!!serv.has_lodging);
+    setHasTransport(!!serv.has_transport);
+
+    // Cargar detalles asociados
+    if (serv.has_menu) loadMenuItems(negocioData.id);
+    if (serv.has_lodging) loadReservas(negocioData.id);
+    loadResenas(negocioData.id);
+    setActiveTab("overview");
   };
 
   const loadMenuItems = async (negocioId) => {
@@ -239,48 +254,69 @@ export default function DashboardPage() {
     }
   };
 
-  // Crear un nuevo negocio de cero
-  const handleCrearNuevoNegocio = async (e) => {
-    e.preventDefault();
+  // Crear un nuevo negocio usando GPS
+  const handleCrearNuevoNegocioGPS = async (e) => {
+    if (e) e.preventDefault();
     setIsClaiming(true);
-    try {
-      // 1. Crear negocio
-      const { data: nuevoNegocio, error: negocioError } = await supabase
-        .from("negocios")
-        .insert([{
-          dueno_id: user.id,
-          nombre: "Mi Nuevo Negocio",
-          tipo: "otro",
-          servicios: { has_menu: false, has_hours: false, has_lodging: false, has_transport: false },
-          activo: false
-        }])
-        .select()
-        .single();
-
-      if (negocioError) throw negocioError;
-
-      // 2. Crear punto geográfico por defecto (Managua)
-      const { error: puntoError } = await supabase
-        .from("puntos")
-        .insert([{
-          negocio_id: nuevoNegocio.id,
-          nombre: "Mi Nuevo Negocio",
-          categoria: "otro",
-          ubicacion: "POINT(-86.2504 12.1364)",
-          estado: "en_verificacion",
-          nombre_creador: perfil?.nombre_completo || "Propietario"
-        }]);
-
-      if (puntoError) throw puntoError;
-
-      alert(lang === "en" ? "Business created! Configure and await verification." : "¡Negocio creado! Configure y espere verificación.");
-      await loadNegocioData(user.id);
-    } catch (err) {
-      console.error("Error al crear negocio:", err);
-      alert(lang === "en" ? `Error creating business: ${err.message || err}` : `Error al crear negocio: ${err.message || err}`);
-    } finally {
+    
+    if (!navigator.geolocation) {
+      alert(lang === "en" ? "Geolocation is not supported by your browser." : "La geolocalización no es soportada por tu navegador.");
       setIsClaiming(false);
+      return;
     }
+
+    alert(lang === "en" ? "We will request your location to place the business on the map." : "Solicitaremos tu ubicación para ubicar el negocio en el mapa.");
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      try {
+        const { longitude, latitude } = position.coords;
+        
+        // 1. Crear negocio
+        const { data: nuevoNegocio, error: negocioError } = await supabase
+          .from("negocios")
+          .insert([{
+            dueno_id: user.id,
+            nombre: "Mi Nuevo Negocio",
+            tipo: "otro",
+            servicios: { has_menu: false, has_hours: false, has_lodging: false, has_transport: false },
+            activo: false
+          }])
+          .select()
+          .single();
+
+        if (negocioError) throw negocioError;
+
+        // 2. Crear punto geográfico con la ubicación GPS exacta
+        const { error: puntoError } = await supabase
+          .from("puntos")
+          .insert([{
+            negocio_id: nuevoNegocio.id,
+            nombre: "Mi Nuevo Negocio",
+            categoria: "otro",
+            ubicacion: `POINT(${longitude} ${latitude})`,
+            estado: "en_verificacion",
+            nombre_creador: perfil?.nombre_completo || "Propietario"
+          }]);
+
+        if (puntoError) throw puntoError;
+
+        alert(lang === "en" ? "Business created at your current location!" : "¡Negocio creado en tu ubicación actual!");
+        await loadNegocioData(user.id);
+      } catch (err) {
+        console.error("Error al crear negocio con GPS:", err);
+        alert(lang === "en" ? `Error creating business: ${err.message || err}` : `Error al crear negocio: ${err.message || err}`);
+      } finally {
+        setIsClaiming(false);
+      }
+    }, (error) => {
+      console.error("GPS Error:", error);
+      alert(lang === "en" ? "Could not get your location. Please check browser permissions." : "No se pudo obtener tu ubicación. Verifica los permisos de tu navegador.");
+      setIsClaiming(false);
+    }, { enableHighAccuracy: true });
+  };
+
+  const handleIrAlMapaParaMarcar = () => {
+    router.push("/mapa");
   };
 
   // Guardar datos generales del negocio
@@ -290,24 +326,30 @@ export default function DashboardPage() {
     setSaveSuccess(false);
 
     try {
-      const { error } = await supabase
+      // Limpiar datos nulos u opcionales
+      const payload = {
+        nombre: nombre || null,
+        descripcion: descripcion || null,
+        telefono: telefono || null,
+        whatsapp: whatsapp || null,
+        rango_precios: rangoPrecios || null,
+        logo_url: logoUrl || null,
+        fotos: fotos || []
+      };
+
+      const { data, error } = await supabase
         .from("negocios")
-        .update({
-          nombre,
-          descripcion,
-          telefono,
-          whatsapp,
-          rango_precios: rangoPrecios,
-          logo_url: logoUrl,
-          fotos: fotos
-        })
-        .eq("id", negocio.id);
+        .update(payload)
+        .eq("id", negocio.id)
+        .select();
 
       if (error) throw error;
+      
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
-      console.error("Error guardando negocio:", err);
+      console.error("Error guardando negocio (completo):", err);
+      alert(`Error al guardar: ${err.message || err.details || JSON.stringify(err)}`);
     } finally {
       setIsSaving(false);
     }
@@ -525,8 +567,8 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* CASO A: EL DUEÑO NO TIENE UN NEGOCIO ASOCIADO */}
-      {!negocio ? (
+      {/* CASO A: EL DUEÑO NO TIENE NEGOCIOS */}
+      {misNegocios.length === 0 ? (
         <div style={styles.noNegocioContainer} className="glass-card animate-fade-in-up">
           <h2 style={{ fontSize: "24px", color: "var(--atlan-gold)", fontWeight: "800", marginBottom: "8px" }}>
             {lang === "en" ? "Claim or Register Your Business" : "Reclama o Registra tu Negocio"}
@@ -569,99 +611,157 @@ export default function DashboardPage() {
             </div>
 
             {/* Opción 2: Registrar Nuevo */}
-            <div style={{ borderTop: "1px dashed rgba(255,255,255,0.1)", paddingTop: "20px" }}>
-              <button onClick={handleCrearNuevoNegocio} disabled={isClaiming} style={styles.createBtn}>
-                ✨ {lang === "en" ? "Register New Business from Scratch" : "Registrar Nuevo Negocio de Cero"}
+            <div style={{ borderTop: "1px dashed rgba(255,255,255,0.1)", paddingTop: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
+              <h3 style={{ fontSize: "16px", fontWeight: "800", color: "white", marginBottom: "4px" }}>
+                ✨ {lang === "en" ? "Register New Business" : "Registrar Nuevo Negocio"}
+              </h3>
+              
+              <button onClick={handleCrearNuevoNegocioGPS} disabled={isClaiming} style={{...styles.createBtn, background: "rgba(16,185,129,0.15)", color: "#34d399", border: "1px solid rgba(16,185,129,0.3)"}}>
+                📍 {lang === "en" ? "Use My Current GPS Location" : "Usar mi ubicación actual (GPS)"}
+              </button>
+
+              <button onClick={handleIrAlMapaParaMarcar} disabled={isClaiming} style={{...styles.createBtn, background: "rgba(59,130,246,0.15)", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.3)"}}>
+                🗺️ {lang === "en" ? "Mark manually on the map" : "Marcar punto manualmente en el mapa"}
               </button>
             </div>
           </div>
         </div>
+      ) : !negocio ? (
+        /* CASO B: SELECTOR DE NEGOCIOS */
+        <div style={{...styles.dashboardOverviewLayout, marginTop: "40px"}} className="animate-fade-in-up">
+          <div style={styles.overviewHeader}>
+            <h2 style={{ fontSize: "28px", fontWeight: "800", color: "white" }}>
+              {lang === "en" ? "My Businesses" : "Mis Negocios"}
+            </h2>
+            <p style={{ color: "var(--atlan-text-secondary)", marginTop: "4px" }}>
+              {lang === "en" ? "Select a business to manage:" : "Selecciona un negocio para administrar:"}
+            </p>
+          </div>
+          <div style={{ ...styles.overviewGrid, marginTop: "24px" }}>
+            {misNegocios.map(n => (
+              <button key={n.id} onClick={() => selectNegocio(n)} style={styles.dashboardCard} className="hover-card">
+                <div style={{ ...styles.cardIcon, background: "rgba(212,175,55,0.1)", color: "var(--atlan-gold)" }}>🏢</div>
+                <h3 style={styles.cardTitle}>{n.nombre}</h3>
+                <p style={styles.cardDesc}>{n.tipo || "Otro"}</p>
+                <div style={{ marginTop: "12px", fontSize: "11px", fontWeight: "800", color: n.activo ? "#10b981" : "#f59e0b" }}>
+                  {n.activo ? (lang === "en" ? "VERIFIED" : "VERIFICADO") : (lang === "en" ? "PENDING" : "PENDIENTE")}
+                </div>
+              </button>
+            ))}
+            <button onClick={handleCrearNuevoNegocioGPS} disabled={isClaiming} style={{ ...styles.dashboardCard, border: "2px dashed rgba(16,185,129,0.4)", background: "transparent", alignItems: "center", justifyContent: "center", textAlign: "center" }} className="hover-card">
+              <div style={{ fontSize: "32px", color: "#10b981", marginBottom: "8px" }}>📍</div>
+              <h3 style={{...styles.cardTitle, color: "#10b981"}}>{lang === "en" ? "Add Business here (GPS)" : "Agregar Negocio Aquí (GPS)"}</h3>
+            </button>
+
+            <button onClick={handleIrAlMapaParaMarcar} disabled={isClaiming} style={{ ...styles.dashboardCard, border: "2px dashed rgba(59,130,246,0.4)", background: "transparent", alignItems: "center", justifyContent: "center", textAlign: "center" }} className="hover-card">
+              <div style={{ fontSize: "32px", color: "#60a5fa", marginBottom: "8px" }}>🗺️</div>
+              <h3 style={{...styles.cardTitle, color: "#60a5fa"}}>{lang === "en" ? "Add manually on map" : "Agregar en el mapa manualmente"}</h3>
+            </button>
+          </div>
+        </div>
       ) : (
-        /* CASO B: EL DUEÑO YA TIENE UN NEGOCIO ASOCIADO */
-        <div style={styles.dashboardGrid} className="dashboard-grid">
-          {/* Sidebar de navegación */}
-          <aside style={styles.sidebar} className="dashboard-sidebar glass-card">
-            <div style={{ padding: "10px 0 20px 0", borderBottom: "1px solid rgba(255,255,255,0.06)", marginBottom: "15px" }}>
-              <h2 style={{ fontSize: "18px", fontWeight: "850", color: "white" }}>{negocio.nombre}</h2>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "6px" }}>
-                <span style={{
-                  width: "8px",
-                  height: "8px",
-                  borderRadius: "50%",
-                  backgroundColor: negocio.activo ? "#10b981" : "#f59e0b",
-                  display: "inline-block"
-                }}></span>
-                <span style={{ fontSize: "11px", fontWeight: "750", color: negocio.activo ? "#10b981" : "#f59e0b" }}>
-                  {negocio.activo 
-                    ? (lang === "en" ? "VERIFIED" : "VERIFICADO") 
-                    : (lang === "en" ? "PENDING VERIFICATION" : "PENDIENTE DE VERIFICACIÓN")}
-                </span>
+        /* CASO C: EL DUEÑO YA SELECCIONÓ UN NEGOCIO ASOCIADO */
+        <div style={activeTab === "overview" ? styles.dashboardOverviewLayout : styles.dashboardDetailLayout}>
+          {activeTab === "overview" ? (
+            <div style={styles.overviewContainer} className="animate-fade-in-up">
+              <div style={styles.overviewHeader}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
+                  <div>
+                    <h2 style={{ fontSize: "28px", fontWeight: "800", color: "white" }}>
+                      {lang === "en" ? "Welcome," : "Bienvenido,"} {perfil?.nombre_completo || "Propietario"}
+                    </h2>
+                    <p style={{ color: "var(--atlan-text-secondary)", marginTop: "4px" }}>
+                      {lang === "en" ? "What would you like to manage today for" : "¿Qué deseas gestionar hoy para"} <strong style={{ color: "var(--atlan-gold)" }}>{negocio.nombre}</strong>?
+                    </p>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "16px" }}>
+                      <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: negocio.activo ? "#10b981" : "#f59e0b" }}></span>
+                      <span style={{ fontSize: "12px", fontWeight: "750", color: negocio.activo ? "#10b981" : "#f59e0b" }}>
+                        {negocio.activo ? (lang === "en" ? "VERIFIED BUSINESS" : "NEGOCIO VERIFICADO") : (lang === "en" ? "PENDING VERIFICATION" : "PENDIENTE DE VERIFICACIÓN")}
+                      </span>
+                    </div>
+                  </div>
+                  {misNegocios.length > 1 && (
+                    <button 
+                      onClick={() => setNegocio(null)} 
+                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "white", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: "700", cursor: "pointer", transition: "all 0.2s" }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
+                    >
+                      🔁 {lang === "en" ? "Switch Business" : "Cambiar de Negocio"}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div style={styles.overviewGrid}>
+                {/* General Info Card */}
+                <button onClick={() => setActiveTab("general")} style={styles.dashboardCard} className="hover-card">
+                  <div style={styles.cardIcon}>ℹ️</div>
+                  <h3 style={styles.cardTitle}>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</h3>
+                  <p style={styles.cardDesc}>{lang === "en" ? "Update photos, description, logo and contact info" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
+                </button>
+
+                {/* Checklist Card */}
+                <button onClick={() => setActiveTab("excentricidades")} style={styles.dashboardCard} className="hover-card">
+                  <div style={styles.cardIcon}>⚙️</div>
+                  <h3 style={styles.cardTitle}>{lang === "en" ? "Services Checklist" : "Checklist de Servicios"}</h3>
+                  <p style={styles.cardDesc}>{lang === "en" ? "Enable menu, lodging, or transport modules" : "Activa módulos de menú, hospedaje o transporte"}</p>
+                </button>
+
+                {/* Hours Card */}
+                {hasHours && (
+                  <button onClick={() => setActiveTab("horarios")} style={styles.dashboardCard} className="hover-card">
+                    <div style={styles.cardIcon}>⏰</div>
+                    <h3 style={styles.cardTitle}>{lang === "en" ? "Opening Hours" : "Horarios de Atención"}</h3>
+                    <p style={styles.cardDesc}>{lang === "en" ? "Manage your daily opening and closing times" : "Configura tus horarios de apertura y cierre"}</p>
+                  </button>
+                )}
+
+                {/* Menu Card */}
+                {hasMenu && (
+                  <button onClick={() => setActiveTab("menu")} style={styles.dashboardCard} className="hover-card">
+                    <div style={styles.cardIcon}>🍲</div>
+                    <h3 style={styles.cardTitle}>{lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"}</h3>
+                    <p style={styles.cardDesc}>{lang === "en" ? "Add or remove dishes, photos, and set prices" : "Agrega o elimina platillos, fotos y precios"}</p>
+                  </button>
+                )}
+
+                {/* Reservations Card */}
+                {hasLodging && (
+                  <button onClick={() => setActiveTab("reservas")} style={styles.dashboardCard} className="hover-card">
+                    <div style={styles.cardIcon}>📅</div>
+                    <h3 style={styles.cardTitle}>{lang === "en" ? "Reservations Manager" : "Gestor de Reservas"}</h3>
+                    <p style={styles.cardDesc}>{lang === "en" ? "Approve or cancel incoming booking requests" : "Aprueba o cancela solicitudes de reserva"}</p>
+                    {reservas.filter(r => r.estado_reserva === "pendiente").length > 0 && (
+                      <div style={styles.cardBadge}>
+                        {reservas.filter(r => r.estado_reserva === "pendiente").length} {lang === "en" ? "Pending" : "Pendientes"}
+                      </div>
+                    )}
+                  </button>
+                )}
+
+                {/* Reviews Card */}
+                <button onClick={() => setActiveTab("resenas")} style={styles.dashboardCard} className="hover-card">
+                  <div style={styles.cardIcon}>⭐</div>
+                  <h3 style={styles.cardTitle}>{lang === "en" ? "Customer Reviews" : "Reseñas de Clientes"}</h3>
+                  <p style={styles.cardDesc}>{lang === "en" ? "Read what tourists think about your business" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
+                </button>
               </div>
             </div>
-
-            <nav style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <button
-                onClick={() => setActiveTab("general")}
-                className={`dashboard-tab-btn ${activeTab === "general" ? "active" : ""}`}
-                style={{ ...styles.tabBtn, ...(activeTab === "general" ? styles.tabBtnActive : {}) }}
+          ) : (
+            <main style={{ ...styles.mainContent, maxWidth: "800px", margin: "0 auto", width: "100%" }} className="dashboard-main glass-card animate-fade-in">
+              <button 
+                onClick={() => setActiveTab("overview")} 
+                style={{ background: "transparent", border: "none", color: "var(--atlan-gold)", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", marginBottom: "24px", fontSize: "14px", padding: 0 }}
               >
-                ℹ️ {lang === "en" ? "General Info" : "Datos Generales"}
-              </button>
-              <button
-                onClick={() => setActiveTab("excentricidades")}
-                className={`dashboard-tab-btn ${activeTab === "excentricidades" ? "active" : ""}`}
-                style={{ ...styles.tabBtn, ...(activeTab === "excentricidades" ? styles.tabBtnActive : {}) }}
-              >
-                ⚙️ {lang === "en" ? "Settings Checklist" : "Checklist de Servicios"}
+                ← {lang === "en" ? "Back to Dashboard" : "Volver al Panel Principal"}
               </button>
 
-              {hasHours && (
-                <button
-                  onClick={() => setActiveTab("horarios")}
-                  className={`dashboard-tab-btn ${activeTab === "horarios" ? "active" : ""}`}
-                  style={{ ...styles.tabBtn, ...(activeTab === "horarios" ? styles.tabBtnActive : {}) }}
-                >
-                  ⏰ {lang === "en" ? "Opening Hours" : "Horarios de Atención"}
-                </button>
+              {saveSuccess && (
+                <div style={styles.successBanner}>
+                  ✅ {lang === "en" ? "Settings saved successfully!" : "¡Configuraciones guardadas exitosamente!"}
+                </div>
               )}
-
-              {hasMenu && (
-                <button
-                  onClick={() => setActiveTab("menu")}
-                  className={`dashboard-tab-btn ${activeTab === "menu" ? "active" : ""}`}
-                  style={{ ...styles.tabBtn, ...(activeTab === "menu" ? styles.tabBtnActive : {}) }}
-                >
-                  🍲 {lang === "en" ? "Menu Items" : "Menú Gastronómico"}
-                </button>
-              )}
-
-              {hasLodging && (
-                <button
-                  onClick={() => setActiveTab("reservas")}
-                  className={`dashboard-tab-btn ${activeTab === "reservas" ? "active" : ""}`}
-                  style={{ ...styles.tabBtn, ...(activeTab === "reservas" ? styles.tabBtnActive : {}) }}
-                >
-                  📅 {lang === "en" ? "Reservations" : "Reservas"}
-                </button>
-              )}
-
-              <button
-                onClick={() => setActiveTab("resenas")}
-                className={`dashboard-tab-btn ${activeTab === "resenas" ? "active" : ""}`}
-                style={{ ...styles.tabBtn, ...(activeTab === "resenas" ? styles.tabBtnActive : {}) }}
-              >
-                ⭐ {lang === "en" ? "Reviews" : "Reseñas"}
-              </button>
-            </nav>
-          </aside>
-
-          {/* Área de Contenido Principal */}
-          <main style={styles.mainContent} className="dashboard-main glass-card animate-fade-in">
-            {saveSuccess && (
-              <div style={styles.successBanner}>
-                ✅ {lang === "en" ? "Settings saved successfully!" : "¡Configuraciones guardadas exitosamente!"}
-              </div>
-            )}
 
             {/* PESTAÑA 1: DATOS GENERALES */}
             {activeTab === "general" && (
@@ -1188,7 +1288,8 @@ export default function DashboardPage() {
               </div>
             )}
           </main>
-        </div>
+        )}
+      </div>
       )}
     </div>
   );
@@ -1315,41 +1416,87 @@ const styles = {
     fontSize: "13.5px",
     cursor: "pointer",
   },
-  dashboardGrid: {
-    display: "grid",
-    gridTemplateColumns: "240px 1fr",
-    gap: "24px",
-    maxWidth: "1200px",
+  dashboardOverviewLayout: {
+    maxWidth: "1100px",
     margin: "0 auto",
-  },
-  sidebar: {
-    padding: "20px",
-    borderRadius: "20px",
-    background: "rgba(16, 22, 40, 0.4)",
-    border: "1px solid rgba(255,255,255,0.06)",
-    height: "fit-content",
-  },
-  tabBtn: {
     width: "100%",
-    padding: "12px 14px",
+  },
+  dashboardDetailLayout: {
+    maxWidth: "1100px",
+    margin: "0 auto",
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+  },
+  overviewContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "32px",
+  },
+  overviewHeader: {
+    background: "rgba(16, 22, 40, 0.4)",
+    padding: "36px",
+    borderRadius: "24px",
+    border: "1px solid rgba(255,255,255,0.06)",
+    boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
+  },
+  overviewGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+    gap: "24px",
+  },
+  dashboardCard: {
+    background: "rgba(16, 22, 40, 0.45)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    borderRadius: "24px",
+    padding: "28px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
     textAlign: "left",
-    background: "transparent",
-    borderTop: "none",
-    borderRight: "none",
-    borderBottom: "none",
-    borderLeft: "3px solid transparent",
-    borderRadius: "10px",
-    color: "#94a3b8",
-    fontSize: "13px",
-    fontWeight: "750",
     cursor: "pointer",
-    transition: "all 0.2s",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    position: "relative",
+    overflow: "hidden",
+    boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
   },
-  tabBtnActive: {
-    background: "rgba(212, 175, 55, 0.1)",
-    color: "#D4AF37",
-    borderLeft: "3px solid #D4AF37",
+  cardIcon: {
+    fontSize: "32px",
+    marginBottom: "20px",
+    background: "rgba(255,255,255,0.03)",
+    width: "64px",
+    height: "64px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "16px",
+    border: "1px solid rgba(255,255,255,0.05)",
   },
+  cardTitle: {
+    fontSize: "19px",
+    fontWeight: "800",
+    color: "white",
+    marginBottom: "8px",
+    letterSpacing: "-0.01em",
+  },
+  cardDesc: {
+    fontSize: "13.5px",
+    color: "#94a3b8",
+    lineHeight: "1.5",
+  },
+  cardBadge: {
+    position: "absolute",
+    top: "24px",
+    right: "24px",
+    background: "#ef4444",
+    color: "white",
+    padding: "4px 10px",
+    borderRadius: "20px",
+    fontSize: "11px",
+    fontWeight: "800",
+    boxShadow: "0 2px 10px rgba(239, 68, 68, 0.4)",
+  },
+
   mainContent: {
     padding: "32px",
     borderRadius: "20px",

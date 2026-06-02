@@ -312,6 +312,31 @@ export default function PerfilPage() {
               ✨ {perfil?.rol === "dueno" ? (lang === "en" ? "Business Owner" : "Dueño de Negocio") : (lang === "en" ? "Registered Tourist" : "Turista Registrado")}
             </div>
 
+            {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
+              <Link href="/dashboard" style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                width: "100%",
+                padding: "12px",
+                background: "linear-gradient(135deg, #D4AF37 0%, #b89324 100%)",
+                color: "#0a0f1c",
+                borderRadius: "12px",
+                fontWeight: "800",
+                fontSize: "13.5px",
+                textDecoration: "none",
+                marginBottom: "16px",
+                boxShadow: "0 4px 12px rgba(212, 175, 55, 0.2)",
+                transition: "transform 0.2s"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+              onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
+              >
+                🛠️ {lang === "en" ? "Manage Business" : "Gestionar mi Negocio"}
+              </Link>
+            )}
+
             <button
               onClick={handleCerrarSesion}
               style={{

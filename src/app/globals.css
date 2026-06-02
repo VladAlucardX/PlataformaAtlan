@@ -910,4 +910,8 @@ a:hover {
   50% { opacity: 0.6; transform: scale(0.98); }
 }
 
-
+.hover-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(212, 175, 55, 0.4) !important;
+  background: rgba(16, 22, 40, 0.6) !important;
+}
