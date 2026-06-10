@@ -24,11 +24,8 @@ export default function RegisterPage() {
             .eq("id", session.user.id)
             .single();
 
-          if (perfilData?.rol === "dueno" || perfilData?.rol === "admin") {
-            router.push("/dashboard");
-          } else {
-            router.push("/mapa");
-          }
+          // Redirigir siempre a la página de bienvenida (/)
+          router.push("/");
         }
       } catch (err) {
         console.error("Session check error:", err);
@@ -88,11 +85,8 @@ export default function RegisterPage() {
 
         // Retraso de 1.5s para mostrar el mensaje de éxito antes de redirigir
         setTimeout(() => {
-          if (rol === "dueno") {
-            router.push("/dashboard");
-          } else {
-            router.push("/mapa");
-          }
+          // Redirigir siempre a la página de bienvenida (/)
+          router.push("/");
         }, 1500);
       }
     } catch (err) {

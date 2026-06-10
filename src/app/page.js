@@ -29,7 +29,7 @@ function Navbar() {
       console.warn("[Atlan] Fallo al recuperar sesión (token inválido). Limpiando almacenamiento:", err);
       try {
         await supabase.auth.signOut();
-      } catch (_) {}
+      } catch (_) { }
       if (typeof window !== 'undefined') {
         localStorage.clear();
       }
@@ -79,8 +79,16 @@ function Navbar() {
       <div style={styles.navInner}>
         {/* Logo */}
         <Link href="/" style={styles.logo}>
-          <span style={styles.logoIcon}>🗺️</span>
-          <span style={styles.logoText}>Atlan</span>
+          <img
+            src="/mapaicono.png"
+            alt="Logo"
+            style={{
+              width: "28px",
+              height: "28px",
+              objectFit: "contain"
+            }}
+          />
+          <span className="logoText" style={styles.logoText}>atlan</span>
         </Link>
 
         {/* Desktop links */}
@@ -89,7 +97,7 @@ function Navbar() {
             {t("nav.map")}
           </Link>
           <LanguageToggle variant="pill" />
-          
+
           {session ? (
             <>
               {rol === "dueno" || rol === "admin" ? (
@@ -146,7 +154,7 @@ function Navbar() {
           <Link href="/mapa" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
             🗺️ {t("nav.map")}
           </Link>
-          
+
           {session ? (
             <>
               {rol === "dueno" || rol === "admin" ? (
@@ -384,7 +392,15 @@ function Footer() {
       <div style={styles.footerInner}>
         <div style={styles.footerBrand}>
           <div style={styles.logo}>
-            <span style={styles.logoIcon}>🗺️</span>
+            <img
+              src="/mapaicono.png"
+              alt="Logo"
+              style={{
+                width: "28px",
+                height: "28px",
+                objectFit: "contain"
+              }}
+            />
             <span style={styles.logoText}>Atlan</span>
           </div>
           <p style={styles.footerDesc}>{t("landing.footer.description")}</p>

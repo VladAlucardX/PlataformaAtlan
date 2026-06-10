@@ -115,9 +115,19 @@ export default function VideoIntro({ onComplete }) {
             textShadow: "0 4px 30px rgba(0,0,0,0.7)",
           }}
         >
-          <span style={introStyles.logoEmoji}>🗺️</span>
-          <span style={introStyles.logoName}>Atlan</span>
-          <span style={introStyles.logoTagline}>Tu GPS Turístico</span>
+          <img
+            src="/mapaicono.png"
+            alt="Logo"
+            style={{
+              width: "80px",
+              height: "80px",
+              filter: "drop-shadow(0 4px 20px rgba(0,0,0,0.5))",
+              animation: "introFloat 3s ease-in-out infinite",
+              objectFit: "contain"
+            }}
+          />
+          <span className="logoName" style={introStyles.logoName}>atlan</span>
+          <span className="logoTagline" style={introStyles.logoTagline}>Descubrí lo tuyo, viví lo nuestro.</span>
         </div>
 
         {/* Símbolo de Carga Animado */}
@@ -143,12 +153,14 @@ export default function VideoIntro({ onComplete }) {
             }}
           />
           <span
+            className="loaderText"
             style={{
               fontSize: "14px",
               fontWeight: "500",
               color: "rgba(255,255,255,0.7)",
-              letterSpacing: "0.2em",
+              letterSpacing: "0.1em",
               textTransform: "uppercase",
+              fontFamily: "'LC Mogi', var(--font-outfit), sans-serif",
             }}
           >
             Cargando
@@ -181,6 +193,68 @@ export default function VideoIntro({ onComplete }) {
           100% { width: 100%; }
         }
       `}</style>
+
+      {/* Branded panel that covers the Gemini watermark area */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: "20px",
+          right: "10px",
+          zIndex: 5,
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          padding: "12px 20px 12px 14px",
+          background: "linear-gradient(135deg, rgba(10,15,28,0.95) 0%, rgba(20,28,45,0.92) 100%)",
+          borderRadius: "14px",
+          border: "1px solid rgba(212,175,55,0.25)",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)",
+          backdropFilter: "blur(12px)",
+          pointerEvents: "none",
+          minWidth: "175px",
+          minHeight: "54px",
+        }}
+      >
+        <img
+          src="/mapaicono.png"
+          alt=""
+          style={{
+            width: "34px",
+            height: "34px",
+            objectFit: "contain",
+            filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.4))",
+            flexShrink: 0,
+          }}
+        />
+        <div style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
+          <span
+            style={{
+              fontFamily: "'LC Mogi', var(--font-outfit), sans-serif",
+              fontSize: "20px",
+              fontWeight: "800",
+              color: "#D4AF37",
+              letterSpacing: "0.04em",
+              lineHeight: 1.1,
+            }}
+          >
+            atlan
+          </span>
+          <span
+            style={{
+              fontFamily: "'Delight', var(--font-inter), sans-serif",
+              fontSize: "11px",
+              fontWeight: "500",
+              color: "rgba(255,255,255,0.55)",
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
+              lineHeight: 1.2,
+              marginTop: "2px",
+            }}
+          >
+            GPS Turístico
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -242,17 +316,18 @@ const introStyles = {
   logoName: {
     fontSize: "clamp(56px, 12vw, 96px)",
     fontWeight: "900",
-    fontFamily: "var(--font-outfit), system-ui, sans-serif",
+    fontFamily: "'LC Mogi', var(--font-outfit), system-ui, sans-serif",
     color: "#D4AF37",
-    letterSpacing: "-0.03em",
+    letterSpacing: "0.05em",
     lineHeight: 1,
   },
 
   logoTagline: {
     fontSize: "clamp(16px, 3vw, 24px)",
     fontWeight: "600",
+    fontFamily: "'LC Mogi', var(--font-outfit), sans-serif",
     color: "rgba(255,255,255,0.9)",
-    letterSpacing: "0.15em",
+    letterSpacing: "0.1em",
     textTransform: "uppercase",
     marginTop: "4px",
     WebkitTextStroke: "0.8px rgba(0,0,0,0.7)",
@@ -275,6 +350,7 @@ const introStyles = {
   skipText: {
     fontSize: "16px",
     fontWeight: "600",
+    fontFamily: "'LC Mogi', var(--font-outfit), sans-serif",
     color: "rgba(255,255,255,0.85)",
     letterSpacing: "0.05em",
     animation: "introPulseText 2s ease-in-out infinite",

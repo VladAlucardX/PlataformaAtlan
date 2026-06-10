@@ -37,8 +37,11 @@ self.addEventListener('fetch', (event) => {
   // Solo cachear peticiones GET
   if (event.request.method !== 'GET') return;
 
-  // Evitar interceptar consultas directas a Supabase
-  if (event.request.url.includes('supabase.co')) {
+  // Evitar interceptar consultas directas a Supabase o Mapbox API/Tiles
+  if (
+    event.request.url.includes('supabase.co') ||
+    event.request.url.includes('mapbox.com')
+  ) {
     return;
   }
 
@@ -65,7 +68,12 @@ self.addEventListener('fetch', (event) => {
       .catch(() => {
         // Fallback a caché si no hay internet
         return caches.match(event.request).then((cachedResponse) => {
-          return cachedResponse || caches.match('/');
+          if (cachedResponse) return cachedResponse;
+          
+          // Solo si es una solicitud de navegación de página HTML, retornar el fallback '/'
+          if (event.request.headers.get('accept')?.includes('text/html')) {
+            return caches.match('/');
+          }
         });
       })
   );

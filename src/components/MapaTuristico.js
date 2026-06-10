@@ -32,41 +32,41 @@ export default function MapaTuristico() {
   const mapContainerRef = useRef(null);
 
   // --- REFS PRINCIPALES ---
-  const mapRef            = useRef(null);
-  const directionsRef     = useRef(null);
+  const mapRef = useRef(null);
+  const directionsRef = useRef(null);
   const rutaCoordenadasRef = useRef([]);
-  const demoIntervalRef   = useRef(null);
-  const userMarkerRef     = useRef(null);
-  const markersRef        = useRef([]);  // Lista de marcadores cargados en el mapa
-  const currentPosRef     = useRef([-86.2504, 12.1364]);  // Managua, Nicaragua
-  const isNavigatingRef   = useRef(false);
+  const demoIntervalRef = useRef(null);
+  const userMarkerRef = useRef(null);
+  const markersRef = useRef([]);  // Lista de marcadores cargados en el mapa
+  const currentPosRef = useRef([-86.2504, 12.1364]);  // Managua, Nicaragua
+  const isNavigatingRef = useRef(false);
   const isInteractionPausedRef = useRef(false);
-  const interactionTimeoutRef  = useRef(null);
-  const lugarDestinoRef   = useRef('');
-  const destinationRef    = useRef(null);
-  const isMutedRef        = useRef(false);
-  const lastSpokenRef     = useRef('');
-  const maneuversRef      = useRef([]);
-  const isDemoRunningRef  = useRef(false);
+  const interactionTimeoutRef = useRef(null);
+  const lugarDestinoRef = useRef('');
+  const destinationRef = useRef(null);
+  const isMutedRef = useRef(false);
+  const lastSpokenRef = useRef('');
+  const maneuversRef = useRef([]);
+  const isDemoRunningRef = useRef(false);
   const lastAnnouncementTimeRef = useRef(0);
-  const isAddingPointRef  = useRef(false);
+  const isAddingPointRef = useRef(false);
   const cinematicTimeoutsRef = useRef([]);
   const selectedPointRef = useRef(null);
 
   // --- ESTADO DE REACT ---
   const [isDemoRunning, setIsDemoRunning] = useState(false);
-  const [isMuted, setIsMuted]             = useState(false);
-  const [isSpeaking, setIsSpeaking]       = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [filtroCategoria, setFiltroCategoria] = useState(null);
   const [showRecenterBtn, setShowRecenterBtn] = useState(false);
-  const [isMapLoading, setIsMapLoading]       = useState(true);
+  const [isMapLoading, setIsMapLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  
+
   // Agregar Punto
   const [isAddingPoint, setIsAddingPoint] = useState(false);
-  const [showAddModal, setShowAddModal]   = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [tempPointCoords, setTempPointCoords] = useState(null);
-  
+
   // Formulario nuevo punto
   const [newPointNombre, setNewPointNombre] = useState('');
   const [newPointCreador, setNewPointCreador] = useState('');
@@ -95,7 +95,7 @@ export default function MapaTuristico() {
   const [newReviewEstrellas, setNewReviewEstrellas] = useState(5);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewErrorMsg, setReviewErrorMsg] = useState('');
-  
+
   // Favoritos
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteId, setFavoriteId] = useState(null);
@@ -133,7 +133,7 @@ export default function MapaTuristico() {
       console.warn("[Atlan] Fallo al recuperar sesión (token inválido). Limpiando almacenamiento:", err);
       try {
         await supabase.auth.signOut();
-      } catch (_) {}
+      } catch (_) { }
       if (typeof window !== 'undefined') {
         localStorage.clear();
       }
@@ -164,7 +164,7 @@ export default function MapaTuristico() {
 
     const loadPointDetails = async () => {
       const cacheKey = `atlan_point_details_${selectedPoint.id}`;
-      
+
       try {
         // 1. Cargar reseñas
         const { data: reviewsData, error: revErr } = await supabase
@@ -172,7 +172,7 @@ export default function MapaTuristico() {
           .select('*')
           .eq('punto_id', selectedPoint.id)
           .order('created_at', { ascending: false });
-        
+
         if (revErr) throw revErr;
         const reviews = reviewsData || [];
         setPointReviews(reviews);
@@ -187,7 +187,7 @@ export default function MapaTuristico() {
             .select('*')
             .eq('id', selectedPoint.negocio_id)
             .single();
-          
+
           if (bizErr) throw bizErr;
           biz = bizData;
           setSelectedPointDetails(biz);
@@ -230,7 +230,7 @@ export default function MapaTuristico() {
             .eq('usuario_id', userSession.user.id)
             .eq('punto_id', selectedPoint.id)
             .maybeSingle();
-          
+
           if (!favError && favData) {
             setIsFavorite(true);
             setFavoriteId(favData.id);
@@ -386,8 +386,8 @@ export default function MapaTuristico() {
       if (verifError) throw verifError;
 
       if (!verifResult) {
-        setReviewErrorMsg(lang === 'en' 
-          ? 'Inappropriate language detected. Please review your comment.' 
+        setReviewErrorMsg(lang === 'en'
+          ? 'Inappropriate language detected. Please review your comment.'
           : 'Contenido inapropiado detectado (palabras prohibidas). Por favor modifique su comentario.');
         setIsSubmittingReview(false);
         return;
@@ -408,7 +408,7 @@ export default function MapaTuristico() {
       if (error) throw error;
 
       setNewReviewComment('');
-      
+
       // Recargar comentarios localmente
       const { data: updatedReviews } = await supabase
         .from('resenas')
@@ -466,7 +466,7 @@ export default function MapaTuristico() {
   const calcRemainingRouteDistance = (pts, currentIndex) => {
     let dist = 0;
     for (let i = currentIndex; i < pts.length - 1; i++) {
-      dist += calcDistanceMeters(pts[i], pts[i+1]);
+      dist += calcDistanceMeters(pts[i], pts[i + 1]);
     }
     return dist;
   };
@@ -490,8 +490,8 @@ export default function MapaTuristico() {
       const cached = localStorage.getItem('atlan_puntos_cercanos');
       if (cached) {
         const cachedPoints = JSON.parse(cached);
-        const filtered = cachedPoints.filter(p => 
-          p.nombre.toLowerCase().includes(query.toLowerCase()) || 
+        const filtered = cachedPoints.filter(p =>
+          p.nombre.toLowerCase().includes(query.toLowerCase()) ||
           (p.descripcion && p.descripcion.toLowerCase().includes(query.toLowerCase()))
         );
         setSearchResults(filtered);
@@ -555,7 +555,7 @@ export default function MapaTuristico() {
 
     try {
       console.log(`[Atlan] Cargando puntos cercanos. Categoría: ${categoria || 'Todas'}`);
-      
+
       let data = [];
       let error = null;
 
@@ -580,14 +580,14 @@ export default function MapaTuristico() {
         const cached = localStorage.getItem('atlan_puntos_cercanos');
         if (cached) {
           const allCached = JSON.parse(cached);
-          pointsToRender = categoria 
-            ? allCached.filter(p => p.categoria === categoria) 
+          pointsToRender = categoria
+            ? allCached.filter(p => p.categoria === categoria)
             : allCached;
         }
       } else {
-        // Filtrar en JavaScript para mostrar 'aprobado' y 'sin_reclamar'
+        // Filtrar en JavaScript para mostrar también 'en_verificacion'
         const rawPoints = data || [];
-        pointsToRender = rawPoints.filter(p => p.estado === 'aprobado' || p.estado === 'sin_reclamar');
+        pointsToRender = rawPoints.filter(p => p.estado === 'aprobado' || p.estado === 'sin_reclamar' || p.estado === 'en_verificacion');
         if (pointsToRender.length > 0) {
           localStorage.setItem('atlan_puntos_cercanos', JSON.stringify(pointsToRender));
         }
@@ -612,15 +612,56 @@ export default function MapaTuristico() {
         inner.style.width = '38px';
         inner.style.height = '38px';
         inner.style.borderRadius = '50%';
-        inner.style.border = '2.5px solid white';
-        inner.style.boxShadow = `0 0 12px ${config.color}90, 0 4px 6px rgba(0,0,0,0.2)`;
         inner.style.display = 'flex';
         inner.style.justifyContent = 'center';
         inner.style.alignItems = 'center';
         inner.style.fontSize = '18px';
         inner.style.cursor = 'pointer';
         inner.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+        inner.style.position = 'relative'; // Asegura contexto de posicionamiento para la insignia
         inner.innerHTML = config.emoji;
+
+        // Crear insignia de estado circular en la esquina
+        const badge = document.createElement('div');
+        badge.style.position = 'absolute';
+        badge.style.bottom = '-4px';
+        badge.style.right = '-4px';
+        badge.style.width = '18px';
+        badge.style.height = '18px';
+        badge.style.borderRadius = '50%';
+        badge.style.display = 'flex';
+        badge.style.justifyContent = 'center';
+        badge.style.alignItems = 'center';
+        badge.style.fontSize = '10px';
+        badge.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
+        badge.style.border = '1.5px solid white';
+        badge.style.zIndex = '10';
+
+        if (punto.estado === 'en_verificacion') {
+          badge.style.backgroundColor = '#f97316'; // Naranja
+          badge.innerHTML = '⏳';
+          inner.style.border = '2.5px solid #f97316';
+          inner.style.boxShadow = '0 0 12px rgba(249, 115, 22, 0.6)';
+          inner.classList.add('pulse-marker-orange');
+        } else if (punto.estado === 'aprobado') {
+          badge.style.backgroundColor = '#10b981'; // Verde
+          badge.innerHTML = '✓';
+          badge.style.color = 'white';
+          badge.style.fontWeight = 'bold';
+          inner.style.border = '2.5px solid #10b981';
+          inner.style.boxShadow = '0 0 12px rgba(16, 185, 129, 0.6)';
+        } else {
+          // Sin reclamar / Estado por defecto
+          const isClaimed = !!punto.negocio_id;
+          badge.style.backgroundColor = isClaimed ? '#10b981' : '#f59e0b'; // Verde / Amber
+          badge.innerHTML = isClaimed ? '✓' : '❓';
+          badge.style.color = 'white';
+          badge.style.fontWeight = isClaimed ? 'bold' : 'normal';
+          inner.style.border = `2.5px solid ${isClaimed ? '#10b981' : '#f59e0b'}`;
+          inner.style.boxShadow = `0 0 12px ${isClaimed ? 'rgba(16, 185, 129, 0.6)' : 'rgba(245, 158, 11, 0.5)'}`;
+        }
+
+        inner.appendChild(badge);
         el.appendChild(inner);
 
         // Efectos interactivos al pasar el mouse
@@ -636,8 +677,21 @@ export default function MapaTuristico() {
         // Estructura del Popup Premium
         const isClaimed = !!punto.negocio_id;
         const ratingText = punto.negocio_rating ? `⭐ ${punto.negocio_rating}` : '';
-        const statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
-        const statusColor = isClaimed ? '#10b981' : '#f59e0b';
+
+        let statusText = '';
+        let statusColor = '';
+
+        if (punto.estado === 'en_verificacion') {
+          statusText = lang === 'en' ? 'Pending Confirmation' : 'Pendiente de Confirmar';
+          statusColor = '#f97316'; // Naranja
+        } else if (punto.estado === 'aprobado') {
+          statusText = lang === 'en' ? 'Confirmed' : 'Confirmado';
+          statusColor = '#10b981'; // Verde
+        } else {
+          statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
+          statusColor = isClaimed ? '#10b981' : '#f59e0b';
+        }
+
         const btnId = `btn-nav-${punto.id}`;
         const btnInfoId = `btn-info-${punto.id}`;
 
@@ -684,6 +738,16 @@ export default function MapaTuristico() {
           const btn = document.getElementById(btnId);
           if (btn) {
             btn.onclick = () => {
+              const [currLng, currLat] = currentPosRef.current;
+              const isUserInCA = currLng >= -93.0 && currLng <= -77.0 && currLat >= 7.0 && currLat <= 19.0;
+
+              if (!isUserInCA) {
+                alert(lang === 'en'
+                  ? 'You are currently outside Central America. Plan your trip and visit us to use live GPS navigation!'
+                  : 'Te encuentras fuera de Centroamérica. ¡Planifica tu viaje y visítanos para usar la navegación GPS en vivo!');
+                return; // Detener navegación intercontinental
+              }
+
               lugarDestinoRef.current = punto.nombre;
 
               if ('speechSynthesis' in window) {
@@ -692,7 +756,6 @@ export default function MapaTuristico() {
               lastSpokenRef.current = '';
               speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${punto.nombre}.`, true);
 
-              const [currLng, currLat] = currentPosRef.current;
               isNavigatingRef.current = true;
               isInteractionPausedRef.current = false;
 
@@ -781,10 +844,10 @@ export default function MapaTuristico() {
   const calcBearing = ([lng1, lat1], [lng2, lat2]) => {
     const toRad = Math.PI / 180;
     const toDeg = 180 / Math.PI;
-    const dLng  = (lng2 - lng1) * toRad;
+    const dLng = (lng2 - lng1) * toRad;
     const y = Math.sin(dLng) * Math.cos(lat2 * toRad);
     const x = Math.cos(lat1 * toRad) * Math.sin(lat2 * toRad)
-            - Math.sin(lat1 * toRad) * Math.cos(lat2 * toRad) * Math.cos(dLng);
+      - Math.sin(lat1 * toRad) * Math.cos(lat2 * toRad) * Math.cos(dLng);
     return (Math.atan2(y, x) * toDeg + 360) % 360;
   };
 
@@ -793,8 +856,8 @@ export default function MapaTuristico() {
     const toRad = Math.PI / 180;
     const dLat = (lat2 - lat1) * toRad;
     const dLng = (lng2 - lng1) * toRad;
-    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*toRad) * Math.cos(lat2*toRad) * Math.sin(dLng/2)**2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * toRad) * Math.cos(lat2 * toRad) * Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   };
 
   const buildManeuverList = (steps) => {
@@ -807,9 +870,9 @@ export default function MapaTuristico() {
         lat: mLat,
         instruction: step.maneuver.instruction,
         segmentDist: step.distance || 0,
-        announcedFar:    false,
-        announcedMid:    false,
-        announcedClose:  false,
+        announcedFar: false,
+        announcedMid: false,
+        announcedClose: false,
         announcedArrive: false,
       });
     });
@@ -833,7 +896,7 @@ export default function MapaTuristico() {
     if (!next) return;
 
     const dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
-    const now  = Date.now();
+    const now = Date.now();
     const silenceSec = (now - lastAnnouncementTimeRef.current) / 1000;
 
     if (dist < 50 && !next.announcedArrive) {
@@ -880,14 +943,14 @@ export default function MapaTuristico() {
     const [dLng, dLat] = destination;
     const directionsLang = lang === 'en' ? 'en' : 'es';
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&steps=true&language=${directionsLang}&access_token=${mapboxgl.accessToken}`;
-    const res  = await fetch(url);
+    const res = await fetch(url);
     const data = await res.json();
     if (data.routes?.length > 0) {
-      const route  = data.routes[0];
+      const route = data.routes[0];
       const coords = route.geometry.coordinates;
-      const steps  = route.legs[0]?.steps || [];
+      const steps = route.legs[0]?.steps || [];
       rutaCoordenadasRef.current = coords;
-      maneuversRef.current       = buildManeuverList(steps);
+      maneuversRef.current = buildManeuverList(steps);
 
       setRouteInfo({
         distance: route.distance,
@@ -905,10 +968,10 @@ export default function MapaTuristico() {
   const iniciarSimulacionDemo = async () => {
     if (demoIntervalRef.current) {
       clearInterval(demoIntervalRef.current);
-      demoIntervalRef.current  = null;
+      demoIntervalRef.current = null;
       isDemoRunningRef.current = false;
       setIsDemoRunning(false);
-      isNavigatingRef.current  = false;
+      isNavigatingRef.current = false;
       setShowRecenterBtn(false);
       setRouteInfo(null);
       const panel = document.querySelector('.mapboxgl-ctrl-directions');
@@ -935,8 +998,8 @@ export default function MapaTuristico() {
     }
 
     setIsDemoRunning(true);
-    isDemoRunningRef.current  = true;
-    isNavigatingRef.current        = true;
+    isDemoRunningRef.current = true;
+    isNavigatingRef.current = true;
     isInteractionPausedRef.current = false;
 
     const panel = document.querySelector('.mapboxgl-ctrl-directions');
@@ -959,10 +1022,10 @@ export default function MapaTuristico() {
 
         if (index >= pts.length - 1) {
           clearInterval(demoIntervalRef.current);
-          demoIntervalRef.current  = null;
+          demoIntervalRef.current = null;
           isDemoRunningRef.current = false;
           setIsDemoRunning(false);
-          isNavigatingRef.current  = false;
+          isNavigatingRef.current = false;
           setShowRecenterBtn(false);
           setRouteInfo(null);
           if (panel) panel.style.display = '';
@@ -978,7 +1041,7 @@ export default function MapaTuristico() {
         }
 
         const current = pts[index];
-        const next    = pts[target];
+        const next = pts[target];
         const bearing = calcBearing(current, next);
 
         handlePositionUpdate(next[0], next[1], bearing);
@@ -1050,10 +1113,10 @@ export default function MapaTuristico() {
         setNewPointDesc('');
         setNewPointCategoria('otro');
         setTempPointCoords(null);
-        
+
         speakInstruction(t('addPoint.success'), true);
         alert(t('addPoint.success'));
-        
+
         // Recargar puntos locales
         cargarPuntosCercanos(currentPosRef.current[0], currentPosRef.current[1], filtroCategoria);
       }
@@ -1065,8 +1128,8 @@ export default function MapaTuristico() {
   };
 
   // ─── EFECTO INICIAL: INICIALIZAR MAPBOX ──────────────────────────────────
-  // Límites de Latinoamérica (desde México hasta Tierra del Fuego + Caribe)
-  const LATAM_BOUNDS = [[-120, -60], [-30, 35]];
+  // Límites estrictos de Centroamérica (desde Guatemala hasta Panamá)
+  const CENTRAL_AMERICA_BOUNDS = [[-93.0, 7.0], [-77.0, 19.0]];
 
   useEffect(() => {
     if (mapRef.current) return;
@@ -1079,11 +1142,11 @@ export default function MapaTuristico() {
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/outdoors-v12?optimize=true',
-      center: [-80, 15],
-      zoom: 3.8,
+      center: [-85.0, 13.0], // Centro de Centroamérica
+      zoom: 5.5,
       pitch: 0,
       projection: 'mercator',
-      maxBounds: LATAM_BOUNDS,
+      maxBounds: CENTRAL_AMERICA_BOUNDS, // Restringir memoria al área estrictamente necesaria
     });
 
     mapRef.current.on('load', () => {
@@ -1107,16 +1170,16 @@ export default function MapaTuristico() {
 
       // Estilización premium de carreteras
       const roadStyles = [
-        ['road-motorway',       '#F5A623', 7  ],
-        ['road-motorway-link',  '#F5A623', 5  ],
-        ['road-trunk',          '#F9C950', 6  ],
-        ['road-trunk-link',     '#F9C950', 4.5],
-        ['road-primary',        '#FFFFFF',  5  ],
-        ['road-primary-link',   '#FFFFFF',  3.5],
-        ['road-secondary',      '#FFFFFF',  4  ],
-        ['road-secondary-link', '#FFFFFF',  3  ],
-        ['road-street',         '#F5F7FA',  3  ],
-        ['road-street-low',     '#F5F7FA',  2  ],
+        ['road-motorway', '#F5A623', 7],
+        ['road-motorway-link', '#F5A623', 5],
+        ['road-trunk', '#F9C950', 6],
+        ['road-trunk-link', '#F9C950', 4.5],
+        ['road-primary', '#FFFFFF', 5],
+        ['road-primary-link', '#FFFFFF', 3.5],
+        ['road-secondary', '#FFFFFF', 4],
+        ['road-secondary-link', '#FFFFFF', 3],
+        ['road-street', '#F5F7FA', 3],
+        ['road-street-low', '#F5F7FA', 2],
       ];
       roadStyles.forEach(([id, color, width]) => {
         if (mapRef.current.getLayer(id)) {
@@ -1126,10 +1189,10 @@ export default function MapaTuristico() {
       });
 
       const casingStyles = [
-        ['road-motorway-casing',  '#A0620A', 10 ],
-        ['road-trunk-casing',     '#A07C0A',  8.5],
-        ['road-primary-casing',   '#8A94A8',  7  ],
-        ['road-secondary-casing', '#9AA4B8',  6  ],
+        ['road-motorway-casing', '#A0620A', 10],
+        ['road-trunk-casing', '#A07C0A', 8.5],
+        ['road-primary-casing', '#8A94A8', 7],
+        ['road-secondary-casing', '#9AA4B8', 6],
       ];
       casingStyles.forEach(([id, color, width]) => {
         if (mapRef.current.getLayer(id)) {
@@ -1211,12 +1274,12 @@ export default function MapaTuristico() {
       if (isDemoRunningRef.current) return;
 
       if (e.route && e.route.length > 0 && e.route[0].geometry?.coordinates) {
-        const route  = e.route[0];
+        const route = e.route[0];
         const coords = route.geometry.coordinates;
-        const steps  = route.legs[0]?.steps || [];
+        const steps = route.legs[0]?.steps || [];
 
         rutaCoordenadasRef.current = coords;
-        maneuversRef.current       = buildManeuverList(steps);
+        maneuversRef.current = buildManeuverList(steps);
 
         setRouteInfo({
           distance: route.distance,
@@ -1258,8 +1321,8 @@ export default function MapaTuristico() {
             // Cargar marcadores iniciales en base a la ubicación detectada
             cargarPuntosCercanos(longitude, latitude, filtroCategoria);
 
-            // Detectar si el usuario está dentro de Latinoamérica
-            const isInLatam = longitude >= -120 && longitude <= -30 && latitude >= -60 && latitude <= 35;
+            // Detectar si el usuario está dentro de Centroamérica
+            const isInCentralAmerica = longitude >= -93.0 && longitude <= -77.0 && latitude >= 7.0 && latitude <= 19.0;
 
             // Esperar 2.5 segundos para que los tiles iniciales carguen por completo en segundo plano
             setTimeout(() => {
@@ -1273,54 +1336,43 @@ export default function MapaTuristico() {
                 return;
               }
 
-              if (!isInLatam) {
-                // Usuario fuera de Latinoamérica: levantar los límites del mapa para que pueda ver su ubicación
-                console.log('[Atlan] Usuario fuera de Latinoamérica, levantando límites del mapa');
+              if (!isInCentralAmerica) {
+                // Usuario fuera de Centroamérica: levantar los límites del mapa para que pueda ver su ubicación
+                console.log('[Atlan] Usuario fuera de Centroamérica, levantando límites del mapa');
                 mapRef.current.setMaxBounds(null);
                 mapRef.current.flyTo({
                   center: [longitude, latitude],
                   zoom: 14,
                   pitch: 45,
-                  duration: 3000,
+                  speed: 0.25,
+                  curve: 1.8,
                   essential: true,
                 });
                 cinematicTimeoutsRef.current = [];
               } else {
-                // Secuencia cinematográfica fluida (3 pasos): Latam → ciudad → ubicación exacta
+                // Vuelo parabólico plano (top-down) para evitar cargar el horizonte 3D en movimiento y evitar distorsión
                 mapRef.current.flyTo({
-                  center: [-82, 12],
-                  zoom: 5.5,
-                  pitch: 10,
+                  center: [longitude, latitude],
+                  zoom: 14.8, // Zoom ligeramente más bajo para evitar forzar texturas extremas
+                  pitch: 0, // Volar en plano consume muchísima menos memoria y evita que se deforme la malla
                   bearing: 0,
-                  duration: 3500,
+                  speed: 0.25, // Velocidad súper lenta
+                  curve: 1.8,  // Curva alta (sube mucho hacia el espacio antes de caer)
                   essential: true,
                 });
 
-                const t1 = setTimeout(() => {
-                  if (!mapRef.current) return;
-                  // Paso 2: Acercamiento a la zona/ciudad del usuario
-                  mapRef.current.flyTo({
-                    center: [longitude, latitude],
-                    zoom: 10,
-                    pitch: 30,
-                    duration: 4500,
-                    essential: true,
-                  });
-                }, 4000);
+                // Una vez que aterrice suavemente, inclinamos la cámara para revelar el 3D
+                mapRef.current.once('moveend', () => {
+                  if (mapRef.current) {
+                    mapRef.current.easeTo({
+                      pitch: 60, // Inclinación final épica para ver los edificios y el horizonte
+                      duration: 2500, // 2.5 segundos inclinando la cámara lentamente
+                      essential: true
+                    });
+                  }
+                });
 
-                const t2 = setTimeout(() => {
-                  if (!mapRef.current) return;
-                  // Paso 3: Zoom final a nivel de calle
-                  mapRef.current.flyTo({
-                    center: [longitude, latitude],
-                    zoom: 15,
-                    pitch: 55,
-                    duration: 4000,
-                    essential: true,
-                  });
-                }, 9000);
-
-                cinematicTimeoutsRef.current = [t1, t2];
+                cinematicTimeoutsRef.current = [];
               }
             }, 5000); // 5 segundos de retraso para carga de texturas y estilos
           }
@@ -1336,7 +1388,7 @@ export default function MapaTuristico() {
     }
 
     return () => {
-      if (demoIntervalRef.current)  clearInterval(demoIntervalRef.current);
+      if (demoIntervalRef.current) clearInterval(demoIntervalRef.current);
       if (interactionTimeoutRef.current) clearTimeout(interactionTimeoutRef.current);
       cinematicTimeoutsRef.current.forEach(t => clearTimeout(t));
       if (watchId !== null) navigator.geolocation.clearWatch(watchId);
@@ -1362,7 +1414,7 @@ export default function MapaTuristico() {
               if (match) {
                 const lng = parseFloat(match[1]);
                 const lat = parseFloat(match[2]);
-                
+
                 // Centrar mapa de inmediato
                 mapRef.current.flyTo({
                   center: [lng, lat],
@@ -1382,7 +1434,8 @@ export default function MapaTuristico() {
                   lng,
                   lat,
                   negocio_id: punto.negocio_id,
-                  nombre_creador: punto.nombre_creador
+                  nombre_creador: punto.nombre_creador,
+                  estado: punto.estado
                 };
                 setSelectedPoint(puntoEstructura);
               }
@@ -1391,7 +1444,7 @@ export default function MapaTuristico() {
             console.error("Error loading point from URL query:", err);
           }
         };
-        
+
         if (mapRef.current.loaded()) {
           cargarPuntoDesdeURL();
         } else {
@@ -1425,7 +1478,7 @@ export default function MapaTuristico() {
   };
 
   return (
-    <div style={{ width: '100vw', height: '100vh', margin: 0, padding: 0, position: 'relative', overflow: 'hidden' }}>
+    <div className="map-page-container" style={{ width: '100vw', height: '100vh', margin: 0, padding: 0, position: 'relative', overflow: 'hidden' }}>
       {/* Indicador Offline */}
       {!isOnline && (
         <div style={{
@@ -1445,7 +1498,7 @@ export default function MapaTuristico() {
           gap: '8px',
           boxShadow: '0 4px 15px rgba(0,0,0,0.5), 0 0 10px rgba(212,175,55,0.2)',
           zIndex: 9999,
-          fontFamily: 'var(--font-outfit), sans-serif',
+          fontFamily: "'LC Mogi', var(--font-outfit), sans-serif",
           backdropFilter: 'blur(8px)',
           animation: 'pulse 2s infinite ease-in-out'
         }}>
@@ -1474,19 +1527,30 @@ export default function MapaTuristico() {
       >
         {/* Logo/Emblema Atlan */}
         <div style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ 
-            fontSize: '32px', 
-            fontWeight: '900', 
-            color: 'var(--atlan-gold)', 
-            letterSpacing: '8px',
-            textShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
+          <div className="loaderTitle" style={{
+            fontSize: 'clamp(48px, 8vw, 64px)',
+            fontWeight: '900',
+            color: 'var(--atlan-gold)',
+            letterSpacing: '0.05em',
+            textShadow: '0 4px 20px rgba(0,0,0,0.6)',
             marginBottom: '8px',
-            fontFamily: 'var(--font-outfit), sans-serif',
+            fontFamily: "'LC Mogi', var(--font-outfit), system-ui, sans-serif",
+            lineHeight: 1,
             animation: 'pulse 2s infinite ease-in-out'
           }}>
-            ATLAN
+            atlan
           </div>
-          <div style={{ fontSize: '12px', color: '#64748b', letterSpacing: '4px', textTransform: 'uppercase', fontWeight: '500' }}>
+          <div className="loaderSubtitle" style={{
+            fontSize: 'clamp(14px, 2.5vw, 18px)',
+            color: 'rgba(255,255,255,0.9)',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            fontWeight: '600',
+            fontFamily: "'Delight', var(--font-inter), sans-serif",
+            marginTop: '8px',
+            WebkitTextStroke: '0.5px rgba(0,0,0,0.5)',
+            textShadow: '0 1px 4px rgba(0,0,0,0.8)'
+          }}>
             Nicaragua Turismo
           </div>
         </div>
@@ -1530,14 +1594,14 @@ export default function MapaTuristico() {
           </svg>
 
           {/* Porcentaje numérico */}
-          <div style={{
-            fontSize: '18px',
+          <div className="loaderText" style={{
+            fontSize: '20px',
             fontWeight: '800',
             color: 'var(--atlan-gold)',
-            fontFamily: 'monospace',
-            letterSpacing: '2px',
+            fontFamily: "'Delight', var(--font-inter), sans-serif",
+            letterSpacing: '0.05em',
             marginTop: '8px',
-            textShadow: '0 0 10px rgba(212, 175, 55, 0.3)'
+            textShadow: '0 0 10px rgba(212, 175, 55, 0.4)'
           }}>
             {loadingProgress}%
           </div>
@@ -1561,7 +1625,14 @@ export default function MapaTuristico() {
           }} />
         </div>
 
-        <div style={{ fontSize: '13px', color: '#94a3b8', letterSpacing: '1px', fontWeight: '600' }}>
+        <div className="loaderDesc" style={{
+          fontSize: '14px',
+          color: 'rgba(255,255,255,0.7)',
+          letterSpacing: '0.1em',
+          fontWeight: '550',
+          textTransform: 'uppercase',
+          fontFamily: "'Delight', var(--font-inter), sans-serif"
+        }}>
           {lang === 'en' ? 'Preparing map experience...' : 'Preparando experiencia de mapa...'}
         </div>
       </div>
@@ -1589,8 +1660,8 @@ export default function MapaTuristico() {
         boxShadow: '0 10px 30px rgba(0, 0, 0, 0.4)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '22px', fontWeight: '800', background: 'linear-gradient(135deg, #D4AF37 0%, #FFF 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: 'var(--font-outfit)' }}>
-            ATLAN
+          <span className="logoText" style={{ fontSize: '22px', fontWeight: '800', background: 'linear-gradient(135deg, #D4AF37 0%, #FFF 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: "'LC Mogi', var(--font-outfit), sans-serif" }}>
+            atlan
           </span>
         </div>
 
@@ -1924,6 +1995,7 @@ export default function MapaTuristico() {
 
       {/* Botón 🚗 Demo */}
       <button
+        className="btn-demo"
         onClick={iniciarSimulacionDemo}
         style={{
           position: 'absolute',
@@ -2010,13 +2082,13 @@ export default function MapaTuristico() {
       >
         {isMuted ? (
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-            <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" />
           </svg>
         ) : (
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
           </svg>
         )}
       </button>
@@ -2047,19 +2119,43 @@ export default function MapaTuristico() {
                 />
               )}
               <div>
-                <span style={{
-                  fontSize: '11px',
-                  fontWeight: '800',
-                  textTransform: 'uppercase',
-                  color: selectedPoint.negocio_id ? '#10b981' : '#f59e0b',
-                  background: selectedPoint.negocio_id ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)',
-                  padding: '4px 8px',
-                  borderRadius: '6px',
-                  display: 'inline-block',
-                  marginBottom: '8px'
-                }}>
-                  {selectedPoint.negocio_id ? t('map.claimed') : t('map.unclaimed')}
-                </span>
+                {(() => {
+                  let statusText = '';
+                  let statusColor = '';
+                  let statusBg = '';
+
+                  if (selectedPoint.estado === 'en_verificacion') {
+                    statusText = lang === 'en' ? 'Awaiting Verification' : 'En Espera de Verificación';
+                    statusColor = '#f97316';
+                    statusBg = 'rgba(249, 115, 22, 0.15)';
+                  } else if (selectedPoint.estado === 'aprobado') {
+                    statusText = lang === 'en' ? 'Verified Business' : 'Negocio Verificado';
+                    statusColor = '#10b981';
+                    statusBg = 'rgba(16, 185, 129, 0.15)';
+                  } else {
+                    const isClaimed = !!selectedPoint.negocio_id;
+                    statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
+                    statusColor = isClaimed ? '#10b981' : '#f59e0b';
+                    statusBg = isClaimed ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)';
+                  }
+
+                  return (
+                    <span style={{
+                      fontSize: '11px',
+                      fontWeight: '800',
+                      textTransform: 'uppercase',
+                      color: statusColor,
+                      background: statusBg,
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      display: 'inline-block',
+                      marginBottom: '8px',
+                      border: `1px solid ${statusColor}40`
+                    }}>
+                      {statusText}
+                    </span>
+                  );
+                })()}
                 <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '850', color: 'white', lineHeight: '1.2' }}>
                   {selectedPoint.nombre}
                 </h2>
@@ -2127,6 +2223,29 @@ export default function MapaTuristico() {
             scrollbarWidth: 'thin',
             scrollbarColor: 'rgba(255,255,255,0.1) transparent'
           }}>
+            {/* Banner Informativo si está en verificación */}
+            {selectedPoint.estado === 'en_verificacion' && (
+              <div style={{
+                padding: '12px 16px',
+                background: 'rgba(249, 115, 22, 0.1)',
+                border: '1px solid rgba(249, 115, 22, 0.3)',
+                borderRadius: '12px',
+                fontSize: '13px',
+                color: '#f97316',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                lineHeight: '1.4',
+                marginBottom: '-8px'
+              }}>
+                <span style={{ fontSize: '18px' }}>⏳</span>
+                <div>
+                  {lang === 'en'
+                    ? 'This business is awaiting physical verification by the Atlan team.'
+                    : 'Este negocio está en espera de verificación presencial por el equipo de Atlan.'}
+                </div>
+              </div>
+            )}
             {/* Descripción */}
             <div>
               <h4 style={{ margin: '0 0 6px', fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -2188,8 +2307,8 @@ export default function MapaTuristico() {
                       color: isBusinessOpenNow(selectedPointDetails.horarios) ? '#10b981' : '#ef4444',
                       border: `1px solid ${isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`
                     }}>
-                      {isBusinessOpenNow(selectedPointDetails.horarios) 
-                        ? (lang === 'en' ? 'Open Now' : 'Abierto Ahora') 
+                      {isBusinessOpenNow(selectedPointDetails.horarios)
+                        ? (lang === 'en' ? 'Open Now' : 'Abierto Ahora')
                         : (lang === 'en' ? 'Closed' : 'Cerrado')}
                     </span>
                   )}
@@ -2213,8 +2332,8 @@ export default function MapaTuristico() {
                       <div key={day} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: isToday ? 'white' : '#94a3b8', fontWeight: isToday ? '750' : '400' }}>
                         <span>{dayLabels[day]} {isToday && '•'}</span>
                         <span>
-                          {info.abierto 
-                            ? `${info.apertura} - ${info.cierre}` 
+                          {info.abierto
+                            ? `${info.apertura} - ${info.cierre}`
                             : (lang === 'en' ? 'Closed' : 'Cerrado')}
                         </span>
                       </div>

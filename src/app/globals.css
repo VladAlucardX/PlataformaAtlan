@@ -86,11 +86,97 @@
   --atlan-z-toast:     500;
 }
 
+/* ── FUENTES PERSONALIZADAS ────────────────────────────────────────────────── */
+/* 1. Fuente Display: LC Mogi (Variable) */
+@font-face {
+  font-family: 'LC Mogi';
+  src: url('/fonts/webfonts/variable/LCMogi-VF.woff2') format('woff2-variations'),
+       url('/fonts/webfonts/variable/LCMogi-VF.woff2') format('woff2'),
+       url('/fonts/variable/LCMogi-VF.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 2. Cortes Estáticos de LC Mogi (Fallbacks) */
+@font-face {
+  font-family: 'LC Mogi A';
+  src: url('/fonts/webfonts/LCMogi-A.woff2') format('woff2'),
+       url('/fonts/otf/LCMogi-A.otf') format('opentype'),
+       url('/fonts/ttf/LCMogi-A.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LC Mogi B';
+  src: url('/fonts/webfonts/LCMogi-B.woff2') format('woff2'),
+       url('/fonts/otf/LCMogi-B.otf') format('opentype'),
+       url('/fonts/ttf/LCMogi-B.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LC Mogi C';
+  src: url('/fonts/webfonts/LCMogi-C.woff2') format('woff2'),
+       url('/fonts/otf/LCMogi-C.otf') format('opentype'),
+       url('/fonts/ttf/LCMogi-C.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 3. Fuente de Párrafos / Texto Secundario: Delight (Variable) */
+@font-face {
+  font-family: 'Delight';
+  src: url('/fonts/delight/delight-vf.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 4. Cortes Estáticos de Delight (Fallbacks) */
+@font-face {
+  font-family: 'Delight Static';
+  src: url('/fonts/delight/delight-regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Delight Static';
+  src: url('/fonts/delight/delight-medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Delight Static';
+  src: url('/fonts/delight/delight-semibold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Delight Static';
+  src: url('/fonts/delight/delight-bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ── TAILWIND v4 THEME ────────────────────────────────────────────────────── */
 @theme inline {
   --color-background: var(--atlan-bg-primary);
   --color-foreground: var(--atlan-text-primary);
-  --font-sans: var(--font-outfit), var(--font-inter), system-ui, sans-serif;
+  --font-sans: 'Delight', 'Delight Static', var(--font-inter), system-ui, sans-serif;
+  --font-display: 'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-outfit), sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 }
 
@@ -112,16 +198,73 @@ body {
   padding: 0;
   background: var(--atlan-bg-primary);
   color: var(--atlan-text-primary);
-  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
-  line-height: 1.6;
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-outfit), system-ui, sans-serif;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+/* ── ESTILOS GLOBALES DE FUENTE Y ESPACIADO ── */
+/* Por defecto, todo el texto (párrafos, botones, inputs) usa la fuente Delight.
+   Quitamos !important para permitir que los estilos en línea (inline styles) funcionen correctamente. */
+* {
+  font-family: 'Delight', 'Delight Static', var(--font-inter), system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.12em;
+  word-spacing: 0.25em;
+  line-height: 1.8;
+}
+
+/* Títulos, encabezados, logos, botones, barras de navegación, menús y pantallas de carga usan la fuente LC Mogi */
+h1, h2, h3, h4, h5, h6,
+h1 *, h2 *, h3 *, h4 *, h5 *, h6 *,
+.logoText,
+.logoText *,
+.logoName,
+.logoName *,
+.logoTagline,
+.logoTagline *,
+.loaderTitle,
+.loaderTitle *,
+.skipText,
+.skipText *,
+[class*="logo"],
+[class*="logo"] *,
+[class*="title"],
+[class*="title"] *,
+.text-gradient-gold,
+.text-gradient-gold *,
+.btn-primary, .btn-primary *,
+.btn-secondary, .btn-secondary *,
+.btn-ghost, .btn-ghost *,
+[class*="btn"], [class*="btn"] *,
+.navLink, .navLink *,
+.mobileLink, .mobileLink *,
+nav a, nav a *,
+nav button, nav button *,
+.categoryLabel, .categoryLabel *,
+.categoryCard, .categoryCard *,
+.statNumber, .statNumber * {
+  font-family: 'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-outfit), sans-serif !important;
+  letter-spacing: 0.04em !important; /* Ligeramente más apretado como pidió el usuario */
+  word-spacing: 0.15em !important;
+  line-height: 1.3 !important;
+}
+
+/* Forzar fuente Delight a toda la sección del mapa interactivo (exclusivo de esta ruta) */
+.map-page-container,
+.map-page-container * {
+  font-family: 'Delight', 'Delight Static', var(--font-inter), system-ui, -apple-system, sans-serif !important;
+  letter-spacing: 0.12em !important;
+  word-spacing: 0.25em !important;
+  line-height: 1.8 !important;
+}
+
+/* Permitir EXCLUSIVAMENTE a la marca / logo "atlan" (en minúsculas) usar la fuente LC Mogi */
+.map-page-container .loaderTitle,
+.map-page-container .loaderTitle *,
+.map-page-container .logoText,
+.map-page-container .logoText * {
+  font-family: 'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-outfit), sans-serif !important;
+  letter-spacing: 0.04em !important;
+  word-spacing: 0.15em !important;
+  line-height: 1.3 !important;
 }
 
 a {
@@ -914,4 +1057,18 @@ a:hover {
   transform: translateY(-5px);
   border-color: rgba(212, 175, 55, 0.4) !important;
   background: rgba(16, 22, 40, 0.6) !important;
+}
+
+/* Pulso para marcadores pendientes de verificación */
+.pulse-marker-orange {
+  animation: marker-pulse-orange 2s infinite ease-in-out;
+}
+
+@keyframes marker-pulse-orange {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(249, 115, 22, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(249, 115, 22, 0.95), 0 0 12px rgba(249, 115, 22, 0.4);
+  }
 }

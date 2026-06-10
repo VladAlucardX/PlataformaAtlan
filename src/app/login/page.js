@@ -24,11 +24,8 @@ export default function LoginPage() {
             .eq("id", session.user.id)
             .single();
 
-          if (perfilData?.rol === "dueno" || perfilData?.rol === "admin") {
-            router.push("/dashboard");
-          } else {
-            router.push("/mapa");
-          }
+          // Redirigir siempre a la página de bienvenida (/)
+          router.push("/");
         }
       } catch (err) {
         console.error("Session check error:", err);
@@ -75,12 +72,8 @@ export default function LoginPage() {
           return;
         }
 
-        // Redirigir según el rol
-        if (perfilData?.rol === "dueno" || perfilData?.rol === "admin") {
-          router.push("/dashboard");
-        } else {
-          router.push("/mapa");
-        }
+        // Redirigir siempre a la página de bienvenida (/)
+        router.push("/");
       }
     } catch (err) {
       console.error("Login catch error:", err);
