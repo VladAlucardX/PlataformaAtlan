@@ -209,8 +209,9 @@ function ChatContent() {
   // ── Realtime subscription ──────────────────────────────────────────────
   useEffect(() => {
     if (!activeConv) return;
+    const channelId = Math.random().toString(36).substring(7);
     const channel = supabase
-      .channel(`chat-${activeConv.id}`)
+      .channel(`chat-${activeConv.id}-${channelId}`)
       .on("postgres_changes", {
         event: "INSERT",
         schema: "public",

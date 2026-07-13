@@ -79,8 +79,9 @@ export default function NotificationDropdown({ session }) {
   useEffect(() => {
     if (!session?.user) return;
 
+    const channelId = Math.random().toString(36).substring(7);
     const channel = supabase
-      .channel(`realtime-notif-${session.user.id}`)
+      .channel(`realtime-notif-${session.user.id}-${channelId}`)
       .on(
         "postgres_changes",
         {
