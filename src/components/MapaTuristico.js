@@ -1150,23 +1150,8 @@ export default function MapaTuristico() {
     });
 
     mapRef.current.on('load', () => {
-      // Terreno 3D DEM
-      mapRef.current.addSource('mapbox-dem', {
-        type: 'raster-dem',
-        url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
-        tileSize: 512,
-        maxzoom: 14,
-      });
-      mapRef.current.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
 
-      // Niebla estilo GPS de gama alta
-      mapRef.current.setFog({
-        range: [0.5, 10],
-        color: '#f0f4ff',
-        'high-color': '#1a3a6e',
-        'space-color': '#000000',
-        'star-intensity': 0.1,
-      });
+
 
       // Estilización premium de carreteras
       const roadStyles = [

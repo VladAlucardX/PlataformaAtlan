@@ -73,6 +73,11 @@ export default function DashboardPage() {
   const [puntosDisponibles, setPuntosDisponibles] = useState([]);
   const [isClaiming, setIsClaiming] = useState(false);
 
+  // Estado del punto geográfico asociado
+  const [puntoAsociado, setPuntoAsociado] = useState(null);
+  const [loadingPunto, setLoadingPunto] = useState(false);
+  const [isResubmitting, setIsResubmitting] = useState(false);
+
   // Cargar datos al montar
   useEffect(() => {
     const fetchUserData = async () => {
@@ -175,6 +180,7 @@ export default function DashboardPage() {
     if (serv.has_menu) loadMenuItems(negocioData.id);
     if (serv.has_lodging) loadReservas(negocioData.id);
     loadResenas(negocioData.id);
+    loadPuntoAsociado(negocioData.id);
     setActiveTab("overview");
   };
 
@@ -205,6 +211,120 @@ export default function DashboardPage() {
       .eq("negocio_id", negocioId)
       .order("created_at", { ascending: false });
     setResenas(data || []);
+  };
+
+  const loadPuntoAsociado = async (negocioId) => {
+    setLoadingPunto(true);
+    try {
+      const { data, error } = await supabase
+        .from("puntos")
+        .select("id, estado, nombre")
+        .eq("negocio_id", negocioId)
+        .maybeSingle();
+
+      if (error) throw error;
+      setPuntoAsociado(data || null);
+    } catch (err) {
+      console.error("Error loading associated point:", err);
+      setPuntoAsociado(null);
+    } finally {
+      setLoadingPunto(false);
+    }
+  };
+
+  const handleResubmitClaim = async () => {
+    if (!negocio || !puntoAsociado) return;
+    setIsResubmitting(true);
+    try {
+      // 1. Limpiar motivo_rechazo en el negocio y asegurar que se guarden los cambios actuales de edición
+      const { error: errorNegocio } = await supabase
+        .from("negocios")
+        .update({ 
+          motivo_rechazo: null,
+          nombre,
+          descripcion,
+          telefono,
+          whatsapp,
+          rango_precios: rangoPrecios
+        })
+        .eq("id", negocio.id);
+
+      if (errorNegocio) throw errorNegocio;
+
+      // 2. Cambiar el punto a 'en_verificacion'
+      const { error: errorPunto } = await supabase
+        .from("puntos")
+        .update({ estado: "en_verificacion" })
+        .eq("id", puntoAsociado.id);
+
+      if (errorPunto) throw errorPunto;
+
+      alert(lang === "en" 
+        ? "Resubmitted successfully! It is now pending verification again." 
+        : "¡Reenviado con éxito! Ahora está pendiente de verificación nuevamente.");
+
+      // Recargar datos
+      await loadNegocioData(user.id);
+      
+      const { data: updatedNegocio } = await supabase
+        .from("negocios")
+        .select("*")
+        .eq("id", negocio.id)
+        .single();
+      if (updatedNegocio) {
+        selectNegocio(updatedNegocio);
+      }
+    } catch (err) {
+      console.error("Error resubmitting claim:", err);
+      alert(lang === "en" ? "Error resubmitting claim." : "Error al reenviar el reclamo.");
+    } finally {
+      setIsResubmitting(false);
+    }
+  };
+
+  const handleCancelClaim = async () => {
+    if (!negocio || !puntoAsociado) return;
+    if (!confirm(lang === "en" 
+      ? "Are you sure you want to cancel this claim? This will release the point on the map and remove this business draft." 
+      : "¿Está seguro de cancelar este reclamo? Esto liberará el punto en el mapa y eliminará este borrador de negocio.")) return;
+
+    setIsResubmitting(true);
+    try {
+      // 1. Liberar el punto en la base de datos
+      const { error: errorPunto } = await supabase
+        .from("puntos")
+        .update({ 
+          negocio_id: null,
+          estado: "sin_reclamar" 
+        })
+        .eq("id", puntoAsociado.id);
+
+      if (errorPunto) throw errorPunto;
+
+      // 2. Eliminar el negocio local
+      const { error: errorNegocio } = await supabase
+        .from("negocios")
+        .delete()
+        .eq("id", negocio.id);
+
+      if (errorNegocio) {
+        // Fallback: si no se puede eliminar por restricciones FK, al menos desvincular
+        await supabase
+          .from("negocios")
+          .update({ dueno_id: null, activo: false })
+          .eq("id", negocio.id);
+      }
+
+      alert(lang === "en" ? "Claim canceled successfully." : "Reclamo cancelado con éxito.");
+      setNegocio(null);
+      setPuntoAsociado(null);
+      await loadNegocioData(user.id);
+    } catch (err) {
+      console.error("Error canceling claim:", err);
+      alert(lang === "en" ? "Error canceling claim." : "Error al cancelar el reclamo.");
+    } finally {
+      setIsResubmitting(false);
+    }
   };
 
   // Reclamar un punto geográfico
@@ -693,6 +813,147 @@ export default function DashboardPage() {
                 </div>
               </div>
 
+              {/* Alertas de verificación */}
+              {puntoAsociado && puntoAsociado.estado === 'rechazado' && (
+                <div style={{
+                  background: 'rgba(239, 68, 68, 0.08)',
+                  border: '1.5px solid rgba(239, 68, 68, 0.25)',
+                  boxShadow: '0 10px 30px rgba(239, 68, 68, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+                  borderRadius: '20px',
+                  padding: '24px',
+                  marginBottom: '32px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px',
+                  animation: 'fadeInUp 0.5s ease forwards'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ fontSize: '28px' }}>⚠️</span>
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: '16px', fontWeight: '850', color: '#fca5a5' }}>
+                        {lang === 'en' ? 'Claim Rejected / Pending Corrections' : 'Reclamo Rechazado / Pendiente de Correcciones'}
+                      </h4>
+                      <p style={{ margin: '4px 0 0', fontSize: '12.5px', color: '#f8fafc' }}>
+                        {lang === 'en' 
+                          ? 'The administrator reviewed your application and rejected it with the following observations:' 
+                          : 'El administrador revisó tu solicitud y la rechazó con las siguientes observaciones:'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div style={{
+                    background: 'rgba(10, 15, 28, 0.4)',
+                    borderLeft: '4px solid #ef4444',
+                    padding: '16px',
+                    borderRadius: '0 12px 12px 0',
+                    fontSize: '13.5px',
+                    color: '#e2e8f0',
+                    lineHeight: 1.5,
+                    fontStyle: 'italic'
+                  }}>
+                    {negocio.motivo_rechazo || (lang === 'en' ? 'No detailed observations provided.' : 'No se proporcionaron observaciones detalladas.')}
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginTop: '4px' }}>
+                    <button
+                      onClick={handleResubmitClaim}
+                      disabled={isResubmitting}
+                      style={{
+                        padding: '10px 20px',
+                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '12px',
+                        fontWeight: '800',
+                        fontSize: '12.5px',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(16,185,129,0.25)',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    >
+                      {isResubmitting 
+                        ? (lang === 'en' ? 'Processing...' : 'Procesando...') 
+                        : (lang === 'en' ? 'Save & Resubmit for Review' : 'Guardar y Reenviar para Revisión')}
+                    </button>
+                    <button
+                      onClick={handleCancelClaim}
+                      disabled={isResubmitting}
+                      style={{
+                        padding: '10px 20px',
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '12px',
+                        color: '#fca5a5',
+                        fontWeight: '800',
+                        fontSize: '12.5px',
+                        cursor: 'pointer',
+                        transition: 'background 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                    >
+                      {lang === 'en' ? 'Cancel Claim' : 'Cancelar Reclamo'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {puntoAsociado && puntoAsociado.estado === 'en_verificacion' && (
+                <div style={{
+                  background: 'rgba(245, 158, 11, 0.06)',
+                  border: '1.5px solid rgba(245, 158, 11, 0.2)',
+                  boxShadow: '0 10px 30px rgba(245, 158, 11, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+                  borderRadius: '20px',
+                  padding: '24px',
+                  marginBottom: '32px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                  animation: 'fadeInUp 0.5s ease forwards'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                    <div className="pulse-container" style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      background: 'rgba(245, 158, 11, 0.1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative'
+                    }}>
+                      <span style={{ fontSize: '20px' }}>⏳</span>
+                      <div style={{
+                        position: 'absolute',
+                        inset: '-2px',
+                        borderRadius: '50%',
+                        border: '2px solid #f59e0b',
+                        animation: 'spin 4s linear infinite',
+                        borderTopColor: 'transparent',
+                        borderBottomColor: 'transparent'
+                      }} />
+                    </div>
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: '15.5px', fontWeight: '850', color: '#fcd34d' }}>
+                        {lang === 'en' ? 'Verification Pending' : 'Verificación en Proceso'}
+                      </h4>
+                      <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#cbd5e1', lineHeight: 1.5 }}>
+                        {lang === 'en' 
+                          ? 'An administrator will carry out a physical/onsite verification to validate the claim of your business.' 
+                          : 'Un administrador realizará una verificación física / presencial para validar la pertenencia de tu negocio.'}
+                      </p>
+                    </div>
+                  </div>
+                  <p style={{ margin: '4px 0 0 54px', fontSize: '12px', color: '#94a3b8', lineHeight: 1.4 }}>
+                    💡 {lang === 'en' 
+                      ? 'While verification is pending, you can keep updating your profile information so it is ready for activation.'
+                      : 'Mientras se realiza la verificación, puedes seguir editando la información de tu perfil para tenerlo listo.'}
+                  </p>
+                </div>
+              )}
+
               <div style={styles.overviewGrid}>
                 {/* General Info Card */}
                 <button onClick={() => setActiveTab("general")} style={styles.dashboardCard} className="hover-card">
@@ -920,9 +1181,71 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <button type="submit" disabled={isSaving} style={styles.saveBtn}>
-                    {isSaving ? "..." : (lang === "en" ? "Save Profile" : "Guardar Perfil")}
-                  </button>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    <button type="submit" disabled={isSaving} style={styles.saveBtn}>
+                      {isSaving ? "..." : (lang === "en" ? "Save Profile" : "Guardar Perfil")}
+                    </button>
+                    {puntoAsociado && puntoAsociado.estado === 'rechazado' && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          setIsSaving(true);
+                          try {
+                            // 1. Guardar cambios
+                            const payload = {
+                              nombre: nombre || null,
+                              descripcion: descripcion || null,
+                              telefono: telefono || null,
+                              whatsapp: whatsapp || null,
+                              rango_precios: rangoPrecios || null,
+                              logo_url: logoUrl || null,
+                              fotos: fotos || [],
+                              motivo_rechazo: null // limpiar motivo
+                            };
+                            const { error: errNeg } = await supabase
+                              .from("negocios")
+                              .update(payload)
+                              .eq("id", negocio.id);
+                            if (errNeg) throw errNeg;
+
+                            // 2. Cambiar a en_verificacion
+                            const { error: errPto } = await supabase
+                              .from("puntos")
+                              .update({ estado: "en_verificacion" })
+                              .eq("id", puntoAsociado.id);
+                            if (errPto) throw errPto;
+
+                            alert(lang === "en" 
+                              ? "Saved and resubmitted successfully!" 
+                              : "¡Guardado y reenviado exitosamente!");
+                            
+                            // Recargar y volver a overview
+                            await loadNegocioData(user.id);
+                            const { data: updatedNeg } = await supabase
+                              .from("negocios")
+                              .select("*")
+                              .eq("id", negocio.id)
+                              .single();
+                            if (updatedNeg) selectNegocio(updatedNeg);
+                          } catch (e) {
+                            console.error(e);
+                            alert("Error al guardar y reenviar.");
+                          } finally {
+                            setIsSaving(false);
+                          }
+                        }}
+                        disabled={isSaving}
+                        style={{
+                          ...styles.saveBtn,
+                          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                          border: 'none',
+                          boxShadow: '0 4px 12px rgba(16,185,129,0.2)'
+                        }}
+                      >
+                        {isSaving ? "..." : (lang === 'en' ? 'Save & Resubmit' : 'Guardar y Reenviar')}
+                      </button>
+                    )}
+                  </div>
                 </form>
               </div>
             )}

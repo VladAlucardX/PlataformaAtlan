@@ -1072,3 +1072,27 @@ a:hover {
     box-shadow: 0 0 24px rgba(249, 115, 22, 0.95), 0 0 12px rgba(249, 115, 22, 0.4);
   }
 }
+
+/* ── COMUNIDAD: Responsive ────────────────────────────────────── */
+@media (min-width: 769px) {
+  .hide-desktop {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hide-desktop {
+    /* show on mobile */
+  }
+
+  /* Community page: collapse 3-column grid to 1 column */
+  .profile-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Chat responsive override */
+  .chat-container {
+    grid-template-columns: 1fr !important;
+    height: calc(100vh - 60px) !important;
+  }
+}

@@ -25,6 +25,12 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('pending'); // 'pending', 'all'
   const [todosLosPuntos, setTodosLosPuntos] = useState([]);
 
+  // Estados para modal de rechazo interactivo
+  const [rejectionTarget, setRejectionTarget] = useState(null); // { puntoId, negocioId, nombreNegocio }
+  const [rejectionType, setRejectionType] = useState('observations'); // 'observations' | 'release'
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [submittingRejection, setSubmittingRejection] = useState(false);
+
   // Verificar rol de admin
   useEffect(() => {
     const checkAdmin = async () => {
@@ -157,37 +163,76 @@ export default function AdminDashboard() {
     }
   };
 
-  // Rechazar un negocio reclamado
-  const handleRechazarReclamo = async (puntoId, negocioId) => {
-    if (!confirm(lang === 'en' ? 'Are you sure you want to reject this claim?' : '¿Está seguro de rechazar este reclamo de negocio?')) return;
+  // Confirmar el rechazo desde el modal interactivo
+  const handleConfirmarRechazo = async () => {
+    if (!rejectionTarget) return;
+    if (!rejectionReason.trim()) {
+      alert(lang === 'en' ? 'Please enter a reason for the rejection.' : 'Por favor, ingrese un motivo para el rechazo.');
+      return;
+    }
+
+    setSubmittingRejection(true);
+    const { puntoId, negocioId } = rejectionTarget;
 
     try {
-      // 1. Devolver el punto a estado 'sin_reclamar' y desvincular el negocio_id
-      const { error: errPunto } = await supabase
-        .from('puntos')
-        .update({ 
-          estado: 'sin_reclamar',
-          negocio_id: null 
-        })
-        .eq('id', puntoId);
+      if (rejectionType === 'observations') {
+        // 1. Cambiar estado de punto a 'rechazado' (mantiene la vinculación para que el dueño corrija)
+        const { error: errPunto } = await supabase
+          .from('puntos')
+          .update({ estado: 'rechazado' })
+          .eq('id', puntoId);
 
-      if (errPunto) throw errPunto;
+        if (errPunto) throw errPunto;
 
-      // 2. Marcar el negocio como inactivo o eliminarlo para liberar el reclamo
-      if (negocioId) {
-        const { error: errNegocio } = await supabase
-          .from('negocios')
-          .update({ activo: false })
-          .eq('id', negocioId);
+        // 2. Guardar el motivo de rechazo en negocios y marcar como inactivo
+        if (negocioId) {
+          const { error: errNegocio } = await supabase
+            .from('negocios')
+            .update({ 
+              activo: false,
+              motivo_rechazo: rejectionReason 
+            })
+            .eq('id', negocioId);
 
-        if (errNegocio) throw errNegocio;
+          if (errNegocio) throw errNegocio;
+        }
+
+        alert(lang === 'en' ? 'Claim rejected with observations successfully.' : 'Reclamo rechazado con observaciones con éxito.');
+      } else {
+        // 1. Devolver el punto a estado 'sin_reclamar' y desvincular el negocio_id para liberar el reclamo
+        const { error: errPunto } = await supabase
+          .from('puntos')
+          .update({ 
+            estado: 'sin_reclamar',
+            negocio_id: null 
+          })
+          .eq('id', puntoId);
+
+        if (errPunto) throw errPunto;
+
+        // 2. Registrar el motivo en el negocio y marcar como inactivo
+        if (negocioId) {
+          const { error: errNegocio } = await supabase
+            .from('negocios')
+            .update({ 
+              activo: false,
+              motivo_rechazo: `[LIBERADO] ${rejectionReason}` 
+            })
+            .eq('id', negocioId);
+
+          if (errNegocio) throw errNegocio;
+        }
+
+        alert(lang === 'en' ? 'Point released and claim rejected.' : 'Punto liberado y reclamo rechazado.');
       }
 
-      alert(lang === 'en' ? 'Claim rejected. Point restored to unclaimed.' : 'Reclamo rechazado. Punto devuelto a sin reclamar.');
+      setRejectionTarget(null);
       loadAdminData();
     } catch (err) {
-      console.error('Error rechazando reclamo:', err);
-      alert('Error al rechazar reclamo.');
+      console.error('Error procesando rechazo:', err);
+      alert(lang === 'en' ? 'Error processing rejection.' : 'Error al procesar el rechazo.');
+    } finally {
+      setSubmittingRejection(false);
     }
   };
 
@@ -371,7 +416,11 @@ export default function AdminDashboard() {
                         ✅ {lang === 'en' ? 'Approve Claim' : 'Aprobar Reclamo'}
                       </button>
                       <button
-                        onClick={() => handleRechazarReclamo(item.id, item.negocio_id)}
+                        onClick={() => {
+                          setRejectionTarget({ puntoId: item.id, negocioId: item.negocio_id, nombreNegocio: item.nombre });
+                          setRejectionType('observations');
+                          setRejectionReason('');
+                        }}
                         style={{
                           padding: '10px 18px',
                           background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
@@ -485,6 +534,197 @@ export default function AdminDashboard() {
           to { transform: translateX(0); }
         }
       `}</style>
+
+      {/* Modal interactivo de Rechazo */}
+      {rejectionTarget && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(5, 10, 20, 0.75)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+          padding: '20px',
+          animation: 'fadeIn 0.3s ease forwards'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(20, 27, 45, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)',
+            border: '1px solid rgba(212, 175, 55, 0.25)',
+            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+            borderRadius: '24px',
+            width: '100%',
+            maxWidth: '520px',
+            padding: '32px',
+            color: 'white',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+            animation: 'scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
+          }}>
+            <h2 style={{
+              margin: 0,
+              fontSize: '22px',
+              fontWeight: '850',
+              color: '#D4AF37',
+              letterSpacing: '0.04em',
+              fontFamily: "'LC Mogi', var(--font-outfit), sans-serif"
+            }}>
+              {lang === 'en' ? 'Reject Business Claim' : 'Rechazar Reclamo de Negocio'}
+            </h2>
+            <p style={{ margin: 0, fontSize: '13.5px', color: '#94a3b8', lineHeight: 1.5 }}>
+              {lang === 'en' 
+                ? `Specify why you are rejecting the claim for ${rejectionTarget.nombreNegocio}:`
+                : `Especifica por qué estás rechazando el reclamo para ${rejectionTarget.nombreNegocio}:`}
+            </p>
+
+            {/* Opciones de tipo de rechazo */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label 
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '12px',
+                  padding: '14px',
+                  background: rejectionType === 'observations' ? 'rgba(212, 175, 55, 0.08)' : 'rgba(255,255,255,0.02)',
+                  border: rejectionType === 'observations' ? '1px solid var(--atlan-gold)' : '1px solid rgba(255,255,255,0.06)',
+                  borderRadius: '16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onClick={() => setRejectionType('observations')}
+              >
+                <input 
+                  type="radio" 
+                  name="rejectionType" 
+                  checked={rejectionType === 'observations'}
+                  onChange={() => {}}
+                  style={{ marginTop: '3px', accentColor: '#D4AF37' }}
+                />
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: '750', color: 'white' }}>
+                    {lang === 'en' ? 'Reject with observations' : 'Rechazar con observaciones'}
+                  </div>
+                  <div style={{ fontSize: '11.5px', color: '#94a3b8', marginTop: '2px', lineHeight: 1.4 }}>
+                    {lang === 'en' 
+                      ? 'The owner remains linked to the point. They can see your feedback, correct the business details, and resubmit.'
+                      : 'El dueño sigue vinculado al punto. Podrá ver tus observaciones, corregir los datos del negocio y volver a enviar.'}
+                  </div>
+                </div>
+              </label>
+
+              <label 
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '12px',
+                  padding: '14px',
+                  background: rejectionType === 'release' ? 'rgba(239, 68, 68, 0.08)' : 'rgba(255,255,255,0.02)',
+                  border: rejectionType === 'release' ? '1px solid #ef4444' : '1px solid rgba(255,255,255,0.06)',
+                  borderRadius: '16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onClick={() => setRejectionType('release')}
+              >
+                <input 
+                  type="radio" 
+                  name="rejectionType" 
+                  checked={rejectionType === 'release'}
+                  onChange={() => {}}
+                  style={{ marginTop: '3px', accentColor: '#ef4444' }}
+                />
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: '750', color: '#fca5a5' }}>
+                    {lang === 'en' ? 'Release point (Fraud / Delete claim)' : 'Liberar punto (Fraude / Cancelar reclamo)'}
+                  </div>
+                  <div style={{ fontSize: '11.5px', color: '#94a3b8', marginTop: '2px', lineHeight: 1.4 }}>
+                    {lang === 'en' 
+                      ? 'Desassociates the point immediately, returning it to unclaimed status. The business is marked inactive.'
+                      : 'Desvincula el punto de inmediato, devolviéndolo a estado "sin reclamar" en el mapa. El negocio queda inactivo.'}
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            {/* Input del motivo */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '12.5px', fontWeight: '750', color: '#cbd5e1' }}>
+                {lang === 'en' ? 'Reason for Rejection:' : 'Motivo del Rechazo:'}
+              </label>
+              <textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder={lang === 'en' ? 'e.g. Please provide a clear profile photo and a valid phone number.' : 'Ej: Por favor, ingrese un número de teléfono de contacto válido y una descripción comercial clara.'}
+                rows={4}
+                style={{
+                  width: '100%',
+                  background: 'rgba(10, 15, 28, 0.6)',
+                  border: '1.5px solid rgba(255,255,255,0.1)',
+                  borderRadius: '12px',
+                  padding: '12px',
+                  color: 'white',
+                  fontSize: '13.5px',
+                  outline: 'none',
+                  resize: 'none',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={(e) => e.target.style.borderColor = rejectionType === 'release' ? '#ef4444' : '#D4AF37'}
+                onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+              />
+            </div>
+
+            {/* Botones de acción */}
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button
+                onClick={() => setRejectionTarget(null)}
+                disabled={submittingRejection}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '14px',
+                  color: 'white',
+                  fontSize: '13px',
+                  fontWeight: '750',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+              >
+                {lang === 'en' ? 'Cancel' : 'Cancelar'}
+              </button>
+              <button
+                onClick={handleConfirmarRechazo}
+                disabled={submittingRejection}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  background: rejectionType === 'release' 
+                    ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' 
+                    : 'linear-gradient(135deg, #D4AF37 0%, #b89324 100%)',
+                  color: rejectionType === 'release' ? 'white' : '#0a0f1c',
+                  border: 'none',
+                  borderRadius: '14px',
+                  fontSize: '13px',
+                  fontWeight: '800',
+                  cursor: 'pointer',
+                  boxShadow: rejectionType === 'release' 
+                    ? '0 4px 12px rgba(239,68,68,0.2)' 
+                    : '0 4px 12px rgba(212,175,55,0.2)'
+                }}
+              >
+                {submittingRejection 
+                  ? (lang === 'en' ? 'Processing...' : 'Procesando...') 
+                  : (lang === 'en' ? 'Confirm Rejection' : 'Confirmar Rechazo')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

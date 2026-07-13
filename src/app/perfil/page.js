@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
+import { uploadMedia } from "@/lib/storage";
 
 export default function PerfilPage() {
   const { t, lang } = useTranslation();
@@ -18,6 +19,32 @@ export default function PerfilPage() {
   const [reservas, setReservas] = useState([]);
   const [resenas, setResenas] = useState([]);
   const [favoritos, setFavoritos] = useState([]);
+
+  // Avatar upload
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarHover, setAvatarHover] = useState(false);
+  const avatarInputRef = useRef(null);
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setAvatarUploading(true);
+    try {
+      const publicUrl = await uploadMedia(file, "avatars");
+      const { error } = await supabase
+        .from("perfiles")
+        .update({ avatar_url: publicUrl })
+        .eq("id", user.id);
+      if (error) throw error;
+
+      setPerfil((p) => ({ ...p, avatar_url: publicUrl }));
+    } catch (err) {
+      console.error("Error updating avatar:", err);
+      alert(lang === "en" ? "Failed to upload profile picture" : "Error al subir la foto de perfil");
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
 
   // Cargar datos del usuario y sus registros
   useEffect(() => {
@@ -271,21 +298,61 @@ export default function PerfilPage() {
             position: "sticky",
             top: "100px"
           }}>
-            <div style={{
-              width: "80px",
-              height: "80px",
-              background: "linear-gradient(135deg, #D4AF37 0%, #b89324 100%)",
-              borderRadius: "50%",
-              margin: "0 auto 16px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontSize: "32px",
-              color: "#0a0f1c",
-              fontWeight: "bold",
-              boxShadow: "0 0 20px rgba(212, 175, 55, 0.2)"
-            }}>
-              {perfil?.nombre_completo ? perfil.nombre_completo.charAt(0).toUpperCase() : "U"}
+            <input 
+              type="file" 
+              ref={avatarInputRef} 
+              accept="image/*" 
+              onChange={handleAvatarChange} 
+              style={{ display: "none" }} 
+            />
+            <div 
+              onClick={() => !avatarUploading && avatarInputRef.current?.click()}
+              onMouseEnter={() => setAvatarHover(true)}
+              onMouseLeave={() => setAvatarHover(false)}
+              style={{
+                width: "80px",
+                height: "80px",
+                background: perfil?.avatar_url 
+                  ? `url(${perfil.avatar_url}) center/cover` 
+                  : "linear-gradient(135deg, #D4AF37 0%, #b89324 100%)",
+                borderRadius: "50%",
+                margin: "0 auto 16px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontSize: "32px",
+                color: "#0a0f1c",
+                fontWeight: "bold",
+                boxShadow: "0 0 20px rgba(212, 175, 55, 0.2)",
+                position: "relative",
+                cursor: "pointer",
+                overflow: "hidden"
+              }}
+              title={lang === "en" ? "Change profile picture" : "Cambiar foto de perfil"}
+            >
+              {avatarUploading ? (
+                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", color: "white", fontSize: "11px", fontWeight: "bold" }}>
+                  ⏳
+                </div>
+              ) : (
+                <>
+                  {!perfil?.avatar_url && (perfil?.nombre_completo ? perfil.nombre_completo.charAt(0).toUpperCase() : "U")}
+                  <div style={{
+                    position: "absolute",
+                    inset: 0,
+                    background: "rgba(0,0,0,0.4)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: avatarHover ? 1 : 0,
+                    transition: "opacity 0.2s",
+                    color: "white",
+                    fontSize: "18px"
+                  }}>
+                    📷
+                  </div>
+                </>
+              )}
             </div>
 
             <h3 style={{ margin: "0 0 4px", fontSize: "18px", fontWeight: "800" }}>

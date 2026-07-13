@@ -16,14 +16,14 @@ function Navbar() {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [session, setSession] = React.useState(null);
-  const [rol, setRol] = React.useState(null);
+  const [perfil, setPerfil] = React.useState(null);
 
   React.useEffect(() => {
     // 1. Obtener sesión actual
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       setSession(currentSession);
       if (currentSession?.user) {
-        fetchUserRol(currentSession.user.id);
+        fetchUserProfile(currentSession.user.id);
       }
     }).catch(async (err) => {
       console.warn("[Atlan] Fallo al recuperar sesión (token inválido). Limpiando almacenamiento:", err);
@@ -34,16 +34,16 @@ function Navbar() {
         localStorage.clear();
       }
       setSession(null);
-      setRol(null);
+      setPerfil(null);
     });
 
     // 2. Suscribirse a cambios de autenticación
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, currentSession) => {
       setSession(currentSession);
       if (currentSession?.user) {
-        fetchUserRol(currentSession.user.id);
+        fetchUserProfile(currentSession.user.id);
       } else {
-        setRol(null);
+        setPerfil(null);
       }
     });
 
@@ -52,25 +52,25 @@ function Navbar() {
     };
   }, []);
 
-  const fetchUserRol = async (userId) => {
+  const fetchUserProfile = async (userId) => {
     try {
       const { data, error } = await supabase
         .from("perfiles")
-        .select("rol")
+        .select("rol, avatar_url, nombre_completo")
         .eq("id", userId)
         .single();
       if (!error && data) {
-        setRol(data.rol);
+        setPerfil(data);
       }
     } catch (err) {
-      console.error("Error fetching user rol in landing:", err);
+      console.error("Error fetching user profile in landing:", err);
     }
   };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setSession(null);
-    setRol(null);
+    setPerfil(null);
     window.location.reload();
   };
 
@@ -96,17 +96,31 @@ function Navbar() {
           <Link href="/mapa" style={styles.navLink}>
             {t("nav.map")}
           </Link>
+          <Link href="/comunidad" style={styles.navLink}>
+            👥 {t("social.community")}
+          </Link>
+          {session && (
+            <Link href="/chat" style={styles.navLink}>
+              💬 {t("chat.title")}
+            </Link>
+          )}
           <LanguageToggle variant="pill" />
 
           {session ? (
             <>
-              {rol === "dueno" || rol === "admin" ? (
-                <Link href="/dashboard" style={styles.navLink}>
-                  💼 {t("nav.dashboard")}
+              {perfil?.rol === "dueno" || perfil?.rol === "admin" ? (
+                <Link href="/dashboard" style={{ ...styles.navLink, display: "flex", alignItems: "center", gap: "6px" }}>
+                  {perfil?.avatar_url ? (
+                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
+                  ) : "💼"}
+                  <span>{t("nav.dashboard")}</span>
                 </Link>
               ) : (
-                <Link href="/perfil" style={styles.navLink}>
-                  👤 {t("nav.myReservations")}
+                <Link href="/perfil" style={{ ...styles.navLink, display: "flex", alignItems: "center", gap: "6px" }}>
+                  {perfil?.avatar_url ? (
+                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
+                  ) : "👤"}
+                  <span>{t("nav.myReservations")}</span>
                 </Link>
               )}
               <button onClick={handleLogout} style={styles.logoutBtn}>
@@ -154,16 +168,30 @@ function Navbar() {
           <Link href="/mapa" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
             🗺️ {t("nav.map")}
           </Link>
-
+          <Link href="/comunidad" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+            👥 {t("social.community")}
+          </Link>
+          {session && (
+            <Link href="/chat" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+              💬 {t("chat.title")}
+            </Link>
+          )}
+ 
           {session ? (
             <>
-              {rol === "dueno" || rol === "admin" ? (
-                <Link href="/dashboard" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
-                  💼 {t("nav.dashboard")}
+              {perfil?.rol === "dueno" || perfil?.rol === "admin" ? (
+                <Link href="/dashboard" style={{ ...styles.mobileLink, display: "flex", alignItems: "center", gap: "8px" }} onClick={() => setMenuOpen(false)}>
+                  {perfil?.avatar_url ? (
+                    <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
+                  ) : "💼"}
+                  <span>{t("nav.dashboard")}</span>
                 </Link>
               ) : (
-                <Link href="/perfil" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
-                  👤 {t("nav.myReservations")}
+                <Link href="/perfil" style={{ ...styles.mobileLink, display: "flex", alignItems: "center", gap: "8px" }} onClick={() => setMenuOpen(false)}>
+                  {perfil?.avatar_url ? (
+                    <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
+                  ) : "👤"}
+                  <span>{t("nav.myReservations")}</span>
                 </Link>
               )}
               <button onClick={() => { setMenuOpen(false); handleLogout(); }} style={styles.mobileLogoutBtn}>

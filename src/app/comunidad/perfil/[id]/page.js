@@ -1,0 +1,511 @@
+"use client";
+
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { supabase } from "@/lib/supabase";
+import { uploadMedia } from "@/lib/storage";
+import { useTranslation } from "@/hooks/useTranslation";
+import LanguageToggle from "@/components/ui/LanguageToggle";
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PERFIL PÚBLICO — Comunidad Atlan
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+function timeAgo(dateStr, lang) {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const diffMs = now - date;
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffHr = Math.floor(diffMs / 3600000);
+  const diffDay = Math.floor(diffMs / 86400000);
+  if (diffMin < 1) return lang === "en" ? "Now" : "Ahora";
+  if (diffMin < 60) return lang === "en" ? `${diffMin}m ago` : `hace ${diffMin}m`;
+  if (diffHr < 24) return lang === "en" ? `${diffHr}h ago` : `hace ${diffHr}h`;
+  return lang === "en" ? `${diffDay}d ago` : `hace ${diffDay}d`;
+}
+
+function avatarStyle(url, size) {
+  return {
+    width: `${size}px`, height: `${size}px`, borderRadius: "50%", flexShrink: 0,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#0a0f1c",
+    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #D4AF37 0%, #E8CC6A 100%)",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+  };
+}
+
+export default function PerfilPublico() {
+  const { t, lang } = useTranslation();
+  const params = useParams();
+  const userId = params.id;
+
+  const [session, setSession] = useState(null);
+  const [myPerfil, setMyPerfil] = useState(null);
+  const [targetPerfil, setTargetPerfil] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isMutualFollow, setIsMutualFollow] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+  const [negocio, setNegocio] = useState(null);
+
+  // Edit bio
+  const [editingBio, setEditingBio] = useState(false);
+  const [bioText, setBioText] = useState("");
+
+  // Post interactions
+  const [likedPosts, setLikedPosts] = useState(new Set());
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // Avatar upload
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarHover, setAvatarHover] = useState(false);
+  const avatarInputRef = useRef(null);
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setAvatarUploading(true);
+    try {
+      const publicUrl = await uploadMedia(file, "avatars");
+      const { error } = await supabase
+        .from("perfiles")
+        .update({ avatar_url: publicUrl })
+        .eq("id", session.user.id);
+      if (error) throw error;
+
+      setTargetPerfil((p) => ({ ...p, avatar_url: publicUrl }));
+      setMyPerfil((p) => ({ ...p, avatar_url: publicUrl }));
+    } catch (err) {
+      console.error("Error updating avatar:", err);
+      alert(lang === "en" ? "Failed to upload profile picture" : "Error al subir la foto de perfil");
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
+  // Init
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const { data: { session: s } } = await supabase.auth.getSession();
+        setSession(s);
+        if (s?.user) {
+          const { data: p } = await supabase.from("perfiles").select("*").eq("id", s.user.id).single();
+          setMyPerfil(p);
+        }
+      } catch (err) { console.warn(err); }
+    };
+    init();
+  }, []);
+
+  // Fetch target profile
+  useEffect(() => {
+    if (!userId) return;
+    const fetchProfile = async () => {
+      setLoading(true);
+      try {
+        // Profile
+        const { data: profile } = await supabase.from("perfiles").select("*").eq("id", userId).single();
+        setTargetPerfil(profile);
+        setBioText(profile?.bio || "");
+
+        // Posts
+        const { data: userPosts } = await supabase.from("publicaciones")
+          .select("*, perfiles(id, nombre_completo, avatar_url, rol)")
+          .eq("autor_id", userId)
+          .order("created_at", { ascending: false });
+        setPosts(userPosts || []);
+
+        // Business (if owner)
+        if (profile?.rol === "dueno") {
+          const { data: biz } = await supabase.from("negocios").select("id, nombre").eq("propietario_id", userId).eq("activo", true).maybeSingle();
+          setNegocio(biz);
+        }
+
+        // Check follow status
+        if (session?.user) {
+          const { data: follow } = await supabase.from("seguimientos")
+            .select("id").eq("seguidor_id", session.user.id).eq("seguido_id", userId).maybeSingle();
+          if (follow) setIsFollowing(true);
+
+          // Check mutual follow for chat
+          const { data: isMutual } = await supabase.rpc("verificar_seguimiento_mutuo", { uid_a: session.user.id, uid_b: userId });
+          setIsMutualFollow(!!isMutual);
+        }
+
+        // Check liked posts
+        if (session?.user && userPosts?.length) {
+          const { data: likes } = await supabase.from("likes_social")
+            .select("publicacion_id")
+            .eq("usuario_id", session.user.id)
+            .in("publicacion_id", userPosts.map(p => p.id));
+          if (likes) setLikedPosts(new Set(likes.map(l => l.publicacion_id)));
+        }
+      } catch (err) { console.error(err); }
+      finally { setLoading(false); }
+    };
+    fetchProfile();
+  }, [userId, session]);
+
+  const handleFollow = async () => {
+    if (!session) { setShowLoginModal(true); return; }
+    setFollowLoading(true);
+    try {
+      if (isFollowing) {
+        await supabase.from("seguimientos").delete().eq("seguidor_id", session.user.id).eq("seguido_id", userId);
+        setIsFollowing(false);
+        setTargetPerfil(p => ({ ...p, seguidores_count: Math.max((p.seguidores_count || 1) - 1, 0) }));
+      } else {
+        await supabase.from("seguimientos").insert({ seguidor_id: session.user.id, seguido_id: userId });
+        setIsFollowing(true);
+        setTargetPerfil(p => ({ ...p, seguidores_count: (p.seguidores_count || 0) + 1 }));
+      }
+    } catch (err) { console.error(err); }
+    finally { setFollowLoading(false); }
+  };
+
+  const handleSaveBio = async () => {
+    if (!session || session.user.id !== userId) return;
+    try {
+      await supabase.from("perfiles").update({ bio: bioText.trim() }).eq("id", userId);
+      setTargetPerfil(p => ({ ...p, bio: bioText.trim() }));
+      setEditingBio(false);
+    } catch (err) { console.error(err); }
+  };
+
+  const handleLikePost = async (postId) => {
+    if (!session) { setShowLoginModal(true); return; }
+    try {
+      const newLiked = new Set(likedPosts);
+      if (newLiked.has(postId)) {
+        await supabase.from("likes_social").delete().eq("publicacion_id", postId).eq("usuario_id", session.user.id);
+        newLiked.delete(postId);
+        setPosts(prev => prev.map(p => p.id === postId ? { ...p, likes_count: Math.max((p.likes_count || 1) - 1, 0) } : p));
+      } else {
+        await supabase.from("likes_social").insert({ publicacion_id: postId, usuario_id: session.user.id });
+        newLiked.add(postId);
+        setPosts(prev => prev.map(p => p.id === postId ? { ...p, likes_count: (p.likes_count || 0) + 1 } : p));
+      }
+      setLikedPosts(newLiked);
+    } catch (err) { console.error(err); }
+  };
+
+  const handleDeletePost = async (postId) => {
+    if (!confirm(lang === "en" ? "Delete this post?" : "¿Eliminar esta publicación?")) return;
+    try {
+      await supabase.from("publicaciones").delete().eq("id", postId);
+      setPosts(prev => prev.filter(p => p.id !== postId));
+    } catch (err) { console.error(err); }
+  };
+
+  const isOwnProfile = session?.user?.id === userId;
+  const isAdmin = myPerfil?.rol === "admin";
+
+  if (loading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "var(--atlan-bg-primary)", color: "white" }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ width: "40px", height: "40px", border: "3px solid rgba(255,255,255,0.1)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
+          <p style={{ fontSize: "14px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Loading profile..." : "Cargando perfil..."}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!targetPerfil) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "var(--atlan-bg-primary)", color: "white" }}>
+        <div style={{ textAlign: "center" }}>
+          <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}>🔍</span>
+          <h3 style={{ margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>{lang === "en" ? "User not found" : "Usuario no encontrado"}</h3>
+          <Link href="/comunidad" style={{ color: "var(--atlan-gold)", fontWeight: "700" }}>← {lang === "en" ? "Back to Community" : "Volver a Comunidad"}</Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
+      {/* Nav */}
+      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(10,15,28,0.85)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <div style={{ maxWidth: "800px", margin: "0 auto", padding: "0 24px", height: "60px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Link href="/comunidad" style={{ color: "var(--atlan-text-secondary)", textDecoration: "none", fontSize: "14px", fontWeight: "700", display: "flex", alignItems: "center", gap: "6px" }}>
+            ← {lang === "en" ? "Community" : "Comunidad"}
+          </Link>
+          <LanguageToggle variant="pill" />
+        </div>
+      </nav>
+
+      {/* Profile Header */}
+      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "0 24px" }}>
+        {/* Banner */}
+        <div style={{ height: "140px", background: "linear-gradient(135deg, #1a3a6e 0%, #0e2242 60%, #10b981 100%)", borderRadius: "0 0 24px 24px", position: "relative" }} />
+
+        {/* Profile Info */}
+        <div style={{ display: "flex", alignItems: "flex-end", gap: "20px", marginTop: "-44px", padding: "0 16px", flexWrap: "wrap" }}>
+          {isOwnProfile && (
+            <input 
+              type="file" 
+              ref={avatarInputRef} 
+              accept="image/*" 
+              onChange={handleAvatarChange} 
+              style={{ display: "none" }} 
+            />
+          )}
+          <div 
+            onClick={() => isOwnProfile && !avatarUploading && avatarInputRef.current?.click()}
+            onMouseEnter={() => isOwnProfile && setAvatarHover(true)}
+            onMouseLeave={() => isOwnProfile && setAvatarHover(false)}
+            style={{ 
+              ...avatarStyle(targetPerfil.avatar_url, 88), 
+              border: "4px solid var(--atlan-bg-primary)",
+              position: "relative",
+              cursor: isOwnProfile ? "pointer" : "default",
+              overflow: "hidden"
+            }}
+            title={isOwnProfile ? (lang === "en" ? "Change profile picture" : "Cambiar foto de perfil") : undefined}
+          >
+            {avatarUploading ? (
+              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", color: "white", fontSize: "11px", fontWeight: "bold" }}>
+                ⏳
+              </div>
+            ) : (
+              <>
+                {!targetPerfil.avatar_url && (targetPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
+                {isOwnProfile && (
+                  <div style={{
+                    position: "absolute",
+                    inset: 0,
+                    background: "rgba(0,0,0,0.4)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: avatarHover ? 1 : 0,
+                    transition: "opacity 0.2s",
+                    color: "white",
+                    fontSize: "20px"
+                  }}>
+                    📷
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+          <div style={{ flex: 1, minWidth: "200px", paddingBottom: "4px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+              <h1 style={{ margin: 0, fontSize: "24px", fontWeight: "900", color: "var(--atlan-text-primary)" }}>
+                {targetPerfil.nombre_completo || "Usuario"}
+              </h1>
+              <span style={{
+                fontSize: "11px", fontWeight: "800", padding: "3px 10px", borderRadius: "20px",
+                background: targetPerfil.rol === "dueno" ? "rgba(212,175,55,0.12)" : "rgba(16,185,129,0.12)",
+                color: targetPerfil.rol === "dueno" ? "#D4AF37" : "#10b981",
+                border: `1px solid ${targetPerfil.rol === "dueno" ? "rgba(212,175,55,0.25)" : "rgba(16,185,129,0.25)"}`,
+                textTransform: "uppercase",
+              }}>
+                {targetPerfil.rol === "dueno" ? "🏢 Propietario" : targetPerfil.rol === "admin" ? "⚡ Admin" : "🧳 Turista"}
+              </span>
+            </div>
+          </div>
+
+          {/* Follow / Chat buttons */}
+          {!isOwnProfile ? (
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <button onClick={handleFollow} disabled={followLoading} style={{
+                padding: "10px 24px", borderRadius: "12px", fontSize: "14px", fontWeight: "800",
+                cursor: "pointer", transition: "all 0.2s", border: "none",
+                background: isFollowing ? "rgba(255,255,255,0.06)" : "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                color: isFollowing ? "var(--atlan-text-secondary)" : "white",
+                boxShadow: isFollowing ? "none" : "0 4px 12px rgba(16,185,129,0.25)",
+              }}>
+                {isFollowing ? (lang === "en" ? "✓ Following" : "✓ Siguiendo") : (lang === "en" ? "Follow" : "Seguir")}
+              </button>
+              {isMutualFollow ? (
+                <Link href={`/chat?user=${userId}`} style={{
+                  padding: "10px 20px", borderRadius: "12px", fontSize: "14px", fontWeight: "800",
+                  textDecoration: "none", border: "none", display: "inline-flex", alignItems: "center", gap: "6px",
+                  background: "linear-gradient(135deg, #D4AF37 0%, #b89324 100%)",
+                  color: "#0a0f1c", boxShadow: "0 4px 12px rgba(212,175,55,0.25)",
+                }}>
+                  💬 {lang === "en" ? "Message" : "Mensaje"}
+                </Link>
+              ) : isFollowing ? (
+                <span style={{
+                  padding: "10px 16px", borderRadius: "12px", fontSize: "12px", fontWeight: "700",
+                  background: "rgba(255,255,255,0.04)", color: "var(--atlan-text-muted)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                }} title={lang === "en" ? "Both users must follow each other to chat" : "Ambos deben seguirse para chatear"}>
+                  🔒 {lang === "en" ? "Follow back to chat" : "Deben seguirse mutuamente"}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+
+        {/* Stats */}
+        <div style={{ display: "flex", gap: "32px", padding: "20px 16px 0", borderBottom: "1px solid rgba(255,255,255,0.06)", paddingBottom: "20px" }}>
+          <div>
+            <span style={{ fontWeight: "800", fontSize: "18px", color: "var(--atlan-text-primary)" }}>{posts.length}</span>
+            <span style={{ fontSize: "13px", color: "var(--atlan-text-muted)", marginLeft: "6px" }}>{lang === "en" ? "Posts" : "Posts"}</span>
+          </div>
+          <div>
+            <span style={{ fontWeight: "800", fontSize: "18px", color: "var(--atlan-text-primary)" }}>{targetPerfil.seguidores_count || 0}</span>
+            <span style={{ fontSize: "13px", color: "var(--atlan-text-muted)", marginLeft: "6px" }}>{lang === "en" ? "Followers" : "Seguidores"}</span>
+          </div>
+          <div>
+            <span style={{ fontWeight: "800", fontSize: "18px", color: "var(--atlan-text-primary)" }}>{targetPerfil.siguiendo_count || 0}</span>
+            <span style={{ fontSize: "13px", color: "var(--atlan-text-muted)", marginLeft: "6px" }}>{lang === "en" ? "Following" : "Siguiendo"}</span>
+          </div>
+        </div>
+
+        {/* Bio */}
+        <div style={{ padding: "16px 16px 0" }}>
+          {editingBio && isOwnProfile ? (
+            <div style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
+              <textarea value={bioText} onChange={(e) => setBioText(e.target.value.slice(0, 200))} style={{
+                flex: 1, padding: "10px 14px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: "12px", color: "var(--atlan-text-primary)", fontSize: "14px", outline: "none", resize: "none", minHeight: "60px",
+                fontFamily: "var(--font-outfit), system-ui, sans-serif",
+              }} />
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <button onClick={handleSaveBio} style={{ padding: "8px 14px", background: "linear-gradient(135deg, #10b981 0%, #059669 100%)", border: "none", borderRadius: "8px", color: "white", fontSize: "12px", fontWeight: "800", cursor: "pointer" }}>✓</button>
+                <button onClick={() => { setEditingBio(false); setBioText(targetPerfil.bio || ""); }} style={{ padding: "8px 14px", background: "rgba(255,255,255,0.06)", border: "none", borderRadius: "8px", color: "var(--atlan-text-muted)", fontSize: "12px", fontWeight: "800", cursor: "pointer" }}>✕</button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {targetPerfil.bio ? (
+                <p style={{ margin: 0, fontSize: "14px", color: "var(--atlan-text-secondary)", lineHeight: "1.6" }}>{targetPerfil.bio}</p>
+              ) : isOwnProfile ? (
+                <p style={{ margin: 0, fontSize: "13px", color: "var(--atlan-text-muted)", fontStyle: "italic" }}>
+                  {lang === "en" ? "No bio yet. Click to add one." : "Sin biografía. Haz clic para agregar una."}
+                </p>
+              ) : null}
+              {isOwnProfile && (
+                <button onClick={() => setEditingBio(true)} style={{ marginTop: "8px", background: "none", border: "none", color: "var(--atlan-gold)", fontSize: "12px", fontWeight: "700", cursor: "pointer", padding: 0 }}>
+                  ✏️ {lang === "en" ? "Edit bio" : "Editar bio"}
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Business link */}
+          {negocio && (
+            <Link href="/mapa" style={{
+              display: "inline-flex", alignItems: "center", gap: "6px", marginTop: "12px",
+              padding: "8px 16px", background: "rgba(212,175,55,0.08)", border: "1px solid rgba(212,175,55,0.15)",
+              borderRadius: "10px", color: "var(--atlan-gold)", fontSize: "13px", fontWeight: "700", textDecoration: "none",
+            }}>
+              📍 {negocio.nombre}
+            </Link>
+          )}
+        </div>
+
+        {/* Posts */}
+        <div style={{ padding: "24px 0" }}>
+          <h3 style={{ margin: "0 0 16px 16px", fontSize: "18px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
+            📝 {lang === "en" ? "Posts" : "Publicaciones"}
+          </h3>
+
+          {posts.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "60px 24px", background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.08)", borderRadius: "16px", margin: "0 16px" }}>
+              <span style={{ fontSize: "40px", display: "block", marginBottom: "12px" }}>📭</span>
+              <p style={{ margin: 0, fontSize: "14px", color: "var(--atlan-text-muted)" }}>
+                {lang === "en" ? "No posts yet" : "Sin publicaciones aún"}
+              </p>
+            </div>
+          ) : (
+            posts.map((post) => {
+              const isLiked = likedPosts.has(post.id);
+              const canDelete = isOwnProfile || isAdmin;
+              const hasPublicidad = post.es_publicidad;
+              const hasPromocion = post.es_promocion;
+
+              const cardStyle = hasPublicidad ? {
+                background: "radial-gradient(circle at top right, rgba(212, 175, 55, 0.08) 0%, rgba(255, 255, 255, 0.03) 70%)",
+                border: "1px solid rgba(212, 175, 55, 0.4)",
+                boxShadow: "0 4px 25px rgba(212, 175, 55, 0.12)",
+                borderRadius: "16px", padding: "20px", margin: "0 16px 14px"
+              } : {
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.06)",
+                borderRadius: "16px", padding: "20px", margin: "0 16px 14px"
+              };
+
+              return (
+                <div key={post.id} style={cardStyle}>
+                  {hasPublicidad && (
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "10px", padding: "5px 14px", borderRadius: "20px", fontSize: "11px", fontWeight: "900", background: "linear-gradient(135deg, #D4AF37 0%, #F59E0B 100%)", border: "1px solid rgba(255,255,255,0.25)", color: "#0a0f1c", textTransform: "uppercase", letterSpacing: "0.8px", boxShadow: "0 2px 8px rgba(212, 175, 55, 0.3)" }}>
+                      ✨ {lang === "en" ? "Sponsored Ad" : "Publicidad"}
+                    </div>
+                  )}
+                  {hasPromocion && !hasPublicidad && (
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "10px", padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "800", background: "linear-gradient(135deg, rgba(212,175,55,0.15), rgba(245,158,11,0.15))", border: "1px solid rgba(212,175,55,0.25)", color: "#D4AF37", textTransform: "uppercase" }}>
+                      📢 {lang === "en" ? "Promo" : "Promoción"}
+                    </div>
+                  )}
+
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                    <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)" }}>{timeAgo(post.created_at, lang)}</span>
+                    {canDelete && (
+                      <button onClick={() => handleDeletePost(post.id)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: "12px", fontWeight: "700", cursor: "pointer" }}>
+                        🗑️ {lang === "en" ? "Delete" : "Eliminar"}
+                      </button>
+                    )}
+                  </div>
+
+                  <p style={{ margin: "0 0 12px", fontSize: "14.5px", lineHeight: "1.6", color: "var(--atlan-text-primary)", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                    {post.contenido}
+                  </p>
+
+                  {post.imagen_url && (
+                    <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "12px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <img src={post.imagen_url} alt="Post" style={{ width: "100%", maxHeight: "400px", objectFit: "cover", display: "block" }} loading="lazy" />
+                    </div>
+                  )}
+
+                  {post.video_url && (
+                    <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "12px", border: "1px solid rgba(255,255,255,0.06)", background: "#000", position: "relative" }}>
+                      <video src={post.video_url} controls playsInline preload="metadata" style={{ width: "100%", maxHeight: "400px", display: "block" }} />
+                      <div style={{ position: "absolute", top: "10px", right: "10px", background: "rgba(0,0,0,0.6)", padding: "3px 8px", borderRadius: "6px", fontSize: "10px", fontWeight: "800", color: "#10b981" }}>🎬 Video</div>
+                    </div>
+                  )}
+
+                  <div style={{ display: "flex", gap: "16px", paddingTop: "8px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                    <button onClick={() => handleLikePost(post.id)} style={{ background: "none", border: "none", color: isLiked ? "#ef4444" : "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}>
+                      {isLiked ? "❤️" : "🤍"} {post.likes_count || 0}
+                    </button>
+                    <Link href={`/comunidad`} style={{ color: "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "700", textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}>
+                      💬 {post.comentarios_count || 0}
+                    </Link>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+
+      {/* Login modal */}
+      {showLoginModal && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }} onClick={() => setShowLoginModal(false)}>
+          <div style={{ maxWidth: "420px", width: "100%", background: "var(--atlan-bg-card)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "20px", padding: "32px", textAlign: "center" }} onClick={(e) => e.stopPropagation()} className="animate-fade-in-up">
+            <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}>🔐</span>
+            <h3 style={{ fontSize: "20px", fontWeight: "800", margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>
+              {lang === "en" ? "Sign in to interact" : "Inicia sesión para interactuar"}
+            </h3>
+            <p style={{ fontSize: "14px", color: "var(--atlan-text-secondary)", margin: "0 0 24px" }}>
+              {lang === "en" ? "Sign up or log in to like, comment, and follow." : "Regístrate o inicia sesión para dar likes, comentar y seguir."}
+            </p>
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+              <Link href="/login" className="btn-primary" style={{ padding: "12px 28px", fontSize: "14px" }}>{lang === "en" ? "Sign In" : "Iniciar Sesión"}</Link>
+              <Link href="/registro" className="btn-secondary" style={{ padding: "12px 28px", fontSize: "14px" }}>{lang === "en" ? "Sign Up" : "Registrarse"}</Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
