@@ -239,7 +239,7 @@ export default function PerfilPage() {
           justifyContent: "space-between",
           alignItems: "center"
         }}>
-          <Link href="/mapa" style={{
+          <Link href="/" style={{
             fontSize: "20px",
             fontWeight: "800",
             color: "white",
@@ -254,7 +254,23 @@ export default function PerfilPage() {
             </span>
           </Link>
           
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <Link href="/" style={{
+              fontSize: "13px",
+              color: "#94a3b8",
+              textDecoration: "none",
+              fontWeight: "600",
+              padding: "6px 12px",
+              borderRadius: "8px",
+              background: "rgba(255,255,255,0.03)",
+              border: "1px solid rgba(255,255,255,0.06)",
+              transition: "all 0.2s"
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = "white"}
+            onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}
+            >
+              🏠 {lang === "en" ? "Home" : "Inicio"}
+            </Link>
             <Link href="/mapa" style={{
               fontSize: "13px",
               color: "#94a3b8",
@@ -269,7 +285,7 @@ export default function PerfilPage() {
             onMouseEnter={(e) => e.currentTarget.style.color = "white"}
             onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}
             >
-              ← {lang === "en" ? "Back to Map" : "Volver al Mapa"}
+              🗺️ {lang === "en" ? "Back to Map" : "Volver al Mapa"}
             </Link>
             <LanguageToggle variant="pill" />
           </div>
