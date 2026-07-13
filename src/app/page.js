@@ -463,10 +463,23 @@ function Footer() {
 export default function Home() {
   const [introDone, setIntroDone] = React.useState(false);
 
+  React.useEffect(() => {
+    if (typeof window !== "undefined" && sessionStorage.getItem("introSeen") === "true") {
+      setIntroDone(true);
+    }
+  }, []);
+
+  const handleIntroComplete = () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("introSeen", "true");
+    }
+    setIntroDone(true);
+  };
+
   return (
     <>
       {/* Video Intro Overlay */}
-      {!introDone && <VideoIntro onComplete={() => setIntroDone(true)} />}
+      {!introDone && <VideoIntro onComplete={handleIntroComplete} />}
 
       {/* Landing Page Content */}
       <div
