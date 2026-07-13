@@ -291,5 +291,13 @@
     "errorSending": "Error sending message",
     "mutualFollowLost": "You no longer follow each other. You can't send messages.",
     "startChatting": "Send the first message!"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications yet",
+    "markAllRead": "Mark all as read",
+    "followedYou": "started following you",
+    "commentedPost": "commented on your post",
+    "likedPost": "liked your post"
   }
 }

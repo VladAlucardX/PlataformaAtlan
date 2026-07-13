@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { uploadMedia } from "@/lib/storage";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
+import NotificationDropdown from "@/components/ui/NotificationDropdown";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    COMUNIDAD ATLAN — Red Social
@@ -49,6 +50,7 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
         </div>
 
         <div style={navStyles.navRight} className="hide-mobile">
+          {session && <NotificationDropdown session={session} />}
           <LanguageToggle variant="pill" />
           {session ? (
             <>
@@ -72,6 +74,7 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
 
         {/* Mobile hamburger */}
         <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {session && <NotificationDropdown session={session} />}
           <LanguageToggle variant="icon" />
           <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu" style={navStyles.hamburger}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

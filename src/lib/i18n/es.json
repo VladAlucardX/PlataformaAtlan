@@ -291,5 +291,13 @@
     "errorSending": "Error al enviar mensaje",
     "mutualFollowLost": "Ya no se siguen mutuamente. No puedes enviar mensajes.",
     "startChatting": "¡Envía el primer mensaje!"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "empty": "No tienes notificaciones",
+    "markAllRead": "Marcar todas como leídas",
+    "followedYou": "comenzó a seguirte",
+    "commentedPost": "comentó tu publicación",
+    "likedPost": "le dio me gusta a tu publicación"
   }
 }

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
+import NotificationDropdown from "@/components/ui/NotificationDropdown";
 import VideoIntro from "@/components/VideoIntro";
 import { supabase } from "@/lib/supabase";
 
@@ -105,6 +106,7 @@ function Navbar() {
             </Link>
           )}
           <LanguageToggle variant="pill" />
+          {session && <NotificationDropdown session={session} />}
 
           {session ? (
             <>
@@ -141,6 +143,7 @@ function Navbar() {
 
         {/* Mobile hamburger */}
         <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {session && <NotificationDropdown session={session} />}
           <LanguageToggle variant="icon" />
           <button
             onClick={() => setMenuOpen(!menuOpen)}
