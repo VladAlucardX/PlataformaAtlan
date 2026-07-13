@@ -665,7 +665,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin }) {
 }
 
 // ── USER SUGGESTION CARD ──────────────────────────────────────────────────
-function UserSuggestionCard({ user, session, lang, onRequireLogin }) {
+function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChange }) {
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -690,6 +690,7 @@ function UserSuggestionCard({ user, session, lang, onRequireLogin }) {
         await supabase.from("seguimientos").insert({ seguidor_id: session.user.id, seguido_id: user.id });
         setIsFollowing(true);
       }
+      if (onFollowChange) onFollowChange();
     } catch (err) { console.error("Follow error:", err); }
     finally { setLoading(false); }
   };
@@ -740,6 +741,9 @@ export default function ComunidadPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [suggestedUsers, setSuggestedUsers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState(false);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -795,13 +799,70 @@ export default function ComunidadPage() {
 
   useEffect(() => { fetchPosts(0); }, [fetchPosts]);
 
-  // Fetch suggested users
+  // Fetch suggested users (inteligente: excluye a mi mismo y a los que ya sigo)
+  const fetchSuggestedUsers = useCallback(async () => {
+    try {
+      let query = supabase.from("perfiles").select("id, nombre_completo, avatar_url, rol, seguidores_count");
+      
+      if (session?.user) {
+        query = query.neq("id", session.user.id);
+        
+        // Consultar a quienes sigo
+        const { data: following } = await supabase
+          .from("seguimientos")
+          .select("seguido_id")
+          .eq("seguidor_id", session.user.id);
+        
+        const followingIds = (following || []).map((f) => f.seguido_id);
+        if (followingIds.length > 0) {
+          query = query.not("id", "in", `(${followingIds.join(",")})`);
+        }
+      }
+      
+      const { data } = await query
+        .order("seguidores_count", { ascending: false })
+        .limit(5);
+        
+      setSuggestedUsers(data || []);
+    } catch (err) {
+      console.error("Error fetching suggested users:", err);
+    }
+  }, [session]);
+
   useEffect(() => {
-    supabase.from("perfiles").select("id, nombre_completo, avatar_url, rol, seguidores_count")
-      .order("seguidores_count", { ascending: false })
-      .limit(5)
-      .then(({ data }) => setSuggestedUsers(data || []));
-  }, []);
+    fetchSuggestedUsers();
+  }, [fetchSuggestedUsers]);
+
+  // Buscador con debounce (400ms)
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const delayDebounce = setTimeout(async () => {
+      setSearching(true);
+      try {
+        let query = supabase
+          .from("perfiles")
+          .select("id, nombre_completo, avatar_url, rol, seguidores_count")
+          .ilike("nombre_completo", `%${searchQuery.trim()}%`);
+
+        if (session?.user) {
+          query = query.neq("id", session.user.id);
+        }
+
+        const { data } = await query.limit(10);
+        setSearchResults(data || []);
+      } catch (err) {
+        console.error("Search error:", err);
+      } finally {
+        setSearching(false);
+      }
+    }, 400);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchQuery, session]);
 
   // Infinite scroll
   useEffect(() => {
@@ -888,6 +949,47 @@ export default function ComunidadPage() {
 
         {/* ── FEED CENTRAL ── */}
         <main style={pageStyles.feed}>
+          {/* Mobile Search Bar */}
+          <div className="hide-desktop" style={{ marginBottom: "16px", background: "var(--atlan-bg-card)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "18px", padding: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}>
+            <h4 style={{ margin: "0 0 12px", fontSize: "14px", fontWeight: "800", color: "var(--atlan-text-primary)", display: "flex", alignItems: "center", gap: "6px" }}>
+              🔍 {lang === "en" ? "Find Friends" : "Buscar Personas"}
+            </h4>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t("social.searchPlaceholder")}
+              style={{
+                width: "100%",
+                padding: "10px 14px",
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                borderRadius: "12px",
+                color: "var(--atlan-text-primary)",
+                fontSize: "13px",
+                outline: "none",
+                boxSizing: "border-box"
+              }}
+            />
+            {searchQuery.trim() && (
+              <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                {searching ? (
+                  <div style={{ padding: "8px", textAlign: "center" }}>
+                    <div style={{ width: "20px", height: "20px", border: "2px solid rgba(255,255,255,0.08)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                  </div>
+                ) : searchResults.length === 0 ? (
+                  <p style={{ margin: 0, fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
+                    {t("social.noResults")}
+                  </p>
+                ) : (
+                  searchResults.map((u) => (
+                    <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Create Post Bar */}
           {session && (
             <div style={pageStyles.createPostBar} onClick={() => setShowCreateModal(true)}>
@@ -943,13 +1045,66 @@ export default function ComunidadPage() {
 
         {/* ── SIDEBAR RIGHT (Desktop) ── */}
         <aside style={pageStyles.sidebarRight} className="hide-mobile">
+          {/* Buscador */}
           <div style={sidebarStyles.sectionCard}>
             <h4 style={sidebarStyles.sectionTitle}>
-              ✨ {lang === "en" ? "Suggested People" : "Personas sugeridas"}
+              🔍 {lang === "en" ? "Search" : "Buscar"}
             </h4>
-            {suggestedUsers.map((u) => (
-              <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} />
-            ))}
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t("social.searchPlaceholder")}
+              style={{
+                width: "100%",
+                padding: "10px 14px",
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                borderRadius: "12px",
+                color: "var(--atlan-text-primary)",
+                fontSize: "13px",
+                outline: "none",
+                boxSizing: "border-box"
+              }}
+            />
+          </div>
+
+          <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
+            {searchQuery.trim() ? (
+              <>
+                <h4 style={sidebarStyles.sectionTitle}>
+                  👥 {lang === "en" ? "Search Results" : "Resultados"}
+                </h4>
+                {searching ? (
+                  <div style={{ padding: "12px", textAlign: "center" }}>
+                    <div style={{ width: "20px", height: "20px", border: "2px solid rgba(255,255,255,0.08)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                  </div>
+                ) : searchResults.length === 0 ? (
+                  <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
+                    {t("social.noResults")}
+                  </p>
+                ) : (
+                  searchResults.map((u) => (
+                    <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
+                  ))
+                )}
+              </>
+            ) : (
+              <>
+                <h4 style={sidebarStyles.sectionTitle}>
+                  ✨ {lang === "en" ? "Suggested People" : "Personas sugeridas"}
+                </h4>
+                {suggestedUsers.length === 0 ? (
+                  <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
+                    {lang === "en" ? "No suggestions" : "Sin sugerencias"}
+                  </p>
+                ) : (
+                  suggestedUsers.map((u) => (
+                    <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
+                  ))
+                )}
+              </>
+            )}
           </div>
 
           <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>

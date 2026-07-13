@@ -265,7 +265,10 @@
     "videoInvalidFormat": "Only MP4, WebM, or MOV video formats are allowed",
     "mediaExclusive": "You can only attach an image or a video, not both",
     "sendMessage": "Send Message",
-    "mutualFollowRequired": "Both users must follow each other to chat"
+    "mutualFollowRequired": "Both users must follow each other to chat",
+    "searchPlaceholder": "Search people...",
+    "noResults": "No people found with that name",
+    "searching": "Searching..."
   },
   "chat": {
     "title": "Messages",
