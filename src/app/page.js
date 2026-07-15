@@ -13,67 +13,9 @@ import { supabase } from "@/lib/supabase";
    ═══════════════════════════════════════════════════════════════════════════ */
 
 // ── NAVBAR ─────────────────────────────────────────────────────────────────
-function Navbar() {
+function Navbar({ session, perfil, handleLogout }) {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const [session, setSession] = React.useState(null);
-  const [perfil, setPerfil] = React.useState(null);
-
-  React.useEffect(() => {
-    // 1. Obtener sesión actual
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      setSession(currentSession);
-      if (currentSession?.user) {
-        fetchUserProfile(currentSession.user.id);
-      }
-    }).catch(async (err) => {
-      console.warn("[Atlan] Fallo al recuperar sesión (token inválido). Limpiando almacenamiento:", err);
-      try {
-        await supabase.auth.signOut();
-      } catch (_) { }
-      if (typeof window !== 'undefined') {
-        localStorage.clear();
-      }
-      setSession(null);
-      setPerfil(null);
-    });
-
-    // 2. Suscribirse a cambios de autenticación
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, currentSession) => {
-      setSession(currentSession);
-      if (currentSession?.user) {
-        fetchUserProfile(currentSession.user.id);
-      } else {
-        setPerfil(null);
-      }
-    });
-
-    return () => {
-      if (subscription) subscription.unsubscribe();
-    };
-  }, []);
-
-  const fetchUserProfile = async (userId) => {
-    try {
-      const { data, error } = await supabase
-        .from("perfiles")
-        .select("rol, avatar_url, nombre_completo")
-        .eq("id", userId)
-        .single();
-      if (!error && data) {
-        setPerfil(data);
-      }
-    } catch (err) {
-      console.error("Error fetching user profile in landing:", err);
-    }
-  };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setSession(null);
-    setPerfil(null);
-    window.location.reload();
-  };
 
   return (
     <nav style={styles.nav}>
@@ -115,18 +57,23 @@ function Navbar() {
                   {perfil?.avatar_url ? (
                     <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
                   ) : "💼"}
-                  <span>{t("nav.dashboard")}</span>
+                  <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.dashboard")}</span>
                 </Link>
               ) : (
                 <Link href="/perfil" style={{ ...styles.navLink, display: "flex", alignItems: "center", gap: "6px" }}>
                   {perfil?.avatar_url ? (
                     <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
                   ) : "👤"}
-                  <span>{t("nav.myReservations")}</span>
+                  <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.myReservations")}</span>
                 </Link>
               )}
-              <button onClick={handleLogout} style={styles.logoutBtn}>
-                🚪 {t("nav.logout")}
+              <button onClick={handleLogout} style={{ ...styles.logoutBtn, display: "flex", alignItems: "center", gap: "6px" }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span>{t("nav.logout")}</span>
               </button>
             </>
           ) : (
@@ -187,18 +134,23 @@ function Navbar() {
                   {perfil?.avatar_url ? (
                     <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
                   ) : "💼"}
-                  <span>{t("nav.dashboard")}</span>
+                  <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.dashboard")}</span>
                 </Link>
               ) : (
                 <Link href="/perfil" style={{ ...styles.mobileLink, display: "flex", alignItems: "center", gap: "8px" }} onClick={() => setMenuOpen(false)}>
                   {perfil?.avatar_url ? (
                     <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
                   ) : "👤"}
-                  <span>{t("nav.myReservations")}</span>
+                  <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.myReservations")}</span>
                 </Link>
               )}
-              <button onClick={() => { setMenuOpen(false); handleLogout(); }} style={styles.mobileLogoutBtn}>
-                🚪 {t("nav.logout")}
+              <button onClick={() => { setMenuOpen(false); handleLogout(); }} style={{ ...styles.mobileLogoutBtn, display: "flex", alignItems: "center", gap: "8px" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span>{t("nav.logout")}</span>
               </button>
             </>
           ) : (
@@ -223,8 +175,8 @@ function Navbar() {
 }
 
 // ── HERO SECTION ───────────────────────────────────────────────────────────
-function HeroSection() {
-  const { t } = useTranslation();
+function HeroSection({ perfil }) {
+  const { t, lang } = useTranslation();
 
   return (
     <section style={styles.hero}>
@@ -234,7 +186,25 @@ function HeroSection() {
       <div style={styles.heroOrb3} />
 
       <div style={styles.heroContent} className="animate-fade-in-up">
-        <div className="badge badge-gold" style={{ marginBottom: "16px" }}>
+        {perfil?.nombre_completo && (
+          <div style={{
+            fontSize: "15px",
+            fontWeight: "800",
+            color: "var(--atlan-gold)",
+            marginBottom: "12px",
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+            background: "rgba(212, 175, 55, 0.08)",
+            padding: "8px 18px",
+            borderRadius: "30px",
+            display: "inline-block",
+            border: "1px solid rgba(212, 175, 55, 0.2)"
+          }}>
+            👋 {lang === "en" ? "Welcome back" : "Bienvenido de nuevo"}, {perfil.nombre_completo.split(" ")[0]}
+          </div>
+        )}
+
+        <div className="badge badge-gold" style={{ marginBottom: "16px", marginLeft: perfil?.nombre_completo ? "12px" : "0" }}>
           🇳🇮 Nicaragua
         </div>
 
@@ -462,12 +432,70 @@ function Footer() {
 // ── MAIN PAGE ──────────────────────────────────────────────────────────────
 export default function Home() {
   const [introDone, setIntroDone] = React.useState(false);
+  const [session, setSession] = React.useState(null);
+  const [perfil, setPerfil] = React.useState(null);
 
   React.useEffect(() => {
     if (typeof window !== "undefined" && sessionStorage.getItem("introSeen") === "true") {
       setIntroDone(true);
     }
   }, []);
+
+  React.useEffect(() => {
+    // 1. Obtener sesión actual
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      if (currentSession?.user) {
+        fetchUserProfile(currentSession.user.id);
+      }
+    }).catch(async (err) => {
+      console.warn("[Atlan] Fallo al recuperar sesión (token inválido). Limpiando almacenamiento:", err);
+      try {
+        await supabase.auth.signOut();
+      } catch (_) { }
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+      }
+      setSession(null);
+      setPerfil(null);
+    });
+
+    // 2. Suscribirse a cambios de autenticación
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, currentSession) => {
+      setSession(currentSession);
+      if (currentSession?.user) {
+        fetchUserProfile(currentSession.user.id);
+      } else {
+        setPerfil(null);
+      }
+    });
+
+    return () => {
+      if (subscription) subscription.unsubscribe();
+    };
+  }, []);
+
+  const fetchUserProfile = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from("perfiles")
+        .select("rol, avatar_url, nombre_completo")
+        .eq("id", userId)
+        .single();
+      if (!error && data) {
+        setPerfil(data);
+      }
+    } catch (err) {
+      console.error("Error fetching user profile in landing:", err);
+    }
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setSession(null);
+    setPerfil(null);
+    window.location.reload();
+  };
 
   const handleIntroComplete = () => {
     if (typeof window !== "undefined") {
@@ -490,8 +518,8 @@ export default function Home() {
           transition: "opacity 0.8s ease 0.2s",
         }}
       >
-        <Navbar />
-        <HeroSection />
+        <Navbar session={session} perfil={perfil} handleLogout={handleLogout} />
+        <HeroSection perfil={perfil} />
         <FeaturesSection />
         <CategoriesSection />
         <CTASection />

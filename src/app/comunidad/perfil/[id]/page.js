@@ -7,6 +7,8 @@ import { supabase } from "@/lib/supabase";
 import { uploadMedia } from "@/lib/storage";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
+import FollowersModal from "@/components/ui/FollowersModal";
+import ImageViewerModal from "@/components/ui/ImageViewerModal";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    PERFIL PÚBLICO — Comunidad Atlan
@@ -62,6 +64,13 @@ export default function PerfilPublico() {
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarHover, setAvatarHover] = useState(false);
   const avatarInputRef = useRef(null);
+
+  // Followers/Following modal
+  const [showFollowersModal, setShowFollowersModal] = useState(false);
+  const [followersModalTab, setFollowersModalTab] = useState("followers");
+
+  // Image viewer modal
+  const [viewerPost, setViewerPost] = useState(null);
 
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
@@ -350,14 +359,14 @@ export default function PerfilPublico() {
             <span style={{ fontWeight: "800", fontSize: "18px", color: "var(--atlan-text-primary)" }}>{posts.length}</span>
             <span style={{ fontSize: "13px", color: "var(--atlan-text-muted)", marginLeft: "6px" }}>{lang === "en" ? "Posts" : "Posts"}</span>
           </div>
-          <div>
+          <button onClick={() => { setFollowersModalTab("followers"); setShowFollowersModal(true); }} style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 6px", borderRadius: "8px", transition: "background 0.15s" }}>
             <span style={{ fontWeight: "800", fontSize: "18px", color: "var(--atlan-text-primary)" }}>{targetPerfil.seguidores_count || 0}</span>
             <span style={{ fontSize: "13px", color: "var(--atlan-text-muted)", marginLeft: "6px" }}>{lang === "en" ? "Followers" : "Seguidores"}</span>
-          </div>
-          <div>
+          </button>
+          <button onClick={() => { setFollowersModalTab("following"); setShowFollowersModal(true); }} style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 6px", borderRadius: "8px", transition: "background 0.15s" }}>
             <span style={{ fontWeight: "800", fontSize: "18px", color: "var(--atlan-text-primary)" }}>{targetPerfil.siguiendo_count || 0}</span>
             <span style={{ fontSize: "13px", color: "var(--atlan-text-muted)", marginLeft: "6px" }}>{lang === "en" ? "Following" : "Siguiendo"}</span>
-          </div>
+          </button>
         </div>
 
         {/* Bio */}
@@ -461,14 +470,14 @@ export default function PerfilPublico() {
                   </p>
 
                   {post.imagen_url && (
-                    <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "12px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "12px", border: "1px solid rgba(255,255,255,0.06)", cursor: "pointer" }} onClick={() => setViewerPost(post)}>
                       <img src={post.imagen_url} alt="Post" style={{ width: "100%", maxHeight: "400px", objectFit: "cover", display: "block" }} loading="lazy" />
                     </div>
                   )}
 
                   {post.video_url && (
-                    <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "12px", border: "1px solid rgba(255,255,255,0.06)", background: "#000", position: "relative" }}>
-                      <video src={post.video_url} controls playsInline preload="metadata" style={{ width: "100%", maxHeight: "400px", display: "block" }} />
+                    <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "12px", border: "1px solid rgba(255,255,255,0.06)", background: "#000", position: "relative", cursor: "pointer" }} onClick={() => setViewerPost(post)}>
+                      <video src={post.video_url} controls playsInline preload="metadata" style={{ width: "100%", maxHeight: "400px", display: "block" }} onClick={e => e.stopPropagation()} />
                       <div style={{ position: "absolute", top: "10px", right: "10px", background: "rgba(0,0,0,0.6)", padding: "3px 8px", borderRadius: "6px", fontSize: "10px", fontWeight: "800", color: "#10b981" }}>🎬 Video</div>
                     </div>
                   )}
@@ -505,6 +514,27 @@ export default function PerfilPublico() {
             </div>
           </div>
         </div>
+      )}
+      {/* Followers/Following Modal */}
+      {showFollowersModal && (
+        <FollowersModal
+          userId={userId}
+          session={session}
+          lang={lang}
+          initialTab={followersModalTab}
+          onClose={() => setShowFollowersModal(false)}
+        />
+      )}
+
+      {/* Image Viewer Modal */}
+      {viewerPost && (
+        <ImageViewerModal
+          post={viewerPost}
+          session={session}
+          perfil={myPerfil}
+          lang={lang}
+          onClose={() => setViewerPost(null)}
+        />
       )}
     </div>
   );

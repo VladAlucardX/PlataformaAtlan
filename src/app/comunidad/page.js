@@ -8,6 +8,10 @@ import { uploadMedia } from "@/lib/storage";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import NotificationDropdown from "@/components/ui/NotificationDropdown";
+import ShareDropdown from "@/components/ui/ShareDropdown";
+import ImageViewerModal from "@/components/ui/ImageViewerModal";
+import ChatWidget from "@/components/ui/ChatWidget";
+import FollowersModal from "@/components/ui/FollowersModal";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    COMUNIDAD ATLAN — Red Social
@@ -62,7 +66,13 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
                 )}
                 <span>{perfil?.nombre_completo?.split(" ")[0] || "Mi perfil"}</span>
               </Link>
-              <button onClick={onLogout} style={navStyles.logoutBtn}>🚪</button>
+              <button onClick={onLogout} style={{ ...navStyles.logoutBtn, display: "flex", alignItems: "center", justifyContent: "center" }} title={t("nav.logout")}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+              </button>
             </>
           ) : (
             <>
@@ -99,7 +109,14 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
                 )}
                 <span>{perfil?.nombre_completo || "Mi perfil"}</span>
               </Link>
-              <button onClick={() => { setMenuOpen(false); onLogout(); }} style={navStyles.mobileLogoutBtn}>🚪 {t("nav.logout")}</button>
+              <button onClick={() => { setMenuOpen(false); onLogout(); }} style={{ ...navStyles.mobileLogoutBtn, display: "flex", alignItems: "center", gap: "8px" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span>{t("nav.logout")}</span>
+              </button>
             </>
           ) : (
             <>
@@ -408,7 +425,7 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
 }
 
 // ── POST CARD ─────────────────────────────────────────────────────────────
-function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin }) {
+function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onImageClick, onRepost }) {
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes_count || 0);
   const [showComments, setShowComments] = useState(false);
@@ -544,20 +561,21 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin }) {
 
       {/* Image */}
       {post.imagen_url && (
-        <div style={cardStyles.imageContainer}>
+        <div style={{ ...cardStyles.imageContainer, cursor: "pointer" }} onClick={() => onImageClick && onImageClick(post)}>
           <img src={post.imagen_url} alt="Post" style={cardStyles.image} loading="lazy" />
         </div>
       )}
 
       {/* Video */}
       {post.video_url && (
-        <div style={{ ...cardStyles.imageContainer, background: "#000", position: "relative" }}>
+        <div style={{ ...cardStyles.imageContainer, background: "#000", position: "relative", cursor: "pointer" }} onClick={() => onImageClick && onImageClick(post)}>
           <video
             src={post.video_url}
             controls
             playsInline
             preload="metadata"
             style={{ width: "100%", maxHeight: "480px", display: "block" }}
+            onClick={(e) => e.stopPropagation()}
           />
           <div style={{
             position: "absolute", top: "10px", right: "10px",
@@ -588,6 +606,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin }) {
         <button onClick={handleToggleComments} style={cardStyles.actionBtn}>
           💬 {lang === "en" ? "Comment" : "Comentar"}
         </button>
+        <ShareDropdown post={post} session={session} perfil={perfil} lang={lang} onRequireLogin={onRequireLogin} onRepost={onRepost} />
       </div>
 
       {/* Comments section */}
@@ -747,6 +766,9 @@ export default function ComunidadPage() {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [viewerPost, setViewerPost] = useState(null); // Image viewer modal
+  const [showFollowersModal, setShowFollowersModal] = useState(false);
+  const [followersModalTab, setFollowersModalTab] = useState("followers");
   const loaderRef = useRef(null);
 
   const PAGE_SIZE = 10;
@@ -890,6 +912,10 @@ export default function ComunidadPage() {
     setPosts((prev) => [newPost, ...prev]);
   };
 
+  const handleRepost = (newPost) => {
+    setPosts((prev) => [newPost, ...prev]);
+  };
+
   const handleDeletePost = async (postId) => {
     try {
       await supabase.from("publicaciones").delete().eq("id", postId);
@@ -920,14 +946,14 @@ export default function ComunidadPage() {
                   {perfil.rol === "dueno" ? "🏢 Propietario" : "🧳 Turista"}
                 </p>
                 <div style={{ display: "flex", justifyContent: "center", gap: "24px" }}>
-                  <div style={{ textAlign: "center" }}>
+                  <button onClick={() => { setFollowersModalTab("followers"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px", borderRadius: "8px", transition: "background 0.15s" }}>
                     <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{perfil.seguidores_count || 0}</div>
                     <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Followers" : "Seguidores"}</div>
-                  </div>
-                  <div style={{ textAlign: "center" }}>
+                  </button>
+                  <button onClick={() => { setFollowersModalTab("following"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px", borderRadius: "8px", transition: "background 0.15s" }}>
                     <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{perfil.siguiendo_count || 0}</div>
                     <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Following" : "Siguiendo"}</div>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -1032,6 +1058,8 @@ export default function ComunidadPage() {
                   lang={lang}
                   onDelete={handleDeletePost}
                   onRequireLogin={() => setShowLoginModal(true)}
+                  onImageClick={(p) => setViewerPost(p)}
+                  onRepost={handleRepost}
                 />
               ))}
               <div ref={loaderRef} style={{ padding: "20px", textAlign: "center" }}>
@@ -1141,6 +1169,31 @@ export default function ComunidadPage() {
         />
       )}
       {showLoginModal && <LoginRequiredModal onClose={() => setShowLoginModal(false)} lang={lang} />}
+
+      {/* Image Viewer Modal */}
+      {viewerPost && (
+        <ImageViewerModal
+          post={viewerPost}
+          session={session}
+          perfil={perfil}
+          lang={lang}
+          onClose={() => setViewerPost(null)}
+        />
+      )}
+
+      {/* Followers Modal */}
+      {showFollowersModal && session && (
+        <FollowersModal
+          userId={session.user.id}
+          session={session}
+          lang={lang}
+          initialTab={followersModalTab}
+          onClose={() => setShowFollowersModal(false)}
+        />
+      )}
+
+      {/* Floating Chat Widget */}
+      {session && <ChatWidget session={session} perfil={perfil} lang={lang} />}
     </div>
   );
 }
@@ -1197,8 +1250,8 @@ const navStyles = {
 
 const pageStyles = {
   container: {
-    maxWidth: "1100px", margin: "0 auto", padding: "20px 16px",
-    display: "grid", gridTemplateColumns: "260px 1fr 280px", gap: "20px",
+    width: "100%", maxWidth: "100%", margin: "0", padding: "20px 20px",
+    display: "grid", gridTemplateColumns: "280px 1fr 300px", gap: "28px",
   },
   sidebarLeft: { position: "sticky", top: "80px", alignSelf: "start" },
   feed: { minWidth: 0 },
