@@ -165,38 +165,9 @@ export default function MapaTuristico() {
       directionsPanel.style.display = 'none';
     }
 
-    const fetchPreviewRoute = async () => {
+    const fetchPreviewRoute = () => {
       const [oLng, oLat] = currentPosRef.current;
-      const dLng = selectedPoint.lng;
-      const dLat = selectedPoint.lat;
-      const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`;
-      
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.routes && data.routes.length > 0) {
-          const route = data.routes[0];
-          const coords = route.geometry.coordinates;
-
-          if (mapRef.current && mapRef.current.getSource('preview-route')) {
-            mapRef.current.getSource('preview-route').setData({
-              type: 'Feature',
-              properties: {},
-              geometry: {
-                type: 'LineString',
-                coordinates: coords
-              }
-            });
-          }
-
-          setPreviewRouteInfo({
-            distance: route.distance,
-            duration: route.duration
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching preview route:", err);
-      }
+      actualizarPrevisualizacionRuta(oLng, oLat, selectedPoint.lng, selectedPoint.lat);
     };
 
     // Dar un breve delay para asegurar que el mapa y los estilos estén listos
@@ -930,6 +901,39 @@ export default function MapaTuristico() {
     }
   };
 
+  const actualizarPrevisualizacionRuta = async (oLng, oLat, dLng, dLat) => {
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`;
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.routes && data.routes.length > 0) {
+        const route = data.routes[0];
+        const coords = route.geometry.coordinates;
+
+        if (mapRef.current && mapRef.current.isStyleLoaded()) {
+          const source = mapRef.current.getSource('preview-route');
+          if (source) {
+            source.setData({
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'LineString',
+                coordinates: coords
+              }
+            });
+          }
+        }
+
+        setPreviewRouteInfo({
+          distance: route.distance,
+          duration: route.duration
+        });
+      }
+    } catch (err) {
+      console.error("Error updating preview route:", err);
+    }
+  };
+
   // ─── ACTUALIZACIÓN DE POSICIÓN (GPS real + Demo) ───────────────────────────
   const handlePositionUpdate = (longitude, latitude, bearing = null) => {
     currentPosRef.current = [longitude, latitude];
@@ -966,6 +970,11 @@ export default function MapaTuristico() {
       };
       if (bearing !== null) opts.bearing = bearing;
       mapRef.current.easeTo(opts);
+    }
+
+    // Rediseñar la trayectoria futura en tiempo real si el usuario cambia de ubicación
+    if (selectedPointRef.current && !isNavigatingRef.current) {
+      actualizarPrevisualizacionRuta(longitude, latitude, selectedPointRef.current.lng, selectedPointRef.current.lat);
     }
   };
 
@@ -1351,10 +1360,9 @@ export default function MapaTuristico() {
             'line-cap': 'round'
           },
           paint: {
-            'line-color': '#D4AF37', // Color dorado premium de Atlan
-            'line-width': 5,
-            'line-opacity': 0.85,
-            'line-dasharray': [2, 2.5] // Línea discontinua elegante
+            'line-color': '#8b5cf6', // Color morado premium de Atlan (trayectoria futura)
+            'line-width': 6,
+            'line-opacity': 0.85
           }
         });
       }
