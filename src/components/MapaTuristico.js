@@ -105,6 +105,7 @@ export default function MapaTuristico() {
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [routeInfo, setRouteInfo] = useState(null);
+  const [previewRouteInfo, setPreviewRouteInfo] = useState(null);
 
   const [isOnline, setIsOnline] = useState(true);
 
@@ -134,6 +135,76 @@ export default function MapaTuristico() {
         }, delay);
       });
     }
+  }, [selectedPoint]);
+
+  // Manejar previsualización de ruta y ocultación del panel de direcciones de Mapbox
+  useEffect(() => {
+    const directionsPanel = document.querySelector('.mapboxgl-ctrl-directions');
+    
+    if (!selectedPoint) {
+      setPreviewRouteInfo(null);
+      if (directionsPanel && !isNavigatingRef.current) {
+        directionsPanel.style.display = '';
+      }
+      if (mapRef.current && mapRef.current.isStyleLoaded()) {
+        const source = mapRef.current.getSource('preview-route');
+        if (source) {
+          source.setData({
+            type: 'Feature',
+            geometry: {
+              type: 'LineString',
+              coordinates: []
+            }
+          });
+        }
+      }
+      return;
+    }
+
+    if (directionsPanel) {
+      directionsPanel.style.display = 'none';
+    }
+
+    const fetchPreviewRoute = async () => {
+      const [oLng, oLat] = currentPosRef.current;
+      const dLng = selectedPoint.lng;
+      const dLat = selectedPoint.lat;
+      const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`;
+      
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.routes && data.routes.length > 0) {
+          const route = data.routes[0];
+          const coords = route.geometry.coordinates;
+
+          if (mapRef.current && mapRef.current.getSource('preview-route')) {
+            mapRef.current.getSource('preview-route').setData({
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'LineString',
+                coordinates: coords
+              }
+            });
+          }
+
+          setPreviewRouteInfo({
+            distance: route.distance,
+            duration: route.duration
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching preview route:", err);
+      }
+    };
+
+    // Dar un breve delay para asegurar que el mapa y los estilos estén listos
+    const timer = setTimeout(() => {
+      fetchPreviewRoute();
+    }, 400);
+
+    return () => clearTimeout(timer);
   }, [selectedPoint]);
 
   // --- EFECTOS DE SESIÓN Y DETALLES DEL PUNTO ---
@@ -1257,6 +1328,36 @@ export default function MapaTuristico() {
           mapRef.current.setPaintProperty(id, 'line-width', width);
         }
       });
+
+      // Fuente y Capa de Previsualización de Trayectoria (Trayectoria Futura)
+      if (mapRef.current) {
+        mapRef.current.addSource('preview-route', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            geometry: {
+              type: 'LineString',
+              coordinates: []
+            }
+          }
+        });
+
+        mapRef.current.addLayer({
+          id: 'preview-route-layer',
+          type: 'line',
+          source: 'preview-route',
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+          },
+          paint: {
+            'line-color': '#D4AF37', // Color dorado premium de Atlan
+            'line-width': 5,
+            'line-opacity': 0.85,
+            'line-dasharray': [2, 2.5] // Línea discontinua elegante
+          }
+        });
+      }
     });
 
     // ── Capturar Click en el Mapa (Levantar Punto) ──────────────────────────
@@ -1704,6 +1805,48 @@ export default function MapaTuristico() {
         }}
       >
         <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
+
+        {/* CUADRO FLOTANTE PREVISUALIZACIÓN DE VIAJE (TRAYECTORIA) */}
+        {selectedPoint && previewRouteInfo && (
+          <div style={{
+            position: 'absolute',
+            top: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(10, 15, 28, 0.9)',
+            border: '1.5px solid var(--atlan-gold)',
+            borderRadius: '16px',
+            padding: '10px 18px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '14px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.25)',
+            zIndex: 40,
+            color: 'white',
+            fontFamily: 'var(--font-outfit), sans-serif',
+            backdropFilter: 'blur(10px)',
+            animation: 'fadeIn 0.3s ease',
+            whiteSpace: 'nowrap'
+          }}>
+            <div>
+              <div style={{ fontSize: '9px', color: '#94a3b8', fontWeight: '750', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                {lang === 'en' ? 'Distance' : 'Distancia'}
+              </div>
+              <div style={{ fontSize: '14px', fontWeight: '900', color: 'var(--atlan-gold)', marginTop: '2px' }}>
+                {formatDistanceDisplay(previewRouteInfo.distance)}
+              </div>
+            </div>
+            <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.15)' }} />
+            <div>
+              <div style={{ fontSize: '9px', color: '#94a3b8', fontWeight: '750', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                {lang === 'en' ? 'Est. Time' : 'Tiempo Est.'}
+              </div>
+              <div style={{ fontSize: '14px', fontWeight: '900', color: '#10b981', marginTop: '2px' }}>
+                {formatDurationDisplay(previewRouteInfo.duration)}
+              </div>
+            </div>
+          </div>
+        )}
 
       {/* ─── CABECERA FLOTANTE PREMIUM ─── */}
       {!selectedPoint && (
