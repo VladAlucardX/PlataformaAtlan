@@ -52,6 +52,8 @@ export default function MapaTuristico() {
   const isAddingPointRef = useRef(false);
   const cinematicTimeoutsRef = useRef([]);
   const selectedPointRef = useRef(null);
+  const lastRecalculateTimeRef = useRef(0);
+
 
   // --- ESTADO DE REACT ---
   const [isDemoRunning, setIsDemoRunning] = useState(false);
@@ -935,6 +937,18 @@ export default function MapaTuristico() {
   };
 
   // ─── ACTUALIZACIÓN DE POSICIÓN (GPS real + Demo) ───────────────────────────
+  const calcularDistanciaMinimaALaRuta = (posUsuario, coordenadasRuta) => {
+    if (!coordenadasRuta || coordenadasRuta.length === 0) return 99999;
+    let minDist = 99999;
+    for (let i = 0; i < coordenadasRuta.length; i++) {
+      const dist = calcDistanceMeters(posUsuario, coordenadasRuta[i]);
+      if (dist < minDist) {
+        minDist = dist;
+      }
+    }
+    return minDist;
+  };
+
   const handlePositionUpdate = (longitude, latitude, bearing = null) => {
     currentPosRef.current = [longitude, latitude];
 
@@ -975,6 +989,22 @@ export default function MapaTuristico() {
     // Rediseñar la trayectoria futura en tiempo real si el usuario cambia de ubicación
     if (selectedPointRef.current && !isNavigatingRef.current) {
       actualizarPrevisualizacionRuta(longitude, latitude, selectedPointRef.current.lng, selectedPointRef.current.lat);
+    }
+
+    // Si estamos en viaje (navegación real) y no en demo, verificar si el usuario se desvió para recalcular ruta
+    if (isNavigatingRef.current && !isDemoRunningRef.current && rutaCoordenadasRef.current.length > 0) {
+      const distALaRuta = calcularDistanciaMinimaALaRuta([longitude, latitude], rutaCoordenadasRef.current);
+      const ahora = Date.now();
+
+      if (distALaRuta > 65 && (ahora - lastRecalculateTimeRef.current) > 12000) {
+        lastRecalculateTimeRef.current = ahora;
+        speakInstruction(lang === 'en' ? 'Recalculating route' : 'Recalculando ruta', true);
+        
+        if (directionsRef.current && destinationRef.current) {
+          directionsRef.current.setOrigin([longitude, latitude]);
+          directionsRef.current.setDestination(destinationRef.current);
+        }
+      }
     }
   };
 
