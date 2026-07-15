@@ -926,6 +926,17 @@ export default function MapaTuristico() {
           }
         }
 
+        // Encuadrar la trayectoria en la pantalla para ver inicio (A) y fin (B) automáticamente
+        if (mapRef.current && coords.length > 0) {
+          const bounds = new mapboxgl.LngLatBounds();
+          coords.forEach(coord => bounds.extend(coord));
+          mapRef.current.fitBounds(bounds, {
+            padding: { top: 100, bottom: 100, left: 100, right: 100 },
+            duration: 1200,
+            essential: true
+          });
+        }
+
         setPreviewRouteInfo({
           distance: route.distance,
           duration: route.duration
