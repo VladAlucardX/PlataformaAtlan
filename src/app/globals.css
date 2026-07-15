@@ -809,24 +809,34 @@ a:hover {
 }
 
 .detail-sheet {
-  position: absolute;
-  top: 0;
-  right: 0;
   width: 100%;
-  max-width: 430px;
+  max-width: 40%;
   height: 100vh;
-  background: rgba(10, 15, 28, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+  background: #0a0f1c; /* Fondo sólido oscuro, sin transparencias */
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.4);
   z-index: 30;
   color: white;
   font-family: var(--font-outfit), sans-serif;
   display: flex;
   flex-direction: column;
-  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.map-page-wrapper {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--atlan-bg-primary);
+}
+
+.map-pane {
+  position: relative;
+  height: 100%;
+  transition: flex 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .filter-bar {

@@ -122,6 +122,20 @@ export default function MapaTuristico() {
     }
   }, []);
 
+  // Redimensionar el mapa cuando se abra o cierre el panel de detalles (Split-Screen)
+  useEffect(() => {
+    if (mapRef.current) {
+      const intervals = [50, 150, 300, 450];
+      intervals.forEach(delay => {
+        setTimeout(() => {
+          if (mapRef.current) {
+            mapRef.current.resize();
+          }
+        }, delay);
+      });
+    }
+  }, [selectedPoint]);
+
   // --- EFECTOS DE SESIÓN Y DETALLES DEL PUNTO ---
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -423,6 +437,49 @@ export default function MapaTuristico() {
     } finally {
       setIsSubmittingReview(false);
     }
+  };
+
+  const handleIniciarViaje = (punto) => {
+    const [currLng, currLat] = currentPosRef.current;
+    const isUserInCA = currLng >= -93.0 && currLng <= -77.0 && currLat >= 7.0 && currLat <= 19.0;
+
+    if (!isUserInCA) {
+      alert(lang === 'en'
+        ? 'You are currently outside Central America. Plan your trip and visit us to use live GPS navigation!'
+        : 'Te encuentras fuera de Centroamérica. ¡Planifica tu viaje y visítanos para usar la navegación GPS en vivo!');
+      return;
+    }
+
+    lugarDestinoRef.current = punto.nombre;
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+    }
+    lastSpokenRef.current = '';
+    speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${punto.nombre}.`, true);
+
+    isNavigatingRef.current = true;
+    isInteractionPausedRef.current = false;
+
+    destinationRef.current = [punto.lng, punto.lat];
+    rutaCoordenadasRef.current = [];
+
+    if (directionsRef.current) {
+      directionsRef.current.setOrigin([currLng, currLat]);
+      directionsRef.current.setDestination([punto.lng, punto.lat]);
+    }
+
+    mapRef.current.flyTo({
+      center: [currLng, currLat],
+      zoom: 16.5,
+      pitch: 60,
+      speed: 0.9,
+      curve: 1.1,
+      essential: true
+    });
+
+    // Cerrar la hoja de detalles al iniciar el viaje
+    setSelectedPoint(null);
   };
 
   const isBusinessOpenNow = (horarios) => {
@@ -1463,7 +1520,7 @@ export default function MapaTuristico() {
   };
 
   return (
-    <div className="map-page-container" style={{ width: '100vw', height: '100vh', margin: 0, padding: 0, position: 'relative', overflow: 'hidden' }}>
+    <div className="map-page-wrapper" style={{ position: 'relative' }}>
       {/* Indicador Offline */}
       {!isOnline && (
         <div style={{
@@ -1622,7 +1679,16 @@ export default function MapaTuristico() {
         </div>
       </div>
 
-      <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
+      {/* PANEL IZQUIERDO: Mapa y Elementos Flotantes */}
+      <div 
+        className="map-pane"
+        style={{
+          flex: typeof window !== 'undefined' && window.innerWidth > 768 && selectedPoint 
+            ? '1 1 60%' 
+            : '1 1 100%'
+        }}
+      >
+        <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
 
       {/* ─── CABECERA FLOTANTE PREMIUM ─── */}
       <div className="map-header" style={{
@@ -2078,6 +2144,8 @@ export default function MapaTuristico() {
         )}
       </button>
 
+      </div>
+
       {/* ─── PANEL LATERAL DE DETALLES PREMIUM (DETAIL SHEET) ─── */}
       {selectedPoint && (
         <div className="detail-sheet">
@@ -2208,6 +2276,44 @@ export default function MapaTuristico() {
             scrollbarWidth: 'thin',
             scrollbarColor: 'rgba(255,255,255,0.1) transparent'
           }}>
+            {/* BOTÓN INICIAR VIAJE */}
+            <button
+              onClick={() => handleIniciarViaje(selectedPoint)}
+              style={{
+                width: '100%',
+                padding: '14px 20px',
+                background: 'linear-gradient(135deg, #D4AF37 0%, #10b981 100%)',
+                color: '#0a0f1c',
+                border: 'none',
+                borderRadius: '14px',
+                fontWeight: '900',
+                fontSize: '14.5px',
+                letterSpacing: '0.5px',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '10px',
+                boxShadow: '0 8px 24px rgba(16, 185, 129, 0.25), 0 0 15px rgba(212, 175, 55, 0.2)',
+                transition: 'all 0.25s ease',
+                textTransform: 'uppercase',
+                marginBottom: '4px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 12px 28px rgba(16, 185, 129, 0.35), 0 0 20px rgba(212, 175, 55, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(16, 185, 129, 0.25), 0 0 15px rgba(212, 175, 55, 0.2)';
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="3 11 22 2 13 21 11 13 3 11" />
+              </svg>
+              {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
+            </button>
+
             {/* Banner Informativo si está en verificación */}
             {selectedPoint.estado === 'en_verificacion' && (
               <div style={{
