@@ -917,6 +917,21 @@ export default function MapaTuristico() {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   };
 
+  const limpiarInstruccion = (texto) => {
+    if (!texto) return "";
+    let t = texto;
+    t = t.replace(/\b(\d+)\s*k\b/gi, "$1 km");
+    t = t.replace(/\b(\d+)\s*km\b/gi, "$1 km");
+    t = t.replace(/en dirección al? (oeste|este|norte|sur)/gi, "");
+    t = t.replace(/hacia el (oeste|este|norte|sur)/gi, "");
+    t = t.replace(/vuelta al oeste/gi, "da vuelta a la derecha");
+    t = t.replace(/vuelta al este/gi, "da vuelta a la izquierda");
+    t = t.replace(/vuelta al norte/gi, "siga recto");
+    t = t.replace(/vuelta al sur/gi, "siga recto");
+    t = t.replace(/\s+/g, " ").trim();
+    return t;
+  };
+
   const buildManeuverList = (steps) => {
     const list = [];
     steps.forEach((step) => {
@@ -925,7 +940,7 @@ export default function MapaTuristico() {
       list.push({
         lng: mLng,
         lat: mLat,
-        instruction: step.maneuver.instruction,
+        instruction: limpiarInstruccion(step.maneuver.instruction),
         segmentDist: step.distance || 0,
         announcedFar: false,
         announcedMid: false,
@@ -1684,14 +1699,15 @@ export default function MapaTuristico() {
         className="map-pane"
         style={{
           flex: typeof window !== 'undefined' && window.innerWidth > 768 && selectedPoint 
-            ? '1 1 60%' 
+            ? '1 1 50%' 
             : '1 1 100%'
         }}
       >
         <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
 
       {/* ─── CABECERA FLOTANTE PREMIUM ─── */}
-      <div className="map-header" style={{
+      {!selectedPoint && (
+        <div className="map-header" style={{
         position: 'absolute',
         top: '20px',
         left: '50%',
@@ -1859,6 +1875,7 @@ export default function MapaTuristico() {
           <LanguageToggle variant="pill" />
         </div>
       </div>
+      )}
 
       {/* ─── BANNER EXPLICATIVO MODO AGREGAR PUNTO ─── */}
       {isAddingPoint && (
@@ -1885,7 +1902,8 @@ export default function MapaTuristico() {
       )}
 
       {/* ─── PANEL HORIZONTAL DE FILTROS ─── */}
-      <div className="filter-bar">
+      {!selectedPoint && !routeInfo && !isDemoRunning && (
+        <div className="filter-bar">
         {/* Píldora "Todas" */}
         <button
           onClick={() => aplicarFiltro(null)}
@@ -1935,6 +1953,7 @@ export default function MapaTuristico() {
           );
         })}
       </div>
+      )}
 
       {/* ─── MODAL PREMIUM DE LEVANTAR PUNTO ─── */}
       {showAddModal && tempPointCoords && (
@@ -2045,9 +2064,10 @@ export default function MapaTuristico() {
       )}
 
       {/* Botón 🚗 Demo */}
-      <button
-        className="btn-demo"
-        onClick={iniciarSimulacionDemo}
+      {!selectedPoint && (
+        <button
+          className="btn-demo"
+          onClick={iniciarSimulacionDemo}
         style={{
           position: 'absolute',
           bottom: '100px',
@@ -2068,9 +2088,10 @@ export default function MapaTuristico() {
       >
         🚗 {isDemoRunning ? t('map.demoStop') : t('map.demo')}
       </button>
+      )}
 
       {/* Botón Volver a centrar (Waze-style) */}
-      {showRecenterBtn && (
+      {!selectedPoint && showRecenterBtn && (
         <button
           onClick={handleRecenter}
           style={{
@@ -2106,9 +2127,10 @@ export default function MapaTuristico() {
       )}
 
       {/* Botón Silenciar / Voz */}
-      <button
-        onClick={toggleMute}
-        title={isMuted ? t('map.unmute') : t('map.mute')}
+      {!selectedPoint && (
+        <button
+          onClick={toggleMute}
+          title={isMuted ? t('map.unmute') : t('map.mute')}
         style={{
           position: 'absolute',
           bottom: '30px',
@@ -2143,6 +2165,7 @@ export default function MapaTuristico() {
           </svg>
         )}
       </button>
+      )}
 
       </div>
 
@@ -2754,15 +2777,15 @@ export default function MapaTuristico() {
           background: 'rgba(10, 15, 28, 0.85)',
           backdropFilter: 'blur(20px)',
           border: '1px solid rgba(255, 255, 255, 0.1)',
-          borderRadius: '24px',
-          padding: '16px 20px',
-          width: '280px',
+          borderRadius: '16px',
+          padding: '10px 14px',
+          width: '220px',
           boxShadow: '0 12px 40px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.15)',
           zIndex: 15,
           color: 'white',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '11px', fontWeight: '800', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            <span style={{ fontSize: '10px', fontWeight: '800', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
               🚗 {lang === 'en' ? 'Active Route' : 'Ruta Activa'}
             </span>
             <button
@@ -2770,33 +2793,33 @@ export default function MapaTuristico() {
                 if (directionsRef.current) directionsRef.current.clean();
                 setRouteInfo(null);
               }}
-              style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' }}
+              style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}
             >
               ✕
             </button>
           </div>
-          <div style={{ fontSize: '15px', fontWeight: '800', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '10px' }}>
+          <div style={{ fontSize: '13px', fontWeight: '800', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '10px' }}>
             {routeInfo.destinationName}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
             <div>
-              <div style={{ fontSize: '11px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>
+              <div style={{ fontSize: '9.5px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>
                 {lang === 'en' ? 'Duration' : 'Tiempo'}
               </div>
-              <div style={{ fontSize: '20px', fontWeight: '900', color: '#10b981' }}>
+              <div style={{ fontSize: '16px', fontWeight: '900', color: '#10b981' }}>
                 {formatDurationDisplay(routeInfo.duration)}
               </div>
             </div>
             <div>
-              <div style={{ fontSize: '11px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>
+              <div style={{ fontSize: '9.5px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>
                 {lang === 'en' ? 'Distance' : 'Distancia'}
               </div>
-              <div style={{ fontSize: '20px', fontWeight: '900', color: 'var(--atlan-gold)' }}>
+              <div style={{ fontSize: '16px', fontWeight: '900', color: 'var(--atlan-gold)' }}>
                 {formatDistanceDisplay(routeInfo.distance)}
               </div>
             </div>
           </div>
-          <div style={{ marginTop: '10px', fontSize: '12px', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '8px' }}>
+          <div style={{ marginTop: '8px', fontSize: '11px', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '6px' }}>
             <span>{lang === 'en' ? 'Arrival ETA:' : 'Llegada (ETA):'}</span>
             <span style={{ fontWeight: '800', color: 'white' }}>{routeInfo.eta}</span>
           </div>

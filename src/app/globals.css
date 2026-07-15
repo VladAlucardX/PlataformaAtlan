@@ -810,7 +810,7 @@ a:hover {
 
 .detail-sheet {
   width: 100%;
-  max-width: 40%;
+  max-width: 50%;
   height: 100vh;
   background: #0a0f1c; /* Fondo sólido oscuro, sin transparencias */
   border-left: 1px solid rgba(255, 255, 255, 0.08);
