@@ -1165,17 +1165,17 @@ export default function DashboardPage() {
                           {!logoUrl && "🏢"}
                         </div>
                         <label style={{
-                          display: "inline-block",
-                          padding: "6px 12px",
-                          background: "rgba(20, 109, 158, 0.05)",
-                          border: "1px solid rgba(20, 109, 158, 0.12)",
-                          borderRadius: "8px",
-                          fontSize: "11px",
-                          fontWeight: "700",
+                          padding: "9px 16px",
+                          background: "rgba(20, 109, 158, 0.08)",
+                          border: "1.5px solid rgba(20, 109, 158, 0.18)",
+                          borderRadius: "10px",
+                          fontSize: "12.5px",
+                          fontWeight: "800",
                           cursor: "pointer",
-                          color: "white"
+                          color: "#146D9E",
+                          transition: "all 0.2s"
                         }}>
-                          {uploadingLogo ? "..." : (lang === "en" ? "Upload Logo" : "Subir Logo")}
+                          {uploadingLogo ? "..." : (lang === "en" ? "📷 Upload Logo" : "📷 Subir Logo")}
                           <input type="file" accept="image/*" onChange={handleLogoUpload} style={{ display: "none" }} />
                         </label>
                       </div>
@@ -1527,14 +1527,15 @@ export default function DashboardPage() {
                       </div>
                     )}
                     <label style={{
-                      padding: "8px 14px",
-                      background: "rgba(20, 109, 158, 0.05)",
-                      border: "1px solid rgba(20, 109, 158, 0.12)",
-                      borderRadius: "8px",
-                      fontSize: "12px",
-                      fontWeight: "700",
+                      padding: "9px 16px",
+                      background: "rgba(20, 109, 158, 0.08)",
+                      border: "1.5px solid rgba(20, 109, 158, 0.18)",
+                      borderRadius: "10px",
+                      fontSize: "12.5px",
+                      fontWeight: "800",
                       cursor: "pointer",
-                      color: "white"
+                      color: "#146D9E",
+                      transition: "all 0.2s"
                     }}>
                       {uploadingPlatoFoto ? "..." : (lang === "en" ? "📸 Add Dish Photo" : "📸 Agregar Foto del Plato")}
                       <input type="file" accept="image/*" onChange={handlePlatoFotoUpload} style={{ display: "none" }} />
