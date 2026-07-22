@@ -85,27 +85,30 @@ function FeaturesSection() {
       icon: "🗺️",
       title: t("landing.features.gps.title"),
       description: t("landing.features.gps.description"),
-      gradient: "linear-gradient(135deg, rgba(20,109,158,0.08), rgba(26,138,199,0.08))",
-      borderColor: "rgba(20, 109, 158, 0.15)",
+      bg: "linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)",
+      border: "1.5px solid #BAE6FD",
+      textColor: "#0369A1",
     },
     {
       icon: "📍",
       title: t("landing.features.community.title"),
       description: t("landing.features.community.description"),
-      gradient: "linear-gradient(135deg, rgba(23,170,74,0.08), rgba(31,204,92,0.08))",
-      borderColor: "rgba(23, 170, 74, 0.15)",
+      bg: "linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)",
+      border: "1.5px solid #A7F3D0",
+      textColor: "#047857",
     },
     {
       icon: "📅",
       title: t("landing.features.reservations.title"),
       description: t("landing.features.reservations.description"),
-      gradient: "linear-gradient(135deg, rgba(255,215,0,0.10), rgba(230,194,0,0.08))",
-      borderColor: "rgba(255, 215, 0, 0.25)",
+      bg: "linear-gradient(135deg, #FFFDF0 0%, #FEF9C3 100%)",
+      border: "1.5px solid #FDE047",
+      textColor: "#854D0E",
     },
   ];
 
   return (
-    <section style={{ ...styles.section, background: "linear-gradient(180deg, #F0F9FF 0%, #ECFDF5 100%)" }}>
+    <section style={{ ...styles.section, background: "linear-gradient(180deg, #F8FAFC 0%, #F0F9FF 100%)" }}>
       <div style={styles.sectionInner}>
         <div style={styles.sectionHeader} className="animate-fade-in-up">
           <h2 style={styles.sectionTitle}>{t("landing.features.title")}</h2>
@@ -116,17 +119,45 @@ function FeaturesSection() {
           {features.map((feature, i) => (
             <div
               key={i}
-              className="animate-fade-in-up"
+              className="animate-fade-in-up clay-card"
               style={{
                 ...styles.featureCard,
-                background: feature.gradient,
-                borderColor: feature.borderColor,
+                background: feature.bg,
+                border: feature.border,
                 animationDelay: `${i * 0.15}s`,
+                boxShadow: "0 10px 25px -4px rgba(20, 109, 158, 0.08), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
+                padding: "32px 24px",
+                borderRadius: "24px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                gap: "16px",
+                transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                cursor: "pointer"
               }}
             >
-              <div style={styles.featureIcon}>{feature.icon}</div>
-              <h3 style={styles.featureTitle}>{feature.title}</h3>
-              <p style={styles.featureDesc}>{feature.description}</p>
+              <div style={{
+                width: "56px",
+                height: "56px",
+                borderRadius: "18px",
+                background: "rgba(255, 255, 255, 0.85)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.06), inset 1px 1px 2px rgba(255,255,255,1)",
+                fontSize: "28px",
+                flexShrink: 0
+              }}>
+                {feature.icon}
+              </div>
+              <div>
+                <h3 style={{ fontSize: "20px", fontWeight: "850", color: feature.textColor, marginBottom: "8px" }}>
+                  {feature.title}
+                </h3>
+                <p style={{ fontSize: "14px", lineHeight: "1.6", color: "var(--atlan-text-secondary)", margin: 0 }}>
+                  {feature.description}
+                </p>
+              </div>
             </div>
           ))}
         </div>
