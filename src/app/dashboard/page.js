@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import NotificationDropdown from "@/components/ui/NotificationDropdown";
+import Navbar from "@/components/ui/Navbar";
 import { uploadMedia } from "@/lib/storage";
 
 export default function DashboardPage() {
@@ -672,40 +673,7 @@ export default function DashboardPage() {
 
   return (
     <div style={styles.container} className="dashboard-container">
-      <header className="atlan-navbar-header" style={{ width: "100%", padding: "0 32px", height: "72px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        {/* Logo Far Left */}
-        <Link href="/" style={styles.logo}>
-          <img src="/mapaicono.png" alt="Logo" style={{ width: "30px", height: "30px", objectFit: "contain", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }} />
-          <span style={styles.logoText} className="logoText">atlan</span>
-        </Link>
-
-        {/* Center Nav Pills */}
-        <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", gap: "10px" }} className="hide-mobile">
-          <Link href="/" className="nav-pill-link">🏠 {lang === "en" ? "Home" : "Inicio"}</Link>
-          <Link href="/mapa" className="nav-pill-link">🗺️ {lang === "en" ? "Map" : "Mapa"}</Link>
-          <Link href="/comunidad" className="nav-pill-link">👥 {lang === "en" ? "Community" : "Comunidad"}</Link>
-          <LanguageToggle variant="pill" />
-          {session && <NotificationDropdown session={session} />}
-        </div>
-
-        {/* Far Right Actions */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <Link href="/dashboard" className="nav-pill-link active">
-            {perfil?.avatar_url ? (
-              <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
-            ) : "💼"}
-            <span>{perfil?.nombre_completo || perfil?.email?.split("@")[0] || (lang === "en" ? "Owner Panel" : "Panel Propietario")}</span>
-          </Link>
-          <button onClick={handleLogout} style={styles.logoutBtn} title={lang === "en" ? "Logout" : "Cerrar Sesión"}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
-            <span>{lang === "en" ? "Logout" : "Cerrar Sesión"}</span>
-          </button>
-        </div>
-      </header>
+      <Navbar activePage="dashboard" session={session} perfil={perfil} onLogout={handleLogout} />
 
       {/* CASO A: EL DUEÑO NO TIENE NEGOCIOS */}
       {misNegocios.length === 0 ? (

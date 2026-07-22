@@ -12,6 +12,7 @@ import ShareDropdown from "@/components/ui/ShareDropdown";
 import ImageViewerModal from "@/components/ui/ImageViewerModal";
 import ChatWidget from "@/components/ui/ChatWidget";
 import FollowersModal from "@/components/ui/FollowersModal";
+import Navbar from "@/components/ui/Navbar";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    COMUNIDAD ATLAN — Red Social
@@ -30,106 +31,6 @@ function timeAgo(dateStr, lang) {
   if (diffMin < 60) return lang === "en" ? `${diffMin}m ago` : `hace ${diffMin}m`;
   if (diffHr < 24) return lang === "en" ? `${diffHr}h ago` : `hace ${diffHr}h`;
   return lang === "en" ? `${diffDay}d ago` : `hace ${diffDay}d`;
-}
-
-// ── NAVBAR ────────────────────────────────────────────────────────────────
-function ComunidadNavbar({ session, perfil, onLogout }) {
-  const { t, lang } = useTranslation();
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  return (
-    <nav className="atlan-navbar-header">
-      <div style={navStyles.navInner}>
-        <Link href="/" style={navStyles.logo}>
-          <img src="/mapaicono.png" alt="Logo" style={{ width: "30px", height: "30px", objectFit: "contain", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }} />
-          <span style={{ fontSize: "25px", fontWeight: "900", color: "#FFD700" }} className="logoText">atlan</span>
-        </Link>
-
-        <div style={navStyles.navCenter}>
-          <Link href="/" className="nav-pill-link">🏠 {lang === "en" ? "Home" : "Inicio"}</Link>
-          <Link href="/mapa" className="nav-pill-link">🗺️ {t("nav.map")}</Link>
-          <Link href="/comunidad" className="nav-pill-link active">
-            👥 {t("social.community")}
-          </Link>
-          {session && <Link href="/chat" className="nav-pill-link">💬 {t("chat.title")}</Link>}
-          <LanguageToggle variant="pill" />
-          {session && <NotificationDropdown session={session} />}
-        </div>
-
-        <div style={navStyles.navRight} className="hide-mobile">
-          {session ? (
-            <>
-              <Link href={perfil?.rol === "dueno" || perfil?.rol === "admin" ? "/dashboard" : "/perfil"} className="nav-pill-link">
-                {perfil?.avatar_url ? (
-                  <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
-                ) : (
-                  perfil?.rol === "dueno" || perfil?.rol === "admin" ? "💼" : "👤"
-                )}
-                <span>{perfil?.nombre_completo || perfil?.email?.split("@")[0] || "Mi perfil"}</span>
-              </Link>
-              <button onClick={onLogout} style={navStyles.logoutBtn} title={t("nav.logout") || "Cerrar Sesión"}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-                <span>{t("nav.logout") || "Cerrar Sesión"}</span>
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="nav-pill-link">{t("nav.login")}</Link>
-              <Link href="/registro" className="btn-primary" style={{ padding: "8px 20px", fontSize: "13px" }}>{t("nav.register")}</Link>
-            </>
-          )}
-        </div>
-
-        {/* Mobile hamburger */}
-        <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          {session && <NotificationDropdown session={session} />}
-          <LanguageToggle variant="icon" />
-          <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu" style={navStyles.hamburger}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              {menuOpen ? <path d="M6 6l12 12M6 18L18 6" /> : (<><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></>)}
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {menuOpen && (
-        <div style={navStyles.mobileMenu} className="animate-fade-in-down">
-          <Link href="/mapa" style={navStyles.mobileLink} onClick={() => setMenuOpen(false)}>🗺️ {t("nav.map")}</Link>
-          <Link href="/comunidad" style={{ ...navStyles.mobileLink, color: "var(--atlan-gold)" }} onClick={() => setMenuOpen(false)}>👥 {t("social.community")}</Link>
-          {session && <Link href="/chat" style={navStyles.mobileLink} onClick={() => setMenuOpen(false)}>💬 {t("chat.title")}</Link>}
-          {session ? (
-            <>
-              <Link href={perfil?.rol === "dueno" || perfil?.rol === "admin" ? "/dashboard" : "/perfil"} style={{ ...navStyles.mobileLink, display: "flex", alignItems: "center", gap: "8px" }} onClick={() => setMenuOpen(false)}>
-                {perfil?.avatar_url ? (
-                  <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
-                ) : (
-                  perfil?.rol === "dueno" || perfil?.rol === "admin" ? "💼" : "👤"
-                )}
-                <span>{perfil?.nombre_completo || "Mi perfil"}</span>
-              </Link>
-              <button onClick={() => { setMenuOpen(false); onLogout(); }} style={{ ...navStyles.mobileLogoutBtn, display: "flex", alignItems: "center", gap: "8px" }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-                <span>{t("nav.logout")}</span>
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/login" style={navStyles.mobileLink} onClick={() => setMenuOpen(false)}>🔑 {t("nav.login")}</Link>
-              <Link href="/registro" className="btn-primary" style={{ width: "100%", textAlign: "center", padding: "14px" }} onClick={() => setMenuOpen(false)}>✨ {t("nav.register")}</Link>
-            </>
-          )}
-        </div>
-      )}
-    </nav>
-  );
 }
 
 // ── MODAL: LOGIN REQUERIDO ────────────────────────────────────────────────
@@ -927,7 +828,7 @@ export default function ComunidadPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
-      <ComunidadNavbar session={session} perfil={perfil} onLogout={handleLogout} />
+      <Navbar activePage="comunidad" session={session} perfil={perfil} onLogout={handleLogout} />
 
       {/* Main Content */}
       <div style={pageStyles.container}>

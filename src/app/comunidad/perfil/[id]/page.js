@@ -9,6 +9,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import FollowersModal from "@/components/ui/FollowersModal";
 import ImageViewerModal from "@/components/ui/ImageViewerModal";
+import Navbar from "@/components/ui/Navbar";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    PERFIL PÚBLICO — Comunidad Atlan
@@ -238,21 +239,7 @@ export default function PerfilPublico() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
       {/* Nav */}
-      <nav className="atlan-navbar-header">
-        <div style={{ width: "100%", padding: "0 32px", height: "72px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
-            <img src="/mapaicono.png" alt="Logo" style={{ width: "30px", height: "30px", objectFit: "contain", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }} />
-            <span className="logoText" style={{ fontSize: "25px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
-          </Link>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <Link href="/" className="nav-pill-link">🏠 {lang === "en" ? "Home" : "Inicio"}</Link>
-            <Link href="/comunidad" className="nav-pill-link">
-              👥 {lang === "en" ? "Community" : "Comunidad"}
-            </Link>
-            <LanguageToggle variant="pill" />
-          </div>
-        </div>
-      </nav>
+      <Navbar activePage="comunidad" session={session} perfil={mePerfil} />
 
       {/* Profile Header */}
       <div style={{ maxWidth: "800px", margin: "0 auto", padding: "0 24px" }}>

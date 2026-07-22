@@ -5,181 +5,13 @@ import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import NotificationDropdown from "@/components/ui/NotificationDropdown";
+import Navbar from "@/components/ui/Navbar";
 import VideoIntro from "@/components/VideoIntro";
 import { supabase } from "@/lib/supabase";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    LANDING PAGE — Plataforma Atlan
    ═══════════════════════════════════════════════════════════════════════════ */
-
-// ── NAVBAR ─────────────────────────────────────────────────────────────────
-function Navbar({ session, perfil, handleLogout }) {
-  const { t } = useTranslation();
-  const [menuOpen, setMenuOpen] = React.useState(false);
-
-  return (
-    <nav className="atlan-navbar-header">
-      <div style={styles.navInner}>
-        {/* Logo at far left */}
-        <Link href="/" style={styles.logo}>
-          <img
-            src="/mapaicono.png"
-            alt="Logo"
-            style={{
-              width: "30px",
-              height: "30px",
-              objectFit: "contain",
-              filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))"
-            }}
-          />
-          <span className="logoText" style={{ fontSize: "25px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
-        </Link>
-
-        {/* Center Nav Pills */}
-        <div style={styles.navCenterPills} className="hide-mobile">
-          <Link href="/" className="nav-pill-link active">
-            🏠 {t("nav.home") || "Inicio"}
-          </Link>
-          <Link href="/mapa" className="nav-pill-link">
-            🗺️ {t("nav.map")}
-          </Link>
-          <Link href="/comunidad" className="nav-pill-link">
-            👥 {t("social.community")}
-          </Link>
-          {session && (
-            <Link href="/chat" className="nav-pill-link">
-              💬 {t("chat.title")}
-            </Link>
-          )}
-          <LanguageToggle variant="pill" />
-          {session && <NotificationDropdown session={session} />}
-        </div>
-
-        {/* Right Actions at far right */}
-        <div style={styles.navRightActions} className="hide-mobile">
-          {session ? (
-            <>
-              {perfil?.rol === "dueno" || perfil?.rol === "admin" ? (
-                <Link href="/dashboard" className="nav-pill-link">
-                  {perfil?.avatar_url ? (
-                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
-                  ) : "💼"}
-                  <span>{perfil?.nombre_completo || perfil?.email?.split("@")[0] || t("nav.dashboard")}</span>
-                </Link>
-              ) : (
-                <Link href="/perfil" className="nav-pill-link">
-                  {perfil?.avatar_url ? (
-                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
-                  ) : "👤"}
-                  <span>{perfil?.nombre_completo || perfil?.email?.split("@")[0] || t("nav.myReservations")}</span>
-                </Link>
-              )}
-              <button onClick={handleLogout} style={styles.logoutBtn} title={t("nav.logout") || "Cerrar Sesión"}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-                <span>{t("nav.logout") || "Cerrar Sesión"}</span>
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="nav-pill-link">
-                {t("nav.login")}
-              </Link>
-              <Link href="/registro" className="btn-primary" style={{ padding: "8px 20px", fontSize: "13.5px" }}>
-                {t("nav.register")}
-              </Link>
-            </>
-          )}
-        </div>
-
-        {/* Mobile hamburger */}
-        <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          {session && <NotificationDropdown session={session} />}
-          <LanguageToggle variant="icon" />
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Menu"
-            style={styles.hamburger}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              {menuOpen ? (
-                <path d="M6 6l12 12M6 18L18 6" />
-              ) : (
-                <>
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="3" y1="12" x2="21" y2="12" />
-                  <line x1="3" y1="18" x2="21" y2="18" />
-                </>
-              )}
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div style={styles.mobileMenu} className="animate-fade-in-down">
-          <Link href="/mapa" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
-            🗺️ {t("nav.map")}
-          </Link>
-          <Link href="/comunidad" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
-            👥 {t("social.community")}
-          </Link>
-          {session && (
-            <Link href="/chat" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
-              💬 {t("chat.title")}
-            </Link>
-          )}
- 
-          {session ? (
-            <>
-              {perfil?.rol === "dueno" || perfil?.rol === "admin" ? (
-                <Link href="/dashboard" style={{ ...styles.mobileLink, display: "flex", alignItems: "center", gap: "8px" }} onClick={() => setMenuOpen(false)}>
-                  {perfil?.avatar_url ? (
-                    <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
-                  ) : "💼"}
-                  <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.dashboard")}</span>
-                </Link>
-              ) : (
-                <Link href="/perfil" style={{ ...styles.mobileLink, display: "flex", alignItems: "center", gap: "8px" }} onClick={() => setMenuOpen(false)}>
-                  {perfil?.avatar_url ? (
-                    <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
-                  ) : "👤"}
-                  <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.myReservations")}</span>
-                </Link>
-              )}
-              <button onClick={() => { setMenuOpen(false); handleLogout(); }} style={{ ...styles.mobileLogoutBtn, display: "flex", alignItems: "center", gap: "8px" }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-                <span>{t("nav.logout")}</span>
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/login" style={styles.mobileLink} onClick={() => setMenuOpen(false)}>
-                🔑 {t("nav.login")}
-              </Link>
-              <Link
-                href="/registro"
-                className="btn-primary"
-                style={{ width: "100%", textAlign: "center", padding: "14px" }}
-                onClick={() => setMenuOpen(false)}
-              >
-                ✨ {t("nav.register")}
-              </Link>
-            </>
-          )}
-        </div>
-      )}
-    </nav>
-  );
-}
 
 // ── HERO SECTION ───────────────────────────────────────────────────────────
 function HeroSection({ perfil }) {
@@ -557,7 +389,7 @@ export default function Home() {
           transition: "opacity 0.8s ease 0.2s",
         }}
       >
-        <Navbar session={session} perfil={perfil} handleLogout={handleLogout} />
+        <Navbar activePage="inicio" session={session} perfil={perfil} onLogout={handleLogout} />
         <HeroSection perfil={perfil} />
         <FeaturesSection />
         <CategoriesSection />
