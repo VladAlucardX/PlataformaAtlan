@@ -479,13 +479,20 @@ export default function DashboardPage() {
         );
         return;
       } else if (claimTargetPunto) {
+        const isObj = claimTargetPunto && typeof claimTargetPunto === "object";
+        const nombreNegocio = isObj && claimTargetPunto.nombre 
+          ? claimTargetPunto.nombre 
+          : (solicitanteNombre ? `Negocio de ${solicitanteNombre}` : "Nuevo Negocio");
+        const tipoNegocio = isObj && claimTargetPunto.categoria ? claimTargetPunto.categoria : "otro";
+        const descNegocio = isObj && claimTargetPunto.descripcion ? claimTargetPunto.descripcion : "";
+
         const { data: nuevoNegocio, error: negocioError } = await supabase
           .from("negocios")
           .insert([{
             dueno_id: user.id,
-            nombre: claimTargetPunto.nombre,
-            descripcion: claimTargetPunto.descripcion,
-            tipo: claimTargetPunto.categoria || "otro",
+            nombre: nombreNegocio,
+            descripcion: descNegocio,
+            tipo: tipoNegocio,
             telefono: solicitanteTelefono,
             whatsapp: solicitanteTelefono,
             servicios: { has_menu: false, has_hours: false, has_lodging: false, has_transport: false },
@@ -495,17 +502,34 @@ export default function DashboardPage() {
           .select()
           .single();
 
-        if (negocioError) throw negocioError;
+        if (negocioError) {
+          console.error("Error al insertar negocio:", negocioError);
+          throw negocioError;
+        }
 
-        const { error: puntoError } = await supabase
-          .from("puntos")
-          .update({
-            negocio_id: nuevoNegocio.id,
-            estado: "en_verificacion"
-          })
-          .eq("id", claimTargetPunto.id);
+        if (isObj && claimTargetPunto.id) {
+          const { error: puntoError } = await supabase
+            .from("puntos")
+            .update({
+              negocio_id: nuevoNegocio.id,
+              estado: "en_verificacion"
+            })
+            .eq("id", claimTargetPunto.id);
 
-        if (puntoError) throw puntoError;
+          if (puntoError) console.warn("Error al actualizar punto:", puntoError);
+        } else {
+          const { error: puntoError } = await supabase
+            .from("puntos")
+            .insert([{
+              negocio_id: nuevoNegocio.id,
+              nombre: nuevoNegocio.nombre,
+              categoria: nuevoNegocio.tipo || "otro",
+              estado: "en_verificacion",
+              nombre_creador: perfil?.nombre_completo || solicitanteNombre || "Propietario"
+            }]);
+
+          if (puntoError) console.warn("Error al crear punto:", puntoError);
+        }
 
         setShowClaimModal(false);
         showToast(lang === "en" 
@@ -514,8 +538,8 @@ export default function DashboardPage() {
         await loadNegocioData(user.id);
       }
     } catch (err) {
-      console.error("Error submitting claim:", err);
-      showToast(lang === "en" ? "Error submitting claim." : "Error al enviar la solicitud de reclamo.", "error");
+      console.error("Error submitting claim:", err?.message || err);
+      showToast(lang === "en" ? "Error submitting claim." : `Error al enviar la solicitud: ${err?.message || "Inténtelo de nuevo"}`, "error");
     } finally {
       setIsClaiming(false);
     }
