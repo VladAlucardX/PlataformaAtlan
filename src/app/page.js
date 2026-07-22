@@ -71,24 +71,6 @@ function HeroSection({ perfil }) {
             <span>{t("landing.hero.ctaSecondary")}</span>
           </Link>
         </div>
-
-        {/* Stats */}
-        <div style={styles.heroStats} className="animate-fade-in-up delay-300">
-          <div style={styles.stat}>
-            <span style={styles.statNumber}>3+</span>
-            <span style={styles.statLabel}>{t("landing.featured.subtitle").split(" ")[0]}</span>
-          </div>
-          <div style={styles.statDivider} />
-          <div style={styles.stat}>
-            <span style={styles.statNumber}>GPS</span>
-            <span style={styles.statLabel}>{t("landing.features.gps.title").split(" ").slice(0, 2).join(" ")}</span>
-          </div>
-          <div style={styles.statDivider} />
-          <div style={styles.stat}>
-            <span style={styles.statNumber}>24/7</span>
-            <span style={styles.statLabel}>{t("landing.features.reservations.title").split(" ").slice(0, 2).join(" ")}</span>
-          </div>
-        </div>
       </div>
     </section>
   );
