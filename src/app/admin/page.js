@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from '../../hooks/useTranslation';
 import LanguageToggle from '../../components/ui/LanguageToggle';
+import Navbar from '../../components/ui/Navbar';
 
 export default function AdminDashboard() {
   const { t, lang } = useTranslation();
@@ -13,6 +14,8 @@ export default function AdminDashboard() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loadingAuth, setLoadingAuth] = useState(true);
   const [loadingData, setLoadingData] = useState(true);
+  const [userSession, setUserSession] = useState(null);
+  const [userPerfil, setUserPerfil] = useState(null);
 
   // Datos
   const [reclamos, setReclamos] = useState([]);
@@ -40,10 +43,11 @@ export default function AdminDashboard() {
           router.replace('/login');
           return;
         }
+        setUserSession(session);
 
         const { data: profile, error } = await supabase
           .from('perfiles')
-          .select('rol')
+          .select('*')
           .eq('id', session.user.id)
           .single();
 
@@ -53,6 +57,7 @@ export default function AdminDashboard() {
           return;
         }
 
+        setUserPerfil(profile);
         setIsAdmin(true);
       } catch (err) {
         console.error('[Atlan Admin] Error de verificación de rol:', err);
@@ -255,7 +260,7 @@ export default function AdminDashboard() {
       background: 'var(--atlan-bg-primary)',
       color: '#1A1A2E',
       fontFamily: 'var(--font-outfit), sans-serif',
-      padding: '40px 24px',
+      padding: '90px 24px 40px 24px',
       position: 'relative',
       overflow: 'hidden'
     }}>
@@ -275,35 +280,9 @@ export default function AdminDashboard() {
         background: "radial-gradient(circle, rgba(23,170,74,0.28) 0%, transparent 70%)",
         filter: "blur(45px)", pointerEvents: "none", zIndex: 0
       }} />
-      {/* Cabecera */}
-      <div className="atlan-navbar-header" style={{ width: '100%', padding: '16px 32px', margin: '-40px -24px 32px -24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-        {/* Logo Far Left */}
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
-          <img src="/mapaicono.png" alt="Logo" style={{ width: '30px', height: '30px', objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
-          <span className="logoText" style={{ fontSize: '25px', fontWeight: '900', color: '#FFD700' }}>atlan</span>
-        </Link>
-
-        {/* Center Nav Pills */}
-        <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', gap: '10px' }} className="hide-mobile">
-          <Link href="/" className="nav-pill-link">🏠 {lang === 'en' ? 'Home' : 'Inicio'}</Link>
-          <Link href="/mapa" className="nav-pill-link">🗺️ {lang === 'en' ? 'Map' : 'Mapa'}</Link>
-          <Link href="/comunidad" className="nav-pill-link">👥 {lang === 'en' ? 'Community' : 'Comunidad'}</Link>
-          <LanguageToggle variant="pill" />
-        </div>
-
-        {/* Far Right Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Link href="/admin" className="nav-pill-link active">⚡ Admin</Link>
-          <button onClick={() => router.push('/mapa')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: '#ef4444', borderRadius: '9999px', fontSize: '13px', fontWeight: '750', cursor: 'pointer' }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
-            <span>{lang === 'en' ? 'Exit' : 'Salir'}</span>
-          </button>
-        </div>
-      </div>
+      
+      {/* Navbar Global Unificada */}
+      <Navbar activePage="admin" session={userSession} perfil={userPerfil} />
 
       {/* Grid de Estadísticas */}
       <div style={{
