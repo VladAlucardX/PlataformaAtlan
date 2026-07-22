@@ -67,7 +67,7 @@ function HeroSection({ perfil }) {
             </svg>
             {t("landing.hero.cta")}
           </Link>
-          <Link href="#cta" className="btn-secondary" style={{ padding: "16px 32px", fontSize: "16px" }}>
+          <Link href="#cta" className="btn-secondary shine-sweep-btn" style={{ padding: "16px 32px", fontSize: "16px" }}>
             {t("landing.hero.ctaSecondary")}
           </Link>
         </div>
@@ -516,24 +516,24 @@ const styles = {
   },
   heroOrb1: {
     position: "absolute",
-    top: "-15%",
+    top: "-10%",
     right: "-5%",
     width: "650px",
     height: "650px",
     borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(255,215,0,0.22) 0%, rgba(255,215,0,0.05) 50%, transparent 70%)",
-    filter: "blur(60px)",
+    background: "radial-gradient(circle, rgba(255,215,0,0.40) 0%, rgba(255,215,0,0.12) 50%, transparent 70%)",
+    filter: "blur(40px)",
     pointerEvents: "none",
   },
   heroOrb2: {
     position: "absolute",
-    bottom: "-10%",
+    bottom: "-5%",
     left: "-5%",
     width: "550px",
     height: "550px",
     borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(20,109,158,0.18) 0%, rgba(20,109,158,0.04) 50%, transparent 70%)",
-    filter: "blur(60px)",
+    background: "radial-gradient(circle, rgba(20,109,158,0.32) 0%, rgba(20,109,158,0.08) 50%, transparent 70%)",
+    filter: "blur(40px)",
     pointerEvents: "none",
   },
   heroOrb3: {
@@ -544,8 +544,8 @@ const styles = {
     width: "450px",
     height: "450px",
     borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(23,170,74,0.12) 0%, transparent 70%)",
-    filter: "blur(70px)",
+    background: "radial-gradient(circle, rgba(23,170,74,0.28) 0%, transparent 70%)",
+    filter: "blur(45px)",
     pointerEvents: "none",
   },
   heroContent: {
@@ -569,11 +569,13 @@ const styles = {
     maxWidth: "560px",
     margin: "0 auto 40px",
   },
-  heroCTAs: {
+  heroActions: {
     display: "flex",
-    gap: "16px",
+    gap: "28px",
     justifyContent: "center",
+    alignItems: "center",
     flexWrap: "wrap",
+    marginTop: "20px",
   },
   heroStats: {
     display: "flex",
