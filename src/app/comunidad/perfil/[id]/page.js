@@ -427,9 +427,9 @@ export default function PerfilPublico() {
               const hasPromocion = post.es_promocion;
 
               const cardStyle = hasPublicidad ? {
-                background: "radial-gradient(circle at top right, rgba(255, 215, 0, 0.08) 0%, rgba(20, 109, 158, 0.03) 70%)",
-                border: "1px solid rgba(255, 215, 0, 0.4)",
-                boxShadow: "0 4px 25px rgba(255, 215, 0, 0.12)",
+                background: "radial-gradient(circle at top right, rgba(23, 170, 74, 0.08) 0%, #FFFFFF 70%)",
+                border: "2px solid #17AA4A",
+                boxShadow: "0 10px 30px -4px rgba(23, 170, 74, 0.25), 0 2px 6px rgba(0, 0, 0, 0.04)",
                 borderRadius: "16px", padding: "20px", margin: "0 16px 14px"
               } : {
                 background: "rgba(20, 109, 158, 0.03)",

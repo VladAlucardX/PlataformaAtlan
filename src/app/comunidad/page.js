@@ -1236,9 +1236,9 @@ const cardStyles = {
     transition: "transform 0.2s ease, box-shadow 0.2s ease",
   },
   publicidadCard: {
-    background: "radial-gradient(circle at top right, rgba(255, 215, 0, 0.08) 0%, #FFFFFF 70%)",
-    border: "1.5px solid rgba(255, 215, 0, 0.4)",
-    boxShadow: "0 10px 30px -4px rgba(255, 215, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.04)",
+    background: "radial-gradient(circle at top right, rgba(23, 170, 74, 0.08) 0%, #FFFFFF 70%)",
+    border: "2px solid #17AA4A",
+    boxShadow: "0 10px 30px -4px rgba(23, 170, 74, 0.25), 0 2px 6px rgba(0, 0, 0, 0.04)",
     borderRadius: "16px", padding: "20px", marginBottom: "16px",
     transition: "transform 0.2s ease, box-shadow 0.2s ease",
   },
