@@ -293,39 +293,41 @@ export default function DashboardPage() {
   };
 
   const handleCancelClaim = async () => {
-    if (!negocio || !puntoAsociado) return;
+    if (!negocio) return;
     if (!confirm(lang === "en" 
-      ? "Are you sure you want to cancel this claim? This will release the point on the map and remove this business draft." 
-      : "¿Está seguro de cancelar este reclamo? Esto liberará el punto en el mapa y eliminará este borrador de negocio.")) return;
+      ? "Are you sure you want to cancel this claim? This will release the point on the map and remove this request." 
+      : "¿Está seguro de cancelar este reclamo? Esto liberará el punto en el mapa y eliminará esta solicitud.")) return;
 
     setIsResubmitting(true);
     try {
-      // 1. Liberar el punto en la base de datos
+      // 1. Liberar cualquier punto en la base de datos asociado a este negocio
       const { error: errorPunto } = await supabase
         .from("puntos")
         .update({ 
           negocio_id: null,
           estado: "sin_reclamar" 
         })
-        .eq("id", puntoAsociado.id);
+        .eq("negocio_id", negocio.id);
 
-      if (errorPunto) throw errorPunto;
+      if (errorPunto) {
+        console.warn("Error al desvincular punto:", errorPunto);
+      }
 
-      // 2. Eliminar el negocio local
+      // 2. Eliminar el negocio
       const { error: errorNegocio } = await supabase
         .from("negocios")
         .delete()
         .eq("id", negocio.id);
 
       if (errorNegocio) {
-        // Fallback: si no se puede eliminar por restricciones FK, al menos desvincular
+        // Fallback: desvincular dueno_id y desactivar negocio si existen restricciones FK
         await supabase
           .from("negocios")
           .update({ dueno_id: null, activo: false })
           .eq("id", negocio.id);
       }
 
-      alert(lang === "en" ? "Claim canceled successfully." : "Reclamo cancelado con éxito.");
+      alert(lang === "en" ? "Claim canceled successfully." : "Solicitud de reclamo cancelada con éxito.");
       setNegocio(null);
       setPuntoAsociado(null);
       await loadNegocioData(user.id);
