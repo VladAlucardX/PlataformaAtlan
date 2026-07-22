@@ -239,7 +239,7 @@ export default function PerfilPublico() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
       {/* Nav */}
-      <Navbar activePage="comunidad" session={session} perfil={mePerfil} />
+      <Navbar activePage="comunidad" session={session} perfil={myPerfil} />
 
       {/* Profile Header */}
       <div style={{ maxWidth: "800px", margin: "0 auto", padding: "0 24px" }}>
