@@ -101,6 +101,11 @@ export default function DashboardPage() {
   const [loadingPunto, setLoadingPunto] = useState(false);
   const [isResubmitting, setIsResubmitting] = useState(false);
 
+  const negocioRef = React.useRef(negocio);
+  useEffect(() => {
+    negocioRef.current = negocio;
+  }, [negocio]);
+
   // Cargar datos al montar
   useEffect(() => {
     const fetchUserData = async () => {
@@ -125,7 +130,7 @@ export default function DashboardPage() {
         setPerfil(perfilData);
 
         // Cargar datos de negocio (si el usuario ya tiene uno o va a reclamar/crear)
-        await loadNegocioData(currentUser.id);
+        await loadNegocioData(currentUser.id, true);
       } catch (err) {
         console.error("Dashboard init error:", err);
       } finally {
@@ -148,7 +153,7 @@ export default function DashboardPage() {
         { event: '*', schema: 'public', table: 'negocios', filter: `dueno_id=eq.${user.id}` },
         async () => {
           console.log('[Realtime] Cambio de negocio detectado');
-          await loadNegocioData(user.id);
+          await loadNegocioData(user.id, false);
         }
       )
       .on(
@@ -156,14 +161,14 @@ export default function DashboardPage() {
         { event: '*', schema: 'public', table: 'puntos' },
         async () => {
           console.log('[Realtime] Cambio en puntos detectado');
-          await loadNegocioData(user.id);
+          await loadNegocioData(user.id, false);
         }
       )
       .subscribe();
 
     // 2. Intervalo de refresco secundario (sondeo de seguridad cada 5s)
     const interval = setInterval(() => {
-      loadNegocioData(user.id);
+      loadNegocioData(user.id, false);
     }, 5000);
 
     return () => {
@@ -172,7 +177,7 @@ export default function DashboardPage() {
     };
   }, [user]);
 
-  const loadNegocioData = async (userId) => {
+  const loadNegocioData = async (userId, isInitialLoad = false) => {
     const { data: negociosData } = await supabase
       .from("negocios")
       .select("*")
@@ -180,13 +185,13 @@ export default function DashboardPage() {
 
     if (negociosData && negociosData.length > 0) {
       setMisNegocios(negociosData);
-      
-      // Auto-seleccionar si solo tiene 1
-      if (negociosData.length === 1) {
-        selectNegocio(negociosData[0]);
+
+      const currentNegocio = negocioRef.current;
+      if (!currentNegocio) {
+        selectNegocio(negociosData[0], { resetTab: isInitialLoad, updateForm: true });
       } else {
-        // Mantiene null si hay varios para mostrar el selector
-        setNegocio(null);
+        const updated = negociosData.find((n) => n.id === currentNegocio.id) || negociosData[0];
+        selectNegocio(updated, { resetTab: false, updateForm: isInitialLoad });
       }
     } else {
       setMisNegocios([]);
@@ -201,41 +206,49 @@ export default function DashboardPage() {
     }
   };
 
-  const selectNegocio = (negocioData) => {
+  const selectNegocio = (negocioData, options = {}) => {
+    const { resetTab = false, updateForm = true } = options;
+
     setNegocio(negocioData);
-    setNombre(negocioData.nombre || "");
-    setDescripcion(negocioData.descripcion || "");
-    setTelefono(negocioData.telefono || "");
-    setWhatsapp(negocioData.whatsapp || "");
-    setRangoPrecios(negocioData.rango_precios || "");
-    setLogoUrl(negocioData.logo_url || "");
-    setFotos(negocioData.fotos || []);
+    if (updateForm) {
+      setNombre(negocioData.nombre || "");
+      setDescripcion(negocioData.descripcion || "");
+      setTelefono(negocioData.telefono || "");
+      setWhatsapp(negocioData.whatsapp || "");
+      setRangoPrecios(negocioData.rango_precios || "");
+      setLogoUrl(negocioData.logo_url || "");
+      setFotos(negocioData.fotos || []);
 
-    // Horarios
-    const hr = negocioData.horarios || {};
-    setHorarios({
-      lunes: hr.lunes || { abierto: true, apertura: "08:00", cierre: "17:00" },
-      martes: hr.martes || { abierto: true, apertura: "08:00", cierre: "17:00" },
-      miercoles: hr.miercoles || { abierto: true, apertura: "08:00", cierre: "17:00" },
-      jueves: hr.jueves || { abierto: true, apertura: "08:00", cierre: "17:00" },
-      viernes: hr.viernes || { abierto: true, apertura: "08:00", cierre: "17:00" },
-      sabado: hr.sabado || { abierto: true, apertura: "09:00", cierre: "14:00" },
-      domingo: hr.domingo || { abierto: false, apertura: "08:00", cierre: "17:00" }
-    });
+      // Horarios
+      const hr = negocioData.horarios || {};
+      setHorarios({
+        lunes: hr.lunes || { abierto: true, apertura: "08:00", cierre: "17:00" },
+        martes: hr.martes || { abierto: true, apertura: "08:00", cierre: "17:00" },
+        miercoles: hr.miercoles || { abierto: true, apertura: "08:00", cierre: "17:00" },
+        jueves: hr.jueves || { abierto: true, apertura: "08:00", cierre: "17:00" },
+        viernes: hr.viernes || { abierto: true, apertura: "08:00", cierre: "17:00" },
+        sabado: hr.sabado || { abierto: true, apertura: "09:00", cierre: "14:00" },
+        domingo: hr.domingo || { abierto: false, apertura: "08:00", cierre: "17:00" }
+      });
 
-    // Servicios (excentricidades)
-    const serv = negocioData.servicios || {};
-    setHasMenu(!!serv.has_menu);
-    setHasHours(!!serv.has_hours);
-    setHasLodging(!!serv.has_lodging);
-    setHasTransport(!!serv.has_transport);
+      // Servicios (excentricidades)
+      const serv = negocioData.servicios || {};
+      setHasMenu(!!serv.has_menu);
+      setHasHours(!!serv.has_hours);
+      setHasLodging(!!serv.has_lodging);
+      setHasTransport(!!serv.has_transport);
+    }
 
     // Cargar detalles asociados
+    const serv = negocioData.servicios || {};
     if (serv.has_menu) loadMenuItems(negocioData.id);
     if (serv.has_lodging) loadReservas(negocioData.id);
     loadResenas(negocioData.id);
     loadPuntoAsociado(negocioData.id);
-    setActiveTab("overview");
+
+    if (resetTab) {
+      setActiveTab("overview");
+    }
   };
 
   const loadMenuItems = async (negocioId) => {
@@ -581,13 +594,8 @@ export default function DashboardPage() {
     }
   };
 
-  const handleCardClick = (tabName) => {
-    if (negocio && !negocio.activo) {
-      alert(lang === "en" 
-        ? "🔒 Your claim is currently under admin verification. Editing modules will be unlocked once an administrator approves your claim." 
-        : "🔒 Tu reclamo está en proceso de verificación por la administración de Atlan. La edición de módulos se activará tan pronto como un Administrador apruebe tu reclamo.");
-      return;
-    }
+  const handleCardClick = (e, tabName) => {
+    if (e && e.preventDefault) e.preventDefault();
     setActiveTab(tabName);
   };
 
@@ -597,7 +605,12 @@ export default function DashboardPage() {
 
   // Guardar datos generales del negocio
   const handleSaveGeneral = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+    if (!negocio || !negocio.id) {
+      showToast(lang === "en" ? "No active business selected." : "No hay un negocio activo seleccionado.", "error");
+      return;
+    }
+
     setIsSaving(true);
     setSaveSuccess(false);
 
@@ -621,11 +634,14 @@ export default function DashboardPage() {
 
       if (error) throw error;
       
+      setNegocio(prev => (prev ? { ...prev, ...payload } : prev));
       setSaveSuccess(true);
+      showToast(lang === "en" ? "Profile saved successfully!" : "¡Perfil guardado exitosamente!", "success");
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
-      console.error("Error guardando negocio (completo):", err);
-      alert(`Error al guardar: ${err.message || err.details || JSON.stringify(err)}`);
+      const errMsg = err?.message || err?.details || err?.hint || err?.code || (typeof err === "object" && err !== null ? (Object.keys(err).length > 0 ? JSON.stringify(err) : String(err)) : String(err));
+      console.error("Error guardando negocio:", errMsg, err);
+      showToast(`${lang === "en" ? "Error saving profile:" : "Error al guardar perfil:"} ${errMsg}`, "error");
     } finally {
       setIsSaving(false);
     }
@@ -633,6 +649,7 @@ export default function DashboardPage() {
 
   // Guardar excentricidades (checklist)
   const handleSaveExcentricidades = async () => {
+    if (!negocio || !negocio.id) return;
     setIsSaving(true);
     try {
       const servicios = {
@@ -650,11 +667,14 @@ export default function DashboardPage() {
       if (error) throw error;
 
       // Actualizar estado local del negocio
-      setNegocio({ ...negocio, servicios });
+      setNegocio(prev => (prev ? { ...prev, servicios } : prev));
       setSaveSuccess(true);
+      showToast(lang === "en" ? "Services saved successfully!" : "¡Servicios guardados exitosamente!", "success");
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
       console.error("Error guardando excentricidades:", err);
+      const errMsg = err?.message || err?.details || err?.hint || String(err);
+      showToast(`${lang === "en" ? "Error saving services:" : "Error al guardar servicios:"} ${errMsg}`, "error");
     } finally {
       setIsSaving(false);
     }
@@ -662,7 +682,8 @@ export default function DashboardPage() {
 
   // Guardar horarios
   const handleSaveHorarios = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+    if (!negocio || !negocio.id) return;
     setIsSaving(true);
     setSaveSuccess(false);
     try {
@@ -672,12 +693,14 @@ export default function DashboardPage() {
         .eq("id", negocio.id);
 
       if (error) throw error;
-      setNegocio({ ...negocio, horarios });
+      setNegocio(prev => (prev ? { ...prev, horarios } : prev));
       setSaveSuccess(true);
+      showToast(lang === "en" ? "Hours saved successfully!" : "¡Horarios guardados exitosamente!", "success");
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
       console.error("Error guardando horarios:", err);
-      alert("Error al guardar horarios.");
+      const errMsg = err?.message || err?.details || err?.hint || String(err);
+      showToast(`${lang === "en" ? "Error saving hours:" : "Error al guardar horarios:"} ${errMsg}`, "error");
     } finally {
       setIsSaving(false);
     }
@@ -891,19 +914,20 @@ export default function DashboardPage() {
               <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#1A1A2E", marginBottom: "12px" }}>
                 🏷️ {lang === "en" ? "Unclaimed Points Nearby" : "Puntos sin Reclamar Disponibles"}
               </h3>
-              {puntosDisponibles.length === 0 ? (
+              {(!puntosDisponibles || puntosDisponibles.length === 0) ? (
                 <p style={{ fontSize: "13px", color: "#9CA3AF" }}>
                   {lang === "en" ? "No unclaimed points found." : "No se hallaron puntos sin reclamar en este momento."}
                 </p>
               ) : (
                 <div style={styles.pointsList}>
-                  {puntosDisponibles.map((p) => (
+                  {(puntosDisponibles || []).map((p) => (
                     <div key={p.id} style={styles.pointRow}>
                       <div>
                         <div style={{ fontWeight: "750", fontSize: "13.5px" }}>{p.nombre}</div>
                         <div style={{ fontSize: "11px", color: "#4A5568" }}>{p.categoria}</div>
                       </div>
                       <button
+                        type="button"
                         onClick={() => handleInitiateClaim(p)}
                         disabled={isClaiming}
                         style={styles.claimBtn}
@@ -922,11 +946,11 @@ export default function DashboardPage() {
                 ✨ {lang === "en" ? "Register New Business" : "Registrar Nuevo Negocio"}
               </h3>
               
-              <button onClick={() => handleInitiateClaim("gps")} disabled={isClaiming} style={{...styles.createBtn, background: "rgba(23, 170, 74,0.15)", color: "#1FCC5C", border: "1px solid rgba(23, 170, 74,0.3)"}}>
+              <button type="button" onClick={() => handleInitiateClaim("gps")} disabled={isClaiming} style={{...styles.createBtn, background: "rgba(23, 170, 74,0.15)", color: "#1FCC5C", border: "1px solid rgba(23, 170, 74,0.3)"}}>
                 📍 {lang === "en" ? "Use My Current GPS Location" : "Usar mi ubicación actual (GPS)"}
               </button>
 
-              <button onClick={handleIrAlMapaParaMarcar} disabled={isClaiming} style={{...styles.createBtn, background: "rgba(59,130,246,0.15)", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.3)"}}>
+              <button type="button" onClick={handleIrAlMapaParaMarcar} disabled={isClaiming} style={{...styles.createBtn, background: "rgba(59,130,246,0.15)", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.3)"}}>
                 🗺️ {lang === "en" ? "Mark manually on the map" : "Marcar punto manualmente en el mapa"}
               </button>
             </div>
@@ -944,8 +968,8 @@ export default function DashboardPage() {
             </p>
           </div>
           <div style={{ ...styles.overviewGrid, marginTop: "24px" }}>
-            {misNegocios.map(n => (
-              <button key={n.id} onClick={() => selectNegocio(n)} style={styles.dashboardCard} className="hover-card">
+            {(misNegocios || []).map(n => (
+              <button type="button" key={n.id} onClick={() => selectNegocio(n)} style={styles.dashboardCard} className="hover-card">
                 <div style={{ ...styles.cardIcon, background: "rgba(255, 215, 0,0.1)", color: "var(--atlan-gold)" }}>🏢</div>
                 <h3 style={styles.cardTitle}>{n.nombre}</h3>
                 <p style={styles.cardDesc}>{n.tipo || "Otro"}</p>
@@ -1252,7 +1276,8 @@ export default function DashboardPage() {
               <div style={styles.overviewGrid}>
                 {/* General Info Card */}
                 <button
-                  onClick={() => handleCardClick("general")}
+                  type="button"
+                  onClick={(e) => handleCardClick(e, "general")}
                   className="hover-card clay-card animate-fade-in-up"
                   style={{
                     ...styles.dashboardCard,
@@ -1271,7 +1296,8 @@ export default function DashboardPage() {
 
                 {/* Checklist Card */}
                 <button
-                  onClick={() => handleCardClick("excentricidades")}
+                  type="button"
+                  onClick={(e) => handleCardClick(e, "excentricidades")}
                   className="hover-card clay-card animate-fade-in-up"
                   style={{
                     ...styles.dashboardCard,
@@ -1291,7 +1317,8 @@ export default function DashboardPage() {
                 {/* Hours Card */}
                 {hasHours && (
                   <button
-                    onClick={() => handleCardClick("horarios")}
+                    type="button"
+                    onClick={(e) => handleCardClick(e, "horarios")}
                     className="hover-card clay-card animate-fade-in-up"
                     style={{
                       ...styles.dashboardCard,
@@ -1312,7 +1339,8 @@ export default function DashboardPage() {
                 {/* Menu Card */}
                 {hasMenu && (
                   <button
-                    onClick={() => handleCardClick("menu")}
+                    type="button"
+                    onClick={(e) => handleCardClick(e, "menu")}
                     className="hover-card clay-card animate-fade-in-up"
                     style={{
                       ...styles.dashboardCard,
@@ -1333,7 +1361,8 @@ export default function DashboardPage() {
                 {/* Reservations Card */}
                 {hasLodging && (
                   <button
-                    onClick={() => handleCardClick("reservas")}
+                    type="button"
+                    onClick={(e) => handleCardClick(e, "reservas")}
                     className="hover-card clay-card animate-fade-in-up"
                     style={{
                       ...styles.dashboardCard,
@@ -1348,9 +1377,9 @@ export default function DashboardPage() {
                       {lang === "en" ? "Reservations Manager" : "Gestor de Reservas"} {negocio && !negocio.activo && "🔒"}
                     </h3>
                     <p style={{ ...styles.cardDesc, color: "#7E22CE" }}>{lang === "en" ? "Approve or cancel incoming booking requests" : "Aprueba o cancela solicitudes de reserva"}</p>
-                    {reservas.filter(r => r.estado_reserva === "pendiente").length > 0 && (
+                    {(reservas || []).filter(r => r.estado_reserva === "pendiente").length > 0 && (
                       <div style={styles.cardBadge}>
-                        {reservas.filter(r => r.estado_reserva === "pendiente").length} {lang === "en" ? "Pending" : "Pendientes"}
+                        {(reservas || []).filter(r => r.estado_reserva === "pendiente").length} {lang === "en" ? "Pending" : "Pendientes"}
                       </div>
                     )}
                   </button>
@@ -1358,7 +1387,8 @@ export default function DashboardPage() {
 
                 {/* Reviews Card */}
                 <button
-                  onClick={() => handleCardClick("resenas")}
+                  type="button"
+                  onClick={(e) => handleCardClick(e, "resenas")}
                   className="hover-card clay-card animate-fade-in-up"
                   style={{
                     ...styles.dashboardCard,
@@ -1379,7 +1409,8 @@ export default function DashboardPage() {
           ) : (
             <main style={{ ...styles.mainContent, maxWidth: "800px", margin: "0 auto", width: "100%" }} className="dashboard-main glass-card animate-fade-in">
               <button 
-                onClick={() => setActiveTab("overview")} 
+                type="button"
+                onClick={(e) => { e.preventDefault(); setActiveTab("overview"); }} 
                 style={{ background: "transparent", border: "none", color: "var(--atlan-gold)", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", marginBottom: "24px", fontSize: "14px", padding: 0 }}
               >
                 ← {lang === "en" ? "Back to Dashboard" : "Volver al Panel Principal"}
@@ -1439,14 +1470,18 @@ export default function DashboardPage() {
                   </div>
 
                   <div style={styles.inputGroup}>
-                    <label style={styles.label}>{lang === "en" ? "Price Range (e.g., $, $$, $$$)" : "Rango de Precios (ej. $, $$, $$$)"}</label>
-                    <input
-                      type="text"
-                      value={rangoPrecios}
+                    <label style={styles.label}>{lang === "en" ? "Price Range" : "Rango de Precios"}</label>
+                    <select
+                      value={rangoPrecios || ""}
                       onChange={(e) => setRangoPrecios(e.target.value)}
-                      placeholder="$, $$, $$$"
                       style={styles.input}
-                    />
+                    >
+                      <option value="">{lang === "en" ? "-- Select Price Range --" : "-- Seleccionar Rango de Precios --"}</option>
+                      <option value="$">$ ({lang === "en" ? "Economic / Inexpensive" : "Económico"})</option>
+                      <option value="$$">$$ ({lang === "en" ? "Moderate" : "Moderado"})</option>
+                      <option value="$$$">$$$ ({lang === "en" ? "Expensive / High-end" : "Costoso / Exclusivo"})</option>
+                      <option value="$$$$">$$$$ ({lang === "en" ? "Luxury" : "Lujo / Premium"})</option>
+                    </select>
                   </div>
 
                   {/* Carga de Logo y Galería de Fotos */}
@@ -1493,7 +1528,7 @@ export default function DashboardPage() {
                       <div>
                         <label style={styles.label}>{lang === "en" ? "Photo Gallery" : "Galería de Fotos"}</label>
                         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "8px" }}>
-                          {fotos.map((url, index) => (
+                          {(fotos || []).map((url, index) => (
                             <div key={index} style={{
                               width: "70px",
                               height: "70px",
@@ -1858,10 +1893,10 @@ export default function DashboardPage() {
 
                 {/* Lista Platos */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                  {menuItems.length === 0 ? (
+                  {(!menuItems || menuItems.length === 0) ? (
                     <p style={{ color: "#9CA3AF", fontSize: "13px" }}>{lang === "en" ? "No dishes added yet." : "Aún no has agregado platillos a tu menú."}</p>
                   ) : (
-                    menuItems.map((item) => (
+                    (menuItems || []).map((item) => (
                       <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: "rgba(20, 109, 158, 0.03)", border: "1px solid rgba(20, 109, 158, 0.08)", borderRadius: "12px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
                           {item.foto_url ? (
@@ -1894,7 +1929,7 @@ export default function DashboardPage() {
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
                           <span style={{ fontWeight: "800", color: "var(--atlan-gold)" }}>${item.precio}</span>
-                          <button onClick={() => handleDeletePlato(item.id)} style={styles.deleteBtn}>🗑️</button>
+                          <button type="button" onClick={() => handleDeletePlato(item.id)} style={styles.deleteBtn}>🗑️</button>
                         </div>
                       </div>
                     ))
@@ -1909,10 +1944,10 @@ export default function DashboardPage() {
                 <h3 style={styles.tabTitle}>{lang === "en" ? "Booking & Reservations Log" : "Bitácora de Reservas"}</h3>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  {reservas.length === 0 ? (
+                  {(!reservas || reservas.length === 0) ? (
                     <p style={{ color: "#9CA3AF", fontSize: "13px" }}>{lang === "en" ? "No bookings received." : "No se han recibido reservas."}</p>
                   ) : (
-                    reservas.map((res) => (
+                    (reservas || []).map((res) => (
                       <div key={res.id} style={{ padding: "16px", background: "rgba(20, 109, 158, 0.03)", border: "1px solid rgba(20, 109, 158, 0.08)", borderRadius: "16px", display: "flex", justifycontent: "space-between", alignitems: "center" }}>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontWeight: "800", fontSize: "14px", color: "#1A1A2E" }}>
@@ -1962,10 +1997,10 @@ export default function DashboardPage() {
                 <h3 style={styles.tabTitle}>{lang === "en" ? "Customer Feedback" : "Opiniones de Clientes"}</h3>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  {resenas.length === 0 ? (
+                  {(!resenas || resenas.length === 0) ? (
                     <p style={{ color: "#9CA3AF", fontSize: "13px" }}>{lang === "en" ? "No reviews left yet." : "Aún no hay reseñas registradas."}</p>
                   ) : (
-                    resenas.map((rev) => (
+                    (resenas || []).map((rev) => (
                       <div key={rev.id} style={{ padding: "14px", background: "rgba(20, 109, 158, 0.03)", border: "1px solid rgba(20, 109, 158, 0.08)", borderRadius: "12px" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
                           <span style={{ fontWeight: "750", fontSize: "13px" }}>{rev.nombre_usuario}</span>
