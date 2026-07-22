@@ -96,8 +96,10 @@ export default function AdminDashboard() {
             whatsapp,
             rango_precios,
             servicios,
+            datos_verificacion,
             perfiles (
-              nombre_completo
+              nombre_completo,
+              email
             )
           )
         `)
@@ -434,6 +436,72 @@ export default function AdminDashboard() {
                         <p style={{ margin: '12px 0 0', fontSize: '13px', color: '#4A5568', borderTop: '1px dashed rgba(20, 109, 158, 0.08)', paddingTop: '10px' }}>
                           <strong>{lang === 'en' ? 'Commercial Description:' : 'Descripción Comercial:'}</strong> {item.negocios.descripcion}
                         </p>
+                      )}
+
+                      {/* Documentos y Verificación de Propiedad */}
+                      {item.negocios?.datos_verificacion && (
+                        <div style={{
+                          marginTop: '14px',
+                          padding: '16px',
+                          background: 'rgba(20, 109, 158, 0.04)',
+                          border: '1.5px solid rgba(20, 109, 158, 0.15)',
+                          borderRadius: '16px'
+                        }}>
+                          <h5 style={{ margin: '0 0 10px', fontSize: '13.5px', fontWeight: '850', color: '#146D9E', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            📋 Documentos de Verificación Presentados por el Solicitante
+                          </h5>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', fontSize: '13px', color: '#1A1A2E' }}>
+                            <p style={{ margin: 0 }}><strong>Propietario Solicitante:</strong> {item.negocios.datos_verificacion.solicitante_nombre || 'N/A'}</p>
+                            <p style={{ margin: 0 }}><strong>N° Cédula / ID / RUC:</strong> {item.negocios.datos_verificacion.solicitante_cedula || 'N/A'}</p>
+                            <p style={{ margin: 0 }}>
+                              <strong>Teléfono Contacto:</strong> {item.negocios.datos_verificacion.solicitante_telefono || 'N/A'}{' '}
+                              {item.negocios.datos_verificacion.solicitante_telefono && (
+                                <a
+                                  href={`https://wa.me/${item.negocios.datos_verificacion.solicitante_telefono.replace(/\D/g, '')}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ color: '#17AA4A', fontWeight: '800', textDecoration: 'none', marginLeft: '6px', fontSize: '12px' }}
+                                >
+                                  💬 WhatsApp
+                                </a>
+                              )}
+                            </p>
+                          </div>
+
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '12px' }}>
+                            {item.negocios.datos_verificacion.documento_cedula_url ? (
+                              <a
+                                href={item.negocios.datos_verificacion.documento_cedula_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="clay-btn-blue"
+                                style={{ padding: '6px 14px', fontSize: '12px', textDecoration: 'none' }}
+                              >
+                                📄 Ver Cédula de Identidad (PDF/Imagen)
+                              </a>
+                            ) : (
+                              <span style={{ fontSize: '12px', color: '#ef4444', fontWeight: '700' }}>⚠️ Sin foto de cédula</span>
+                            )}
+
+                            {item.negocios.datos_verificacion.documento_propiedad_url && (
+                              <a
+                                href={item.negocios.datos_verificacion.documento_propiedad_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="clay-btn-gold"
+                                style={{ padding: '6px 14px', fontSize: '12px', textDecoration: 'none' }}
+                              >
+                                📄 Ver Comprobante de Propiedad / Licencia
+                              </a>
+                            )}
+                          </div>
+
+                          {item.negocios.datos_verificacion.solicitud_notas && (
+                            <p style={{ margin: '10px 0 0', fontSize: '12.5px', color: '#4A5568', fontStyle: 'italic', borderTop: '1px dashed rgba(20,109,158,0.1)', paddingTop: '8px' }}>
+                              📝 <strong>Notas del Solicitante:</strong> "{item.negocios.datos_verificacion.solicitud_notas}"
+                            </p>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}

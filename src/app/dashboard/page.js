@@ -76,6 +76,18 @@ export default function DashboardPage() {
   const [puntosDisponibles, setPuntosDisponibles] = useState([]);
   const [isClaiming, setIsClaiming] = useState(false);
 
+  // Modal de Verificación de Reclamo
+  const [showClaimModal, setShowClaimModal] = useState(false);
+  const [claimTargetPunto, setClaimTargetPunto] = useState(null); // punto objeto o 'gps'
+  const [solicitanteNombre, setSolicitanteNombre] = useState("");
+  const [solicitanteCedula, setSolicitanteCedula] = useState("");
+  const [solicitanteTelefono, setSolicitanteTelefono] = useState("");
+  const [documentoCedulaUrl, setDocumentoCedulaUrl] = useState("");
+  const [documentoPropiedadUrl, setDocumentoPropiedadUrl] = useState("");
+  const [solicitudNotas, setSolicitudNotas] = useState("");
+  const [uploadingCedulaDoc, setUploadingCedulaDoc] = useState(false);
+  const [uploadingPropiedadDoc, setUploadingPropiedadDoc] = useState(false);
+
   // Estado del punto geográfico asociado
   const [puntoAsociado, setPuntoAsociado] = useState(null);
   const [loadingPunto, setLoadingPunto] = useState(false);
@@ -327,110 +339,156 @@ export default function DashboardPage() {
 
   // Reclamar un punto geográfico
   const handleReclamarPunto = async (puntoId) => {
-    setIsClaiming(true);
+  const handleInitiateClaim = (punto) => {
+    setClaimTargetPunto(punto);
+    setSolicitanteNombre(perfil?.nombre_completo || "");
+    setSolicitanteCedula("");
+    setSolicitanteTelefono(perfil?.telefono || "");
+    setDocumentoCedulaUrl("");
+    setDocumentoPropiedadUrl("");
+    setSolicitudNotas("");
+    setShowClaimModal(true);
+  };
+
+  const handleDocUpload = async (e, type) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (type === "cedula") setUploadingCedulaDoc(true);
+    else setUploadingPropiedadDoc(true);
+
     try {
-      const puntoSeleccionado = puntosDisponibles.find(p => p.id === puntoId);
-      if (!puntoSeleccionado) return;
-
-      // 1. Crear el negocio asociado
-      const { data: nuevoNegocio, error: negocioError } = await supabase
-        .from("negocios")
-        .insert([{
-          dueno_id: user.id,
-          nombre: puntoSeleccionado.nombre,
-          descripcion: puntoSeleccionado.descripcion,
-          tipo: puntoSeleccionado.categoria || "otro",
-          servicios: { has_menu: false, has_hours: false, has_lodging: false, has_transport: false },
-          activo: false // Requiere verificación presencial
-        }])
-        .select()
-        .single();
-
-      if (negocioError) throw negocioError;
-
-      // 2. Asociar el punto al negocio y actualizar estado a 'en_verificacion'
-      const { error: puntoError } = await supabase
-        .from("puntos")
-        .update({
-          negocio_id: nuevoNegocio.id,
-          estado: "en_verificacion" // en espera de verificación presencial
-        })
-        .eq("id", puntoId);
-
-      if (puntoError) throw puntoError;
-
-      alert(lang === "en" 
-        ? "Claim requested successfully! Personal verification required." 
-        : "¡Reclamo solicitado con éxito! Se requiere verificación presencial.");
-      
-      await loadNegocioData(user.id);
+      const url = await uploadMedia(file, "negocios/documentos");
+      if (type === "cedula") setDocumentoCedulaUrl(url);
+      else setDocumentoPropiedadUrl(url);
     } catch (err) {
-      console.error("Error al reclamar:", err);
-      alert("Error al procesar el reclamo.");
+      console.error("Error al subir documento:", err);
+      alert(lang === "en" ? "Error uploading document" : "Error al subir el documento.");
     } finally {
-      setIsClaiming(false);
+      if (type === "cedula") setUploadingCedulaDoc(false);
+      else setUploadingPropiedadDoc(false);
     }
   };
 
-  // Crear un nuevo negocio usando GPS
-  const handleCrearNuevoNegocioGPS = async (e) => {
+  const handleConfirmSubmitClaim = async (e) => {
     if (e) e.preventDefault();
-    setIsClaiming(true);
-    
-    if (!navigator.geolocation) {
-      alert(lang === "en" ? "Geolocation is not supported by your browser." : "La geolocalización no es soportada por tu navegador.");
-      setIsClaiming(false);
+    if (!solicitanteNombre.trim() || !solicitanteCedula.trim() || !solicitanteTelefono.trim()) {
+      alert(lang === "en" ? "Please fill in all required fields (Name, ID, Phone)." : "Por favor completa todos los campos requeridos (Nombre, Cédula y Teléfono).");
+      return;
+    }
+    if (!documentoCedulaUrl) {
+      alert(lang === "en" ? "Please attach your ID document." : "Por favor adjunta la foto o PDF de tu Cédula de Identidad.");
       return;
     }
 
-    alert(lang === "en" ? "We will request your location to place the business on the map." : "Solicitaremos tu ubicación para ubicar el negocio en el mapa.");
+    setIsClaiming(true);
+    try {
+      const datosVerificacion = {
+        solicitante_nombre: solicitanteNombre,
+        solicitante_cedula: solicitanteCedula,
+        solicitante_telefono: solicitanteTelefono,
+        documento_cedula_url: documentoCedulaUrl,
+        documento_propiedad_url: documentoPropiedadUrl,
+        solicitud_notas: solicitudNotas,
+        fecha_solicitud: new Date().toISOString()
+      };
 
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      try {
-        const { longitude, latitude } = position.coords;
-        
-        // 1. Crear negocio
+      if (claimTargetPunto === "gps") {
+        if (!navigator.geolocation) {
+          alert("GPS no soportado.");
+          setIsClaiming(false);
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const { longitude, latitude } = position.coords;
+          const { data: nuevoNegocio, error: negocioError } = await supabase
+            .from("negocios")
+            .insert([{
+              dueno_id: user.id,
+              nombre: solicitanteNombre ? `Negocio de ${solicitanteNombre}` : "Nuevo Negocio",
+              tipo: "otro",
+              telefono: solicitanteTelefono,
+              whatsapp: solicitanteTelefono,
+              servicios: { has_menu: false, has_hours: false, has_lodging: false, has_transport: false },
+              activo: false,
+              datos_verificacion: datosVerificacion
+            }])
+            .select()
+            .single();
+
+          if (negocioError) throw negocioError;
+
+          const { error: puntoError } = await supabase
+            .from("puntos")
+            .insert([{
+              negocio_id: nuevoNegocio.id,
+              nombre: nuevoNegocio.nombre,
+              categoria: "otro",
+              ubicacion: `POINT(${longitude} ${latitude})`,
+              estado: "en_verificacion",
+              nombre_creador: perfil?.nombre_completo || "Propietario"
+            }]);
+
+          if (puntoError) throw puntoError;
+
+          setShowClaimModal(false);
+          alert(lang === "en" 
+            ? "Verification request submitted! It is now pending admin approval." 
+            : "¡Solicitud de verificación enviada! Tu reclamo está pendiente de aprobación por la administración.");
+          await loadNegocioData(user.id);
+        });
+
+      } else if (claimTargetPunto) {
         const { data: nuevoNegocio, error: negocioError } = await supabase
           .from("negocios")
           .insert([{
             dueno_id: user.id,
-            nombre: "Mi Nuevo Negocio",
-            tipo: "otro",
+            nombre: claimTargetPunto.nombre,
+            descripcion: claimTargetPunto.descripcion,
+            tipo: claimTargetPunto.categoria || "otro",
+            telefono: solicitanteTelefono,
+            whatsapp: solicitanteTelefono,
             servicios: { has_menu: false, has_hours: false, has_lodging: false, has_transport: false },
-            activo: false
+            activo: false,
+            datos_verificacion: datosVerificacion
           }])
           .select()
           .single();
 
         if (negocioError) throw negocioError;
 
-        // 2. Crear punto geográfico con la ubicación GPS exacta
         const { error: puntoError } = await supabase
           .from("puntos")
-          .insert([{
+          .update({
             negocio_id: nuevoNegocio.id,
-            nombre: "Mi Nuevo Negocio",
-            categoria: "otro",
-            ubicacion: `POINT(${longitude} ${latitude})`,
-            estado: "en_verificacion",
-            nombre_creador: perfil?.nombre_completo || "Propietario"
-          }]);
+            estado: "en_verificacion"
+          })
+          .eq("id", claimTargetPunto.id);
 
         if (puntoError) throw puntoError;
 
-        alert(lang === "en" ? "Business created at your current location!" : "¡Negocio creado en tu ubicación actual!");
+        setShowClaimModal(false);
+        alert(lang === "en" 
+          ? "Verification request submitted! It is now pending admin approval." 
+          : "¡Solicitud de verificación enviada! Tu reclamo está pendiente de aprobación por la administración.");
         await loadNegocioData(user.id);
-      } catch (err) {
-        console.error("Error al crear negocio con GPS:", err);
-        alert(lang === "en" ? `Error creating business: ${err.message || err}` : `Error al crear negocio: ${err.message || err}`);
-      } finally {
-        setIsClaiming(false);
       }
-    }, (error) => {
-      console.error("GPS Error:", error);
-      alert(lang === "en" ? "Could not get your location. Please check browser permissions." : "No se pudo obtener tu ubicación. Verifica los permisos de tu navegador.");
+    } catch (err) {
+      console.error("Error submitting claim:", err);
+      alert("Error al enviar la solicitud de reclamo.");
+    } finally {
       setIsClaiming(false);
-    }, { enableHighAccuracy: true });
+    }
+  };
+
+  const handleCardClick = (tabName) => {
+    if (negocio && !negocio.activo) {
+      alert(lang === "en" 
+        ? "🔒 Your claim is currently under admin verification. Editing modules will be unlocked once an administrator approves your claim." 
+        : "🔒 Tu reclamo está en proceso de verificación por la administración de Atlan. La edición de módulos se activará tan pronto como un Administrador apruebe tu reclamo.");
+      return;
+    }
+    setActiveTab(tabName);
   };
 
   const handleIrAlMapaParaMarcar = () => {
@@ -716,7 +774,7 @@ export default function DashboardPage() {
                         <div style={{ fontSize: "11px", color: "#4A5568" }}>{p.categoria}</div>
                       </div>
                       <button
-                        onClick={() => handleReclamarPunto(p.id)}
+                        onClick={() => handleInitiateClaim(p)}
                         disabled={isClaiming}
                         style={styles.claimBtn}
                       >
@@ -734,7 +792,7 @@ export default function DashboardPage() {
                 ✨ {lang === "en" ? "Register New Business" : "Registrar Nuevo Negocio"}
               </h3>
               
-              <button onClick={handleCrearNuevoNegocioGPS} disabled={isClaiming} style={{...styles.createBtn, background: "rgba(23, 170, 74,0.15)", color: "#1FCC5C", border: "1px solid rgba(23, 170, 74,0.3)"}}>
+              <button onClick={() => handleInitiateClaim("gps")} disabled={isClaiming} style={{...styles.createBtn, background: "rgba(23, 170, 74,0.15)", color: "#1FCC5C", border: "1px solid rgba(23, 170, 74,0.3)"}}>
                 📍 {lang === "en" ? "Use My Current GPS Location" : "Usar mi ubicación actual (GPS)"}
               </button>
 
@@ -955,50 +1013,59 @@ export default function DashboardPage() {
               <div style={styles.overviewGrid}>
                 {/* General Info Card */}
                 <button
-                  onClick={() => setActiveTab("general")}
+                  onClick={() => handleCardClick("general")}
                   className="hover-card clay-card animate-fade-in-up"
                   style={{
                     ...styles.dashboardCard,
                     background: "linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)",
                     border: "2px solid #C7D2FE",
-                    boxShadow: "0 12px 28px -4px rgba(79, 70, 229, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                    boxShadow: "0 12px 28px -4px rgba(79, 70, 229, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
+                    opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
                   <div style={{ ...styles.cardIcon, background: "#4F46E5", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(79, 70, 229, 0.35)" }}>ℹ️</div>
-                  <h3 style={{ ...styles.cardTitle, color: "#3730A3" }}>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</h3>
+                  <h3 style={{ ...styles.cardTitle, color: "#3730A3" }}>
+                    {lang === "en" ? "Business Profile" : "Perfil del Negocio"} {negocio && !negocio.activo && "🔒"}
+                  </h3>
                   <p style={{ ...styles.cardDesc, color: "#4338CA" }}>{lang === "en" ? "Update photos, description, logo and contact info" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
                 </button>
 
                 {/* Checklist Card */}
                 <button
-                  onClick={() => setActiveTab("excentricidades")}
+                  onClick={() => handleCardClick("excentricidades")}
                   className="hover-card clay-card animate-fade-in-up"
                   style={{
                     ...styles.dashboardCard,
                     background: "linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)",
                     border: "2px solid #86EFAC",
-                    boxShadow: "0 12px 28px -4px rgba(22, 163, 74, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                    boxShadow: "0 12px 28px -4px rgba(22, 163, 74, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
+                    opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
                   <div style={{ ...styles.cardIcon, background: "#16A34A", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(22, 163, 74, 0.35)" }}>⚙️</div>
-                  <h3 style={{ ...styles.cardTitle, color: "#166534" }}>{lang === "en" ? "Services Checklist" : "Checklist de Servicios"}</h3>
+                  <h3 style={{ ...styles.cardTitle, color: "#166534" }}>
+                    {lang === "en" ? "Services Checklist" : "Checklist de Servicios"} {negocio && !negocio.activo && "🔒"}
+                  </h3>
                   <p style={{ ...styles.cardDesc, color: "#15803D" }}>{lang === "en" ? "Enable menu, lodging, or transport modules" : "Activa módulos de menú, hospedaje o transporte"}</p>
                 </button>
 
                 {/* Hours Card */}
                 {hasHours && (
                   <button
-                    onClick={() => setActiveTab("horarios")}
+                    onClick={() => handleCardClick("horarios")}
                     className="hover-card clay-card animate-fade-in-up"
                     style={{
                       ...styles.dashboardCard,
                       background: "linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)",
                       border: "2px solid #FDE68A",
-                      boxShadow: "0 12px 28px -4px rgba(217, 119, 6, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                      boxShadow: "0 12px 28px -4px rgba(217, 119, 6, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
+                      opacity: negocio && !negocio.activo ? 0.75 : 1
                     }}
                   >
                     <div style={{ ...styles.cardIcon, background: "#D97706", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(217, 119, 6, 0.35)" }}>⏰</div>
-                    <h3 style={{ ...styles.cardTitle, color: "#92400E" }}>{lang === "en" ? "Opening Hours" : "Horarios de Atención"}</h3>
+                    <h3 style={{ ...styles.cardTitle, color: "#92400E" }}>
+                      {lang === "en" ? "Opening Hours" : "Horarios de Atención"} {negocio && !negocio.activo && "🔒"}
+                    </h3>
                     <p style={{ ...styles.cardDesc, color: "#B45309" }}>{lang === "en" ? "Manage your daily opening and closing times" : "Configura tus horarios de apertura y cierre"}</p>
                   </button>
                 )}
@@ -1006,17 +1073,20 @@ export default function DashboardPage() {
                 {/* Menu Card */}
                 {hasMenu && (
                   <button
-                    onClick={() => setActiveTab("menu")}
+                    onClick={() => handleCardClick("menu")}
                     className="hover-card clay-card animate-fade-in-up"
                     style={{
                       ...styles.dashboardCard,
                       background: "linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)",
                       border: "2px solid #93C5FD",
-                      boxShadow: "0 12px 28px -4px rgba(37, 99, 235, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                      boxShadow: "0 12px 28px -4px rgba(37, 99, 235, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
+                      opacity: negocio && !negocio.activo ? 0.75 : 1
                     }}
                   >
                     <div style={{ ...styles.cardIcon, background: "#2563EB", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(37, 99, 235, 0.35)" }}>🍲</div>
-                    <h3 style={{ ...styles.cardTitle, color: "#1E40AF" }}>{lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"}</h3>
+                    <h3 style={{ ...styles.cardTitle, color: "#1E40AF" }}>
+                      {lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"} {negocio && !negocio.activo && "🔒"}
+                    </h3>
                     <p style={{ ...styles.cardDesc, color: "#1D4ED8" }}>{lang === "en" ? "Add or remove dishes, photos, and set prices" : "Agrega o elimina platillos, fotos y precios"}</p>
                   </button>
                 )}
@@ -1024,17 +1094,20 @@ export default function DashboardPage() {
                 {/* Reservations Card */}
                 {hasLodging && (
                   <button
-                    onClick={() => setActiveTab("reservas")}
+                    onClick={() => handleCardClick("reservas")}
                     className="hover-card clay-card animate-fade-in-up"
                     style={{
                       ...styles.dashboardCard,
                       background: "linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%)",
                       border: "2px solid #D8B4FE",
-                      boxShadow: "0 12px 28px -4px rgba(147, 51, 234, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                      boxShadow: "0 12px 28px -4px rgba(147, 51, 234, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
+                      opacity: negocio && !negocio.activo ? 0.75 : 1
                     }}
                   >
                     <div style={{ ...styles.cardIcon, background: "#9333EA", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(147, 51, 234, 0.35)" }}>📅</div>
-                    <h3 style={{ ...styles.cardTitle, color: "#6B21A8" }}>{lang === "en" ? "Reservations Manager" : "Gestor de Reservas"}</h3>
+                    <h3 style={{ ...styles.cardTitle, color: "#6B21A8" }}>
+                      {lang === "en" ? "Reservations Manager" : "Gestor de Reservas"} {negocio && !negocio.activo && "🔒"}
+                    </h3>
                     <p style={{ ...styles.cardDesc, color: "#7E22CE" }}>{lang === "en" ? "Approve or cancel incoming booking requests" : "Aprueba o cancela solicitudes de reserva"}</p>
                     {reservas.filter(r => r.estado_reserva === "pendiente").length > 0 && (
                       <div style={styles.cardBadge}>
@@ -1046,17 +1119,20 @@ export default function DashboardPage() {
 
                 {/* Reviews Card */}
                 <button
-                  onClick={() => setActiveTab("resenas")}
+                  onClick={() => handleCardClick("resenas")}
                   className="hover-card clay-card animate-fade-in-up"
                   style={{
                     ...styles.dashboardCard,
                     background: "linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%)",
                     border: "2px solid #FECDD3",
-                    boxShadow: "0 12px 28px -4px rgba(225, 29, 72, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                    boxShadow: "0 12px 28px -4px rgba(225, 29, 72, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
+                    opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
                   <div style={{ ...styles.cardIcon, background: "#E11D48", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(225, 29, 72, 0.35)" }}>⭐</div>
-                  <h3 style={{ ...styles.cardTitle, color: "#9F1239" }}>{lang === "en" ? "Customer Reviews" : "Reseñas de Clientes"}</h3>
+                  <h3 style={{ ...styles.cardTitle, color: "#9F1239" }}>
+                    {lang === "en" ? "Customer Reviews" : "Reseñas de Clientes"} {negocio && !negocio.activo && "🔒"}
+                  </h3>
                   <p style={{ ...styles.cardDesc, color: "#BE123C" }}>{lang === "en" ? "Read what tourists think about your business" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
                 </button>
               </div>
@@ -1666,6 +1742,138 @@ export default function DashboardPage() {
           </main>
         )}
       </div>
+      )}
+
+      {/* MODAL DE SOLICITUD DE VERIFICACIÓN DE RECLAMO */}
+      {showClaimModal && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, width: "100%", height: "100vh",
+          background: "rgba(10, 15, 28, 0.65)", backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)", zIndex: 1000, display: "flex",
+          alignItems: "center", justifyContent: "center", padding: "20px"
+        }} className="animate-fade-in">
+          <div style={{
+            maxWidth: "540px", width: "100%", background: "#FFFFFF",
+            border: "2px solid rgba(255, 255, 255, 0.95)",
+            boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 24px 60px -10px rgba(20, 109, 158, 0.20)",
+            borderRadius: "28px", padding: "32px", maxHeight: "90vh", overflowY: "auto"
+          }} className="clay-modal animate-scale-up">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "850", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "8px" }}>
+                📋 {lang === "en" ? "Claim Verification Request" : "Solicitud de Verificación de Propiedad"}
+              </h3>
+              <button onClick={() => setShowClaimModal(false)} style={{ background: "none", border: "none", fontSize: "20px", cursor: "pointer", color: "#9CA3AF" }}>
+                ✕
+              </button>
+            </div>
+
+            <p style={{ fontSize: "13px", color: "#4A5568", lineHeight: "1.5", marginBottom: "20px" }}>
+              {lang === "en" 
+                ? "Please provide your identification and owner proof details so that the Atlan Admin team can verify and approve your claim." 
+                : "Para proteger la autenticidad de los negocios, la administración de Atlan verificará tus documentos de propiedad antes de darte el control total."}
+            </p>
+
+            <form onSubmit={handleConfirmSubmitClaim} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <div>
+                <label style={styles.label}>{lang === "en" ? "Owner / Applicant Full Name *" : "Nombre Completo del Propietario / Representante *"}</label>
+                <input
+                  type="text"
+                  required
+                  placeholder={lang === "en" ? "Full Legal Name" : "Ej. Juan Carlos Pérez"}
+                  value={solicitanteNombre}
+                  onChange={(e) => setSolicitanteNombre(e.target.value)}
+                  style={styles.input}
+                />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                <div>
+                  <label style={styles.label}>{lang === "en" ? "ID / RUC Number *" : "N° Cédula / Identificación *"}</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ej. 0801-1990-12345"
+                    value={solicitanteCedula}
+                    onChange={(e) => setSolicitanteCedula(e.target.value)}
+                    style={styles.input}
+                  />
+                </div>
+                <div>
+                  <label style={styles.label}>{lang === "en" ? "Contact Phone / WhatsApp *" : "Teléfono de Contacto *"}</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="+504 9999-9999"
+                    value={solicitanteTelefono}
+                    onChange={(e) => setSolicitanteTelefono(e.target.value)}
+                    style={styles.input}
+                  />
+                </div>
+              </div>
+
+              {/* Adjuntar Cédula */}
+              <div>
+                <label style={styles.label}>{lang === "en" ? "ID Document (Photo / PDF) *" : "Foto o PDF de Cédula de Identidad *"}</label>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
+                  <label className="clay-btn-blue" style={{ padding: "8px 14px", fontSize: "12px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                    {uploadingCedulaDoc ? "..." : (documentoCedulaUrl ? "✅ Cédula Adjuntada" : "📄 Adjuntar Cédula")}
+                    <input type="file" accept="image/*,.pdf" onChange={(e) => handleDocUpload(e, "cedula")} style={{ display: "none" }} />
+                  </label>
+                  {documentoCedulaUrl && (
+                    <a href={documentoCedulaUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "#146D9E", fontWeight: "700" }}>
+                      🔗 Ver Documento
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Adjuntar Comprobante de Propiedad */}
+              <div>
+                <label style={styles.label}>{lang === "en" ? "Business Permit / Property Proof (Optional)" : "Comprobante de Propiedad / Licencia Comercial (Opcional)"}</label>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
+                  <label className="clay-btn-gold" style={{ padding: "8px 14px", fontSize: "12px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                    {uploadingPropiedadDoc ? "..." : (documentoPropiedadUrl ? "✅ Comprobante Adjuntado" : "📄 Adjuntar Comprobante")}
+                    <input type="file" accept="image/*,.pdf" onChange={(e) => handleDocUpload(e, "propiedad")} style={{ display: "none" }} />
+                  </label>
+                  {documentoPropiedadUrl && (
+                    <a href={documentoPropiedadUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "#B8960E", fontWeight: "700" }}>
+                      🔗 Ver Documento
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label style={styles.label}>{lang === "en" ? "Additional Notes / Observations" : "Notas Adicionales u Observaciones"}</label>
+                <textarea
+                  rows="2"
+                  placeholder={lang === "en" ? "Details that help verify ownership..." : "Detalles o referencias que ayuden a verificar la propiedad..."}
+                  value={solicitudNotas}
+                  onChange={(e) => setSolicitudNotas(e.target.value)}
+                  style={{ ...styles.input, resize: "none" }}
+                />
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "12px" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowClaimModal(false)}
+                  style={{ padding: "10px 18px", background: "none", border: "1px solid rgba(20, 109, 158, 0.15)", borderRadius: "10px", fontSize: "13px", fontWeight: "700", cursor: "pointer", color: "#4A5568" }}
+                >
+                  {lang === "en" ? "Cancel" : "Cancelar"}
+                </button>
+                <button
+                  type="submit"
+                  disabled={isClaiming || uploadingCedulaDoc || uploadingPropiedadDoc}
+                  className="clay-btn-green"
+                  style={{ padding: "10px 22px", fontSize: "13px" }}
+                >
+                  {isClaiming ? "..." : `🚀 ${lang === "en" ? "Submit Verification Claim" : "Enviar Solicitud de Verificación"}`}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );
