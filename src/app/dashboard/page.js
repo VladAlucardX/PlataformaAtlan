@@ -1928,7 +1928,7 @@ export default function DashboardPage() {
             maxWidth: "540px", width: "100%", background: "#FFFFFF",
             border: "2px solid rgba(255, 255, 255, 0.95)",
             boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 24px 60px -10px rgba(20, 109, 158, 0.20)",
-            borderRadius: "28px", padding: "32px", maxHeight: "90vh", overflowY: "auto"
+            borderRadius: "28px", padding: "24px 28px", maxHeight: "85vh", display: "flex", flexDirection: "column"
           }} className="clay-modal animate-scale-up">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
               <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "850", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "8px" }}>
@@ -1945,7 +1945,7 @@ export default function DashboardPage() {
                 : "Para proteger la autenticidad de los negocios, la administración de Atlan verificará tus documentos de propiedad antes de darte el control total."}
             </p>
 
-            <form noValidate onSubmit={handleConfirmSubmitClaim} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <form noValidate onSubmit={handleConfirmSubmitClaim} style={{ display: "flex", flexDirection: "column", gap: "14px", overflowY: "auto", paddingRight: "4px", paddingBottom: "16px" }}>
               <div>
                 <label style={styles.label}>{lang === "en" ? "Owner / Applicant Full Name *" : "Nombre Completo del Propietario / Representante *"}</label>
                 <input
