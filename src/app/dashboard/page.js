@@ -338,7 +338,6 @@ export default function DashboardPage() {
   };
 
   // Reclamar un punto geográfico
-  const handleReclamarPunto = async (puntoId) => {
   const handleInitiateClaim = (punto) => {
     if (punto && punto !== "gps" && (punto.estado === "en_verificacion" || punto.negocio_id)) {
       alert(lang === "en" 
