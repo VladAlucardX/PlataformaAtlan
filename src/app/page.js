@@ -20,7 +20,7 @@ function Navbar({ session, perfil, handleLogout }) {
   return (
     <nav style={styles.nav}>
       <div style={styles.navInner}>
-        {/* Logo */}
+        {/* Logo at far left */}
         <Link href="/" style={styles.logo}>
           <img
             src="/mapaicono.png"
@@ -34,8 +34,11 @@ function Navbar({ session, perfil, handleLogout }) {
           <span className="logoText" style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
         </Link>
 
-        {/* Desktop links */}
-        <div style={styles.navLinks} className="hide-mobile">
+        {/* Center Nav Pills */}
+        <div style={styles.navCenterPills} className="hide-mobile">
+          <Link href="/" className="nav-pill-link active">
+            🏠 {t("nav.home") || "Inicio"}
+          </Link>
           <Link href="/mapa" className="nav-pill-link">
             🗺️ {t("nav.map")}
           </Link>
@@ -47,6 +50,10 @@ function Navbar({ session, perfil, handleLogout }) {
               💬 {t("chat.title")}
             </Link>
           )}
+        </div>
+
+        {/* Right Actions at far right */}
+        <div style={styles.navRightActions} className="hide-mobile">
           <LanguageToggle variant="pill" />
           {session && <NotificationDropdown session={session} />}
 
@@ -67,13 +74,8 @@ function Navbar({ session, perfil, handleLogout }) {
                   <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.myReservations")}</span>
                 </Link>
               )}
-              <button onClick={handleLogout} style={{ ...styles.logoutBtn, display: "flex", alignItems: "center", gap: "6px" }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-                <span>{t("nav.logout")}</span>
+              <button onClick={handleLogout} style={styles.logoutBtn}>
+                🚪 <span>{t("nav.logout") || "Cerrar Sesión"}</span>
               </button>
             </>
           ) : (
@@ -81,7 +83,7 @@ function Navbar({ session, perfil, handleLogout }) {
               <Link href="/login" className="nav-pill-link">
                 {t("nav.login")}
               </Link>
-              <Link href="/registro" className="btn-primary" style={{ padding: "10px 24px", fontSize: "14px" }}>
+              <Link href="/registro" className="btn-primary" style={{ padding: "8px 20px", fontSize: "13.5px" }}>
                 {t("nav.register")}
               </Link>
             </>
@@ -573,32 +575,40 @@ const styles = {
     borderBottom: "1px solid rgba(20,109,158,0.10)",
   },
   navInner: {
-    maxWidth: "1200px",
-    margin: "0 auto",
-    padding: "0 24px",
+    width: "100%",
+    padding: "0 32px",
     height: "72px",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
+    position: "relative",
   },
-  logo: {
+  navCenterPills: {
+    position: "absolute",
+    left: "50%",
+    transform: "translateX(-50%)",
     display: "flex",
     alignItems: "center",
     gap: "10px",
-    textDecoration: "none",
   },
-  logoIcon: { fontSize: "26px" },
-  logoText: {
-    fontSize: "24px",
-    fontWeight: "900",
-    fontFamily: "var(--font-outfit), system-ui, sans-serif",
-    color: "#FFD700",
-    letterSpacing: "-0.02em",
-  },
-  navLinks: {
+  navRightActions: {
     display: "flex",
     alignItems: "center",
-    gap: "20px",
+    gap: "12px",
+  },
+  logoutBtn: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    padding: "8px 16px",
+    background: "rgba(239, 68, 68, 0.08)",
+    border: "1px solid rgba(239, 68, 68, 0.25)",
+    color: "#ef4444",
+    borderRadius: "var(--atlan-radius-full)",
+    fontSize: "13px",
+    fontWeight: "750",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
   },
   navLink: {
     color: "var(--atlan-text-secondary)",

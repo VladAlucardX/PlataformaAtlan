@@ -67,12 +67,8 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
                 )}
                 <span>{perfil?.nombre_completo?.split(" ")[0] || "Mi perfil"}</span>
               </Link>
-              <button onClick={onLogout} style={{ ...navStyles.logoutBtn, display: "flex", alignItems: "center", justifyContent: "center" }} title={t("nav.logout")}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
+              <button onClick={onLogout} style={navStyles.logoutBtn} title={t("nav.logout")}>
+                🚪 <span>{t("nav.logout") || "Cerrar Sesión"}</span>
               </button>
             </>
           ) : (
@@ -1231,18 +1227,28 @@ const navStyles = {
     borderBottom: "1px solid rgba(20,109,158,0.10)",
   },
   navInner: {
-    maxWidth: "1200px", margin: "0 auto", padding: "0 24px",
-    height: "60px", display: "flex", alignItems: "center", justifyContent: "space-between",
+    width: "100%", padding: "0 32px",
+    height: "64px", display: "flex", alignItems: "center", justifyContent: "space-between",
+    position: "relative",
   },
   logo: { display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" },
   logoText: {
     fontSize: "24px", fontWeight: "900", fontFamily: "var(--font-outfit), system-ui, sans-serif",
     color: "#FFD700", letterSpacing: "-0.02em",
   },
-  navCenter: { display: "flex", alignItems: "center", gap: "20px" },
-  navRight: { display: "flex", alignItems: "center", gap: "16px" },
+  navCenter: {
+    position: "absolute", left: "50%", transform: "translateX(-50%)",
+    display: "flex", alignItems: "center", gap: "10px",
+  },
+  navRight: { display: "flex", alignItems: "center", gap: "12px" },
   navLink: { color: "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "600", textDecoration: "none", transition: "color 0.2s" },
-  logoutBtn: { background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", padding: "6px 10px", borderRadius: "8px", fontSize: "13px", cursor: "pointer" },
+  logoutBtn: {
+    display: "inline-flex", alignItems: "center", gap: "6px",
+    padding: "8px 16px", background: "rgba(239,68,68,0.08)",
+    border: "1px solid rgba(239,68,68,0.25)", color: "#ef4444",
+    borderRadius: "var(--atlan-radius-full)", fontSize: "13px", fontWeight: "750",
+    cursor: "pointer", transition: "all 0.2s ease",
+  },
   hamburger: { background: "none", border: "none", color: "var(--atlan-text-primary)", cursor: "pointer", padding: "8px" },
   mobileMenu: { padding: "12px 24px 20px", display: "flex", flexDirection: "column", gap: "10px",    borderTop: "1px solid rgba(20,109,158,0.08)" },
   mobileLink: { color: "var(--atlan-text-secondary)", fontSize: "15px", fontWeight: "600", textDecoration: "none", padding: "10px 0" },

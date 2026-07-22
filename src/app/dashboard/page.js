@@ -670,11 +670,14 @@ export default function DashboardPage() {
   return (
     <div style={styles.container} className="dashboard-container">
       <header style={styles.header} className="dashboard-header">
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <Link href="/" style={styles.logo}>
-            <span style={styles.logoIcon}>🗺️</span>
-            <span style={styles.logoText} className="logoText">atlan</span>
-          </Link>
+        {/* Logo Far Left */}
+        <Link href="/" style={styles.logo}>
+          <span style={styles.logoIcon}>🗺️</span>
+          <span style={styles.logoText} className="logoText">atlan</span>
+        </Link>
+
+        {/* Center Nav Pills */}
+        <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", gap: "10px" }} className="hide-mobile">
           <Link href="/" className="nav-pill-link">🏠 {lang === "en" ? "Home" : "Inicio"}</Link>
           <Link href="/mapa" className="nav-pill-link">🗺️ {lang === "en" ? "Map" : "Mapa"}</Link>
           <Link href="/comunidad" className="nav-pill-link">👥 {lang === "en" ? "Community" : "Comunidad"}</Link>
@@ -682,10 +685,12 @@ export default function DashboardPage() {
             💼 {lang === "en" ? "Owner Panel" : "Panel Propietario"}
           </Link>
         </div>
+
+        {/* Far Right Actions */}
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <LanguageToggle variant="pill" />
           <button onClick={handleLogout} style={styles.logoutBtn}>
-            🚪 {lang === "en" ? "Logout" : "Cerrar Sesión"}
+            🚪 <span>{lang === "en" ? "Logout" : "Cerrar Sesión"}</span>
           </button>
         </div>
       </header>

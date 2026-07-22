@@ -222,23 +222,26 @@ export default function PerfilPage() {
       paddingBottom: "80px",
       fontFamily: "var(--font-outfit), sans-serif"
     }}>
-      {/* HEADER */}
       <nav style={{
         background: "rgba(255, 255, 255, 0.92)",
         backdropFilter: "blur(12px)",
         borderBottom: "1px solid rgba(20, 109, 158, 0.12)",
-        padding: "16px 24px",
+        padding: "0 32px",
+        height: "64px",
+        display: "flex",
+        alignItems: "center",
         position: "sticky",
         top: 0,
         zIndex: 50
       }}>
         <div style={{
-          maxWidth: "1100px",
-          margin: "0 auto",
+          width: "100%",
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center"
+          alignItems: "center",
+          position: "relative"
         }}>
+          {/* Logo Far Left */}
           <Link href="/" style={{
             fontSize: "20px",
             fontWeight: "800",
@@ -248,13 +251,14 @@ export default function PerfilPage() {
             alignItems: "center",
             gap: "8px"
           }}>
-            <span>🗺️</span>
-            <span className="logoText" style={{ color: "#FFD700", fontWeight: "900" }}>
+            <img src="/mapaicono.png" alt="Logo" style={{ width: "26px", height: "26px", objectFit: "contain" }} />
+            <span className="logoText" style={{ color: "#FFD700", fontWeight: "900", fontSize: "24px" }}>
               atlan
             </span>
           </Link>
           
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {/* Center Nav Pills */}
+          <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", gap: "10px" }} className="hide-mobile">
             <Link href="/" className="nav-pill-link">
               🏠 {lang === "en" ? "Home" : "Inicio"}
             </Link>
@@ -270,7 +274,31 @@ export default function PerfilPage() {
             <Link href="/perfil" className="nav-pill-link active">
               👤 {lang === "en" ? "My Profile" : "Mi Perfil"}
             </Link>
+          </div>
+
+          {/* Far Right Actions */}
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <LanguageToggle variant="pill" />
+            <button
+              onClick={handleCerrarSesion}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "8px 16px",
+                background: "rgba(239, 68, 68, 0.08)",
+                border: "1px solid rgba(239, 68, 68, 0.25)",
+                color: "#ef4444",
+                borderRadius: "var(--atlan-radius-full)",
+                fontSize: "13px",
+                fontWeight: "750",
+                cursor: "pointer",
+                transition: "all 0.2s"
+              }}
+              title={lang === "en" ? "Sign Out" : "Cerrar Sesión"}
+            >
+              🚪 <span>{lang === "en" ? "Sign Out" : "Cerrar Sesión"}</span>
+            </button>
           </div>
         </div>
       </nav>

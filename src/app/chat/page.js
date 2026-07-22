@@ -395,13 +395,16 @@ function ChatContent() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
       {/* Navbar */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255, 255, 255, 0.92)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(20, 109, 158, 0.08)" }}>
-        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px", height: "60px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", marginRight: "10px" }}>
-              <img src="/mapaicono.png" alt="Logo" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
-              <span className="logoText" style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
-            </Link>
+      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255, 255, 255, 0.92)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(20, 109, 158, 0.08)", padding: "0 32px", height: "64px", display: "flex", alignItems: "center" }}>
+        <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
+          {/* Logo Far Left */}
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
+            <img src="/mapaicono.png" alt="Logo" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
+            <span className="logoText" style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
+          </Link>
+
+          {/* Center Nav Pills */}
+          <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", gap: "10px" }} className="hide-mobile">
             <Link href="/" className="nav-pill-link">🏠 {lang === "en" ? "Home" : "Inicio"}</Link>
             <Link href="/mapa" className="nav-pill-link">🗺️ {t("nav.map")}</Link>
             <Link href="/comunidad" className="nav-pill-link">👥 {t("social.community")}</Link>
@@ -409,9 +412,30 @@ function ChatContent() {
               💬 {t("chat.title")} {totalUnread > 0 && <span style={{ background: "#ef4444", color: "white", borderRadius: "10px", padding: "1px 6px", fontSize: "10px", fontWeight: "800", marginLeft: "4px" }}>{totalUnread}</span>}
             </Link>
           </div>
+
+          {/* Far Right Actions */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <LanguageToggle variant="pill" />
-            <button onClick={handleLogout} style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", padding: "6px 10px", borderRadius: "8px", fontSize: "13px", cursor: "pointer" }}>🚪</button>
+            <button
+              onClick={handleLogout}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "8px 16px",
+                background: "rgba(239, 68, 68, 0.08)",
+                border: "1px solid rgba(239, 68, 68, 0.25)",
+                color: "#ef4444",
+                borderRadius: "var(--atlan-radius-full)",
+                fontSize: "13px",
+                fontWeight: "750",
+                cursor: "pointer",
+                transition: "all 0.2s"
+              }}
+              title={t("nav.logout") || "Cerrar Sesión"}
+            >
+              🚪 <span>{t("nav.logout") || "Cerrar Sesión"}</span>
+            </button>
           </div>
         </div>
       </nav>
