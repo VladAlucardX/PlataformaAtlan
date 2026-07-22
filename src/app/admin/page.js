@@ -150,14 +150,23 @@ export default function AdminDashboard() {
 
       if (errPunto) throw errPunto;
 
-      // 2. Activar el negocio en negocios (activo = true)
+      // 2. Activar el negocio en negocios (activo = true) y actualizar el rol del dueño a 'dueno'
       if (negocioId) {
-        const { error: errNegocio } = await supabase
+        const { data: negData, error: errNegocio } = await supabase
           .from('negocios')
           .update({ activo: true })
-          .eq('id', negocioId);
+          .eq('id', negocioId)
+          .select('dueno_id')
+          .single();
 
         if (errNegocio) throw errNegocio;
+
+        if (negData?.dueno_id) {
+          await supabase
+            .from('perfiles')
+            .update({ rol: 'dueno' })
+            .eq('id', negData.dueno_id);
+        }
       }
 
       alert(lang === 'en' ? 'Claim approved successfully!' : '¡Reclamo aprobado con éxito!');
