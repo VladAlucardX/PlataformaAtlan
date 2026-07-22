@@ -494,6 +494,26 @@ export default function MapaTuristico() {
       return;
     }
 
+    // Limpiar cualquier ruta o previsualización previa para evitar confusión de múltiples líneas
+    if (directionsRef.current) {
+      try {
+        directionsRef.current.removeRoutes();
+      } catch (e) {}
+    }
+    if (mapRef.current && mapRef.current.isStyleLoaded()) {
+      const source = mapRef.current.getSource('preview-route');
+      if (source) {
+        source.setData({
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: []
+          }
+        });
+      }
+    }
+    setPreviewRouteInfo(null);
+
     lugarDestinoRef.current = punto.nombre;
 
     if ('speechSynthesis' in window) {
@@ -1405,7 +1425,7 @@ export default function MapaTuristico() {
             'line-cap': 'round'
           },
           paint: {
-            'line-color': '#8b5cf6', // Color morado premium de Atlan (trayectoria futura)
+            'line-color': '#146D9E', // Color azul océano de Atlan para la ruta
             'line-width': 6,
             'line-opacity': 0.85
           }
@@ -2498,11 +2518,12 @@ export default function MapaTuristico() {
             {/* BOTÓN INICIAR VIAJE */}
             <button
               onClick={() => handleIniciarViaje(selectedPoint)}
-              className="clay-btn-gold"
+              className="clay-btn-blue"
               style={{
                 width: '100%',
                 padding: '14px 20px',
                 fontSize: '15px',
+                color: '#FFFFFF',
                 marginBottom: '4px'
               }}
             >

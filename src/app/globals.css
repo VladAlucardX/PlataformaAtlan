@@ -1477,7 +1477,11 @@ a:hover {
     0 4px 12px rgba(0, 0, 0, 0.04);
   z-index: 30;
   color: #1A1A2E;
-  font-family: var(--font-outfit), sans-serif;
+  font-family: var(--font-outfit), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
   display: flex;
   flex-direction: column;
   overflow: hidden;
