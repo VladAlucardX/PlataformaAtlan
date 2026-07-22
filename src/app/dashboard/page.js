@@ -960,43 +960,88 @@ export default function DashboardPage() {
 
               <div style={styles.overviewGrid}>
                 {/* General Info Card */}
-                <button onClick={() => setActiveTab("general")} style={styles.dashboardCard} className="hover-card">
-                  <div style={styles.cardIcon}>ℹ️</div>
-                  <h3 style={styles.cardTitle}>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</h3>
-                  <p style={styles.cardDesc}>{lang === "en" ? "Update photos, description, logo and contact info" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
+                <button
+                  onClick={() => setActiveTab("general")}
+                  className="hover-card clay-card animate-fade-in-up"
+                  style={{
+                    ...styles.dashboardCard,
+                    background: "linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)",
+                    border: "2px solid #C7D2FE",
+                    boxShadow: "0 12px 28px -4px rgba(79, 70, 229, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                  }}
+                >
+                  <div style={{ ...styles.cardIcon, background: "#4F46E5", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(79, 70, 229, 0.35)" }}>ℹ️</div>
+                  <h3 style={{ ...styles.cardTitle, color: "#3730A3" }}>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</h3>
+                  <p style={{ ...styles.cardDesc, color: "#4338CA" }}>{lang === "en" ? "Update photos, description, logo and contact info" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
                 </button>
 
                 {/* Checklist Card */}
-                <button onClick={() => setActiveTab("excentricidades")} style={styles.dashboardCard} className="hover-card">
-                  <div style={styles.cardIcon}>⚙️</div>
-                  <h3 style={styles.cardTitle}>{lang === "en" ? "Services Checklist" : "Checklist de Servicios"}</h3>
-                  <p style={styles.cardDesc}>{lang === "en" ? "Enable menu, lodging, or transport modules" : "Activa módulos de menú, hospedaje o transporte"}</p>
+                <button
+                  onClick={() => setActiveTab("excentricidades")}
+                  className="hover-card clay-card animate-fade-in-up"
+                  style={{
+                    ...styles.dashboardCard,
+                    background: "linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)",
+                    border: "2px solid #86EFAC",
+                    boxShadow: "0 12px 28px -4px rgba(22, 163, 74, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                  }}
+                >
+                  <div style={{ ...styles.cardIcon, background: "#16A34A", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(22, 163, 74, 0.35)" }}>⚙️</div>
+                  <h3 style={{ ...styles.cardTitle, color: "#166534" }}>{lang === "en" ? "Services Checklist" : "Checklist de Servicios"}</h3>
+                  <p style={{ ...styles.cardDesc, color: "#15803D" }}>{lang === "en" ? "Enable menu, lodging, or transport modules" : "Activa módulos de menú, hospedaje o transporte"}</p>
                 </button>
 
                 {/* Hours Card */}
                 {hasHours && (
-                  <button onClick={() => setActiveTab("horarios")} style={styles.dashboardCard} className="hover-card">
-                    <div style={styles.cardIcon}>⏰</div>
-                    <h3 style={styles.cardTitle}>{lang === "en" ? "Opening Hours" : "Horarios de Atención"}</h3>
-                    <p style={styles.cardDesc}>{lang === "en" ? "Manage your daily opening and closing times" : "Configura tus horarios de apertura y cierre"}</p>
+                  <button
+                    onClick={() => setActiveTab("horarios")}
+                    className="hover-card clay-card animate-fade-in-up"
+                    style={{
+                      ...styles.dashboardCard,
+                      background: "linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)",
+                      border: "2px solid #FDE68A",
+                      boxShadow: "0 12px 28px -4px rgba(217, 119, 6, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                    }}
+                  >
+                    <div style={{ ...styles.cardIcon, background: "#D97706", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(217, 119, 6, 0.35)" }}>⏰</div>
+                    <h3 style={{ ...styles.cardTitle, color: "#92400E" }}>{lang === "en" ? "Opening Hours" : "Horarios de Atención"}</h3>
+                    <p style={{ ...styles.cardDesc, color: "#B45309" }}>{lang === "en" ? "Manage your daily opening and closing times" : "Configura tus horarios de apertura y cierre"}</p>
                   </button>
                 )}
 
                 {/* Menu Card */}
                 {hasMenu && (
-                  <button onClick={() => setActiveTab("menu")} style={styles.dashboardCard} className="hover-card">
-                    <div style={styles.cardIcon}>🍲</div>
-                    <h3 style={styles.cardTitle}>{lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"}</h3>
-                    <p style={styles.cardDesc}>{lang === "en" ? "Add or remove dishes, photos, and set prices" : "Agrega o elimina platillos, fotos y precios"}</p>
+                  <button
+                    onClick={() => setActiveTab("menu")}
+                    className="hover-card clay-card animate-fade-in-up"
+                    style={{
+                      ...styles.dashboardCard,
+                      background: "linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)",
+                      border: "2px solid #93C5FD",
+                      boxShadow: "0 12px 28px -4px rgba(37, 99, 235, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                    }}
+                  >
+                    <div style={{ ...styles.cardIcon, background: "#2563EB", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(37, 99, 235, 0.35)" }}>🍲</div>
+                    <h3 style={{ ...styles.cardTitle, color: "#1E40AF" }}>{lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"}</h3>
+                    <p style={{ ...styles.cardDesc, color: "#1D4ED8" }}>{lang === "en" ? "Add or remove dishes, photos, and set prices" : "Agrega o elimina platillos, fotos y precios"}</p>
                   </button>
                 )}
 
                 {/* Reservations Card */}
                 {hasLodging && (
-                  <button onClick={() => setActiveTab("reservas")} style={styles.dashboardCard} className="hover-card">
-                    <div style={styles.cardIcon}>📅</div>
-                    <h3 style={styles.cardTitle}>{lang === "en" ? "Reservations Manager" : "Gestor de Reservas"}</h3>
-                    <p style={styles.cardDesc}>{lang === "en" ? "Approve or cancel incoming booking requests" : "Aprueba o cancela solicitudes de reserva"}</p>
+                  <button
+                    onClick={() => setActiveTab("reservas")}
+                    className="hover-card clay-card animate-fade-in-up"
+                    style={{
+                      ...styles.dashboardCard,
+                      background: "linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%)",
+                      border: "2px solid #D8B4FE",
+                      boxShadow: "0 12px 28px -4px rgba(147, 51, 234, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                    }}
+                  >
+                    <div style={{ ...styles.cardIcon, background: "#9333EA", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(147, 51, 234, 0.35)" }}>📅</div>
+                    <h3 style={{ ...styles.cardTitle, color: "#6B21A8" }}>{lang === "en" ? "Reservations Manager" : "Gestor de Reservas"}</h3>
+                    <p style={{ ...styles.cardDesc, color: "#7E22CE" }}>{lang === "en" ? "Approve or cancel incoming booking requests" : "Aprueba o cancela solicitudes de reserva"}</p>
                     {reservas.filter(r => r.estado_reserva === "pendiente").length > 0 && (
                       <div style={styles.cardBadge}>
                         {reservas.filter(r => r.estado_reserva === "pendiente").length} {lang === "en" ? "Pending" : "Pendientes"}
@@ -1006,10 +1051,19 @@ export default function DashboardPage() {
                 )}
 
                 {/* Reviews Card */}
-                <button onClick={() => setActiveTab("resenas")} style={styles.dashboardCard} className="hover-card">
-                  <div style={styles.cardIcon}>⭐</div>
-                  <h3 style={styles.cardTitle}>{lang === "en" ? "Customer Reviews" : "Reseñas de Clientes"}</h3>
-                  <p style={styles.cardDesc}>{lang === "en" ? "Read what tourists think about your business" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
+                <button
+                  onClick={() => setActiveTab("resenas")}
+                  className="hover-card clay-card animate-fade-in-up"
+                  style={{
+                    ...styles.dashboardCard,
+                    background: "linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%)",
+                    border: "2px solid #FECDD3",
+                    boxShadow: "0 12px 28px -4px rgba(225, 29, 72, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                  }}
+                >
+                  <div style={{ ...styles.cardIcon, background: "#E11D48", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(225, 29, 72, 0.35)" }}>⭐</div>
+                  <h3 style={{ ...styles.cardTitle, color: "#9F1239" }}>{lang === "en" ? "Customer Reviews" : "Reseñas de Clientes"}</h3>
+                  <p style={{ ...styles.cardDesc, color: "#BE123C" }}>{lang === "en" ? "Read what tourists think about your business" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
                 </button>
               </div>
             </div>
@@ -1627,8 +1681,8 @@ const styles = {
   container: {
     minHeight: "100vh",
     width: "100%",
-    background: "#070b14",
-    color: "#fff",
+    background: "var(--atlan-bg-primary)",
+    color: "#1A1A2E",
     fontFamily: "var(--font-outfit), sans-serif",
     padding: "90px 24px 24px 24px",
     position: "relative",
@@ -1639,7 +1693,7 @@ const styles = {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    background: "#070b14",
+    background: "var(--atlan-bg-primary)",
   },
   header: {
     position: "absolute",
@@ -1695,9 +1749,10 @@ const styles = {
     maxWidth: "600px",
     margin: "40px auto",
     padding: "32px",
-    borderRadius: "20px",
-    background: "rgba(16, 22, 40, 0.5)",
-    border: "1px solid rgba(20, 109, 158, 0.10)",
+    borderRadius: "28px",
+    background: "#FFFFFF",
+    border: "2px solid rgba(255, 255, 255, 0.95)",
+    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 20px 48px -6px rgba(20, 109, 158, 0.14)",
   },
   claimSection: {
     background: "rgba(255,255,255,0.02)",
