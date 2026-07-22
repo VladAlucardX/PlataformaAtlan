@@ -503,7 +503,7 @@ export default function DashboardPage() {
           .single();
 
         if (negocioError) {
-          console.error("Error al insertar negocio:", negocioError);
+          console.error("Error al insertar negocio:", negocioError?.message || JSON.stringify(negocioError));
           throw negocioError;
         }
 
