@@ -18,7 +18,7 @@ function Navbar({ session, perfil, handleLogout }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
 
   return (
-    <nav style={styles.nav}>
+    <nav className="atlan-navbar-header">
       <div style={styles.navInner}>
         {/* Logo at far left */}
         <Link href="/" style={styles.logo}>
@@ -26,12 +26,13 @@ function Navbar({ session, perfil, handleLogout }) {
             src="/mapaicono.png"
             alt="Logo"
             style={{
-              width: "28px",
-              height: "28px",
-              objectFit: "contain"
+              width: "30px",
+              height: "30px",
+              objectFit: "contain",
+              filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))"
             }}
           />
-          <span className="logoText" style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
+          <span className="logoText" style={{ fontSize: "25px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
         </Link>
 
         {/* Center Nav Pills */}
@@ -73,8 +74,13 @@ function Navbar({ session, perfil, handleLogout }) {
                   <span>{perfil?.nombre_completo || perfil?.email?.split("@")[0] || t("nav.myReservations")}</span>
                 </Link>
               )}
-              <button onClick={handleLogout} style={styles.logoutBtn}>
-                🚪 <span>{t("nav.logout") || "Cerrar Sesión"}</span>
+              <button onClick={handleLogout} style={styles.logoutBtn} title={t("nav.logout") || "Cerrar Sesión"}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span>{t("nav.logout") || "Cerrar Sesión"}</span>
               </button>
             </>
           ) : (
@@ -180,7 +186,7 @@ function HeroSection({ perfil }) {
   const { t, lang } = useTranslation();
 
   return (
-    <section style={styles.hero}>
+    <section style={{ ...styles.hero, background: "linear-gradient(180deg, #F8FAFC 0%, #FFFDF0 60%, #F0F9FF 100%)" }}>
       {/* Background gradient orbs */}
       <div style={styles.heroOrb1} />
       <div style={styles.heroOrb2} />
@@ -212,12 +218,17 @@ function HeroSection({ perfil }) {
         <h1 style={styles.heroTitle}>
           {t("landing.hero.title")}
           <br />
-          <span className="text-gradient-gold">{t("landing.hero.titleHighlight")}</span>
+          <span style={styles.heroTitleAccent}>
+            {t("landing.hero.accent")}
+          </span>
         </h1>
 
-        <p style={styles.heroSubtitle}>{t("landing.hero.subtitle")}</p>
+        <p style={styles.heroSubtitle}>
+          {t("landing.hero.subtitle")}
+        </p>
 
-        <div style={styles.heroCTAs}>
+        {/* Action Buttons */}
+        <div style={styles.heroActions}>
           <Link href="/mapa" className="btn-primary" style={{ padding: "16px 36px", fontSize: "16px" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polygon points="3 11 22 2 13 21 11 13 3 11" />
@@ -280,7 +291,7 @@ function FeaturesSection() {
   ];
 
   return (
-    <section style={styles.section}>
+    <section style={{ ...styles.section, background: "linear-gradient(180deg, #F0F9FF 0%, #ECFDF5 100%)" }}>
       <div style={styles.sectionInner}>
         <div style={styles.sectionHeader} className="animate-fade-in-up">
           <h2 style={styles.sectionTitle}>{t("landing.features.title")}</h2>
@@ -348,7 +359,7 @@ function CategoriesSection() {
   ];
 
   return (
-    <section style={{ ...styles.section, background: "var(--atlan-bg-secondary)" }}>
+    <section style={{ ...styles.section, background: "linear-gradient(180deg, #ECFDF5 0%, #FFFDF0 100%)" }}>
       <div style={styles.sectionInner}>
         <div style={styles.sectionHeader} className="animate-fade-in-up">
           <h2 style={styles.sectionTitle}>{t("map.categories")}</h2>

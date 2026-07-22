@@ -38,11 +38,11 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav style={navStyles.nav}>
+    <nav className="atlan-navbar-header">
       <div style={navStyles.navInner}>
         <Link href="/" style={navStyles.logo}>
-          <img src="/mapaicono.png" alt="Logo" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
-          <span style={navStyles.logoText} className="logoText">atlan</span>
+          <img src="/mapaicono.png" alt="Logo" style={{ width: "30px", height: "30px", objectFit: "contain", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }} />
+          <span style={{ fontSize: "25px", fontWeight: "900", color: "#FFD700" }} className="logoText">atlan</span>
         </Link>
 
         <div style={navStyles.navCenter}>
@@ -67,8 +67,13 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
                 )}
                 <span>{perfil?.nombre_completo || perfil?.email?.split("@")[0] || "Mi perfil"}</span>
               </Link>
-              <button onClick={onLogout} style={navStyles.logoutBtn} title={t("nav.logout")}>
-                🚪 <span>{t("nav.logout") || "Cerrar Sesión"}</span>
+              <button onClick={onLogout} style={navStyles.logoutBtn} title={t("nav.logout") || "Cerrar Sesión"}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span>{t("nav.logout") || "Cerrar Sesión"}</span>
               </button>
             </>
           ) : (

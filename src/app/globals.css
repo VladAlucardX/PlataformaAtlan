@@ -394,7 +394,37 @@ a:hover {
     0 2px 6px rgba(0, 0, 0, 0.03);
 }
 
-/* ── NAV PILL LINKS (Píldoras de Navegación 3D) ────────────────────────── */
+/* ── BARRA DE NAVEGACIÓN CON CONSTRASTE 3D DISTINTIVO ────────────────────── */
+.atlan-navbar-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 2.5px solid rgba(20, 109, 158, 0.18) !important;
+  box-shadow: 
+    0 12px 32px -4px rgba(20, 109, 158, 0.14),
+    0 4px 12px rgba(0, 0, 0, 0.04),
+    inset 0 -2px 6px rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ── SECCIONES CON MATICES PASTELES ARMÓNICOS ────────────────────────────── */
+.pastel-section-gold {
+  background: linear-gradient(180deg, #FFFDF0 0%, #FEF9C3 100%) !important;
+}
+
+.pastel-section-blue {
+  background: linear-gradient(180deg, #F0F9FF 0%, #E0F2FE 100%) !important;
+}
+
+.pastel-section-emerald {
+  background: linear-gradient(180deg, #ECFDF5 0%, #D1FAE5 100%) !important;
+}
+
+.pastel-section-violet {
+  background: linear-gradient(180deg, #F5F3FF 0%, #EDE9FE 100%) !important;
+}
 .nav-pill-link {
   display: inline-flex;
   align-items: center;

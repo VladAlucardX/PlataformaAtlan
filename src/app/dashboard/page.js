@@ -672,10 +672,10 @@ export default function DashboardPage() {
 
   return (
     <div style={styles.container} className="dashboard-container">
-      <header style={styles.header} className="dashboard-header">
+      <header className="atlan-navbar-header" style={{ width: "100%", padding: "0 32px", height: "72px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         {/* Logo Far Left */}
         <Link href="/" style={styles.logo}>
-          <span style={styles.logoIcon}>🗺️</span>
+          <img src="/mapaicono.png" alt="Logo" style={{ width: "30px", height: "30px", objectFit: "contain", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }} />
           <span style={styles.logoText} className="logoText">atlan</span>
         </Link>
 
@@ -696,8 +696,13 @@ export default function DashboardPage() {
             ) : "💼"}
             <span>{perfil?.nombre_completo || perfil?.email?.split("@")[0] || (lang === "en" ? "Owner Panel" : "Panel Propietario")}</span>
           </Link>
-          <button onClick={handleLogout} style={styles.logoutBtn}>
-            🚪 <span>{lang === "en" ? "Logout" : "Cerrar Sesión"}</span>
+          <button onClick={handleLogout} style={styles.logoutBtn} title={lang === "en" ? "Logout" : "Cerrar Sesión"}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span>{lang === "en" ? "Logout" : "Cerrar Sesión"}</span>
           </button>
         </div>
       </header>

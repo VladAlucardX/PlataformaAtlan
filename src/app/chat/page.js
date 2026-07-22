@@ -397,12 +397,12 @@ function ChatContent() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
       {/* Navbar */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255, 255, 255, 0.92)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderBottom: "1px solid rgba(20, 109, 158, 0.10)" }}>
+      <nav className="atlan-navbar-header">
         <div style={{ width: "100%", padding: "0 32px", height: "72px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
           {/* Logo Far Left */}
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
-            <img src="/mapaicono.png" alt="Logo" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
-            <span className="logoText" style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
+            <img src="/mapaicono.png" alt="Logo" style={{ width: "30px", height: "30px", objectFit: "contain", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }} />
+            <span className="logoText" style={{ fontSize: "25px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
           </Link>
 
           {/* Center Nav Pills */}
@@ -447,7 +447,12 @@ function ChatContent() {
               }}
               title={t("nav.logout") || "Cerrar Sesión"}
             >
-              🚪 <span>{t("nav.logout") || "Cerrar Sesión"}</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              <span>{t("nav.logout") || "Cerrar Sesión"}</span>
             </button>
           </div>
 

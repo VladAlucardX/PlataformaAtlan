@@ -225,20 +225,11 @@ export default function PerfilPage() {
       paddingBottom: "80px",
       fontFamily: "var(--font-outfit), sans-serif"
     }}>
-      <nav style={{
-        background: "rgba(255, 255, 255, 0.92)",
-        backdropFilter: "blur(12px)",
-        borderBottom: "1px solid rgba(20, 109, 158, 0.12)",
-        padding: "0 32px",
-        height: "64px",
-        display: "flex",
-        alignItems: "center",
-        position: "sticky",
-        top: 0,
-        zIndex: 50
-      }}>
+      <nav className="atlan-navbar-header">
         <div style={{
           width: "100%",
+          padding: "0 32px",
+          height: "72px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -252,10 +243,10 @@ export default function PerfilPage() {
             textDecoration: "none",
             display: "flex",
             alignItems: "center",
-            gap: "8px"
+            gap: "10px"
           }}>
-            <img src="/mapaicono.png" alt="Logo" style={{ width: "26px", height: "26px", objectFit: "contain" }} />
-            <span className="logoText" style={{ color: "#FFD700", fontWeight: "900", fontSize: "24px" }}>
+            <img src="/mapaicono.png" alt="Logo" style={{ width: "30px", height: "30px", objectFit: "contain", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }} />
+            <span className="logoText" style={{ color: "#FFD700", fontWeight: "900", fontSize: "25px" }}>
               atlan
             </span>
           </Link>
@@ -304,7 +295,12 @@ export default function PerfilPage() {
               }}
               title={lang === "en" ? "Sign Out" : "Cerrar Sesión"}
             >
-              🚪 <span>{lang === "en" ? "Sign Out" : "Cerrar Sesión"}</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              <span>{lang === "en" ? "Sign Out" : "Cerrar Sesión"}</span>
             </button>
           </div>
         </div>

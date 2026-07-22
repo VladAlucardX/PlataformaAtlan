@@ -238,15 +238,19 @@ export default function PerfilPublico() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
       {/* Nav */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255, 255, 255,0.85)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(20, 109, 158, 0.08)" }}>
-        <div style={{ maxWidth: "800px", margin: "0 auto", padding: "0 24px", height: "60px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <nav className="atlan-navbar-header">
+        <div style={{ width: "100%", padding: "0 32px", height: "72px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
+            <img src="/mapaicono.png" alt="Logo" style={{ width: "30px", height: "30px", objectFit: "contain", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }} />
+            <span className="logoText" style={{ fontSize: "25px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
+          </Link>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <Link href="/" className="nav-pill-link">🏠 {lang === "en" ? "Home" : "Inicio"}</Link>
             <Link href="/comunidad" className="nav-pill-link">
               👥 {lang === "en" ? "Community" : "Comunidad"}
             </Link>
+            <LanguageToggle variant="pill" />
           </div>
-          <LanguageToggle variant="pill" />
         </div>
       </nav>
 
