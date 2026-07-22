@@ -829,7 +829,7 @@ export default function DashboardPage() {
                 </div>
               </button>
             ))}
-            <button onClick={handleCrearNuevoNegocioGPS} disabled={isClaiming} style={{ ...styles.dashboardCard, border: "2px dashed rgba(23, 170, 74,0.4)", background: "transparent", alignItems: "center", justifyContent: "center", textAlign: "center" }} className="hover-card">
+            <button onClick={() => handleInitiateClaim("gps")} disabled={isClaiming} style={{ ...styles.dashboardCard, border: "2px dashed rgba(23, 170, 74,0.4)", background: "transparent", alignItems: "center", justifyContent: "center", textAlign: "center" }} className="hover-card">
               <div style={{ fontSize: "32px", color: "#17AA4A", marginBottom: "8px" }}>📍</div>
               <h3 style={{...styles.cardTitle, color: "#17AA4A"}}>{lang === "en" ? "Add Business here (GPS)" : "Agregar Negocio Aquí (GPS)"}</h3>
             </button>
