@@ -6,6 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 import '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from '../hooks/useTranslation';
 import LanguageToggle from './ui/LanguageToggle';
@@ -29,6 +30,7 @@ const CATEGORIAS_CONFIG = {
 
 export default function MapaTuristico() {
   const { t, lang } = useTranslation();
+  const router = useRouter();
   const mapContainerRef = useRef(null);
 
   // --- REFS PRINCIPALES ---
@@ -2535,8 +2537,8 @@ export default function MapaTuristico() {
 
             {/* BOTÓN RECLAMAR NEGOCIO (SOLO SI ESTÁ COMPLETAMENTE LIBRE / SIN RECLAMO PENDIENTE) */}
             {!selectedPoint.negocio_id && selectedPoint.estado === 'sin_reclamar' && (
-              <button
-                onClick={() => router.push('/dashboard')}
+              <Link
+                href="/dashboard"
                 className="clay-btn-gold"
                 style={{
                   width: '100%',
@@ -2550,7 +2552,7 @@ export default function MapaTuristico() {
                 }}
               >
                 🏢 {lang === 'en' ? 'Are you the owner? Claim this business' : '¿Eres el dueño? Reclamar este negocio'}
-              </button>
+              </Link>
             )}
 
             {/* Banner Informativo si está en verificación */}
