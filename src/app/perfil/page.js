@@ -355,32 +355,6 @@ export default function PerfilPage() {
                 🛠️ {lang === "en" ? "Manage Business" : "Gestionar mi Negocio"}
               </Link>
             )}
-
-            <button
-              onClick={handleCerrarSesion}
-              style={{
-                width: "100%",
-                padding: "12px",
-                background: "rgba(239, 68, 68, 0.08)",
-                border: "1px solid rgba(239, 68, 68, 0.2)",
-                color: "#f87171",
-                borderRadius: "12px",
-                fontWeight: "750",
-                fontSize: "13px",
-                cursor: "pointer",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "#ef4444";
-                e.currentTarget.style.color = "white";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(239, 68, 68, 0.08)";
-                e.currentTarget.style.color = "#f87171";
-              }}
-            >
-              🚪 {lang === "en" ? "Sign Out" : "Cerrar Sesión"}
-            </button>
           </div>
         </div>
 
