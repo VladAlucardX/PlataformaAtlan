@@ -419,50 +419,65 @@ export default function DashboardPage() {
 
       if (claimTargetPunto === "gps") {
         if (!navigator.geolocation) {
-          alert("GPS no soportado.");
+          showToast(lang === "en" ? "GPS not supported" : "GPS no soportado en este navegador.", "error");
           setIsClaiming(false);
           return;
         }
 
-        navigator.geolocation.getCurrentPosition(async (position) => {
-          const { longitude, latitude } = position.coords;
-          const { data: nuevoNegocio, error: negocioError } = await supabase
-            .from("negocios")
-            .insert([{
-              dueno_id: user.id,
-              nombre: solicitanteNombre ? `Negocio de ${solicitanteNombre}` : "Nuevo Negocio",
-              tipo: "otro",
-              telefono: solicitanteTelefono,
-              whatsapp: solicitanteTelefono,
-              servicios: { has_menu: false, has_hours: false, has_lodging: false, has_transport: false },
-              activo: false,
-              datos_verificacion: datosVerificacion
-            }])
-            .select()
-            .single();
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            try {
+              const { longitude, latitude } = position.coords;
+              const { data: nuevoNegocio, error: negocioError } = await supabase
+                .from("negocios")
+                .insert([{
+                  dueno_id: user.id,
+                  nombre: solicitanteNombre ? `Negocio de ${solicitanteNombre}` : "Nuevo Negocio",
+                  tipo: "otro",
+                  telefono: solicitanteTelefono,
+                  whatsapp: solicitanteTelefono,
+                  servicios: { has_menu: false, has_hours: false, has_lodging: false, has_transport: false },
+                  activo: false,
+                  datos_verificacion: datosVerificacion
+                }])
+                .select()
+                .single();
 
-          if (negocioError) throw negocioError;
+              if (negocioError) throw negocioError;
 
-          const { error: puntoError } = await supabase
-            .from("puntos")
-            .insert([{
-              negocio_id: nuevoNegocio.id,
-              nombre: nuevoNegocio.nombre,
-              categoria: "otro",
-              ubicacion: `POINT(${longitude} ${latitude})`,
-              estado: "en_verificacion",
-              nombre_creador: perfil?.nombre_completo || "Propietario"
-            }]);
+              const { error: puntoError } = await supabase
+                .from("puntos")
+                .insert([{
+                  negocio_id: nuevoNegocio.id,
+                  nombre: nuevoNegocio.nombre,
+                  categoria: "otro",
+                  ubicacion: `POINT(${longitude} ${latitude})`,
+                  estado: "en_verificacion",
+                  nombre_creador: perfil?.nombre_completo || "Propietario"
+                }]);
 
-          if (puntoError) throw puntoError;
+              if (puntoError) throw puntoError;
 
-          setShowClaimModal(false);
-          showToast(lang === "en" 
-            ? "Verification request submitted! It is now pending admin approval." 
-            : "¡Solicitud de verificación enviada! Tu reclamo está pendiente de aprobación por la administración.", "success");
-          await loadNegocioData(user.id);
-        });
-
+              setShowClaimModal(false);
+              showToast(lang === "en" 
+                ? "Verification request submitted! It is now pending admin approval." 
+                : "¡Solicitud de verificación enviada! Tu reclamo está pendiente de aprobación por la administración.", "success");
+              await loadNegocioData(user.id);
+            } catch (err) {
+              console.error("Error creating GPS claim:", err);
+              showToast(lang === "en" ? "Error submitting claim." : "Error al enviar la solicitud.", "error");
+            } finally {
+              setIsClaiming(false);
+            }
+          },
+          (geoErr) => {
+            console.error("GPS error:", geoErr);
+            showToast(lang === "en" ? "Failed to get GPS location." : "No se pudo obtener la ubicación GPS.", "error");
+            setIsClaiming(false);
+          },
+          { timeout: 10000, enableHighAccuracy: true }
+        );
+        return;
       } else if (claimTargetPunto) {
         const { data: nuevoNegocio, error: negocioError } = await supabase
           .from("negocios")
@@ -1930,7 +1945,7 @@ export default function DashboardPage() {
                 : "Para proteger la autenticidad de los negocios, la administración de Atlan verificará tus documentos de propiedad antes de darte el control total."}
             </p>
 
-            <form onSubmit={handleConfirmSubmitClaim} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <form noValidate onSubmit={handleConfirmSubmitClaim} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
               <div>
                 <label style={styles.label}>{lang === "en" ? "Owner / Applicant Full Name *" : "Nombre Completo del Propietario / Representante *"}</label>
                 <input
