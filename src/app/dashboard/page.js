@@ -136,6 +136,42 @@ export default function DashboardPage() {
     fetchUserData();
   }, []);
 
+  // Supabase Realtime WebSockets + Polling automático de estado de solicitud
+  useEffect(() => {
+    if (!user) return;
+
+    // 1. Escuchar actualizaciones de negocios y puntos en tiempo real
+    const channel = supabase
+      .channel(`realtime_dashboard_${user.id}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'negocios', filter: `dueno_id=eq.${user.id}` },
+        async () => {
+          console.log('[Realtime] Cambio de negocio detectado');
+          await loadNegocioData(user.id);
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'puntos' },
+        async () => {
+          console.log('[Realtime] Cambio en puntos detectado');
+          await loadNegocioData(user.id);
+        }
+      )
+      .subscribe();
+
+    // 2. Intervalo de refresco secundario (sondeo de seguridad cada 5s)
+    const interval = setInterval(() => {
+      loadNegocioData(user.id);
+    }, 5000);
+
+    return () => {
+      supabase.removeChannel(channel);
+      clearInterval(interval);
+    };
+  }, [user]);
+
   const loadNegocioData = async (userId) => {
     const { data: negociosData } = await supabase
       .from("negocios")
@@ -1012,6 +1048,13 @@ export default function DashboardPage() {
                     ) : "Sin adjuntar"}
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* Mensaje de Observaciones del Administrador si fue rechazado */}
+            {negocio.motivo_rechazo && (
+              <div style={{ background: "rgba(239, 68, 68, 0.08)", borderLeft: "4px solid #ef4444", padding: "16px 20px", borderRadius: "0 12px 12px 0", fontSize: "13.5px", color: "#1A1A2E", lineHeight: "1.5" }}>
+                ⚠️ <strong>Observaciones del Administrador:</strong> {negocio.motivo_rechazo}
               </div>
             )}
 
