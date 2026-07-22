@@ -72,6 +72,11 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
               💬 {t("chat.title")}
             </Link>
           )}
+          {perfil?.rol === "admin" && (
+            <Link href="/admin" className={`nav-pill-link ${activePage === "admin" ? "active" : ""}`}>
+              🛡️ Admin
+            </Link>
+          )}
           <LanguageToggle variant="pill" />
           {session && <NotificationDropdown session={session} />}
         </div>
