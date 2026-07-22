@@ -1186,12 +1186,12 @@ const navStyles = {
 
 const pageStyles = {
   container: {
-    width: "100%", maxWidth: "100%", margin: "0", padding: "20px 20px",
+    width: "100%", maxWidth: "100%", margin: "0", padding: "90px 20px 40px 20px",
     display: "grid", gridTemplateColumns: "280px 1fr 300px", gap: "28px",
   },
-  sidebarLeft: { position: "sticky", top: "80px", alignSelf: "start" },
+  sidebarLeft: { position: "sticky", top: "90px", alignSelf: "start" },
   feed: { minWidth: 0 },
-  sidebarRight: { position: "sticky", top: "80px", alignSelf: "start" },
+  sidebarRight: { position: "sticky", top: "90px", alignSelf: "start" },
   createPostBar: {
     display: "flex", alignItems: "center", gap: "12px", padding: "16px 20px",
     background: "rgba(20,109,158,0.03)", border: "1px solid rgba(20,109,158,0.08)",

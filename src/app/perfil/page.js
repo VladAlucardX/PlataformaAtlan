@@ -250,7 +250,7 @@ export default function PerfilPage() {
       {/* CUERPO DEL CONTENEDOR */}
       <div style={{
         maxWidth: "1100px",
-        margin: "40px auto 0",
+        margin: "84px auto 0",
         padding: "0 24px",
         display: "grid",
         gridTemplateColumns: "300px 1fr",

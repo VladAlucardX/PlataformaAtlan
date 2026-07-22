@@ -721,8 +721,8 @@ function ChatContent() {
 const chatLayoutStyles = {
   container: {
     maxWidth: "1100px",
-    margin: "16px auto",
-    height: "calc(100vh - 92px)",
+    margin: "84px auto 24px",
+    height: "calc(100vh - 110px)",
     display: "grid",
     gridTemplateColumns: "340px 1fr",
     border: "2px solid rgba(255, 255, 255, 0.95)",

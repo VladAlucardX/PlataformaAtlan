@@ -242,7 +242,7 @@ export default function PerfilPublico() {
       <Navbar activePage="comunidad" session={session} perfil={myPerfil} />
 
       {/* Profile Header */}
-      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "0 24px" }}>
+      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "90px 24px 40px 24px" }}>
         {/* Banner */}
         <div style={{ height: "140px", background: "linear-gradient(135deg, #146D9E 0%, #0F5579 60%, #17AA4A 100%)", borderRadius: "0 0 24px 24px", position: "relative" }} />
 
