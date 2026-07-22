@@ -891,12 +891,16 @@ export default function MapaTuristico() {
           }
         });
 
+        if (!mapRef.current) return;
+
         const marker = new mapboxgl.Marker(el)
           .setLngLat([punto.lng, punto.lat])
-          .setPopup(popup)
-          .addTo(mapRef.current);
+          .setPopup(popup);
 
-        markersRef.current.push(marker);
+        if (mapRef.current) {
+          marker.addTo(mapRef.current);
+          markersRef.current.push(marker);
+        }
       });
     } catch (err) {
       console.error('[Atlan] Error inesperado en cargarPuntosCercanos:', err);
