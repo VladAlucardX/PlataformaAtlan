@@ -30,9 +30,16 @@ export default function AdminDashboard() {
 
   // Estados para modal de rechazo interactivo
   const [rejectionTarget, setRejectionTarget] = useState(null); // { puntoId, negocioId, nombreNegocio }
-  const [rejectionType, setRejectionType] = useState('observations'); // 'observations' | 'release'
+  const [rejectionType, setRejectionType] = useState('correction'); // 'correction' | 'release'
   const [rejectionReason, setRejectionReason] = useState('');
   const [submittingRejection, setSubmittingRejection] = useState(false);
+
+  // Toast Banner 3D
+  const [toastBanner, setToastBanner] = useState(null);
+  const showToast = (message, type = 'success') => {
+    setToastBanner({ message, type });
+    setTimeout(() => setToastBanner(null), 4000);
+  };
 
   // Verificar rol de admin
   useEffect(() => {
@@ -199,11 +206,11 @@ export default function AdminDashboard() {
         }
       }
 
-      alert(lang === 'en' ? 'Claim approved successfully!' : '¡Reclamo aprobado con éxito!');
+      showToast(lang === 'en' ? 'Claim approved successfully!' : '¡Reclamo aprobado con éxito!', 'success');
       loadAdminData();
     } catch (err) {
       console.error('Error aprobando reclamo:', err);
-      alert('Error al aprobar reclamo.');
+      showToast(lang === 'en' ? 'Error approving claim.' : 'Error al aprobar el reclamo.', 'error');
     }
   };
 
@@ -211,7 +218,7 @@ export default function AdminDashboard() {
   const handleConfirmarRechazo = async () => {
     if (!rejectionTarget) return;
     if (!rejectionReason.trim()) {
-      alert(lang === 'en' ? 'Please enter a reason for the rejection.' : 'Por favor, ingrese un motivo para el rechazo.');
+      showToast(lang === 'en' ? 'Please enter a reason for the rejection.' : 'Por favor, ingrese un motivo para el rechazo.', 'error');
       return;
     }
 
@@ -219,7 +226,7 @@ export default function AdminDashboard() {
     const { puntoId, negocioId } = rejectionTarget;
 
     try {
-      if (rejectionType === 'observations') {
+      if (rejectionType === 'correction' || rejectionType === 'observations') {
         // 1. Cambiar estado de punto a 'rechazado' (mantiene la vinculación para que el dueño corrija)
         const { error: errPunto } = await supabase
           .from('puntos')
@@ -241,7 +248,7 @@ export default function AdminDashboard() {
           if (errNegocio) throw errNegocio;
         }
 
-        alert(lang === 'en' ? 'Claim rejected with observations successfully.' : 'Reclamo rechazado con observaciones con éxito.');
+        showToast(lang === 'en' ? 'Claim rejected with observations successfully.' : '¡Reclamo rechazado con observaciones con éxito!', 'info');
       } else {
         // 1. Devolver el punto a estado 'sin_reclamar' y desvincular el negocio_id para liberar el reclamo
         const { error: errPunto } = await supabase
@@ -267,14 +274,14 @@ export default function AdminDashboard() {
           if (errNegocio) throw errNegocio;
         }
 
-        alert(lang === 'en' ? 'Point released and claim rejected.' : 'Punto liberado y reclamo rechazado.');
+        showToast(lang === 'en' ? 'Point released and claim rejected.' : '¡Punto liberado y reclamo rechazado con éxito!', 'success');
       }
 
       setRejectionTarget(null);
       loadAdminData();
     } catch (err) {
       console.error('Error procesando rechazo:', err);
-      alert(lang === 'en' ? 'Error processing rejection.' : 'Error al procesar el rechazo.');
+      showToast(lang === 'en' ? 'Error processing rejection.' : 'Error al procesar el rechazo.', 'error');
     } finally {
       setSubmittingRejection(false);
     }
@@ -322,6 +329,36 @@ export default function AdminDashboard() {
       
       {/* Navbar Global Unificada */}
       <Navbar activePage="admin" session={userSession} perfil={userPerfil} />
+
+      {/* TOAST NOTIFICATION BANNER 3D CLAYMORFISMO */}
+      {toastBanner && (
+        <div style={{
+          position: "fixed",
+          top: "84px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 1100,
+          background: toastBanner.type === "success" 
+            ? "linear-gradient(135deg, #10B981 0%, #059669 100%)" 
+            : toastBanner.type === "error"
+            ? "linear-gradient(135deg, #EF4444 0%, #DC2626 100%)"
+            : "linear-gradient(135deg, #146D9E 0%, #0D4E72 100%)",
+          color: "#FFFFFF",
+          padding: "14px 28px",
+          borderRadius: "20px",
+          fontWeight: "800",
+          fontSize: "14px",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          boxShadow: "0 14px 35px rgba(0, 0, 0, 0.25), inset 2px 2px 4px rgba(255, 255, 255, 0.4)",
+          border: "2px solid rgba(255, 255, 255, 0.8)",
+          pointerEvents: "none"
+        }} className="animate-fade-in-down">
+          <span>{toastBanner.type === "success" ? "✅" : toastBanner.type === "error" ? "❌" : "ℹ️"}</span>
+          <span>{toastBanner.message}</span>
+        </div>
+      )}
 
       {/* Grid de Estadísticas */}
       <div style={{
