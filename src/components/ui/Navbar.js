@@ -74,7 +74,7 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
           )}
           {perfil?.rol === "admin" && (
             <Link href="/admin" className={`nav-pill-link ${activePage === "admin" ? "active" : ""}`}>
-              🛡️ Admin
+              🛡️ {lang === "en" ? "Management" : "Gestión"}
             </Link>
           )}
           <LanguageToggle variant="pill" />
@@ -156,6 +156,11 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
           <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>🗺️ {t("nav.map")}</Link>
           <Link href="/comunidad" className={`nav-pill-link ${activePage === "comunidad" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>👥 {t("social.community")}</Link>
           {session && <Link href="/chat" className={`nav-pill-link ${activePage === "chat" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>💬 {t("chat.title")}</Link>}
+          {perfil?.rol === "admin" && (
+            <Link href="/admin" className={`nav-pill-link ${activePage === "admin" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
+              🛡️ {lang === "en" ? "Management" : "Gestión"}
+            </Link>
+          )}
           {session ? (
             <>
               <Link href={getProfileLink()} className={`nav-pill-link ${activePage === "perfil" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>👤 {getProfileLabel()}</Link>
