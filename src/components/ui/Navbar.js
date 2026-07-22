@@ -57,7 +57,7 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
         </Link>
 
         {/* Center Nav Pills */}
-        <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", gap: "10px" }} className="hide-mobile">
+        <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", gap: "8px", whiteSpace: "nowrap" }} className="hide-mobile">
           <Link href="/" className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`}>
             🏠 {lang === "en" ? "Home" : "Inicio"}
           </Link>
