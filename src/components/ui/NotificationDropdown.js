@@ -22,9 +22,9 @@ function avatarStyle(url, size) {
   return {
     width: `${size}px`, height: `${size}px`, borderRadius: "50%", flexShrink: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#FFFFFF",
+    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "600", color: "#FFFFFF",
     background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #FFD700 0%, #FFDF33 100%)",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
   };
 }
 
@@ -260,7 +260,7 @@ export default function NotificationDropdown({ session }) {
             padding: "12px 16px", borderBottom: "1px solid rgba(20, 109, 158, 0.10)",
             background: "rgba(255,255,255,0.02)"
           }}>
-            <span style={{ fontSize: "14px", fontWeight: "700", color: "var(--atlan-text-primary)" }}>
+            <span style={{ fontSize: "13.5px", fontWeight: "500", color: "var(--atlan-text-primary)" }}>
               {t("notifications.title")}
             </span>
             {unreadCount > 0 && (
@@ -268,7 +268,7 @@ export default function NotificationDropdown({ session }) {
                 onClick={handleMarkAllRead}
                 style={{
                   background: "none", border: "none", color: "#146D9E",
-                  fontSize: "11.5px", fontWeight: "500", cursor: "pointer", padding: 0
+                  fontSize: "11px", fontWeight: "400", cursor: "pointer", padding: 0
                 }}
               >
                 {t("notifications.markAllRead")}
@@ -294,7 +294,8 @@ export default function NotificationDropdown({ session }) {
                     background: notif.leido ? "transparent" : "rgba(255, 215, 0, 0.04)",
                     display: "flex", gap: "10px", alignItems: "center",
                     cursor: "pointer", transition: "background 0.2s",
-                    textAlign: "left"
+                    textAlign: "left",
+                    fontWeight: "300"
                   }}
                   className="notif-item"
                 >
@@ -306,14 +307,14 @@ export default function NotificationDropdown({ session }) {
                   {/* Detalle */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{
-                      margin: 0, fontSize: "12.5px", lineHeight: "1.4",
+                      margin: 0, fontSize: "12px", lineHeight: "1.4",
                       color: notif.leido ? "var(--atlan-text-secondary)" : "var(--atlan-text-primary)",
-                      fontWeight: notif.leido ? "400" : "500",
+                      fontWeight: notif.leido ? "300" : "400",
                       wordBreak: "break-word"
                     }}>
                       {getNotifText(notif)}
                     </p>
-                    <span style={{ fontSize: "10px", color: "var(--atlan-text-muted)", marginTop: "4px", display: "block" }}>
+                    <span style={{ fontSize: "10px", color: "var(--atlan-text-muted)", marginTop: "4px", display: "block", fontWeight: "300" }}>
                       {timeAgo(notif.created_at, lang)}
                     </span>
                   </div>
