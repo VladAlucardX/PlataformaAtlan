@@ -18,26 +18,21 @@ function HeroSection({ perfil }) {
   const { t, lang } = useTranslation();
 
   return (
-    <section style={{ ...styles.hero, background: "linear-gradient(180deg, #F8FAFC 0%, #FFFDF0 60%, #F0F9FF 100%)" }}>
-      {/* Background gradient orbs */}
-      <div style={styles.heroOrb1} />
-      <div style={styles.heroOrb2} />
-      <div style={styles.heroOrb3} />
-
+    <section style={{ ...styles.hero, background: "#146D9E" }}>
       <div style={styles.heroContent} className="animate-fade-in-up">
         {perfil?.nombre_completo && (
           <div style={{
             fontSize: "15px",
             fontWeight: "800",
-            color: "var(--atlan-ocean)",
+            color: "#FFD700",
             marginBottom: "12px",
             textTransform: "uppercase",
             letterSpacing: "1px",
-            background: "rgba(20, 109, 158, 0.08)",
+            background: "rgba(255, 255, 255, 0.15)",
             padding: "8px 18px",
             borderRadius: "30px",
             display: "inline-block",
-            border: "1px solid rgba(20, 109, 158, 0.15)"
+            border: "1px solid rgba(255, 255, 255, 0.25)"
           }}>
             👋 {lang === "en" ? "Welcome back" : "Bienvenido de nuevo"}, {perfil.nombre_completo.split(" ")[0]}
           </div>
@@ -47,23 +42,23 @@ function HeroSection({ perfil }) {
           🇳🇮 Nicaragua
         </div>
 
-        <h1 style={styles.heroTitle}>
+        <h1 style={{ ...styles.heroTitle, color: "#FFFFFF" }}>
           {t("landing.hero.title")}
         </h1>
 
-        <p style={styles.heroSubtitle}>
+        <p style={{ ...styles.heroSubtitle, color: "rgba(255, 255, 255, 0.9)" }}>
           {t("landing.hero.subtitle")}
         </p>
 
         {/* Action Buttons */}
         <div style={styles.heroActions}>
-          <Link href="/mapa" className="btn-primary" style={{ padding: "16px 36px", fontSize: "16px" }}>
+          <Link href="/mapa" className="btn-primary" style={{ padding: "16px 36px", fontSize: "16px", background: "#FFD700", color: "#1A1A2E", fontWeight: "800", border: "none" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="3 11 22 2 13 21 11 13 3 11" />
             </svg>
             <span>{t("landing.hero.cta")}</span>
           </Link>
-          <Link href="#cta" className="btn-secondary" style={{ padding: "16px 36px", fontSize: "16px" }}>
+          <Link href="#cta" className="btn-secondary" style={{ padding: "16px 36px", fontSize: "16px", background: "rgba(255, 255, 255, 0.15)", color: "#FFFFFF", border: "1.5px solid rgba(255, 255, 255, 0.4)" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
               <path d="M16 21V5a2 2 0 0 1-2-2h-4a2 2 0 0 0-2 2v16" />
@@ -108,11 +103,11 @@ function FeaturesSection() {
   ];
 
   return (
-    <section style={{ ...styles.section, background: "linear-gradient(180deg, #F8FAFC 0%, #F0F9FF 100%)" }}>
+    <section style={{ ...styles.section, background: "#17AA4A", paddingTop: "110px" }}>
       <div style={styles.sectionInner}>
         <div style={styles.sectionHeader} className="animate-fade-in-up">
-          <h2 style={styles.sectionTitle}>{t("landing.features.title")}</h2>
-          <p style={styles.sectionSubtitle}>{t("landing.features.subtitle")}</p>
+          <h2 style={{ ...styles.sectionTitle, color: "#FFFFFF" }}>{t("landing.features.title")}</h2>
+          <p style={{ ...styles.sectionSubtitle, color: "rgba(255, 255, 255, 0.9)" }}>{t("landing.features.subtitle")}</p>
         </div>
 
         <div style={styles.featuresGrid}>
@@ -125,7 +120,7 @@ function FeaturesSection() {
                 background: feature.bg,
                 border: feature.border,
                 animationDelay: `${i * 0.15}s`,
-                boxShadow: "0 10px 25px -4px rgba(20, 109, 158, 0.08), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
+                boxShadow: "0 10px 25px -4px rgba(0, 0, 0, 0.15), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
                 padding: "32px 24px",
                 borderRadius: "24px",
                 display: "flex",
@@ -171,47 +166,67 @@ function CategoriesSection() {
   const { t } = useTranslation();
 
   const categories = [
-    { 
-      icon: "🍽️", key: "comideria", color: "#E6A800",
-      bg: "linear-gradient(135deg, #FFFDF0 0%, #FEF9C3 100%)",
-      border: "1.5px solid #FDE047", textColor: "#854D0E"
+    {
+      icon: "🍽️", key: "comideria",
+      bg: "#FFFFFF", border: "1.5px solid rgba(217, 119, 6, 0.25)",
+      iconBg: "rgba(245, 158, 11, 0.15)", textColor: "#92400E"
     },
-    { 
-      icon: "🍲", key: "restaurante", color: "#DC2626",
-      bg: "linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%)",
-      border: "1.5px solid #FECDD3", textColor: "#9F1239"
+    {
+      icon: "🍲", key: "restaurante",
+      bg: "#FFFFFF", border: "1.5px solid rgba(220, 38, 38, 0.25)",
+      iconBg: "rgba(239, 68, 68, 0.15)", textColor: "#991B1B"
     },
-    { 
-      icon: "🎨", key: "artesanal", color: "#7C3AED",
-      bg: "linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%)",
-      border: "1.5px solid #DDD6FE", textColor: "#5B21B6"
+    {
+      icon: "🎨", key: "artesanal",
+      bg: "#FFFFFF", border: "1.5px solid rgba(124, 58, 237, 0.25)",
+      iconBg: "rgba(139, 92, 246, 0.15)", textColor: "#5B21B6"
     },
-    { 
-      icon: "🏖️", key: "playa", color: "#0891B2",
-      bg: "linear-gradient(135deg, #ECFEFF 0%, #CFFAFE 100%)",
-      border: "1.5px solid #A5F3FC", textColor: "#155E75"
+    {
+      icon: "🏖️", key: "playa",
+      bg: "#FFFFFF", border: "1.5px solid rgba(8, 145, 178, 0.25)",
+      iconBg: "rgba(6, 182, 212, 0.15)", textColor: "#155E75"
     },
-    { 
-      icon: "👨‍👩‍👧‍👦", key: "familiar", color: "#DB2777",
-      bg: "linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 100%)",
-      border: "1.5px solid #FBCFE8", textColor: "#9D174D"
+    {
+      icon: "👨‍👩‍👧‍👦", key: "familiar",
+      bg: "#FFFFFF", border: "1.5px solid rgba(219, 39, 119, 0.25)",
+      iconBg: "rgba(236, 72, 153, 0.15)", textColor: "#9D174D"
     },
-    { 
-      icon: "🏨", key: "hotel", color: "#4F46E5",
-      bg: "linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)",
-      border: "1.5px solid #C7D2FE", textColor: "#3730A3"
+    {
+      icon: "🏨", key: "hotel",
+      bg: "#FFFFFF", border: "1.5px solid rgba(79, 70, 229, 0.25)",
+      iconBg: "rgba(99, 102, 241, 0.15)", textColor: "#3730A3"
+    },
+    {
+      icon: "🏡", key: "hostal",
+      bg: "#FFFFFF", border: "1.5px solid rgba(13, 148, 136, 0.25)",
+      iconBg: "rgba(20, 184, 166, 0.15)", textColor: "#115E59"
+    },
+    {
+      icon: "🚖", key: "transporte",
+      bg: "#FFFFFF", border: "1.5px solid rgba(234, 88, 12, 0.25)",
+      iconBg: "rgba(249, 115, 22, 0.15)", textColor: "#9A3412"
+    },
+    {
+      icon: "🌋", key: "tour",
+      bg: "#FFFFFF", border: "1.5px solid rgba(23, 170, 74, 0.25)",
+      iconBg: "rgba(34, 197, 94, 0.15)", textColor: "#166534"
+    },
+    {
+      icon: "🛍️", key: "tienda",
+      bg: "#FFFFFF", border: "1.5px solid rgba(147, 51, 234, 0.25)",
+      iconBg: "rgba(168, 85, 247, 0.15)", textColor: "#6B21A8"
     },
   ];
 
   return (
-    <section style={{ ...styles.section, background: "linear-gradient(180deg, #ECFDF5 0%, #FFFDF0 100%)" }}>
+    <section style={{ ...styles.section, background: "#FFD700" }}>
       <div style={styles.sectionInner}>
         <div style={styles.sectionHeader} className="animate-fade-in-up">
-          <h2 style={styles.sectionTitle}>{t("map.categories")}</h2>
-          <p style={styles.sectionSubtitle}>{t("landing.features.subtitle")}</p>
+          <h2 style={{ ...styles.sectionTitle, color: "#1A1A2E" }}>{t("map.categories")}</h2>
+          <p style={{ ...styles.sectionSubtitle, color: "#333333" }}>{t("landing.features.subtitle")}</p>
         </div>
 
-        <div style={styles.categoriesGrid}>
+        <div className="categories-grid-5">
           {categories.map((cat, i) => (
             <Link
               key={cat.key}
@@ -221,14 +236,14 @@ function CategoriesSection() {
                 ...styles.categoryCard,
                 background: cat.bg,
                 border: cat.border,
-                animationDelay: `${i * 0.1}s`,
-                boxShadow: "0 10px 25px -4px rgba(20, 109, 158, 0.08), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
+                animationDelay: `${i * 0.08}s`,
+                boxShadow: "0 10px 25px -4px rgba(0, 0, 0, 0.14), inset 2px 2px 4px rgba(255, 255, 255, 1)",
               }}
             >
-              <div style={{ ...styles.categoryIcon, background: "rgba(255, 255, 255, 0.8)", boxShadow: "0 4px 10px rgba(0,0,0,0.05)" }}>
+              <div style={{ ...styles.categoryIcon, background: cat.iconBg, boxShadow: "0 4px 10px rgba(0,0,0,0.04)" }}>
                 <span style={{ fontSize: "28px" }}>{cat.icon}</span>
               </div>
-              <span style={{ ...styles.categoryLabel, color: cat.textColor, fontWeight: "800" }}>
+              <span style={{ ...styles.categoryLabel, color: cat.textColor, fontWeight: "850" }}>
                 {t(`addPoint.categories.${cat.key}`)}
               </span>
             </Link>
@@ -246,29 +261,27 @@ function CTASection({ session }) {
   return (
     <section id="cta" style={{
       ...styles.ctaSection,
-      background: "linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%)",
-      borderTop: "1.5px solid #C4B5FD",
-      borderBottom: "1.5px solid #C4B5FD"
+      background: "#146D9E",
+      borderTop: "2px solid #0F5579",
+      borderBottom: "2px solid #0F5579"
     }}>
-      <div style={styles.ctaOrb} />
-
       <div style={{
         ...styles.ctaContent,
-        background: "rgba(255, 255, 255, 0.88)",
-        border: "2px solid #C4B5FD",
+        background: "rgba(255, 255, 255, 0.95)",
+        border: "2px solid rgba(255, 255, 255, 0.3)",
         borderRadius: "32px",
         padding: "48px 32px",
-        boxShadow: "0 20px 40px -10px rgba(124, 58, 237, 0.15), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+        boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.2), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
       }} className="animate-fade-in-up clay-card">
-        <h2 style={{ ...styles.ctaTitle, color: "#5B21B6", fontWeight: "900" }}>{t("landing.cta.title")}</h2>
-        <p style={{ ...styles.ctaSubtitle, color: "#6D28D9", fontSize: "16px" }}>{t("landing.cta.subtitle")}</p>
+        <h2 style={{ ...styles.ctaTitle, color: "#146D9E", fontWeight: "900" }}>{t("landing.cta.title")}</h2>
+        <p style={{ ...styles.ctaSubtitle, color: "#4A5568", fontSize: "16px" }}>{t("landing.cta.subtitle")}</p>
 
         <div style={styles.ctaBenefits}>
           {["benefit1", "benefit2", "benefit3"].map((key) => (
-            <div key={key} style={{ ...styles.ctaBenefit, color: "#4C1D95", fontWeight: "750", fontSize: "15px", display: "flex", alignItems: "center", gap: "8px" }}>
+            <div key={key} style={{ ...styles.ctaBenefit, color: "#1A1A2E", fontWeight: "750", fontSize: "15px", display: "flex", alignItems: "center", gap: "8px" }}>
               <span style={{
-                color: "#7C3AED",
-                background: "#DDD6FE",
+                color: "#17AA4A",
+                background: "#E6F4EA",
                 borderRadius: "50%",
                 width: "24px",
                 height: "24px",
@@ -299,36 +312,46 @@ function Footer() {
     <footer style={styles.footer}>
       <div style={styles.footerInner}>
         <div style={styles.footerBrand}>
-          <div style={styles.logo}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
             <img
               src="/mapaicono.png"
-              alt="Logo"
+              alt="Logo Atlan"
               style={{
-                width: "28px",
-                height: "28px",
+                width: "36px",
+                height: "36px",
                 objectFit: "contain"
               }}
             />
-            <span style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
+            <span style={{ fontSize: "28px", fontWeight: "900", color: "#FFD700", letterSpacing: "-0.5px" }}>atlan</span>
           </div>
           <p style={styles.footerDesc}>{t("landing.footer.description")}</p>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "16px", color: "#94A3B8", fontSize: "13px", fontWeight: "600" }}>
+
+            <span>Orgullosamente desarrollado para Nicaragua</span>
+          </div>
         </div>
 
         <div style={styles.footerLinks}>
           <div>
             <h4 style={styles.footerLinkTitle}>{t("landing.footer.links")}</h4>
-            <Link href="/mapa" style={styles.footerLink}>{t("nav.map")}</Link>
+            <Link href="/mapa" style={styles.footerLink}>🗺️ {t("nav.map")}</Link>
+            <Link href="/comunidad" style={styles.footerLink}>👥 {t("nav.community")}</Link>
+          </div>
+          <div>
+            <h4 style={styles.footerLinkTitle}>Negocios</h4>
+            <Link href="/registro" style={styles.footerLink}>🏬 Registrar Negocio</Link>
+            <Link href="/dashboard" style={styles.footerLink}>📊 Mi Panel</Link>
           </div>
           <div>
             <h4 style={styles.footerLinkTitle}>{t("landing.footer.legal")}</h4>
-            <Link href="#" style={styles.footerLink}>{t("landing.footer.privacy")}</Link>
-            <Link href="#" style={styles.footerLink}>{t("landing.footer.terms")}</Link>
+            <Link href="#" style={styles.footerLink}>🔒 {t("landing.footer.privacy")}</Link>
+            <Link href="#" style={styles.footerLink}>📜 {t("landing.footer.terms")}</Link>
           </div>
         </div>
       </div>
 
       <div style={styles.footerBottom}>
-        <p style={{ margin: 0, fontSize: "13px", color: "var(--atlan-text-muted)" }}>
+        <p style={{ margin: 0, fontSize: "13px", color: "#94A3B8" }}>
           © {new Date().getFullYear()} Atlan. {t("landing.footer.rights")}
         </p>
       </div>
@@ -543,12 +566,12 @@ const styles = {
   // ── Hero
   hero: {
     position: "relative",
-    minHeight: "calc(100vh - 120px)",
+    minHeight: "calc(100vh - 140px)",
     display: "flex",
-    alignItems: "flex-start",
+    alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
-    padding: "96px 24px 40px",
+    padding: "100px 24px 70px",
   },
   heroOrb1: {
     position: "absolute",
@@ -587,24 +610,24 @@ const styles = {
   heroContent: {
     position: "relative",
     textAlign: "center",
-    maxWidth: "780px",
+    maxWidth: "840px",
     zIndex: 2,
-    marginTop: "12px",
+    marginTop: "0px",
   },
   heroTitle: {
-    fontSize: "clamp(36px, 6vw, 68px)",
+    fontSize: "clamp(42px, 6.5vw, 76px)",
     fontWeight: "900",
-    lineHeight: "1.08",
+    lineHeight: "1.1",
     letterSpacing: "-0.03em",
-    marginBottom: "24px",
+    marginBottom: "28px",
     color: "var(--atlan-text-primary)",
   },
   heroSubtitle: {
-    fontSize: "clamp(16px, 2.2vw, 20px)",
+    fontSize: "clamp(18px, 2.5vw, 22px)",
     color: "var(--atlan-text-secondary)",
     lineHeight: "1.7",
-    maxWidth: "560px",
-    margin: "0 auto 40px",
+    maxWidth: "680px",
+    margin: "0 auto 44px",
   },
   heroActions: {
     display: "flex",
@@ -658,16 +681,16 @@ const styles = {
     marginBottom: "56px",
   },
   sectionTitle: {
-    fontSize: "clamp(28px, 4vw, 42px)",
-    fontWeight: "800",
+    fontSize: "clamp(34px, 5.2vw, 54px)",
+    fontWeight: "900",
     letterSpacing: "-0.02em",
-    marginBottom: "12px",
+    marginBottom: "14px",
     color: "var(--atlan-text-primary)",
   },
   sectionSubtitle: {
-    fontSize: "16px",
+    fontSize: "18px",
     color: "var(--atlan-text-secondary)",
-    maxWidth: "500px",
+    maxWidth: "560px",
     margin: "0 auto",
   },
 
@@ -704,9 +727,9 @@ const styles = {
   // ── Categories
   categoriesGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-    gap: "16px",
-    maxWidth: "900px",
+    gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+    gap: "18px",
+    maxWidth: "1050px",
     margin: "0 auto",
   },
   categoryCard: {
@@ -796,50 +819,57 @@ const styles = {
 
   // ── Footer
   footer: {
-    borderTop: "1px solid rgba(20,109,158,0.08)",
-    background: "#F5F7FA",
+    background: "#0A192F",
+    color: "#FFFFFF",
+    borderTop: "3px solid #0F5579",
   },
   footerInner: {
     maxWidth: "1100px",
     margin: "0 auto",
-    padding: "56px 24px 40px",
+    padding: "64px 24px 44px",
     display: "flex",
     justifyContent: "space-between",
     flexWrap: "wrap",
-    gap: "40px",
+    gap: "48px",
   },
   footerBrand: {
-    maxWidth: "320px",
+    maxWidth: "340px",
   },
   footerDesc: {
     fontSize: "14px",
-    color: "var(--atlan-text-muted)",
+    color: "#94A3B8",
     lineHeight: "1.7",
-    marginTop: "12px",
+    margin: 0,
   },
   footerLinks: {
     display: "flex",
-    gap: "64px",
+    gap: "56px",
+    flexWrap: "wrap",
   },
   footerLinkTitle: {
-    fontSize: "14px",
-    fontWeight: "700",
-    color: "var(--atlan-text-primary)",
-    marginBottom: "12px",
+    fontSize: "15px",
+    fontWeight: "800",
+    color: "#FFFFFF",
+    marginBottom: "16px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
   },
   footerLink: {
-    display: "block",
-    color: "var(--atlan-text-muted)",
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+    color: "#CBD5E1",
     fontSize: "14px",
+    fontWeight: "500",
     textDecoration: "none",
-    marginBottom: "8px",
-    transition: "color 0.2s",
+    marginBottom: "12px",
+    transition: "all 0.2s ease",
   },
   footerBottom: {
     maxWidth: "1100px",
     margin: "0 auto",
-    padding: "20px 24px",
-    borderTop: "1px solid rgba(20,109,158,0.08)",
+    padding: "24px 24px",
+    borderTop: "1px solid rgba(255, 255, 255, 0.1)",
     textAlign: "center",
   },
 };

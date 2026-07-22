@@ -1792,4 +1792,25 @@ a:hover {
 /* ── NOTIFICACIONES ────────────────────────────────────────── */
 .notif-item:hover {
   background-color: rgba(20, 109, 158, 0.04) !important;
+}
+
+/* ── CATEGORÍAS LANDING: 2 filas de 5 en escritorio ───────── */
+.categories-grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+  max-width: 1050px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .categories-grid-5 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 550px) {
+  .categories-grid-5 {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
