@@ -78,6 +78,7 @@ export default function DashboardPage() {
 
   // Modal de Verificación de Reclamo
   const [showClaimModal, setShowClaimModal] = useState(false);
+  const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
   const [claimTargetPunto, setClaimTargetPunto] = useState(null); // punto objeto o 'gps'
   const [solicitanteNombre, setSolicitanteNombre] = useState("");
   const [solicitanteCedula, setSolicitanteCedula] = useState("");
@@ -294,9 +295,6 @@ export default function DashboardPage() {
 
   const handleCancelClaim = async () => {
     if (!negocio) return;
-    if (!confirm(lang === "en" 
-      ? "Are you sure you want to cancel this claim? This will release the point on the map and remove this request." 
-      : "¿Está seguro de cancelar este reclamo? Esto liberará el punto en el mapa y eliminará esta solicitud.")) return;
 
     setIsResubmitting(true);
     try {
@@ -938,7 +936,7 @@ export default function DashboardPage() {
               <button onClick={() => router.push("/mapa")} className="clay-btn-blue" style={{ padding: "12px 24px", fontSize: "13.5px" }}>
                 🗺️ {lang === "en" ? "Explore Map" : "Volver a Explorar el Mapa"}
               </button>
-              <button onClick={handleCancelClaim} disabled={isResubmitting} style={{ background: "rgba(239, 68, 68, 0.08)", border: "1px solid rgba(239, 68, 68, 0.2)", color: "#ef4444", padding: "12px 24px", borderRadius: "12px", fontSize: "13.5px", fontWeight: "700", cursor: "pointer" }}>
+              <button onClick={() => setShowCancelConfirmModal(true)} disabled={isResubmitting} style={{ background: "rgba(239, 68, 68, 0.08)", border: "1px solid rgba(239, 68, 68, 0.2)", color: "#ef4444", padding: "12px 24px", borderRadius: "12px", fontSize: "13.5px", fontWeight: "700", cursor: "pointer" }}>
                 ❌ {lang === "en" ? "Cancel Request" : "Cancelar Solicitud"}
               </button>
             </div>
@@ -1981,6 +1979,73 @@ export default function DashboardPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE CONFIRMACIÓN DE CANCELACIÓN EN 3D CLAYMORFISMO */}
+      {showCancelConfirmModal && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, width: "100%", height: "100vh",
+          background: "rgba(10, 15, 28, 0.65)", backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)", zIndex: 1050, display: "flex",
+          alignItems: "center", justifyContent: "center", padding: "20px"
+        }} className="animate-fade-in">
+          <div style={{
+            maxWidth: "460px", width: "100%", background: "#FFFFFF",
+            border: "2px solid rgba(255, 255, 255, 0.95)",
+            boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(239, 68, 68, 0.10), 0 24px 60px -10px rgba(239, 68, 68, 0.25)",
+            borderRadius: "28px", padding: "32px", textAlign: "center"
+          }} className="clay-modal animate-scale-up">
+            <div style={{
+              width: "64px", height: "64px", borderRadius: "50%",
+              background: "rgba(239, 68, 68, 0.12)", border: "2px solid #ef4444",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "28px", margin: "0 auto 16px"
+            }}>
+              ⚠️
+            </div>
+
+            <h3 style={{ margin: "0 0 10px", fontSize: "20px", fontWeight: "850", color: "#1A1A2E" }}>
+              {lang === "en" ? "Cancel Claim Request?" : "¿Cancelar Solicitud de Reclamo?"}
+            </h3>
+
+            <p style={{ fontSize: "13.5px", color: "#4A5568", lineHeight: "1.5", margin: "0 0 24px" }}>
+              {lang === "en" 
+                ? "This will release the location on the map for other users and permanently remove your pending verification submission." 
+                : "Esta acción liberará el local en el mapa para la comunidad y eliminará la documentación enviada a la administración."}
+            </p>
+
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+              <button
+                type="button"
+                onClick={() => setShowCancelConfirmModal(false)}
+                style={{
+                  flex: 1, padding: "12px 18px", background: "#F4F6F9",
+                  border: "1.5px solid rgba(20, 109, 158, 0.15)", borderRadius: "14px",
+                  fontSize: "13.5px", fontWeight: "750", cursor: "pointer", color: "#4A5568"
+                }}
+              >
+                {lang === "en" ? "Go Back" : "Regresar / No Cancelar"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowCancelConfirmModal(false);
+                  handleCancelClaim();
+                }}
+                disabled={isResubmitting}
+                style={{
+                  flex: 1, padding: "12px 18px",
+                  background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+                  color: "#FFFFFF", border: "none", borderRadius: "14px",
+                  fontSize: "13.5px", fontWeight: "850", cursor: "pointer",
+                  boxShadow: "0 6px 16px rgba(239, 68, 68, 0.35)"
+                }}
+              >
+                {isResubmitting ? "..." : `🗑️ ${lang === "en" ? "Yes, Cancel Request" : "Sí, Cancelar Solicitud"}`}
+              </button>
+            </div>
           </div>
         </div>
       )}
