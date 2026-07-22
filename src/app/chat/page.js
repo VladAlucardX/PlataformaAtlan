@@ -393,11 +393,13 @@ function ChatContent() {
     !searchMutual || u.nombre_completo?.toLowerCase().includes(searchMutual.toLowerCase())
   );
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
       {/* Navbar */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255, 255, 255, 0.92)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(20, 109, 158, 0.08)", padding: "0 32px", height: "64px", display: "flex", alignItems: "center" }}>
-        <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
+      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255, 255, 255, 0.92)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderBottom: "1px solid rgba(20, 109, 158, 0.10)" }}>
+        <div style={{ width: "100%", padding: "0 32px", height: "72px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
           {/* Logo Far Left */}
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
             <img src="/mapaicono.png" alt="Logo" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
@@ -417,7 +419,7 @@ function ChatContent() {
           </div>
 
           {/* Far Right Actions */}
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }} className="hide-mobile">
             {session && (
               <Link href={perfil?.rol === "dueno" || perfil?.rol === "admin" ? "/dashboard" : "/perfil"} className="nav-pill-link">
                 {perfil?.avatar_url ? (
@@ -449,7 +451,42 @@ function ChatContent() {
               🚪 <span>{t("nav.logout") || "Cerrar Sesión"}</span>
             </button>
           </div>
+
+          {/* Mobile Hamburger */}
+          <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            {session && <NotificationDropdown session={session} />}
+            <LanguageToggle variant="icon" />
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Menu"
+              style={{ background: "none", border: "none", color: "var(--atlan-text-primary)", cursor: "pointer", padding: "8px" }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                {menuOpen ? <path d="M6 6l12 12M6 18L18 6" /> : (
+                  <>
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                  </>
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
+
+        {/* Mobile menu drawer */}
+        {menuOpen && (
+          <div style={{ padding: "12px 24px 20px", display: "flex", flexDirection: "column", gap: "10px", borderTop: "1px solid rgba(20,109,158,0.08)" }} className="animate-fade-in-down hide-desktop">
+            <Link href="/" className="nav-pill-link" onClick={() => setMenuOpen(false)}>🏠 {lang === "en" ? "Home" : "Inicio"}</Link>
+            <Link href="/mapa" className="nav-pill-link" onClick={() => setMenuOpen(false)}>🗺️ {t("nav.map")}</Link>
+            <Link href="/comunidad" className="nav-pill-link" onClick={() => setMenuOpen(false)}>👥 {t("social.community")}</Link>
+            <Link href="/chat" className="nav-pill-link active" onClick={() => setMenuOpen(false)}>💬 {t("chat.title")}</Link>
+            <Link href="/perfil" className="nav-pill-link" onClick={() => setMenuOpen(false)}>👤 {lang === "en" ? "My Profile" : "Mi Perfil"}</Link>
+            <button onClick={handleLogout} style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", padding: "10px", borderRadius: "10px", fontSize: "14px", fontWeight: "700", cursor: "pointer", width: "100%", textAlign: "left" }}>
+              🚪 {t("nav.logout") || "Cerrar Sesión"}
+            </button>
+          </div>
+        )}
       </nav>
 
       {/* Chat Layout */}
