@@ -61,7 +61,7 @@ function HeroSection({ perfil }) {
 
         {/* Action Buttons */}
         <div style={styles.heroActions}>
-          <Link href="/mapa" className="btn-primary" style={{ padding: "16px 36px", fontSize: "16px" }}>
+          <Link href="/mapa" className="btn-primary shine-sweep-btn" style={{ padding: "16px 36px", fontSize: "16px" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polygon points="3 11 22 2 13 21 11 13 3 11" />
             </svg>
