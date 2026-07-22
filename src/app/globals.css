@@ -1468,17 +1468,34 @@ a:hover {
   width: 100%;
   max-width: 50%;
   height: 100vh;
-  background: #FFFFFF; /* Fondo sólido blanco */
-  border-left: 1px solid rgba(20, 109, 158, 0.12);
-  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.08);
+  background: #FFFFFF;
+  border-left: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 4px 4px 10px rgba(255, 255, 255, 1),
+    inset -6px -6px 14px rgba(20, 109, 158, 0.08),
+    -16px 0 40px rgba(20, 109, 158, 0.16),
+    0 4px 12px rgba(0, 0, 0, 0.04);
   z-index: 30;
   color: #1A1A2E;
   font-family: var(--font-outfit), sans-serif;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
   transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.detail-sheet::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #FFD700 0%, #146D9E 50%, #17AA4A 100%);
+  opacity: 0.85;
+  z-index: 2;
 }
 
 .map-page-wrapper {

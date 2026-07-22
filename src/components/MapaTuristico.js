@@ -2428,10 +2428,10 @@ export default function MapaTuristico() {
                     </span>
                   );
                 })()}
-                <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '850', color: 'white', lineHeight: '1.2' }}>
+                <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '850', color: '#1A1A2E', lineHeight: '1.2' }}>
                   {selectedPoint.nombre}
                 </h2>
-                <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#94a3b8' }}>
+                <p style={{ margin: '4px 0 0', fontSize: '12.5px', color: '#4A5568', fontWeight: '600' }}>
                   📍 {t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}
                 </p>
               </div>
@@ -2443,17 +2443,17 @@ export default function MapaTuristico() {
                   onClick={handleToggleFavorite}
                   title={isFavorite ? (lang === 'en' ? 'Remove from Favorites' : 'Quitar de Favoritos') : (lang === 'en' ? 'Add to Favorites' : 'Guardar en Favoritos')}
                   style={{
-                    background: isFavorite ? 'rgba(212, 175, 55, 0.15)' : 'rgba(255,255,255,0.06)',
-                    border: isFavorite ? '1px solid rgba(212,175,55,0.3)' : '1px solid transparent',
-                    color: isFavorite ? '#D4AF37' : '#94a3b8',
-                    width: '32px',
-                    height: '32px',
+                    background: isFavorite ? 'rgba(255, 215, 0, 0.18)' : 'rgba(20, 109, 158, 0.08)',
+                    border: isFavorite ? '1.5px solid #FFD700' : '1.5px solid rgba(20, 109, 158, 0.12)',
+                    color: isFavorite ? '#B8960E' : '#4A5568',
+                    width: '36px',
+                    height: '36px',
                     borderRadius: '50%',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '16px',
+                    fontSize: '18px',
                     transition: 'all 0.25s ease'
                   }}
                 >
@@ -2464,11 +2464,11 @@ export default function MapaTuristico() {
               <button
                 onClick={() => setSelectedPoint(null)}
                 style={{
-                  background: 'rgba(255,255,255,0.06)',
-                  border: 'none',
-                  color: 'white',
-                  width: '32px',
-                  height: '32px',
+                  background: 'rgba(20, 109, 158, 0.08)',
+                  border: '1.5px solid rgba(20, 109, 158, 0.12)',
+                  color: '#1A1A2E',
+                  width: '36px',
+                  height: '36px',
                   borderRadius: '50%',
                   cursor: 'pointer',
                   display: 'flex',
@@ -2498,39 +2498,18 @@ export default function MapaTuristico() {
             {/* BOTÓN INICIAR VIAJE */}
             <button
               onClick={() => handleIniciarViaje(selectedPoint)}
+              className="clay-btn-gold"
               style={{
                 width: '100%',
                 padding: '14px 20px',
-                background: 'linear-gradient(135deg, #D4AF37 0%, #10b981 100%)',
-                color: '#0a0f1c',
-                border: 'none',
-                borderRadius: '14px',
-                fontWeight: '900',
-                fontSize: '14.5px',
-                letterSpacing: '0.5px',
-                cursor: 'pointer',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: '10px',
-                boxShadow: '0 8px 24px rgba(16, 185, 129, 0.25), 0 0 15px rgba(212, 175, 55, 0.2)',
-                transition: 'all 0.25s ease',
-                textTransform: 'uppercase',
+                fontSize: '15px',
                 marginBottom: '4px'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 12px 28px rgba(16, 185, 129, 0.35), 0 0 20px rgba(212, 175, 55, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(16, 185, 129, 0.25), 0 0 15px rgba(212, 175, 55, 0.2)';
               }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="3 11 22 2 13 21 11 13 3 11" />
               </svg>
-              {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
+              <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
             </button>
 
             {/* Banner Informativo si está en verificación */}
@@ -2558,10 +2537,10 @@ export default function MapaTuristico() {
             )}
             {/* Descripción */}
             <div>
-              <h4 style={{ margin: '0 0 6px', fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <h4 style={{ margin: '0 0 6px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 {lang === 'en' ? 'About' : 'Acerca de'}
               </h4>
-              <p style={{ margin: 0, fontSize: '14px', color: '#94a3b8', lineHeight: '1.5' }}>
+              <p style={{ margin: 0, fontSize: '14px', color: '#4A5568', lineHeight: '1.6' }}>
                 {selectedPoint.descripcion || (lang === 'en' ? 'No description available.' : 'Sin descripción disponible.')}
               </p>
             </div>
@@ -2601,9 +2580,9 @@ export default function MapaTuristico() {
 
             {/* Horarios del Negocio */}
             {selectedPointDetails?.servicios?.has_hours && selectedPointDetails?.horarios && (
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px' }}>
+              <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.08)', paddingTop: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     ⏰ {lang === 'en' ? 'Opening Hours' : 'Horarios de Atención'}
                   </h4>
                   {isBusinessOpenNow(selectedPointDetails.horarios) !== null && (
@@ -2613,9 +2592,9 @@ export default function MapaTuristico() {
                       textTransform: 'uppercase',
                       padding: '4px 8px',
                       borderRadius: '6px',
-                      backgroundColor: isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)',
-                      color: isBusinessOpenNow(selectedPointDetails.horarios) ? '#10b981' : '#ef4444',
-                      border: `1px solid ${isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`
+                      backgroundColor: isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.12)' : 'rgba(239,68,68,0.12)',
+                      color: isBusinessOpenNow(selectedPointDetails.horarios) ? '#17AA4A' : '#ef4444',
+                      border: `1px solid ${isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.25)' : 'rgba(239,68,68,0.25)'}`
                     }}>
                       {isBusinessOpenNow(selectedPointDetails.horarios)
                         ? (lang === 'en' ? 'Open Now' : 'Abierto Ahora')
@@ -2623,7 +2602,7 @@ export default function MapaTuristico() {
                     </span>
                   )}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                <div className="clay-card-static" style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {Object.entries(selectedPointDetails.horarios).map(([day, info]) => {
                     const dayLabels = {
                       lunes: lang === 'en' ? 'Monday' : 'Lunes',
@@ -2639,7 +2618,7 @@ export default function MapaTuristico() {
                     }[day];
 
                     return (
-                      <div key={day} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: isToday ? 'white' : '#94a3b8', fontWeight: isToday ? '750' : '400' }}>
+                      <div key={day} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: isToday ? '#1A1A2E' : '#4A5568', fontWeight: isToday ? '800' : '500' }}>
                         <span>{dayLabels[day]} {isToday && '•'}</span>
                         <span>
                           {info.abierto
@@ -2655,18 +2634,18 @@ export default function MapaTuristico() {
 
             {/* Menú del Negocio */}
             {selectedPointDetails?.servicios?.has_menu && (
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px' }}>
-                <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.08)', paddingTop: '20px' }}>
+                <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   🍽️ {t('dashboard.menu')}
                 </h4>
                 {pointMenu.length === 0 ? (
-                  <p style={{ margin: 0, fontSize: '13px', color: '#64748b', fontStyle: 'italic' }}>
+                  <p style={{ margin: 0, fontSize: '13px', color: '#4A5568', fontStyle: 'italic' }}>
                     {lang === 'en' ? 'No menu items published yet.' : 'No hay platillos publicados aún.'}
                   </p>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {pointMenu.map((item) => (
-                      <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '10px 14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                      <div key={item.id} className="clay-card-static" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                           {item.foto_url ? (
                             <img
@@ -2675,34 +2654,34 @@ export default function MapaTuristico() {
                               style={{
                                 width: '44px',
                                 height: '44px',
-                                borderRadius: '8px',
+                                borderRadius: '10px',
                                 objectFit: 'cover',
-                                border: '1px solid rgba(255, 255, 255, 0.08)'
+                                border: '1px solid rgba(20, 109, 158, 0.1)'
                               }}
                             />
                           ) : (
                             <div style={{
                               width: '44px',
                               height: '44px',
-                              borderRadius: '8px',
-                              background: 'rgba(255,255,255,0.03)',
+                              borderRadius: '10px',
+                              background: '#F4F6F9',
                               display: 'flex',
                               justifyContent: 'center',
                               alignItems: 'center',
                               fontSize: '18px',
-                              border: '1px solid rgba(255, 255, 255, 0.05)'
+                              border: '1px solid rgba(20, 109, 158, 0.1)'
                             }}>
                               🍲
                             </div>
                           )}
                           <div>
-                            <p style={{ margin: 0, fontSize: '14px', fontWeight: '700', color: 'white' }}>{item.nombre}</p>
+                            <p style={{ margin: 0, fontSize: '14px', fontWeight: '800', color: '#1A1A2E' }}>{item.nombre}</p>
                             {item.descripcion && (
-                              <p style={{ margin: '2px 0 0', fontSize: '11.5px', color: '#64748b' }}>{item.descripcion}</p>
+                              <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#4A5568' }}>{item.descripcion}</p>
                             )}
                           </div>
                         </div>
-                        <span style={{ fontSize: '14px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
+                        <span style={{ fontSize: '14px', fontWeight: '800', color: 'var(--atlan-gold-dark, #B8960E)' }}>
                           C$ {item.precio}
                         </span>
                       </div>
@@ -2714,30 +2693,27 @@ export default function MapaTuristico() {
 
             {/* Reservas directas */}
             {selectedPointDetails?.servicios?.has_lodging && (
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px' }}>
-                <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.08)', paddingTop: '20px' }}>
+                <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   🏨 {t('reservations.title')}
                 </h4>
 
                 {reservaSuccess ? (
-                  <div style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid #10b981', color: '#34d399', padding: '14px', borderRadius: '12px', fontSize: '13px', fontWeight: '700', textAlign: 'center' }}>
+                  <div className="clay-card-static" style={{ background: 'rgba(23, 170, 74, 0.10)', border: '1px solid #17AA4A', color: '#17AA4A', padding: '14px', textAlign: 'center', fontWeight: '700' }}>
                     🎉 {t('reservations.success')}
                   </div>
                 ) : !userSession ? (
-                  <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid #f59e0b', padding: '14px', borderRadius: '12px', textAlign: 'center' }}>
-                    <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#fbbf24', fontWeight: '600' }}>
+                  <div className="clay-card-static" style={{ padding: '14px', textAlign: 'center' }}>
+                    <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#4A5568', fontWeight: '600' }}>
                       🔑 {t('reservations.loginRequired')}
                     </p>
                     <a
                       href="/login"
+                      className="clay-btn-gold"
                       style={{
-                        display: 'inline-block',
-                        padding: '6px 14px',
-                        background: 'linear-gradient(135deg, #D4AF37 0%, #b89324 100%)',
-                        color: '#0a0f1c',
-                        borderRadius: '8px',
-                        fontWeight: '800',
-                        fontSize: '11px',
+                        display: 'inline-flex',
+                        padding: '8px 18px',
+                        fontSize: '12px',
                         textDecoration: 'none'
                       }}
                     >
@@ -2747,13 +2723,14 @@ export default function MapaTuristico() {
                 ) : (
                   <form onSubmit={handleCrearReserva} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div>
-                      <label style={{ fontSize: '11.5px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                      <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
                         {t('reservations.type')}
                       </label>
                       <select
                         value={reservaTipo}
                         onChange={(e) => setReservaTipo(e.target.value)}
-                        style={{ width: '100%', padding: '10px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '13px', outline: 'none' }}
+                        className="clay-input"
+                        style={{ padding: '10px 14px' }}
                       >
                         <option value="mesa">{t('reservations.types.mesa')}</option>
                         <option value="habitacion">{t('reservations.types.habitacion')}</option>
@@ -2764,7 +2741,7 @@ export default function MapaTuristico() {
 
                     <div style={{ display: 'flex', gap: '10px' }}>
                       <div style={{ flex: 1 }}>
-                        <label style={{ fontSize: '11.5px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                        <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
                           {t('reservations.date')} / {t('reservations.time')}
                         </label>
                         <input
@@ -2772,11 +2749,12 @@ export default function MapaTuristico() {
                           required
                           value={reservaFechaHora}
                           onChange={(e) => setReservaFechaHora(e.target.value)}
-                          style={{ width: '100%', padding: '9px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '13px', outline: 'none' }}
+                          className="clay-input"
+                          style={{ padding: '9px 12px' }}
                         />
                       </div>
                       <div style={{ width: '90px' }}>
-                        <label style={{ fontSize: '11.5px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                        <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
                           🧑‍🤝‍🧑 {t('reservations.people')}
                         </label>
                         <input
@@ -2785,13 +2763,14 @@ export default function MapaTuristico() {
                           required
                           value={reservaPersonas}
                           onChange={(e) => setReservaPersonas(e.target.value)}
-                          style={{ width: '100%', padding: '9px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '13px', outline: 'none' }}
+                          className="clay-input"
+                          style={{ padding: '9px 12px' }}
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label style={{ fontSize: '11.5px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                      <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
                         📝 {t('reservations.notes')}
                       </label>
                       <textarea
@@ -2799,24 +2778,16 @@ export default function MapaTuristico() {
                         value={reservaNotas}
                         onChange={(e) => setReservaNotas(e.target.value)}
                         placeholder="..."
-                        style={{ width: '100%', padding: '10px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '13.5px', outline: 'none', resize: 'none' }}
+                        className="clay-textarea"
+                        style={{ padding: '10px 14px' }}
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={isSubmittingReserva}
-                      style={{
-                        padding: '11px',
-                        background: 'linear-gradient(135deg, #D4AF37 0%, #b89324 100%)',
-                        color: '#0a0f1c',
-                        border: 'none',
-                        borderRadius: '10px',
-                        fontWeight: '800',
-                        fontSize: '12.5px',
-                        cursor: 'pointer',
-                        boxShadow: '0 4px 12px rgba(212,175,55,0.2)'
-                      }}
+                      className="clay-btn-gold"
+                      style={{ width: '100%', padding: '12px' }}
                     >
                       {isSubmittingReserva ? '...' : t('reservations.submit')}
                     </button>
@@ -2826,27 +2797,24 @@ export default function MapaTuristico() {
             )}
 
             {/* Panel de Reseñas */}
-            <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px' }}>
-              <h4 style={{ margin: '0 0 16px', fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.08)', paddingTop: '20px' }}>
+              <h4 style={{ margin: '0 0 16px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 ⭐ {t('reviews.title')}
               </h4>
 
               {/* Formulario de Reseña */}
               {!userSession ? (
-                <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid #f59e0b', padding: '14px', borderRadius: '12px', textAlign: 'center', marginBottom: '20px' }}>
-                  <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#fbbf24', fontWeight: '600' }}>
+                <div className="clay-card-static" style={{ padding: '14px', textAlign: 'center', marginBottom: '20px' }}>
+                  <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#4A5568', fontWeight: '600' }}>
                     🔑 {lang === 'en' ? 'Log in to write reviews & comments' : 'Inicia sesión para escribir reseñas y comentarios'}
                   </p>
                   <a
                     href="/login"
+                    className="clay-btn-gold"
                     style={{
-                      display: 'inline-block',
-                      padding: '6px 14px',
-                      background: 'linear-gradient(135deg, #D4AF37 0%, #b89324 100%)',
-                      color: '#0a0f1c',
-                      borderRadius: '8px',
-                      fontWeight: '800',
-                      fontSize: '11px',
+                      display: 'inline-flex',
+                      padding: '8px 18px',
+                      fontSize: '12px',
                       textDecoration: 'none'
                     }}
                   >
@@ -2854,8 +2822,8 @@ export default function MapaTuristico() {
                   </a>
                 </div>
               ) : (
-                <form onSubmit={handleCrearResena} style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: 'rgba(255,255,255,0.03)', padding: '14px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '20px' }}>
-                  <p style={{ margin: 0, fontSize: '12.5px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
+                <form onSubmit={handleCrearResena} className="clay-card-static" style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px', marginBottom: '20px' }}>
+                  <p style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: 'var(--atlan-gold-dark, #B8960E)' }}>
                     {t('reviews.writeReview')}
                   </p>
 
@@ -2866,7 +2834,7 @@ export default function MapaTuristico() {
                   )}
 
                   <div>
-                    <label style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                    <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
                       👤 {t('reviews.yourName')}
                     </label>
                     <input
@@ -2876,12 +2844,13 @@ export default function MapaTuristico() {
                       value={newReviewNombre}
                       onChange={(e) => setNewReviewNombre(e.target.value)}
                       placeholder="Ej: Carlos"
-                      style={{ width: '100%', padding: '9px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '12.5px', outline: 'none' }}
+                      className="clay-input"
+                      style={{ padding: '9px 12px' }}
                     />
                   </div>
 
                   <div>
-                    <label style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                    <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
                       ⭐ {t('reviews.rating')}
                     </label>
                     <div style={{ display: 'flex', gap: '6px' }}>
@@ -2896,7 +2865,7 @@ export default function MapaTuristico() {
                             fontSize: '22px',
                             cursor: 'pointer',
                             padding: 0,
-                            color: star <= newReviewEstrellas ? '#fbbf24' : 'rgba(255,255,255,0.25)',
+                            color: star <= newReviewEstrellas ? '#B8960E' : 'rgba(20, 109, 158, 0.2)',
                             transition: 'transform 0.1s'
                           }}
                         >
@@ -2907,7 +2876,7 @@ export default function MapaTuristico() {
                   </div>
 
                   <div>
-                    <label style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                    <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
                       💬 {t('reviews.yourComment')}
                     </label>
                     <textarea
@@ -2916,23 +2885,16 @@ export default function MapaTuristico() {
                       value={newReviewComment}
                       onChange={(e) => setNewReviewComment(e.target.value)}
                       placeholder="..."
-                      style={{ width: '100%', padding: '9px 12px', background: '#0a0f1c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '12.5px', outline: 'none', resize: 'none' }}
+                      className="clay-textarea"
+                      style={{ padding: '10px 14px' }}
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={isSubmittingReview}
-                    style={{
-                      padding: '9px',
-                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '10px',
-                      fontWeight: '800',
-                      fontSize: '12px',
-                      cursor: 'pointer'
-                    }}
+                    className="clay-btn-green"
+                    style={{ width: '100%', padding: '10px' }}
                   >
                     {isSubmittingReview ? '...' : t('reviews.submit')}
                   </button>
@@ -2942,19 +2904,19 @@ export default function MapaTuristico() {
               {/* Listado de Reseñas */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {pointReviews.length === 0 ? (
-                  <p style={{ margin: 0, fontSize: '13px', color: '#64748b', fontStyle: 'italic', textAlign: 'center', padding: '10px 0' }}>
+                  <p style={{ margin: 0, fontSize: '13px', color: '#4A5568', fontStyle: 'italic', textAlign: 'center', padding: '10px 0' }}>
                     {lang === 'en' ? 'No reviews yet. Be the first!' : 'No hay reseñas aún. ¡Sé el primero!'}
                   </p>
                 ) : (
                   pointReviews.map((rev) => (
-                    <div key={rev.id} style={{ background: 'rgba(255,255,255,0.02)', padding: '12px 14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                    <div key={rev.id} className="clay-card-static" style={{ padding: '14px 16px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                        <span style={{ fontSize: '13px', fontWeight: '800', color: 'white' }}>{rev.autor_nombre}</span>
-                        <span style={{ fontSize: '12px', color: '#fbbf24' }}>
+                        <span style={{ fontSize: '13.5px', fontWeight: '800', color: '#1A1A2E' }}>{rev.autor_nombre}</span>
+                        <span style={{ fontSize: '12px', color: '#B8960E' }}>
                           {'★'.repeat(rev.estrellas)}{'☆'.repeat(5 - rev.estrellas)}
                         </span>
                       </div>
-                      <p style={{ margin: 0, fontSize: '12.5px', color: '#cbd5e1', lineHeight: '1.4' }}>{rev.comentario}</p>
+                      <p style={{ margin: 0, fontSize: '13px', color: '#4A5568', lineHeight: '1.5' }}>{rev.comentario}</p>
                     </div>
                   ))
                 )}
