@@ -396,9 +396,12 @@ a:hover {
 
 /* ── BARRA DE NAVEGACIÓN CON CONSTRASTE 3D DISTINTIVO ────────────────────── */
 .atlan-navbar-header {
-  position: sticky;
-  top: 0;
-  z-index: 200;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 200 !important;
   background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
