@@ -2533,6 +2533,26 @@ export default function MapaTuristico() {
               <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
             </button>
 
+            {/* BOTÓN RECLAMAR NEGOCIO (SI ESTÁ SIN RECLAMAR O SIN DUEÑO) */}
+            {(!selectedPoint.negocio_id || selectedPoint.estado === 'sin_reclamar') && (
+              <button
+                onClick={() => router.push('/dashboard')}
+                className="clay-btn-gold"
+                style={{
+                  width: '100%',
+                  padding: '12px 18px',
+                  fontSize: '13.5px',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
+                }}
+              >
+                🏢 {lang === 'en' ? 'Are you the owner? Claim this business' : '¿Eres el dueño? Reclamar este negocio'}
+              </button>
+            )}
+
             {/* Banner Informativo si está en verificación */}
             {selectedPoint.estado === 'en_verificacion' && (
               <div style={{

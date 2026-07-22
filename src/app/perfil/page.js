@@ -336,7 +336,7 @@ export default function PerfilPage() {
               ✨ {perfil?.rol === "dueno" ? (lang === "en" ? "Business Owner" : "Dueño de Negocio") : (lang === "en" ? "Registered Tourist" : "Turista Registrado")}
             </span>
 
-            {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
+            {(perfil?.rol === "dueno" || perfil?.rol === "admin") ? (
               <Link href="/dashboard" className="clay-btn-gold" style={{
                 width: '100%',
                 justifyContent: 'center',
@@ -345,6 +345,16 @@ export default function PerfilPage() {
                 fontSize: '13.5px'
               }}>
                 🛠️ {lang === "en" ? "Manage Business" : "Gestionar mi Negocio"}
+              </Link>
+            ) : (
+              <Link href="/dashboard" className="clay-btn-blue" style={{
+                width: '100%',
+                justifyContent: 'center',
+                marginBottom: '16px',
+                textDecoration: 'none',
+                fontSize: '13px'
+              }}>
+                🏢 {lang === "en" ? "Claim or Register Business" : "Reclamar o Registrar Negocio"}
               </Link>
             )}
           </div>

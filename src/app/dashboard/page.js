@@ -104,13 +104,7 @@ export default function DashboardPage() {
 
         setPerfil(perfilData);
 
-        if (perfilData?.rol !== "dueno" && perfilData?.rol !== "admin") {
-          // Si no es dueño ni admin, redirigir al mapa
-          router.push("/mapa");
-          return;
-        }
-
-        // Negocio
+        // Cargar datos de negocio (si el usuario ya tiene uno o va a reclamar/crear)
         await loadNegocioData(currentUser.id);
       } catch (err) {
         console.error("Dashboard init error:", err);
@@ -354,6 +348,9 @@ export default function DashboardPage() {
 
       if (negocioError) throw negocioError;
 
+      // Actualizar rol del usuario a 'dueno'
+      await supabase.from("perfiles").update({ rol: "dueno" }).eq("id", user.id);
+
       // 2. Asociar el punto al negocio y actualizar estado a 'en_verificacion'
       const { error: puntoError } = await supabase
         .from("puntos")
@@ -409,6 +406,9 @@ export default function DashboardPage() {
           .single();
 
         if (negocioError) throw negocioError;
+
+        // Actualizar rol del usuario a 'dueno'
+        await supabase.from("perfiles").update({ rol: "dueno" }).eq("id", user.id);
 
         // 2. Crear punto geográfico con la ubicación GPS exacta
         const { error: puntoError } = await supabase
