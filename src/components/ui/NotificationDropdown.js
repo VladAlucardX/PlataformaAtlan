@@ -205,18 +205,28 @@ export default function NotificationDropdown({ session }) {
     }
   };
 
-  const getNotifText = (notif) => {
-    const name = notif.creador?.nombre_completo || "Usuario";
+  const renderNotifContent = (notif) => {
+    const name = notif.creador?.nombre_completo || (lang === "en" ? "User" : "Usuario");
+    let actionText = "";
     if (notif.tipo === "follow") {
-      return `${name} ${t("notifications.followedYou")}`;
+      actionText = t("notifications.followedYou");
+    } else if (notif.tipo === "comment") {
+      actionText = t("notifications.commentedPost");
+    } else if (notif.tipo === "like") {
+      actionText = t("notifications.likedPost");
     }
-    if (notif.tipo === "comment") {
-      return `${name} ${t("notifications.commentedPost")}`;
-    }
-    if (notif.tipo === "like") {
-      return `${name} ${t("notifications.likedPost")}`;
-    }
-    return "";
+
+    return (
+      <p style={{
+        margin: 0, fontSize: "12.5px", lineHeight: "1.45",
+        fontFamily: "'Delight Static', 'Delight', var(--font-outfit), sans-serif",
+        fontWeight: "400",
+        wordBreak: "break-word"
+      }}>
+        <span style={{ color: "#1A1A2E", fontWeight: "400" }}>{name}</span>{" "}
+        <span style={{ color: "#4A5568", fontWeight: "300" }}>{actionText}</span>
+      </p>
+    );
   };
 
   return (
@@ -306,14 +316,7 @@ export default function NotificationDropdown({ session }) {
 
                   {/* Detalle */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{
-                      margin: 0, fontSize: "12px", lineHeight: "1.4",
-                      color: notif.leido ? "var(--atlan-text-secondary)" : "var(--atlan-text-primary)",
-                      fontWeight: notif.leido ? "300" : "400",
-                      wordBreak: "break-word"
-                    }}>
-                      {getNotifText(notif)}
-                    </p>
+                    {renderNotifContent(notif)}
                     <span style={{ fontSize: "10px", color: "var(--atlan-text-muted)", marginTop: "4px", display: "block", fontWeight: "300" }}>
                       {timeAgo(notif.created_at, lang)}
                     </span>
