@@ -12,8 +12,8 @@ function avatarStyle(url, size) {
   return {
     width: `${size}px`, height: `${size}px`, borderRadius: "50%", flexShrink: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#0a0f1c",
-    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #D4AF37 0%, #E8CC6A 100%)",
+    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#FFFFFF",
+    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #FFD700 0%, #FFDF33 100%)",
     boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
   };
 }
@@ -221,7 +221,7 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
               <div style={styles.mutualsList}>
                 {loadingMutuals ? (
                   <div style={{ padding: "16px", textAlign: "center" }}>
-                    <div style={{ width: "20px", height: "20px", border: "2px solid rgba(255,255,255,0.08)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                    <div style={{ width: "20px", height: "20px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
                   </div>
                 ) : mutuals.length === 0 ? (
                   <p style={{ margin: 0, padding: "16px", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
@@ -276,9 +276,9 @@ const styles = {
   dropdown: {
     position: "absolute", bottom: "100%", left: "50%", transform: "translateX(-50%)",
     marginBottom: "8px", zIndex: 60,
-    background: "var(--atlan-bg-elevated)", border: "1px solid rgba(255,255,255,0.1)",
+    background: "var(--atlan-bg-elevated)", border: "1px solid rgba(20, 109, 158, 0.12)",
     borderRadius: "14px", padding: "6px", minWidth: "200px",
-    boxShadow: "0 12px 32px rgba(0,0,0,0.5)",
+    boxShadow: "0 12px 32px rgba(0, 0, 0, 0.12)",
   },
   dropdownItem: {
     display: "flex", alignItems: "center", gap: "10px", width: "100%", padding: "10px 14px",
@@ -290,11 +290,11 @@ const styles = {
     fontSize: "15px", width: "20px", textAlign: "center",
   },
   dropdownDivider: {
-    height: "1px", background: "rgba(255,255,255,0.06)", margin: "4px 8px",
+    height: "1px", background: "rgba(20, 109, 158, 0.08)", margin: "4px 8px",
   },
   sendChatHeader: {
     display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px",
-    borderBottom: "1px solid rgba(255,255,255,0.06)", marginBottom: "4px",
+    borderBottom: "1px solid rgba(20, 109, 158, 0.08)", marginBottom: "4px",
   },
   backBtn: {
     background: "none", border: "none", color: "var(--atlan-text-secondary)",
@@ -311,9 +311,9 @@ const styles = {
   toast: {
     position: "fixed", bottom: "24px", left: "50%", transform: "translateX(-50%)",
     zIndex: 999, padding: "12px 24px",
-    background: "rgba(16, 185, 129, 0.95)", color: "white",
+    background: "rgba(23, 170, 74, 0.95)", color: "white",
     borderRadius: "12px", fontSize: "14px", fontWeight: "800",
-    boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.10)",
     pointerEvents: "none",
   },
 };

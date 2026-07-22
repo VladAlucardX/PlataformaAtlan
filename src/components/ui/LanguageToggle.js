@@ -92,7 +92,7 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
           height: '28px',
           borderRadius: 'var(--atlan-radius-full)',
           background: 'var(--atlan-gold)',
-          color: '#0a0f1c',
+          color: '#1A1A2E',
           fontWeight: '800',
           fontSize: '11px',
           letterSpacing: '0.05em',

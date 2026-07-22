@@ -662,7 +662,7 @@ export default function DashboardPage() {
     return (
       <div style={styles.loadingContainer}>
         <div className="skeleton-loader" style={{ width: "80px", height: "80px", borderRadius: "50%" }}></div>
-        <p style={{ color: "#a1a1aa", marginTop: "16px", fontWeight: "700" }}>{t("common.loading")}</p>
+        <p style={{ color: "#6B7280", marginTop: "16px", fontWeight: "700" }}>{t("common.loading")}</p>
       </div>
     );
   }
@@ -693,7 +693,7 @@ export default function DashboardPage() {
           <h2 style={{ fontSize: "24px", color: "var(--atlan-gold)", fontWeight: "800", marginBottom: "8px" }}>
             {lang === "en" ? "Claim or Register Your Business" : "Reclama o Registra tu Negocio"}
           </h2>
-          <p style={{ color: "#94a3b8", fontSize: "14px", marginBottom: "24px", lineHeight: "1.5" }}>
+          <p style={{ color: "#4A5568", fontSize: "14px", marginBottom: "24px", lineHeight: "1.5" }}>
             {lang === "en" 
               ? "You can claim a point that a tourist previously added to the map, or register a new one." 
               : "Puedes reclamar un punto que un turista haya agregado previamente al mapa, o registrar uno nuevo."}
@@ -702,11 +702,11 @@ export default function DashboardPage() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "24px" }}>
             {/* Opción 1: Reclamar */}
             <div style={styles.claimSection}>
-              <h3 style={{ fontSize: "16px", fontWeight: "800", color: "white", marginBottom: "12px" }}>
+              <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#1A1A2E", marginBottom: "12px" }}>
                 🏷️ {lang === "en" ? "Unclaimed Points Nearby" : "Puntos sin Reclamar Disponibles"}
               </h3>
               {puntosDisponibles.length === 0 ? (
-                <p style={{ fontSize: "13px", color: "#64748b" }}>
+                <p style={{ fontSize: "13px", color: "#9CA3AF" }}>
                   {lang === "en" ? "No unclaimed points found." : "No se hallaron puntos sin reclamar en este momento."}
                 </p>
               ) : (
@@ -715,7 +715,7 @@ export default function DashboardPage() {
                     <div key={p.id} style={styles.pointRow}>
                       <div>
                         <div style={{ fontWeight: "750", fontSize: "13.5px" }}>{p.nombre}</div>
-                        <div style={{ fontSize: "11px", color: "#94a3b8" }}>{p.categoria}</div>
+                        <div style={{ fontSize: "11px", color: "#4A5568" }}>{p.categoria}</div>
                       </div>
                       <button
                         onClick={() => handleReclamarPunto(p.id)}
@@ -731,12 +731,12 @@ export default function DashboardPage() {
             </div>
 
             {/* Opción 2: Registrar Nuevo */}
-            <div style={{ borderTop: "1px dashed rgba(255,255,255,0.1)", paddingTop: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
-              <h3 style={{ fontSize: "16px", fontWeight: "800", color: "white", marginBottom: "4px" }}>
+            <div style={{ borderTop: "1px dashed rgba(20, 109, 158, 0.12)", paddingTop: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
+              <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#1A1A2E", marginBottom: "4px" }}>
                 ✨ {lang === "en" ? "Register New Business" : "Registrar Nuevo Negocio"}
               </h3>
               
-              <button onClick={handleCrearNuevoNegocioGPS} disabled={isClaiming} style={{...styles.createBtn, background: "rgba(16,185,129,0.15)", color: "#34d399", border: "1px solid rgba(16,185,129,0.3)"}}>
+              <button onClick={handleCrearNuevoNegocioGPS} disabled={isClaiming} style={{...styles.createBtn, background: "rgba(23, 170, 74,0.15)", color: "#1FCC5C", border: "1px solid rgba(23, 170, 74,0.3)"}}>
                 📍 {lang === "en" ? "Use My Current GPS Location" : "Usar mi ubicación actual (GPS)"}
               </button>
 
@@ -750,7 +750,7 @@ export default function DashboardPage() {
         /* CASO B: SELECTOR DE NEGOCIOS */
         <div style={{...styles.dashboardOverviewLayout, marginTop: "40px"}} className="animate-fade-in-up">
           <div style={styles.overviewHeader}>
-            <h2 style={{ fontSize: "28px", fontWeight: "800", color: "white" }}>
+            <h2 style={{ fontSize: "28px", fontWeight: "800", color: "#1A1A2E" }}>
               {lang === "en" ? "My Businesses" : "Mis Negocios"}
             </h2>
             <p style={{ color: "var(--atlan-text-secondary)", marginTop: "4px" }}>
@@ -760,17 +760,17 @@ export default function DashboardPage() {
           <div style={{ ...styles.overviewGrid, marginTop: "24px" }}>
             {misNegocios.map(n => (
               <button key={n.id} onClick={() => selectNegocio(n)} style={styles.dashboardCard} className="hover-card">
-                <div style={{ ...styles.cardIcon, background: "rgba(212,175,55,0.1)", color: "var(--atlan-gold)" }}>🏢</div>
+                <div style={{ ...styles.cardIcon, background: "rgba(255, 215, 0,0.1)", color: "var(--atlan-gold)" }}>🏢</div>
                 <h3 style={styles.cardTitle}>{n.nombre}</h3>
                 <p style={styles.cardDesc}>{n.tipo || "Otro"}</p>
-                <div style={{ marginTop: "12px", fontSize: "11px", fontWeight: "800", color: n.activo ? "#10b981" : "#f59e0b" }}>
+                <div style={{ marginTop: "12px", fontSize: "11px", fontWeight: "800", color: n.activo ? "#17AA4A" : "#E6A800" }}>
                   {n.activo ? (lang === "en" ? "VERIFIED" : "VERIFICADO") : (lang === "en" ? "PENDING" : "PENDIENTE")}
                 </div>
               </button>
             ))}
-            <button onClick={handleCrearNuevoNegocioGPS} disabled={isClaiming} style={{ ...styles.dashboardCard, border: "2px dashed rgba(16,185,129,0.4)", background: "transparent", alignItems: "center", justifyContent: "center", textAlign: "center" }} className="hover-card">
-              <div style={{ fontSize: "32px", color: "#10b981", marginBottom: "8px" }}>📍</div>
-              <h3 style={{...styles.cardTitle, color: "#10b981"}}>{lang === "en" ? "Add Business here (GPS)" : "Agregar Negocio Aquí (GPS)"}</h3>
+            <button onClick={handleCrearNuevoNegocioGPS} disabled={isClaiming} style={{ ...styles.dashboardCard, border: "2px dashed rgba(23, 170, 74,0.4)", background: "transparent", alignItems: "center", justifyContent: "center", textAlign: "center" }} className="hover-card">
+              <div style={{ fontSize: "32px", color: "#17AA4A", marginBottom: "8px" }}>📍</div>
+              <h3 style={{...styles.cardTitle, color: "#17AA4A"}}>{lang === "en" ? "Add Business here (GPS)" : "Agregar Negocio Aquí (GPS)"}</h3>
             </button>
 
             <button onClick={handleIrAlMapaParaMarcar} disabled={isClaiming} style={{ ...styles.dashboardCard, border: "2px dashed rgba(59,130,246,0.4)", background: "transparent", alignItems: "center", justifyContent: "center", textAlign: "center" }} className="hover-card">
@@ -787,15 +787,15 @@ export default function DashboardPage() {
               <div style={styles.overviewHeader}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
                   <div>
-                    <h2 style={{ fontSize: "28px", fontWeight: "800", color: "white" }}>
+                    <h2 style={{ fontSize: "28px", fontWeight: "800", color: "#1A1A2E" }}>
                       {lang === "en" ? "Welcome," : "Bienvenido,"} {perfil?.nombre_completo || "Propietario"}
                     </h2>
                     <p style={{ color: "var(--atlan-text-secondary)", marginTop: "4px" }}>
                       {lang === "en" ? "What would you like to manage today for" : "¿Qué deseas gestionar hoy para"} <strong style={{ color: "var(--atlan-gold)" }}>{negocio.nombre}</strong>?
                     </p>
                     <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "16px" }}>
-                      <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: negocio.activo ? "#10b981" : "#f59e0b" }}></span>
-                      <span style={{ fontSize: "12px", fontWeight: "750", color: negocio.activo ? "#10b981" : "#f59e0b" }}>
+                      <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: negocio.activo ? "#17AA4A" : "#E6A800" }}></span>
+                      <span style={{ fontSize: "12px", fontWeight: "750", color: negocio.activo ? "#17AA4A" : "#E6A800" }}>
                         {negocio.activo ? (lang === "en" ? "VERIFIED BUSINESS" : "NEGOCIO VERIFICADO") : (lang === "en" ? "PENDING VERIFICATION" : "PENDIENTE DE VERIFICACIÓN")}
                       </span>
                     </div>
@@ -803,9 +803,9 @@ export default function DashboardPage() {
                   {misNegocios.length > 1 && (
                     <button 
                       onClick={() => setNegocio(null)} 
-                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "white", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: "700", cursor: "pointer", transition: "all 0.2s" }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
-                      onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
+                      style={{ background: "rgba(20, 109, 158, 0.05)", border: "1px solid rgba(20, 109, 158, 0.12)", color: "#1A1A2E", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: "700", cursor: "pointer", transition: "all 0.2s" }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.12)"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.05)"}
                     >
                       🔁 {lang === "en" ? "Switch Business" : "Cambiar de Negocio"}
                     </button>
@@ -818,7 +818,7 @@ export default function DashboardPage() {
                 <div style={{
                   background: 'rgba(239, 68, 68, 0.08)',
                   border: '1.5px solid rgba(239, 68, 68, 0.25)',
-                  boxShadow: '0 10px 30px rgba(239, 68, 68, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+                  boxShadow: '0 10px 30px rgba(239, 68, 68, 0.1), inset 0 1px 0 rgba(20, 109, 158, 0.05)',
                   borderRadius: '20px',
                   padding: '24px',
                   marginBottom: '32px',
@@ -833,7 +833,7 @@ export default function DashboardPage() {
                       <h4 style={{ margin: 0, fontSize: '16px', fontWeight: '850', color: '#fca5a5' }}>
                         {lang === 'en' ? 'Claim Rejected / Pending Corrections' : 'Reclamo Rechazado / Pendiente de Correcciones'}
                       </h4>
-                      <p style={{ margin: '4px 0 0', fontSize: '12.5px', color: '#f8fafc' }}>
+                      <p style={{ margin: '4px 0 0', fontSize: '12.5px', color: '#1A1A2E' }}>
                         {lang === 'en' 
                           ? 'The administrator reviewed your application and rejected it with the following observations:' 
                           : 'El administrador revisó tu solicitud y la rechazó con las siguientes observaciones:'}
@@ -847,7 +847,7 @@ export default function DashboardPage() {
                     padding: '16px',
                     borderRadius: '0 12px 12px 0',
                     fontSize: '13.5px',
-                    color: '#e2e8f0',
+                    color: '#1A1A2E',
                     lineHeight: 1.5,
                     fontStyle: 'italic'
                   }}>
@@ -860,14 +860,14 @@ export default function DashboardPage() {
                       disabled={isResubmitting}
                       style={{
                         padding: '10px 20px',
-                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        background: 'linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)',
                         color: 'white',
                         border: 'none',
                         borderRadius: '12px',
                         fontWeight: '800',
                         fontSize: '12.5px',
                         cursor: 'pointer',
-                        boxShadow: '0 4px 12px rgba(16,185,129,0.25)',
+                        boxShadow: '0 4px 12px rgba(23, 170, 74,0.25)',
                         transition: 'all 0.2s'
                       }}
                       onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
@@ -882,8 +882,8 @@ export default function DashboardPage() {
                       disabled={isResubmitting}
                       style={{
                         padding: '10px 20px',
-                        background: 'rgba(255,255,255,0.05)',
-                        border: '1px solid rgba(255,255,255,0.1)',
+                        background: 'rgba(20, 109, 158, 0.05)',
+                        border: '1px solid rgba(20, 109, 158, 0.12)',
                         borderRadius: '12px',
                         color: '#fca5a5',
                         fontWeight: '800',
@@ -891,8 +891,8 @@ export default function DashboardPage() {
                         cursor: 'pointer',
                         transition: 'background 0.2s'
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-                      onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(20, 109, 158, 0.12)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(20, 109, 158, 0.05)'}
                     >
                       {lang === 'en' ? 'Cancel Claim' : 'Cancelar Reclamo'}
                     </button>
@@ -902,9 +902,9 @@ export default function DashboardPage() {
 
               {puntoAsociado && puntoAsociado.estado === 'en_verificacion' && (
                 <div style={{
-                  background: 'rgba(245, 158, 11, 0.06)',
-                  border: '1.5px solid rgba(245, 158, 11, 0.2)',
-                  boxShadow: '0 10px 30px rgba(245, 158, 11, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+                  background: 'rgba(230, 194, 0, 0.06)',
+                  border: '1.5px solid rgba(230, 194, 0, 0.2)',
+                  boxShadow: '0 10px 30px rgba(230, 194, 0, 0.05), inset 0 1px 0 rgba(20, 109, 158, 0.05)',
                   borderRadius: '20px',
                   padding: '24px',
                   marginBottom: '32px',
@@ -918,7 +918,7 @@ export default function DashboardPage() {
                       width: '40px',
                       height: '40px',
                       borderRadius: '50%',
-                      background: 'rgba(245, 158, 11, 0.1)',
+                      background: 'rgba(230, 194, 0, 0.1)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -929,7 +929,7 @@ export default function DashboardPage() {
                         position: 'absolute',
                         inset: '-2px',
                         borderRadius: '50%',
-                        border: '2px solid #f59e0b',
+                        border: '2px solid #E6A800',
                         animation: 'spin 4s linear infinite',
                         borderTopColor: 'transparent',
                         borderBottomColor: 'transparent'
@@ -939,14 +939,14 @@ export default function DashboardPage() {
                       <h4 style={{ margin: 0, fontSize: '15.5px', fontWeight: '850', color: '#fcd34d' }}>
                         {lang === 'en' ? 'Verification Pending' : 'Verificación en Proceso'}
                       </h4>
-                      <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#cbd5e1', lineHeight: 1.5 }}>
+                      <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#4A5568', lineHeight: 1.5 }}>
                         {lang === 'en' 
                           ? 'An administrator will carry out a physical/onsite verification to validate the claim of your business.' 
                           : 'Un administrador realizará una verificación física / presencial para validar la pertenencia de tu negocio.'}
                       </p>
                     </div>
                   </div>
-                  <p style={{ margin: '4px 0 0 54px', fontSize: '12px', color: '#94a3b8', lineHeight: 1.4 }}>
+                  <p style={{ margin: '4px 0 0 54px', fontSize: '12px', color: '#4A5568', lineHeight: 1.4 }}>
                     💡 {lang === 'en' 
                       ? 'While verification is pending, you can keep updating your profile information so it is ready for activation.'
                       : 'Mientras se realiza la verificación, puedes seguir editando la información de tu perfil para tenerlo listo.'}
@@ -1083,7 +1083,7 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Carga de Logo y Galería de Fotos */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px 0", borderTop: "1px dashed rgba(255,255,255,0.08)", paddingTop: "20px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px 0", borderTop: "1px dashed rgba(20, 109, 158, 0.10)", paddingTop: "20px" }}>
                     <h4 style={{ fontSize: "14px", fontWeight: "800", color: "var(--atlan-gold)", margin: 0 }}>
                       📸 {lang === "en" ? "Business Media" : "Medios del Negocio"}
                     </h4>
@@ -1095,22 +1095,22 @@ export default function DashboardPage() {
                           width: "80px",
                           height: "80px",
                           borderRadius: "50%",
-                          border: "2px solid rgba(255,255,255,0.1)",
+                          border: "2px solid rgba(20, 109, 158, 0.12)",
                           background: logoUrl ? `url(${logoUrl}) center/cover no-repeat` : "rgba(255,255,255,0.02)",
                           margin: "0 auto 10px",
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
                           fontSize: logoUrl ? "0px" : "24px",
-                          color: "#64748b"
+                          color: "#9CA3AF"
                         }}>
                           {!logoUrl && "🏢"}
                         </div>
                         <label style={{
                           display: "inline-block",
                           padding: "6px 12px",
-                          background: "rgba(255,255,255,0.05)",
-                          border: "1px solid rgba(255,255,255,0.1)",
+                          background: "rgba(20, 109, 158, 0.05)",
+                          border: "1px solid rgba(20, 109, 158, 0.12)",
                           borderRadius: "8px",
                           fontSize: "11px",
                           fontWeight: "700",
@@ -1131,7 +1131,7 @@ export default function DashboardPage() {
                               width: "70px",
                               height: "70px",
                               borderRadius: "10px",
-                              border: "1px solid rgba(255,255,255,0.1)",
+                              border: "1px solid rgba(20, 109, 158, 0.12)",
                               background: `url(${url}) center/cover no-repeat`,
                               position: "relative"
                             }}>
@@ -1164,7 +1164,7 @@ export default function DashboardPage() {
                             width: "70px",
                             height: "70px",
                             borderRadius: "10px",
-                            border: "1.5px dashed rgba(255,255,255,0.15)",
+                            border: "1.5px dashed rgba(20, 109, 158, 0.15)",
                             background: "rgba(255,255,255,0.01)",
                             display: "flex",
                             justifyContent: "center",
@@ -1237,9 +1237,9 @@ export default function DashboardPage() {
                         disabled={isSaving}
                         style={{
                           ...styles.saveBtn,
-                          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                          background: 'linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)',
                           border: 'none',
-                          boxShadow: '0 4px 12px rgba(16,185,129,0.2)'
+                          boxShadow: '0 4px 12px rgba(23, 170, 74,0.2)'
                         }}
                       >
                         {isSaving ? "..." : (lang === 'en' ? 'Save & Resubmit' : 'Guardar y Reenviar')}
@@ -1254,7 +1254,7 @@ export default function DashboardPage() {
             {activeTab === "excentricidades" && (
               <div style={styles.tabContent}>
                 <h3 style={styles.tabTitle}>{lang === "en" ? "Services & Features Checklist" : "Checklist de Servicios y Excentricidades"}</h3>
-                <p style={{ color: "#94a3b8", fontSize: "13px", marginBottom: "20px" }}>
+                <p style={{ color: "#4A5568", fontSize: "13px", marginBottom: "20px" }}>
                   {lang === "en" 
                     ? "Select the options that apply to your business. This will enable custom sections in your dashboard." 
                     : "Selecciona las opciones que aplican a tu negocio. Esto habilitará secciones personalizadas en tu panel."}
@@ -1270,8 +1270,8 @@ export default function DashboardPage() {
                       style={styles.checkbox}
                     />
                     <div>
-                      <div style={{ fontWeight: "750", color: "white" }}>🍲 {lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"}</div>
-                      <div style={{ fontSize: "12px", color: "#64748b" }}>{lang === "en" ? "Display list of dishes and prices to tourists" : "Muestra lista de platillos y precios a los turistas"}</div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E" }}>🍲 {lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"}</div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Display list of dishes and prices to tourists" : "Muestra lista de platillos y precios a los turistas"}</div>
                     </div>
                   </label>
 
@@ -1284,8 +1284,8 @@ export default function DashboardPage() {
                       style={styles.checkbox}
                     />
                     <div>
-                      <div style={{ fontWeight: "750", color: "white" }}>⏰ {lang === "en" ? "Opening Hours" : "Horarios de Atención"}</div>
-                      <div style={{ fontSize: "12px", color: "#64748b" }}>{lang === "en" ? "Specify opening and closing schedules" : "Especifica horarios de apertura y cierre"}</div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E" }}>⏰ {lang === "en" ? "Opening Hours" : "Horarios de Atención"}</div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Specify opening and closing schedules" : "Especifica horarios de apertura y cierre"}</div>
                     </div>
                   </label>
 
@@ -1298,8 +1298,8 @@ export default function DashboardPage() {
                       style={styles.checkbox}
                     />
                     <div>
-                      <div style={{ fontWeight: "750", color: "white" }}>🏨 {lang === "en" ? "Lodging Services" : "Servicios de Hospedaje"}</div>
-                      <div style={{ fontSize: "12px", color: "#64748b" }}>{lang === "en" ? "Accept room/bed reservations directly" : "Acepta reservas de habitaciones directamente"}</div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E" }}>🏨 {lang === "en" ? "Lodging Services" : "Servicios de Hospedaje"}</div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Accept room/bed reservations directly" : "Acepta reservas de habitaciones directamente"}</div>
                     </div>
                   </label>
 
@@ -1312,8 +1312,8 @@ export default function DashboardPage() {
                       style={styles.checkbox}
                     />
                     <div>
-                      <div style={{ fontWeight: "750", color: "white" }}>🚌 {lang === "en" ? "Transport / Tours" : "Transporte o Tours"}</div>
-                      <div style={{ fontSize: "12px", color: "#64748b" }}>{lang === "en" ? "Provide tourist routing and itineraries" : "Provee itinerarios y rutas de viaje"}</div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E" }}>🚌 {lang === "en" ? "Transport / Tours" : "Transporte o Tours"}</div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Provide tourist routing and itineraries" : "Provee itinerarios y rutas de viaje"}</div>
                     </div>
                   </label>
                 </div>
@@ -1340,7 +1340,7 @@ export default function DashboardPage() {
                         domingo: lang === "en" ? "Sunday" : "Domingo",
                       };
                       return (
-                        <div key={day} style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.02)", padding: "12px 16px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.05)", gap: "10px" }}>
+                        <div key={day} style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.02)", padding: "12px 16px", borderRadius: "12px", border: "1px solid rgba(20, 109, 158, 0.05)", gap: "10px" }}>
                           <span style={{ fontWeight: "750", width: "120px" }}>{dayLabels[day]}</span>
                           
                           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
@@ -1367,10 +1367,10 @@ export default function DashboardPage() {
                                     [day]: { ...horarios[day], apertura: e.target.value }
                                   })}
                                   style={{
-                                    background: "rgba(255, 255, 255, 0.05)",
-                                    border: "1px solid rgba(255, 255, 255, 0.15)",
+                                    background: "rgba(20, 109, 158, 0.05)",
+                                    border: "1px solid rgba(20, 109, 158, 0.15)",
                                     borderRadius: "8px",
-                                    color: "white",
+                                    color: "#1A1A2E",
                                     fontSize: "13px",
                                     padding: "6px 10px",
                                     outline: "none"
@@ -1385,10 +1385,10 @@ export default function DashboardPage() {
                                     [day]: { ...horarios[day], cierre: e.target.value }
                                   })}
                                   style={{
-                                    background: "rgba(255, 255, 255, 0.05)",
-                                    border: "1px solid rgba(255, 255, 255, 0.15)",
+                                    background: "rgba(20, 109, 158, 0.05)",
+                                    border: "1px solid rgba(20, 109, 158, 0.15)",
                                     borderRadius: "8px",
-                                    color: "white",
+                                    color: "#1A1A2E",
                                     fontSize: "13px",
                                     padding: "6px 10px",
                                     outline: "none"
@@ -1415,7 +1415,7 @@ export default function DashboardPage() {
                 <h3 style={styles.tabTitle}>{lang === "en" ? "Manage Gastronomic Menu" : "Gestionar Menú Gastronómico"}</h3>
                 
                 {/* Formulario Agregar */}
-                <form onSubmit={handleAddPlato} style={{ ...styles.form, background: "rgba(255,255,255,0.02)", padding: "16px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.05)", marginBottom: "24px" }}>
+                <form onSubmit={handleAddPlato} style={{ ...styles.form, background: "rgba(255,255,255,0.02)", padding: "16px", borderRadius: "14px", border: "1px solid rgba(20, 109, 158, 0.05)", marginBottom: "24px" }}>
                   <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "12px" }}>
                     <input
                       type="text"
@@ -1450,7 +1450,7 @@ export default function DashboardPage() {
                         width: "50px",
                         height: "50px",
                         borderRadius: "8px",
-                        border: "1px solid rgba(255,255,255,0.1)",
+                        border: "1px solid rgba(20, 109, 158, 0.12)",
                         background: `url(${newPlatoFotoUrl}) center/cover no-repeat`
                       }} />
                     ) : (
@@ -1458,20 +1458,20 @@ export default function DashboardPage() {
                         width: "50px",
                         height: "50px",
                         borderRadius: "8px",
-                        border: "1.5px dashed rgba(255,255,255,0.15)",
+                        border: "1.5px dashed rgba(20, 109, 158, 0.15)",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
                         fontSize: "16px",
-                        color: "#64748b"
+                        color: "#9CA3AF"
                       }}>
                         🍲
                       </div>
                     )}
                     <label style={{
                       padding: "8px 14px",
-                      background: "rgba(255,255,255,0.05)",
-                      border: "1px solid rgba(255,255,255,0.1)",
+                      background: "rgba(20, 109, 158, 0.05)",
+                      border: "1px solid rgba(20, 109, 158, 0.12)",
                       borderRadius: "8px",
                       fontSize: "12px",
                       fontWeight: "700",
@@ -1491,10 +1491,10 @@ export default function DashboardPage() {
                 {/* Lista Platos */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   {menuItems.length === 0 ? (
-                    <p style={{ color: "#64748b", fontSize: "13px" }}>{lang === "en" ? "No dishes added yet." : "Aún no has agregado platillos a tu menú."}</p>
+                    <p style={{ color: "#9CA3AF", fontSize: "13px" }}>{lang === "en" ? "No dishes added yet." : "Aún no has agregado platillos a tu menú."}</p>
                   ) : (
                     menuItems.map((item) => (
-                      <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "12px" }}>
+                      <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: "rgba(20, 109, 158, 0.03)", border: "1px solid rgba(20, 109, 158, 0.08)", borderRadius: "12px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
                           {item.foto_url ? (
                             <div style={{
@@ -1502,26 +1502,26 @@ export default function DashboardPage() {
                               height: "48px",
                               borderRadius: "8px",
                               background: `url(${item.foto_url}) center/cover no-repeat`,
-                              border: "1px solid rgba(255,255,255,0.08)"
+                              border: "1px solid rgba(20, 109, 158, 0.10)"
                             }} />
                           ) : (
                             <div style={{
                               width: "48px",
                               height: "48px",
                               borderRadius: "8px",
-                              background: "rgba(255,255,255,0.03)",
+                              background: "rgba(20, 109, 158, 0.03)",
                               display: "flex",
                               justifyContent: "center",
                               alignItems: "center",
                               fontSize: "20px",
-                              border: "1px solid rgba(255,255,255,0.05)"
+                              border: "1px solid rgba(20, 109, 158, 0.05)"
                             }}>
                               🍲
                             </div>
                           )}
                           <div>
                             <div style={{ fontWeight: "750", fontSize: "14px" }}>{item.nombre}</div>
-                            {item.descripcion && <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>{item.descripcion}</div>}
+                            {item.descripcion && <div style={{ fontSize: "11px", color: "#4A5568", marginTop: "2px" }}>{item.descripcion}</div>}
                           </div>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
@@ -1542,22 +1542,22 @@ export default function DashboardPage() {
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   {reservas.length === 0 ? (
-                    <p style={{ color: "#64748b", fontSize: "13px" }}>{lang === "en" ? "No bookings received." : "No se han recibido reservas."}</p>
+                    <p style={{ color: "#9CA3AF", fontSize: "13px" }}>{lang === "en" ? "No bookings received." : "No se han recibido reservas."}</p>
                   ) : (
                     reservas.map((res) => (
-                      <div key={res.id} style={{ padding: "16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "16px", display: "flex", justifycontent: "space-between", alignitems: "center" }}>
+                      <div key={res.id} style={{ padding: "16px", background: "rgba(20, 109, 158, 0.03)", border: "1px solid rgba(20, 109, 158, 0.08)", borderRadius: "16px", display: "flex", justifycontent: "space-between", alignitems: "center" }}>
                         <div style={{ flex: 1 }}>
-                          <div style={{ fontWeight: "800", fontSize: "14px", color: "white" }}>
+                          <div style={{ fontWeight: "800", fontSize: "14px", color: "#1A1A2E" }}>
                             👤 {res.perfiles?.nombre_completo || (lang === "en" ? "Anonymous Traveler" : "Turista Anónimo")}
                           </div>
-                          <div style={{ fontSize: "12.5px", color: "#94a3b8", marginTop: "4px" }}>
+                          <div style={{ fontSize: "12.5px", color: "#4A5568", marginTop: "4px" }}>
                             📅 {new Date(res.fecha_hora).toLocaleString()}
                           </div>
                           <div style={{ fontSize: "12px", color: "var(--atlan-gold)", marginTop: "4px" }}>
                             👥 {lang === "en" ? "Guests:" : "Personas:"} {res.num_personas || 1}
                           </div>
                           {res.notas && (
-                            <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "6px", fontStyle: "italic" }}>
+                            <div style={{ fontSize: "12px", color: "#4A5568", marginTop: "6px", fontStyle: "italic" }}>
                               💬 "{res.notas}"
                             </div>
                           )}
@@ -1568,8 +1568,8 @@ export default function DashboardPage() {
                             fontWeight: "800",
                             padding: "3px 8px",
                             borderRadius: "6px",
-                            background: res.estado_reserva === "aprobada" ? "rgba(16,185,129,0.15)" : res.estado_reserva === "pendiente" ? "rgba(245,158,11,0.15)" : "rgba(239,68,68,0.15)",
-                            color: res.estado_reserva === "aprobada" ? "#10b981" : res.estado_reserva === "pendiente" ? "#f59e0b" : "#ef4444"
+                            background: res.estado_reserva === "aprobada" ? "rgba(23, 170, 74,0.15)" : res.estado_reserva === "pendiente" ? "rgba(230, 194, 0,0.15)" : "rgba(239,68,68,0.15)",
+                            color: res.estado_reserva === "aprobada" ? "#17AA4A" : res.estado_reserva === "pendiente" ? "#E6A800" : "#ef4444"
                           }}>
                             {(res.estado_reserva || "pendiente").toUpperCase()}
                           </span>
@@ -1595,15 +1595,15 @@ export default function DashboardPage() {
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   {resenas.length === 0 ? (
-                    <p style={{ color: "#64748b", fontSize: "13px" }}>{lang === "en" ? "No reviews left yet." : "Aún no hay reseñas registradas."}</p>
+                    <p style={{ color: "#9CA3AF", fontSize: "13px" }}>{lang === "en" ? "No reviews left yet." : "Aún no hay reseñas registradas."}</p>
                   ) : (
                     resenas.map((rev) => (
-                      <div key={rev.id} style={{ padding: "14px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "12px" }}>
+                      <div key={rev.id} style={{ padding: "14px", background: "rgba(20, 109, 158, 0.03)", border: "1px solid rgba(20, 109, 158, 0.08)", borderRadius: "12px" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
                           <span style={{ fontWeight: "750", fontSize: "13px" }}>{rev.nombre_usuario}</span>
                           <span style={{ color: "var(--atlan-gold)", fontWeight: "700" }}>⭐ {rev.estrellas}</span>
                         </div>
-                        <p style={{ fontSize: "12.5px", color: "#cbd5e1", margin: 0 }}>"{rev.comentario}"</p>
+                        <p style={{ fontSize: "12.5px", color: "#4A5568", margin: 0 }}>"{rev.comentario}"</p>
                       </div>
                     ))
                   )}
@@ -1643,10 +1643,10 @@ const styles = {
     left: 0,
     width: "100%",
     padding: "20px 32px",
-    background: "rgba(7, 11, 20, 0.75)",
+    background: "rgba(255, 255, 255, 0.92)",
     backdropFilter: "blur(12px)",
     WebkitBackdropFilter: "blur(12px)",
-    borderBottom: "1px solid rgba(255,255,255,0.06)",
+    borderBottom: "1px solid rgba(20, 109, 158, 0.12)",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -1662,14 +1662,14 @@ const styles = {
     fontSize: "22px",
   },
   logoText: {
-    fontSize: "20px",
-    fontWeight: "800",
-    color: "#fff",
+    fontSize: "22px",
+    fontWeight: "900",
+    color: "#FFD700",
   },
   badgeRol: {
-    background: "rgba(212,175,55,0.1)",
-    border: "1px solid rgba(212,175,55,0.2)",
-    color: "#D4AF37",
+    background: "rgba(255, 215, 0,0.1)",
+    border: "1px solid rgba(255, 215, 0,0.2)",
+    color: "#FFD700",
     padding: "4px 8px",
     borderRadius: "6px",
     fontSize: "10px",
@@ -1693,13 +1693,13 @@ const styles = {
     padding: "32px",
     borderRadius: "20px",
     background: "rgba(16, 22, 40, 0.5)",
-    border: "1px solid rgba(255,255,255,0.08)",
+    border: "1px solid rgba(20, 109, 158, 0.10)",
   },
   claimSection: {
     background: "rgba(255,255,255,0.02)",
     padding: "16px",
     borderRadius: "14px",
-    border: "1px solid rgba(255,255,255,0.05)",
+    border: "1px solid rgba(20, 109, 158, 0.05)",
   },
   pointsList: {
     display: "flex",
@@ -1714,13 +1714,13 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     padding: "10px 14px",
-    background: "rgba(255,255,255,0.03)",
-    border: "1px solid rgba(255,255,255,0.06)",
+    background: "rgba(20, 109, 158, 0.03)",
+    border: "1px solid rgba(20, 109, 158, 0.08)",
     borderRadius: "10px",
   },
   claimBtn: {
-    background: "#D4AF37",
-    color: "#0a0f1c",
+    background: "#FFD700",
+    color: "#FFFFFF",
     border: "none",
     padding: "6px 12px",
     borderRadius: "8px",
@@ -1731,7 +1731,7 @@ const styles = {
   createBtn: {
     width: "100%",
     padding: "14px",
-    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+    background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
     color: "white",
     border: "none",
     borderRadius: "12px",
@@ -1766,7 +1766,7 @@ const styles = {
     background: "rgba(16, 22, 40, 0.4)",
     padding: "36px",
     borderRadius: "24px",
-    border: "1px solid rgba(255,255,255,0.06)",
+    border: "1px solid rgba(20, 109, 158, 0.08)",
     boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
   },
   overviewGrid: {
@@ -1776,7 +1776,7 @@ const styles = {
   },
   dashboardCard: {
     background: "rgba(16, 22, 40, 0.45)",
-    border: "1px solid rgba(255,255,255,0.08)",
+    border: "1px solid rgba(20, 109, 158, 0.10)",
     borderRadius: "24px",
     padding: "28px",
     display: "flex",
@@ -1792,25 +1792,25 @@ const styles = {
   cardIcon: {
     fontSize: "32px",
     marginBottom: "20px",
-    background: "rgba(255,255,255,0.03)",
+    background: "rgba(20, 109, 158, 0.03)",
     width: "64px",
     height: "64px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: "16px",
-    border: "1px solid rgba(255,255,255,0.05)",
+    border: "1px solid rgba(20, 109, 158, 0.05)",
   },
   cardTitle: {
     fontSize: "19px",
     fontWeight: "800",
-    color: "white",
+    color: "#1A1A2E",
     marginBottom: "8px",
     letterSpacing: "-0.01em",
   },
   cardDesc: {
     fontSize: "13.5px",
-    color: "#94a3b8",
+    color: "#4A5568",
     lineHeight: "1.5",
   },
   cardBadge: {
@@ -1830,7 +1830,7 @@ const styles = {
     padding: "32px",
     borderRadius: "20px",
     background: "rgba(16, 22, 40, 0.45)",
-    border: "1px solid rgba(255,255,255,0.06)",
+    border: "1px solid rgba(20, 109, 158, 0.08)",
     minHeight: "450px",
   },
   tabContent: {
@@ -1858,13 +1858,13 @@ const styles = {
   label: {
     fontSize: "12.5px",
     fontWeight: "750",
-    color: "#cbd5e1",
+    color: "#4A5568",
   },
   input: {
     width: "100%",
     padding: "11px 14px",
-    background: "rgba(255, 255, 255, 0.03)",
-    border: "1px solid rgba(255, 255, 255, 0.08)",
+    background: "rgba(20, 109, 158, 0.03)",
+    border: "1px solid rgba(20, 109, 158, 0.10)",
     borderRadius: "10px",
     color: "#fff",
     fontSize: "13.5px",
@@ -1873,14 +1873,14 @@ const styles = {
   saveBtn: {
     alignSelf: "flex-start",
     padding: "12px 24px",
-    background: "linear-gradient(135deg, #D4AF37 0%, #b89324 100%)",
-    color: "#0a0f1c",
+    background: "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)",
+    color: "#FFFFFF",
     border: "none",
     borderRadius: "10px",
     fontWeight: "800",
     fontSize: "13.5px",
     cursor: "pointer",
-    boxShadow: "0 4px 10px rgba(212, 175, 55, 0.2)",
+    boxShadow: "0 4px 10px rgba(255, 215, 0, 0.2)",
     marginTop: "8px",
   },
   checkboxLabel: {
@@ -1889,7 +1889,7 @@ const styles = {
     gap: "12px",
     padding: "14px",
     background: "rgba(255,255,255,0.02)",
-    border: "1px solid rgba(255,255,255,0.05)",
+    border: "1px solid rgba(20, 109, 158, 0.05)",
     borderRadius: "12px",
     cursor: "pointer",
     transition: "background 0.2s",
@@ -1907,19 +1907,19 @@ const styles = {
     fontSize: "14px",
   },
   successBanner: {
-    background: "rgba(16, 185, 129, 0.15)",
-    border: "1px solid rgba(16, 185, 129, 0.25)",
+    background: "rgba(23, 170, 74, 0.15)",
+    border: "1px solid rgba(23, 170, 74, 0.25)",
     borderRadius: "10px",
     padding: "10px 14px",
-    color: "#34d399",
+    color: "#1FCC5C",
     fontSize: "13px",
     fontWeight: "600",
     marginBottom: "16px",
   },
   actionApproveBtn: {
-    background: "rgba(16, 185, 129, 0.2)",
+    background: "rgba(23, 170, 74, 0.2)",
     border: "none",
-    color: "#10b981",
+    color: "#17AA4A",
     width: "28px",
     height: "28px",
     borderRadius: "50%",

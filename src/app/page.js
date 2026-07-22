@@ -31,7 +31,7 @@ function Navbar({ session, perfil, handleLogout }) {
               objectFit: "contain"
             }}
           />
-          <span className="logoText" style={styles.logoText}>atlan</span>
+          <span className="logoText" style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
         </Link>
 
         {/* Desktop links */}
@@ -55,14 +55,14 @@ function Navbar({ session, perfil, handleLogout }) {
               {perfil?.rol === "dueno" || perfil?.rol === "admin" ? (
                 <Link href="/dashboard" style={{ ...styles.navLink, display: "flex", alignItems: "center", gap: "6px" }}>
                   {perfil?.avatar_url ? (
-                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
+                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
                   ) : "💼"}
                   <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.dashboard")}</span>
                 </Link>
               ) : (
                 <Link href="/perfil" style={{ ...styles.navLink, display: "flex", alignItems: "center", gap: "6px" }}>
                   {perfil?.avatar_url ? (
-                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
+                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
                   ) : "👤"}
                   <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.myReservations")}</span>
                 </Link>
@@ -132,14 +132,14 @@ function Navbar({ session, perfil, handleLogout }) {
               {perfil?.rol === "dueno" || perfil?.rol === "admin" ? (
                 <Link href="/dashboard" style={{ ...styles.mobileLink, display: "flex", alignItems: "center", gap: "8px" }} onClick={() => setMenuOpen(false)}>
                   {perfil?.avatar_url ? (
-                    <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
+                    <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
                   ) : "💼"}
                   <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.dashboard")}</span>
                 </Link>
               ) : (
                 <Link href="/perfil" style={{ ...styles.mobileLink, display: "flex", alignItems: "center", gap: "8px" }} onClick={() => setMenuOpen(false)}>
                   {perfil?.avatar_url ? (
-                    <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
+                    <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
                   ) : "👤"}
                   <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.myReservations")}</span>
                 </Link>
@@ -190,15 +190,15 @@ function HeroSection({ perfil }) {
           <div style={{
             fontSize: "15px",
             fontWeight: "800",
-            color: "var(--atlan-gold)",
+            color: "var(--atlan-ocean)",
             marginBottom: "12px",
             textTransform: "uppercase",
             letterSpacing: "1px",
-            background: "rgba(212, 175, 55, 0.08)",
+            background: "rgba(20, 109, 158, 0.08)",
             padding: "8px 18px",
             borderRadius: "30px",
             display: "inline-block",
-            border: "1px solid rgba(212, 175, 55, 0.2)"
+            border: "1px solid rgba(20, 109, 158, 0.15)"
           }}>
             👋 {lang === "en" ? "Welcome back" : "Bienvenido de nuevo"}, {perfil.nombre_completo.split(" ")[0]}
           </div>
@@ -259,22 +259,22 @@ function FeaturesSection() {
       icon: "🗺️",
       title: t("landing.features.gps.title"),
       description: t("landing.features.gps.description"),
-      gradient: "linear-gradient(135deg, #2563eb22, #06b6d422)",
-      borderColor: "rgba(37, 99, 235, 0.2)",
+      gradient: "linear-gradient(135deg, rgba(20,109,158,0.08), rgba(26,138,199,0.08))",
+      borderColor: "rgba(20, 109, 158, 0.15)",
     },
     {
       icon: "📍",
       title: t("landing.features.community.title"),
       description: t("landing.features.community.description"),
-      gradient: "linear-gradient(135deg, #10b98122, #84cc1622)",
-      borderColor: "rgba(16, 185, 129, 0.2)",
+      gradient: "linear-gradient(135deg, rgba(23,170,74,0.08), rgba(31,204,92,0.08))",
+      borderColor: "rgba(23, 170, 74, 0.15)",
     },
     {
       icon: "📅",
       title: t("landing.features.reservations.title"),
       description: t("landing.features.reservations.description"),
-      gradient: "linear-gradient(135deg, #D4AF3722, #f59e0b22)",
-      borderColor: "rgba(212, 175, 55, 0.2)",
+      gradient: "linear-gradient(135deg, rgba(255,215,0,0.10), rgba(230,194,0,0.08))",
+      borderColor: "rgba(255, 215, 0, 0.25)",
     },
   ];
 
@@ -402,7 +402,7 @@ function Footer() {
                 objectFit: "contain"
               }}
             />
-            <span style={styles.logoText}>Atlan</span>
+            <span style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
           </div>
           <p style={styles.footerDesc}>{t("landing.footer.description")}</p>
         </div>
@@ -513,7 +513,7 @@ export default function Home() {
       <div
         style={{
           minHeight: "100vh",
-          background: "var(--atlan-bg-primary)",
+          background: "#FFFFFF",
           opacity: introDone ? 1 : 0,
           transition: "opacity 0.8s ease 0.2s",
         }}
@@ -540,10 +540,10 @@ const styles = {
     left: 0,
     right: 0,
     zIndex: 200,
-    background: "rgba(10, 15, 28, 0.8)",
+    background: "rgba(255, 255, 255, 0.92)",
     backdropFilter: "blur(16px)",
     WebkitBackdropFilter: "blur(16px)",
-    borderBottom: "1px solid rgba(255,255,255,0.06)",
+    borderBottom: "1px solid rgba(20,109,158,0.10)",
   },
   navInner: {
     maxWidth: "1200px",
@@ -562,13 +562,10 @@ const styles = {
   },
   logoIcon: { fontSize: "26px" },
   logoText: {
-    fontSize: "22px",
-    fontWeight: "800",
+    fontSize: "24px",
+    fontWeight: "900",
     fontFamily: "var(--font-outfit), system-ui, sans-serif",
-    background: "linear-gradient(135deg, #D4AF37, #E8CC6A)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
+    color: "#FFD700",
     letterSpacing: "-0.02em",
   },
   navLinks: {
@@ -586,7 +583,7 @@ const styles = {
   hamburger: {
     background: "none",
     border: "none",
-    color: "var(--atlan-text-primary)",
+    color: "#1A1A2E",
     cursor: "pointer",
     padding: "8px",
   },
@@ -595,7 +592,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     gap: "12px",
-    borderTop: "1px solid rgba(255,255,255,0.06)",
+    borderTop: "1px solid rgba(20,109,158,0.08)",
   },
   mobileLink: {
     color: "var(--atlan-text-secondary)",
@@ -640,36 +637,36 @@ const styles = {
   },
   heroOrb1: {
     position: "absolute",
-    top: "-20%",
-    right: "-10%",
-    width: "600px",
-    height: "600px",
+    top: "-15%",
+    right: "-5%",
+    width: "650px",
+    height: "650px",
     borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(212,175,55,0.12) 0%, transparent 70%)",
+    background: "radial-gradient(circle, rgba(255,215,0,0.22) 0%, rgba(255,215,0,0.05) 50%, transparent 70%)",
     filter: "blur(60px)",
     pointerEvents: "none",
   },
   heroOrb2: {
     position: "absolute",
-    bottom: "-15%",
+    bottom: "-10%",
     left: "-5%",
-    width: "500px",
-    height: "500px",
+    width: "550px",
+    height: "550px",
     borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(26,58,110,0.25) 0%, transparent 70%)",
+    background: "radial-gradient(circle, rgba(20,109,158,0.18) 0%, rgba(20,109,158,0.04) 50%, transparent 70%)",
     filter: "blur(60px)",
     pointerEvents: "none",
   },
   heroOrb3: {
     position: "absolute",
-    top: "40%",
+    top: "35%",
     left: "50%",
     transform: "translateX(-50%)",
-    width: "400px",
-    height: "400px",
+    width: "450px",
+    height: "450px",
     borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%)",
-    filter: "blur(80px)",
+    background: "radial-gradient(circle, rgba(23,170,74,0.12) 0%, transparent 70%)",
+    filter: "blur(70px)",
     pointerEvents: "none",
   },
   heroContent: {
@@ -727,7 +724,7 @@ const styles = {
   statDivider: {
     width: "1px",
     height: "36px",
-    background: "rgba(255,255,255,0.1)",
+    background: "rgba(20,109,158,0.12)",
   },
 
   // ── Sections
@@ -835,7 +832,7 @@ const styles = {
     width: "600px",
     height: "600px",
     borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%)",
+    background: "radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 70%)",
     filter: "blur(80px)",
     pointerEvents: "none",
   },
@@ -881,8 +878,8 @@ const styles = {
 
   // ── Footer
   footer: {
-    borderTop: "1px solid rgba(255,255,255,0.06)",
-    background: "var(--atlan-bg-secondary)",
+    borderTop: "1px solid rgba(20,109,158,0.08)",
+    background: "#F5F7FA",
   },
   footerInner: {
     maxWidth: "1100px",
@@ -924,7 +921,7 @@ const styles = {
     maxWidth: "1100px",
     margin: "0 auto",
     padding: "20px 24px",
-    borderTop: "1px solid rgba(255,255,255,0.06)",
+    borderTop: "1px solid rgba(20,109,158,0.08)",
     textAlign: "center",
   },
 };

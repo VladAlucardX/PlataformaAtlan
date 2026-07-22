@@ -200,13 +200,13 @@ export default function PerfilPage() {
           <div className="spinner" style={{
             width: "40px",
             height: "40px",
-            border: "3px solid rgba(255,255,255,0.1)",
-            borderTopColor: "var(--atlan-gold, #D4AF37)",
+            border: "3px solid rgba(20, 109, 158, 0.12)",
+            borderTopColor: "var(--atlan-gold, #FFD700)",
             borderRadius: "50%",
             animation: "spin 1s linear infinite",
             margin: "0 auto 16px"
           }} />
-          <p style={{ fontSize: "14px", color: "#94a3b8" }}>
+          <p style={{ fontSize: "14px", color: "#4A5568" }}>
             {lang === "en" ? "Loading profile..." : "Cargando perfil..."}
           </p>
         </div>
@@ -217,16 +217,16 @@ export default function PerfilPage() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "radial-gradient(circle at top, #0f172a 0%, #050508 100%)",
-      color: "white",
+      background: "var(--atlan-bg-primary)",
+      color: "var(--atlan-text-primary)",
       paddingBottom: "80px",
       fontFamily: "var(--font-outfit), sans-serif"
     }}>
       {/* HEADER */}
       <nav style={{
-        background: "rgba(10, 15, 28, 0.75)",
+        background: "rgba(255, 255, 255, 0.92)",
         backdropFilter: "blur(12px)",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+        borderBottom: "1px solid rgba(20, 109, 158, 0.12)",
         padding: "16px 24px",
         position: "sticky",
         top: 0,
@@ -242,48 +242,48 @@ export default function PerfilPage() {
           <Link href="/" style={{
             fontSize: "20px",
             fontWeight: "800",
-            color: "white",
+            color: "#1A1A2E",
             textDecoration: "none",
             display: "flex",
             alignItems: "center",
             gap: "8px"
           }}>
             <span>🗺️</span>
-            <span style={{ background: "linear-gradient(135deg, #D4AF37 0%, #FFF 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              ATLAN
+            <span className="logoText" style={{ color: "#FFD700", fontWeight: "900" }}>
+              atlan
             </span>
           </Link>
           
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <Link href="/" style={{
               fontSize: "13px",
-              color: "#94a3b8",
+              color: "#4A5568",
               textDecoration: "none",
               fontWeight: "600",
               padding: "6px 12px",
               borderRadius: "8px",
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.06)",
+              background: "rgba(20, 109, 158, 0.04)",
+              border: "1px solid rgba(20, 109, 158, 0.10)",
               transition: "all 0.2s"
             }}
-            onMouseEnter={(e) => e.currentTarget.style.color = "white"}
-            onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}
+            onMouseEnter={(e) => e.currentTarget.style.color = "#146D9E"}
+            onMouseLeave={(e) => e.currentTarget.style.color = "#4A5568"}
             >
               🏠 {lang === "en" ? "Home" : "Inicio"}
             </Link>
             <Link href="/mapa" style={{
               fontSize: "13px",
-              color: "#94a3b8",
+              color: "#4A5568",
               textDecoration: "none",
               fontWeight: "600",
               padding: "6px 12px",
               borderRadius: "8px",
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.06)",
+              background: "rgba(20, 109, 158, 0.04)",
+              border: "1px solid rgba(20, 109, 158, 0.10)",
               transition: "all 0.2s"
             }}
-            onMouseEnter={(e) => e.currentTarget.style.color = "white"}
-            onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}
+            onMouseEnter={(e) => e.currentTarget.style.color = "#146D9E"}
+            onMouseLeave={(e) => e.currentTarget.style.color = "#4A5568"}
             >
               🗺️ {lang === "en" ? "Back to Map" : "Volver al Mapa"}
             </Link>
@@ -305,12 +305,12 @@ export default function PerfilPage() {
         {/* SIDEBAR DE USUARIO */}
         <div>
           <div style={{
-            background: "rgba(255, 255, 255, 0.02)",
-            border: "1px solid rgba(255, 255, 255, 0.05)",
+            background: "#FFFFFF",
+            border: "1px solid rgba(20, 109, 158, 0.12)",
             borderRadius: "24px",
             padding: "24px",
             textAlign: "center",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+            boxShadow: "0 10px 30px -4px rgba(20, 109, 158, 0.08), 0 2px 6px rgba(0, 0, 0, 0.03)",
             position: "sticky",
             top: "100px"
           }}>
@@ -330,16 +330,16 @@ export default function PerfilPage() {
                 height: "80px",
                 background: perfil?.avatar_url 
                   ? `url(${perfil.avatar_url}) center/cover` 
-                  : "linear-gradient(135deg, #D4AF37 0%, #b89324 100%)",
+                  : "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)",
                 borderRadius: "50%",
                 margin: "0 auto 16px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 fontSize: "32px",
-                color: "#0a0f1c",
+                color: "#FFFFFF",
                 fontWeight: "bold",
-                boxShadow: "0 0 20px rgba(212, 175, 55, 0.2)",
+                boxShadow: "0 0 20px rgba(255, 215, 0, 0.2)",
                 position: "relative",
                 cursor: "pointer",
                 overflow: "hidden"
@@ -347,7 +347,7 @@ export default function PerfilPage() {
               title={lang === "en" ? "Change profile picture" : "Cambiar foto de perfil"}
             >
               {avatarUploading ? (
-                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", color: "white", fontSize: "11px", fontWeight: "bold" }}>
+                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", color: "#1A1A2E", fontSize: "11px", fontWeight: "bold" }}>
                   ⏳
                 </div>
               ) : (
@@ -356,13 +356,13 @@ export default function PerfilPage() {
                   <div style={{
                     position: "absolute",
                     inset: 0,
-                    background: "rgba(0,0,0,0.4)",
+                    background: "rgba(0, 0, 0, 0.10)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     opacity: avatarHover ? 1 : 0,
                     transition: "opacity 0.2s",
-                    color: "white",
+                    color: "#1A1A2E",
                     fontSize: "18px"
                   }}>
                     📷
@@ -375,15 +375,15 @@ export default function PerfilPage() {
               {perfil?.nombre_completo || "Usuario Atlan"}
             </h3>
 
-            <p style={{ margin: "0 0 16px", fontSize: "12.5px", color: "#64748b", fontWeight: "600" }}>
+            <p style={{ margin: "0 0 16px", fontSize: "12.5px", color: "#9CA3AF", fontWeight: "600" }}>
               {user?.email}
             </p>
 
             <div style={{
               display: "inline-block",
-              background: "rgba(212, 175, 55, 0.1)",
-              border: "1px solid rgba(212, 175, 55, 0.2)",
-              color: "#D4AF37",
+              background: "rgba(255, 215, 0, 0.1)",
+              border: "1px solid rgba(255, 215, 0, 0.2)",
+              color: "#FFD700",
               fontSize: "11px",
               fontWeight: "800",
               padding: "4px 12px",
@@ -403,14 +403,14 @@ export default function PerfilPage() {
                 gap: "8px",
                 width: "100%",
                 padding: "12px",
-                background: "linear-gradient(135deg, #D4AF37 0%, #b89324 100%)",
-                color: "#0a0f1c",
+                background: "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)",
+                color: "#1A1A2E",
                 borderRadius: "12px",
                 fontWeight: "800",
                 fontSize: "13.5px",
                 textDecoration: "none",
                 marginBottom: "16px",
-                boxShadow: "0 4px 12px rgba(212, 175, 55, 0.2)",
+                boxShadow: "0 4px 12px rgba(255, 215, 0, 0.2)",
                 transition: "transform 0.2s"
               }}
               onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
@@ -453,27 +453,28 @@ export default function PerfilPage() {
           
           {/* SECCIÓN RESERVAS */}
           <div>
-            <h2 style={{ margin: "0 0 20px", fontSize: "20px", fontWeight: "800", color: "#f8fafc", display: "flex", alignItems: "center", gap: "10px" }}>
+            <h2 style={{ margin: "0 0 20px", fontSize: "20px", fontWeight: "800", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
               <span>📅</span> {lang === "en" ? "My Reservations" : "Mis Reservas Directas"}
-              <span style={{ fontSize: "12px", background: "rgba(255,255,255,0.08)", padding: "2px 8px", borderRadius: "8px", color: "#94a3b8" }}>
+              <span style={{ fontSize: "12px", background: "rgba(20, 109, 158, 0.10)", padding: "2px 8px", borderRadius: "8px", color: "#4A5568" }}>
                 {reservas.length}
               </span>
             </h2>
 
             {reservas.length === 0 ? (
               <div style={{
-                background: "rgba(255,255,255,0.01)",
-                border: "1px dashed rgba(255,255,255,0.1)",
+                background: "#FFFFFF",
+                border: "1px dashed rgba(20, 109, 158, 0.2)",
+                boxShadow: "0 4px 16px -2px rgba(20, 109, 158, 0.06)",
                 borderRadius: "16px",
                 padding: "40px 20px",
                 textAlign: "center",
-                color: "#64748b"
+                color: "#9CA3AF"
               }}>
                 <span style={{ fontSize: "32px", display: "block", marginBottom: "12px" }}>🏨</span>
                 <p style={{ margin: 0, fontSize: "14px" }}>
                   {lang === "en" ? "You haven't made any lodging/table reservations yet." : "Aún no has realizado reservas de hospedaje o mesas."}
                 </p>
-                <Link href="/mapa" style={{ display: "inline-block", marginTop: "16px", fontSize: "13px", color: "#D4AF37", fontWeight: "700" }}>
+                <Link href="/mapa" style={{ display: "inline-block", marginTop: "16px", fontSize: "13px", color: "#FFD700", fontWeight: "700" }}>
                   {lang === "en" ? "Book a place now →" : "Reservar un lugar ahora →"}
                 </Link>
               </div>
@@ -492,16 +493,17 @@ export default function PerfilPage() {
 
                   // Estilos por estado
                   const estadoStyles = {
-                    pendiente: { bg: "rgba(245, 158, 11, 0.15)", text: "#fbbf24", border: "rgba(245, 158, 11, 0.3)" },
-                    confirmada: { bg: "rgba(16, 185, 129, 0.15)", text: "#34d399", border: "rgba(16, 185, 129, 0.3)" },
+                    pendiente: { bg: "rgba(230, 194, 0, 0.15)", text: "#E6C200", border: "rgba(230, 194, 0, 0.3)" },
+                    confirmada: { bg: "rgba(23, 170, 74, 0.15)", text: "#1FCC5C", border: "rgba(23, 170, 74, 0.3)" },
                     cancelada: { bg: "rgba(239, 68, 68, 0.15)", text: "#f87171", border: "rgba(239, 68, 68, 0.3)" },
                     completada: { bg: "rgba(59, 130, 246, 0.15)", text: "#60a5fa", border: "rgba(59, 130, 246, 0.3)" }
-                  }[res.estado_reserva] || { bg: "rgba(255,255,255,0.05)", text: "white", border: "rgba(255,255,255,0.1)" };
+                  }[res.estado_reserva] || { bg: "rgba(20, 109, 158, 0.05)", text: "white", border: "rgba(20, 109, 158, 0.12)" };
 
                   return (
                     <div key={res.id} style={{
-                      background: "rgba(255,255,255,0.02)",
-                      border: "1px solid rgba(255,255,255,0.05)",
+                      background: "#FFFFFF",
+                      border: "1px solid rgba(20, 109, 158, 0.12)",
+                      boxShadow: "0 4px 16px -2px rgba(20, 109, 158, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03)",
                       borderRadius: "16px",
                       padding: "16px 20px",
                       display: "flex",
@@ -524,17 +526,17 @@ export default function PerfilPage() {
                             {t(`reservations.status.${res.estado_reserva}`) || res.estado_reserva}
                           </span>
                         </div>
-                        <p style={{ margin: "0 0 6px", fontSize: "12.5px", color: "#94a3b8" }}>
+                        <p style={{ margin: "0 0 6px", fontSize: "12.5px", color: "#4A5568" }}>
                           📅 {fechaFormatted}
                         </p>
-                        <div style={{ display: "flex", gap: "14px", fontSize: "12px", color: "#64748b" }}>
+                        <div style={{ display: "flex", gap: "14px", fontSize: "12px", color: "#9CA3AF" }}>
                           <span>👥 {res.num_personas} {lang === "en" ? "people" : "personas"}</span>
                           {res.tipo_reserva && (
                             <span style={{ textTransform: "capitalize" }}>🏷️ {res.tipo_reserva}</span>
                           )}
                         </div>
                         {res.notas && (
-                          <p style={{ margin: "8px 0 0", fontSize: "12px", color: "#cbd5e1", fontStyle: "italic", background: "rgba(255,255,255,0.02)", padding: "6px 10px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.04)" }}>
+                          <p style={{ margin: "8px 0 0", fontSize: "12px", color: "#4A5568", fontStyle: "italic", background: "rgba(255,255,255,0.02)", padding: "6px 10px", borderRadius: "8px", border: "1px solid rgba(20, 109, 158, 0.04)" }}>
                             " {res.notas} "
                           </p>
                         )}
@@ -573,27 +575,28 @@ export default function PerfilPage() {
 
           {/* SECCIÓN FAVORITOS / DESTINOS GUARDADOS */}
           <div>
-            <h2 style={{ margin: "0 0 20px", fontSize: "20px", fontWeight: "800", color: "#f8fafc", display: "flex", alignItems: "center", gap: "10px" }}>
+            <h2 style={{ margin: "0 0 20px", fontSize: "20px", fontWeight: "800", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
               <span>❤️</span> {lang === "en" ? "My Saved Places" : "Mis Destinos Guardados"}
-              <span style={{ fontSize: "12px", background: "rgba(255,255,255,0.08)", padding: "2px 8px", borderRadius: "8px", color: "#94a3b8" }}>
+              <span style={{ fontSize: "12px", background: "rgba(20, 109, 158, 0.10)", padding: "2px 8px", borderRadius: "8px", color: "#4A5568" }}>
                 {favoritos.length}
               </span>
             </h2>
 
             {favoritos.length === 0 ? (
               <div style={{
-                background: "rgba(255,255,255,0.01)",
-                border: "1px dashed rgba(255,255,255,0.1)",
+                background: "#FFFFFF",
+                border: "1px dashed rgba(20, 109, 158, 0.2)",
+                boxShadow: "0 4px 16px -2px rgba(20, 109, 158, 0.06)",
                 borderRadius: "16px",
                 padding: "40px 20px",
                 textAlign: "center",
-                color: "#64748b"
+                color: "#9CA3AF"
               }}>
                 <span style={{ fontSize: "32px", display: "block", marginBottom: "12px" }}>⭐</span>
                 <p style={{ margin: 0, fontSize: "14px" }}>
                   {lang === "en" ? "You haven't saved any places yet." : "Aún no tienes destinos o negocios guardados."}
                 </p>
-                <Link href="/mapa" style={{ display: "inline-block", marginTop: "16px", fontSize: "13px", color: "#D4AF37", fontWeight: "700" }}>
+                <Link href="/mapa" style={{ display: "inline-block", marginTop: "16px", fontSize: "13px", color: "#FFD700", fontWeight: "700" }}>
                   {lang === "en" ? "Explore the map →" : "Explorar el mapa →"}
                 </Link>
               </div>
@@ -605,8 +608,9 @@ export default function PerfilPage() {
                   
                   return (
                     <div key={fav.id} style={{
-                      background: "rgba(255,255,255,0.02)",
-                      border: "1px solid rgba(255,255,255,0.05)",
+                      background: "#FFFFFF",
+                      border: "1px solid rgba(20, 109, 158, 0.12)",
+                      boxShadow: "0 4px 16px -2px rgba(20, 109, 158, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03)",
                       borderRadius: "16px",
                       padding: "16px 20px",
                       display: "flex",
@@ -615,15 +619,15 @@ export default function PerfilPage() {
                       gap: "16px"
                     }}>
                       <div>
-                        <h4 style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "800", color: "white" }}>
+                        <h4 style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "800", color: "#1A1A2E" }}>
                           {punto.nombre}
                         </h4>
                         <span style={{
                           fontSize: "10.5px",
                           fontWeight: "800",
                           textTransform: "uppercase",
-                          color: "#94a3b8",
-                          background: "rgba(255,255,255,0.06)",
+                          color: "#4A5568",
+                          background: "rgba(20, 109, 158, 0.08)",
                           padding: "2px 6px",
                           borderRadius: "4px"
                         }}>
@@ -636,7 +640,7 @@ export default function PerfilPage() {
                           href={`/mapa?id=${punto.id}`}
                           style={{
                             padding: "8px 14px",
-                            background: "linear-gradient(135deg, #1a3a6e 0%, #10b981 100%)",
+                            background: "linear-gradient(135deg, #146D9E 0%, #17AA4A 100%)",
                             border: "none",
                             color: "white",
                             borderRadius: "10px",
@@ -674,9 +678,9 @@ export default function PerfilPage() {
 
           {/* SECCIÓN RESEÑAS ESCRITAS */}
           <div>
-            <h2 style={{ margin: "0 0 20px", fontSize: "20px", fontWeight: "800", color: "#f8fafc", display: "flex", alignItems: "center", gap: "10px" }}>
+            <h2 style={{ margin: "0 0 20px", fontSize: "20px", fontWeight: "800", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
               <span>⭐</span> {lang === "en" ? "My Reviews" : "Reseñas Publicadas"}
-              <span style={{ fontSize: "12px", background: "rgba(255,255,255,0.08)", padding: "2px 8px", borderRadius: "8px", color: "#94a3b8" }}>
+              <span style={{ fontSize: "12px", background: "rgba(20, 109, 158, 0.10)", padding: "2px 8px", borderRadius: "8px", color: "#4A5568" }}>
                 {resenas.length}
               </span>
             </h2>
@@ -684,11 +688,11 @@ export default function PerfilPage() {
             {resenas.length === 0 ? (
               <div style={{
                 background: "rgba(255,255,255,0.01)",
-                border: "1px dashed rgba(255,255,255,0.1)",
+                border: "1px dashed rgba(20, 109, 158, 0.12)",
                 borderRadius: "16px",
                 padding: "40px 20px",
                 textAlign: "center",
-                color: "#64748b"
+                color: "#9CA3AF"
               }}>
                 <span style={{ fontSize: "32px", display: "block", marginBottom: "12px" }}>💬</span>
                 <p style={{ margin: 0, fontSize: "14px" }}>
@@ -702,7 +706,7 @@ export default function PerfilPage() {
                   return (
                     <div key={rev.id} style={{
                       background: "rgba(255,255,255,0.02)",
-                      border: "1px solid rgba(255,255,255,0.05)",
+                      border: "1px solid rgba(20, 109, 158, 0.05)",
                       borderRadius: "16px",
                       padding: "16px 20px",
                       display: "flex",
@@ -712,15 +716,15 @@ export default function PerfilPage() {
                     }}>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                          <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: "white" }}>{destinoNombre}</h4>
-                          <span style={{ fontSize: "13px", color: "#fbbf24" }}>
+                          <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: "#1A1A2E" }}>{destinoNombre}</h4>
+                          <span style={{ fontSize: "13px", color: "#E6C200" }}>
                             {"★".repeat(rev.estrellas)}{"☆".repeat(5 - rev.estrellas)}
                           </span>
                         </div>
-                        <p style={{ margin: 0, fontSize: "13px", color: "#cbd5e1", lineHeight: "1.5" }}>
+                        <p style={{ margin: 0, fontSize: "13px", color: "#4A5568", lineHeight: "1.5" }}>
                           {rev.comentario}
                         </p>
-                        <span style={{ display: "block", marginTop: "8px", fontSize: "11px", color: "#64748b" }}>
+                        <span style={{ display: "block", marginTop: "8px", fontSize: "11px", color: "#9CA3AF" }}>
                           {new Date(rev.created_at).toLocaleDateString()}
                         </span>
                       </div>

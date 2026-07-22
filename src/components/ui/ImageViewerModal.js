@@ -25,8 +25,8 @@ function avatarStyle(url, size) {
   return {
     width: `${size}px`, height: `${size}px`, borderRadius: "50%", flexShrink: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#0a0f1c",
-    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #D4AF37 0%, #E8CC6A 100%)",
+    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#FFFFFF",
+    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #FFD700 0%, #FFDF33 100%)",
     boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
   };
 }
@@ -196,7 +196,7 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
             <div style={styles.commentsList}>
               {loadingComments ? (
                 <div style={{ padding: "24px", textAlign: "center" }}>
-                  <div style={{ width: "24px", height: "24px", border: "2px solid rgba(255,255,255,0.08)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                  <div style={{ width: "24px", height: "24px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
                 </div>
               ) : comments.length === 0 ? (
                 <div style={{ padding: "32px 16px", textAlign: "center" }}>
@@ -264,7 +264,7 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
                 </button>
               </div>
             ) : (
-              <div style={{ padding: "12px 16px", textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+              <div style={{ padding: "12px 16px", textAlign: "center", borderTop: "1px solid rgba(20, 109, 158, 0.08)" }}>
                 <Link href="/login" style={{ color: "var(--atlan-gold)", fontSize: "13px", fontWeight: "700", textDecoration: "none" }}>
                   🔐 {lang === "en" ? "Sign in to comment" : "Inicia sesión para comentar"}
                 </Link>
@@ -289,7 +289,7 @@ const styles = {
   },
   container: {
     width: "100%", maxWidth: "1100px", maxHeight: "90vh",
-    background: "var(--atlan-bg-card)", border: "1px solid rgba(255,255,255,0.1)",
+    background: "var(--atlan-bg-card)", border: "1px solid rgba(20, 109, 158, 0.12)",
     borderRadius: "20px", overflow: "hidden", position: "relative",
     boxShadow: "0 32px 64px rgba(0,0,0,0.6)",
   },
@@ -315,26 +315,26 @@ const styles = {
   },
   commentSection: {
     flex: "0 0 380px", display: "flex", flexDirection: "column",
-    borderLeft: "1px solid rgba(255,255,255,0.06)",
+    borderLeft: "1px solid rgba(20, 109, 158, 0.08)",
     background: "var(--atlan-bg-card)",
     overflow: "hidden",
   },
   postHeader: {
-    padding: "16px", borderBottom: "1px solid rgba(255,255,255,0.06)",
+    padding: "16px", borderBottom: "1px solid rgba(20, 109, 158, 0.08)",
     flexShrink: 0,
   },
   roleBadge: {
     display: "inline-flex", alignItems: "center", justifyContent: "center",
     width: "18px", height: "18px", borderRadius: "5px", fontSize: "9px",
-    background: "rgba(212,175,55,0.15)", color: "var(--atlan-gold)",
+    background: "rgba(255, 215, 0,0.15)", color: "var(--atlan-gold)",
   },
   postContent: {
-    padding: "12px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)",
+    padding: "12px 16px", borderBottom: "1px solid rgba(20, 109, 158, 0.08)",
     flexShrink: 0, maxHeight: "120px", overflowY: "auto",
   },
   likeBar: {
     display: "flex", justifyContent: "space-between", alignItems: "center",
-    padding: "10px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)",
+    padding: "10px 16px", borderBottom: "1px solid rgba(20, 109, 158, 0.08)",
     flexShrink: 0,
   },
   likeBtn: {
@@ -349,23 +349,23 @@ const styles = {
     display: "flex", gap: "8px", marginBottom: "10px", alignItems: "flex-start",
   },
   commentBubble: {
-    background: "rgba(255,255,255,0.04)", padding: "7px 12px", borderRadius: "0 12px 12px 12px",
+    background: "rgba(20, 109, 158, 0.04)", padding: "7px 12px", borderRadius: "0 12px 12px 12px",
   },
   commentInputArea: {
     display: "flex", alignItems: "center", gap: "8px",
-    padding: "12px 14px", borderTop: "1px solid rgba(255,255,255,0.06)",
+    padding: "12px 14px", borderTop: "1px solid rgba(20, 109, 158, 0.08)",
     flexShrink: 0,
   },
   commentInput: {
-    flex: 1, padding: "9px 14px", background: "rgba(255,255,255,0.04)",
-    border: "1px solid rgba(255,255,255,0.08)", borderRadius: "20px",
+    flex: 1, padding: "9px 14px", background: "rgba(20, 109, 158, 0.04)",
+    border: "1px solid rgba(20, 109, 158, 0.10)", borderRadius: "20px",
     color: "white", fontSize: "13px", outline: "none",
   },
   sendBtn: {
-    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)", border: "none",
+    background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none",
     width: "34px", height: "34px", borderRadius: "50%", color: "white", fontSize: "13px",
     cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-    boxShadow: "0 2px 8px rgba(16,185,129,0.25)", flexShrink: 0,
+    boxShadow: "0 2px 8px rgba(23, 170, 74,0.25)", flexShrink: 0,
   },
 };
 
@@ -378,6 +378,6 @@ if (typeof window !== "undefined") {
     styles.imageSection.maxHeight = "45vh";
     styles.commentSection.flex = "1 1 auto";
     styles.commentSection.borderLeft = "none";
-    styles.commentSection.borderTop = "1px solid rgba(255,255,255,0.06)";
+    styles.commentSection.borderTop = "1px solid rgba(20, 109, 158, 0.08)";
   }
 }

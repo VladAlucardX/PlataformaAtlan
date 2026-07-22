@@ -22,8 +22,8 @@ function avatarStyle(url, size) {
   return {
     width: `${size}px`, height: `${size}px`, borderRadius: "50%", flexShrink: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#0a0f1c",
-    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #D4AF37 0%, #E8CC6A 100%)",
+    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#FFFFFF",
+    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #FFD700 0%, #FFDF33 100%)",
     boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
   };
 }
@@ -251,14 +251,14 @@ export default function NotificationDropdown({ session }) {
         <div style={{
           position: "absolute", right: 0, top: "40px", zIndex: 150,
           width: "320px", background: "var(--atlan-bg-card)",
-          border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "14px",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.5)", overflow: "hidden"
+          border: "1px solid rgba(20, 109, 158, 0.12)", borderRadius: "14px",
+          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.12)", overflow: "hidden"
         }} className="animate-fade-in-up">
           
           {/* Header del Dropdown */}
           <div style={{
             display: "flex", justifyContent: "space-between", alignItems: "center",
-            padding: "12px 16px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+            padding: "12px 16px", borderBottom: "1px solid rgba(20, 109, 158, 0.10)",
             background: "rgba(255,255,255,0.02)"
           }}>
             <span style={{ fontSize: "14px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
@@ -291,8 +291,8 @@ export default function NotificationDropdown({ session }) {
                   onClick={() => handleNotifClick(notif)}
                   style={{
                     width: "100%", padding: "12px 16px", border: "none",
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
-                    background: notif.leido ? "transparent" : "rgba(212, 175, 55, 0.04)",
+                    borderBottom: "1px solid rgba(20, 109, 158, 0.04)",
+                    background: notif.leido ? "transparent" : "rgba(255, 215, 0, 0.04)",
                     display: "flex", gap: "10px", alignItems: "center",
                     cursor: "pointer", transition: "background 0.2s",
                     textAlign: "left"

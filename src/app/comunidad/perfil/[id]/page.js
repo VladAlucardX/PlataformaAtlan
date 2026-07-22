@@ -31,8 +31,8 @@ function avatarStyle(url, size) {
   return {
     width: `${size}px`, height: `${size}px`, borderRadius: "50%", flexShrink: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#0a0f1c",
-    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #D4AF37 0%, #E8CC6A 100%)",
+    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#FFFFFF",
+    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #FFD700 0%, #FFDF33 100%)",
     boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
   };
 }
@@ -214,9 +214,9 @@ export default function PerfilPublico() {
 
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "var(--atlan-bg-primary)", color: "white" }}>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "var(--atlan-bg-primary)", color: "#1A1A2E" }}>
         <div style={{ textAlign: "center" }}>
-          <div style={{ width: "40px", height: "40px", border: "3px solid rgba(255,255,255,0.1)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
+          <div style={{ width: "40px", height: "40px", border: "3px solid rgba(20, 109, 158, 0.12)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
           <p style={{ fontSize: "14px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Loading profile..." : "Cargando perfil..."}</p>
         </div>
       </div>
@@ -225,7 +225,7 @@ export default function PerfilPublico() {
 
   if (!targetPerfil) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "var(--atlan-bg-primary)", color: "white" }}>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "var(--atlan-bg-primary)", color: "#1A1A2E" }}>
         <div style={{ textAlign: "center" }}>
           <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}>🔍</span>
           <h3 style={{ margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>{lang === "en" ? "User not found" : "Usuario no encontrado"}</h3>
@@ -238,7 +238,7 @@ export default function PerfilPublico() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
       {/* Nav */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(10,15,28,0.85)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255, 255, 255,0.85)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(20, 109, 158, 0.08)" }}>
         <div style={{ maxWidth: "800px", margin: "0 auto", padding: "0 24px", height: "60px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <Link href="/comunidad" style={{ color: "var(--atlan-text-secondary)", textDecoration: "none", fontSize: "14px", fontWeight: "700", display: "flex", alignItems: "center", gap: "6px" }}>
             ← {lang === "en" ? "Community" : "Comunidad"}
@@ -250,7 +250,7 @@ export default function PerfilPublico() {
       {/* Profile Header */}
       <div style={{ maxWidth: "800px", margin: "0 auto", padding: "0 24px" }}>
         {/* Banner */}
-        <div style={{ height: "140px", background: "linear-gradient(135deg, #1a3a6e 0%, #0e2242 60%, #10b981 100%)", borderRadius: "0 0 24px 24px", position: "relative" }} />
+        <div style={{ height: "140px", background: "linear-gradient(135deg, #146D9E 0%, #0F5579 60%, #17AA4A 100%)", borderRadius: "0 0 24px 24px", position: "relative" }} />
 
         {/* Profile Info */}
         <div style={{ display: "flex", alignItems: "flex-end", gap: "20px", marginTop: "-44px", padding: "0 16px", flexWrap: "wrap" }}>
@@ -277,7 +277,7 @@ export default function PerfilPublico() {
             title={isOwnProfile ? (lang === "en" ? "Change profile picture" : "Cambiar foto de perfil") : undefined}
           >
             {avatarUploading ? (
-              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", color: "white", fontSize: "11px", fontWeight: "bold" }}>
+              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", color: "#1A1A2E", fontSize: "11px", fontWeight: "bold" }}>
                 ⏳
               </div>
             ) : (
@@ -293,7 +293,7 @@ export default function PerfilPublico() {
                     justifyContent: "center",
                     opacity: avatarHover ? 1 : 0,
                     transition: "opacity 0.2s",
-                    color: "white",
+                    color: "#1A1A2E",
                     fontSize: "20px"
                   }}>
                     📷
@@ -309,9 +309,9 @@ export default function PerfilPublico() {
               </h1>
               <span style={{
                 fontSize: "11px", fontWeight: "800", padding: "3px 10px", borderRadius: "20px",
-                background: targetPerfil.rol === "dueno" ? "rgba(212,175,55,0.12)" : "rgba(16,185,129,0.12)",
-                color: targetPerfil.rol === "dueno" ? "#D4AF37" : "#10b981",
-                border: `1px solid ${targetPerfil.rol === "dueno" ? "rgba(212,175,55,0.25)" : "rgba(16,185,129,0.25)"}`,
+                background: targetPerfil.rol === "dueno" ? "rgba(255, 215, 0,0.12)" : "rgba(23, 170, 74,0.12)",
+                color: targetPerfil.rol === "dueno" ? "#FFD700" : "#17AA4A",
+                border: `1px solid ${targetPerfil.rol === "dueno" ? "rgba(255, 215, 0,0.25)" : "rgba(23, 170, 74,0.25)"}`,
                 textTransform: "uppercase",
               }}>
                 {targetPerfil.rol === "dueno" ? "🏢 Propietario" : targetPerfil.rol === "admin" ? "⚡ Admin" : "🧳 Turista"}
@@ -325,9 +325,9 @@ export default function PerfilPublico() {
               <button onClick={handleFollow} disabled={followLoading} style={{
                 padding: "10px 24px", borderRadius: "12px", fontSize: "14px", fontWeight: "800",
                 cursor: "pointer", transition: "all 0.2s", border: "none",
-                background: isFollowing ? "rgba(255,255,255,0.06)" : "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                background: isFollowing ? "rgba(20, 109, 158, 0.08)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
                 color: isFollowing ? "var(--atlan-text-secondary)" : "white",
-                boxShadow: isFollowing ? "none" : "0 4px 12px rgba(16,185,129,0.25)",
+                boxShadow: isFollowing ? "none" : "0 4px 12px rgba(23, 170, 74,0.25)",
               }}>
                 {isFollowing ? (lang === "en" ? "✓ Following" : "✓ Siguiendo") : (lang === "en" ? "Follow" : "Seguir")}
               </button>
@@ -335,16 +335,16 @@ export default function PerfilPublico() {
                 <Link href={`/chat?user=${userId}`} style={{
                   padding: "10px 20px", borderRadius: "12px", fontSize: "14px", fontWeight: "800",
                   textDecoration: "none", border: "none", display: "inline-flex", alignItems: "center", gap: "6px",
-                  background: "linear-gradient(135deg, #D4AF37 0%, #b89324 100%)",
-                  color: "#0a0f1c", boxShadow: "0 4px 12px rgba(212,175,55,0.25)",
+                  background: "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)",
+                  color: "#1A1A2E", boxShadow: "0 4px 12px rgba(255, 215, 0, 0.3)",
                 }}>
                   💬 {lang === "en" ? "Message" : "Mensaje"}
                 </Link>
               ) : isFollowing ? (
                 <span style={{
                   padding: "10px 16px", borderRadius: "12px", fontSize: "12px", fontWeight: "700",
-                  background: "rgba(255,255,255,0.04)", color: "var(--atlan-text-muted)",
-                  border: "1px solid rgba(255,255,255,0.06)",
+                  background: "rgba(20, 109, 158, 0.04)", color: "var(--atlan-text-muted)",
+                  border: "1px solid rgba(20, 109, 158, 0.08)",
                 }} title={lang === "en" ? "Both users must follow each other to chat" : "Ambos deben seguirse para chatear"}>
                   🔒 {lang === "en" ? "Follow back to chat" : "Deben seguirse mutuamente"}
                 </span>
@@ -354,7 +354,7 @@ export default function PerfilPublico() {
         </div>
 
         {/* Stats */}
-        <div style={{ display: "flex", gap: "32px", padding: "20px 16px 0", borderBottom: "1px solid rgba(255,255,255,0.06)", paddingBottom: "20px" }}>
+        <div style={{ display: "flex", gap: "32px", padding: "20px 16px 0", borderBottom: "1px solid rgba(20, 109, 158, 0.08)", paddingBottom: "20px" }}>
           <div>
             <span style={{ fontWeight: "800", fontSize: "18px", color: "var(--atlan-text-primary)" }}>{posts.length}</span>
             <span style={{ fontSize: "13px", color: "var(--atlan-text-muted)", marginLeft: "6px" }}>{lang === "en" ? "Posts" : "Posts"}</span>
@@ -374,13 +374,13 @@ export default function PerfilPublico() {
           {editingBio && isOwnProfile ? (
             <div style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
               <textarea value={bioText} onChange={(e) => setBioText(e.target.value.slice(0, 200))} style={{
-                flex: 1, padding: "10px 14px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)",
+                flex: 1, padding: "10px 14px", background: "rgba(20, 109, 158, 0.04)", border: "1px solid rgba(20, 109, 158, 0.12)",
                 borderRadius: "12px", color: "var(--atlan-text-primary)", fontSize: "14px", outline: "none", resize: "none", minHeight: "60px",
                 fontFamily: "var(--font-outfit), system-ui, sans-serif",
               }} />
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <button onClick={handleSaveBio} style={{ padding: "8px 14px", background: "linear-gradient(135deg, #10b981 0%, #059669 100%)", border: "none", borderRadius: "8px", color: "white", fontSize: "12px", fontWeight: "800", cursor: "pointer" }}>✓</button>
-                <button onClick={() => { setEditingBio(false); setBioText(targetPerfil.bio || ""); }} style={{ padding: "8px 14px", background: "rgba(255,255,255,0.06)", border: "none", borderRadius: "8px", color: "var(--atlan-text-muted)", fontSize: "12px", fontWeight: "800", cursor: "pointer" }}>✕</button>
+                <button onClick={handleSaveBio} style={{ padding: "8px 14px", background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none", borderRadius: "8px", color: "white", fontSize: "12px", fontWeight: "800", cursor: "pointer" }}>✓</button>
+                <button onClick={() => { setEditingBio(false); setBioText(targetPerfil.bio || ""); }} style={{ padding: "8px 14px", background: "rgba(20, 109, 158, 0.08)", border: "none", borderRadius: "8px", color: "var(--atlan-text-muted)", fontSize: "12px", fontWeight: "800", cursor: "pointer" }}>✕</button>
               </div>
             </div>
           ) : (
@@ -404,7 +404,7 @@ export default function PerfilPublico() {
           {negocio && (
             <Link href="/mapa" style={{
               display: "inline-flex", alignItems: "center", gap: "6px", marginTop: "12px",
-              padding: "8px 16px", background: "rgba(212,175,55,0.08)", border: "1px solid rgba(212,175,55,0.15)",
+              padding: "8px 16px", background: "rgba(255, 215, 0,0.08)", border: "1px solid rgba(255, 215, 0,0.15)",
               borderRadius: "10px", color: "var(--atlan-gold)", fontSize: "13px", fontWeight: "700", textDecoration: "none",
             }}>
               📍 {negocio.nombre}
@@ -419,7 +419,7 @@ export default function PerfilPublico() {
           </h3>
 
           {posts.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "60px 24px", background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.08)", borderRadius: "16px", margin: "0 16px" }}>
+            <div style={{ textAlign: "center", padding: "60px 24px", background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(20, 109, 158, 0.10)", borderRadius: "16px", margin: "0 16px" }}>
               <span style={{ fontSize: "40px", display: "block", marginBottom: "12px" }}>📭</span>
               <p style={{ margin: 0, fontSize: "14px", color: "var(--atlan-text-muted)" }}>
                 {lang === "en" ? "No posts yet" : "Sin publicaciones aún"}
@@ -433,25 +433,25 @@ export default function PerfilPublico() {
               const hasPromocion = post.es_promocion;
 
               const cardStyle = hasPublicidad ? {
-                background: "radial-gradient(circle at top right, rgba(212, 175, 55, 0.08) 0%, rgba(255, 255, 255, 0.03) 70%)",
-                border: "1px solid rgba(212, 175, 55, 0.4)",
-                boxShadow: "0 4px 25px rgba(212, 175, 55, 0.12)",
+                background: "radial-gradient(circle at top right, rgba(255, 215, 0, 0.08) 0%, rgba(20, 109, 158, 0.03) 70%)",
+                border: "1px solid rgba(255, 215, 0, 0.4)",
+                boxShadow: "0 4px 25px rgba(255, 215, 0, 0.12)",
                 borderRadius: "16px", padding: "20px", margin: "0 16px 14px"
               } : {
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.06)",
+                background: "rgba(20, 109, 158, 0.03)",
+                border: "1px solid rgba(20, 109, 158, 0.08)",
                 borderRadius: "16px", padding: "20px", margin: "0 16px 14px"
               };
 
               return (
                 <div key={post.id} style={cardStyle}>
                   {hasPublicidad && (
-                    <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "10px", padding: "5px 14px", borderRadius: "20px", fontSize: "11px", fontWeight: "900", background: "linear-gradient(135deg, #D4AF37 0%, #F59E0B 100%)", border: "1px solid rgba(255,255,255,0.25)", color: "#0a0f1c", textTransform: "uppercase", letterSpacing: "0.8px", boxShadow: "0 2px 8px rgba(212, 175, 55, 0.3)" }}>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "10px", padding: "5px 14px", borderRadius: "20px", fontSize: "11px", fontWeight: "900", background: "linear-gradient(135deg, #FFD700 0%, #E6A800 100%)", border: "1px solid rgba(255,255,255,0.25)", color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.8px", boxShadow: "0 2px 8px rgba(255, 215, 0, 0.3)" }}>
                       ✨ {lang === "en" ? "Sponsored Ad" : "Publicidad"}
                     </div>
                   )}
                   {hasPromocion && !hasPublicidad && (
-                    <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "10px", padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "800", background: "linear-gradient(135deg, rgba(212,175,55,0.15), rgba(245,158,11,0.15))", border: "1px solid rgba(212,175,55,0.25)", color: "#D4AF37", textTransform: "uppercase" }}>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "10px", padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "800", background: "linear-gradient(135deg, rgba(255, 215, 0,0.15), rgba(245,158,11,0.15))", border: "1px solid rgba(255, 215, 0,0.25)", color: "#FFD700", textTransform: "uppercase" }}>
                       📢 {lang === "en" ? "Promo" : "Promoción"}
                     </div>
                   )}
@@ -470,19 +470,19 @@ export default function PerfilPublico() {
                   </p>
 
                   {post.imagen_url && (
-                    <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "12px", border: "1px solid rgba(255,255,255,0.06)", cursor: "pointer" }} onClick={() => setViewerPost(post)}>
+                    <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "12px", border: "1px solid rgba(20, 109, 158, 0.08)", cursor: "pointer" }} onClick={() => setViewerPost(post)}>
                       <img src={post.imagen_url} alt="Post" style={{ width: "100%", maxHeight: "400px", objectFit: "cover", display: "block" }} loading="lazy" />
                     </div>
                   )}
 
                   {post.video_url && (
-                    <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "12px", border: "1px solid rgba(255,255,255,0.06)", background: "#000", position: "relative", cursor: "pointer" }} onClick={() => setViewerPost(post)}>
+                    <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "12px", border: "1px solid rgba(20, 109, 158, 0.08)", background: "#000", position: "relative", cursor: "pointer" }} onClick={() => setViewerPost(post)}>
                       <video src={post.video_url} controls playsInline preload="metadata" style={{ width: "100%", maxHeight: "400px", display: "block" }} onClick={e => e.stopPropagation()} />
-                      <div style={{ position: "absolute", top: "10px", right: "10px", background: "rgba(0,0,0,0.6)", padding: "3px 8px", borderRadius: "6px", fontSize: "10px", fontWeight: "800", color: "#10b981" }}>🎬 Video</div>
+                      <div style={{ position: "absolute", top: "10px", right: "10px", background: "rgba(0,0,0,0.6)", padding: "3px 8px", borderRadius: "6px", fontSize: "10px", fontWeight: "800", color: "#17AA4A" }}>🎬 Video</div>
                     </div>
                   )}
 
-                  <div style={{ display: "flex", gap: "16px", paddingTop: "8px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                  <div style={{ display: "flex", gap: "16px", paddingTop: "8px", borderTop: "1px solid rgba(20, 109, 158, 0.05)" }}>
                     <button onClick={() => handleLikePost(post.id)} style={{ background: "none", border: "none", color: isLiked ? "#ef4444" : "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}>
                       {isLiked ? "❤️" : "🤍"} {post.likes_count || 0}
                     </button>
@@ -500,7 +500,7 @@ export default function PerfilPublico() {
       {/* Login modal */}
       {showLoginModal && (
         <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }} onClick={() => setShowLoginModal(false)}>
-          <div style={{ maxWidth: "420px", width: "100%", background: "var(--atlan-bg-card)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "20px", padding: "32px", textAlign: "center" }} onClick={(e) => e.stopPropagation()} className="animate-fade-in-up">
+          <div style={{ maxWidth: "420px", width: "100%", background: "var(--atlan-bg-card)", border: "1px solid rgba(20, 109, 158, 0.12)", borderRadius: "20px", padding: "32px", textAlign: "center" }} onClick={(e) => e.stopPropagation()} className="animate-fade-in-up">
             <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}>🔐</span>
             <h3 style={{ fontSize: "20px", fontWeight: "800", margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>
               {lang === "en" ? "Sign in to interact" : "Inicia sesión para interactuar"}

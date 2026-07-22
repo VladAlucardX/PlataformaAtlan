@@ -7,63 +7,63 @@
 
 /* ── PALETA DE COLORES ────────────────────────────────────────────────────── */
 :root {
-  /* Primarios */
-  --atlan-gold:          #D4AF37;
-  --atlan-gold-light:    #E8CC6A;
-  --atlan-gold-dark:     #B8941F;
-  --atlan-gold-glow:     rgba(212, 175, 55, 0.35);
+  /* Primarios — Gold */
+  --atlan-gold:          #FFD700;
+  --atlan-gold-light:    #FFDF33;
+  --atlan-gold-dark:     #E6C200;
+  --atlan-gold-glow:     rgba(255, 215, 0, 0.25);
 
-  /* Secundarios */
-  --atlan-ocean:         #1a3a6e;
-  --atlan-ocean-light:   #2a5298;
-  --atlan-ocean-dark:    #0e2242;
+  /* Secundarios — Azul Corporativo */
+  --atlan-ocean:         #146D9E;
+  --atlan-ocean-light:   #1A8AC7;
+  --atlan-ocean-dark:    #0F5579;
 
-  /* Acento - Naturaleza */
-  --atlan-emerald:       #10b981;
-  --atlan-emerald-light: #34d399;
-  --atlan-emerald-dark:  #059669;
+  /* Acento — Verde Naturaleza */
+  --atlan-emerald:       #17AA4A;
+  --atlan-emerald-light: #1FCC5C;
+  --atlan-emerald-dark:  #128A3C;
 
-  /* Fondos */
-  --atlan-bg-primary:    #0a0f1c;
-  --atlan-bg-secondary:  #111827;
-  --atlan-bg-card:       #1a2332;
-  --atlan-bg-elevated:   #1f2b3d;
+  /* Fondos — Tema Light Elevado */
+  --atlan-bg-primary:    #F4F6F9;
+  --atlan-bg-secondary:  #EBF0F5;
+  --atlan-bg-card:       #FFFFFF;
+  --atlan-bg-elevated:   #FFFFFF;
 
-  /* Glassmorphism */
-  --atlan-glass:         rgba(255, 255, 255, 0.06);
-  --atlan-glass-border:  rgba(255, 255, 255, 0.1);
-  --atlan-glass-hover:   rgba(255, 255, 255, 0.1);
+  /* Glassmorphism — Light */
+  --atlan-glass:         rgba(255, 255, 255, 0.90);
+  --atlan-glass-border:  rgba(20, 109, 158, 0.12);
+  --atlan-glass-hover:   rgba(255, 255, 255, 0.98);
 
-  /* Textos */
-  --atlan-text-primary:  #f8fafc;
-  --atlan-text-secondary:#94a3b8;
-  --atlan-text-muted:    #64748b;
-  --atlan-text-dark:     #1e293b;
+  /* Textos — Oscuros sobre blanco */
+  --atlan-text-primary:  #1A1A2E;
+  --atlan-text-secondary:#4A5568;
+  --atlan-text-muted:    #9CA3AF;
+  --atlan-text-dark:     #1A1A2E;
 
   /* Categorías de negocio */
-  --atlan-cat-comideria:  #f59e0b;
-  --atlan-cat-restaurante:#ef4444;
-  --atlan-cat-artesanal:  #8b5cf6;
-  --atlan-cat-playa:      #06b6d4;
-  --atlan-cat-familiar:   #ec4899;
-  --atlan-cat-hotel:      #6366f1;
-  --atlan-cat-hostal:     #14b8a6;
-  --atlan-cat-transporte: #f97316;
-  --atlan-cat-tour:       #84cc16;
-  --atlan-cat-tienda:     #a855f7;
-  --atlan-cat-otro:       #9ca3af;
+  --atlan-cat-comideria:  #E6A800;
+  --atlan-cat-restaurante:#DC2626;
+  --atlan-cat-artesanal:  #7C3AED;
+  --atlan-cat-playa:      #0891B2;
+  --atlan-cat-familiar:   #DB2777;
+  --atlan-cat-hotel:      #4F46E5;
+  --atlan-cat-hostal:     #0D9488;
+  --atlan-cat-transporte: #EA580C;
+  --atlan-cat-tour:       #65A30D;
+  --atlan-cat-tienda:     #9333EA;
+  --atlan-cat-otro:       #6B7280;
 
   /* Estados de punto */
-  --atlan-estado-sin-reclamar:   #9ca3af;
-  --atlan-estado-verificacion:   #f59e0b;
-  --atlan-estado-aprobado:       #10b981;
-  --atlan-estado-rechazado:      #ef4444;
+  --atlan-estado-sin-reclamar:   #9CA3AF;
+  --atlan-estado-verificacion:   #E6A800;
+  --atlan-estado-aprobado:       #17AA4A;
+  --atlan-estado-rechazado:      #DC2626;
 
-  /* Sombras */
-  --atlan-shadow-sm:     0 2px 8px rgba(0, 0, 0, 0.25);
-  --atlan-shadow-md:     0 8px 24px rgba(0, 0, 0, 0.35);
-  --atlan-shadow-lg:     0 16px 48px rgba(0, 0, 0, 0.45);
-  --atlan-shadow-gold:   0 4px 20px rgba(212, 175, 55, 0.3);
+  /* Sombras — Suaves para tema light */
+  --atlan-shadow-sm:     0 2px 8px rgba(0, 0, 0, 0.06);
+  --atlan-shadow-md:     0 8px 24px rgba(0, 0, 0, 0.08);
+  --atlan-shadow-lg:     0 16px 48px rgba(0, 0, 0, 0.10);
+  --atlan-shadow-gold:   0 4px 20px rgba(255, 215, 0, 0.25);
 
   /* Bordes */
   --atlan-radius-sm:     8px;
@@ -199,16 +199,17 @@ body {
   background: var(--atlan-bg-primary);
   color: var(--atlan-text-primary);
   overflow-x: hidden;
+  /* Patrón de fondo geométrico sutil estilo mapa/puntos */
+  background-image: radial-gradient(rgba(20, 109, 158, 0.06) 1.5px, transparent 1.5px);
+  background-size: 32px 32px;
 }
 
 /* ── ESTILOS GLOBALES DE FUENTE Y ESPACIADO ── */
-/* Por defecto, todo el texto (párrafos, botones, inputs) usa la fuente Delight.
-   Quitamos !important para permitir que los estilos en línea (inline styles) funcionen correctamente. */
 * {
   font-family: 'Delight', 'Delight Static', var(--font-inter), system-ui, -apple-system, sans-serif;
-  letter-spacing: 0.12em;
-  word-spacing: 0.25em;
-  line-height: 1.8;
+  letter-spacing: 0.08em;
+  word-spacing: 0.15em;
+  line-height: 1.7;
 }
 
 /* Títulos, encabezados, logos, botones, barras de navegación, menús y pantallas de carga usan la fuente LC Mogi */
@@ -242,12 +243,28 @@ nav button, nav button *,
 .categoryCard, .categoryCard *,
 .statNumber, .statNumber * {
   font-family: 'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-outfit), sans-serif !important;
-  letter-spacing: 0.04em !important; /* Ligeramente más apretado como pidió el usuario */
+  letter-spacing: 0.04em !important;
   word-spacing: 0.15em !important;
   line-height: 1.3 !important;
 }
 
-/* Forzar fuente Delight a toda la sección del mapa interactivo (exclusivo de esta ruta) */
+/* Marca "atlan" — AMARILLO DORADO #FFD700 PURO CON ZOOM EN HOVER */
+.logoText,
+.brand-atlan {
+  font-family: 'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-outfit), sans-serif !important;
+  color: #FFD700 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.01em !important;
+  display: inline-block;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logoText:hover,
+.brand-atlan:hover {
+  transform: scale(1.08);
+}
+
+/* Forzar fuente Delight a toda la sección del mapa interactivo */
 .map-page-container,
 .map-page-container * {
   font-family: 'Delight', 'Delight Static', var(--font-inter), system-ui, -apple-system, sans-serif !important;
@@ -256,64 +273,85 @@ nav button, nav button *,
   line-height: 1.8 !important;
 }
 
-/* Permitir EXCLUSIVAMENTE a la marca / logo "atlan" (en minúsculas) usar la fuente LC Mogi */
+/* Permitir a la marca "atlan" dentro del mapa mantener su amarillo #FFD700 */
 .map-page-container .loaderTitle,
 .map-page-container .loaderTitle *,
 .map-page-container .logoText,
 .map-page-container .logoText * {
   font-family: 'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-outfit), sans-serif !important;
+  color: #FFD700 !important;
   letter-spacing: 0.04em !important;
-  word-spacing: 0.15em !important;
   line-height: 1.3 !important;
 }
 
 a {
-  color: var(--atlan-gold);
+  color: var(--atlan-ocean);
   text-decoration: none;
-  transition: color var(--atlan-transition-fast);
+  transition: all var(--atlan-transition-fast);
 }
 
 a:hover {
-  color: var(--atlan-gold-light);
+  color: var(--atlan-ocean-light);
 }
 
 /* ── TIPOGRAFÍA UTILITARIA ────────────────────────────────────────────────── */
 .text-gradient-gold {
-  background: linear-gradient(135deg, var(--atlan-gold-light), var(--atlan-gold), var(--atlan-gold-dark));
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #E6C200 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  filter: drop-shadow(0 2px 8px rgba(255, 215, 0, 0.3));
 }
 
 .text-gradient-ocean {
-  background: linear-gradient(135deg, #60a5fa, var(--atlan-ocean-light), var(--atlan-ocean));
+  background: linear-gradient(135deg, #146D9E 0%, #1A8AC7 50%, #0F5579 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* ── GLASSMORPHISM ────────────────────────────────────────────────────────── */
+/* ── GLASSMORPHISM & TARJETAS DE ALTA PROFUNDIDAD ─────────────────────────── */
 .glass-card {
-  background: var(--atlan-glass);
-  border: 1px solid var(--atlan-glass-border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(20, 109, 158, 0.12);
+  box-shadow: 0 10px 30px -5px rgba(20, 109, 158, 0.08), 0 20px 25px -5px rgba(255, 215, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
   border-radius: var(--atlan-radius-lg);
   transition: all var(--atlan-transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #FFD700 0%, #146D9E 50%, #17AA4A 100%);
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
 }
 
 .glass-card:hover {
-  background: var(--atlan-glass-hover);
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: var(--atlan-shadow-md);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow: 0 20px 40px -5px rgba(20, 109, 158, 0.14), 0 25px 35px -5px rgba(255, 215, 0, 0.15);
+  transform: translateY(-6px) scale(1.005);
+}
+
+.glass-card:hover::before {
+  opacity: 1;
 }
 
 .glass-card-static {
-  background: var(--atlan-glass);
-  border: 1px solid var(--atlan-glass-border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(20, 109, 158, 0.12);
+  box-shadow: 0 10px 30px -5px rgba(20, 109, 158, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
   border-radius: var(--atlan-radius-lg);
 }
 
@@ -325,7 +363,7 @@ a:hover {
   gap: 8px;
   padding: 12px 28px;
   background: linear-gradient(135deg, var(--atlan-gold), var(--atlan-gold-dark));
-  color: #0a0f1c;
+  color: #1A1A2E;
   font-family: var(--font-outfit), system-ui, sans-serif;
   font-weight: 700;
   font-size: 15px;
@@ -346,13 +384,13 @@ a:hover {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(20, 109, 158, 0.15), transparent);
   transition: left 0.6s ease;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 28px rgba(212, 175, 55, 0.45);
+  box-shadow: 0 6px 28px rgba(255, 215, 0, 0.35);
 }
 
 .btn-primary:hover::before {
@@ -446,21 +484,21 @@ a:hover {
 }
 
 .badge-gold {
-  background: rgba(212, 175, 55, 0.15);
-  color: var(--atlan-gold-light);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(255, 215, 0, 0.12);
+  color: var(--atlan-gold-dark);
+  border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
 .badge-emerald {
-  background: rgba(16, 185, 129, 0.15);
-  color: var(--atlan-emerald-light);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(23, 170, 74, 0.10);
+  color: var(--atlan-emerald-dark);
+  border: 1px solid rgba(23, 170, 74, 0.25);
 }
 
 .badge-gray {
-  background: rgba(148, 163, 184, 0.15);
+  background: rgba(156, 163, 175, 0.12);
   color: var(--atlan-text-secondary);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  border: 1px solid rgba(156, 163, 175, 0.25);
 }
 
 /* ── ANIMACIONES ──────────────────────────────────────────────────────────── */
@@ -536,7 +574,7 @@ a:hover {
 
 @keyframes pulseGlow {
   0%, 100% { box-shadow: 0 0 10px var(--atlan-gold-glow); }
-  50%      { box-shadow: 0 0 30px var(--atlan-gold-glow), 0 0 60px rgba(212, 175, 55, 0.15); }
+  50%      { box-shadow: 0 0 30px var(--atlan-gold-glow), 0 0 60px rgba(255, 215, 0, 0.15); }
 }
 
 @keyframes gradientMove {
@@ -606,7 +644,7 @@ a:hover {
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  background: linear-gradient(90deg, transparent, rgba(20,109,158,0.06), transparent);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
@@ -639,7 +677,7 @@ a:hover {
 
 /* ── SKELETON LOADER ──────────────────────────────────────────────────────── */
 .skeleton {
-  background: linear-gradient(90deg, var(--atlan-bg-card) 25%, var(--atlan-bg-elevated) 50%, var(--atlan-bg-card) 75%);
+  background: linear-gradient(90deg, #F0F2F5 25%, #E5E7EB 50%, #F0F2F5 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: var(--atlan-radius-md);
@@ -689,10 +727,10 @@ a:hover {
 .user-location-pulsing {
   width: 20px;
   height: 20px;
-  background-color: #2563eb;
+  background-color: #146D9E;
   border-radius: 50%;
   position: relative;
-  box-shadow: 0 0 15px rgba(37, 99, 235, 0.8);
+  box-shadow: 0 0 15px rgba(20, 109, 158, 0.8);
   border: 3px solid white;
 }
 
@@ -812,11 +850,11 @@ a:hover {
   width: 100%;
   max-width: 50%;
   height: 100vh;
-  background: #0a0f1c; /* Fondo sólido oscuro, sin transparencias */
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.4);
+  background: #FFFFFF; /* Fondo sólido blanco */
+  border-left: 1px solid rgba(20, 109, 158, 0.12);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.08);
   z-index: 30;
-  color: white;
+  color: #1A1A2E;
   font-family: var(--font-outfit), sans-serif;
   display: flex;
   flex-direction: column;
@@ -859,12 +897,12 @@ a:hover {
 .add-point-modal {
   width: 90%;
   max-width: 480px;
-  background: rgba(20, 27, 45, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(20, 109, 158, 0.12);
   border-radius: 24px;
   padding: 24px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  color: white;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+  color: #1A1A2E;
   font-family: var(--font-outfit), sans-serif;
   animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -899,9 +937,9 @@ a:hover {
     max-width: 100% !important;
     height: 70vh !important;
     border-left: none !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-top: 1px solid rgba(20, 109, 158, 0.12) !important;
     border-radius: 24px 24px 0 0 !important;
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.12) !important;
     animation: slideInUpDetail 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 
@@ -910,7 +948,7 @@ a:hover {
     display: block !important;
     width: 40px !important;
     height: 4px !important;
-    background: rgba(255, 255, 255, 0.25) !important;
+    background: rgba(20, 109, 158, 0.2) !important;
     border-radius: 2px !important;
     margin: 12px auto 0 !important;
     flex-shrink: 0 !important;
@@ -923,11 +961,11 @@ a:hover {
     left: 20px !important;
     right: 90px !important;
     padding: 4px !important;
-    background: rgba(10, 15, 28, 0.45) !important;
+    background: rgba(255, 255, 255, 0.85) !important;
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
     border-radius: 16px !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(20, 109, 158, 0.12) !important;
   }
 
   /* Add Point Modal scrollability */
@@ -982,8 +1020,8 @@ a:hover {
 
   .dashboard-tab-btn.active {
     border-left: none !important;
-    border-bottom: 3px solid #D4AF37 !important;
-    background: rgba(212, 175, 55, 0.1) !important;
+    border-bottom: 3px solid #FFD700 !important;
+    background: rgba(255, 215, 0, 0.1) !important;
   }
 
   .dashboard-main {
@@ -1065,8 +1103,8 @@ a:hover {
 
 .hover-card:hover {
   transform: translateY(-5px);
-  border-color: rgba(212, 175, 55, 0.4) !important;
-  background: rgba(16, 22, 40, 0.6) !important;
+  border-color: rgba(255, 215, 0, 0.4) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
 }
 
 /* Pulso para marcadores pendientes de verificación */
@@ -1109,5 +1147,5 @@ a:hover {
 
 /* ── NOTIFICACIONES ────────────────────────────────────────── */
 .notif-item:hover {
-  background-color: rgba(255, 255, 255, 0.05) !important;
+  background-color: rgba(20, 109, 158, 0.04) !important;
 }

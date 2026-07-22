@@ -25,8 +25,8 @@ function avatarStyle(url, size) {
   return {
     width: `${size}px`, height: `${size}px`, borderRadius: "50%", flexShrink: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#0a0f1c",
-    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #D4AF37 0%, #E8CC6A 100%)",
+    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#FFFFFF",
+    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #FFD700 0%, #FFDF33 100%)",
     boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
   };
 }
@@ -239,7 +239,7 @@ export default function ChatWidget({ session, perfil, lang }) {
               <div style={styles.listContainer}>
                 {loadingConvs ? (
                   <div style={{ padding: "32px", textAlign: "center" }}>
-                    <div style={{ width: "24px", height: "24px", border: "2px solid rgba(255,255,255,0.08)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                    <div style={{ width: "24px", height: "24px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
                   </div>
                 ) : conversaciones.length === 0 ? (
                   <div style={{ padding: "40px 20px", textAlign: "center" }}>
@@ -313,7 +313,7 @@ export default function ChatWidget({ session, perfil, lang }) {
               <div style={styles.messagesContainer}>
                 {loadingMsgs ? (
                   <div style={{ padding: "32px", textAlign: "center" }}>
-                    <div style={{ width: "24px", height: "24px", border: "2px solid rgba(255,255,255,0.08)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                    <div style={{ width: "24px", height: "24px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
                   </div>
                 ) : mensajes.length === 0 ? (
                   <div style={{ padding: "40px 20px", textAlign: "center" }}>
@@ -329,8 +329,8 @@ export default function ChatWidget({ session, perfil, lang }) {
                       <div key={msg.id} style={{ display: "flex", justifyContent: isMe ? "flex-end" : "flex-start", marginBottom: "6px" }}>
                         <div style={{
                           maxWidth: "80%", padding: "8px 12px", borderRadius: isMe ? "14px 14px 4px 14px" : "14px 14px 14px 4px",
-                          background: isMe ? "linear-gradient(135deg, #D4AF37 0%, #b89324 100%)" : "rgba(255,255,255,0.06)",
-                          color: isMe ? "#0a0f1c" : "var(--atlan-text-primary)",
+                          background: isMe ? "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)" : "rgba(20, 109, 158, 0.08)",
+                          color: isMe ? "#FFFFFF" : "var(--atlan-text-primary)",
                           fontSize: "13px", lineHeight: "1.4", wordBreak: "break-word",
                         }}>
                           {msg.imagen_url && (
@@ -383,9 +383,9 @@ const styles = {
   },
   fab: {
     width: "56px", height: "56px", borderRadius: "50%",
-    background: "linear-gradient(135deg, #D4AF37 0%, #b89324 100%)",
+    background: "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)",
     border: "none", fontSize: "24px", cursor: "pointer",
-    boxShadow: "0 6px 24px rgba(212,175,55,0.4)",
+    boxShadow: "0 6px 24px rgba(255, 215, 0,0.4)",
     display: "flex", alignItems: "center", justifyContent: "center",
     position: "relative", transition: "transform 0.2s, box-shadow 0.2s",
   },
@@ -399,25 +399,25 @@ const styles = {
   panel: {
     width: "360px", height: "480px",
     background: "var(--atlan-bg-card)",
-    border: "1px solid rgba(255,255,255,0.1)",
+    border: "1px solid rgba(20, 109, 158, 0.12)",
     borderRadius: "18px", overflow: "hidden",
-    boxShadow: "0 16px 48px rgba(0,0,0,0.5)",
+    boxShadow: "0 16px 48px rgba(0, 0, 0, 0.12)",
     display: "flex", flexDirection: "column",
   },
   panelHeader: {
     display: "flex", justifyContent: "space-between", alignItems: "center",
-    padding: "14px 18px", borderBottom: "1px solid rgba(255,255,255,0.06)",
+    padding: "14px 18px", borderBottom: "1px solid rgba(20, 109, 158, 0.08)",
     flexShrink: 0,
   },
   expandBtn: {
-    background: "rgba(255,255,255,0.06)", border: "none",
+    background: "rgba(20, 109, 158, 0.08)", border: "none",
     width: "28px", height: "28px", borderRadius: "8px",
     color: "var(--atlan-text-secondary)", fontSize: "14px", fontWeight: "800",
     cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
     textDecoration: "none",
   },
   minimizeBtn: {
-    background: "rgba(255,255,255,0.06)", border: "none",
+    background: "rgba(20, 109, 158, 0.08)", border: "none",
     width: "28px", height: "28px", borderRadius: "8px",
     color: "var(--atlan-text-secondary)", fontSize: "14px", fontWeight: "800",
     cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
@@ -428,27 +428,27 @@ const styles = {
   convItem: {
     display: "flex", alignItems: "center", gap: "12px", width: "100%",
     padding: "12px 16px", background: "none", border: "none",
-    borderBottom: "1px solid rgba(255,255,255,0.04)",
+    borderBottom: "1px solid rgba(20, 109, 158, 0.04)",
     cursor: "pointer", transition: "background 0.15s", textAlign: "left",
   },
   onlineDot: {
     position: "absolute", bottom: "0", right: "0",
     width: "12px", height: "12px", borderRadius: "50%",
-    background: "#10b981", border: "2px solid var(--atlan-bg-card)",
+    background: "#17AA4A", border: "2px solid var(--atlan-bg-card)",
   },
   unreadBadge: {
     minWidth: "18px", height: "18px", borderRadius: "9px",
-    background: "var(--atlan-gold)", color: "#0a0f1c", fontSize: "10px", fontWeight: "800",
+    background: "var(--atlan-gold)", color: "#FFFFFF", fontSize: "10px", fontWeight: "800",
     display: "flex", alignItems: "center", justifyContent: "center",
     padding: "0 4px", flexShrink: 0,
   },
   chatHeader: {
     display: "flex", alignItems: "center", gap: "10px",
-    padding: "12px 14px", borderBottom: "1px solid rgba(255,255,255,0.06)",
+    padding: "12px 14px", borderBottom: "1px solid rgba(20, 109, 158, 0.08)",
     flexShrink: 0,
   },
   backBtn: {
-    background: "rgba(255,255,255,0.06)", border: "none",
+    background: "rgba(20, 109, 158, 0.08)", border: "none",
     width: "28px", height: "28px", borderRadius: "8px",
     color: "var(--atlan-text-secondary)", fontSize: "14px",
     cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
@@ -458,19 +458,19 @@ const styles = {
   },
   inputArea: {
     display: "flex", alignItems: "center", gap: "8px",
-    padding: "10px 14px", borderTop: "1px solid rgba(255,255,255,0.06)",
+    padding: "10px 14px", borderTop: "1px solid rgba(20, 109, 158, 0.08)",
     flexShrink: 0,
   },
   textInput: {
-    flex: 1, padding: "9px 14px", background: "rgba(255,255,255,0.04)",
-    border: "1px solid rgba(255,255,255,0.08)", borderRadius: "20px",
+    flex: 1, padding: "9px 14px", background: "rgba(20, 109, 158, 0.04)",
+    border: "1px solid rgba(20, 109, 158, 0.10)", borderRadius: "20px",
     color: "white", fontSize: "13px", outline: "none",
     fontFamily: "var(--font-outfit), system-ui, sans-serif",
   },
   sendBtn: {
-    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)", border: "none",
+    background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none",
     width: "34px", height: "34px", borderRadius: "50%", color: "white", fontSize: "13px",
     cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-    boxShadow: "0 2px 8px rgba(16,185,129,0.25)", flexShrink: 0,
+    boxShadow: "0 2px 8px rgba(23, 170, 74,0.25)", flexShrink: 0,
   },
 };

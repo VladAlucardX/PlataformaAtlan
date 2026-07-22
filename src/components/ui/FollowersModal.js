@@ -12,8 +12,8 @@ function avatarStyle(url, size) {
   return {
     width: `${size}px`, height: `${size}px`, borderRadius: "50%", flexShrink: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#0a0f1c",
-    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #D4AF37 0%, #E8CC6A 100%)",
+    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#FFFFFF",
+    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #FFD700 0%, #FFDF33 100%)",
     boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
   };
 }
@@ -112,7 +112,7 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
     if (isLoading) {
       return (
         <div style={{ padding: "32px", textAlign: "center" }}>
-          <div style={{ width: "28px", height: "28px", border: "2px solid rgba(255,255,255,0.08)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+          <div style={{ width: "28px", height: "28px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
         </div>
       );
     }
@@ -165,10 +165,10 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
                     fontSize: "12px", fontWeight: "800", cursor: "pointer",
                     transition: "all 0.2s", whiteSpace: "nowrap",
                     background: amFollowing
-                      ? "rgba(255,255,255,0.06)"
-                      : "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                      ? "rgba(20, 109, 158, 0.08)"
+                      : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
                     color: amFollowing ? "var(--atlan-text-secondary)" : "white",
-                    boxShadow: amFollowing ? "none" : "0 2px 8px rgba(16,185,129,0.2)",
+                    boxShadow: amFollowing ? "none" : "0 2px 8px rgba(23, 170, 74,0.2)",
                   }}
                 >
                   {amFollowing
@@ -235,14 +235,14 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
 const styles = {
   overlay: {
     position: "fixed", inset: 0, zIndex: 200,
-    background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)",
+    background: "rgba(0, 0, 0, 0.40)", backdropFilter: "blur(8px)",
     display: "flex", alignItems: "center", justifyContent: "center", padding: "24px",
   },
   modal: {
     width: "100%", maxWidth: "460px", maxHeight: "80vh",
-    background: "var(--atlan-bg-card)", border: "1px solid rgba(255,255,255,0.1)",
+    background: "var(--atlan-bg-card)", border: "1px solid rgba(20, 109, 158, 0.12)",
     borderRadius: "20px", overflow: "hidden",
-    boxShadow: "0 24px 48px rgba(0,0,0,0.5)",
+    boxShadow: "0 24px 48px rgba(0, 0, 0, 0.12)",
     display: "flex", flexDirection: "column",
   },
   header: {
@@ -250,13 +250,13 @@ const styles = {
     padding: "20px 24px 0",
   },
   closeBtn: {
-    background: "rgba(255,255,255,0.06)", border: "none", color: "var(--atlan-text-muted)",
+    background: "rgba(20, 109, 158, 0.08)", border: "none", color: "var(--atlan-text-muted)",
     width: "32px", height: "32px", borderRadius: "50%", fontSize: "14px",
     cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
   },
   tabs: {
     display: "flex", gap: "0", padding: "16px 24px 0",
-    borderBottom: "1px solid rgba(255,255,255,0.06)",
+    borderBottom: "1px solid rgba(20, 109, 158, 0.08)",
   },
   tab: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
@@ -266,14 +266,14 @@ const styles = {
   },
   tabCount: {
     fontSize: "12px", fontWeight: "800", padding: "2px 8px", borderRadius: "10px",
-    background: "rgba(255,255,255,0.06)",
+    background: "rgba(20, 109, 158, 0.08)",
   },
   userList: {
     overflowY: "auto", flex: 1, padding: "8px 16px",
   },
   userRow: {
     display: "flex", alignItems: "center", gap: "10px", padding: "10px 8px",
-    borderBottom: "1px solid rgba(255,255,255,0.04)",
+    borderBottom: "1px solid rgba(20, 109, 158, 0.04)",
     transition: "background 0.15s",
   },
 };

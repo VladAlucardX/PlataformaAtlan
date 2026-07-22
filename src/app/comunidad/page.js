@@ -42,7 +42,7 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
       <div style={navStyles.navInner}>
         <Link href="/" style={navStyles.logo}>
           <img src="/mapaicono.png" alt="Logo" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
-          <span style={navStyles.logoText}>atlan</span>
+          <span style={navStyles.logoText} className="logoText">atlan</span>
         </Link>
 
         <div style={navStyles.navCenter}>
@@ -60,7 +60,7 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
             <>
               <Link href={perfil?.rol === "dueno" || perfil?.rol === "admin" ? "/dashboard" : "/perfil"} style={{ ...navStyles.navLink, display: "flex", alignItems: "center", gap: "6px" }}>
                 {perfil?.avatar_url ? (
-                  <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
+                  <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
                 ) : (
                   perfil?.rol === "dueno" || perfil?.rol === "admin" ? "💼" : "👤"
                 )}
@@ -103,7 +103,7 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
             <>
               <Link href={perfil?.rol === "dueno" || perfil?.rol === "admin" ? "/dashboard" : "/perfil"} style={{ ...navStyles.mobileLink, display: "flex", alignItems: "center", gap: "8px" }} onClick={() => setMenuOpen(false)}>
                 {perfil?.avatar_url ? (
-                  <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(255,255,255,0.2)", flexShrink: 0 }} />
+                  <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
                 ) : (
                   perfil?.rol === "dueno" || perfil?.rol === "admin" ? "💼" : "👤"
                 )}
@@ -328,8 +328,8 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
             <button onClick={clearVideo} style={postFormStyles.removeImgBtn}>✕</button>
             <div style={{
               position: "absolute", bottom: "12px", left: "12px",
-              background: "rgba(0,0,0,0.7)", padding: "4px 10px", borderRadius: "8px",
-              fontSize: "11px", fontWeight: "800", color: "#10b981"
+              background: "rgba(0, 0, 0, 0.40)", padding: "4px 10px", borderRadius: "8px",
+              fontSize: "11px", fontWeight: "800", color: "#17AA4A"
             }}>
               🎬 {(videoFile.size / (1024 * 1024)).toFixed(1)}MB
             </div>
@@ -367,13 +367,13 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
                 </label>
               )}
 
-              <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "13px", color: "#fbbf24", fontWeight: "700" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "13px", color: "#E6C200", fontWeight: "700" }}>
                 <input 
                   type="radio" 
                   name="postType" 
                   checked={esPublicidad} 
                   onChange={() => { setEsPromocion(false); setEsPublicidad(true); }} 
-                  style={{ accentColor: "#fbbf24" }} 
+                  style={{ accentColor: "#E6C200" }} 
                 />
                 ✨ {lang === "en" ? "Sponsored Ad" : "Publicidad"}
               </label>
@@ -403,7 +403,7 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
             <button
               onClick={() => videoInputRef.current?.click()}
               disabled={!!imageFile}
-              style={{ ...postFormStyles.attachBtn, opacity: imageFile ? 0.4 : 1, background: videoFile ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.04)", color: videoFile ? "#10b981" : "var(--atlan-text-secondary)", borderColor: videoFile ? "rgba(16,185,129,0.3)" : "rgba(255,255,255,0.08)" }}
+              style={{ ...postFormStyles.attachBtn, opacity: imageFile ? 0.4 : 1, background: videoFile ? "rgba(23, 170, 74,0.15)" : "rgba(20, 109, 158, 0.04)", color: videoFile ? "#17AA4A" : "var(--atlan-text-secondary)", borderColor: videoFile ? "rgba(23, 170, 74,0.3)" : "rgba(20, 109, 158, 0.10)" }}
             >
               🎬 {lang === "en" ? "Video" : "Video"}
             </button>
@@ -580,7 +580,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
           <div style={{
             position: "absolute", top: "10px", right: "10px",
             background: "rgba(0,0,0,0.6)", padding: "3px 8px", borderRadius: "6px",
-            fontSize: "10px", fontWeight: "800", color: "#10b981"
+            fontSize: "10px", fontWeight: "800", color: "#17AA4A"
           }}>
             🎬 Video
           </div>
@@ -736,7 +736,7 @@ function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChang
         disabled={loading}
         style={{
           ...sidebarStyles.followBtn,
-          background: isFollowing ? "rgba(255,255,255,0.06)" : "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+          background: isFollowing ? "rgba(20,109,158,0.06)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
           color: isFollowing ? "var(--atlan-text-secondary)" : "white",
         }}
       >
@@ -976,7 +976,7 @@ export default function ComunidadPage() {
         {/* ── FEED CENTRAL ── */}
         <main style={pageStyles.feed}>
           {/* Mobile Search Bar */}
-          <div className="hide-desktop" style={{ marginBottom: "16px", background: "var(--atlan-bg-card)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "18px", padding: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}>
+          <div className="hide-desktop" style={{ marginBottom: "16px", background: "var(--atlan-bg-card)", border: "1px solid rgba(20, 109, 158, 0.08)", borderRadius: "18px", padding: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}>
             <h4 style={{ margin: "0 0 12px", fontSize: "14px", fontWeight: "800", color: "var(--atlan-text-primary)", display: "flex", alignItems: "center", gap: "6px" }}>
               🔍 {lang === "en" ? "Find Friends" : "Buscar Personas"}
             </h4>
@@ -988,8 +988,8 @@ export default function ComunidadPage() {
               style={{
                 width: "100%",
                 padding: "10px 14px",
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                background: "rgba(20, 109, 158, 0.04)",
+                border: "1px solid rgba(20, 109, 158, 0.10)",
                 borderRadius: "12px",
                 color: "var(--atlan-text-primary)",
                 fontSize: "13px",
@@ -998,10 +998,10 @@ export default function ComunidadPage() {
               }}
             />
             {searchQuery.trim() && (
-              <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+              <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid rgba(20, 109, 158, 0.05)" }}>
                 {searching ? (
                   <div style={{ padding: "8px", textAlign: "center" }}>
-                    <div style={{ width: "20px", height: "20px", border: "2px solid rgba(255,255,255,0.08)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                    <div style={{ width: "20px", height: "20px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
                   </div>
                 ) : searchResults.length === 0 ? (
                   <p style={{ margin: 0, fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
@@ -1034,7 +1034,7 @@ export default function ComunidadPage() {
           {/* Posts */}
           {loadingPosts ? (
             <div style={{ textAlign: "center", padding: "60px 20px" }}>
-              <div style={{ width: "40px", height: "40px", border: "3px solid rgba(255,255,255,0.1)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
+              <div style={{ width: "40px", height: "40px", border: "3px solid rgba(20, 109, 158, 0.12)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
               <p style={{ fontSize: "14px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Loading posts..." : "Cargando publicaciones..."}</p>
             </div>
           ) : posts.length === 0 ? (
@@ -1064,7 +1064,7 @@ export default function ComunidadPage() {
               ))}
               <div ref={loaderRef} style={{ padding: "20px", textAlign: "center" }}>
                 {loadingMore && (
-                  <div style={{ width: "28px", height: "28px", border: "2px solid rgba(255,255,255,0.08)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                  <div style={{ width: "28px", height: "28px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
                 )}
               </div>
             </>
@@ -1086,8 +1086,8 @@ export default function ComunidadPage() {
               style={{
                 width: "100%",
                 padding: "10px 14px",
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                background: "rgba(20, 109, 158, 0.04)",
+                border: "1px solid rgba(20, 109, 158, 0.10)",
                 borderRadius: "12px",
                 color: "var(--atlan-text-primary)",
                 fontSize: "13px",
@@ -1105,7 +1105,7 @@ export default function ComunidadPage() {
                 </h4>
                 {searching ? (
                   <div style={{ padding: "12px", textAlign: "center" }}>
-                    <div style={{ width: "20px", height: "20px", border: "2px solid rgba(255,255,255,0.08)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                    <div style={{ width: "20px", height: "20px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
                   </div>
                 ) : searchResults.length === 0 ? (
                   <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
@@ -1212,9 +1212,9 @@ function avatarStyle(url, size) {
     justifyContent: "center",
     fontSize: `${Math.floor(size * 0.42)}px`,
     fontWeight: "800",
-    color: "#0a0f1c",
-    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #D4AF37 0%, #E8CC6A 100%)",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+    color: "#1A1A2E",
+    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #FFD700 0%, #FFDF33 100%)",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
   };
 }
 
@@ -1225,9 +1225,9 @@ function avatarStyle(url, size) {
 const navStyles = {
   nav: {
     position: "sticky", top: 0, zIndex: 100,
-    background: "rgba(10, 15, 28, 0.85)",
+    background: "rgba(255, 255, 255, 0.92)",
     backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
-    borderBottom: "1px solid rgba(255,255,255,0.06)",
+    borderBottom: "1px solid rgba(20,109,158,0.10)",
   },
   navInner: {
     maxWidth: "1200px", margin: "0 auto", padding: "0 24px",
@@ -1235,15 +1235,15 @@ const navStyles = {
   },
   logo: { display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" },
   logoText: {
-    fontSize: "22px", fontWeight: "800", fontFamily: "var(--font-outfit), system-ui, sans-serif",
-    background: "linear-gradient(135deg, #D4AF37, #E8CC6A)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", letterSpacing: "-0.02em",
+    fontSize: "24px", fontWeight: "900", fontFamily: "var(--font-outfit), system-ui, sans-serif",
+    color: "#FFD700", letterSpacing: "-0.02em",
   },
   navCenter: { display: "flex", alignItems: "center", gap: "20px" },
   navRight: { display: "flex", alignItems: "center", gap: "16px" },
   navLink: { color: "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "600", textDecoration: "none", transition: "color 0.2s" },
   logoutBtn: { background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", padding: "6px 10px", borderRadius: "8px", fontSize: "13px", cursor: "pointer" },
   hamburger: { background: "none", border: "none", color: "var(--atlan-text-primary)", cursor: "pointer", padding: "8px" },
-  mobileMenu: { padding: "12px 24px 20px", display: "flex", flexDirection: "column", gap: "10px", borderTop: "1px solid rgba(255,255,255,0.06)" },
+  mobileMenu: { padding: "12px 24px 20px", display: "flex", flexDirection: "column", gap: "10px",    borderTop: "1px solid rgba(20,109,158,0.08)" },
   mobileLink: { color: "var(--atlan-text-secondary)", fontSize: "15px", fontWeight: "600", textDecoration: "none", padding: "10px 0" },
   mobileLogoutBtn: { background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", padding: "10px", borderRadius: "10px", fontSize: "14px", fontWeight: "700", cursor: "pointer", width: "100%", textAlign: "left" },
 };
@@ -1258,61 +1258,65 @@ const pageStyles = {
   sidebarRight: { position: "sticky", top: "80px", alignSelf: "start" },
   createPostBar: {
     display: "flex", alignItems: "center", gap: "12px", padding: "16px 20px",
-    background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
+    background: "rgba(20,109,158,0.03)", border: "1px solid rgba(20,109,158,0.08)",
     borderRadius: "16px", cursor: "pointer", transition: "all 0.2s", marginBottom: "16px",
   },
   createPostInput: {
     flex: 1, fontSize: "14px", color: "var(--atlan-text-muted)", fontWeight: "500",
-    padding: "10px 16px", background: "rgba(255,255,255,0.04)", borderRadius: "20px",
-    border: "1px solid rgba(255,255,255,0.06)",
+    padding: "10px 16px",    background: "rgba(20,109,158,0.03)", borderRadius: "20px",
+    border: "1px solid rgba(20,109,158,0.08)",
   },
   createPostBtn: {
-    background: "linear-gradient(135deg, #D4AF37 0%, #b89324 100%)", border: "none",
+    background: "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)", border: "none",
     width: "40px", height: "40px", borderRadius: "12px", fontSize: "16px", cursor: "pointer",
     display: "flex", alignItems: "center", justifyContent: "center",
-    boxShadow: "0 2px 8px rgba(212,175,55,0.2)",
+    boxShadow: "0 2px 8px rgba(255,215,0,0.2)",
   },
   emptyState: {
     textAlign: "center", padding: "80px 24px",
-    background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.08)",
+    background: "rgba(20,109,158,0.02)", border: "1px dashed rgba(20,109,158,0.15)",
     borderRadius: "20px",
   },
   fab: {
     position: "fixed", bottom: "24px", right: "24px", width: "56px", height: "56px",
-    borderRadius: "50%", background: "linear-gradient(135deg, #D4AF37 0%, #b89324 100%)",
+    borderRadius: "50%", background: "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)",
     border: "none", fontSize: "22px", cursor: "pointer", zIndex: 90,
-    boxShadow: "0 6px 20px rgba(212,175,55,0.35)",
+    boxShadow: "0 6px 20px rgba(255,215,0,0.35)",
     display: "flex", alignItems: "center", justifyContent: "center",
   },
 };
 
 const cardStyles = {
   card: {
-    background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
-    borderRadius: "16px", padding: "20px", marginBottom: "16px",
-    transition: "border-color 0.2s",
+    background: "#FFFFFF",
+    border: "1px solid rgba(20, 109, 158, 0.12)",
+    boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04)",
+    borderRadius: "16px",
+    padding: "20px",
+    marginBottom: "16px",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
   },
   publicidadCard: {
-    background: "radial-gradient(circle at top right, rgba(212, 175, 55, 0.08) 0%, rgba(255, 255, 255, 0.03) 70%)",
-    border: "1px solid rgba(212, 175, 55, 0.4)",
-    boxShadow: "0 4px 25px rgba(212, 175, 55, 0.12)",
+    background: "radial-gradient(circle at top right, rgba(255, 215, 0, 0.08) 0%, #FFFFFF 70%)",
+    border: "1.5px solid rgba(255, 215, 0, 0.4)",
+    boxShadow: "0 10px 30px -4px rgba(255, 215, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.04)",
     borderRadius: "16px", padding: "20px", marginBottom: "16px",
-    transition: "border-color 0.2s",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
   },
   promoBadge: {
     display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "12px",
     padding: "4px 12px", borderRadius: "20px", fontSize: "11px", fontWeight: "800",
-    background: "linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(245,158,11,0.15) 100%)",
-    border: "1px solid rgba(212,175,55,0.25)", color: "#D4AF37",
+    background: "linear-gradient(135deg, rgba(255,215,0,0.10) 0%, rgba(230,194,0,0.10) 100%)",
+    border: "1px solid rgba(255,215,0,0.25)", color: "#E6C200",
     textTransform: "uppercase", letterSpacing: "0.5px",
   },
   publicidadBadge: {
     display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "12px",
     padding: "5px 14px", borderRadius: "20px", fontSize: "11px", fontWeight: "900",
-    background: "linear-gradient(135deg, #D4AF37 0%, #F59E0B 100%)",
-    border: "1px solid rgba(255,255,255,0.25)", color: "#0a0f1c",
+    background: "linear-gradient(135deg, #FFD700 0%, #E6A800 100%)",
+    border: "1px solid rgba(20, 109, 158, 0.18)", color: "#1A1A2E",
     textTransform: "uppercase", letterSpacing: "0.8px",
-    boxShadow: "0 2px 8px rgba(212, 175, 55, 0.3)",
+    boxShadow: "0 2px 8px rgba(255, 215, 0, 0.3)",
   },
   header: {
     display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "14px",
@@ -1320,7 +1324,7 @@ const cardStyles = {
   roleBadge: {
     display: "inline-flex", alignItems: "center", justifyContent: "center",
     width: "20px", height: "20px", borderRadius: "6px", fontSize: "10px",
-    background: "rgba(212,175,55,0.15)", color: "var(--atlan-gold)",
+    background: "rgba(255,215,0,0.10)", color: "var(--atlan-gold-dark)",
   },
   content: {
     margin: "0 0 14px", fontSize: "14.5px", lineHeight: "1.6",
@@ -1328,12 +1332,12 @@ const cardStyles = {
   },
   imageContainer: {
     borderRadius: "14px", overflow: "hidden", marginBottom: "14px",
-    border: "1px solid rgba(255,255,255,0.06)",
+    border: "1px solid rgba(20,109,158,0.08)",
   },
   image: { width: "100%", maxHeight: "420px", objectFit: "cover", display: "block" },
   statsBar: {
     display: "flex", justifyContent: "space-between", padding: "8px 4px",
-    borderBottom: "1px solid rgba(255,255,255,0.05)", marginBottom: "4px",
+    borderBottom: "1px solid rgba(20,109,158,0.06)", marginBottom: "4px",
   },
   statText: { fontSize: "12px", color: "var(--atlan-text-muted)", fontWeight: "600" },
   actionBar: {
@@ -1351,9 +1355,9 @@ const cardStyles = {
   },
   menuDropdown: {
     position: "absolute", top: "100%", right: 0, zIndex: 50,
-    background: "var(--atlan-bg-elevated)", border: "1px solid rgba(255,255,255,0.1)",
+    background: "var(--atlan-bg-elevated)", border: "1px solid rgba(20, 109, 158, 0.12)",
     borderRadius: "12px", padding: "4px", minWidth: "140px",
-    boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.10)",
   },
   menuItem: {
     display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "10px 12px",
@@ -1361,44 +1365,47 @@ const cardStyles = {
     cursor: "pointer", borderRadius: "8px", transition: "background 0.15s",
   },
   commentsSection: {
-    borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "14px", marginTop: "4px",
+    borderTop: "1px solid rgba(20,109,158,0.06)", paddingTop: "14px", marginTop: "4px",
   },
   commentItem: {
     display: "flex", gap: "10px", marginBottom: "12px", alignItems: "flex-start",
   },
   commentBubble: {
-    background: "rgba(255,255,255,0.04)", padding: "8px 14px", borderRadius: "0 14px 14px 14px",
+    background: "rgba(20,109,158,0.04)", padding: "8px 14px", borderRadius: "0 14px 14px 14px",
   },
   commentInput: {
     display: "flex", alignItems: "center", gap: "10px", marginTop: "12px",
   },
   commentTextField: {
-    flex: 1, padding: "10px 16px", background: "rgba(255,255,255,0.04)",
-    border: "1px solid rgba(255,255,255,0.08)", borderRadius: "20px",
-    color: "white", fontSize: "13px", outline: "none",
+    flex: 1, padding: "10px 16px", background: "rgba(20,109,158,0.04)",
+    border: "1px solid rgba(20,109,158,0.10)", borderRadius: "20px",
+    color: "#1A1A2E", fontSize: "13px", outline: "none",
   },
   sendBtn: {
-    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)", border: "none",
+    background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none",
     width: "36px", height: "36px", borderRadius: "50%", color: "white", fontSize: "14px",
     cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-    boxShadow: "0 2px 8px rgba(16,185,129,0.25)",
+    boxShadow: "0 2px 8px rgba(23,170,74,0.25)",
   },
 };
 
 const sidebarStyles = {
   profileCard: {
-    background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
+    background: "#FFFFFF", border: "1px solid rgba(20, 109, 158, 0.12)",
+    boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.08)",
     borderRadius: "16px", overflow: "hidden",
   },
   profileBanner: {
-    height: "60px", background: "linear-gradient(135deg, #1a3a6e 0%, #0e2242 100%)",
+    height: "60px", background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
   },
   loginCard: {
-    background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
+    background: "#FFFFFF", border: "1px solid rgba(20, 109, 158, 0.12)",
+    boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.08)",
     borderRadius: "16px", padding: "24px", textAlign: "center",
   },
   sectionCard: {
-    background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
+    background: "#FFFFFF", border: "1px solid rgba(20, 109, 158, 0.12)",
+    boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.08)",
     borderRadius: "16px", padding: "16px",
   },
   sectionTitle: {
@@ -1407,7 +1414,7 @@ const sidebarStyles = {
   },
   userCard: {
     display: "flex", alignItems: "center", gap: "10px", padding: "8px 0",
-    borderBottom: "1px solid rgba(255,255,255,0.04)",
+    borderBottom: "1px solid rgba(20,109,158,0.06)",
   },
   followBtn: {
     padding: "6px 14px", border: "none", borderRadius: "20px",
@@ -1425,17 +1432,17 @@ const sidebarStyles = {
 const modalStyles = {
   overlay: {
     position: "fixed", inset: 0, zIndex: 200,
-    background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)",
+    background: "rgba(0, 0, 0, 0.12)", backdropFilter: "blur(8px)",
     display: "flex", alignItems: "center", justifyContent: "center", padding: "24px",
   },
   modal: {
     width: "100%", maxWidth: "480px", maxHeight: "90vh", overflowY: "auto",
-    background: "var(--atlan-bg-card)", border: "1px solid rgba(255,255,255,0.1)",
+    background: "#FFFFFF", border: "1px solid rgba(20,109,158,0.12)",
     borderRadius: "20px", padding: "28px", position: "relative",
-    boxShadow: "0 24px 48px rgba(0,0,0,0.5)",
+    boxShadow: "0 24px 48px rgba(0,0,0,0.12)",
   },
   closeBtn: {
-    position: "absolute", top: "16px", right: "16px", background: "rgba(255,255,255,0.06)",
+    position: "absolute", top: "16px", right: "16px", background: "rgba(20,109,158,0.06)",
     border: "none", color: "var(--atlan-text-muted)", width: "32px", height: "32px",
     borderRadius: "50%", fontSize: "14px", cursor: "pointer", display: "flex",
     alignItems: "center", justifyContent: "center",
@@ -1444,8 +1451,8 @@ const modalStyles = {
 
 const postFormStyles = {
   textarea: {
-    width: "100%", padding: "14px", background: "rgba(255,255,255,0.04)",
-    border: "1px solid rgba(255,255,255,0.08)", borderRadius: "14px",
+    width: "100%", padding: "14px", background: "rgba(20, 109, 158, 0.04)",
+    border: "1px solid rgba(20,109,158,0.10)", borderRadius: "14px",
     color: "var(--atlan-text-primary)", fontSize: "15px", lineHeight: "1.5",
     outline: "none", resize: "vertical", minHeight: "100px",
     fontFamily: "var(--font-outfit), system-ui, sans-serif",
@@ -1456,25 +1463,25 @@ const postFormStyles = {
     fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
   },
   promoSection: {
-    padding: "12px 16px", background: "rgba(212,175,55,0.06)",
-    border: "1px solid rgba(212,175,55,0.15)", borderRadius: "12px",
+    padding: "12px 16px", background: "rgba(255,215,0,0.06)",
+    border: "1px solid rgba(255,215,0,0.15)", borderRadius: "12px",
     display: "flex", flexDirection: "column", gap: "10px",
   },
   select: {
-    width: "100%", padding: "8px 12px", background: "rgba(255,255,255,0.04)",
-    border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px",
+    width: "100%", padding: "8px 12px", background: "rgba(20, 109, 158, 0.04)",
+    border: "1px solid rgba(20,109,158,0.12)", borderRadius: "8px",
     color: "var(--atlan-text-primary)", fontSize: "13px", outline: "none",
   },
   attachBtn: {
-    padding: "8px 14px", background: "rgba(255,255,255,0.04)",
-    border: "1px solid rgba(255,255,255,0.08)", borderRadius: "10px",
+    padding: "8px 14px", background: "rgba(20,109,158,0.04)",
+    border: "1px solid rgba(20,109,158,0.10)", borderRadius: "10px",
     color: "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "700",
     cursor: "pointer", transition: "all 0.2s",
   },
   publishBtn: {
-    padding: "10px 28px", background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+    padding: "10px 28px", background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
     border: "none", borderRadius: "12px", color: "white", fontSize: "14px",
-    fontWeight: "800", cursor: "pointer", boxShadow: "0 4px 12px rgba(16,185,129,0.25)",
+    fontWeight: "800", cursor: "pointer", boxShadow: "0 4px 12px rgba(23,170,74,0.25)",
     transition: "all 0.2s",
   },
 };

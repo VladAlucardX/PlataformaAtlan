@@ -29,8 +29,8 @@ function avatarStyle(url, size) {
   return {
     width: `${size}px`, height: `${size}px`, borderRadius: "50%", flexShrink: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#0a0f1c",
-    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #D4AF37 0%, #E8CC6A 100%)",
+    fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#FFFFFF",
+    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #FFD700 0%, #FFDF33 100%)",
     boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
   };
 }
@@ -379,7 +379,7 @@ function ChatContent() {
     return (
       <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", display: "flex", justifyContent: "center", alignItems: "center" }}>
         <div style={{ textAlign: "center" }}>
-          <div style={{ width: "40px", height: "40px", border: "3px solid rgba(255,255,255,0.1)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
+          <div style={{ width: "40px", height: "40px", border: "3px solid rgba(20, 109, 158, 0.12)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
           <p style={{ fontSize: "14px", color: "var(--atlan-text-muted)" }}>{t("common.loading")}</p>
         </div>
       </div>
@@ -395,12 +395,12 @@ function ChatContent() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
       {/* Navbar */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(10,15,28,0.85)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255, 255, 255, 0.92)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(20, 109, 158, 0.08)" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px", height: "60px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
             <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
               <img src="/mapaicono.png" alt="Logo" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
-              <span style={{ fontSize: "22px", fontWeight: "800", background: "linear-gradient(135deg, #D4AF37, #E8CC6A)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", letterSpacing: "-0.02em" }}>atlan</span>
+              <span className="logoText" style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
             </Link>
             <Link href="/comunidad" style={{ color: "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "600", textDecoration: "none" }}>👥 {t("social.community")}</Link>
             <span style={{ color: "var(--atlan-gold)", fontSize: "13px", fontWeight: "800", borderBottom: "2px solid var(--atlan-gold)", paddingBottom: "4px" }}>
@@ -455,7 +455,7 @@ function ChatContent() {
                     onClick={() => selectConversation(conv)}
                     style={{
                       ...chatLayoutStyles.convItem,
-                      background: isActive ? "rgba(212,175,55,0.08)" : "transparent",
+                      background: isActive ? "rgba(255, 215, 0,0.08)" : "transparent",
                       borderLeft: isActive ? "3px solid var(--atlan-gold)" : "3px solid transparent",
                     }}
                   >
@@ -525,7 +525,7 @@ function ChatContent() {
               <div ref={messagesContainerRef} style={chatLayoutStyles.messagesContainer}>
                 {loadingMensajes ? (
                   <div style={{ textAlign: "center", padding: "40px" }}>
-                    <div style={{ width: "30px", height: "30px", border: "2px solid rgba(255,255,255,0.1)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                    <div style={{ width: "30px", height: "30px", border: "2px solid rgba(20, 109, 158, 0.12)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
                   </div>
                 ) : mensajes.length === 0 ? (
                   <div style={{ textAlign: "center", padding: "60px 24px" }}>
@@ -544,11 +544,11 @@ function ChatContent() {
                           padding: msg.imagen_url ? "4px" : "10px 16px",
                           borderRadius: isMine ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
                           background: isMine
-                            ? "linear-gradient(135deg, #10b981 0%, #059669 100%)"
-                            : "rgba(255,255,255,0.06)",
+                            ? "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)"
+                            : "rgba(20, 109, 158, 0.08)",
                           color: isMine ? "white" : "var(--atlan-text-primary)",
-                          boxShadow: isMine ? "0 2px 8px rgba(16,185,129,0.2)" : "none",
-                          border: isMine ? "none" : "1px solid rgba(255,255,255,0.06)",
+                          boxShadow: isMine ? "0 2px 8px rgba(23, 170, 74,0.2)" : "none",
+                          border: isMine ? "none" : "1px solid rgba(20, 109, 158, 0.08)",
                         }}>
                           {msg.imagen_url && (
                             <img
@@ -583,12 +583,12 @@ function ChatContent() {
 
               {/* Chat image preview */}
               {chatImagePreview && (
-                <div style={{ padding: "8px 16px", borderTop: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ padding: "8px 16px", borderTop: "1px solid rgba(20, 109, 158, 0.08)", display: "flex", alignItems: "center", gap: "8px" }}>
                   <div style={{ position: "relative" }}>
                     <img src={chatImagePreview} alt="Preview" style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "8px" }} />
                     <button
                       onClick={() => { setChatImageFile(null); setChatImagePreview(null); }}
-                      style={{ position: "absolute", top: "-6px", right: "-6px", width: "20px", height: "20px", borderRadius: "50%", background: "rgba(239,68,68,0.9)", border: "none", color: "white", fontSize: "10px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                      style={{ position: "absolute", top: "-6px", right: "-6px", width: "20px", height: "20px", borderRadius: "50%", background: "rgba(239,68,68,0.9)", border: "none", color: "#1A1A2E", fontSize: "10px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >✕</button>
                   </div>
                   <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Image attached" : "Imagen adjuntada"}</span>
@@ -640,26 +640,26 @@ function ChatContent() {
 
       {/* New Chat Modal */}
       {showNewChatModal && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }} onClick={() => setShowNewChatModal(false)}>
-          <div style={{ maxWidth: "420px", width: "100%", maxHeight: "70vh", background: "var(--atlan-bg-card)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "20px", padding: "24px", overflow: "hidden", display: "flex", flexDirection: "column" }} onClick={(e) => e.stopPropagation()} className="animate-fade-in-up">
+        <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0, 0, 0, 0.40)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }} onClick={() => setShowNewChatModal(false)}>
+          <div style={{ maxWidth: "420px", width: "100%", maxHeight: "70vh", background: "var(--atlan-bg-card)", border: "1px solid rgba(20, 109, 158, 0.12)", borderRadius: "20px", padding: "24px", overflow: "hidden", display: "flex", flexDirection: "column" }} onClick={(e) => e.stopPropagation()} className="animate-fade-in-up">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
               <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
                 ✨ {t("chat.newChat")}
               </h3>
-              <button onClick={() => setShowNewChatModal(false)} style={{ background: "rgba(255,255,255,0.06)", border: "none", color: "var(--atlan-text-muted)", width: "32px", height: "32px", borderRadius: "50%", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+              <button onClick={() => setShowNewChatModal(false)} style={{ background: "rgba(20, 109, 158, 0.08)", border: "none", color: "var(--atlan-text-muted)", width: "32px", height: "32px", borderRadius: "50%", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
             </div>
 
             <input
               value={searchMutual}
               onChange={(e) => setSearchMutual(e.target.value)}
               placeholder={lang === "en" ? "Search..." : "Buscar..."}
-              style={{ width: "100%", padding: "10px 14px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", color: "var(--atlan-text-primary)", fontSize: "13px", outline: "none", marginBottom: "12px", boxSizing: "border-box" }}
+              style={{ width: "100%", padding: "10px 14px", background: "rgba(20, 109, 158, 0.04)", border: "1px solid rgba(20, 109, 158, 0.10)", borderRadius: "12px", color: "var(--atlan-text-primary)", fontSize: "13px", outline: "none", marginBottom: "12px", boxSizing: "border-box" }}
             />
 
             <div style={{ flex: 1, overflowY: "auto" }}>
               {loadingMutuals ? (
                 <div style={{ textAlign: "center", padding: "30px" }}>
-                  <div style={{ width: "30px", height: "30px", border: "2px solid rgba(255,255,255,0.1)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                  <div style={{ width: "30px", height: "30px", border: "2px solid rgba(20, 109, 158, 0.12)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
                 </div>
               ) : filteredMutuals.length === 0 ? (
                 <div style={{ textAlign: "center", padding: "30px" }}>
@@ -678,7 +678,7 @@ function ChatContent() {
                     onClick={() => handleStartChat(u.id)}
                     style={{
                       display: "flex", alignItems: "center", gap: "12px", width: "100%",
-                      padding: "12px", background: "none", border: "none", borderBottom: "1px solid rgba(255,255,255,0.04)",
+                      padding: "12px", background: "none", border: "none", borderBottom: "1px solid rgba(20, 109, 158, 0.04)",
                       cursor: "pointer", transition: "background 0.15s", textAlign: "left",
                     }}
                   >
@@ -709,19 +709,21 @@ function ChatContent() {
 const chatLayoutStyles = {
   container: {
     maxWidth: "1100px",
-    margin: "0 auto",
-    height: "calc(100vh - 60px)",
+    margin: "16px auto",
+    height: "calc(100vh - 92px)",
     display: "grid",
     gridTemplateColumns: "340px 1fr",
-    border: "1px solid rgba(255,255,255,0.06)",
-    borderTop: "none",
+    border: "1px solid rgba(20, 109, 158, 0.14)",
+    borderRadius: "20px",
+    background: "#FFFFFF",
+    boxShadow: "0 12px 36px -6px rgba(20, 109, 158, 0.10), 0 2px 6px rgba(0, 0, 0, 0.04)",
     overflow: "hidden",
   },
   sidebar: {
-    borderRight: "1px solid rgba(255,255,255,0.06)",
+    borderRight: "1px solid rgba(20, 109, 158, 0.10)",
     display: "flex",
     flexDirection: "column",
-    background: "rgba(255,255,255,0.01)",
+    background: "#F8FAFC",
     overflow: "hidden",
   },
   sidebarHeader: {
@@ -729,18 +731,18 @@ const chatLayoutStyles = {
     justifyContent: "space-between",
     alignItems: "center",
     padding: "20px 20px 16px",
-    borderBottom: "1px solid rgba(255,255,255,0.06)",
+    borderBottom: "1px solid rgba(20, 109, 158, 0.10)",
   },
   newChatBtn: {
     padding: "8px 16px",
-    background: "linear-gradient(135deg, #D4AF37 0%, #b89324 100%)",
+    background: "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)",
     border: "none",
     borderRadius: "10px",
-    color: "#0a0f1c",
+    color: "#1A1A2E",
     fontSize: "12px",
     fontWeight: "800",
     cursor: "pointer",
-    boxShadow: "0 2px 8px rgba(212,175,55,0.2)",
+    boxShadow: "0 2px 8px rgba(255, 215, 0, 0.3)",
   },
   convList: {
     flex: 1,
@@ -755,7 +757,7 @@ const chatLayoutStyles = {
     border: "none",
     cursor: "pointer",
     transition: "background 0.15s",
-    borderBottom: "1px solid rgba(255,255,255,0.03)",
+    borderBottom: "1px solid rgba(20, 109, 158, 0.03)",
   },
   chatArea: {
     display: "flex",
@@ -767,7 +769,7 @@ const chatLayoutStyles = {
     display: "flex",
     alignItems: "center",
     padding: "12px 20px",
-    borderBottom: "1px solid rgba(255,255,255,0.06)",
+    borderBottom: "1px solid rgba(20, 109, 158, 0.08)",
     background: "rgba(255,255,255,0.02)",
   },
   messagesContainer: {
@@ -780,14 +782,14 @@ const chatLayoutStyles = {
     alignItems: "center",
     gap: "8px",
     padding: "12px 16px",
-    borderTop: "1px solid rgba(255,255,255,0.06)",
+    borderTop: "1px solid rgba(20, 109, 158, 0.08)",
     background: "rgba(255,255,255,0.02)",
   },
   messageInput: {
     flex: 1,
     padding: "12px 18px",
-    background: "rgba(255,255,255,0.04)",
-    border: "1px solid rgba(255,255,255,0.08)",
+    background: "rgba(20, 109, 158, 0.04)",
+    border: "1px solid rgba(20, 109, 158, 0.10)",
     borderRadius: "24px",
     color: "var(--atlan-text-primary)",
     fontSize: "14px",
@@ -795,7 +797,7 @@ const chatLayoutStyles = {
     fontFamily: "var(--font-outfit), system-ui, sans-serif",
   },
   sendBtn: {
-    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+    background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
     border: "none",
     width: "42px",
     height: "42px",
@@ -806,7 +808,7 @@ const chatLayoutStyles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    boxShadow: "0 2px 8px rgba(16,185,129,0.25)",
+    boxShadow: "0 2px 8px rgba(23, 170, 74,0.25)",
     flexShrink: 0,
   },
 };
@@ -815,7 +817,7 @@ export default function ChatPage() {
   return (
     <React.Suspense fallback={
       <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <div style={{ width: "40px", height: "40px", border: "3px solid rgba(255,255,255,0.1)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+        <div style={{ width: "40px", height: "40px", border: "3px solid rgba(20, 109, 158, 0.12)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
       </div>
     }>
       <ChatContent />

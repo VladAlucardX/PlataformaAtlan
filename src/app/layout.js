@@ -65,7 +65,7 @@ export default function RootLayout({ children }) {
     <html lang="es" className={`${outfit.variable} ${inter.variable}`}>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#D4AF37" />
+        <meta name="theme-color" content="#FFD700" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Atlan" />

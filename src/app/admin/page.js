@@ -238,10 +238,10 @@ export default function AdminDashboard() {
 
   if (loadingAuth) {
     return (
-      <div style={{ minHeight: '100vh', background: '#0a0f1c', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white', fontFamily: 'var(--font-outfit), sans-serif' }}>
+      <div style={{ minHeight: '100vh', background: '#FFFFFF', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#1A1A2E', fontFamily: 'var(--font-outfit), sans-serif' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: '40px', height: '40px', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: '#D4AF37', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }}></div>
-          <p style={{ fontSize: '15px', color: '#94a3b8', fontWeight: '600' }}>{t('common.loading')}</p>
+          <div style={{ width: '40px', height: '40px', border: '3px solid rgba(20, 109, 158, 0.12)', borderTopColor: '#FFD700', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }}></div>
+          <p style={{ fontSize: '15px', color: '#4A5568', fontWeight: '600' }}>{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -252,19 +252,19 @@ export default function AdminDashboard() {
   return (
     <div className="admin-container" style={{
       minHeight: '100vh',
-      background: 'radial-gradient(circle at 10% 20%, rgba(10, 15, 28, 1) 0%, rgba(15, 23, 42, 1) 90%)',
-      color: 'white',
+      background: 'var(--atlan-bg-primary)',
+      color: '#1A1A2E',
       fontFamily: 'var(--font-outfit), sans-serif',
       padding: '40px 24px',
       position: 'relative'
     }}>
       {/* Cabecera */}
-      <div className="admin-header" style={{ maxWidth: '1200px', margin: '0 auto 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '24px' }}>
+      <div className="admin-header" style={{ maxWidth: '1200px', margin: '0 auto 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(20, 109, 158, 0.12)', paddingBottom: '24px' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '850', background: 'linear-gradient(135deg, #D4AF37 0%, #FFF 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            ATLAN ADMIN PANEL
+          <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '850', color: '#FFD700' }}>
+            <span className="logoText" style={{ color: '#FFD700' }}>atlan</span> ADMIN PANEL
           </h1>
-          <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#94a3b8' }}>
+          <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#4A5568' }}>
             {lang === 'en' ? 'Verify business claims and community contributions' : 'Verifica los reclamos de negocios y contribuciones de la comunidad'}
           </p>
         </div>
@@ -273,10 +273,10 @@ export default function AdminDashboard() {
             onClick={() => router.push('/mapa')}
             style={{
               padding: '8px 16px',
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'rgba(20, 109, 158, 0.05)',
+              border: '1px solid rgba(20, 109, 158, 0.12)',
               borderRadius: '10px',
-              color: 'white',
+              color: '#1A1A2E',
               fontSize: '12.5px',
               fontWeight: '700',
               cursor: 'pointer',
@@ -297,24 +297,24 @@ export default function AdminDashboard() {
         gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
         gap: '20px'
       }}>
-        <div style={{ background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.06)', padding: '24px', borderRadius: '20px' }}>
-          <p style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+        <div style={{ background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)', border: '1px solid rgba(20, 109, 158, 0.08)', padding: '24px', borderRadius: '20px' }}>
+          <p style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             ⌛ {lang === 'en' ? 'Claims in Verification' : 'Reclamos en Verificación'}
           </p>
-          <h2 style={{ margin: '8px 0 0', fontSize: '36px', fontWeight: '900', color: '#f59e0b' }}>
+          <h2 style={{ margin: '8px 0 0', fontSize: '36px', fontWeight: '900', color: '#E6A800' }}>
             {stats.pendientes}
           </h2>
         </div>
-        <div style={{ background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.06)', padding: '24px', borderRadius: '20px' }}>
-          <p style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+        <div style={{ background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)', border: '1px solid rgba(20, 109, 158, 0.08)', padding: '24px', borderRadius: '20px' }}>
+          <p style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             ✅ {lang === 'en' ? 'Approved Pointers' : 'Puntos Aprobados'}
           </p>
-          <h2 style={{ margin: '8px 0 0', fontSize: '36px', fontWeight: '900', color: '#10b981' }}>
+          <h2 style={{ margin: '8px 0 0', fontSize: '36px', fontWeight: '900', color: '#17AA4A' }}>
             {stats.aprobados}
           </h2>
         </div>
-        <div style={{ background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.06)', padding: '24px', borderRadius: '20px' }}>
-          <p style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+        <div style={{ background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)', border: '1px solid rgba(20, 109, 158, 0.08)', padding: '24px', borderRadius: '20px' }}>
+          <p style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             🌍 {lang === 'en' ? 'Total Pointers' : 'Total de Puntos'}
           </p>
           <h2 style={{ margin: '8px 0 0', fontSize: '36px', fontWeight: '900', color: '#3b82f6' }}>
@@ -329,8 +329,8 @@ export default function AdminDashboard() {
           onClick={() => setActiveTab('pending')}
           style={{
             padding: '10px 20px',
-            background: activeTab === 'pending' ? 'linear-gradient(135deg, #D4AF37 0%, #b89324 100%)' : 'rgba(255,255,255,0.03)',
-            color: activeTab === 'pending' ? '#0a0f1c' : 'white',
+            background: activeTab === 'pending' ? 'linear-gradient(135deg, #FFD700 0%, #E6C200 100%)' : 'rgba(20, 109, 158, 0.03)',
+            color: activeTab === 'pending' ? '#FFFFFF' : 'white',
             border: 'none',
             borderRadius: '12px',
             fontWeight: '800',
@@ -345,8 +345,8 @@ export default function AdminDashboard() {
           onClick={() => setActiveTab('all')}
           style={{
             padding: '10px 20px',
-            background: activeTab === 'all' ? 'linear-gradient(135deg, #D4AF37 0%, #b89324 100%)' : 'rgba(255,255,255,0.03)',
-            color: activeTab === 'all' ? '#0a0f1c' : 'white',
+            background: activeTab === 'all' ? 'linear-gradient(135deg, #FFD700 0%, #E6C200 100%)' : 'rgba(20, 109, 158, 0.03)',
+            color: activeTab === 'all' ? '#FFFFFF' : 'white',
             border: 'none',
             borderRadius: '12px',
             fontWeight: '800',
@@ -362,12 +362,12 @@ export default function AdminDashboard() {
       {/* Contenido Principal */}
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         {loadingData ? (
-          <div style={{ padding: '60px 0', textAlign: 'center', color: '#94a3b8' }}>
+          <div style={{ padding: '60px 0', textAlign: 'center', color: '#4A5568' }}>
             {t('common.loading')}
           </div>
         ) : activeTab === 'pending' ? (
           reclamos.length === 0 ? (
-            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.04)', padding: '60px 20px', borderRadius: '24px', textAlign: 'center', color: '#94a3b8' }}>
+            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(20, 109, 158, 0.04)', padding: '60px 20px', borderRadius: '24px', textAlign: 'center', color: '#4A5568' }}>
               🏖️ {lang === 'en' ? 'No pending claims. All quiet on the front!' : 'No hay reclamos pendientes. ¡Todo en orden!'}
             </div>
           ) : (
@@ -376,7 +376,7 @@ export default function AdminDashboard() {
                 <div key={item.id} style={{
                   background: 'rgba(20, 27, 45, 0.5)',
                   backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(20, 109, 158, 0.10)',
                   borderRadius: '24px',
                   padding: '24px',
                   display: 'flex',
@@ -386,14 +386,14 @@ export default function AdminDashboard() {
                   {/* Fila superior */}
                   <div className="admin-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '12px' }}>
                     <div>
-                      <span style={{ fontSize: '11px', fontWeight: '800', background: 'rgba(212,175,55,0.15)', color: 'var(--atlan-gold)', padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase', display: 'inline-block', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '11px', fontWeight: '800', background: 'rgba(255, 215, 0,0.15)', color: 'var(--atlan-gold)', padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase', display: 'inline-block', marginBottom: '6px' }}>
                         {item.categoria}
                       </span>
                       <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '850', color: 'white' }}>
                         {item.nombre}
                       </h3>
-                      <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#94a3b8' }}>
-                        {lang === 'en' ? 'Point creator:' : 'Creador del punto:'} <span style={{ fontWeight: '700', color: '#cbd5e1' }}>{item.nombre_creador || 'Comunidad'}</span>
+                      <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#4A5568' }}>
+                        {lang === 'en' ? 'Point creator:' : 'Creador del punto:'} <span style={{ fontWeight: '700', color: '#4A5568' }}>{item.nombre_creador || 'Comunidad'}</span>
                       </p>
                     </div>
 
@@ -403,14 +403,14 @@ export default function AdminDashboard() {
                         onClick={() => handleAprobarReclamo(item.id, item.negocio_id)}
                         style={{
                           padding: '10px 18px',
-                          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                          background: 'linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)',
                           color: 'white',
                           border: 'none',
                           borderRadius: '12px',
                           fontWeight: '800',
                           fontSize: '12.5px',
                           cursor: 'pointer',
-                          boxShadow: '0 4px 12px rgba(16,185,129,0.2)'
+                          boxShadow: '0 4px 12px rgba(23, 170, 74,0.2)'
                         }}
                       >
                         ✅ {lang === 'en' ? 'Approve Claim' : 'Aprobar Reclamo'}
@@ -442,7 +442,7 @@ export default function AdminDashboard() {
                   {item.negocios && (
                     <div style={{
                       background: 'rgba(255, 255, 255, 0.02)',
-                      border: '1px solid rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(20, 109, 158, 0.05)',
                       borderRadius: '16px',
                       padding: '16px',
                       marginTop: '8px'
@@ -450,7 +450,7 @@ export default function AdminDashboard() {
                       <h4 style={{ margin: '0 0 10px', fontSize: '13.5px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
                         🏢 {lang === 'en' ? 'Claiming Business Info' : 'Información Comercial del Reclamante'}
                       </h4>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', fontSize: '13px', color: '#cbd5e1' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', fontSize: '13px', color: '#4A5568' }}>
                         <div>
                           <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'Owner Name:' : 'Nombre del Dueño:'}</strong> {item.negocios.perfiles?.nombre_completo || 'N/A'}</p>
                           <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'Business Type:' : 'Tipo de Negocio:'}</strong> {item.negocios.tipo}</p>
@@ -463,7 +463,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       {item.negocios.descripcion && (
-                        <p style={{ margin: '12px 0 0', fontSize: '13px', color: '#94a3b8', borderTop: '1px dashed rgba(255,255,255,0.06)', paddingTop: '10px' }}>
+                        <p style={{ margin: '12px 0 0', fontSize: '13px', color: '#4A5568', borderTop: '1px dashed rgba(20, 109, 158, 0.08)', paddingTop: '10px' }}>
                           <strong>{lang === 'en' ? 'Commercial Description:' : 'Descripción Comercial:'}</strong> {item.negocios.descripcion}
                         </p>
                       )}
@@ -475,10 +475,10 @@ export default function AdminDashboard() {
           )
         ) : (
           /* Lista de todos los puntos */
-          <div style={{ background: 'rgba(10, 15, 28, 0.4)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '24px', padding: '20px', overflowX: 'auto' }}>
+          <div style={{ background: 'rgba(10, 15, 28, 0.4)', border: '1px solid rgba(20, 109, 158, 0.10)', borderRadius: '24px', padding: '20px', overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13.5px' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)', color: '#94a3b8' }}>
+                <tr style={{ borderBottom: '1px solid rgba(20, 109, 158, 0.12)', color: '#4A5568' }}>
                   <th style={{ padding: '12px' }}>{lang === 'en' ? 'Name' : 'Nombre'}</th>
                   <th style={{ padding: '12px' }}>{lang === 'en' ? 'Category' : 'Categoría'}</th>
                   <th style={{ padding: '12px' }}>{lang === 'en' ? 'Creator' : 'Creador'}</th>
@@ -489,16 +489,16 @@ export default function AdminDashboard() {
               <tbody>
                 {todosLosPuntos.map((p) => {
                   const statusColors = {
-                    aprobado: '#10b981',
-                    en_verificacion: '#f59e0b',
-                    sin_reclamar: '#64748b',
+                    aprobado: '#17AA4A',
+                    en_verificacion: '#E6A800',
+                    sin_reclamar: '#9CA3AF',
                     rechazado: '#ef4444'
                   };
                   return (
-                    <tr key={p.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)', transition: 'background 0.2s' }}>
+                    <tr key={p.id} style={{ borderBottom: '1px solid rgba(20, 109, 158, 0.04)', transition: 'background 0.2s' }}>
                       <td style={{ padding: '14px 12px', fontWeight: '700' }}>{p.nombre}</td>
                       <td style={{ padding: '14px 12px' }}>{p.categoria}</td>
-                      <td style={{ padding: '14px 12px', color: '#94a3b8' }}>{p.nombre_creador || 'Comunidad'}</td>
+                      <td style={{ padding: '14px 12px', color: '#4A5568' }}>{p.nombre_creador || 'Comunidad'}</td>
                       <td style={{ padding: '14px 12px' }}>
                         <span style={{
                           fontSize: '11px',
@@ -512,7 +512,7 @@ export default function AdminDashboard() {
                           {p.estado}
                         </span>
                       </td>
-                      <td style={{ padding: '14px 12px', color: '#64748b' }}>
+                      <td style={{ padding: '14px 12px', color: '#9CA3AF' }}>
                         {new Date(p.created_at).toLocaleDateString()}
                       </td>
                     </tr>
@@ -550,14 +550,14 @@ export default function AdminDashboard() {
           animation: 'fadeIn 0.3s ease forwards'
         }}>
           <div style={{
-            background: 'linear-gradient(135deg, rgba(20, 27, 45, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)',
-            border: '1px solid rgba(212, 175, 55, 0.25)',
-            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%)',
+            border: '1px solid rgba(255, 215, 0, 0.25)',
+            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(20, 109, 158, 0.05)',
             borderRadius: '24px',
             width: '100%',
             maxWidth: '520px',
             padding: '32px',
-            color: 'white',
+            color: '#1A1A2E',
             display: 'flex',
             flexDirection: 'column',
             gap: '20px',
@@ -567,13 +567,13 @@ export default function AdminDashboard() {
               margin: 0,
               fontSize: '22px',
               fontWeight: '850',
-              color: '#D4AF37',
+              color: '#FFD700',
               letterSpacing: '0.04em',
               fontFamily: "'LC Mogi', var(--font-outfit), sans-serif"
             }}>
               {lang === 'en' ? 'Reject Business Claim' : 'Rechazar Reclamo de Negocio'}
             </h2>
-            <p style={{ margin: 0, fontSize: '13.5px', color: '#94a3b8', lineHeight: 1.5 }}>
+            <p style={{ margin: 0, fontSize: '13.5px', color: '#4A5568', lineHeight: 1.5 }}>
               {lang === 'en' 
                 ? `Specify why you are rejecting the claim for ${rejectionTarget.nombreNegocio}:`
                 : `Especifica por qué estás rechazando el reclamo para ${rejectionTarget.nombreNegocio}:`}
@@ -587,8 +587,8 @@ export default function AdminDashboard() {
                   alignItems: 'flex-start',
                   gap: '12px',
                   padding: '14px',
-                  background: rejectionType === 'observations' ? 'rgba(212, 175, 55, 0.08)' : 'rgba(255,255,255,0.02)',
-                  border: rejectionType === 'observations' ? '1px solid var(--atlan-gold)' : '1px solid rgba(255,255,255,0.06)',
+                  background: rejectionType === 'observations' ? 'rgba(255, 215, 0, 0.08)' : 'rgba(255,255,255,0.02)',
+                  border: rejectionType === 'observations' ? '1px solid var(--atlan-gold)' : '1px solid rgba(20, 109, 158, 0.08)',
                   borderRadius: '16px',
                   cursor: 'pointer',
                   transition: 'all 0.2s'
@@ -600,13 +600,13 @@ export default function AdminDashboard() {
                   name="rejectionType" 
                   checked={rejectionType === 'observations'}
                   onChange={() => {}}
-                  style={{ marginTop: '3px', accentColor: '#D4AF37' }}
+                  style={{ marginTop: '3px', accentColor: '#FFD700' }}
                 />
                 <div>
                   <div style={{ fontSize: '14px', fontWeight: '750', color: 'white' }}>
                     {lang === 'en' ? 'Reject with observations' : 'Rechazar con observaciones'}
                   </div>
-                  <div style={{ fontSize: '11.5px', color: '#94a3b8', marginTop: '2px', lineHeight: 1.4 }}>
+                  <div style={{ fontSize: '11.5px', color: '#4A5568', marginTop: '2px', lineHeight: 1.4 }}>
                     {lang === 'en' 
                       ? 'The owner remains linked to the point. They can see your feedback, correct the business details, and resubmit.'
                       : 'El dueño sigue vinculado al punto. Podrá ver tus observaciones, corregir los datos del negocio y volver a enviar.'}
@@ -621,7 +621,7 @@ export default function AdminDashboard() {
                   gap: '12px',
                   padding: '14px',
                   background: rejectionType === 'release' ? 'rgba(239, 68, 68, 0.08)' : 'rgba(255,255,255,0.02)',
-                  border: rejectionType === 'release' ? '1px solid #ef4444' : '1px solid rgba(255,255,255,0.06)',
+                  border: rejectionType === 'release' ? '1px solid #ef4444' : '1px solid rgba(20, 109, 158, 0.08)',
                   borderRadius: '16px',
                   cursor: 'pointer',
                   transition: 'all 0.2s'
@@ -639,7 +639,7 @@ export default function AdminDashboard() {
                   <div style={{ fontSize: '14px', fontWeight: '750', color: '#fca5a5' }}>
                     {lang === 'en' ? 'Release point (Fraud / Delete claim)' : 'Liberar punto (Fraude / Cancelar reclamo)'}
                   </div>
-                  <div style={{ fontSize: '11.5px', color: '#94a3b8', marginTop: '2px', lineHeight: 1.4 }}>
+                  <div style={{ fontSize: '11.5px', color: '#4A5568', marginTop: '2px', lineHeight: 1.4 }}>
                     {lang === 'en' 
                       ? 'Desassociates the point immediately, returning it to unclaimed status. The business is marked inactive.'
                       : 'Desvincula el punto de inmediato, devolviéndolo a estado "sin reclamar" en el mapa. El negocio queda inactivo.'}
@@ -650,7 +650,7 @@ export default function AdminDashboard() {
 
             {/* Input del motivo */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '12.5px', fontWeight: '750', color: '#cbd5e1' }}>
+              <label style={{ fontSize: '12.5px', fontWeight: '750', color: '#4A5568' }}>
                 {lang === 'en' ? 'Reason for Rejection:' : 'Motivo del Rechazo:'}
               </label>
               <textarea
@@ -661,17 +661,17 @@ export default function AdminDashboard() {
                 style={{
                   width: '100%',
                   background: 'rgba(10, 15, 28, 0.6)',
-                  border: '1.5px solid rgba(255,255,255,0.1)',
+                  border: '1.5px solid rgba(20, 109, 158, 0.12)',
                   borderRadius: '12px',
                   padding: '12px',
-                  color: 'white',
+                  color: '#1A1A2E',
                   fontSize: '13.5px',
                   outline: 'none',
                   resize: 'none',
                   transition: 'border-color 0.2s'
                 }}
-                onFocus={(e) => e.target.style.borderColor = rejectionType === 'release' ? '#ef4444' : '#D4AF37'}
-                onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+                onFocus={(e) => e.target.style.borderColor = rejectionType === 'release' ? '#ef4444' : '#FFD700'}
+                onBlur={(e) => e.target.style.borderColor = 'rgba(20, 109, 158, 0.12)'}
               />
             </div>
 
@@ -683,17 +683,17 @@ export default function AdminDashboard() {
                 style={{
                   flex: 1,
                   padding: '12px',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'rgba(20, 109, 158, 0.05)',
+                  border: '1px solid rgba(20, 109, 158, 0.12)',
                   borderRadius: '14px',
-                  color: 'white',
+                  color: '#1A1A2E',
                   fontSize: '13px',
                   fontWeight: '750',
                   cursor: 'pointer',
                   transition: 'background 0.2s'
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(20, 109, 158, 0.12)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(20, 109, 158, 0.05)'}
               >
                 {lang === 'en' ? 'Cancel' : 'Cancelar'}
               </button>
@@ -705,8 +705,8 @@ export default function AdminDashboard() {
                   padding: '12px',
                   background: rejectionType === 'release' 
                     ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' 
-                    : 'linear-gradient(135deg, #D4AF37 0%, #b89324 100%)',
-                  color: rejectionType === 'release' ? 'white' : '#0a0f1c',
+                    : 'linear-gradient(135deg, #FFD700 0%, #E6C200 100%)',
+                  color: rejectionType === 'release' ? 'white' : '#FFFFFF',
                   border: 'none',
                   borderRadius: '14px',
                   fontSize: '13px',
@@ -714,7 +714,7 @@ export default function AdminDashboard() {
                   cursor: 'pointer',
                   boxShadow: rejectionType === 'release' 
                     ? '0 4px 12px rgba(239,68,68,0.2)' 
-                    : '0 4px 12px rgba(212,175,55,0.2)'
+                    : '0 4px 12px rgba(255, 215, 0,0.2)'
                 }}
               >
                 {submittingRejection 
