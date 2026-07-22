@@ -403,21 +403,16 @@ function ChatContent() {
       position: "relative",
       overflow: "hidden"
     }}>
-      {/* Orbes de luz ambientales de fondo */}
+      {/* Fondo en 3 columnas con difuminado únicamente en las líneas de conexión */}
       <div style={{
-        position: "absolute", top: "-5%", right: "-5%", width: "650px", height: "650px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(255,215,0,0.40) 0%, rgba(255,215,0,0.12) 50%, transparent 70%)",
-        filter: "blur(40px)", pointerEvents: "none", zIndex: 0
-      }} />
-      <div style={{
-        position: "absolute", bottom: "-5%", left: "-5%", width: "550px", height: "550px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(20,109,158,0.32) 0%, rgba(20,109,158,0.08) 50%, transparent 70%)",
-        filter: "blur(40px)", pointerEvents: "none", zIndex: 0
-      }} />
-      <div style={{
-        position: "absolute", top: "35%", left: "50%", transform: "translateX(-50%)", width: "450px", height: "450px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(23,170,74,0.28) 0%, transparent 70%)",
-        filter: "blur(45px)", pointerEvents: "none", zIndex: 0
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "linear-gradient(to right, #146D9E 0%, #146D9E 28%, #17AA4A 38%, #17AA4A 62%, #FFD700 72%, #FFD700 100%)",
+        zIndex: 0,
+        pointerEvents: "none"
       }} />
 
       {/* Navbar */}

@@ -28,6 +28,36 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('pending'); // 'pending', 'all'
   const [todosLosPuntos, setTodosLosPuntos] = useState([]);
 
+  // Buscador y Paginación
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 8;
+
+  // Reiniciar página al cambiar tab o búsqueda
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchTerm]);
+
+  // Filtrado de items
+  const rawItems = activeTab === 'pending' ? reclamos : todosLosPuntos;
+  const filteredItems = rawItems.filter((item) => {
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      item.nombre?.toLowerCase().includes(term) ||
+      item.categoria?.toLowerCase().includes(term) ||
+      item.nombre_creador?.toLowerCase().includes(term) ||
+      item.descripcion?.toLowerCase().includes(term) ||
+      item.negocios?.nombre?.toLowerCase().includes(term)
+    );
+  });
+
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE) || 1;
+  const paginatedItems = filteredItems.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
   // Estados para modal de rechazo interactivo
   const [rejectionTarget, setRejectionTarget] = useState(null); // { puntoId, negocioId, nombreNegocio }
   const [rejectionType, setRejectionType] = useState('correction'); // 'correction' | 'release'
@@ -77,9 +107,15 @@ export default function AdminDashboard() {
     checkAdmin();
   }, [router]);
 
+  // Cargar datos cuando isAdmin cambia a true
+  useEffect(() => {
+    if (isAdmin) {
+      loadAdminData();
+    }
+  }, [isAdmin]);
+
   // Cargar reclamos y estadísticas
   const loadAdminData = async () => {
-    if (!isAdmin) return;
     setLoadingData(true);
 
     try {
@@ -310,21 +346,16 @@ export default function AdminDashboard() {
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* Orbes de luz ambientales de fondo */}
+      {/* Fondo diagonal fijo en 3 franjas de prueba: Azul -> Verde -> Amarillo */}
       <div style={{
-        position: "absolute", top: "-5%", right: "-5%", width: "650px", height: "650px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(255,215,0,0.40) 0%, rgba(255,215,0,0.12) 50%, transparent 70%)",
-        filter: "blur(40px)", pointerEvents: "none", zIndex: 0
-      }} />
-      <div style={{
-        position: "absolute", bottom: "-5%", left: "-5%", width: "550px", height: "550px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(20,109,158,0.32) 0%, rgba(20,109,158,0.08) 50%, transparent 70%)",
-        filter: "blur(40px)", pointerEvents: "none", zIndex: 0
-      }} />
-      <div style={{
-        position: "absolute", top: "35%", left: "50%", transform: "translateX(-50%)", width: "450px", height: "450px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(23,170,74,0.28) 0%, transparent 70%)",
-        filter: "blur(45px)", pointerEvents: "none", zIndex: 0
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "linear-gradient(135deg, #146D9E 0%, #146D9E 28%, #17AA4A 38%, #17AA4A 62%, #FFD700 72%, #FFD700 100%)",
+        zIndex: 0,
+        pointerEvents: "none"
       }} />
       
       {/* Navbar Global Unificada */}
@@ -366,7 +397,9 @@ export default function AdminDashboard() {
         margin: '0 auto 40px',
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '20px'
+        gap: '20px',
+        position: 'relative',
+        zIndex: 1
       }}>
         <div className="clay-stat-card">
           <p style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -394,186 +427,239 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto 24px', display: 'flex', gap: '12px' }}>
-        <button
-          onClick={() => setActiveTab('pending')}
-          className={`clay-tab ${activeTab === 'pending' ? 'clay-tab-active' : ''}`}
-        >
-          ⌛ {lang === 'en' ? 'Pending Claims' : 'Reclamos Pendientes'} ({reclamos.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('all')}
-          className={`clay-tab ${activeTab === 'all' ? 'clay-tab-active' : ''}`}
-        >
-          🌍 {lang === 'en' ? 'All Points' : 'Todos los Puntos'} ({todosLosPuntos.length})
-        </button>
+      {/* Tabs y Buscador */}
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto 24px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '16px',
+        position: 'relative',
+        zIndex: 1
+      }}>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button
+            onClick={() => setActiveTab('pending')}
+            className={`clay-tab ${activeTab === 'pending' ? 'clay-tab-active' : ''}`}
+          >
+            ⌛ {lang === 'en' ? 'Pending Claims' : 'Reclamos Pendientes'} ({reclamos.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('all')}
+            className={`clay-tab ${activeTab === 'all' ? 'clay-tab-active' : ''}`}
+          >
+            🌍 {lang === 'en' ? 'All Points' : 'Todos los Puntos'} ({todosLosPuntos.length})
+          </button>
+        </div>
+
+        {/* Buscador */}
+        <div style={{ position: 'relative', minWidth: '280px', flex: '1', maxWidth: '380px' }}>
+          <input
+            type="text"
+            placeholder={lang === 'en' ? '🔍 Search point, category...' : '🔍 Buscar punto por nombre, categoría...'}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '12px 18px',
+              borderRadius: '16px',
+              border: '1.5px solid rgba(20, 109, 158, 0.2)',
+              background: 'rgba(255, 255, 255, 0.95)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+              fontSize: '13.5px',
+              fontWeight: '600',
+              color: '#1A1A2E',
+              outline: 'none',
+            }}
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '14px',
+                color: '#94A3B8'
+              }}
+            >
+              ✖
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Contenido Principal */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
         {loadingData ? (
           <div style={{ padding: '60px 0', textAlign: 'center', color: '#4A5568' }}>
             {t('common.loading')}
           </div>
+        ) : filteredItems.length === 0 ? (
+          <div className="clay-card-static" style={{ padding: '60px 20px', textAlign: 'center', color: '#4A5568' }}>
+            {searchTerm
+              ? (lang === 'en' ? '🔍 No points match your search criteria.' : '🔍 No se encontraron puntos que coincidan con la búsqueda.')
+              : (lang === 'en' ? '🏖️ No items in this section.' : '🏖️ No hay registros en esta sección.')
+            }
+          </div>
         ) : activeTab === 'pending' ? (
-          reclamos.length === 0 ? (
-            <div className="clay-card-static" style={{ padding: '60px 20px', textAlign: 'center', color: '#4A5568' }}>
-              🏖️ {lang === 'en' ? 'No pending claims. All quiet on the front!' : 'No hay reclamos pendientes. ¡Todo en orden!'}
-            </div>
-          ) : (
-            <div style={{ display: 'grid', gap: '20px' }}>
-              {reclamos.map((item) => (
-                <div key={item.id} className="clay-card" style={{
-                  padding: '24px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '16px'
-                }}>
-                  {/* Fila superior */}
-                  <div className="admin-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '12px' }}>
-                    <div>
-                      <span style={{ fontSize: '11px', fontWeight: '800', background: 'rgba(255, 215, 0,0.15)', color: 'var(--atlan-gold)', padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase', display: 'inline-block', marginBottom: '6px' }}>
-                        {item.categoria}
-                      </span>
-                      <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '850', color: '#1A1A2E' }}>
-                        {item.nombre}
-                      </h3>
-                      <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#4A5568' }}>
-                        {lang === 'en' ? 'Point creator:' : 'Creador del punto:'} <span style={{ fontWeight: '700', color: '#4A5568' }}>{item.nombre_creador || 'Comunidad'}</span>
-                      </p>
-                    </div>
-
-                    {/* Botones de Acción */}
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                      <button
-                        onClick={() => handleAprobarReclamo(item.id, item.negocio_id)}
-                        className="clay-btn-green"
-                        style={{ padding: '10px 18px', fontSize: '12.5px' }}
-                      >
-                        ✅ {lang === 'en' ? 'Approve Claim' : 'Aprobar Reclamo'}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setRejectionTarget({ puntoId: item.id, negocioId: item.negocio_id, nombreNegocio: item.nombre });
-                          setRejectionType('observations');
-                          setRejectionReason('');
-                        }}
-                        style={{
-                          padding: '10px 18px',
-                          background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '12px',
-                          fontWeight: '800',
-                          fontSize: '12.5px',
-                          cursor: 'pointer',
-                          boxShadow: '0 4px 12px rgba(239,68,68,0.2)'
-                        }}
-                      >
-                        ❌ {lang === 'en' ? 'Reject' : 'Rechazar'}
-                      </button>
-                    </div>
+          <div style={{ display: 'grid', gap: '20px' }}>
+            {paginatedItems.map((item) => (
+              <div key={item.id} className="clay-card" style={{
+                padding: '24px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px'
+              }}>
+                {/* Fila superior */}
+                <div className="admin-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '12px' }}>
+                  <div>
+                    <span style={{ fontSize: '11px', fontWeight: '800', background: 'rgba(255, 215, 0,0.15)', color: 'var(--atlan-gold)', padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase', display: 'inline-block', marginBottom: '6px' }}>
+                      {item.categoria}
+                    </span>
+                    <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '850', color: '#1A1A2E' }}>
+                      {item.nombre}
+                    </h3>
+                    <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#4A5568' }}>
+                      {lang === 'en' ? 'Point creator:' : 'Creador del punto:'} <span style={{ fontWeight: '700', color: '#4A5568' }}>{item.nombre_creador || 'Comunidad'}</span>
+                    </p>
                   </div>
 
-                  {/* Detalles del Negocio comercial */}
-                  {item.negocios && (
-                    <div className="clay-card-static" style={{
-                      padding: '16px',
-                      marginTop: '8px'
-                    }}>
-                      <h4 style={{ margin: '0 0 10px', fontSize: '13.5px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
-                        🏢 {lang === 'en' ? 'Claiming Business Info' : 'Información Comercial del Reclamante'}
-                      </h4>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', fontSize: '13px', color: '#4A5568' }}>
-                        <div>
-                          <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'Owner Name:' : 'Nombre del Dueño:'}</strong> {item.negocios.perfiles?.nombre_completo || 'N/A'}</p>
-                          <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'Business Type:' : 'Tipo de Negocio:'}</strong> {item.negocios.tipo}</p>
-                          <p style={{ margin: '0' }}><strong>{lang === 'en' ? 'Price Range:' : 'Rango de Precios:'}</strong> {item.negocios.rango_precios || 'N/A'}</p>
-                        </div>
-                        <div>
-                          <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'Telephone:' : 'Teléfono:'}</strong> {item.negocios.telefono || 'N/A'}</p>
-                          <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'WhatsApp:' : 'WhatsApp:'}</strong> {item.negocios.whatsapp || 'N/A'}</p>
-                          <p style={{ margin: '0' }}><strong>{lang === 'en' ? 'Services:' : 'Servicios:'}</strong> {item.negocios.servicios ? Object.keys(item.negocios.servicios).filter(k => item.negocios.servicios[k]).join(', ') : 'N/A'}</p>
-                        </div>
+                  {/* Botones de Acción */}
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                      onClick={() => handleAprobarReclamo(item.id, item.negocio_id)}
+                      className="clay-btn-green"
+                      style={{ padding: '10px 18px', fontSize: '12.5px' }}
+                    >
+                      ✅ {lang === 'en' ? 'Approve Claim' : 'Aprobar Reclamo'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setRejectionTarget({ puntoId: item.id, negocioId: item.negocio_id, nombreNegocio: item.nombre });
+                        setRejectionType('observations');
+                        setRejectionReason('');
+                      }}
+                      style={{
+                        padding: '10px 18px',
+                        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '12px',
+                        fontWeight: '800',
+                        fontSize: '12.5px',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(239,68,68,0.2)'
+                      }}
+                    >
+                      ❌ {lang === 'en' ? 'Reject' : 'Rechazar'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Detalles del Negocio comercial */}
+                {item.negocios && (
+                  <div className="clay-card-static" style={{
+                    padding: '16px',
+                    marginTop: '8px'
+                  }}>
+                    <h4 style={{ margin: '0 0 10px', fontSize: '13.5px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
+                      🏢 {lang === 'en' ? 'Claiming Business Info' : 'Información Comercial del Reclamante'}
+                    </h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', fontSize: '13px', color: '#4A5568' }}>
+                      <div>
+                        <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'Owner Name:' : 'Nombre del Dueño:'}</strong> {item.negocios.perfiles?.nombre_completo || 'N/A'}</p>
+                        <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'Business Type:' : 'Tipo de Negocio:'}</strong> {item.negocios.tipo}</p>
+                        <p style={{ margin: '0' }}><strong>{lang === 'en' ? 'Price Range:' : 'Rango de Precios:'}</strong> {item.negocios.rango_precios || 'N/A'}</p>
                       </div>
-                      {item.negocios.descripcion && (
-                        <p style={{ margin: '12px 0 0', fontSize: '13px', color: '#4A5568', borderTop: '1px dashed rgba(20, 109, 158, 0.08)', paddingTop: '10px' }}>
-                          <strong>{lang === 'en' ? 'Commercial Description:' : 'Descripción Comercial:'}</strong> {item.negocios.descripcion}
-                        </p>
-                      )}
+                      <div>
+                        <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'Telephone:' : 'Teléfono:'}</strong> {item.negocios.telefono || 'N/A'}</p>
+                        <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'WhatsApp:' : 'WhatsApp:'}</strong> {item.negocios.whatsapp || 'N/A'}</p>
+                        <p style={{ margin: '0' }}><strong>{lang === 'en' ? 'Services:' : 'Servicios:'}</strong> {item.negocios.servicios ? Object.keys(item.negocios.servicios).filter(k => item.negocios.servicios[k]).join(', ') : 'N/A'}</p>
+                      </div>
+                    </div>
+                    {item.negocios.descripcion && (
+                      <p style={{ margin: '12px 0 0', fontSize: '13px', color: '#4A5568', borderTop: '1px dashed rgba(20, 109, 158, 0.08)', paddingTop: '10px' }}>
+                        <strong>{lang === 'en' ? 'Commercial Description:' : 'Descripción Comercial:'}</strong> {item.negocios.descripcion}
+                      </p>
+                    )}
 
-                      {/* Documentos y Verificación de Propiedad */}
-                      {item.negocios?.datos_verificacion && (
-                        <div style={{
-                          marginTop: '14px',
-                          padding: '16px',
-                          background: 'rgba(20, 109, 158, 0.04)',
-                          border: '1.5px solid rgba(20, 109, 158, 0.15)',
-                          borderRadius: '16px'
-                        }}>
-                          <h5 style={{ margin: '0 0 10px', fontSize: '13.5px', fontWeight: '850', color: '#146D9E', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            📋 Documentos de Verificación Presentados por el Solicitante
-                          </h5>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', fontSize: '13px', color: '#1A1A2E' }}>
-                            <p style={{ margin: 0 }}><strong>Propietario Solicitante:</strong> {item.negocios.datos_verificacion.solicitante_nombre || 'N/A'}</p>
-                            <p style={{ margin: 0 }}><strong>N° Cédula / ID / RUC:</strong> {item.negocios.datos_verificacion.solicitante_cedula || 'N/A'}</p>
-                            <p style={{ margin: 0 }}>
-                              <strong>Teléfono Contacto:</strong> {item.negocios.datos_verificacion.solicitante_telefono || 'N/A'}{' '}
-                              {item.negocios.datos_verificacion.solicitante_telefono && (
-                                <a
-                                  href={`https://wa.me/${item.negocios.datos_verificacion.solicitante_telefono.replace(/\D/g, '')}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  style={{ color: '#17AA4A', fontWeight: '800', textDecoration: 'none', marginLeft: '6px', fontSize: '12px' }}
-                                >
-                                  💬 WhatsApp
-                                </a>
-                              )}
-                            </p>
-                          </div>
-
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '12px' }}>
-                            {item.negocios.datos_verificacion.documento_cedula_url ? (
+                    {/* Documentos y Verificación de Propiedad */}
+                    {item.negocios?.datos_verificacion && (
+                      <div style={{
+                        marginTop: '14px',
+                        padding: '16px',
+                        background: 'rgba(20, 109, 158, 0.04)',
+                        border: '1.5px solid rgba(20, 109, 158, 0.15)',
+                        borderRadius: '16px'
+                      }}>
+                        <h5 style={{ margin: '0 0 10px', fontSize: '13.5px', fontWeight: '850', color: '#146D9E', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          📋 Documentos de Verificación Presentados por el Solicitante
+                        </h5>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', fontSize: '13px', color: '#1A1A2E' }}>
+                          <p style={{ margin: 0 }}><strong>Propietario Solicitante:</strong> {item.negocios.datos_verificacion.solicitante_nombre || 'N/A'}</p>
+                          <p style={{ margin: 0 }}><strong>N° Cédula / ID / RUC:</strong> {item.negocios.datos_verificacion.solicitante_cedula || 'N/A'}</p>
+                          <p style={{ margin: 0 }}>
+                            <strong>Teléfono Contacto:</strong> {item.negocios.datos_verificacion.solicitante_telefono || 'N/A'}{' '}
+                            {item.negocios.datos_verificacion.solicitante_telefono && (
                               <a
-                                href={item.negocios.datos_verificacion.documento_cedula_url}
+                                href={`https://wa.me/${item.negocios.datos_verificacion.solicitante_telefono.replace(/\D/g, '')}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="clay-btn-blue"
-                                style={{ padding: '6px 14px', fontSize: '12px', textDecoration: 'none' }}
+                                style={{ color: '#17AA4A', fontWeight: '800', textDecoration: 'none', marginLeft: '6px', fontSize: '12px' }}
                               >
-                                📄 Ver Cédula de Identidad (PDF/Imagen)
-                              </a>
-                            ) : (
-                              <span style={{ fontSize: '12px', color: '#ef4444', fontWeight: '700' }}>⚠️ Sin foto de cédula</span>
-                            )}
-
-                            {item.negocios.datos_verificacion.documento_propiedad_url && (
-                              <a
-                                href={item.negocios.datos_verificacion.documento_propiedad_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="clay-btn-gold"
-                                style={{ padding: '6px 14px', fontSize: '12px', textDecoration: 'none' }}
-                              >
-                                📄 Ver Comprobante de Propiedad / Licencia
+                                💬 WhatsApp
                               </a>
                             )}
-                          </div>
+                          </p>
+                        </div>
 
-                          {item.negocios.datos_verificacion.solicitud_notas && (
-                            <p style={{ margin: '10px 0 0', fontSize: '12.5px', color: '#4A5568', fontStyle: 'italic', borderTop: '1px dashed rgba(20,109,158,0.1)', paddingTop: '8px' }}>
-                              📝 <strong>Notas del Solicitante:</strong> "{item.negocios.datos_verificacion.solicitud_notas}"
-                            </p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '12px' }}>
+                          {item.negocios.datos_verificacion.documento_cedula_url ? (
+                            <a
+                              href={item.negocios.datos_verificacion.documento_cedula_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="clay-btn-blue"
+                              style={{ padding: '6px 14px', fontSize: '12px', textDecoration: 'none' }}
+                            >
+                              📄 Ver Cédula de Identidad (PDF/Imagen)
+                            </a>
+                          ) : (
+                            <span style={{ fontSize: '12px', color: '#ef4444', fontWeight: '700' }}>⚠️ Sin foto de cédula</span>
+                          )}
+
+                          {item.negocios.datos_verificacion.documento_propiedad_url && (
+                            <a
+                              href={item.negocios.datos_verificacion.documento_propiedad_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="clay-btn-gold"
+                              style={{ padding: '6px 14px', fontSize: '12px', textDecoration: 'none' }}
+                            >
+                              📄 Ver Comprobante de Propiedad / Licencia
+                            </a>
                           )}
                         </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )
+
+                        {item.negocios.datos_verificacion.solicitud_notas && (
+                          <p style={{ margin: '10px 0 0', fontSize: '12.5px', color: '#4A5568', fontStyle: 'italic', borderTop: '1px dashed rgba(20,109,158,0.1)', paddingTop: '8px' }}>
+                            📝 <strong>Notas del Solicitante:</strong> "{item.negocios.datos_verificacion.solicitud_notas}"
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         ) : (
           /* Lista de todos los puntos */
           <div className="clay-table-wrapper">
@@ -588,7 +674,7 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {todosLosPuntos.map((p) => {
+                {paginatedItems.map((p) => {
                   const statusColors = {
                     aprobado: '#17AA4A',
                     en_verificacion: '#E6A800',
@@ -621,6 +707,49 @@ export default function AdminDashboard() {
                 })}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Paginación */}
+        {totalPages > 1 && (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '16px',
+            marginTop: '28px'
+          }}>
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+              className="clay-btn-blue"
+              style={{
+                padding: '8px 16px',
+                fontSize: '13px',
+                opacity: currentPage === 1 ? 0.5 : 1,
+                cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
+              }}
+            >
+              ◀ {lang === 'en' ? 'Previous' : 'Anterior'}
+            </button>
+
+            <span style={{ fontSize: '13.5px', fontWeight: '800', color: '#1A1A2E', background: 'rgba(255, 255, 255, 0.95)', padding: '6px 16px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+              {lang === 'en' ? 'Page' : 'Página'} {currentPage} {lang === 'en' ? 'of' : 'de'} {totalPages}
+            </span>
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+              className="clay-btn-blue"
+              style={{
+                padding: '8px 16px',
+                fontSize: '13.5px',
+                opacity: currentPage === totalPages ? 0.5 : 1,
+                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {lang === 'en' ? 'Next' : 'Siguiente'} ▶
+            </button>
           </div>
         )}
       </div>
