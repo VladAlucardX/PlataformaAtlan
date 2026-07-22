@@ -256,8 +256,25 @@ export default function AdminDashboard() {
       color: '#1A1A2E',
       fontFamily: 'var(--font-outfit), sans-serif',
       padding: '40px 24px',
-      position: 'relative'
+      position: 'relative',
+      overflow: 'hidden'
     }}>
+      {/* Orbes de luz ambientales de fondo */}
+      <div style={{
+        position: "absolute", top: "-5%", right: "-5%", width: "650px", height: "650px", borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(255,215,0,0.40) 0%, rgba(255,215,0,0.12) 50%, transparent 70%)",
+        filter: "blur(40px)", pointerEvents: "none", zIndex: 0
+      }} />
+      <div style={{
+        position: "absolute", bottom: "-5%", left: "-5%", width: "550px", height: "550px", borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(20,109,158,0.32) 0%, rgba(20,109,158,0.08) 50%, transparent 70%)",
+        filter: "blur(40px)", pointerEvents: "none", zIndex: 0
+      }} />
+      <div style={{
+        position: "absolute", top: "35%", left: "50%", transform: "translateX(-50%)", width: "450px", height: "450px", borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(23,170,74,0.28) 0%, transparent 70%)",
+        filter: "blur(45px)", pointerEvents: "none", zIndex: 0
+      }} />
       {/* Cabecera */}
       <div className="atlan-navbar-header" style={{ width: '100%', padding: '16px 32px', margin: '-40px -24px 32px -24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
         {/* Logo Far Left */}
@@ -364,7 +381,7 @@ export default function AdminDashboard() {
                       <span style={{ fontSize: '11px', fontWeight: '800', background: 'rgba(255, 215, 0,0.15)', color: 'var(--atlan-gold)', padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase', display: 'inline-block', marginBottom: '6px' }}>
                         {item.categoria}
                       </span>
-                      <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '850', color: 'white' }}>
+                      <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '850', color: '#1A1A2E' }}>
                         {item.nombre}
                       </h3>
                       <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#4A5568' }}>

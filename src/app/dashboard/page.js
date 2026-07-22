@@ -672,7 +672,23 @@ export default function DashboardPage() {
   }
 
   return (
-    <div style={styles.container} className="dashboard-container">
+    <div style={{ ...styles.container, position: "relative", overflow: "hidden" }} className="dashboard-container">
+      {/* Orbes de luz ambientales de fondo */}
+      <div style={{
+        position: "absolute", top: "-5%", right: "-5%", width: "650px", height: "650px", borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(255,215,0,0.40) 0%, rgba(255,215,0,0.12) 50%, transparent 70%)",
+        filter: "blur(40px)", pointerEvents: "none", zIndex: 0
+      }} />
+      <div style={{
+        position: "absolute", bottom: "-5%", left: "-5%", width: "550px", height: "550px", borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(20,109,158,0.32) 0%, rgba(20,109,158,0.08) 50%, transparent 70%)",
+        filter: "blur(40px)", pointerEvents: "none", zIndex: 0
+      }} />
+      <div style={{
+        position: "absolute", top: "35%", left: "50%", transform: "translateX(-50%)", width: "450px", height: "450px", borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(23,170,74,0.28) 0%, transparent 70%)",
+        filter: "blur(45px)", pointerEvents: "none", zIndex: 0
+      }} />
       <Navbar activePage="dashboard" session={session} perfil={perfil} onLogout={handleLogout} />
 
       {/* CASO A: EL DUEÑO NO TIENE NEGOCIOS */}
@@ -1751,11 +1767,11 @@ const styles = {
     gap: "32px",
   },
   overviewHeader: {
-    background: "rgba(16, 22, 40, 0.4)",
+    background: "#FFFFFF",
     padding: "36px",
     borderRadius: "24px",
-    border: "1px solid rgba(20, 109, 158, 0.08)",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
+    border: "2px solid rgba(255, 255, 255, 0.95)",
+    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
   },
   overviewGrid: {
     display: "grid",
@@ -1763,8 +1779,8 @@ const styles = {
     gap: "24px",
   },
   dashboardCard: {
-    background: "rgba(16, 22, 40, 0.45)",
-    border: "1px solid rgba(20, 109, 158, 0.10)",
+    background: "#FFFFFF",
+    border: "2px solid rgba(255, 255, 255, 0.95)",
     borderRadius: "24px",
     padding: "28px",
     display: "flex",
@@ -1775,7 +1791,7 @@ const styles = {
     transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     position: "relative",
     overflow: "hidden",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
   },
   cardIcon: {
     fontSize: "32px",
@@ -1816,9 +1832,10 @@ const styles = {
 
   mainContent: {
     padding: "32px",
-    borderRadius: "20px",
-    background: "rgba(16, 22, 40, 0.45)",
-    border: "1px solid rgba(20, 109, 158, 0.08)",
+    borderRadius: "24px",
+    background: "#FFFFFF",
+    border: "2px solid rgba(255, 255, 255, 0.95)",
+    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 16px 36px -6px rgba(20, 109, 158, 0.10)",
     minHeight: "450px",
   },
   tabContent: {
@@ -1829,7 +1846,7 @@ const styles = {
   tabTitle: {
     fontSize: "20px",
     fontWeight: "800",
-    color: "var(--atlan-gold)",
+    color: "var(--atlan-gold-dark, #B8960E)",
     marginBottom: "16px",
     letterSpacing: "-0.01em",
   },
@@ -1851,10 +1868,10 @@ const styles = {
   input: {
     width: "100%",
     padding: "11px 14px",
-    background: "rgba(20, 109, 158, 0.03)",
-    border: "1px solid rgba(20, 109, 158, 0.10)",
-    borderRadius: "10px",
-    color: "#fff",
+    background: "#F4F6F9",
+    border: "1.5px solid rgba(20, 109, 158, 0.12)",
+    borderRadius: "12px",
+    color: "#1A1A2E",
     fontSize: "13.5px",
     outline: "none",
   },
@@ -1876,8 +1893,8 @@ const styles = {
     alignItems: "flex-start",
     gap: "12px",
     padding: "14px",
-    background: "rgba(255,255,255,0.02)",
-    border: "1px solid rgba(20, 109, 158, 0.05)",
+    background: "#F4F6F9",
+    border: "1px solid rgba(20, 109, 158, 0.10)",
     borderRadius: "12px",
     cursor: "pointer",
     transition: "background 0.2s",
