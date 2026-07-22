@@ -67,6 +67,7 @@ function ChatContent() {
 
   // Mobile: show chat view
   const [mobileShowChat, setMobileShowChat] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Image attachment in chat
   const [chatImageFile, setChatImageFile] = useState(null);
@@ -392,8 +393,6 @@ function ChatContent() {
   const filteredMutuals = mutualFollowers.filter(u =>
     !searchMutual || u.nombre_completo?.toLowerCase().includes(searchMutual.toLowerCase())
   );
-
-  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
