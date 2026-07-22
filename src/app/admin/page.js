@@ -76,8 +76,8 @@ export default function AdminDashboard() {
     setLoadingData(true);
 
     try {
-      // 1. Obtener puntos con estado = 'en_verificacion' (Reclamos pendientes)
-      const { data: puntosPendientes, error: errorPuntos } = await supabase
+      // 1. Cargar reclamos pendientes (puntos con estado 'en_verificacion')
+      let { data: puntosPendientes, error: errorPuntos } = await supabase
         .from('puntos')
         .select(`
           id,
@@ -97,15 +97,43 @@ export default function AdminDashboard() {
             rango_precios,
             servicios,
             datos_verificacion,
-            perfiles (
-              nombre_completo,
-              email
-            )
+            dueno_id
           )
         `)
         .eq('estado', 'en_verificacion');
 
-      if (errorPuntos) throw errorPuntos;
+      if (errorPuntos) {
+        console.warn('[Atlan Admin] Intentando consulta alternativa para reclamos:', errorPuntos);
+        const { data: rawPuntos } = await supabase
+          .from('puntos')
+          .select('*')
+          .eq('estado', 'en_verificacion');
+        puntosPendientes = rawPuntos || [];
+      }
+
+      // Enriquecer con datos de perfil si dueno_id está presente
+      if (puntosPendientes && puntosPendientes.length > 0) {
+        const duenoIds = puntosPendientes
+          .map(p => p.negocios?.dueno_id)
+          .filter(Boolean);
+
+        if (duenoIds.length > 0) {
+          const { data: perfilesData } = await supabase
+            .from('perfiles')
+            .select('id, nombre_completo, email')
+            .in('id', duenoIds);
+
+          if (perfilesData) {
+            const profileMap = new Map(perfilesData.map(p => [p.id, p]));
+            puntosPendientes.forEach(p => {
+              if (p.negocios && p.negocios.dueno_id) {
+                p.negocios.perfiles = profileMap.get(p.negocios.dueno_id) || null;
+              }
+            });
+          }
+        }
+      }
+
       setReclamos(puntosPendientes || []);
 
       // 2. Cargar todos los puntos para la segunda pestaña
