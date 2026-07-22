@@ -240,7 +240,7 @@ function CategoriesSection() {
 }
 
 // ── CTA SECTION ────────────────────────────────────────────────────────────
-function CTASection() {
+function CTASection({ session }) {
   const { t } = useTranslation();
 
   return (
@@ -283,7 +283,7 @@ function CTASection() {
           ))}
         </div>
 
-        <Link href="/registro" className="btn-primary" style={{ padding: "16px 40px", fontSize: "16px", marginTop: "24px" }}>
+        <Link href={session ? "/dashboard" : "/registro"} className="btn-primary" style={{ padding: "16px 40px", fontSize: "16px", marginTop: "24px" }}>
           {t("landing.cta.button")}
         </Link>
       </div>
@@ -429,7 +429,7 @@ export default function Home() {
         <HeroSection perfil={perfil} />
         <FeaturesSection />
         <CategoriesSection />
-        <CTASection />
+        <CTASection session={session} />
         <Footer />
       </div>
     </>
