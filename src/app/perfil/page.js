@@ -623,17 +623,21 @@ export default function PerfilPage() {
 
             {resenas.length === 0 ? (
               <div style={{
-                background: "rgba(255,255,255,0.01)",
-                border: "1px dashed rgba(20, 109, 158, 0.12)",
+                background: "#FFFFFF",
+                border: "1px dashed rgba(20, 109, 158, 0.2)",
+                boxShadow: "0 4px 16px -2px rgba(20, 109, 158, 0.06)",
                 borderRadius: "16px",
                 padding: "40px 20px",
                 textAlign: "center",
-                color: "#9CA3AF"
+                color: "#4A5568"
               }}>
                 <span style={{ fontSize: "32px", display: "block", marginBottom: "12px" }}>💬</span>
-                <p style={{ margin: 0, fontSize: "14px" }}>
+                <p style={{ margin: 0, fontSize: "14px", fontWeight: "600" }}>
                   {lang === "en" ? "You haven't posted any reviews yet." : "Aún no has publicado reseñas en los destinos."}
                 </p>
+                <Link href="/mapa" style={{ display: "inline-block", marginTop: "16px", fontSize: "13px", color: "#FFD700", fontWeight: "700" }}>
+                  {lang === "en" ? "Explore destinations and leave a review →" : "Explorar el mapa para calificar →"}
+                </Link>
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
@@ -641,8 +645,9 @@ export default function PerfilPage() {
                   const destinoNombre = rev.negocios?.nombre || rev.puntos?.nombre || (lang === "en" ? "Local Destination" : "Destino");
                   return (
                     <div key={rev.id} style={{
-                      background: "rgba(255,255,255,0.02)",
-                      border: "1px solid rgba(20, 109, 158, 0.05)",
+                      background: "#FFFFFF",
+                      border: "1px solid rgba(20, 109, 158, 0.12)",
+                      boxShadow: "0 4px 16px -2px rgba(20, 109, 158, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03)",
                       borderRadius: "16px",
                       padding: "16px 20px",
                       display: "flex",
@@ -652,7 +657,7 @@ export default function PerfilPage() {
                     }}>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                          <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: "#1A1A2E" }}>{destinoNombre}</h4>
+                          <h4 style={{ margin: 0, fontSize: "15px", fontWeight: "800", color: "#1A1A2E" }}>{destinoNombre}</h4>
                           <span style={{ fontSize: "13px", color: "#E6C200" }}>
                             {"★".repeat(rev.estrellas)}{"☆".repeat(5 - rev.estrellas)}
                           </span>
@@ -660,7 +665,7 @@ export default function PerfilPage() {
                         <p style={{ margin: 0, fontSize: "13px", color: "#4A5568", lineHeight: "1.5" }}>
                           {rev.comentario}
                         </p>
-                        <span style={{ display: "block", marginTop: "8px", fontSize: "11px", color: "#9CA3AF" }}>
+                        <span style={{ display: "block", marginTop: "8px", fontSize: "11px", color: "#718096" }}>
                           {new Date(rev.created_at).toLocaleDateString()}
                         </span>
                       </div>
