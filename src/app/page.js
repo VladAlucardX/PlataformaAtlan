@@ -489,12 +489,12 @@ const styles = {
   // ── Hero
   hero: {
     position: "relative",
-    minHeight: "100vh",
+    minHeight: "calc(100vh - 120px)",
     display: "flex",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "center",
     overflow: "hidden",
-    padding: "100px 24px 60px",
+    padding: "48px 24px 40px",
   },
   heroOrb1: {
     position: "absolute",
@@ -535,6 +535,7 @@ const styles = {
     textAlign: "center",
     maxWidth: "780px",
     zIndex: 2,
+    marginTop: "12px",
   },
   heroTitle: {
     fontSize: "clamp(36px, 6vw, 68px)",
