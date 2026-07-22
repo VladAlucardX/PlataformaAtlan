@@ -49,10 +49,6 @@ function HeroSection({ perfil }) {
 
         <h1 style={styles.heroTitle}>
           {t("landing.hero.title")}
-          <br />
-          <span style={styles.heroTitleAccent}>
-            {t("landing.hero.accent")}
-          </span>
         </h1>
 
         <p style={styles.heroSubtitle}>
