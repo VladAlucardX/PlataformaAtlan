@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { uploadMedia } from "@/lib/storage";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
+import NotificationDropdown from "@/components/ui/NotificationDropdown";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    CHAT — Mensajería entre seguidores mutuos

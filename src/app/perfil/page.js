@@ -6,12 +6,14 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
+import NotificationDropdown from "@/components/ui/NotificationDropdown";
 import { uploadMedia } from "@/lib/storage";
 
 export default function PerfilPage() {
   const { t, lang } = useTranslation();
   const router = useRouter();
 
+  const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
   const [perfil, setPerfil] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -50,13 +52,14 @@ export default function PerfilPage() {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        if (sessionError || !session) {
+        const { data: { session: activeSession }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError || !activeSession) {
           router.push("/login");
           return;
         }
 
-        const currentUser = session.user;
+        setSession(activeSession);
+        const currentUser = activeSession.user;
         setUser(currentUser);
 
         // Cargar perfil
