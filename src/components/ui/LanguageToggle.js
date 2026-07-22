@@ -56,7 +56,7 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
     );
   }
 
-  // Default: pill variant
+  // Default: pill variant (Claymorphism 3D style)
   return (
     <button
       onClick={toggle}
@@ -66,21 +66,26 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: '6px',
-        padding: '6px 6px 6px 14px',
-        background: 'var(--atlan-glass)',
-        border: '1px solid var(--atlan-glass-border)',
+        gap: '8px',
+        padding: '6px 8px 6px 14px',
+        background: '#FFFFFF',
+        border: '2px solid rgba(255, 255, 255, 0.9)',
         borderRadius: 'var(--atlan-radius-full)',
         color: 'var(--atlan-text-primary)',
         fontSize: '13px',
-        fontWeight: '600',
+        fontWeight: '700',
         cursor: 'pointer',
-        transition: 'all var(--atlan-transition-normal)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        boxShadow: `
+          inset 2px 2px 5px rgba(255, 255, 255, 1),
+          inset -3px -3px 6px rgba(20, 109, 158, 0.08),
+          0 8px 20px -4px rgba(20, 109, 158, 0.12)
+        `,
         letterSpacing: '0.02em',
         fontFamily: 'var(--font-outfit), system-ui, sans-serif',
       }}
+      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)'}
+      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0) scale(1)'}
     >
       <span style={{ fontSize: '15px' }}>🌐</span>
       <span
@@ -88,15 +93,19 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          width: '32px',
+          width: '34px',
           height: '28px',
           borderRadius: 'var(--atlan-radius-full)',
-          background: 'var(--atlan-gold)',
+          background: 'linear-gradient(145deg, #FFE033 0%, #FFD700 70%, #E6C200 100%)',
           color: '#1A1A2E',
           fontWeight: '800',
           fontSize: '11px',
           letterSpacing: '0.05em',
-          transition: 'all var(--atlan-transition-normal)',
+          boxShadow: `
+            inset 2px 2px 4px rgba(255, 255, 255, 0.7),
+            inset -2px -2px 4px rgba(180, 140, 0, 0.35),
+            0 4px 10px rgba(255, 215, 0, 0.3)
+          `,
         }}
       >
         {lang.toUpperCase()}
