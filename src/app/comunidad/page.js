@@ -52,11 +52,11 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
             👥 {t("social.community")}
           </Link>
           {session && <Link href="/chat" className="nav-pill-link">💬 {t("chat.title")}</Link>}
+          <LanguageToggle variant="pill" />
+          {session && <NotificationDropdown session={session} />}
         </div>
 
         <div style={navStyles.navRight} className="hide-mobile">
-          {session && <NotificationDropdown session={session} />}
-          <LanguageToggle variant="pill" />
           {session ? (
             <>
               <Link href={perfil?.rol === "dueno" || perfil?.rol === "admin" ? "/dashboard" : "/perfil"} className="nav-pill-link">
@@ -65,7 +65,7 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
                 ) : (
                   perfil?.rol === "dueno" || perfil?.rol === "admin" ? "💼" : "👤"
                 )}
-                <span>{perfil?.nombre_completo?.split(" ")[0] || "Mi perfil"}</span>
+                <span>{perfil?.nombre_completo || perfil?.email?.split("@")[0] || "Mi perfil"}</span>
               </Link>
               <button onClick={onLogout} style={navStyles.logoutBtn} title={t("nav.logout")}>
                 🚪 <span>{t("nav.logout") || "Cerrar Sesión"}</span>

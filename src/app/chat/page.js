@@ -411,11 +411,22 @@ function ChatContent() {
             <Link href="/chat" className="nav-pill-link active">
               💬 {t("chat.title")} {totalUnread > 0 && <span style={{ background: "#ef4444", color: "white", borderRadius: "10px", padding: "1px 6px", fontSize: "10px", fontWeight: "800", marginLeft: "4px" }}>{totalUnread}</span>}
             </Link>
+            <LanguageToggle variant="pill" />
+            {session && <NotificationDropdown session={session} />}
           </div>
 
           {/* Far Right Actions */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <LanguageToggle variant="pill" />
+            {session && (
+              <Link href={perfil?.rol === "dueno" || perfil?.rol === "admin" ? "/dashboard" : "/perfil"} className="nav-pill-link">
+                {perfil?.avatar_url ? (
+                  <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
+                ) : (
+                  perfil?.rol === "dueno" || perfil?.rol === "admin" ? "💼" : "👤"
+                )}
+                <span>{perfil?.nombre_completo || perfil?.email?.split("@")[0] || (lang === "en" ? "My Profile" : "Mi Perfil")}</span>
+              </Link>
+            )}
             <button
               onClick={handleLogout}
               style={{

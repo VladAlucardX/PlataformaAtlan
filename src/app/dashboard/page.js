@@ -681,14 +681,18 @@ export default function DashboardPage() {
           <Link href="/" className="nav-pill-link">🏠 {lang === "en" ? "Home" : "Inicio"}</Link>
           <Link href="/mapa" className="nav-pill-link">🗺️ {lang === "en" ? "Map" : "Mapa"}</Link>
           <Link href="/comunidad" className="nav-pill-link">👥 {lang === "en" ? "Community" : "Comunidad"}</Link>
-          <Link href="/dashboard" className="nav-pill-link active">
-            💼 {lang === "en" ? "Owner Panel" : "Panel Propietario"}
-          </Link>
+          <LanguageToggle variant="pill" />
+          {session && <NotificationDropdown session={session} />}
         </div>
 
         {/* Far Right Actions */}
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <LanguageToggle variant="pill" />
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <Link href="/dashboard" className="nav-pill-link active">
+            {perfil?.avatar_url ? (
+              <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
+            ) : "💼"}
+            <span>{perfil?.nombre_completo || perfil?.email?.split("@")[0] || (lang === "en" ? "Owner Panel" : "Panel Propietario")}</span>
+          </Link>
           <button onClick={handleLogout} style={styles.logoutBtn}>
             🚪 <span>{lang === "en" ? "Logout" : "Cerrar Sesión"}</span>
           </button>

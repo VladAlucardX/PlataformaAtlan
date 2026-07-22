@@ -259,21 +259,28 @@ export default function AdminDashboard() {
       position: 'relative'
     }}>
       {/* Cabecera */}
-      <div className="admin-header" style={{ maxWidth: '1200px', margin: '0 auto 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(20, 109, 158, 0.12)', paddingBottom: '24px' }}>
+      <div className="admin-header" style={{ width: '100%', padding: '0 32px 24px', margin: '0 0 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(20, 109, 158, 0.12)', position: 'relative' }}>
+        {/* Logo Far Left */}
         <div>
           <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '850', color: '#FFD700' }}>
-            <span className="logoText" style={{ color: '#FFD700' }}>atlan</span> ADMIN PANEL
+            <span className="logoText" style={{ color: '#FFD700' }}>atlan</span> ADMIN
           </h1>
-          <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#4A5568' }}>
-            {lang === 'en' ? 'Verify business claims and community contributions' : 'Verifica los reclamos de negocios y contribuciones de la comunidad'}
-          </p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+
+        {/* Center Nav Pills */}
+        <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', gap: '10px' }} className="hide-mobile">
           <Link href="/" className="nav-pill-link">🏠 {lang === 'en' ? 'Home' : 'Inicio'}</Link>
           <Link href="/mapa" className="nav-pill-link">🗺️ {lang === 'en' ? 'Map' : 'Mapa'}</Link>
           <Link href="/comunidad" className="nav-pill-link">👥 {lang === 'en' ? 'Community' : 'Comunidad'}</Link>
-          <Link href="/admin" className="nav-pill-link active">⚡ Admin</Link>
           <LanguageToggle variant="pill" />
+        </div>
+
+        {/* Far Right Actions */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Link href="/admin" className="nav-pill-link active">⚡ Admin</Link>
+          <button onClick={() => router.push('/mapa')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: '#ef4444', borderRadius: '9999px', fontSize: '13px', fontWeight: '750', cursor: 'pointer' }}>
+            🚪 <span>{lang === 'en' ? 'Exit' : 'Salir'}</span>
+          </button>
         </div>
       </div>
 

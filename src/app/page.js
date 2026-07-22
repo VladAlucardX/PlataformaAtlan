@@ -50,13 +50,12 @@ function Navbar({ session, perfil, handleLogout }) {
               💬 {t("chat.title")}
             </Link>
           )}
+          <LanguageToggle variant="pill" />
+          {session && <NotificationDropdown session={session} />}
         </div>
 
         {/* Right Actions at far right */}
         <div style={styles.navRightActions} className="hide-mobile">
-          <LanguageToggle variant="pill" />
-          {session && <NotificationDropdown session={session} />}
-
           {session ? (
             <>
               {perfil?.rol === "dueno" || perfil?.rol === "admin" ? (
@@ -64,14 +63,14 @@ function Navbar({ session, perfil, handleLogout }) {
                   {perfil?.avatar_url ? (
                     <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
                   ) : "💼"}
-                  <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.dashboard")}</span>
+                  <span>{perfil?.nombre_completo || perfil?.email?.split("@")[0] || t("nav.dashboard")}</span>
                 </Link>
               ) : (
                 <Link href="/perfil" className="nav-pill-link">
                   {perfil?.avatar_url ? (
                     <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
                   ) : "👤"}
-                  <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.myReservations")}</span>
+                  <span>{perfil?.nombre_completo || perfil?.email?.split("@")[0] || t("nav.myReservations")}</span>
                 </Link>
               )}
               <button onClick={handleLogout} style={styles.logoutBtn}>
