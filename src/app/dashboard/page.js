@@ -305,37 +305,50 @@ export default function DashboardPage() {
 
     setIsResubmitting(true);
     try {
+      const targetNegocioId = negocio.id;
+
       // 1. Liberar cualquier punto en la base de datos asociado a este negocio
-      const { error: errorPunto } = await supabase
+      await supabase
         .from("puntos")
         .update({ 
           negocio_id: null,
           estado: "sin_reclamar" 
         })
-        .eq("negocio_id", negocio.id);
+        .eq("negocio_id", targetNegocioId);
 
-      if (errorPunto) {
-        console.warn("Error al desvincular punto:", errorPunto);
-      }
+      // 2. Limpiar tablas asociadas para evitar conflictos de claves foráneas
+      await supabase.from("menu_items").delete().eq("negocio_id", targetNegocioId);
+      await supabase.from("reservas").delete().eq("negocio_id", targetNegocioId);
 
-      // 2. Eliminar el negocio
+      // 3. Eliminar el negocio
       const { error: errorNegocio } = await supabase
         .from("negocios")
         .delete()
-        .eq("id", negocio.id);
+        .eq("id", targetNegocioId);
 
       if (errorNegocio) {
-        // Fallback: desvincular dueno_id y desactivar negocio si existen restricciones FK
+        console.warn("Desvinculando dueno_id de negocio:", errorNegocio);
         await supabase
           .from("negocios")
           .update({ dueno_id: null, activo: false })
-          .eq("id", negocio.id);
+          .eq("id", targetNegocioId);
       }
 
-      showToast(lang === "en" ? "Claim canceled successfully." : "¡Solicitud de reclamo cancelada con éxito!", "success");
+      // 4. Limpiar estado local de inmediato para cambiar la vista inmediatamente a CASO A
       setNegocio(null);
       setPuntoAsociado(null);
-      await loadNegocioData(user.id);
+      setMisNegocios((prev) => prev.filter((n) => n.id !== targetNegocioId));
+
+      showToast(lang === "en" ? "Claim canceled successfully." : "¡Solicitud de reclamo cancelada con éxito!", "success");
+
+      // 5. Cargar puntos libres de nuevo para la lista de reclamos
+      const { data: puntosLibres } = await supabase
+        .from("puntos")
+        .select("*")
+        .eq("estado", "sin_reclamar")
+        .is("negocio_id", null);
+      setPuntosDisponibles(puntosLibres || []);
+
     } catch (err) {
       console.error("Error canceling claim:", err);
       showToast(lang === "en" ? "Error canceling claim." : "Error al cancelar el reclamo.", "error");
