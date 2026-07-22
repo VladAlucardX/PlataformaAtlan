@@ -110,7 +110,7 @@ export default function RegisterPage() {
         <LanguageToggle variant="pill" />
       </header>
 
-      <div style={styles.card} className="glass-card animate-fade-in-up">
+      <div style={styles.card} className="clay-card animate-fade-in-up">
         <h2 style={styles.title}>{t("auth.registerTitle")}</h2>
         <p style={styles.subtitle}>{t("auth.registerSubtitle")}</p>
 
@@ -125,12 +125,9 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setRol("turista")}
-                style={{
-                  ...styles.roleBtn,
-                  ...(rol === "turista" ? styles.roleBtnActiveTurista : {}),
-                }}
+                className={`clay-role-btn ${rol === "turista" ? "active-turista" : ""}`}
               >
-                <span style={{ fontSize: "18px" }}>🧳</span>
+                <span style={{ fontSize: "22px" }}>🧳</span>
                 <span style={{ fontWeight: "750" }}>
                   {lang === "en" ? "Tourist" : "Turista"}
                 </span>
@@ -138,12 +135,9 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setRol("dueno")}
-                style={{
-                  ...styles.roleBtn,
-                  ...(rol === "dueno" ? styles.roleBtnActiveDueno : {}),
-                }}
+                className={`clay-role-btn ${rol === "dueno" ? "active-dueno" : ""}`}
               >
-                <span style={{ fontSize: "18px" }}>🏢</span>
+                <span style={{ fontSize: "22px" }}>🏢</span>
                 <span style={{ fontWeight: "750" }}>
                   {lang === "en" ? "Business Owner" : "Propietario"}
                 </span>
@@ -159,6 +153,7 @@ export default function RegisterPage() {
               placeholder={lang === "en" ? "John Doe" : "Juan Pérez"}
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
+              className="clay-input"
               style={styles.input}
               disabled={loading}
             />
@@ -172,6 +167,7 @@ export default function RegisterPage() {
               placeholder="correo@ejemplo.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="clay-input"
               style={styles.input}
               disabled={loading}
             />
@@ -185,6 +181,7 @@ export default function RegisterPage() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="clay-input"
               style={styles.input}
               disabled={loading}
             />
@@ -198,12 +195,13 @@ export default function RegisterPage() {
               placeholder="••••••••"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              className="clay-input"
               style={styles.input}
               disabled={loading}
             />
           </div>
 
-          <button type="submit" style={styles.submitBtn} disabled={loading}>
+          <button type="submit" className="clay-btn-green" style={{ width: '100%', marginTop: '10px' }} disabled={loading}>
             {loading ? t("common.loading") : t("auth.registerButton")}
           </button>
         </form>
@@ -381,14 +379,7 @@ const styles = {
   },
   input: {
     width: "100%",
-    padding: "12px 16px",
-    background: "rgba(20, 109, 158, 0.04)",
-    border: "1px solid rgba(20, 109, 158, 0.12)",
-    borderRadius: "12px",
-    color: "#1A1A2E",
-    fontSize: "14px",
-    outline: "none",
-    transition: "all 0.2s",
+    boxSizing: "border-box",
   },
   submitBtn: {
     marginTop: "10px",

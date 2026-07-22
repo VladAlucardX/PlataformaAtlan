@@ -248,12 +248,10 @@ export default function NotificationDropdown({ session }) {
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div style={{
+        <div className="clay-dropdown animate-fade-in-up" style={{
           position: "absolute", right: 0, top: "40px", zIndex: 150,
-          width: "320px", background: "var(--atlan-bg-card)",
-          border: "1px solid rgba(20, 109, 158, 0.12)", borderRadius: "14px",
-          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.12)", overflow: "hidden"
-        }} className="animate-fade-in-up">
+          width: "320px"
+        }}>
           
           {/* Header del Dropdown */}
           <div style={{

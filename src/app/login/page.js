@@ -99,7 +99,7 @@ export default function LoginPage() {
       </header>
 
       {/* Tarjeta de Login Glassmorphism */}
-      <div style={styles.card} className="glass-card animate-fade-in-up">
+      <div style={styles.card} className="clay-card animate-fade-in-up">
         <h2 style={styles.title}>{t("auth.loginTitle")}</h2>
         <p style={styles.subtitle}>{t("auth.loginSubtitle")}</p>
 
@@ -118,6 +118,7 @@ export default function LoginPage() {
               placeholder="correo@ejemplo.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="clay-input"
               style={styles.input}
               disabled={loading}
             />
@@ -136,12 +137,13 @@ export default function LoginPage() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="clay-input"
               style={styles.input}
               disabled={loading}
             />
           </div>
 
-          <button type="submit" style={styles.submitBtn} disabled={loading}>
+          <button type="submit" className="clay-btn-gold" style={{ width: '100%', marginTop: '10px' }} disabled={loading}>
             {loading ? t("common.loading") : t("auth.loginButton")}
           </button>
         </form>
@@ -155,7 +157,8 @@ export default function LoginPage() {
           onClick={async () => {
             alert("Acceso rápido con Google (Demo)");
           }}
-          style={styles.googleBtn}
+          className="clay-tab"
+          style={{ width: '100%', justifyContent: 'center' }}
           disabled={loading}
         >
           <svg style={{ width: "18px", height: "18px" }} viewBox="0 0 24 24" fill="currentColor">
@@ -304,14 +307,7 @@ const styles = {
   },
   input: {
     width: "100%",
-    padding: "12px 16px",
-    background: "rgba(20, 109, 158, 0.04)",
-    border: "1px solid rgba(20, 109, 158, 0.12)",
-    borderRadius: "12px",
-    color: "#1A1A2E",
-    fontSize: "14px",
-    outline: "none",
-    transition: "all 0.2s",
+    boxSizing: "border-box",
   },
   submitBtn: {
     marginTop: "10px",

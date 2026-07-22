@@ -296,7 +296,7 @@ export default function AdminDashboard() {
         gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
         gap: '20px'
       }}>
-        <div style={{ background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)', border: '1px solid rgba(20, 109, 158, 0.08)', padding: '24px', borderRadius: '20px' }}>
+        <div className="clay-stat-card">
           <p style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             ⌛ {lang === 'en' ? 'Claims in Verification' : 'Reclamos en Verificación'}
           </p>
@@ -304,7 +304,7 @@ export default function AdminDashboard() {
             {stats.pendientes}
           </h2>
         </div>
-        <div style={{ background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)', border: '1px solid rgba(20, 109, 158, 0.08)', padding: '24px', borderRadius: '20px' }}>
+        <div className="clay-stat-card">
           <p style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             ✅ {lang === 'en' ? 'Approved Pointers' : 'Puntos Aprobados'}
           </p>
@@ -312,7 +312,7 @@ export default function AdminDashboard() {
             {stats.aprobados}
           </h2>
         </div>
-        <div style={{ background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(10px)', border: '1px solid rgba(20, 109, 158, 0.08)', padding: '24px', borderRadius: '20px' }}>
+        <div className="clay-stat-card">
           <p style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             🌍 {lang === 'en' ? 'Total Pointers' : 'Total de Puntos'}
           </p>
@@ -326,33 +326,13 @@ export default function AdminDashboard() {
       <div style={{ maxWidth: '1200px', margin: '0 auto 24px', display: 'flex', gap: '12px' }}>
         <button
           onClick={() => setActiveTab('pending')}
-          style={{
-            padding: '10px 20px',
-            background: activeTab === 'pending' ? 'linear-gradient(135deg, #FFD700 0%, #E6C200 100%)' : 'rgba(20, 109, 158, 0.03)',
-            color: activeTab === 'pending' ? '#FFFFFF' : 'white',
-            border: 'none',
-            borderRadius: '12px',
-            fontWeight: '800',
-            fontSize: '13px',
-            cursor: 'pointer',
-            transition: 'all 0.2s'
-          }}
+          className={`clay-tab ${activeTab === 'pending' ? 'clay-tab-active' : ''}`}
         >
           ⌛ {lang === 'en' ? 'Pending Claims' : 'Reclamos Pendientes'} ({reclamos.length})
         </button>
         <button
           onClick={() => setActiveTab('all')}
-          style={{
-            padding: '10px 20px',
-            background: activeTab === 'all' ? 'linear-gradient(135deg, #FFD700 0%, #E6C200 100%)' : 'rgba(20, 109, 158, 0.03)',
-            color: activeTab === 'all' ? '#FFFFFF' : 'white',
-            border: 'none',
-            borderRadius: '12px',
-            fontWeight: '800',
-            fontSize: '13px',
-            cursor: 'pointer',
-            transition: 'all 0.2s'
-          }}
+          className={`clay-tab ${activeTab === 'all' ? 'clay-tab-active' : ''}`}
         >
           🌍 {lang === 'en' ? 'All Points' : 'Todos los Puntos'} ({todosLosPuntos.length})
         </button>
@@ -366,17 +346,13 @@ export default function AdminDashboard() {
           </div>
         ) : activeTab === 'pending' ? (
           reclamos.length === 0 ? (
-            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(20, 109, 158, 0.04)', padding: '60px 20px', borderRadius: '24px', textAlign: 'center', color: '#4A5568' }}>
+            <div className="clay-card-static" style={{ padding: '60px 20px', textAlign: 'center', color: '#4A5568' }}>
               🏖️ {lang === 'en' ? 'No pending claims. All quiet on the front!' : 'No hay reclamos pendientes. ¡Todo en orden!'}
             </div>
           ) : (
             <div style={{ display: 'grid', gap: '20px' }}>
               {reclamos.map((item) => (
-                <div key={item.id} style={{
-                  background: 'rgba(20, 27, 45, 0.5)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(20, 109, 158, 0.10)',
-                  borderRadius: '24px',
+                <div key={item.id} className="clay-card" style={{
                   padding: '24px',
                   display: 'flex',
                   flexDirection: 'column',
@@ -400,17 +376,8 @@ export default function AdminDashboard() {
                     <div style={{ display: 'flex', gap: '10px' }}>
                       <button
                         onClick={() => handleAprobarReclamo(item.id, item.negocio_id)}
-                        style={{
-                          padding: '10px 18px',
-                          background: 'linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '12px',
-                          fontWeight: '800',
-                          fontSize: '12.5px',
-                          cursor: 'pointer',
-                          boxShadow: '0 4px 12px rgba(23, 170, 74,0.2)'
-                        }}
+                        className="clay-btn-green"
+                        style={{ padding: '10px 18px', fontSize: '12.5px' }}
                       >
                         ✅ {lang === 'en' ? 'Approve Claim' : 'Aprobar Reclamo'}
                       </button>
@@ -439,10 +406,7 @@ export default function AdminDashboard() {
 
                   {/* Detalles del Negocio comercial */}
                   {item.negocios && (
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.02)',
-                      border: '1px solid rgba(20, 109, 158, 0.05)',
-                      borderRadius: '16px',
+                    <div className="clay-card-static" style={{
                       padding: '16px',
                       marginTop: '8px'
                     }}>
@@ -474,7 +438,7 @@ export default function AdminDashboard() {
           )
         ) : (
           /* Lista de todos los puntos */
-          <div style={{ background: 'rgba(10, 15, 28, 0.4)', border: '1px solid rgba(20, 109, 158, 0.10)', borderRadius: '24px', padding: '20px', overflowX: 'auto' }}>
+          <div className="clay-table-wrapper">
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13.5px' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(20, 109, 158, 0.12)', color: '#4A5568' }}>
@@ -536,32 +500,8 @@ export default function AdminDashboard() {
 
       {/* Modal interactivo de Rechazo */}
       {rejectionTarget && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(5, 10, 20, 0.75)',
-          backdropFilter: 'blur(8px)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 9999,
-          padding: '20px',
-          animation: 'fadeIn 0.3s ease forwards'
-        }}>
-          <div style={{
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%)',
-            border: '1px solid rgba(255, 215, 0, 0.25)',
-            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(20, 109, 158, 0.05)',
-            borderRadius: '24px',
-            width: '100%',
-            maxWidth: '520px',
-            padding: '32px',
-            color: '#1A1A2E',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-            animation: 'scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
-          }}>
+        <div className="clay-modal-overlay">
+          <div className="clay-modal" style={{ maxWidth: '520px' }}>
             <h2 style={{
               margin: 0,
               fontSize: '22px',

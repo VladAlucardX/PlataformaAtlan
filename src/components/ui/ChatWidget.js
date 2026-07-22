@@ -328,10 +328,14 @@ export default function ChatWidget({ session, perfil, lang }) {
                     return (
                       <div key={msg.id} style={{ display: "flex", justifyContent: isMe ? "flex-end" : "flex-start", marginBottom: "6px" }}>
                         <div style={{
-                          maxWidth: "80%", padding: "8px 12px", borderRadius: isMe ? "14px 14px 4px 14px" : "14px 14px 14px 4px",
-                          background: isMe ? "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)" : "rgba(20, 109, 158, 0.08)",
-                          color: isMe ? "#FFFFFF" : "var(--atlan-text-primary)",
+                          maxWidth: "80%", padding: "8px 14px", borderRadius: isMe ? "18px 18px 5px 18px" : "18px 18px 18px 5px",
+                          background: isMe ? "linear-gradient(145deg, #FFE033 0%, #FFD700 60%, #E6C200 100%)" : "#F4F6F9",
+                          color: isMe ? "#1A1A2E" : "var(--atlan-text-primary)",
                           fontSize: "13px", lineHeight: "1.4", wordBreak: "break-word",
+                          boxShadow: isMe
+                            ? "inset 2px 2px 4px rgba(255,255,255,0.6), inset -2px -2px 4px rgba(180,140,0,0.2), 0 4px 10px -2px rgba(255,215,0,0.25)"
+                            : "inset 1px 1px 3px rgba(255,255,255,0.9), inset -1px -1px 3px rgba(20,109,158,0.04), 0 2px 6px -2px rgba(20,109,158,0.06)",
+                          border: isMe ? "1.5px solid rgba(255,255,255,0.5)" : "1.5px solid rgba(255,255,255,0.85)",
                         }}>
                           {msg.imagen_url && (
                             <img src={msg.imagen_url} alt="" style={{ maxWidth: "100%", borderRadius: "8px", marginBottom: msg.contenido ? "6px" : 0, display: "block" }} />
@@ -474,10 +478,11 @@ const styles = {
     flexShrink: 0,
   },
   textInput: {
-    flex: 1, padding: "9px 14px", background: "rgba(20, 109, 158, 0.04)",
-    border: "1px solid rgba(20, 109, 158, 0.10)", borderRadius: "20px",
-    color: "white", fontSize: "13px", outline: "none",
+    flex: 1, padding: "9px 14px", background: "#F4F6F9",
+    border: "1.5px solid rgba(20, 109, 158, 0.12)", borderRadius: "20px",
+    color: "var(--atlan-text-primary, #1A1A2E)", fontSize: "13px", outline: "none",
     fontFamily: "var(--font-outfit), system-ui, sans-serif",
+    transition: "all 0.2s",
   },
   sendBtn: {
     background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none",

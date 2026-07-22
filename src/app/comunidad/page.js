@@ -1228,12 +1228,12 @@ const pageStyles = {
 const cardStyles = {
   card: {
     background: "#FFFFFF",
-    border: "1px solid rgba(20, 109, 158, 0.12)",
-    boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04)",
-    borderRadius: "16px",
-    padding: "20px",
-    marginBottom: "16px",
-    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+    border: "2px solid rgba(255, 255, 255, 0.95)",
+    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 16px 36px -6px rgba(20, 109, 158, 0.10), 0 4px 12px rgba(0, 0, 0, 0.03)",
+    borderRadius: "24px",
+    padding: "24px",
+    marginBottom: "20px",
+    transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
   },
   publicidadCard: {
     background: "radial-gradient(circle at top right, rgba(23, 170, 74, 0.08) 0%, #FFFFFF 70%)",
@@ -1310,14 +1310,16 @@ const cardStyles = {
     display: "flex", gap: "10px", marginBottom: "12px", alignItems: "flex-start",
   },
   commentBubble: {
-    background: "rgba(20,109,158,0.04)", padding: "8px 14px", borderRadius: "0 14px 14px 14px",
+    background: "#F4F6F9", padding: "8px 14px", borderRadius: "0 14px 14px 14px",
+    boxShadow: "inset 1px 1px 3px rgba(255, 255, 255, 0.8), inset -1px -1px 3px rgba(20, 109, 158, 0.04)",
+    border: "1px solid rgba(255, 255, 255, 0.9)",
   },
   commentInput: {
     display: "flex", alignItems: "center", gap: "10px", marginTop: "12px",
   },
   commentTextField: {
-    flex: 1, padding: "10px 16px", background: "rgba(20,109,158,0.04)",
-    border: "1px solid rgba(20,109,158,0.10)", borderRadius: "20px",
+    flex: 1, padding: "10px 16px", background: "#F4F6F9",
+    border: "1.5px solid rgba(20,109,158,0.12)", borderRadius: "20px",
     color: "#1A1A2E", fontSize: "13px", outline: "none",
   },
   sendBtn: {
@@ -1330,22 +1332,22 @@ const cardStyles = {
 
 const sidebarStyles = {
   profileCard: {
-    background: "#FFFFFF", border: "1px solid rgba(20, 109, 158, 0.12)",
-    boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.08)",
-    borderRadius: "16px", overflow: "hidden",
+    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
+    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
+    borderRadius: "24px", overflow: "hidden",
   },
   profileBanner: {
     height: "60px", background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
   },
   loginCard: {
-    background: "#FFFFFF", border: "1px solid rgba(20, 109, 158, 0.12)",
-    boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.08)",
-    borderRadius: "16px", padding: "24px", textAlign: "center",
+    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
+    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
+    borderRadius: "24px", padding: "24px", textAlign: "center",
   },
   sectionCard: {
-    background: "#FFFFFF", border: "1px solid rgba(20, 109, 158, 0.12)",
-    boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.08)",
-    borderRadius: "16px", padding: "16px",
+    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
+    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
+    borderRadius: "24px", padding: "20px",
   },
   sectionTitle: {
     margin: "0 0 14px", fontSize: "15px", fontWeight: "800",
@@ -1371,14 +1373,14 @@ const sidebarStyles = {
 const modalStyles = {
   overlay: {
     position: "fixed", inset: 0, zIndex: 200,
-    background: "rgba(0, 0, 0, 0.12)", backdropFilter: "blur(8px)",
+    background: "rgba(5, 10, 20, 0.55)", backdropFilter: "blur(12px)",
     display: "flex", alignItems: "center", justifyContent: "center", padding: "24px",
   },
   modal: {
     width: "100%", maxWidth: "480px", maxHeight: "90vh", overflowY: "auto",
-    background: "#FFFFFF", border: "1px solid rgba(20,109,158,0.12)",
-    borderRadius: "20px", padding: "28px", position: "relative",
-    boxShadow: "0 24px 48px rgba(0,0,0,0.12)",
+    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
+    borderRadius: "28px", padding: "32px", position: "relative",
+    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 24px 56px -8px rgba(20, 109, 158, 0.16)",
   },
   closeBtn: {
     position: "absolute", top: "16px", right: "16px", background: "rgba(20,109,158,0.06)",
@@ -1390,11 +1392,12 @@ const modalStyles = {
 
 const postFormStyles = {
   textarea: {
-    width: "100%", padding: "14px", background: "rgba(20, 109, 158, 0.04)",
-    border: "1px solid rgba(20,109,158,0.10)", borderRadius: "14px",
+    width: "100%", padding: "14px 18px", background: "#F4F6F9",
+    border: "1.5px solid rgba(20,109,158,0.12)", borderRadius: "18px",
     color: "var(--atlan-text-primary)", fontSize: "15px", lineHeight: "1.5",
     outline: "none", resize: "vertical", minHeight: "100px",
     fontFamily: "var(--font-outfit), system-ui, sans-serif",
+    boxShadow: "inset 2px 2px 4px rgba(20, 109, 158, 0.04), inset -1px -1px 3px rgba(255, 255, 255, 0.8)",
   },
   removeImgBtn: {
     position: "absolute", top: "8px", right: "8px", background: "rgba(0,0,0,0.6)",

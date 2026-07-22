@@ -7,7 +7,7 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
    
    El video se reproduce automáticamente a pantalla completa.
    Cuando termina (o tras un timeout de seguridad), hace un fade-out
-   elegante para revelar el contenido de la página.
+   para revelar el contenido de la página.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function VideoIntro({ onComplete }) {

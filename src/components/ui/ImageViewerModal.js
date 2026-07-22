@@ -289,9 +289,10 @@ const styles = {
   },
   container: {
     width: "100%", maxWidth: "1100px", maxHeight: "90vh",
-    background: "var(--atlan-bg-card)", border: "1px solid rgba(20, 109, 158, 0.12)",
-    borderRadius: "20px", overflow: "hidden", position: "relative",
-    boxShadow: "0 32px 64px rgba(0,0,0,0.6)",
+    background: "#FFFFFF",
+    border: "2px solid rgba(255, 255, 255, 0.95)",
+    borderRadius: "28px", overflow: "hidden", position: "relative",
+    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 32px 64px rgba(0,0,0,0.4)",
   },
   closeBtn: {
     position: "absolute", top: "12px", right: "12px", zIndex: 10,
@@ -316,7 +317,7 @@ const styles = {
   commentSection: {
     flex: "0 0 380px", display: "flex", flexDirection: "column",
     borderLeft: "1px solid rgba(20, 109, 158, 0.08)",
-    background: "var(--atlan-bg-card)",
+    background: "#FFFFFF",
     overflow: "hidden",
   },
   postHeader: {
@@ -349,7 +350,9 @@ const styles = {
     display: "flex", gap: "8px", marginBottom: "10px", alignItems: "flex-start",
   },
   commentBubble: {
-    background: "rgba(20, 109, 158, 0.04)", padding: "7px 12px", borderRadius: "0 12px 12px 12px",
+    background: "#F4F6F9", padding: "8px 14px", borderRadius: "0 14px 14px 14px",
+    boxShadow: "inset 1px 1px 3px rgba(255, 255, 255, 0.8), inset -1px -1px 3px rgba(20, 109, 158, 0.04)",
+    border: "1px solid rgba(255, 255, 255, 0.9)",
   },
   commentInputArea: {
     display: "flex", alignItems: "center", gap: "8px",
@@ -357,9 +360,10 @@ const styles = {
     flexShrink: 0,
   },
   commentInput: {
-    flex: 1, padding: "9px 14px", background: "rgba(20, 109, 158, 0.04)",
-    border: "1px solid rgba(20, 109, 158, 0.10)", borderRadius: "20px",
-    color: "white", fontSize: "13px", outline: "none",
+    flex: 1, padding: "9px 14px", background: "#F4F6F9",
+    border: "1.5px solid rgba(20, 109, 158, 0.12)", borderRadius: "20px",
+    color: "var(--atlan-text-primary, #1A1A2E)", fontSize: "13px", outline: "none",
+    transition: "all 0.2s",
   },
   sendBtn: {
     background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none",

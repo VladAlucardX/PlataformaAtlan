@@ -184,8 +184,8 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
   };
 
   return (
-    <div style={styles.overlay} onClick={onClose}>
-      <div style={styles.modal} onClick={(e) => e.stopPropagation()} className="animate-fade-in-up">
+    <div className="clay-modal-overlay" onClick={onClose}>
+      <div className="clay-modal animate-fade-in-up" style={{ maxWidth: '460px', maxHeight: '80vh', padding: 0, display: 'flex', flexDirection: 'column' }} onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div style={styles.header}>
           <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
@@ -239,11 +239,7 @@ const styles = {
     display: "flex", alignItems: "center", justifyContent: "center", padding: "24px",
   },
   modal: {
-    width: "100%", maxWidth: "460px", maxHeight: "80vh",
-    background: "var(--atlan-bg-card)", border: "1px solid rgba(20, 109, 158, 0.12)",
-    borderRadius: "20px", overflow: "hidden",
-    boxShadow: "0 24px 48px rgba(0, 0, 0, 0.12)",
-    display: "flex", flexDirection: "column",
+    /* styles now applied via className clay-modal */
   },
   header: {
     display: "flex", justifyContent: "space-between", alignItems: "center",

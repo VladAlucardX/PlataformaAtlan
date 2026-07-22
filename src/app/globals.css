@@ -700,6 +700,394 @@ a:hover {
   box-shadow: 0 0 0 3px var(--atlan-gold-glow);
 }
 
+/* ── CLAYMORPHISM: MODALES ────────────────────────────────────────────────── */
+.clay-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 10, 20, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+  animation: fadeIn 0.25s ease forwards;
+}
+
+.clay-modal {
+  background: #FFFFFF;
+  border-radius: 28px;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 4px 4px 10px rgba(255, 255, 255, 1),
+    inset -6px -6px 14px rgba(20, 109, 158, 0.08),
+    0 24px 56px -8px rgba(20, 109, 158, 0.16),
+    0 8px 20px rgba(0, 0, 0, 0.05);
+  padding: 32px;
+  width: 100%;
+  max-width: 520px;
+  position: relative;
+  overflow: hidden;
+  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.clay-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #FFD700 0%, #146D9E 50%, #17AA4A 100%);
+  opacity: 0.85;
+  z-index: 2;
+}
+
+/* ── CLAYMORPHISM: TARJETAS DE ESTADÍSTICAS ─────────────────────────────── */
+.clay-stat-card {
+  background: #FFFFFF;
+  border-radius: 22px;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 3px 3px 8px rgba(255, 255, 255, 1),
+    inset -4px -4px 10px rgba(20, 109, 158, 0.06),
+    0 12px 28px -4px rgba(20, 109, 158, 0.10),
+    0 3px 8px rgba(0, 0, 0, 0.03);
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.clay-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #FFD700 0%, #146D9E 100%);
+  opacity: 0.7;
+}
+
+.clay-stat-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow:
+    inset 3px 3px 8px rgba(255, 255, 255, 1),
+    inset -4px -4px 10px rgba(255, 215, 0, 0.12),
+    0 18px 36px -4px rgba(20, 109, 158, 0.14),
+    0 6px 14px rgba(255, 215, 0, 0.08);
+}
+
+/* ── CLAYMORPHISM: TABS / PESTAÑAS ───────────────────────────────────────── */
+.clay-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  background: #F4F6F9;
+  color: var(--atlan-text-secondary);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--atlan-radius-full);
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow:
+    inset 2px 2px 5px rgba(255, 255, 255, 0.9),
+    inset -3px -3px 6px rgba(20, 109, 158, 0.06),
+    0 4px 10px -2px rgba(20, 109, 158, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.clay-tab:hover {
+  transform: translateY(-2px);
+  background: #EEF2F7;
+  box-shadow:
+    inset 2px 2px 5px rgba(255, 255, 255, 0.9),
+    inset -3px -3px 6px rgba(20, 109, 158, 0.08),
+    0 6px 14px -2px rgba(20, 109, 158, 0.10);
+}
+
+.clay-tab-active {
+  background: linear-gradient(145deg, #FFE033 0%, #FFD700 60%, #E6C200 100%);
+  color: #1A1A2E;
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 3px 3px 6px rgba(255, 255, 255, 0.7),
+    inset -4px -4px 8px rgba(180, 140, 0, 0.3),
+    0 8px 20px -4px rgba(255, 215, 0, 0.40);
+}
+
+.clay-tab-active:hover {
+  transform: translateY(-2px);
+}
+
+/* ── CLAYMORPHISM: PANEL LATERAL / SIDEBAR ───────────────────────────────── */
+.clay-sidebar {
+  background: #FFFFFF;
+  border-radius: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 4px 4px 10px rgba(255, 255, 255, 1),
+    inset -6px -6px 14px rgba(20, 109, 158, 0.06),
+    0 14px 32px -6px rgba(20, 109, 158, 0.10),
+    0 4px 10px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+/* ── CLAYMORPHISM: BURBUJAS DE CHAT ──────────────────────────────────────── */
+.clay-bubble-sent {
+  background: linear-gradient(145deg, #1C92D2 0%, #146D9E 100%);
+  color: #FFFFFF;
+  border-radius: 20px 20px 6px 20px;
+  padding: 10px 16px;
+  box-shadow:
+    inset 2px 2px 5px rgba(255, 255, 255, 0.25),
+    inset -3px -3px 6px rgba(10, 50, 80, 0.25),
+    0 6px 14px -3px rgba(20, 109, 158, 0.30);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  max-width: 75%;
+  word-wrap: break-word;
+}
+
+.clay-bubble-received {
+  background: #F4F6F9;
+  color: var(--atlan-text-primary);
+  border-radius: 20px 20px 20px 6px;
+  padding: 10px 16px;
+  box-shadow:
+    inset 2px 2px 5px rgba(255, 255, 255, 1),
+    inset -3px -3px 6px rgba(20, 109, 158, 0.05),
+    0 4px 10px -3px rgba(20, 109, 158, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  max-width: 75%;
+  word-wrap: break-word;
+}
+
+/* ── CLAYMORPHISM: DROPDOWN PANELS ───────────────────────────────────────── */
+.clay-dropdown {
+  background: #FFFFFF;
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 3px 3px 8px rgba(255, 255, 255, 1),
+    inset -4px -4px 10px rgba(20, 109, 158, 0.06),
+    0 20px 48px -8px rgba(20, 109, 158, 0.18),
+    0 6px 16px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  position: relative;
+}
+
+.clay-dropdown::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #FFD700 0%, #146D9E 50%, #17AA4A 100%);
+  opacity: 0.7;
+}
+
+/* ── CLAYMORPHISM: SELECTOR DE ROL ───────────────────────────────────────── */
+.clay-role-btn {
+  flex: 1;
+  padding: 16px 12px;
+  background: #F4F6F9;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 18px;
+  color: var(--atlan-text-secondary);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow:
+    inset 2px 2px 5px rgba(255, 255, 255, 0.9),
+    inset -3px -3px 6px rgba(20, 109, 158, 0.05),
+    0 4px 10px -2px rgba(20, 109, 158, 0.06);
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.clay-role-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 2px 2px 5px rgba(255, 255, 255, 0.9),
+    inset -3px -3px 6px rgba(20, 109, 158, 0.08),
+    0 8px 16px -2px rgba(20, 109, 158, 0.10);
+}
+
+.clay-role-btn.active-turista {
+  background: linear-gradient(145deg, #E8FFF0 0%, #D1FAE5 100%);
+  border-color: #17AA4A;
+  color: #17AA4A;
+  box-shadow:
+    inset 3px 3px 6px rgba(255, 255, 255, 0.7),
+    inset -4px -4px 8px rgba(15, 90, 38, 0.12),
+    0 8px 20px -4px rgba(23, 170, 74, 0.25);
+}
+
+.clay-role-btn.active-dueno {
+  background: linear-gradient(145deg, #FFFDF0 0%, #FEF9C3 100%);
+  border-color: #FFD700;
+  color: #B8960E;
+  box-shadow:
+    inset 3px 3px 6px rgba(255, 255, 255, 0.7),
+    inset -4px -4px 8px rgba(180, 140, 0, 0.12),
+    0 8px 20px -4px rgba(255, 215, 0, 0.25);
+}
+
+/* ── CLAYMORPHISM: ITEM DE LISTA INTERACTIVO ─────────────────────────────── */
+.clay-list-item {
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.clay-list-item:hover {
+  background: #F4F6F9;
+  box-shadow:
+    inset 2px 2px 4px rgba(255, 255, 255, 0.8),
+    inset -2px -2px 4px rgba(20, 109, 158, 0.04);
+}
+
+/* ── CLAYMORPHISM: BOTÓN FLOTANTE CIRCULAR ───────────────────────────────── */
+.clay-fab {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #FFE033 0%, #FFD700 60%, #E6C200 100%);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  color: #1A1A2E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow:
+    inset 3px 3px 6px rgba(255, 255, 255, 0.7),
+    inset -4px -4px 8px rgba(180, 140, 0, 0.35),
+    0 12px 24px -4px rgba(255, 215, 0, 0.45),
+    0 4px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.clay-fab:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow:
+    inset 4px 4px 8px rgba(255, 255, 255, 0.8),
+    inset -5px -5px 10px rgba(180, 140, 0, 0.4),
+    0 16px 32px -4px rgba(255, 215, 0, 0.55),
+    0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.clay-fab:active {
+  transform: translateY(2px) scale(0.95);
+  box-shadow:
+    inset 2px 2px 4px rgba(0, 0, 0, 0.2),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.4),
+    0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+/* ── CLAYMORPHISM: TABLA ENVOLVENTE ──────────────────────────────────────── */
+.clay-table-wrapper {
+  background: #FFFFFF;
+  border-radius: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 3px 3px 8px rgba(255, 255, 255, 1),
+    inset -4px -4px 10px rgba(20, 109, 158, 0.05),
+    0 12px 28px -6px rgba(20, 109, 158, 0.10),
+    0 3px 8px rgba(0, 0, 0, 0.03);
+  padding: 20px;
+  overflow-x: auto;
+}
+
+/* ── CLAYMORPHISM: TEXTAREA ──────────────────────────────────────────────── */
+.clay-textarea {
+  width: 100%;
+  background: #F4F6F9;
+  color: var(--atlan-text-primary);
+  border: 1.5px solid rgba(20, 109, 158, 0.12);
+  border-radius: 16px;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  resize: none;
+  transition: all var(--atlan-transition-fast);
+  box-shadow:
+    inset 2px 2px 4px rgba(20, 109, 158, 0.04),
+    inset -1px -1px 3px rgba(255, 255, 255, 0.8);
+}
+
+.clay-textarea:focus {
+  border-color: var(--atlan-gold);
+  box-shadow: 0 0 0 3px var(--atlan-gold-glow);
+}
+
+.clay-input:focus {
+  border-color: var(--atlan-gold);
+  box-shadow: 0 0 0 3px var(--atlan-gold-glow);
+}
+
+.clay-input::placeholder,
+.clay-textarea::placeholder {
+  color: var(--atlan-text-muted);
+}
+
+/* ── CLAYMORPHISM: BADGE 3D ──────────────────────────────────────────────── */
+.clay-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 14px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: var(--atlan-radius-full);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 1px 1px 3px rgba(255, 255, 255, 0.6),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.06),
+    0 3px 8px -2px rgba(0, 0, 0, 0.08);
+}
+
+.clay-badge-gold {
+  background: linear-gradient(145deg, #FFF4CC 0%, #FFE88A 100%);
+  color: #8B6914;
+}
+
+.clay-badge-green {
+  background: linear-gradient(145deg, #D1FAE5 0%, #A7F3D0 100%);
+  color: #065F46;
+}
+
+.clay-badge-blue {
+  background: linear-gradient(145deg, #DBEAFE 0%, #BFDBFE 100%);
+  color: #1E40AF;
+}
+
+.clay-badge-red {
+  background: linear-gradient(145deg, #FEE2E2 0%, #FECACA 100%);
+  color: #991B1B;
+}
+
+.clay-badge-gray {
+  background: linear-gradient(145deg, #F3F4F6 0%, #E5E7EB 100%);
+  color: #374151;
+}
+
 /* ── BADGES ───────────────────────────────────────────────────────────────── */
 .badge {
   display: inline-flex;

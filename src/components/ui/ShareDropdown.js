@@ -276,9 +276,10 @@ const styles = {
   dropdown: {
     position: "absolute", bottom: "100%", left: "50%", transform: "translateX(-50%)",
     marginBottom: "8px", zIndex: 60,
-    background: "var(--atlan-bg-elevated)", border: "1px solid rgba(20, 109, 158, 0.12)",
-    borderRadius: "14px", padding: "6px", minWidth: "200px",
-    boxShadow: "0 12px 32px rgba(0, 0, 0, 0.12)",
+    background: "#FFFFFF",
+    border: "2px solid rgba(255, 255, 255, 0.95)",
+    borderRadius: "20px", padding: "6px", minWidth: "200px",
+    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.06), 0 20px 48px -8px rgba(20, 109, 158, 0.18), 0 6px 16px rgba(0, 0, 0, 0.04)",
   },
   dropdownItem: {
     display: "flex", alignItems: "center", gap: "10px", width: "100%", padding: "10px 14px",

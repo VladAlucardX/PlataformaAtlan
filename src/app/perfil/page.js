@@ -261,13 +261,9 @@ export default function PerfilPage() {
         
         {/* SIDEBAR DE USUARIO */}
         <div>
-          <div style={{
-            background: "#FFFFFF",
-            border: "1px solid rgba(20, 109, 158, 0.12)",
-            borderRadius: "24px",
+          <div className="clay-sidebar" style={{
             padding: "24px",
             textAlign: "center",
-            boxShadow: "0 10px 30px -4px rgba(20, 109, 158, 0.08), 0 2px 6px rgba(0, 0, 0, 0.03)",
             position: "sticky",
             top: "100px"
           }}>
@@ -336,43 +332,18 @@ export default function PerfilPage() {
               {user?.email}
             </p>
 
-            <div style={{
-              display: "inline-block",
-              background: "rgba(255, 215, 0, 0.1)",
-              border: "1px solid rgba(255, 215, 0, 0.2)",
-              color: "#FFD700",
-              fontSize: "11px",
-              fontWeight: "800",
-              padding: "4px 12px",
-              borderRadius: "20px",
-              textTransform: "uppercase",
-              letterSpacing: "1px",
-              marginBottom: "24px"
-            }}>
+            <span className="clay-badge clay-badge-gold" style={{ marginBottom: '24px' }}>
               ✨ {perfil?.rol === "dueno" ? (lang === "en" ? "Business Owner" : "Dueño de Negocio") : (lang === "en" ? "Registered Tourist" : "Turista Registrado")}
-            </div>
+            </span>
 
             {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
-              <Link href="/dashboard" style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "8px",
-                width: "100%",
-                padding: "12px",
-                background: "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)",
-                color: "#1A1A2E",
-                borderRadius: "12px",
-                fontWeight: "800",
-                fontSize: "13.5px",
-                textDecoration: "none",
-                marginBottom: "16px",
-                boxShadow: "0 4px 12px rgba(255, 215, 0, 0.2)",
-                transition: "transform 0.2s"
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
-              onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
-              >
+              <Link href="/dashboard" className="clay-btn-gold" style={{
+                width: '100%',
+                justifyContent: 'center',
+                marginBottom: '16px',
+                textDecoration: 'none',
+                fontSize: '13.5px'
+              }}>
                 🛠️ {lang === "en" ? "Manage Business" : "Gestionar mi Negocio"}
               </Link>
             )}
@@ -392,11 +363,7 @@ export default function PerfilPage() {
             </h2>
 
             {reservas.length === 0 ? (
-              <div style={{
-                background: "#FFFFFF",
-                border: "1px dashed rgba(20, 109, 158, 0.2)",
-                boxShadow: "0 4px 16px -2px rgba(20, 109, 158, 0.06)",
-                borderRadius: "16px",
+              <div className="clay-card-static" style={{
                 padding: "40px 20px",
                 textAlign: "center",
                 color: "#9CA3AF"
@@ -431,11 +398,7 @@ export default function PerfilPage() {
                   }[res.estado_reserva] || { bg: "rgba(20, 109, 158, 0.05)", text: "white", border: "rgba(20, 109, 158, 0.12)" };
 
                   return (
-                    <div key={res.id} style={{
-                      background: "#FFFFFF",
-                      border: "1px solid rgba(20, 109, 158, 0.12)",
-                      boxShadow: "0 4px 16px -2px rgba(20, 109, 158, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03)",
-                      borderRadius: "16px",
+                    <div key={res.id} className="clay-card-static" style={{
                       padding: "16px 20px",
                       display: "flex",
                       justifyContent: "space-between",
@@ -514,11 +477,7 @@ export default function PerfilPage() {
             </h2>
 
             {favoritos.length === 0 ? (
-              <div style={{
-                background: "#FFFFFF",
-                border: "1px dashed rgba(20, 109, 158, 0.2)",
-                boxShadow: "0 4px 16px -2px rgba(20, 109, 158, 0.06)",
-                borderRadius: "16px",
+              <div className="clay-card-static" style={{
                 padding: "40px 20px",
                 textAlign: "center",
                 color: "#9CA3AF"
@@ -538,11 +497,7 @@ export default function PerfilPage() {
                   if (!punto) return null;
                   
                   return (
-                    <div key={fav.id} style={{
-                      background: "#FFFFFF",
-                      border: "1px solid rgba(20, 109, 158, 0.12)",
-                      boxShadow: "0 4px 16px -2px rgba(20, 109, 158, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03)",
-                      borderRadius: "16px",
+                    <div key={fav.id} className="clay-card-static" style={{
                       padding: "16px 20px",
                       display: "flex",
                       justifyContent: "space-between",
@@ -617,11 +572,7 @@ export default function PerfilPage() {
             </h2>
 
             {resenas.length === 0 ? (
-              <div style={{
-                background: "#FFFFFF",
-                border: "1px dashed rgba(20, 109, 158, 0.2)",
-                boxShadow: "0 4px 16px -2px rgba(20, 109, 158, 0.06)",
-                borderRadius: "16px",
+              <div className="clay-card-static" style={{
                 padding: "40px 20px",
                 textAlign: "center",
                 color: "#4A5568"
@@ -639,11 +590,7 @@ export default function PerfilPage() {
                 {resenas.map((rev) => {
                   const destinoNombre = rev.negocios?.nombre || rev.puntos?.nombre || (lang === "en" ? "Local Destination" : "Destino");
                   return (
-                    <div key={rev.id} style={{
-                      background: "#FFFFFF",
-                      border: "1px solid rgba(20, 109, 158, 0.12)",
-                      boxShadow: "0 4px 16px -2px rgba(20, 109, 158, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03)",
-                      borderRadius: "16px",
+                    <div key={rev.id} className="clay-card-static" style={{
                       padding: "16px 20px",
                       display: "flex",
                       justifyContent: "space-between",

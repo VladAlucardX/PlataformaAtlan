@@ -551,13 +551,15 @@ function ChatContent() {
                         <div style={{
                           maxWidth: "75%",
                           padding: msg.imagen_url ? "4px" : "10px 16px",
-                          borderRadius: isMine ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+                          borderRadius: isMine ? "20px 20px 6px 20px" : "20px 20px 20px 6px",
                           background: isMine
-                            ? "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)"
-                            : "rgba(20, 109, 158, 0.08)",
+                            ? "linear-gradient(145deg, #1C92D2 0%, #146D9E 100%)"
+                            : "#F4F6F9",
                           color: isMine ? "white" : "var(--atlan-text-primary)",
-                          boxShadow: isMine ? "0 2px 8px rgba(23, 170, 74,0.2)" : "none",
-                          border: isMine ? "none" : "1px solid rgba(20, 109, 158, 0.08)",
+                          boxShadow: isMine
+                            ? "inset 2px 2px 5px rgba(255, 255, 255, 0.25), inset -3px -3px 6px rgba(10, 50, 80, 0.25), 0 6px 14px -3px rgba(20, 109, 158, 0.30)"
+                            : "inset 2px 2px 5px rgba(255, 255, 255, 1), inset -3px -3px 6px rgba(20, 109, 158, 0.05), 0 4px 10px -3px rgba(20, 109, 158, 0.08)",
+                          border: isMine ? "1.5px solid rgba(255, 255, 255, 0.2)" : "1.5px solid rgba(255, 255, 255, 0.9)",
                         }}>
                           {msg.imagen_url && (
                             <img
@@ -619,7 +621,7 @@ function ChatContent() {
                   onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
                   placeholder={t("chat.typeMessage")}
                   disabled={enviando}
-                  style={chatLayoutStyles.messageInput}
+                  style={{ ...chatLayoutStyles.messageInput, background: "#e0e5ec", boxShadow: "inset 5px 5px 10px #bebebe, inset -5px -5px 10px #ffffff", border: "none" }}
                 />
                 <button
                   onClick={handleSendMessage}
@@ -627,6 +629,7 @@ function ChatContent() {
                   style={{
                     ...chatLayoutStyles.sendBtn,
                     opacity: enviando || (!nuevoMensaje.trim() && !chatImageFile) ? 0.4 : 1,
+                    boxShadow: "5px 5px 10px #bebebe, -5px -5px 10px #ffffff"
                   }}
                 >
                   ➤
@@ -722,10 +725,10 @@ const chatLayoutStyles = {
     height: "calc(100vh - 92px)",
     display: "grid",
     gridTemplateColumns: "340px 1fr",
-    border: "1px solid rgba(20, 109, 158, 0.14)",
-    borderRadius: "20px",
+    border: "2px solid rgba(255, 255, 255, 0.95)",
+    borderRadius: "24px",
     background: "#FFFFFF",
-    boxShadow: "0 12px 36px -6px rgba(20, 109, 158, 0.10), 0 2px 6px rgba(0, 0, 0, 0.04)",
+    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 20px 48px -6px rgba(20, 109, 158, 0.16), 0 4px 12px rgba(0, 0, 0, 0.04)",
     overflow: "hidden",
   },
   sidebar: {
@@ -797,13 +800,14 @@ const chatLayoutStyles = {
   messageInput: {
     flex: 1,
     padding: "12px 18px",
-    background: "rgba(20, 109, 158, 0.04)",
-    border: "1px solid rgba(20, 109, 158, 0.10)",
+    background: "#F4F6F9",
+    border: "1.5px solid rgba(20, 109, 158, 0.12)",
     borderRadius: "24px",
     color: "var(--atlan-text-primary)",
     fontSize: "14px",
     outline: "none",
     fontFamily: "var(--font-outfit), system-ui, sans-serif",
+    boxShadow: "inset 2px 2px 4px rgba(20, 109, 158, 0.04), inset -1px -1px 3px rgba(255, 255, 255, 0.8)",
   },
   sendBtn: {
     background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
