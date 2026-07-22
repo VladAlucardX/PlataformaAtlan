@@ -36,14 +36,14 @@ function Navbar({ session, perfil, handleLogout }) {
 
         {/* Desktop links */}
         <div style={styles.navLinks} className="hide-mobile">
-          <Link href="/mapa" style={styles.navLink}>
-            {t("nav.map")}
+          <Link href="/mapa" className="nav-pill-link">
+            🗺️ {t("nav.map")}
           </Link>
-          <Link href="/comunidad" style={styles.navLink}>
+          <Link href="/comunidad" className="nav-pill-link">
             👥 {t("social.community")}
           </Link>
           {session && (
-            <Link href="/chat" style={styles.navLink}>
+            <Link href="/chat" className="nav-pill-link">
               💬 {t("chat.title")}
             </Link>
           )}
@@ -53,14 +53,14 @@ function Navbar({ session, perfil, handleLogout }) {
           {session ? (
             <>
               {perfil?.rol === "dueno" || perfil?.rol === "admin" ? (
-                <Link href="/dashboard" style={{ ...styles.navLink, display: "flex", alignItems: "center", gap: "6px" }}>
+                <Link href="/dashboard" className="nav-pill-link">
                   {perfil?.avatar_url ? (
                     <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
                   ) : "💼"}
                   <span>{perfil?.nombre_completo?.split(" ")[0] || t("nav.dashboard")}</span>
                 </Link>
               ) : (
-                <Link href="/perfil" style={{ ...styles.navLink, display: "flex", alignItems: "center", gap: "6px" }}>
+                <Link href="/perfil" className="nav-pill-link">
                   {perfil?.avatar_url ? (
                     <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
                   ) : "👤"}
@@ -78,7 +78,7 @@ function Navbar({ session, perfil, handleLogout }) {
             </>
           ) : (
             <>
-              <Link href="/login" style={styles.navLink}>
+              <Link href="/login" className="nav-pill-link">
                 {t("nav.login")}
               </Link>
               <Link href="/registro" className="btn-primary" style={{ padding: "10px 24px", fontSize: "14px" }}>
@@ -314,12 +314,36 @@ function CategoriesSection() {
   const { t } = useTranslation();
 
   const categories = [
-    { icon: "🍽️", key: "comideria", color: "var(--atlan-cat-comideria)" },
-    { icon: "🍲", key: "restaurante", color: "var(--atlan-cat-restaurante)" },
-    { icon: "🎨", key: "artesanal", color: "var(--atlan-cat-artesanal)" },
-    { icon: "🏖️", key: "playa", color: "var(--atlan-cat-playa)" },
-    { icon: "👨‍👩‍👧‍👦", key: "familiar", color: "var(--atlan-cat-familiar)" },
-    { icon: "🏨", key: "hotel", color: "var(--atlan-cat-hotel)" },
+    { 
+      icon: "🍽️", key: "comideria", color: "#E6A800",
+      bg: "linear-gradient(135deg, #FFFDF0 0%, #FEF9C3 100%)",
+      border: "1.5px solid #FDE047", textColor: "#854D0E"
+    },
+    { 
+      icon: "🍲", key: "restaurante", color: "#DC2626",
+      bg: "linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%)",
+      border: "1.5px solid #FECDD3", textColor: "#9F1239"
+    },
+    { 
+      icon: "🎨", key: "artesanal", color: "#7C3AED",
+      bg: "linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%)",
+      border: "1.5px solid #DDD6FE", textColor: "#5B21B6"
+    },
+    { 
+      icon: "🏖️", key: "playa", color: "#0891B2",
+      bg: "linear-gradient(135deg, #ECFEFF 0%, #CFFAFE 100%)",
+      border: "1.5px solid #A5F3FC", textColor: "#155E75"
+    },
+    { 
+      icon: "👨‍👩‍👧‍👦", key: "familiar", color: "#DB2777",
+      bg: "linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 100%)",
+      border: "1.5px solid #FBCFE8", textColor: "#9D174D"
+    },
+    { 
+      icon: "🏨", key: "hotel", color: "#4F46E5",
+      bg: "linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)",
+      border: "1.5px solid #C7D2FE", textColor: "#3730A3"
+    },
   ];
 
   return (
@@ -335,16 +359,19 @@ function CategoriesSection() {
             <Link
               key={cat.key}
               href="/mapa"
-              className="animate-fade-in-up"
+              className="animate-fade-in-up clay-card"
               style={{
                 ...styles.categoryCard,
+                background: cat.bg,
+                border: cat.border,
                 animationDelay: `${i * 0.1}s`,
+                boxShadow: "0 10px 25px -4px rgba(20, 109, 158, 0.08), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
               }}
             >
-              <div style={{ ...styles.categoryIcon, background: `${cat.color}22` }}>
+              <div style={{ ...styles.categoryIcon, background: "rgba(255, 255, 255, 0.8)", boxShadow: "0 4px 10px rgba(0,0,0,0.05)" }}>
                 <span style={{ fontSize: "28px" }}>{cat.icon}</span>
               </div>
-              <span style={styles.categoryLabel}>
+              <span style={{ ...styles.categoryLabel, color: cat.textColor, fontWeight: "800" }}>
                 {t(`addPoint.categories.${cat.key}`)}
               </span>
             </Link>

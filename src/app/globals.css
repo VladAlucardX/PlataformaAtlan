@@ -326,6 +326,7 @@ a:hover {
   overflow: hidden;
 }
 
+/* Barra superior de acento cromático */
 .glass-card::before,
 .clay-card::before {
   content: '';
@@ -337,6 +338,36 @@ a:hover {
   background: linear-gradient(90deg, #FFD700 0%, #146D9E 50%, #17AA4A 100%);
   opacity: 0.85;
   transition: opacity 0.3s ease;
+  z-index: 2;
+}
+
+/* Efecto de destello / brillo sutil al pasar el cursor (Gentle Sheen Sweep) */
+.glass-card::after,
+.clay-card::after,
+.btn-primary::after,
+.clay-btn-gold::after,
+.clay-btn-blue::after,
+.clay-btn-green::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -80%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
+  transform: rotate(25deg);
+  transition: left 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.glass-card:hover::after,
+.clay-card:hover::after,
+.btn-primary:hover::after,
+.clay-btn-gold:hover::after,
+.clay-btn-blue:hover::after,
+.clay-btn-green:hover::after {
+  left: 140%;
 }
 
 .glass-card:hover,
@@ -361,6 +392,37 @@ a:hover {
     inset -6px -6px 14px rgba(20, 109, 158, 0.06),
     0 12px 28px -6px rgba(20, 109, 158, 0.08),
     0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+/* ── NAV PILL LINKS (Píldoras de Navegación 3D) ────────────────────────── */
+.nav-pill-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(20, 109, 158, 0.12);
+  border-radius: var(--atlan-radius-full);
+  color: var(--atlan-text-secondary);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 
+    inset 2px 2px 4px rgba(255, 255, 255, 0.9),
+    inset -2px -2px 4px rgba(20, 109, 158, 0.05),
+    0 4px 12px rgba(20, 109, 158, 0.06);
+}
+
+.nav-pill-link:hover {
+  background: #FFFFFF;
+  border-color: rgba(255, 215, 0, 0.4);
+  color: var(--atlan-ocean);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    inset 2px 2px 4px rgba(255, 255, 255, 1),
+    inset -2px -2px 4px rgba(255, 215, 0, 0.15),
+    0 8px 18px rgba(20, 109, 158, 0.10);
 }
 
 /* ── BOTONES CLAYMORFICOS 3D ──────────────────────────────────────────────── */
