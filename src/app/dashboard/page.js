@@ -72,6 +72,13 @@ export default function DashboardPage() {
   // Reseñas
   const [resenas, setResenas] = useState([]);
 
+  // Toast Notification 3D
+  const [toastBanner, setToastBanner] = useState(null); // { message, type }
+  const showToast = (message, type = "success") => {
+    setToastBanner({ message, type });
+    setTimeout(() => setToastBanner(null), 4000);
+  };
+
   // Reclamar punto
   const [puntosDisponibles, setPuntosDisponibles] = useState([]);
   const [isClaiming, setIsClaiming] = useState(false);
@@ -325,13 +332,13 @@ export default function DashboardPage() {
           .eq("id", negocio.id);
       }
 
-      alert(lang === "en" ? "Claim canceled successfully." : "Solicitud de reclamo cancelada con éxito.");
+      showToast(lang === "en" ? "Claim canceled successfully." : "¡Solicitud de reclamo cancelada con éxito!", "success");
       setNegocio(null);
       setPuntoAsociado(null);
       await loadNegocioData(user.id);
     } catch (err) {
       console.error("Error canceling claim:", err);
-      alert(lang === "en" ? "Error canceling claim." : "Error al cancelar el reclamo.");
+      showToast(lang === "en" ? "Error canceling claim." : "Error al cancelar el reclamo.", "error");
     } finally {
       setIsResubmitting(false);
     }
@@ -340,9 +347,9 @@ export default function DashboardPage() {
   // Reclamar un punto geográfico
   const handleInitiateClaim = (punto) => {
     if (punto && punto !== "gps" && (punto.estado === "en_verificacion" || punto.negocio_id)) {
-      alert(lang === "en" 
+      showToast(lang === "en" 
         ? "⏳ This location already has a pending claim request under admin review." 
-        : "⏳ Este local ya cuenta con una solicitud de reclamo en proceso de verificación por la administración.");
+        : "⏳ Este local ya cuenta con una solicitud de reclamo en proceso de verificación por la administración.", "info");
       return;
     }
     setClaimTargetPunto(punto);
@@ -377,11 +384,11 @@ export default function DashboardPage() {
   const handleConfirmSubmitClaim = async (e) => {
     if (e) e.preventDefault();
     if (!solicitanteNombre.trim() || !solicitanteCedula.trim() || !solicitanteTelefono.trim()) {
-      alert(lang === "en" ? "Please fill in all required fields (Name, ID, Phone)." : "Por favor completa todos los campos requeridos (Nombre, Cédula y Teléfono).");
+      showToast(lang === "en" ? "Please fill in all required fields (Name, ID, Phone)." : "Por favor completa todos los campos requeridos (Nombre, Cédula y Teléfono).", "error");
       return;
     }
     if (!documentoCedulaUrl) {
-      alert(lang === "en" ? "Please attach your ID document." : "Por favor adjunta la foto o PDF de tu Cédula de Identidad.");
+      showToast(lang === "en" ? "Please attach your ID document." : "Por favor adjunta la foto o PDF de tu Cédula de Identidad.", "error");
       return;
     }
 
@@ -437,9 +444,9 @@ export default function DashboardPage() {
           if (puntoError) throw puntoError;
 
           setShowClaimModal(false);
-          alert(lang === "en" 
+          showToast(lang === "en" 
             ? "Verification request submitted! It is now pending admin approval." 
-            : "¡Solicitud de verificación enviada! Tu reclamo está pendiente de aprobación por la administración.");
+            : "¡Solicitud de verificación enviada! Tu reclamo está pendiente de aprobación por la administración.", "success");
           await loadNegocioData(user.id);
         });
 
@@ -473,14 +480,14 @@ export default function DashboardPage() {
         if (puntoError) throw puntoError;
 
         setShowClaimModal(false);
-        alert(lang === "en" 
+        showToast(lang === "en" 
           ? "Verification request submitted! It is now pending admin approval." 
-          : "¡Solicitud de verificación enviada! Tu reclamo está pendiente de aprobación por la administración.");
+          : "¡Solicitud de verificación enviada! Tu reclamo está pendiente de aprobación por la administración.", "success");
         await loadNegocioData(user.id);
       }
     } catch (err) {
       console.error("Error submitting claim:", err);
-      alert("Error al enviar la solicitud de reclamo.");
+      showToast(lang === "en" ? "Error submitting claim." : "Error al enviar la solicitud de reclamo.", "error");
     } finally {
       setIsClaiming(false);
     }
@@ -747,6 +754,36 @@ export default function DashboardPage() {
         filter: "blur(45px)", pointerEvents: "none", zIndex: 0
       }} />
       <Navbar activePage="dashboard" session={session} perfil={perfil} onLogout={handleLogout} />
+
+      {/* TOAST NOTIFICATION BANNER 3D CLAYMORFISMO */}
+      {toastBanner && (
+        <div style={{
+          position: "fixed",
+          top: "84px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 1100,
+          background: toastBanner.type === "success" 
+            ? "linear-gradient(135deg, #10B981 0%, #059669 100%)" 
+            : toastBanner.type === "error"
+            ? "linear-gradient(135deg, #EF4444 0%, #DC2626 100%)"
+            : "linear-gradient(135deg, #146D9E 0%, #0D4E72 100%)",
+          color: "#FFFFFF",
+          padding: "14px 28px",
+          borderRadius: "20px",
+          fontWeight: "800",
+          fontSize: "14px",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          boxShadow: "0 14px 35px rgba(0, 0, 0, 0.25), inset 2px 2px 4px rgba(255, 255, 255, 0.4)",
+          border: "2px solid rgba(255, 255, 255, 0.8)",
+          pointerEvents: "none"
+        }} className="animate-fade-in-down">
+          <span>{toastBanner.type === "success" ? "✅" : toastBanner.type === "error" ? "❌" : "ℹ️"}</span>
+          <span>{toastBanner.message}</span>
+        </div>
+      )}
 
       {/* CASO A: EL DUEÑO NO TIENE NEGOCIOS */}
       {misNegocios.length === 0 ? (
