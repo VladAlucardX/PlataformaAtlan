@@ -260,7 +260,7 @@ export default function AdminDashboard() {
       background: 'var(--atlan-bg-primary)',
       color: '#1A1A2E',
       fontFamily: 'var(--font-outfit), sans-serif',
-      padding: '90px 24px 40px 24px',
+      padding: '110px 24px 40px 24px',
       position: 'relative',
       overflow: 'hidden'
     }}>
