@@ -260,15 +260,15 @@ export default function NotificationDropdown({ session }) {
             padding: "12px 16px", borderBottom: "1px solid rgba(20, 109, 158, 0.10)",
             background: "rgba(255,255,255,0.02)"
           }}>
-            <span style={{ fontSize: "14px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
+            <span style={{ fontSize: "14px", fontWeight: "700", color: "var(--atlan-text-primary)" }}>
               {t("notifications.title")}
             </span>
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
                 style={{
-                  background: "none", border: "none", color: "var(--atlan-gold)",
-                  fontSize: "11px", fontWeight: "700", cursor: "pointer", padding: 0
+                  background: "none", border: "none", color: "#146D9E",
+                  fontSize: "11.5px", fontWeight: "500", cursor: "pointer", padding: 0
                 }}
               >
                 {t("notifications.markAllRead")}
@@ -308,7 +308,7 @@ export default function NotificationDropdown({ session }) {
                     <p style={{
                       margin: 0, fontSize: "12.5px", lineHeight: "1.4",
                       color: notif.leido ? "var(--atlan-text-secondary)" : "var(--atlan-text-primary)",
-                      fontWeight: notif.leido ? "500" : "700",
+                      fontWeight: notif.leido ? "400" : "500",
                       wordBreak: "break-word"
                     }}>
                       {getNotifText(notif)}
