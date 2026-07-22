@@ -2533,8 +2533,8 @@ export default function MapaTuristico() {
               <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
             </button>
 
-            {/* BOTÓN RECLAMAR NEGOCIO (SI ESTÁ SIN RECLAMAR O SIN DUEÑO) */}
-            {(!selectedPoint.negocio_id || selectedPoint.estado === 'sin_reclamar') && (
+            {/* BOTÓN RECLAMAR NEGOCIO (SOLO SI ESTÁ COMPLETAMENTE LIBRE / SIN RECLAMO PENDIENTE) */}
+            {!selectedPoint.negocio_id && selectedPoint.estado === 'sin_reclamar' && (
               <button
                 onClick={() => router.push('/dashboard')}
                 className="clay-btn-gold"
@@ -2557,22 +2557,25 @@ export default function MapaTuristico() {
             {selectedPoint.estado === 'en_verificacion' && (
               <div style={{
                 padding: '12px 16px',
-                background: 'rgba(249, 115, 22, 0.1)',
-                border: '1px solid rgba(249, 115, 22, 0.3)',
-                borderRadius: '12px',
+                background: 'rgba(230, 194, 0, 0.12)',
+                border: '1.5px solid rgba(230, 194, 0, 0.3)',
+                borderRadius: '14px',
                 fontSize: '13px',
-                color: '#f97316',
+                color: '#B8960E',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '10px',
-                lineHeight: '1.4',
-                marginBottom: '-8px'
+                gap: '10px'
               }}>
-                <span style={{ fontSize: '18px' }}>⏳</span>
+                <span style={{ fontSize: '20px' }}>⏳</span>
                 <div>
-                  {lang === 'en'
-                    ? 'This business is awaiting physical verification by the Atlan team.'
-                    : 'Este negocio está en espera de verificación presencial por el equipo de Atlan.'}
+                  <strong style={{ color: '#1A1A2E' }}>
+                    {lang === 'en' ? 'Claim Under Review' : 'Solicitud de Reclamo en Verificación'}
+                  </strong>
+                  <div style={{ fontSize: '12px', color: '#4A5568', marginTop: '2px', lineHeight: 1.4 }}>
+                    {lang === 'en' 
+                      ? 'A owner verification claim is currently being evaluated by Atlan administration.' 
+                      : 'Una solicitud de verificación de propiedad sobre este local se encuentra actualmente en revisión por la administración.'}
+                  </div>
                 </div>
               </div>
             )}

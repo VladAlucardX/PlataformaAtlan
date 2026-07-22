@@ -340,6 +340,12 @@ export default function DashboardPage() {
   // Reclamar un punto geográfico
   const handleReclamarPunto = async (puntoId) => {
   const handleInitiateClaim = (punto) => {
+    if (punto && punto !== "gps" && (punto.estado === "en_verificacion" || punto.negocio_id)) {
+      alert(lang === "en" 
+        ? "⏳ This location already has a pending claim request under admin review." 
+        : "⏳ Este local ya cuenta con una solicitud de reclamo en proceso de verificación por la administración.");
+      return;
+    }
     setClaimTargetPunto(punto);
     setSolicitanteNombre(perfil?.nombre_completo || "");
     setSolicitanteCedula("");
@@ -835,8 +841,110 @@ export default function DashboardPage() {
             </button>
           </div>
         </div>
+      ) : !negocio.activo ? (
+        /* CASO PENDIENTE: VISTA DE ESPERA DE SOLICITUD DE RECLAMO */
+        <div style={{ ...styles.dashboardOverviewLayout, marginTop: "20px" }} className="animate-fade-in-up">
+          <div className="clay-card" style={{
+            padding: "36px 32px",
+            background: "#FFFFFF",
+            border: "2px solid rgba(255, 255, 255, 0.95)",
+            boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 20px 48px -6px rgba(20, 109, 158, 0.14)",
+            borderRadius: "28px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "24px"
+          }}>
+            {/* Encabezado de Estado */}
+            <div style={{ display: "flex", alignItems: "center", gap: "16px", borderBottom: "1px solid rgba(20, 109, 158, 0.08)", paddingBottom: "24px" }}>
+              <div style={{
+                width: "56px", height: "56px", borderRadius: "50%",
+                background: "rgba(230, 194, 0, 0.12)", border: "2px solid #E6C200",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "26px", flexShrink: 0
+              }}>
+                ⏳
+              </div>
+              <div>
+                <span className="clay-badge clay-badge-gold" style={{ marginBottom: "6px", display: "inline-block" }}>
+                  {lang === "en" ? "VERIFICATION IN PROGRESS" : "VERIFICACIÓN EN PROCESO"}
+                </span>
+                <h2 style={{ margin: 0, fontSize: "24px", fontWeight: "850", color: "#1A1A2E" }}>
+                  {lang === "en" ? "Business Claim Request Submitted" : "Solicitud de Reclamo Enviada"}
+                </h2>
+                <p style={{ margin: "4px 0 0", fontSize: "13.5px", color: "#4A5568" }}>
+                  {lang === "en" ? "Requested Business:" : "Negocio Solicitado:"} <strong style={{ color: "#146D9E" }}>{negocio.nombre}</strong>
+                </p>
+              </div>
+            </div>
+
+            {/* Step Progress Bar */}
+            <div style={{
+              display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px",
+              background: "#F8FAFC", padding: "20px", borderRadius: "18px", border: "1.5px solid rgba(20, 109, 158, 0.1)"
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <span style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#17AA4A", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "12px" }}>✓</span>
+                <div>
+                  <div style={{ fontSize: "11.5px", fontWeight: "800", color: "#17AA4A" }}>Paso 1</div>
+                  <div style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>Solicitud Recibida</div>
+                </div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <span style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#E6A800", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "12px" }}>2</span>
+                <div>
+                  <div style={{ fontSize: "11.5px", fontWeight: "800", color: "#E6A800" }}>Paso 2 (En Curso)</div>
+                  <div style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>Revisión de Cédula/Docs</div>
+                </div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <span style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#9CA3AF", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "12px" }}>3</span>
+                <div>
+                  <div style={{ fontSize: "11.5px", fontWeight: "800", color: "#9CA3AF" }}>Paso 3</div>
+                  <div style={{ fontSize: "13px", fontWeight: "750", color: "#6B7280" }}>Aprobación y Activación</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Resumen de Documentación Enviada */}
+            {negocio.datos_verificacion && (
+              <div style={{ background: "#F4F6F9", padding: "18px 22px", borderRadius: "16px", border: "1px solid rgba(20, 109, 158, 0.1)" }}>
+                <h4 style={{ margin: "0 0 10px", fontSize: "14px", fontWeight: "800", color: "#1A1A2E" }}>
+                  📄 Resumen de Documentación de Propiedad Enviada
+                </h4>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "10px", fontSize: "13px", color: "#4A5568" }}>
+                  <div><strong>Solicitante:</strong> {negocio.datos_verificacion.solicitante_nombre}</div>
+                  <div><strong>N° Cédula:</strong> {negocio.datos_verificacion.solicitante_cedula}</div>
+                  <div><strong>Teléfono Contacto:</strong> {negocio.datos_verificacion.solicitante_telefono}</div>
+                  <div>
+                    <strong>Cédula de Identidad:</strong>{" "}
+                    {negocio.datos_verificacion.documento_cedula_url ? (
+                      <a href={negocio.datos_verificacion.documento_cedula_url} target="_blank" rel="noopener noreferrer" style={{ color: "#146D9E", fontWeight: "700" }}>
+                        ✓ Adjuntada (Ver)
+                      </a>
+                    ) : "Sin adjuntar"}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Mensaje Informativo */}
+            <div style={{ background: "rgba(20, 109, 158, 0.04)", borderLeft: "4px solid #146D9E", padding: "16px 20px", borderRadius: "0 12px 12px 0", fontSize: "13.5px", color: "#4A5568", lineHeight: "1.5" }}>
+              🔒 <strong>Acceso a Administración Bloqueado:</strong> Tu solicitud está en revisión por el equipo de administración de Atlan. Para proteger a los verdaderos comerciantes, el acceso a la gestión del menú, reservas, horarios y edición estará bloqueado hasta que un Administrador apruebe tus documentos.
+            </div>
+
+            {/* Acciones */}
+            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginTop: "8px" }}>
+              <button onClick={() => router.push("/mapa")} className="clay-btn-blue" style={{ padding: "12px 24px", fontSize: "13.5px" }}>
+                🗺️ {lang === "en" ? "Explore Map" : "Volver a Explorar el Mapa"}
+              </button>
+              <button onClick={handleCancelClaim} disabled={isResubmitting} style={{ background: "rgba(239, 68, 68, 0.08)", border: "1px solid rgba(239, 68, 68, 0.2)", color: "#ef4444", padding: "12px 24px", borderRadius: "12px", fontSize: "13.5px", fontWeight: "700", cursor: "pointer" }}>
+                ❌ {lang === "en" ? "Cancel Request" : "Cancelar Solicitud"}
+              </button>
+            </div>
+          </div>
+        </div>
       ) : (
-        /* CASO C: EL DUEÑO YA SELECCIONÓ UN NEGOCIO ASOCIADO */
+        /* CASO C: EL DUEÑO YA FUE APROBADO Y SELECCIONÓ UN NEGOCIO VERIFICADO */
         <div style={activeTab === "overview" ? styles.dashboardOverviewLayout : styles.dashboardDetailLayout}>
           {activeTab === "overview" ? (
             <div style={styles.overviewContainer} className="animate-fade-in-up">
