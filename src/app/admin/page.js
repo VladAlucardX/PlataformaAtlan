@@ -268,23 +268,11 @@ export default function AdminDashboard() {
             {lang === 'en' ? 'Verify business claims and community contributions' : 'Verifica los reclamos de negocios y contribuciones de la comunidad'}
           </p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button 
-            onClick={() => router.push('/mapa')}
-            style={{
-              padding: '8px 16px',
-              background: 'rgba(20, 109, 158, 0.05)',
-              border: '1px solid rgba(20, 109, 158, 0.12)',
-              borderRadius: '10px',
-              color: '#1A1A2E',
-              fontSize: '12.5px',
-              fontWeight: '700',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-          >
-            ← {t('nav.map')}
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Link href="/" className="nav-pill-link">🏠 {lang === 'en' ? 'Home' : 'Inicio'}</Link>
+          <Link href="/mapa" className="nav-pill-link">🗺️ {lang === 'en' ? 'Map' : 'Mapa'}</Link>
+          <Link href="/comunidad" className="nav-pill-link">👥 {lang === 'en' ? 'Community' : 'Comunidad'}</Link>
+          <Link href="/admin" className="nav-pill-link active">⚡ Admin</Link>
           <LanguageToggle variant="pill" />
         </div>
       </div>

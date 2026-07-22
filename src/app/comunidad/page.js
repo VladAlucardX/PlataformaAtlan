@@ -34,7 +34,7 @@ function timeAgo(dateStr, lang) {
 
 // ── NAVBAR ────────────────────────────────────────────────────────────────
 function ComunidadNavbar({ session, perfil, onLogout }) {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -46,11 +46,12 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
         </Link>
 
         <div style={navStyles.navCenter}>
-          <Link href="/mapa" style={navStyles.navLink}>🗺️ {t("nav.map")}</Link>
-          <Link href="/comunidad" style={{ ...navStyles.navLink, color: "var(--atlan-gold)", borderBottom: "2px solid var(--atlan-gold)", paddingBottom: "4px" }}>
+          <Link href="/" className="nav-pill-link">🏠 {lang === "en" ? "Home" : "Inicio"}</Link>
+          <Link href="/mapa" className="nav-pill-link">🗺️ {t("nav.map")}</Link>
+          <Link href="/comunidad" className="nav-pill-link active">
             👥 {t("social.community")}
           </Link>
-          {session && <Link href="/chat" style={navStyles.navLink}>💬 {t("chat.title")}</Link>}
+          {session && <Link href="/chat" className="nav-pill-link">💬 {t("chat.title")}</Link>}
         </div>
 
         <div style={navStyles.navRight} className="hide-mobile">
@@ -58,7 +59,7 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
           <LanguageToggle variant="pill" />
           {session ? (
             <>
-              <Link href={perfil?.rol === "dueno" || perfil?.rol === "admin" ? "/dashboard" : "/perfil"} style={{ ...navStyles.navLink, display: "flex", alignItems: "center", gap: "6px" }}>
+              <Link href={perfil?.rol === "dueno" || perfil?.rol === "admin" ? "/dashboard" : "/perfil"} className="nav-pill-link">
                 {perfil?.avatar_url ? (
                   <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
                 ) : (
@@ -76,7 +77,7 @@ function ComunidadNavbar({ session, perfil, onLogout }) {
             </>
           ) : (
             <>
-              <Link href="/login" style={navStyles.navLink}>{t("nav.login")}</Link>
+              <Link href="/login" className="nav-pill-link">{t("nav.login")}</Link>
               <Link href="/registro" className="btn-primary" style={{ padding: "8px 20px", fontSize: "13px" }}>{t("nav.register")}</Link>
             </>
           )}

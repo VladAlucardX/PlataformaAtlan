@@ -240,9 +240,12 @@ export default function PerfilPublico() {
       {/* Nav */}
       <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255, 255, 255,0.85)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(20, 109, 158, 0.08)" }}>
         <div style={{ maxWidth: "800px", margin: "0 auto", padding: "0 24px", height: "60px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Link href="/comunidad" style={{ color: "var(--atlan-text-secondary)", textDecoration: "none", fontSize: "14px", fontWeight: "700", display: "flex", alignItems: "center", gap: "6px" }}>
-            ← {lang === "en" ? "Community" : "Comunidad"}
-          </Link>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <Link href="/" className="nav-pill-link">🏠 {lang === "en" ? "Home" : "Inicio"}</Link>
+            <Link href="/comunidad" className="nav-pill-link">
+              👥 {lang === "en" ? "Community" : "Comunidad"}
+            </Link>
+          </div>
           <LanguageToggle variant="pill" />
         </div>
       </nav>

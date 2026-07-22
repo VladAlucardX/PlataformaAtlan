@@ -397,15 +397,17 @@ function ChatContent() {
       {/* Navbar */}
       <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255, 255, 255, 0.92)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(20, 109, 158, 0.08)" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 24px", height: "60px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", marginRight: "10px" }}>
               <img src="/mapaicono.png" alt="Logo" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
               <span className="logoText" style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
             </Link>
-            <Link href="/comunidad" style={{ color: "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "600", textDecoration: "none" }}>👥 {t("social.community")}</Link>
-            <span style={{ color: "var(--atlan-gold)", fontSize: "13px", fontWeight: "800", borderBottom: "2px solid var(--atlan-gold)", paddingBottom: "4px" }}>
+            <Link href="/" className="nav-pill-link">🏠 {lang === "en" ? "Home" : "Inicio"}</Link>
+            <Link href="/mapa" className="nav-pill-link">🗺️ {t("nav.map")}</Link>
+            <Link href="/comunidad" className="nav-pill-link">👥 {t("social.community")}</Link>
+            <Link href="/chat" className="nav-pill-link active">
               💬 {t("chat.title")} {totalUnread > 0 && <span style={{ background: "#ef4444", color: "white", borderRadius: "10px", padding: "1px 6px", fontSize: "10px", fontWeight: "800", marginLeft: "4px" }}>{totalUnread}</span>}
-            </span>
+            </Link>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <LanguageToggle variant="pill" />

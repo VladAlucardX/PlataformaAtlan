@@ -254,38 +254,21 @@ export default function PerfilPage() {
             </span>
           </Link>
           
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <Link href="/" style={{
-              fontSize: "13px",
-              color: "#4A5568",
-              textDecoration: "none",
-              fontWeight: "600",
-              padding: "6px 12px",
-              borderRadius: "8px",
-              background: "rgba(20, 109, 158, 0.04)",
-              border: "1px solid rgba(20, 109, 158, 0.10)",
-              transition: "all 0.2s"
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.color = "#146D9E"}
-            onMouseLeave={(e) => e.currentTarget.style.color = "#4A5568"}
-            >
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <Link href="/" className="nav-pill-link">
               🏠 {lang === "en" ? "Home" : "Inicio"}
             </Link>
-            <Link href="/mapa" style={{
-              fontSize: "13px",
-              color: "#4A5568",
-              textDecoration: "none",
-              fontWeight: "600",
-              padding: "6px 12px",
-              borderRadius: "8px",
-              background: "rgba(20, 109, 158, 0.04)",
-              border: "1px solid rgba(20, 109, 158, 0.10)",
-              transition: "all 0.2s"
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.color = "#146D9E"}
-            onMouseLeave={(e) => e.currentTarget.style.color = "#4A5568"}
-            >
-              🗺️ {lang === "en" ? "Back to Map" : "Volver al Mapa"}
+            <Link href="/mapa" className="nav-pill-link">
+              🗺️ {lang === "en" ? "Map" : "Mapa"}
+            </Link>
+            <Link href="/comunidad" className="nav-pill-link">
+              👥 {lang === "en" ? "Community" : "Comunidad"}
+            </Link>
+            <Link href="/chat" className="nav-pill-link">
+              💬 {lang === "en" ? "Chat" : "Mensajes"}
+            </Link>
+            <Link href="/perfil" className="nav-pill-link active">
+              👤 {lang === "en" ? "My Profile" : "Mi Perfil"}
             </Link>
             <LanguageToggle variant="pill" />
           </div>
