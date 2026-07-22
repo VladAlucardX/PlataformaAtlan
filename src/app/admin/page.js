@@ -621,65 +621,61 @@ export default function AdminDashboard() {
 
             {/* Opciones de tipo de rechazo */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <label 
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '12px',
-                  padding: '14px',
-                  background: rejectionType === 'observations' ? 'rgba(255, 215, 0, 0.08)' : 'rgba(255,255,255,0.02)',
-                  border: rejectionType === 'observations' ? '1px solid var(--atlan-gold)' : '1px solid rgba(20, 109, 158, 0.08)',
-                  borderRadius: '16px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-                onClick={() => setRejectionType('observations')}
-              >
-                <input 
-                  type="radio" 
-                  name="rejectionType" 
-                  checked={rejectionType === 'observations'}
-                  onChange={() => {}}
-                  style={{ marginTop: '3px', accentColor: '#FFD700' }}
+              {/* Radio 1: Corrección */}
+              <label style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '12px',
+                padding: '12px 14px',
+                background: rejectionType === 'correction' ? 'rgba(230, 194, 0, 0.08)' : 'rgba(20, 109, 158, 0.03)',
+                border: `1.5px solid ${rejectionType === 'correction' ? 'rgba(230, 194, 0, 0.4)' : 'rgba(20, 109, 158, 0.12)'}`,
+                borderRadius: '14px',
+                cursor: 'pointer'
+              }}>
+                <input
+                  type="radio"
+                  name="rejectionType"
+                  value="correction"
+                  checked={rejectionType === 'correction'}
+                  onChange={() => setRejectionType('correction')}
+                  style={{ marginTop: '3px', accentColor: '#E6A800' }}
                 />
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: '750', color: 'white' }}>
-                    {lang === 'en' ? 'Reject with observations' : 'Rechazar con observaciones'}
+                  <div style={{ fontSize: '14px', fontWeight: '750', color: '#1A1A2E' }}>
+                    {lang === 'en' ? 'Request Correction (Keep pending claim)' : 'Solicitar Corrección (Mantener reclamo pendiente)'}
                   </div>
-                  <div style={{ fontSize: '11.5px', color: '#4A5568', marginTop: '2px', lineHeight: 1.4 }}>
+                  <div style={{ fontSize: '12px', color: '#4A5568', marginTop: '2px', lineHeight: 1.4 }}>
                     {lang === 'en' 
-                      ? 'The owner remains linked to the point. They can see your feedback, correct the business details, and resubmit.'
-                      : 'El dueño sigue vinculado al punto. Podrá ver tus observaciones, corregir los datos del negocio y volver a enviar.'}
+                      ? 'The owner will see your observations on their dashboard so they can fix their information.'
+                      : 'El solicitante verá tus observaciones en su panel para que pueda corregir sus datos.'}
                   </div>
                 </div>
               </label>
 
-              <label 
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '12px',
-                  padding: '14px',
-                  background: rejectionType === 'release' ? 'rgba(239, 68, 68, 0.08)' : 'rgba(255,255,255,0.02)',
-                  border: rejectionType === 'release' ? '1px solid #ef4444' : '1px solid rgba(20, 109, 158, 0.08)',
-                  borderRadius: '16px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-                onClick={() => setRejectionType('release')}
-              >
-                <input 
-                  type="radio" 
-                  name="rejectionType" 
+              {/* Radio 2: Liberar Punto */}
+              <label style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '12px',
+                padding: '12px 14px',
+                background: rejectionType === 'release' ? 'rgba(239, 68, 68, 0.08)' : 'rgba(20, 109, 158, 0.03)',
+                border: `1.5px solid ${rejectionType === 'release' ? 'rgba(239, 68, 68, 0.4)' : 'rgba(20, 109, 158, 0.12)'}`,
+                borderRadius: '14px',
+                cursor: 'pointer'
+              }}>
+                <input
+                  type="radio"
+                  name="rejectionType"
+                  value="release"
                   checked={rejectionType === 'release'}
-                  onChange={() => {}}
+                  onChange={() => setRejectionType('release')}
                   style={{ marginTop: '3px', accentColor: '#ef4444' }}
                 />
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: '750', color: '#fca5a5' }}>
+                  <div style={{ fontSize: '14px', fontWeight: '750', color: '#DC2626' }}>
                     {lang === 'en' ? 'Release point (Fraud / Delete claim)' : 'Liberar punto (Fraude / Cancelar reclamo)'}
                   </div>
-                  <div style={{ fontSize: '11.5px', color: '#4A5568', marginTop: '2px', lineHeight: 1.4 }}>
+                  <div style={{ fontSize: '12px', color: '#4A5568', marginTop: '2px', lineHeight: 1.4 }}>
                     {lang === 'en' 
                       ? 'Desassociates the point immediately, returning it to unclaimed status. The business is marked inactive.'
                       : 'Desvincula el punto de inmediato, devolviéndolo a estado "sin reclamar" en el mapa. El negocio queda inactivo.'}
@@ -689,34 +685,33 @@ export default function AdminDashboard() {
             </div>
 
             {/* Input del motivo */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '12.5px', fontWeight: '750', color: '#4A5568' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '20px' }}>
+              <label style={{ fontSize: '13px', fontWeight: '800', color: '#1A1A2E' }}>
                 {lang === 'en' ? 'Reason for Rejection:' : 'Motivo del Rechazo:'}
               </label>
               <textarea
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder={lang === 'en' ? 'e.g. Please provide a clear profile photo and a valid phone number.' : 'Ej: Por favor, ingrese un número de teléfono de contacto válido y una descripción comercial clara.'}
+                placeholder={lang === 'en' ? 'e.g. Please provide a clear profile photo and a valid phone number.' : 'Ej: Por favor, adjunte un documento de cédula legible y proporcione un número de WhatsApp de contacto válido.'}
                 rows={4}
                 style={{
                   width: '100%',
-                  background: 'rgba(10, 15, 28, 0.6)',
-                  border: '1.5px solid rgba(20, 109, 158, 0.12)',
-                  borderRadius: '12px',
-                  padding: '12px',
+                  background: '#F8FAFC',
+                  border: '1.5px solid rgba(20, 109, 158, 0.2)',
+                  borderRadius: '14px',
+                  padding: '14px',
                   color: '#1A1A2E',
                   fontSize: '13.5px',
+                  fontWeight: '500',
                   outline: 'none',
                   resize: 'none',
-                  transition: 'border-color 0.2s'
+                  boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.03)'
                 }}
-                onFocus={(e) => e.target.style.borderColor = rejectionType === 'release' ? '#ef4444' : '#FFD700'}
-                onBlur={(e) => e.target.style.borderColor = 'rgba(20, 109, 158, 0.12)'}
               />
             </div>
 
             {/* Botones de acción */}
-            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
               <button
                 onClick={() => setRejectionTarget(null)}
                 disabled={submittingRejection}
