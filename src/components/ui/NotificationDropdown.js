@@ -250,7 +250,8 @@ export default function NotificationDropdown({ session }) {
       {isOpen && (
         <div className="clay-dropdown animate-fade-in-up" style={{
           position: "absolute", right: 0, top: "40px", zIndex: 150,
-          width: "320px"
+          width: "320px",
+          fontFamily: "'Delight', 'Delight Static', var(--font-outfit), sans-serif"
         }}>
           
           {/* Header del Dropdown */}
