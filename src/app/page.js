@@ -244,23 +244,46 @@ function CTASection() {
   const { t } = useTranslation();
 
   return (
-    <section id="cta" style={styles.ctaSection}>
+    <section id="cta" style={{
+      ...styles.ctaSection,
+      background: "linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%)",
+      borderTop: "1.5px solid #C4B5FD",
+      borderBottom: "1.5px solid #C4B5FD"
+    }}>
       <div style={styles.ctaOrb} />
 
-      <div style={styles.ctaContent} className="animate-fade-in-up">
-        <h2 style={styles.ctaTitle}>{t("landing.cta.title")}</h2>
-        <p style={styles.ctaSubtitle}>{t("landing.cta.subtitle")}</p>
+      <div style={{
+        ...styles.ctaContent,
+        background: "rgba(255, 255, 255, 0.88)",
+        border: "2px solid #C4B5FD",
+        borderRadius: "32px",
+        padding: "48px 32px",
+        boxShadow: "0 20px 40px -10px rgba(124, 58, 237, 0.15), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+      }} className="animate-fade-in-up clay-card">
+        <h2 style={{ ...styles.ctaTitle, color: "#5B21B6", fontWeight: "900" }}>{t("landing.cta.title")}</h2>
+        <p style={{ ...styles.ctaSubtitle, color: "#6D28D9", fontSize: "16px" }}>{t("landing.cta.subtitle")}</p>
 
         <div style={styles.ctaBenefits}>
           {["benefit1", "benefit2", "benefit3"].map((key) => (
-            <div key={key} style={styles.ctaBenefit}>
-              <span style={styles.ctaCheck}>✓</span>
+            <div key={key} style={{ ...styles.ctaBenefit, color: "#4C1D95", fontWeight: "750", fontSize: "15px", display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{
+                color: "#7C3AED",
+                background: "#DDD6FE",
+                borderRadius: "50%",
+                width: "24px",
+                height: "24px",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: "900",
+                fontSize: "13px"
+              }}>✓</span>
               <span>{t(`landing.cta.${key}`)}</span>
             </div>
           ))}
         </div>
 
-        <Link href="/mapa" className="btn-primary" style={{ padding: "16px 40px", fontSize: "16px", marginTop: "16px" }}>
+        <Link href="/registro" className="btn-primary" style={{ padding: "16px 40px", fontSize: "16px", marginTop: "24px" }}>
           {t("landing.cta.button")}
         </Link>
       </div>
