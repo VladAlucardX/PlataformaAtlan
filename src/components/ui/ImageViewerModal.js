@@ -5,9 +5,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import Icon from "@/components/ui/Icon";
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   IMAGE VIEWER MODAL — Visor de imagen ampliada + hilo de comentarios
-   ═══════════════════════════════════════════════════════════════════════════ */
+// Visor de imagen ampliada con comentarios
 
 function timeAgo(dateStr, lang) {
   const now = new Date();
@@ -278,9 +276,7 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STYLES
-// ═══════════════════════════════════════════════════════════════════════════
+// Estilos
 const styles = {
   overlay: {
     position: "fixed", inset: 0, zIndex: 300,

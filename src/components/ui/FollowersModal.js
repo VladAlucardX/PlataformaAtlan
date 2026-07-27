@@ -5,9 +5,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import Icon from "@/components/ui/Icon";
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   FOLLOWERS MODAL — Lista de Seguidores y Siguiendo
-   ═══════════════════════════════════════════════════════════════════════════ */
+// Modal de lista de seguidores y siguiendo
 
 function avatarStyle(url, size) {
   return {
@@ -230,9 +228,7 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STYLES
-// ═══════════════════════════════════════════════════════════════════════════
+// Estilos
 const styles = {
   overlay: {
     position: "fixed", inset: 0, zIndex: 200,

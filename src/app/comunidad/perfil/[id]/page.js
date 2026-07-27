@@ -12,9 +12,7 @@ import ImageViewerModal from "@/components/ui/ImageViewerModal";
 import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   PERFIL PÚBLICO — Comunidad Atlan
-   ═══════════════════════════════════════════════════════════════════════════ */
+// Perfil público de comunidad
 
 function timeAgo(dateStr, lang) {
   const now = new Date();

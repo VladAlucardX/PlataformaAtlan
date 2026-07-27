@@ -5,9 +5,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import Icon from "@/components/ui/Icon";
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   SHARE DROPDOWN — Opciones de compartir publicación
-   ═══════════════════════════════════════════════════════════════════════════ */
+// Opciones de compartir publicación
 
 function avatarStyle(url, size) {
   return {
@@ -264,9 +262,7 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STYLES
-// ═══════════════════════════════════════════════════════════════════════════
+// Estilos
 const styles = {
   actionBtn: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",

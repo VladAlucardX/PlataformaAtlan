@@ -2,26 +2,20 @@
 
 import React, { useRef, useEffect, useState, useCallback } from "react";
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   VIDEO INTRO — Pantalla de bienvenida con video de fondo
-   
-   El video se reproduce automáticamente a pantalla completa.
-   Cuando termina (o tras un timeout de seguridad), hace un fade-out
-   para revelar el contenido de la página.
-   ═══════════════════════════════════════════════════════════════════════════ */
+// Pantalla de bienvenida con video de fondo
 
 export default function VideoIntro({ onComplete }) {
   const videoRef = useRef(null);
   const [phase, setPhase] = useState("playing"); // "playing" | "fading" | "done"
   const [videoReady, setVideoReady] = useState(false);
 
-  // ── Iniciar el fade-out ─────────────────────────────────────────────────
+  // Fade-out
   const startFadeOut = useCallback(() => {
     if (phase !== "playing") return;
     setPhase("fading");
   }, [phase]);
 
-  // ── Forzar reproducción en Chrome ────────────────────────────────────────
+  // Forzar reproducción en Chrome
   useEffect(() => {
     if (videoRef.current) {
       // Forzar mute por si React no lo aplica correctamente en el DOM
@@ -38,7 +32,7 @@ export default function VideoIntro({ onComplete }) {
     }
   }, []);
 
-  // ── Cuando el fade-out termina, notificar al padre ──────────────────────
+  // Notificar al terminar fade-out
   useEffect(() => {
     if (phase === "fading") {
       const timer = setTimeout(() => {
@@ -49,7 +43,7 @@ export default function VideoIntro({ onComplete }) {
     }
   }, [phase, onComplete]);
 
-  // ── Timeout de 9 segundos (transición automática) ──────────
+  // Timeout de seguridad
   useEffect(() => {
     const safety = setTimeout(() => {
       startFadeOut();
@@ -259,9 +253,7 @@ export default function VideoIntro({ onComplete }) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   ESTILOS
-   ═══════════════════════════════════════════════════════════════════════════ */
+// Estilos
 const introStyles = {
   overlay: {
     position: "fixed",

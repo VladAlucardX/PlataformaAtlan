@@ -16,11 +16,9 @@ import Navbar from "@/components/ui/Navbar";
 import { getProfileSlug } from "@/lib/profileUtils";
 import Icon from "@/components/ui/Icon";
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   COMUNIDAD ATLAN — Red Social
-   ═══════════════════════════════════════════════════════════════════════════ */
+// Comunidad Atlan
 
-// ── Utilidad: Tiempo relativo ────────────────────────────────────────────
+// Tiempo relativo
 function timeAgo(dateStr, lang) {
   const now = new Date();
   const date = new Date(dateStr);
@@ -651,9 +649,7 @@ function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChang
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// MAIN PAGE
-// ═══════════════════════════════════════════════════════════════════════════
+// Componente Principal
 export default function ComunidadPage() {
   const { t, lang } = useTranslation();
   const router = useRouter();
@@ -1126,9 +1122,7 @@ export default function ComunidadPage() {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// HELPER: Avatar style
-// ═══════════════════════════════════════════════════════════════════════════
+// Estilo de Avatar
 function avatarStyle(url, size) {
   return {
     width: `${size}px`,
@@ -1146,9 +1140,7 @@ function avatarStyle(url, size) {
   };
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STYLES
-// ═══════════════════════════════════════════════════════════════════════════
+// Estilos
 
 const navStyles = {
   nav: {

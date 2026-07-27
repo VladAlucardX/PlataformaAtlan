@@ -5,9 +5,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import Icon from "@/components/ui/Icon";
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   CHAT WIDGET — Messenger flotante para desktop
-   ═══════════════════════════════════════════════════════════════════════════ */
+// Messenger flotante para escritorio
 
 function timeAgo(dateStr, lang) {
   const now = new Date();
@@ -50,7 +48,7 @@ export default function ChatWidget({ session, perfil, lang }) {
   const mensajesEndRef = useRef(null);
   const widgetRef = useRef(null);
 
-  // ── Load conversations ─────────────────────────────────────────────────
+  // Cargar conversaciones
   const loadConversaciones = useCallback(async () => {
     if (!session) return;
     setLoadingConvs(true);
@@ -99,7 +97,7 @@ export default function ChatWidget({ session, perfil, lang }) {
     if (isOpen && view === "list") loadConversaciones();
   }, [isOpen, view, loadConversaciones]);
 
-  // ── Load messages for active chat ────────────────────────────────────
+  // Cargar mensajes del chat activo
   const loadMensajes = useCallback(async (convId) => {
     setLoadingMsgs(true);
     try {
@@ -132,7 +130,7 @@ export default function ChatWidget({ session, perfil, lang }) {
     }
   }, [mensajes, view]);
 
-  // ── Realtime subscription for active chat ──────────────────────────
+  // Suscripción en tiempo real
   useEffect(() => {
     if (!activeConv || view !== "chat") return;
 
@@ -159,7 +157,7 @@ export default function ChatWidget({ session, perfil, lang }) {
     return () => { supabase.removeChannel(channel); };
   }, [activeConv, view, session]);
 
-  // ── Send message ───────────────────────────────────────────────────
+  // Enviar mensaje
   const handleSend = async () => {
     if (!nuevoMensaje.trim() || !activeConv || enviando) return;
     setEnviando(true);
@@ -183,7 +181,7 @@ export default function ChatWidget({ session, perfil, lang }) {
     }
   };
 
-  // ── Open a chat ────────────────────────────────────────────────────
+  // Abrir chat
   const openChat = (conv) => {
     setActiveConv(conv);
     setActiveUser(conv.otherUser);
@@ -202,9 +200,7 @@ export default function ChatWidget({ session, perfil, lang }) {
   // Guard: don't render if not logged in
   if (!session || !perfil) return null;
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // RENDER
-  // ═══════════════════════════════════════════════════════════════════════
+  // Render
 
   return (
     <div ref={widgetRef} className="hide-mobile" style={styles.wrapper}>
@@ -379,9 +375,7 @@ export default function ChatWidget({ session, perfil, lang }) {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STYLES
-// ═══════════════════════════════════════════════════════════════════════════
+// Estilos
 const styles = {
   wrapper: {
     position: "fixed", bottom: "24px", right: "24px", zIndex: 150,

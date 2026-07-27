@@ -2564,7 +2564,7 @@ export default function DashboardPage() {
   );
 }
 
-// ── ESTILOS PREMIUM DASHBOARD ───────────────────────────────────────────────
+// Estilos dashboard
 const styles = {
   container: {
     minHeight: "100vh",

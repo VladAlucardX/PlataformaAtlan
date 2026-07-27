@@ -179,7 +179,7 @@ export default function LoginPage() {
   );
 }
 
-// ── ESTILOS PREMIUM INLINE ──────────────────────────────────────────────────
+// Estilos
 const styles = {
   container: {
     minHeight: "100vh",

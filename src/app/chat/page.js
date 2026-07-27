@@ -10,9 +10,7 @@ import LanguageToggle from "@/components/ui/LanguageToggle";
 import NotificationDropdown from "@/components/ui/NotificationDropdown";
 import Navbar from "@/components/ui/Navbar";
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   CHAT — Mensajería entre seguidores mutuos
-   ═══════════════════════════════════════════════════════════════════════════ */
+// Chat entre seguidores mutuos
 
 function timeAgo(dateStr, lang) {
   const now = new Date();
@@ -710,9 +708,7 @@ function ChatContent() {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STYLES
-// ═══════════════════════════════════════════════════════════════════════════
+// Estilos
 const chatLayoutStyles = {
   container: {
     maxWidth: "1100px",

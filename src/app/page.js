@@ -10,16 +10,17 @@ import VideoIntro from "@/components/VideoIntro";
 import { supabase } from "@/lib/supabase";
 import Icon from "@/components/ui/Icon";
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   LANDING PAGE — Plataforma Atlan
-   ═══════════════════════════════════════════════════════════════════════════ */
+// Landing Page
 
-// ── HERO SECTION ───────────────────────────────────────────────────────────
+// Hero
 function HeroSection({ perfil }) {
   const { t, lang } = useTranslation();
 
   return (
-    <section style={{ ...styles.hero, background: "#146D9E" }}>
+    <section style={{
+      ...styles.hero,
+      background: "url('/images/Frame 4.png') center / 100% 100% no-repeat"
+    }}>
       <div style={styles.heroContent} className="animate-fade-in-up">
         {perfil?.nombre_completo && (
           <div style={{
@@ -72,7 +73,7 @@ function HeroSection({ perfil }) {
   );
 }
 
-// ── FEATURES SECTION ───────────────────────────────────────────────────────
+// Características
 function FeaturesSection() {
   const { t } = useTranslation();
 
@@ -104,8 +105,11 @@ function FeaturesSection() {
   ];
 
   return (
-    <section style={{ ...styles.section, background: "#17AA4A", paddingTop: "110px" }}>
-      <div style={styles.sectionInner}>
+    <section style={{ ...styles.section, background: "url('/images/Frame 6.png') center / 100% 100% no-repeat", paddingTop: "110px", position: "relative" }}>
+      {/* Transición leve superior con Hero */}
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "70px", background: "linear-gradient(to bottom, rgba(20, 109, 158, 0.35) 0%, transparent 100%)", pointerEvents: "none", zIndex: 1 }} />
+      
+      <div style={{ ...styles.sectionInner, position: "relative", zIndex: 2 }}>
         <div style={styles.sectionHeader} className="animate-fade-in-up">
           <h2 style={{ ...styles.sectionTitle, color: "#FFFFFF" }}>{t("landing.features.title")}</h2>
           <p style={{ ...styles.sectionSubtitle, color: "rgba(255, 255, 255, 0.9)" }}>{t("landing.features.subtitle")}</p>
@@ -158,11 +162,13 @@ function FeaturesSection() {
           ))}
         </div>
       </div>
+      {/* Transición leve inferior con Categorías */}
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "70px", background: "linear-gradient(to top, rgba(255, 215, 0, 0.25) 0%, transparent 100%)", pointerEvents: "none", zIndex: 1 }} />
     </section>
   );
 }
 
-// ── CATEGORIES SECTION ─────────────────────────────────────────────────────
+// Categorías
 function CategoriesSection() {
   const { t } = useTranslation();
 
@@ -220,8 +226,11 @@ function CategoriesSection() {
   ];
 
   return (
-    <section style={{ ...styles.section, background: "#FFD700" }}>
-      <div style={styles.sectionInner}>
+    <section style={{ ...styles.section, background: "url('/images/Frame 5.png') center / 100% 100% no-repeat", position: "relative" }}>
+      {/* Transición leve superior con Features */}
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "70px", background: "linear-gradient(to bottom, rgba(23, 170, 74, 0.25) 0%, transparent 100%)", pointerEvents: "none", zIndex: 1 }} />
+
+      <div style={{ ...styles.sectionInner, position: "relative", zIndex: 2 }}>
         <div style={styles.sectionHeader} className="animate-fade-in-up">
           <h2 style={{ ...styles.sectionTitle, color: "#1A1A2E" }}>{t("map.categories")}</h2>
           <p style={{ ...styles.sectionSubtitle, color: "#333333" }}>{t("landing.features.subtitle")}</p>
@@ -251,11 +260,13 @@ function CategoriesSection() {
           ))}
         </div>
       </div>
+      {/* Transición leve inferior con CTA */}
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "70px", background: "linear-gradient(to top, rgba(20, 109, 158, 0.25) 0%, transparent 100%)", pointerEvents: "none", zIndex: 1 }} />
     </section>
   );
 }
 
-// ── CTA SECTION ────────────────────────────────────────────────────────────
+// Llamado a la acción
 function CTASection({ session }) {
   const { t } = useTranslation();
 
@@ -305,7 +316,7 @@ function CTASection({ session }) {
   );
 }
 
-// ── FOOTER ─────────────────────────────────────────────────────────────────
+// Footer
 function Footer() {
   const { t } = useTranslation();
 
@@ -360,7 +371,7 @@ function Footer() {
   );
 }
 
-// ── MAIN PAGE ──────────────────────────────────────────────────────────────
+// Componente Principal
 export default function Home() {
   const [introDone, setIntroDone] = React.useState(false);
   const [session, setSession] = React.useState(null);
@@ -460,9 +471,7 @@ export default function Home() {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════ 
-// STYLES
-// ═══════════════════════════════════════════════════════════════════════════
+// Estilos
 const styles = {
   // ── Nav
   nav: {

@@ -402,14 +402,13 @@ a:hover {
   right: 0 !important;
   width: 100% !important;
   z-index: 200 !important;
-  background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%) !important;
+  background: #0A192F !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 2.5px solid rgba(20, 109, 158, 0.18) !important;
+  border-bottom: 2.5px solid rgba(255, 255, 255, 0.12) !important;
   box-shadow: 
-    0 12px 32px -4px rgba(20, 109, 158, 0.14),
-    0 4px 12px rgba(0, 0, 0, 0.04),
-    inset 0 -2px 6px rgba(255, 255, 255, 0.9) !important;
+    0 12px 32px -4px rgba(0, 0, 0, 0.35),
+    0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* ── BOTÓN CON DESTELLO DE LUZ BLANCA SHIMMER SWEEP ───────────────────────── */

@@ -17,7 +17,7 @@ mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 // SVG icon helper for map markers (returns HTML string for innerHTML)
 const svgIcon = (path, size = 18) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle">${path}</svg>`;
 
-// ─── CONFIGURACIÓN DE CATEGORÍAS (Colores y Emojis) ─────────────────────────
+// Configuración de categorías (colores e íconos)
 const CATEGORIAS_CONFIG = {
   comideria: { color: '#ff6b6b', icon: 'utensils', svg: svgIcon('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>') },
   restaurante: { color: '#ff9233', icon: 'soup', svg: svgIcon('<path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9z"/><path d="M7 21h10"/>') },
@@ -644,7 +644,7 @@ export default function MapaTuristico() {
     }
   };
 
-  // ─── UTILIDADES DE VOZ ────────────────────────────────────────────────────
+  // Utilidades de voz
   const speakInstruction = (text, interrupt = false) => {
     if (!('speechSynthesis' in window)) return;
     if (isMutedRef.current) return;
@@ -672,7 +672,7 @@ export default function MapaTuristico() {
     setIsMuted(isMutedRef.current);
   };
 
-  // ─── CARGAR PUNTOS DESDE SUPABASE ─────────────────────────────────────────
+  // Cargar puntos desde Supabase
   const cargarPuntosCercanos = async (lon, lat, categoria = null) => {
     if (!mapRef.current) return;
 
@@ -977,7 +977,7 @@ export default function MapaTuristico() {
     }
   };
 
-  // ─── ACTUALIZACIÓN DE POSICIÓN (GPS real + Demo) ───────────────────────────
+  // Actualización de posición (GPS real + Demo)
   const calcularDistanciaMinimaALaRuta = (posUsuario, coordenadasRuta) => {
     if (!coordenadasRuta || coordenadasRuta.length === 0) return 99999;
     let minDist = 99999;
@@ -1187,7 +1187,7 @@ export default function MapaTuristico() {
     return [];
   };
 
-  // ─── LÓGICA DEL DEMO SIMULADOR ───────────────────────────────────────────
+  // Lógica del simulador demo
   const iniciarSimulacionDemo = async () => {
     if (demoIntervalRef.current) {
       clearInterval(demoIntervalRef.current);
@@ -1289,7 +1289,7 @@ export default function MapaTuristico() {
     }, 4000);
   };
 
-  // ─── ACTIVAR MODO LEVANTAR PUNTO ──────────────────────────────────────────
+  // Activar modo agregar punto
   const activarLevantarPunto = () => {
     if (!userSession) {
       alert(lang === 'en' ? 'Please log in to add points to the map.' : 'Por favor, inicia sesión para levantar un punto en el mapa.');
@@ -1308,7 +1308,7 @@ export default function MapaTuristico() {
     }
   };
 
-  // ─── GUARDAR NUEVO PUNTO EN SUPABASE ──────────────────────────────────────
+  // Guardar nuevo punto en Supabase
   const handleGuardarPunto = async (e) => {
     e.preventDefault();
     if (!newPointNombre || !newPointCategoria || !tempPointCoords) return;
@@ -1350,7 +1350,7 @@ export default function MapaTuristico() {
     }
   };
 
-  // ─── EFECTO INICIAL: INICIALIZAR MAPBOX ──────────────────────────────────
+  // Inicializar Mapbox
   // Límites estrictos de Centroamérica (desde Guatemala hasta Panamá)
   const CENTRAL_AMERICA_BOUNDS = [[-93.0, 7.0], [-77.0, 19.0]];
 
@@ -1439,7 +1439,7 @@ export default function MapaTuristico() {
       }
     });
 
-    // ── Capturar Click en el Mapa (Levantar Punto) ──────────────────────────
+    // Click en el mapa (agregar punto)
     mapRef.current.on('click', (e) => {
       if (isAddingPointRef.current) {
         const { lng, lat } = e.lngLat;
@@ -1691,7 +1691,7 @@ export default function MapaTuristico() {
     }
   }, [mapRef.current]);
 
-  // ─── EFECTO FILTROS: RECARGAR MARCADORES AL CAMBIAR CATEGORÍA ─────────────
+  // Recargar marcadores al cambiar categoría
   const aplicarFiltro = (cat) => {
     setFiltroCategoria(cat);
     cargarPuntosCercanos(currentPosRef.current[0], currentPosRef.current[1], cat);
@@ -1927,7 +1927,7 @@ export default function MapaTuristico() {
           </div>
         )}
 
-      {/* ─── CABECERA FLOTANTE PREMIUM ─── */}
+      {/* Cabecera flotante */}
       {!selectedPoint && (
         <div className="map-header" style={{
         position: 'absolute',
@@ -2099,7 +2099,7 @@ export default function MapaTuristico() {
       </div>
       )}
 
-      {/* ─── BANNER EXPLICATIVO MODO AGREGAR PUNTO ─── */}
+      {/* Banner modo agregar punto */}
       {isAddingPoint && (
         <div style={{
           position: 'absolute',
@@ -2123,7 +2123,7 @@ export default function MapaTuristico() {
         </div>
       )}
 
-      {/* ─── PANEL HORIZONTAL DE FILTROS ─── */}
+      {/* Panel de filtros */}
       {!selectedPoint && !routeInfo && !isDemoRunning && (
         <div className="filter-bar">
         {/* Píldora "Todas" */}
@@ -2177,7 +2177,7 @@ export default function MapaTuristico() {
       </div>
       )}
 
-      {/* ─── MODAL PREMIUM DE LEVANTAR PUNTO ─── */}
+      {/* Modal agregar punto */}
       {showAddModal && tempPointCoords && (
         <div style={{
           position: 'absolute',
@@ -2391,7 +2391,7 @@ export default function MapaTuristico() {
 
       </div>
 
-      {/* ─── PANEL LATERAL DE DETALLES PREMIUM (DETAIL SHEET) ─── */}
+      {/* Panel de detalles */}
       {selectedPoint && (
         <div className="detail-sheet">
           {/* Cabecera del Panel */}
