@@ -10,6 +10,7 @@ import LanguageToggle from "@/components/ui/LanguageToggle";
 import FollowersModal from "@/components/ui/FollowersModal";
 import ImageViewerModal from "@/components/ui/ImageViewerModal";
 import Navbar from "@/components/ui/Navbar";
+import Icon from "@/components/ui/Icon";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    PERFIL PÚBLICO — Comunidad Atlan
@@ -249,7 +250,7 @@ export default function PerfilPublico() {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "var(--atlan-bg-primary)", color: "#1A1A2E" }}>
         <div style={{ textAlign: "center" }}>
-          <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}>🔍</span>
+          <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}><Icon name="search" size={48} /></span>
           <h3 style={{ margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>{lang === "en" ? "User not found" : "Usuario no encontrado"}</h3>
           <Link href="/comunidad" style={{ color: "var(--atlan-gold)", fontWeight: "700" }}>← {lang === "en" ? "Back to Community" : "Volver a Comunidad"}</Link>
         </div>
@@ -329,7 +330,7 @@ export default function PerfilPublico() {
                 border: `1px solid ${targetPerfil.rol === "dueno" ? "rgba(255, 215, 0,0.25)" : "rgba(23, 170, 74,0.25)"}`,
                 textTransform: "uppercase",
               }}>
-                {targetPerfil.rol === "dueno" ? "🏢 Propietario" : targetPerfil.rol === "admin" ? "⚡ Admin" : "🧳 Turista"}
+                {targetPerfil.rol === "dueno" ? <><Icon name="building" size={12} /> Propietario</> : targetPerfil.rol === "admin" ? <><Icon name="zap" size={12} /> Admin</> : <><Icon name="luggage" size={12} /> Turista</>}
               </span>
             </div>
           </div>
@@ -353,7 +354,7 @@ export default function PerfilPublico() {
                   background: "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)",
                   color: "#1A1A2E", boxShadow: "0 4px 12px rgba(255, 215, 0, 0.3)",
                 }}>
-                  💬 {lang === "en" ? "Message" : "Mensaje"}
+                  <Icon name="messageCircle" size={14} /> {lang === "en" ? "Message" : "Mensaje"}
                 </Link>
               ) : isFollowing ? (
                 <span style={{
@@ -361,7 +362,7 @@ export default function PerfilPublico() {
                   background: "rgba(20, 109, 158, 0.04)", color: "var(--atlan-text-muted)",
                   border: "1px solid rgba(20, 109, 158, 0.08)",
                 }} title={lang === "en" ? "Both users must follow each other to chat" : "Ambos deben seguirse para chatear"}>
-                  🔒 {lang === "en" ? "Follow back to chat" : "Deben seguirse mutuamente"}
+                  <Icon name="lock" size={14} /> {lang === "en" ? "Follow back to chat" : "Deben seguirse mutuamente"}
                 </span>
               ) : null}
             </div>
@@ -409,7 +410,7 @@ export default function PerfilPublico() {
               ) : null}
               {isOwnProfile && (
                 <button onClick={() => setEditingBio(true)} style={{ marginTop: "8px", background: "none", border: "none", color: "var(--atlan-gold)", fontSize: "12px", fontWeight: "700", cursor: "pointer", padding: 0 }}>
-                  ✏️ {lang === "en" ? "Edit bio" : "Editar bio"}
+                  <Icon name="edit" size={14} /> {lang === "en" ? "Edit bio" : "Editar bio"}
                 </button>
               )}
             </div>
@@ -422,7 +423,7 @@ export default function PerfilPublico() {
               padding: "8px 16px", background: "rgba(255, 215, 0,0.08)", border: "1px solid rgba(255, 215, 0,0.15)",
               borderRadius: "10px", color: "var(--atlan-gold)", fontSize: "13px", fontWeight: "700", textDecoration: "none",
             }}>
-              📍 {negocio.nombre}
+              <Icon name="mapPin" size={14} /> {negocio.nombre}
             </Link>
           )}
         </div>
@@ -430,7 +431,7 @@ export default function PerfilPublico() {
         {/* Posts */}
         <div style={{ padding: "24px 0" }}>
           <h3 style={{ margin: "0 0 16px 16px", fontSize: "18px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
-            📝 {lang === "en" ? "Posts" : "Publicaciones"}
+            <Icon name="clipboard" size={14} /> {lang === "en" ? "Posts" : "Publicaciones"}
           </h3>
 
           {posts.length === 0 ? (
@@ -462,12 +463,12 @@ export default function PerfilPublico() {
                 <div key={post.id} style={cardStyle}>
                   {hasPublicidad && (
                     <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "10px", padding: "5px 14px", borderRadius: "20px", fontSize: "11px", fontWeight: "900", background: "linear-gradient(135deg, #FFD700 0%, #E6A800 100%)", border: "1px solid rgba(255,255,255,0.25)", color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.8px", boxShadow: "0 2px 8px rgba(255, 215, 0, 0.3)" }}>
-                      ✨ {lang === "en" ? "Sponsored Ad" : "Publicidad"}
+                      <Icon name="sparkles" size={12} /> {lang === "en" ? "Sponsored Ad" : "Publicidad"}
                     </div>
                   )}
                   {hasPromocion && !hasPublicidad && (
                     <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "10px", padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "800", background: "linear-gradient(135deg, rgba(255, 215, 0,0.15), rgba(245,158,11,0.15))", border: "1px solid rgba(255, 215, 0,0.25)", color: "#FFD700", textTransform: "uppercase" }}>
-                      📢 {lang === "en" ? "Promo" : "Promoción"}
+                      <Icon name="megaphone" size={12} /> {lang === "en" ? "Promo" : "Promoción"}
                     </div>
                   )}
 
@@ -475,7 +476,7 @@ export default function PerfilPublico() {
                     <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)" }}>{timeAgo(post.created_at, lang)}</span>
                     {canDelete && (
                       <button onClick={() => handleDeletePost(post.id)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: "12px", fontWeight: "700", cursor: "pointer" }}>
-                        🗑️ {lang === "en" ? "Delete" : "Eliminar"}
+                        <Icon name="trash" size={12} /> {lang === "en" ? "Delete" : "Eliminar"}
                       </button>
                     )}
                   </div>
@@ -499,10 +500,10 @@ export default function PerfilPublico() {
 
                   <div style={{ display: "flex", gap: "16px", paddingTop: "8px", borderTop: "1px solid rgba(20, 109, 158, 0.05)" }}>
                     <button onClick={() => handleLikePost(post.id)} style={{ background: "none", border: "none", color: isLiked ? "#ef4444" : "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}>
-                      {isLiked ? "❤️" : "🤍"} {post.likes_count || 0}
+                      {isLiked ? <Icon name="heartFilled" size={14} color="#ef4444" /> : <Icon name="heart" size={14} />} {post.likes_count || 0}
                     </button>
                     <Link href={`/comunidad`} style={{ color: "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "700", textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}>
-                      💬 {post.comentarios_count || 0}
+                      <Icon name="messageCircle" size={14} /> {post.comentarios_count || 0}
                     </Link>
                   </div>
                 </div>
@@ -516,7 +517,7 @@ export default function PerfilPublico() {
       {showLoginModal && (
         <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }} onClick={() => setShowLoginModal(false)}>
           <div style={{ maxWidth: "420px", width: "100%", background: "var(--atlan-bg-card)", border: "1px solid rgba(20, 109, 158, 0.12)", borderRadius: "20px", padding: "32px", textAlign: "center" }} onClick={(e) => e.stopPropagation()} className="animate-fade-in-up">
-            <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}>🔐</span>
+            <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}><Icon name="lock" size={48} /></span>
             <h3 style={{ fontSize: "20px", fontWeight: "800", margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>
               {lang === "en" ? "Sign in to interact" : "Inicia sesión para interactuar"}
             </h3>

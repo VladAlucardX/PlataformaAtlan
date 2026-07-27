@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
+import Icon from "@/components/ui/Icon";
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -92,7 +93,7 @@ export default function LoginPage() {
       {/* Header con Logo y Selector de Idioma */}
       <header style={styles.header}>
         <Link href="/" style={styles.logo}>
-          <span style={styles.logoIcon}>🗺️</span>
+          <span style={styles.logoIcon}><Icon name="map" size={24} /></span>
           <span style={styles.logoText}>Atlan</span>
         </Link>
         <LanguageToggle variant="pill" />
@@ -105,7 +106,7 @@ export default function LoginPage() {
 
         {errorMsg && (
           <div style={styles.errorBanner} className="animate-fade-in">
-            ⚠️ {errorMsg}
+            <Icon name="alertTriangle" size={16} /> {errorMsg}
           </div>
         )}
 

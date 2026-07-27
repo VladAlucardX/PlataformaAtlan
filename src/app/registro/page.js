@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
+import Icon from "@/components/ui/Icon";
 
 export default function RegisterPage() {
   const { t, lang } = useTranslation();
@@ -104,7 +105,7 @@ export default function RegisterPage() {
 
       <header style={styles.header}>
         <Link href="/" style={styles.logo}>
-          <span style={styles.logoIcon}>🗺️</span>
+          <span style={styles.logoIcon}><Icon name="map" size={24} /></span>
           <span style={styles.logoText}>Atlan</span>
         </Link>
         <LanguageToggle variant="pill" />
@@ -114,8 +115,8 @@ export default function RegisterPage() {
         <h2 style={styles.title}>{t("auth.registerTitle")}</h2>
         <p style={styles.subtitle}>{t("auth.registerSubtitle")}</p>
 
-        {errorMsg && <div style={styles.errorBanner}>⚠️ {errorMsg}</div>}
-        {successMsg && <div style={styles.successBanner}>✅ {successMsg}</div>}
+        {errorMsg && <div style={styles.errorBanner}><Icon name="alertTriangle" size={16} /> {errorMsg}</div>}
+        {successMsg && <div style={styles.successBanner}><Icon name="checkCircle" size={16} /> {successMsg}</div>}
 
         <form onSubmit={handleRegister} style={styles.form}>
           {/* Selector de Rol Premium */}
@@ -127,7 +128,7 @@ export default function RegisterPage() {
                 onClick={() => setRol("turista")}
                 className={`clay-role-btn ${rol === "turista" ? "active-turista" : ""}`}
               >
-                <span style={{ fontSize: "22px" }}>🧳</span>
+                <span style={{ fontSize: "22px" }}><Icon name="luggage" size={22} /></span>
                 <span style={{ fontWeight: "750" }}>
                   {lang === "en" ? "Tourist" : "Turista"}
                 </span>
@@ -137,7 +138,7 @@ export default function RegisterPage() {
                 onClick={() => setRol("dueno")}
                 className={`clay-role-btn ${rol === "dueno" ? "active-dueno" : ""}`}
               >
-                <span style={{ fontSize: "22px" }}>🏢</span>
+                <span style={{ fontSize: "22px" }}><Icon name="building" size={22} /></span>
                 <span style={{ fontWeight: "750" }}>
                   {lang === "en" ? "Business Owner" : "Propietario"}
                 </span>

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useTranslation } from "@/hooks/useTranslation";
+import Icon from "@/components/ui/Icon";
 
 function timeAgo(dateStr, lang) {
   const now = new Date();
@@ -242,7 +243,7 @@ export default function NotificationDropdown({ session }) {
         }}
         title={t("notifications.title")}
       >
-        🔔
+        <Icon name="bell" size={20} />
         {unreadCount > 0 && (
           <span style={{
             position: "absolute", top: "1px", right: "1px",

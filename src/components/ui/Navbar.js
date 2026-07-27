@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import NotificationDropdown from "@/components/ui/NotificationDropdown";
+import Icon from "@/components/ui/Icon";
 
 import { getProfileSlug } from "@/lib/profileUtils";
 
@@ -71,22 +72,22 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
         {/* Center Nav Pills */}
         <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", gap: "8px", whiteSpace: "nowrap" }} className="hide-mobile">
           <Link href="/" className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`}>
-            🏠 {lang === "en" ? "Home" : "Inicio"}
+            <Icon name="home" size={16} /> {lang === "en" ? "Home" : "Inicio"}
           </Link>
           <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`}>
-            🗺️ {t("nav.map")}
+            <Icon name="map" size={16} /> {t("nav.map")}
           </Link>
           <Link href="/comunidad" className={`nav-pill-link ${activePage === "comunidad" ? "active" : ""}`}>
-            👥 {t("social.community")}
+            <Icon name="users" size={16} /> {t("social.community")}
           </Link>
           {session && (
             <Link href="/chat" className={`nav-pill-link ${activePage === "chat" ? "active" : ""}`}>
-              💬 {t("chat.title")}
+              <Icon name="messageCircle" size={16} /> {t("chat.title")}
             </Link>
           )}
           {perfil?.rol === "admin" && (
             <Link href="/admin" className={`nav-pill-link ${activePage === "admin" ? "active" : ""}`}>
-              🛡️ {lang === "en" ? "Management" : "Gestión"}
+              <Icon name="shield" size={16} /> {lang === "en" ? "Management" : "Gestión"}
             </Link>
           )}
           <LanguageToggle variant="pill" />
@@ -107,7 +108,7 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
                   {perfil?.avatar_url ? (
                     <div style={{ width: "22px", height: "22px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
                   ) : (
-                    "👤"
+                    <Icon name="user" size={18} />
                   )}
                   <span>{getProfileLabel()}</span>
                 </Link>
@@ -131,7 +132,7 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
                   }}
                   title={lang === "en" ? "User Options" : "Opciones de Usuario"}
                 >
-                  ▼
+                  <Icon name="chevronDown" size={12} />
                 </button>
               </div>
 
@@ -174,7 +175,7 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
                     onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
                     onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                   >
-                    👤 {lang === "en" ? "My Profile" : "Mi Perfil"}
+                    <Icon name="user" size={16} /> {lang === "en" ? "My Profile" : "Mi Perfil"}
                   </Link>
 
                   {/* Opción 2: Mis Giras (Favoritos, Giras y Reservas guardadas) */}
@@ -196,7 +197,7 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
                     onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
                     onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                   >
-                    🎒 {lang === "en" ? "My Tours & Saved" : "Mis Giras"}
+                    <Icon name="compass" size={16} /> {lang === "en" ? "My Tours & Saved" : "Mis Giras"}
                   </Link>
 
                   {/* Opción 3: Mi Negocio (Si es dueño/admin) */}
@@ -219,7 +220,7 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
                       onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
                       onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                     >
-                      💼 {lang === "en" ? "My Business Hub" : "Mi Negocio"}
+                      <Icon name="briefcase" size={16} /> {lang === "en" ? "My Business Hub" : "Mi Negocio"}
                     </Link>
                   )}
 
@@ -250,7 +251,7 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
                     onMouseEnter={(e) => e.currentTarget.style.background = "rgba(239, 68, 68, 0.08)"}
                     onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                   >
-                    🚪 {t("nav.logout") || "Cerrar Sesión"}
+                    <Icon name="logOut" size={16} /> {t("nav.logout") || "Cerrar Sesión"}
                   </button>
                 </div>
               )}
@@ -288,24 +289,24 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
       {/* Mobile Drawer */}
       {menuOpen && (
         <div style={{ padding: "12px 24px 20px", display: "flex", flexDirection: "column", gap: "10px", borderTop: "1px solid rgba(20,109,158,0.08)" }} className="animate-fade-in-down hide-desktop">
-          <Link href="/" className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>🏠 {lang === "en" ? "Home" : "Inicio"}</Link>
-          <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>🗺️ {t("nav.map")}</Link>
-          <Link href="/comunidad" className={`nav-pill-link ${activePage === "comunidad" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>👥 {t("social.community")}</Link>
-          {session && <Link href="/chat" className={`nav-pill-link ${activePage === "chat" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>💬 {t("chat.title")}</Link>}
+          <Link href="/" className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="home" size={16} /> {lang === "en" ? "Home" : "Inicio"}</Link>
+          <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="map" size={16} /> {t("nav.map")}</Link>
+          <Link href="/comunidad" className={`nav-pill-link ${activePage === "comunidad" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="users" size={16} /> {t("social.community")}</Link>
+          {session && <Link href="/chat" className={`nav-pill-link ${activePage === "chat" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="messageCircle" size={16} /> {t("chat.title")}</Link>}
           {perfil?.rol === "admin" && (
             <Link href="/admin" className={`nav-pill-link ${activePage === "admin" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-              🛡️ {lang === "en" ? "Management" : "Gestión"}
+              <Icon name="shield" size={16} /> {lang === "en" ? "Management" : "Gestión"}
             </Link>
           )}
           {session ? (
             <>
-              <Link href={communityProfileLink} className="nav-pill-link" onClick={() => setMenuOpen(false)}>👤 {lang === "en" ? "My Profile" : "Mi Perfil"}</Link>
-              <Link href="/perfil" className="nav-pill-link" onClick={() => setMenuOpen(false)}>🎒 {lang === "en" ? "My Tours & Saved" : "Mis Giras"}</Link>
+              <Link href={communityProfileLink} className="nav-pill-link" onClick={() => setMenuOpen(false)}><Icon name="user" size={16} /> {lang === "en" ? "My Profile" : "Mi Perfil"}</Link>
+              <Link href="/perfil" className="nav-pill-link" onClick={() => setMenuOpen(false)}><Icon name="compass" size={16} /> {lang === "en" ? "My Tours & Saved" : "Mis Giras"}</Link>
               {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
-                <Link href="/dashboard" className="nav-pill-link" onClick={() => setMenuOpen(false)}>💼 {lang === "en" ? "My Business" : "Mi Negocio"}</Link>
+                <Link href="/dashboard" className="nav-pill-link" onClick={() => setMenuOpen(false)}><Icon name="briefcase" size={16} /> {lang === "en" ? "My Business" : "Mi Negocio"}</Link>
               )}
               <button onClick={() => { setMenuOpen(false); handleLogout(); }} style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", padding: "10px", borderRadius: "10px", fontSize: "14px", fontWeight: "700", cursor: "pointer", width: "100%", textAlign: "left" }}>
-                🚪 {t("nav.logout") || "Cerrar Sesión"}
+                <Icon name="logOut" size={16} /> {t("nav.logout") || "Cerrar Sesión"}
               </button>
             </>
           ) : (

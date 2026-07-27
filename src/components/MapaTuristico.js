@@ -10,22 +10,26 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from '../hooks/useTranslation';
 import LanguageToggle from './ui/LanguageToggle';
+import Icon from './ui/Icon';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
+// SVG icon helper for map markers (returns HTML string for innerHTML)
+const svgIcon = (path, size = 18) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle">${path}</svg>`;
+
 // ─── CONFIGURACIÓN DE CATEGORÍAS (Colores y Emojis) ─────────────────────────
 const CATEGORIAS_CONFIG = {
-  comideria: { color: '#ff6b6b', emoji: '🍽️' },
-  restaurante: { color: '#ff9233', emoji: '🍲' },
-  artesanal: { color: '#8a2be2', emoji: '🎨' },
-  playa: { color: '#00bfff', emoji: '🏖️' },
-  familiar: { color: '#4caf50', emoji: '👨‍👩‍👧‍👦' },
-  hotel: { color: '#e040fb', emoji: '🏨' },
-  hostal: { color: '#9c27b0', emoji: '🏡' },
-  transporte: { color: '#607d8b', emoji: '🚌' },
-  tour: { color: '#009688', emoji: '🗺️' },
-  tienda: { color: '#795548', emoji: '🛒' },
-  otro: { color: '#ffc107', emoji: '📍' }
+  comideria: { color: '#ff6b6b', icon: 'utensils', svg: svgIcon('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>') },
+  restaurante: { color: '#ff9233', icon: 'soup', svg: svgIcon('<path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9z"/><path d="M7 21h10"/>') },
+  artesanal: { color: '#8a2be2', icon: 'palette', svg: svgIcon('<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"/>') },
+  playa: { color: '#00bfff', icon: 'umbrella', svg: svgIcon('<path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7"/>') },
+  familiar: { color: '#4caf50', icon: 'family', svg: svgIcon('<circle cx="8" cy="5" r="3"/><circle cx="16" cy="5" r="3"/><path d="M3 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"/><path d="M13 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"/>') },
+  hotel: { color: '#e040fb', icon: 'hotel', svg: svgIcon('<path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path d="M9 22v-4h6v4"/><rect x="8" y="6" width="3" height="3" rx=".5"/><rect x="13" y="6" width="3" height="3" rx=".5"/>') },
+  hostal: { color: '#9c27b0', icon: 'homeAlt', svg: svgIcon('<path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V10.5z"/><path d="M10 21v-6h4v6"/>') },
+  transporte: { color: '#607d8b', icon: 'car', svg: svgIcon('<path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a1 1 0 0 0-.8.4L1.74 11l-1.58.86a1 1 0 0 0-.16.99V16h3"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/>') },
+  tour: { color: '#009688', icon: 'mountain', svg: svgIcon('<path d="M8 3l4 8 5-5 5 15H2L8 3z"/>') },
+  tienda: { color: '#795548', icon: 'shoppingBag', svg: svgIcon('<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>') },
+  otro: { color: '#ffc107', icon: 'mapPin', svg: svgIcon('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>') }
 };
 
 export default function MapaTuristico() {
@@ -742,7 +746,7 @@ export default function MapaTuristico() {
         inner.style.cursor = 'pointer';
         inner.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
         inner.style.position = 'relative'; // Asegura contexto de posicionamiento para la insignia
-        inner.innerHTML = config.emoji;
+        inner.innerHTML = config.svg;
 
         // Crear insignia de estado circular en la esquina
         const badge = document.createElement('div');
@@ -799,7 +803,7 @@ export default function MapaTuristico() {
 
         // Estructura del Popup Premium
         const isClaimed = !!punto.negocio_id;
-        const ratingText = punto.negocio_rating ? `⭐ ${punto.negocio_rating}` : '';
+        const ratingText = punto.negocio_rating ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" style="display:inline-block;vertical-align:middle;color:#fbbf24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> ${punto.negocio_rating}` : '';
 
         let statusText = '';
         let statusColor = '';
@@ -832,7 +836,7 @@ export default function MapaTuristico() {
             
             ${punto.negocio_rango_precios ? `
               <div style="margin-bottom:8px; font-size:11px; font-weight:600; color:#0f766e; background:#f0fdfa; padding:3px 6px; border-radius:4px; display:inline-block;">
-                💰 ${punto.negocio_rango_precios}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> ${punto.negocio_rango_precios}
               </div>
             ` : ''}
 
@@ -1953,7 +1957,7 @@ export default function MapaTuristico() {
         {/* BUSCADOR GLOBAL */}
         <div style={{ flex: 1, margin: '0 20px', position: 'relative' }}>
           <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '6px 12px', gap: '8px' }}>
-            <span style={{ color: '#94a3b8' }}>🔍</span>
+            <span style={{ color: '#94a3b8' }}><Icon name="search" size={16} /></span>
             <input
               type="text"
               placeholder={lang === 'en' ? 'Search destinations...' : 'Buscar destinos...'}
@@ -2020,7 +2024,7 @@ export default function MapaTuristico() {
                   onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                 >
                   <span style={{ fontSize: '13.5px', fontWeight: '750', color: 'white' }}>{p.nombre}</span>
-                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>📍 {t(`addPoint.categories.${p.categoria || 'otro'}`)}</span>
+                  <span style={{ fontSize: '11px', color: '#94a3b8' }}><Icon name="mapPin" size={11} /> {t(`addPoint.categories.${p.categoria || 'otro'}`)}</span>
                 </div>
               ))}
             </div>
@@ -2046,7 +2050,7 @@ export default function MapaTuristico() {
                 transition: 'all 0.25s ease'
               }}
             >
-              👤 {lang === 'en' ? 'Profile' : 'Perfil'}
+              <Icon name="user" size={14} /> {lang === 'en' ? 'Profile' : 'Perfil'}
             </Link>
           ) : (
             <Link
@@ -2066,7 +2070,7 @@ export default function MapaTuristico() {
                 transition: 'all 0.25s ease'
               }}
             >
-              🔑 {lang === 'en' ? 'Login' : 'Ingresar'}
+              <Icon name="key" size={14} /> {lang === 'en' ? 'Login' : 'Ingresar'}
             </Link>
           )}
 
@@ -2165,7 +2169,7 @@ export default function MapaTuristico() {
                 gap: '6px'
               }}
             >
-              <span>{config.emoji}</span>
+              <span><Icon name={config.icon} size={16} /></span>
               <span>{t(`addPoint.categories.${key}`)}</span>
             </button>
           );
@@ -2190,7 +2194,7 @@ export default function MapaTuristico() {
         }}>
           <div className="add-point-modal">
             <h2 style={{ margin: '0 0 4px', fontSize: '20px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
-              📍 {t('addPoint.title')}
+              <Icon name="mapPin" size={20} /> {t('addPoint.title')}
             </h2>
             <p style={{ margin: '0 0 20px', fontSize: '13px', color: '#94a3b8' }}>
               {t('addPoint.subtitle')}
@@ -2199,7 +2203,7 @@ export default function MapaTuristico() {
             <form onSubmit={handleGuardarPunto} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {/* Coordenadas informativas */}
               <div style={{ background: 'rgba(255,255,255,0.05)', padding: '10px 14px', borderRadius: '10px', fontSize: '11px', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.08)' }}>
-                📍 Coords: {tempPointCoords[1].toFixed(5)}, {tempPointCoords[0].toFixed(5)}
+                <Icon name="mapPin" size={12} /> Coords: {tempPointCoords[1].toFixed(5)}, {tempPointCoords[0].toFixed(5)}
               </div>
 
               <div>
@@ -2240,7 +2244,7 @@ export default function MapaTuristico() {
                 >
                   {Object.keys(CATEGORIAS_CONFIG).map((key) => (
                     <option key={key} value={key}>
-                      {CATEGORIAS_CONFIG[key].emoji} {t(`addPoint.categories.${key}`)}
+                      {t(`addPoint.categories.${key}`)}
                     </option>
                   ))}
                 </select>

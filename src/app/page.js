@@ -8,6 +8,7 @@ import NotificationDropdown from "@/components/ui/NotificationDropdown";
 import Navbar from "@/components/ui/Navbar";
 import VideoIntro from "@/components/VideoIntro";
 import { supabase } from "@/lib/supabase";
+import Icon from "@/components/ui/Icon";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    LANDING PAGE — Plataforma Atlan
@@ -34,12 +35,12 @@ function HeroSection({ perfil }) {
             display: "inline-block",
             border: "1px solid rgba(255, 255, 255, 0.25)"
           }}>
-            👋 {lang === "en" ? "Welcome back" : "Bienvenido de nuevo"}, {perfil.nombre_completo.split(" ")[0]}
+            <Icon name="hand" size={16} /> {lang === "en" ? "Welcome back" : "Bienvenido de nuevo"}, {perfil.nombre_completo.split(" ")[0]}
           </div>
         )}
 
         <div className="badge badge-gold" style={{ marginBottom: "16px", marginLeft: perfil?.nombre_completo ? "12px" : "0" }}>
-          🇳🇮 Nicaragua
+          <Icon name="flag" size={14} /> Nicaragua
         </div>
 
         <h1 style={{ ...styles.heroTitle, color: "#FFFFFF" }}>
@@ -77,7 +78,7 @@ function FeaturesSection() {
 
   const features = [
     {
-      icon: "🗺️",
+      icon: <Icon name="map" size={28} />,
       title: t("landing.features.gps.title"),
       description: t("landing.features.gps.description"),
       bg: "linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)",
@@ -85,7 +86,7 @@ function FeaturesSection() {
       textColor: "#0369A1",
     },
     {
-      icon: "📍",
+      icon: <Icon name="mapPin" size={28} />,
       title: t("landing.features.community.title"),
       description: t("landing.features.community.description"),
       bg: "linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)",
@@ -93,7 +94,7 @@ function FeaturesSection() {
       textColor: "#047857",
     },
     {
-      icon: "📅",
+      icon: <Icon name="calendar" size={28} />,
       title: t("landing.features.reservations.title"),
       description: t("landing.features.reservations.description"),
       bg: "linear-gradient(135deg, #FFFDF0 0%, #FEF9C3 100%)",
@@ -167,52 +168,52 @@ function CategoriesSection() {
 
   const categories = [
     {
-      icon: "🍽️", key: "comideria",
+      icon: <Icon name="utensils" size={28} />, key: "comideria",
       bg: "#FFFFFF", border: "1.5px solid rgba(217, 119, 6, 0.25)",
       iconBg: "rgba(245, 158, 11, 0.15)", textColor: "#92400E"
     },
     {
-      icon: "🍲", key: "restaurante",
+      icon: <Icon name="soup" size={28} />, key: "restaurante",
       bg: "#FFFFFF", border: "1.5px solid rgba(220, 38, 38, 0.25)",
       iconBg: "rgba(239, 68, 68, 0.15)", textColor: "#991B1B"
     },
     {
-      icon: "🎨", key: "artesanal",
+      icon: <Icon name="palette" size={28} />, key: "artesanal",
       bg: "#FFFFFF", border: "1.5px solid rgba(124, 58, 237, 0.25)",
       iconBg: "rgba(139, 92, 246, 0.15)", textColor: "#5B21B6"
     },
     {
-      icon: "🏖️", key: "playa",
+      icon: <Icon name="umbrella" size={28} />, key: "playa",
       bg: "#FFFFFF", border: "1.5px solid rgba(8, 145, 178, 0.25)",
       iconBg: "rgba(6, 182, 212, 0.15)", textColor: "#155E75"
     },
     {
-      icon: "👨‍👩‍👧‍👦", key: "familiar",
+      icon: <Icon name="family" size={28} />, key: "familiar",
       bg: "#FFFFFF", border: "1.5px solid rgba(219, 39, 119, 0.25)",
       iconBg: "rgba(236, 72, 153, 0.15)", textColor: "#9D174D"
     },
     {
-      icon: "🏨", key: "hotel",
+      icon: <Icon name="hotel" size={28} />, key: "hotel",
       bg: "#FFFFFF", border: "1.5px solid rgba(79, 70, 229, 0.25)",
       iconBg: "rgba(99, 102, 241, 0.15)", textColor: "#3730A3"
     },
     {
-      icon: "🏡", key: "hostal",
+      icon: <Icon name="homeAlt" size={28} />, key: "hostal",
       bg: "#FFFFFF", border: "1.5px solid rgba(13, 148, 136, 0.25)",
       iconBg: "rgba(20, 184, 166, 0.15)", textColor: "#115E59"
     },
     {
-      icon: "🚖", key: "transporte",
+      icon: <Icon name="car" size={28} />, key: "transporte",
       bg: "#FFFFFF", border: "1.5px solid rgba(234, 88, 12, 0.25)",
       iconBg: "rgba(249, 115, 22, 0.15)", textColor: "#9A3412"
     },
     {
-      icon: "🌋", key: "tour",
+      icon: <Icon name="mountain" size={28} />, key: "tour",
       bg: "#FFFFFF", border: "1.5px solid rgba(23, 170, 74, 0.25)",
       iconBg: "rgba(34, 197, 94, 0.15)", textColor: "#166534"
     },
     {
-      icon: "🛍️", key: "tienda",
+      icon: <Icon name="shoppingBag" size={28} />, key: "tienda",
       bg: "#FFFFFF", border: "1.5px solid rgba(147, 51, 234, 0.25)",
       iconBg: "rgba(168, 85, 247, 0.15)", textColor: "#6B21A8"
     },
@@ -334,18 +335,18 @@ function Footer() {
         <div style={styles.footerLinks}>
           <div>
             <h4 style={styles.footerLinkTitle}>{t("landing.footer.links")}</h4>
-            <Link href="/mapa" style={styles.footerLink}>🗺️ {t("nav.map")}</Link>
-            <Link href="/comunidad" style={styles.footerLink}>👥 {t("nav.community")}</Link>
+            <Link href="/mapa" style={styles.footerLink}><Icon name="map" size={14} /> {t("nav.map")}</Link>
+            <Link href="/comunidad" style={styles.footerLink}><Icon name="users" size={14} /> {t("nav.community")}</Link>
           </div>
           <div>
             <h4 style={styles.footerLinkTitle}>Negocios</h4>
-            <Link href="/registro" style={styles.footerLink}>🏬 Registrar Negocio</Link>
-            <Link href="/dashboard" style={styles.footerLink}>📊 Mi Panel</Link>
+            <Link href="/registro" style={styles.footerLink}><Icon name="store" size={14} /> Registrar Negocio</Link>
+            <Link href="/dashboard" style={styles.footerLink}><Icon name="barChart" size={14} /> Mi Panel</Link>
           </div>
           <div>
             <h4 style={styles.footerLinkTitle}>{t("landing.footer.legal")}</h4>
-            <Link href="#" style={styles.footerLink}>🔒 {t("landing.footer.privacy")}</Link>
-            <Link href="#" style={styles.footerLink}>📜 {t("landing.footer.terms")}</Link>
+            <Link href="#" style={styles.footerLink}><Icon name="lock" size={14} /> {t("landing.footer.privacy")}</Link>
+            <Link href="#" style={styles.footerLink}><Icon name="fileText" size={14} /> {t("landing.footer.terms")}</Link>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import Icon from "@/components/ui/Icon";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    FOLLOWERS MODAL — Lista de Seguidores y Siguiendo
@@ -121,7 +122,7 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
       return (
         <div style={{ padding: "40px 24px", textAlign: "center" }}>
           <span style={{ fontSize: "36px", display: "block", marginBottom: "12px" }}>
-            {activeTab === "followers" ? "👥" : "🔍"}
+            {activeTab === "followers" ? <Icon name="users" size={36} /> : <Icon name="search" size={36} />}
           </span>
           <p style={{ margin: 0, fontSize: "14px", color: "var(--atlan-text-muted)" }}>
             {activeTab === "followers"
@@ -152,7 +153,7 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
                     {user.nombre_completo || "Usuario"}
                   </div>
                   <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>
-                    {user.rol === "dueno" ? "🏢 Propietario" : user.rol === "admin" ? "⚡ Admin" : "🧳 Turista"}
+                    {user.rol === "dueno" ? <><Icon name="building" size={11} /> Propietario</> : user.rol === "admin" ? <><Icon name="zap" size={11} /> Admin</> : <><Icon name="luggage" size={11} /> Turista</>}
                   </div>
                 </div>
               </Link>
@@ -204,7 +205,7 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
               borderBottom: activeTab === "followers" ? "2px solid var(--atlan-gold)" : "2px solid transparent",
             }}
           >
-            👥 {lang === "en" ? "Followers" : "Seguidores"}
+            <Icon name="users" size={16} /> {lang === "en" ? "Followers" : "Seguidores"}
             <span style={styles.tabCount}>{followers.length}</span>
           </button>
           <button
@@ -215,7 +216,7 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
               borderBottom: activeTab === "following" ? "2px solid var(--atlan-gold)" : "2px solid transparent",
             }}
           >
-            ✨ {lang === "en" ? "Following" : "Siguiendo"}
+            <Icon name="sparkles" size={16} /> {lang === "en" ? "Following" : "Siguiendo"}
             <span style={styles.tabCount}>{following.length}</span>
           </button>
         </div>

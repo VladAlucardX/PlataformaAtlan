@@ -14,6 +14,7 @@ import ChatWidget from "@/components/ui/ChatWidget";
 import FollowersModal from "@/components/ui/FollowersModal";
 import Navbar from "@/components/ui/Navbar";
 import { getProfileSlug } from "@/lib/profileUtils";
+import Icon from "@/components/ui/Icon";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    COMUNIDAD ATLAN — Red Social
@@ -41,7 +42,7 @@ function LoginRequiredModal({ onClose, lang }) {
       <div style={modalStyles.modal} onClick={(e) => e.stopPropagation()} className="animate-fade-in-up">
         <button onClick={onClose} style={modalStyles.closeBtn}>✕</button>
         <div style={{ textAlign: "center", padding: "20px 0" }}>
-          <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}>🔐</span>
+          <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}><Icon name="lock" size={48} /></span>
           <h3 style={{ fontSize: "22px", fontWeight: "800", margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>
             {lang === "en" ? "Sign in to interact" : "Inicia sesión para interactuar"}
           </h3>
@@ -193,7 +194,7 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
           <div>
             <span style={{ fontWeight: "700", fontSize: "14px", color: "var(--atlan-text-primary)" }}>{perfil?.nombre_completo || "Usuario"}</span>
             <span style={{ display: "block", fontSize: "11px", color: "var(--atlan-text-muted)" }}>
-              {perfil?.rol === "dueno" ? "🏢 Propietario" : perfil?.rol === "admin" ? "⚡ Administrador" : "🧳 Turista"}
+              {perfil?.rol === "dueno" ? <><Icon name="building" size={12} /> Propietario</> : perfil?.rol === "admin" ? <><Icon name="zap" size={12} /> Administrador</> : <><Icon name="luggage" size={12} /> Turista</>}
             </span>
           </div>
         </div>
@@ -244,7 +245,7 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
         {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
           <div style={postFormStyles.promoSection}>
             <span style={{ fontSize: "12px", fontWeight: "800", color: "var(--atlan-gold)", textTransform: "uppercase", display: "block", marginBottom: "8px", letterSpacing: "0.5px" }}>
-              📢 {lang === "en" ? "Publication type" : "Tipo de publicación"}
+              <Icon name="megaphone" size={14} /> {lang === "en" ? "Publication type" : "Tipo de publicación"}
             </span>
             <div style={{ display: "flex", gap: "16px", marginBottom: "8px", flexWrap: "wrap" }}>
               <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "13px", color: "var(--atlan-text-secondary)" }}>
@@ -267,7 +268,7 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
                     onChange={() => { setEsPromocion(true); setEsPublicidad(false); }} 
                     style={{ accentColor: "var(--atlan-gold)" }} 
                   />
-                  📢 {lang === "en" ? "Promotion" : "Promoción"}
+                  <Icon name="megaphone" size={12} /> {lang === "en" ? "Promotion" : "Promoción"}
                 </label>
               )}
 
@@ -279,7 +280,7 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
                   onChange={() => { setEsPromocion(false); setEsPublicidad(true); }} 
                   style={{ accentColor: "#E6C200" }} 
                 />
-                ✨ {lang === "en" ? "Sponsored Ad" : "Publicidad"}
+                <Icon name="sparkles" size={12} /> {lang === "en" ? "Sponsored Ad" : "Publicidad"}
               </label>
             </div>
 
@@ -420,12 +421,12 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
       {/* Badges */}
       {post.es_publicidad && (
         <div style={cardStyles.publicidadBadge}>
-          ✨ {lang === "en" ? "Sponsored Ad" : "Publicidad"}
+          <Icon name="sparkles" size={12} /> {lang === "en" ? "Sponsored Ad" : "Publicidad"}
         </div>
       )}
       {post.es_promocion && !post.es_publicidad && (
         <div style={cardStyles.promoBadge}>
-          📢 {lang === "en" ? "Promo" : "Promoción"}
+          <Icon name="megaphone" size={12} /> {lang === "en" ? "Promo" : "Promoción"}
         </div>
       )}
 
@@ -438,8 +439,8 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <span style={{ fontWeight: "800", fontSize: "14px", color: "var(--atlan-text-primary)" }}>{autor.nombre_completo || "Usuario"}</span>
-              {autor.rol === "dueno" && <span style={cardStyles.roleBadge}>🏢</span>}
-              {autor.rol === "admin" && <span style={{ ...cardStyles.roleBadge, background: "rgba(239,68,68,0.15)", color: "#ef4444" }}>⚡</span>}
+              {autor.rol === "dueno" && <span style={cardStyles.roleBadge}><Icon name="building" size={12} /></span>}
+              {autor.rol === "admin" && <span style={{ ...cardStyles.roleBadge, background: "rgba(239,68,68,0.15)", color: "#ef4444" }}><Icon name="zap" size={12} /></span>}
             </div>
             <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)" }}>{timeAgo(post.created_at, lang)}</span>
           </div>
@@ -452,7 +453,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
             {showMenu && (
               <div style={cardStyles.menuDropdown}>
                 <button onClick={handleDeletePost} style={cardStyles.menuItem}>
-                  🗑️ {lang === "en" ? "Delete" : "Eliminar"}
+                  <Icon name="trash" size={12} /> {lang === "en" ? "Delete" : "Eliminar"}
                 </button>
               </div>
             )}
@@ -493,10 +494,10 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
 
       {/* Stats bar */}
       <div style={cardStyles.statsBar}>
-        {likesCount > 0 && <span style={cardStyles.statText}>❤️ {likesCount}</span>}
+        {likesCount > 0 && <span style={cardStyles.statText}><Icon name="heartFilled" size={12} color="#ef4444" /> {likesCount}</span>}
         {commentsCount > 0 && (
           <button onClick={handleToggleComments} style={{ ...cardStyles.statText, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-            💬 {commentsCount} {commentsCount === 1 ? (lang === "en" ? "comment" : "comentario") : (lang === "en" ? "comments" : "comentarios")}
+            <Icon name="messageCircle" size={12} /> {commentsCount} {commentsCount === 1 ? (lang === "en" ? "comment" : "comentario") : (lang === "en" ? "comments" : "comentarios")}
           </button>
         )}
       </div>
@@ -504,11 +505,11 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
       {/* Action bar */}
       <div style={cardStyles.actionBar}>
         <button onClick={handleLike} style={{ ...cardStyles.actionBtn, color: liked ? "#ef4444" : "var(--atlan-text-secondary)" }}>
-          <span style={{ fontSize: "16px", transition: "transform 0.2s", transform: liked ? "scale(1.2)" : "scale(1)" }}>{liked ? "❤️" : "🤍"}</span>
+          <span style={{ fontSize: "16px", transition: "transform 0.2s", transform: liked ? "scale(1.2)" : "scale(1)" }}>{liked ? <Icon name="heartFilled" size={16} color="#ef4444" /> : <Icon name="heart" size={16} />}</span>
           {lang === "en" ? (liked ? "Liked" : "Like") : (liked ? "Te gusta" : "Me gusta")}
         </button>
         <button onClick={handleToggleComments} style={cardStyles.actionBtn}>
-          💬 {lang === "en" ? "Comment" : "Comentar"}
+          <Icon name="messageCircle" size={14} /> {lang === "en" ? "Comment" : "Comentar"}
         </button>
         <ShareDropdown post={post} session={session} perfil={perfil} lang={lang} onRequireLogin={onRequireLogin} onRepost={onRepost} />
       </div>
@@ -576,7 +577,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
                 </div>
               ) : (
                 <button onClick={onRequireLogin} style={{ ...cardStyles.actionBtn, width: "100%", justifyContent: "center", marginTop: "8px", color: "var(--atlan-gold)" }}>
-                  🔐 {lang === "en" ? "Sign in to comment" : "Inicia sesión para comentar"}
+                  <Icon name="lock" size={14} /> {lang === "en" ? "Sign in to comment" : "Inicia sesión para comentar"}
                 </button>
               )}
             </>
@@ -631,7 +632,7 @@ function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChang
             {user.nombre_completo || "Usuario"}
           </div>
           <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>
-            {user.rol === "dueno" ? "🏢 Propietario" : "🧳 Turista"}
+            {user.rol === "dueno" ? <><Icon name="building" size={11} /> Propietario</> : <><Icon name="luggage" size={11} /> Turista</>}
           </div>
         </div>
       </Link>
@@ -870,7 +871,7 @@ export default function ComunidadPage() {
                 </Link>
                 <h4 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{perfil.nombre_completo}</h4>
                 <p style={{ margin: "0 0 12px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>
-                  {perfil.rol === "dueno" ? "🏢 Propietario" : "🧳 Turista"}
+                  {perfil.rol === "dueno" ? <><Icon name="building" size={11} /> Propietario</> : <><Icon name="luggage" size={11} /> Turista</>}
                 </p>
                 <div style={{ display: "flex", justifyContent: "center", gap: "24px" }}>
                   <button onClick={() => { setFollowersModalTab("followers"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px", borderRadius: "8px", transition: "background 0.15s" }}>
@@ -886,7 +887,7 @@ export default function ComunidadPage() {
             </div>
           ) : (
             <div style={sidebarStyles.loginCard}>
-              <span style={{ fontSize: "36px", display: "block", marginBottom: "12px" }}>👥</span>
+              <span style={{ fontSize: "36px", display: "block", marginBottom: "12px" }}><Icon name="users" size={36} /></span>
               <h4 style={{ margin: "0 0 8px", fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
                 {lang === "en" ? "Join the Community" : "Únete a la Comunidad"}
               </h4>
@@ -905,7 +906,7 @@ export default function ComunidadPage() {
           {/* Mobile Search Bar */}
           <div className="hide-desktop" style={{ marginBottom: "16px", background: "var(--atlan-bg-card)", border: "1px solid rgba(20, 109, 158, 0.08)", borderRadius: "18px", padding: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}>
             <h4 style={{ margin: "0 0 12px", fontSize: "14px", fontWeight: "800", color: "var(--atlan-text-primary)", display: "flex", alignItems: "center", gap: "6px" }}>
-              🔍 {lang === "en" ? "Find Friends" : "Buscar Personas"}
+              <Icon name="search" size={14} /> {lang === "en" ? "Find Friends" : "Buscar Personas"}
             </h4>
             <input
               type="text"
@@ -953,7 +954,7 @@ export default function ComunidadPage() {
                 {lang === "en" ? "What's on your mind?" : "¿Qué estás pensando?"}
               </div>
               <button style={pageStyles.createPostBtn}>
-                📝
+                <Icon name="edit" size={16} />
               </button>
             </div>
           )}
@@ -966,7 +967,7 @@ export default function ComunidadPage() {
             </div>
           ) : posts.length === 0 ? (
             <div style={pageStyles.emptyState}>
-              <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}>📝</span>
+              <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}><Icon name="edit" size={48} /></span>
               <h3 style={{ margin: "0 0 8px", fontSize: "20px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
                 {lang === "en" ? "No posts yet" : "No hay publicaciones todavía"}
               </h3>
@@ -1003,7 +1004,7 @@ export default function ComunidadPage() {
           {/* Buscador */}
           <div style={sidebarStyles.sectionCard}>
             <h4 style={sidebarStyles.sectionTitle}>
-              🔍 {lang === "en" ? "Search" : "Buscar"}
+              <Icon name="search" size={14} /> {lang === "en" ? "Search" : "Buscar"}
             </h4>
             <input
               type="text"
@@ -1028,7 +1029,7 @@ export default function ComunidadPage() {
             {searchQuery.trim() ? (
               <>
                 <h4 style={sidebarStyles.sectionTitle}>
-                  👥 {lang === "en" ? "Search Results" : "Resultados"}
+                  <Icon name="users" size={14} /> {lang === "en" ? "Search Results" : "Resultados"}
                 </h4>
                 {searching ? (
                   <div style={{ padding: "12px", textAlign: "center" }}>
@@ -1047,7 +1048,7 @@ export default function ComunidadPage() {
             ) : (
               <>
                 <h4 style={sidebarStyles.sectionTitle}>
-                  ✨ {lang === "en" ? "Suggested People" : "Personas sugeridas"}
+                  <Icon name="sparkles" size={14} /> {lang === "en" ? "Suggested People" : "Personas sugeridas"}
                 </h4>
                 {suggestedUsers.length === 0 ? (
                   <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
@@ -1064,14 +1065,14 @@ export default function ComunidadPage() {
 
           <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
             <h4 style={sidebarStyles.sectionTitle}>
-              🗺️ {lang === "en" ? "Explore" : "Explorar"}
+              <Icon name="map" size={14} /> {lang === "en" ? "Explore" : "Explorar"}
             </h4>
             <Link href="/mapa" style={sidebarStyles.exploreLink}>
-              📍 {lang === "en" ? "Tourist Map" : "Mapa Turístico"}
+              <Icon name="mapPin" size={14} /> {lang === "en" ? "Tourist Map" : "Mapa Turístico"}
             </Link>
             {session && (perfil?.rol === "dueno" || perfil?.rol === "admin") && (
               <Link href="/dashboard" style={sidebarStyles.exploreLink}>
-                💼 {lang === "en" ? "My Business" : "Mi Negocio"}
+                <Icon name="briefcase" size={14} /> {lang === "en" ? "My Business" : "Mi Negocio"}
               </Link>
             )}
           </div>
@@ -1081,7 +1082,7 @@ export default function ComunidadPage() {
       {/* FAB: Create Post (Mobile) */}
       {session && (
         <button onClick={() => setShowCreateModal(true)} style={pageStyles.fab} className="hide-desktop">
-          ✏️
+          <Icon name="edit" size={16} />
         </button>
       )}
 

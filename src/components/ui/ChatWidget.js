@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import Icon from "@/components/ui/Icon";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    CHAT WIDGET — Messenger flotante para desktop
@@ -210,7 +211,7 @@ export default function ChatWidget({ session, perfil, lang }) {
       {/* Floating button */}
       {!isOpen && (
         <button onClick={() => setIsOpen(true)} style={styles.fab}>
-          💬
+          <Icon name="messageCircle" size={24} />
           {totalUnread > 0 && (
             <span style={styles.badge}>{totalUnread > 9 ? "9+" : totalUnread}</span>
           )}
@@ -225,7 +226,7 @@ export default function ChatWidget({ session, perfil, lang }) {
               {/* List Header */}
               <div style={styles.panelHeader}>
                 <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
-                  💬 {lang === "en" ? "Messages" : "Mensajes"}
+                  <Icon name="messageCircle" size={18} /> {lang === "en" ? "Messages" : "Mensajes"}
                 </h4>
                 <div style={{ display: "flex", gap: "6px" }}>
                   <Link href="/chat" style={styles.expandBtn} title={lang === "en" ? "Open full chat" : "Abrir chat completo"}>
@@ -243,7 +244,7 @@ export default function ChatWidget({ session, perfil, lang }) {
                   </div>
                 ) : conversaciones.length === 0 ? (
                   <div style={{ padding: "40px 20px", textAlign: "center" }}>
-                    <span style={{ fontSize: "32px", display: "block", marginBottom: "8px" }}>📭</span>
+                    <span style={{ fontSize: "32px", display: "block", marginBottom: "8px" }}><Icon name="messageCircle" size={32} /></span>
                     <p style={{ margin: 0, fontSize: "13px", color: "var(--atlan-text-muted)" }}>
                       {lang === "en" ? "No conversations yet" : "Sin conversaciones aún"}
                     </p>
@@ -317,7 +318,7 @@ export default function ChatWidget({ session, perfil, lang }) {
                   </div>
                 ) : mensajes.length === 0 ? (
                   <div style={{ padding: "40px 20px", textAlign: "center" }}>
-                    <span style={{ fontSize: "28px", display: "block", marginBottom: "8px" }}>👋</span>
+                    <span style={{ fontSize: "28px", display: "block", marginBottom: "8px" }}><Icon name="hand" size={28} /></span>
                     <p style={{ margin: 0, fontSize: "12px", color: "var(--atlan-text-muted)" }}>
                       {lang === "en" ? "Say hi!" : "¡Saluda!"}
                     </p>

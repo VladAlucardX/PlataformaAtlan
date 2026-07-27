@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import Icon from "@/components/ui/Icon";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    IMAGE VIEWER MODAL — Visor de imagen ampliada + hilo de comentarios
@@ -159,8 +160,8 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
                     <span style={{ fontWeight: "800", fontSize: "14px", color: "var(--atlan-text-primary)" }}>
                       {autor.nombre_completo || "Usuario"}
                     </span>
-                    {autor.rol === "dueno" && <span style={styles.roleBadge}>🏢</span>}
-                    {autor.rol === "admin" && <span style={{ ...styles.roleBadge, background: "rgba(239,68,68,0.15)", color: "#ef4444" }}>⚡</span>}
+                    {autor.rol === "dueno" && <span style={styles.roleBadge}><Icon name="building" size={12} /></span>}
+                    {autor.rol === "admin" && <span style={{ ...styles.roleBadge, background: "rgba(239,68,68,0.15)", color: "#ef4444" }}><Icon name="zap" size={12} /></span>}
                   </div>
                   <span style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>
                     {timeAgo(post.created_at, lang)}
@@ -182,13 +183,13 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
             <div style={styles.likeBar}>
               <button onClick={handleLike} style={{ ...styles.likeBtn, color: liked ? "#ef4444" : "var(--atlan-text-secondary)" }}>
                 <span style={{ transition: "transform 0.2s", transform: liked ? "scale(1.2)" : "scale(1)" }}>
-                  {liked ? "❤️" : "🤍"}
+                  {liked ? <Icon name="heartFilled" size={18} color="#ef4444" /> : <Icon name="heart" size={18} />}
                 </span>
                 {likesCount > 0 && <span>{likesCount}</span>}
                 <span>{lang === "en" ? (liked ? "Liked" : "Like") : (liked ? "Te gusta" : "Me gusta")}</span>
               </button>
               <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)", fontWeight: "600" }}>
-                💬 {comments.length} {comments.length === 1 ? (lang === "en" ? "comment" : "comentario") : (lang === "en" ? "comments" : "comentarios")}
+                <Icon name="messageCircle" size={14} /> {comments.length} {comments.length === 1 ? (lang === "en" ? "comment" : "comentario") : (lang === "en" ? "comments" : "comentarios")}
               </span>
             </div>
 
@@ -200,7 +201,7 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
                 </div>
               ) : comments.length === 0 ? (
                 <div style={{ padding: "32px 16px", textAlign: "center" }}>
-                  <span style={{ fontSize: "28px", display: "block", marginBottom: "8px" }}>💬</span>
+                  <span style={{ fontSize: "28px", display: "block", marginBottom: "8px" }}><Icon name="messageCircle" size={28} /></span>
                   <p style={{ margin: 0, fontSize: "13px", color: "var(--atlan-text-muted)" }}>
                     {lang === "en" ? "No comments yet. Be the first!" : "Sin comentarios aún. ¡Sé el primero!"}
                   </p>
@@ -260,13 +261,13 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
                   disabled={!newComment.trim() || submitting}
                   style={{ ...styles.sendBtn, opacity: !newComment.trim() ? 0.4 : 1 }}
                 >
-                  ➤
+                  <Icon name="send" size={16} />
                 </button>
               </div>
             ) : (
               <div style={{ padding: "12px 16px", textAlign: "center", borderTop: "1px solid rgba(20, 109, 158, 0.08)" }}>
                 <Link href="/login" style={{ color: "var(--atlan-gold)", fontSize: "13px", fontWeight: "700", textDecoration: "none" }}>
-                  🔐 {lang === "en" ? "Sign in to comment" : "Inicia sesión para comentar"}
+                  <Icon name="lock" size={14} /> {lang === "en" ? "Sign in to comment" : "Inicia sesión para comentar"}
                 </Link>
               </div>
             )}

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import Icon from "@/components/ui/Icon";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    SHARE DROPDOWN — Opciones de compartir publicación
@@ -189,7 +190,7 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
         onClick={() => { setOpen(!open); setShowSendChat(false); }}
         style={styles.actionBtn}
       >
-        📤 {lang === "en" ? "Share" : "Compartir"}
+        <Icon name="share2" size={14} /> {lang === "en" ? "Share" : "Compartir"}
       </button>
 
       {open && (
@@ -197,16 +198,16 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
           {!showSendChat ? (
             <>
               <button onClick={handleCopyLink} style={styles.dropdownItem}>
-                <span style={styles.dropdownIcon}>🔗</span>
+                <span style={styles.dropdownIcon}><Icon name="link" size={16} /></span>
                 {lang === "en" ? "Copy link" : "Copiar enlace"}
               </button>
               <button onClick={handleRepost} style={styles.dropdownItem}>
-                <span style={styles.dropdownIcon}>🔁</span>
+                <span style={styles.dropdownIcon}><Icon name="share2" size={16} /></span>
                 {lang === "en" ? "Share to my feed" : "Compartir en mi muro"}
               </button>
               <div style={styles.dropdownDivider} />
               <button onClick={handleOpenSendChat} style={styles.dropdownItem}>
-                <span style={styles.dropdownIcon}>💬</span>
+                <span style={styles.dropdownIcon}><Icon name="messageCircle" size={16} /></span>
                 {lang === "en" ? "Send via chat" : "Enviar por chat"}
               </button>
             </>
