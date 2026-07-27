@@ -13,6 +13,7 @@ import ImageViewerModal from "@/components/ui/ImageViewerModal";
 import ChatWidget from "@/components/ui/ChatWidget";
 import FollowersModal from "@/components/ui/FollowersModal";
 import Navbar from "@/components/ui/Navbar";
+import { getProfileSlug } from "@/lib/profileUtils";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    COMUNIDAD ATLAN — Red Social
@@ -862,7 +863,7 @@ export default function ComunidadPage() {
             <div style={sidebarStyles.profileCard}>
               <div style={sidebarStyles.profileBanner} />
               <div style={{ padding: "0 20px 20px", marginTop: "-32px", textAlign: "center" }}>
-                <Link href={`/comunidad/perfil/${session.user.id}`} style={{ textDecoration: "none" }}>
+                <Link href={`/comunidad/perfil/${getProfileSlug(perfil) || session.user.id}`} style={{ textDecoration: "none" }}>
                   <div style={{ ...avatarStyle(perfil.avatar_url, 64), margin: "0 auto 8px", border: "3px solid var(--atlan-bg-primary)" }}>
                     {!perfil.avatar_url && (perfil.nombre_completo?.[0]?.toUpperCase() || "U")}
                   </div>
@@ -1186,21 +1187,61 @@ const navStyles = {
 
 const pageStyles = {
   container: {
-    width: "100%", maxWidth: "100%", margin: "0", padding: "90px 20px 40px 20px",
-    display: "grid", gridTemplateColumns: "280px 1fr 300px", gap: "28px",
+    width: "100%",
+    maxWidth: "1440px",
+    margin: "0 auto",
+    padding: "90px 24px 40px 24px",
+    display: "block",
+    position: "relative"
   },
-  sidebarLeft: { position: "sticky", top: "90px", alignSelf: "start" },
-  feed: { minWidth: 0 },
-  sidebarRight: { position: "sticky", top: "90px", alignSelf: "start" },
+  sidebarLeft: {
+    position: "fixed",
+    top: "90px",
+    left: "max(24px, calc(50vw - 720px + 24px))",
+    width: "260px",
+    maxHeight: "calc(100vh - 110px)",
+    overflowY: "auto",
+    scrollbarWidth: "none",
+    zIndex: 10
+  },
+  feed: {
+    minWidth: 0,
+    maxWidth: "760px",
+    width: "100%",
+    margin: "0 auto"
+  },
+  sidebarRight: {
+    position: "fixed",
+    top: "90px",
+    right: "max(24px, calc(50vw - 720px + 24px))",
+    width: "280px",
+    maxHeight: "calc(100vh - 110px)",
+    overflowY: "auto",
+    scrollbarWidth: "none",
+    zIndex: 10
+  },
   createPostBar: {
-    display: "flex", alignItems: "center", gap: "12px", padding: "16px 20px",
-    background: "rgba(20,109,158,0.03)", border: "1px solid rgba(20,109,158,0.08)",
-    borderRadius: "16px", cursor: "pointer", transition: "all 0.2s", marginBottom: "16px",
+    display: "flex",
+    alignItems: "center",
+    gap: "14px",
+    padding: "18px 24px",
+    background: "#FFFFFF",
+    border: "2px solid rgba(255, 255, 255, 0.95)",
+    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 16px 36px -6px rgba(20, 109, 158, 0.10)",
+    borderRadius: "24px",
+    cursor: "pointer",
+    transition: "all 0.2s",
+    marginBottom: "24px"
   },
   createPostInput: {
-    flex: 1, fontSize: "14px", color: "var(--atlan-text-muted)", fontWeight: "500",
-    padding: "10px 16px",    background: "rgba(20,109,158,0.03)", borderRadius: "20px",
-    border: "1px solid rgba(20,109,158,0.08)",
+    flex: 1,
+    fontSize: "15px",
+    color: "var(--atlan-text-muted)",
+    fontWeight: "500",
+    padding: "12px 20px",
+    background: "#F4F6F9",
+    borderRadius: "24px",
+    border: "1.5px solid rgba(20, 109, 158, 0.12)"
   },
   createPostBtn: {
     background: "linear-gradient(145deg, #FFE033 0%, #FFD700 60%, #E6C200 100%)",
@@ -1229,17 +1270,17 @@ const cardStyles = {
   card: {
     background: "#FFFFFF",
     border: "2px solid rgba(255, 255, 255, 0.95)",
-    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 16px 36px -6px rgba(20, 109, 158, 0.10), 0 4px 12px rgba(0, 0, 0, 0.03)",
-    borderRadius: "24px",
-    padding: "24px",
-    marginBottom: "20px",
-    transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 18px 40px -6px rgba(20, 109, 158, 0.12), 0 4px 12px rgba(0, 0, 0, 0.03)",
+    borderRadius: "28px",
+    padding: "28px",
+    marginBottom: "24px",
+    transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"
   },
   publicidadCard: {
     background: "radial-gradient(circle at top right, rgba(23, 170, 74, 0.08) 0%, #FFFFFF 70%)",
     border: "2px solid #17AA4A",
     boxShadow: "0 10px 30px -4px rgba(23, 170, 74, 0.25), 0 2px 6px rgba(0, 0, 0, 0.04)",
-    borderRadius: "16px", padding: "20px", marginBottom: "16px",
+    borderRadius: "20px", padding: "24px", marginBottom: "20px",
     transition: "transform 0.2s ease, box-shadow 0.2s ease",
   },
   promoBadge: {
@@ -1258,7 +1299,7 @@ const cardStyles = {
     boxShadow: "0 2px 8px rgba(255, 215, 0, 0.3)",
   },
   header: {
-    display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "14px",
+    display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px",
   },
   roleBadge: {
     display: "inline-flex", alignItems: "center", justifyContent: "center",
@@ -1266,14 +1307,14 @@ const cardStyles = {
     background: "rgba(255,215,0,0.10)", color: "var(--atlan-gold-dark)",
   },
   content: {
-    margin: "0 0 14px", fontSize: "14.5px", lineHeight: "1.6",
+    margin: "0 0 16px", fontSize: "15.5px", lineHeight: "1.65",
     color: "var(--atlan-text-primary)", whiteSpace: "pre-wrap", wordBreak: "break-word",
   },
   imageContainer: {
-    borderRadius: "14px", overflow: "hidden", marginBottom: "14px",
+    borderRadius: "18px", overflow: "hidden", marginBottom: "16px",
     border: "1px solid rgba(20,109,158,0.08)",
   },
-  image: { width: "100%", maxHeight: "420px", objectFit: "cover", display: "block" },
+  image: { width: "100%", maxHeight: "540px", objectFit: "cover", display: "block" },
   statsBar: {
     display: "flex", justifyContent: "space-between", padding: "8px 4px",
     borderBottom: "1px solid rgba(20,109,158,0.06)", marginBottom: "4px",

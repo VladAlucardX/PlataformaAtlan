@@ -38,14 +38,19 @@ function avatarStyle(url, size) {
   };
 }
 
+import { getProfileSlug } from "@/lib/profileUtils";
+
 export default function PerfilPublico() {
   const { t, lang } = useTranslation();
   const params = useParams();
-  const userId = params.id;
+  const rawUserId = params.id;
 
   const [session, setSession] = useState(null);
   const [myPerfil, setMyPerfil] = useState(null);
   const [targetPerfil, setTargetPerfil] = useState(null);
+
+  const userId = targetPerfil?.id || rawUserId;
+
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -112,36 +117,52 @@ export default function PerfilPublico() {
 
   // Fetch target profile
   useEffect(() => {
-    if (!userId) return;
+    if (!rawUserId) return;
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        // Profile
-        const { data: profile } = await supabase.from("perfiles").select("*").eq("id", userId).single();
+        let profile = null;
+
+        // 1. Intentar por UUID directo
+        if (rawUserId.length === 36 && rawUserId.includes("-")) {
+          const { data } = await supabase.from("perfiles").select("*").eq("id", rawUserId).maybeSingle();
+          profile = data;
+        }
+
+        // 2. Si no se halló por UUID o se pasó un slug de nombre de usuario
+        if (!profile) {
+          const { data: allProfiles } = await supabase.from("perfiles").select("*");
+          if (allProfiles) {
+            profile = allProfiles.find(p => getProfileSlug(p) === rawUserId.toLowerCase()) || allProfiles.find(p => p.id === rawUserId);
+          }
+        }
+
         setTargetPerfil(profile);
         setBioText(profile?.bio || "");
+
+        const targetId = profile ? profile.id : rawUserId;
 
         // Posts
         const { data: userPosts } = await supabase.from("publicaciones")
           .select("*, perfiles(id, nombre_completo, avatar_url, rol)")
-          .eq("autor_id", userId)
+          .eq("autor_id", targetId)
           .order("created_at", { ascending: false });
         setPosts(userPosts || []);
 
         // Business (if owner)
         if (profile?.rol === "dueno") {
-          const { data: biz } = await supabase.from("negocios").select("id, nombre").eq("propietario_id", userId).eq("activo", true).maybeSingle();
+          const { data: biz } = await supabase.from("negocios").select("id, nombre").eq("propietario_id", targetId).eq("activo", true).maybeSingle();
           setNegocio(biz);
         }
 
         // Check follow status
         if (session?.user) {
           const { data: follow } = await supabase.from("seguimientos")
-            .select("id").eq("seguidor_id", session.user.id).eq("seguido_id", userId).maybeSingle();
+            .select("id").eq("seguidor_id", session.user.id).eq("seguido_id", targetId).maybeSingle();
           if (follow) setIsFollowing(true);
 
           // Check mutual follow for chat
-          const { data: isMutual } = await supabase.rpc("verificar_seguimiento_mutuo", { uid_a: session.user.id, uid_b: userId });
+          const { data: isMutual } = await supabase.rpc("verificar_seguimiento_mutuo", { uid_a: session.user.id, uid_b: targetId });
           setIsMutualFollow(!!isMutual);
         }
 
@@ -157,7 +178,7 @@ export default function PerfilPublico() {
       finally { setLoading(false); }
     };
     fetchProfile();
-  }, [userId, session]);
+  }, [rawUserId, session]);
 
   const handleFollow = async () => {
     if (!session) { setShowLoginModal(true); return; }

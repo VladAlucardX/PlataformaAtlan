@@ -342,7 +342,7 @@ export default function AdminDashboard() {
       background: 'var(--atlan-bg-primary)',
       color: '#1A1A2E',
       fontFamily: 'var(--font-outfit), sans-serif',
-      padding: '110px 24px 40px 24px',
+      padding: '78px 24px 20px 24px',
       position: 'relative',
       overflow: 'hidden'
     }}>
@@ -391,71 +391,70 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Grid de Estadísticas */}
+      {/* Grid de Estadísticas Compacto */}
       <div style={{
         maxWidth: '1200px',
-        margin: '0 auto 40px',
+        margin: '0 auto 16px',
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '20px',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+        gap: '12px',
         position: 'relative',
         zIndex: 1
       }}>
-        <div className="clay-stat-card">
-          <p style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+        <div className="clay-stat-card" style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
             ⌛ {lang === 'en' ? 'Claims in Verification' : 'Reclamos en Verificación'}
-          </p>
-          <h2 style={{ margin: '8px 0 0', fontSize: '36px', fontWeight: '900', color: '#E6A800' }}>
+          </span>
+          <span style={{ fontSize: '20px', fontWeight: '900', color: '#E6A800', background: 'rgba(230, 168, 0, 0.12)', padding: '2px 10px', borderRadius: '10px' }}>
             {stats.pendientes}
-          </h2>
+          </span>
         </div>
-        <div className="clay-stat-card">
-          <p style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            ✅ {lang === 'en' ? 'Approved Pointers' : 'Puntos Aprobados'}
-          </p>
-          <h2 style={{ margin: '8px 0 0', fontSize: '36px', fontWeight: '900', color: '#17AA4A' }}>
+
+        <div className="clay-stat-card" style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            ✅ {lang === 'en' ? 'Approved Points' : 'Puntos Aprobados'}
+          </span>
+          <span style={{ fontSize: '20px', fontWeight: '900', color: '#17AA4A', background: 'rgba(23, 170, 74, 0.12)', padding: '2px 10px', borderRadius: '10px' }}>
             {stats.aprobados}
-          </h2>
+          </span>
         </div>
-        <div className="clay-stat-card">
-          <p style={{ margin: 0, fontSize: '13px', fontWeight: '750', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            🌍 {lang === 'en' ? 'Total Pointers' : 'Total de Puntos'}
-          </p>
-          <h2 style={{ margin: '8px 0 0', fontSize: '36px', fontWeight: '900', color: '#3b82f6' }}>
+
+        <div className="clay-stat-card" style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            🌍 {lang === 'en' ? 'Total Points' : 'Total de Puntos'}
+          </span>
+          <span style={{ fontSize: '20px', fontWeight: '900', color: '#3b82f6', background: 'rgba(59, 130, 246, 0.12)', padding: '2px 10px', borderRadius: '10px' }}>
             {stats.totalPuntos}
-          </h2>
+          </span>
         </div>
       </div>
 
-      {/* Tabs y Buscador */}
+      {/* Tabs, Buscador y Paginación en una sola fila continua */}
       <div style={{
         maxWidth: '1200px',
-        margin: '0 auto 24px',
+        margin: '0 auto 16px',
         display: 'flex',
-        justifyContent: 'space-between',
         alignItems: 'center',
+        gap: '12px',
         flexWrap: 'wrap',
-        gap: '16px',
         position: 'relative',
         zIndex: 1
       }}>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button
-            onClick={() => setActiveTab('pending')}
-            className={`clay-tab ${activeTab === 'pending' ? 'clay-tab-active' : ''}`}
-          >
-            ⌛ {lang === 'en' ? 'Pending Claims' : 'Reclamos Pendientes'} ({reclamos.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('all')}
-            className={`clay-tab ${activeTab === 'all' ? 'clay-tab-active' : ''}`}
-          >
-            🌍 {lang === 'en' ? 'All Points' : 'Todos los Puntos'} ({todosLosPuntos.length})
-          </button>
-        </div>
+        <button
+          onClick={() => setActiveTab('pending')}
+          className={`clay-tab ${activeTab === 'pending' ? 'clay-tab-active' : ''}`}
+        >
+          ⌛ {lang === 'en' ? 'Pending Claims' : 'Reclamos Pendientes'} ({reclamos.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('all')}
+          className={`clay-tab ${activeTab === 'all' ? 'clay-tab-active' : ''}`}
+        >
+          🌍 {lang === 'en' ? 'All Points' : 'Todos los Puntos'} ({todosLosPuntos.length})
+        </button>
 
-        {/* Buscador */}
-        <div style={{ position: 'relative', minWidth: '280px', flex: '1', maxWidth: '380px' }}>
+        {/* Buscador más ancho */}
+        <div style={{ position: 'relative', minWidth: '240px', flex: '1', maxWidth: '400px', marginLeft: '50px' }}>
           <input
             type="text"
             placeholder={lang === 'en' ? '🔍 Search point, category...' : '🔍 Buscar punto por nombre, categoría...'}
@@ -463,12 +462,12 @@ export default function AdminDashboard() {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
               width: '100%',
-              padding: '12px 18px',
-              borderRadius: '16px',
+              padding: '9px 16px',
+              borderRadius: '14px',
               border: '1.5px solid rgba(20, 109, 158, 0.2)',
               background: 'rgba(255, 255, 255, 0.95)',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-              fontSize: '13.5px',
+              fontSize: '13px',
               fontWeight: '600',
               color: '#1A1A2E',
               outline: 'none',
@@ -479,13 +478,13 @@ export default function AdminDashboard() {
               onClick={() => setSearchTerm('')}
               style={{
                 position: 'absolute',
-                right: '12px',
+                right: '10px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: '14px',
+                fontSize: '13px',
                 color: '#94A3B8'
               }}
             >
@@ -493,6 +492,58 @@ export default function AdminDashboard() {
             </button>
           )}
         </div>
+
+        {/* Paginación empujada al borde derecho de la lista */}
+        {totalPages > 1 && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            marginLeft: 'auto'
+          }}>
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+              className="clay-btn-blue"
+              style={{
+                padding: '6px 10px',
+                fontSize: '11.5px',
+                borderRadius: '10px',
+                opacity: currentPage === 1 ? 0.5 : 1,
+                cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
+              }}
+            >
+              ◀ {lang === 'en' ? 'Prev' : 'Ant'}
+            </button>
+
+            <span style={{
+              fontSize: '11.5px',
+              fontWeight: '800',
+              color: '#1A1A2E',
+              background: 'rgba(255, 255, 255, 0.95)',
+              padding: '5px 10px',
+              borderRadius: '10px',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
+            }}>
+              {currentPage}/{totalPages}
+            </span>
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+              className="clay-btn-blue"
+              style={{
+                padding: '6px 10px',
+                fontSize: '11.5px',
+                borderRadius: '10px',
+                opacity: currentPage === totalPages ? 0.5 : 1,
+                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {lang === 'en' ? 'Next' : 'Sig'} ▶
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Contenido Principal */}
@@ -710,48 +761,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Paginación */}
-        {totalPages > 1 && (
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '16px',
-            marginTop: '28px'
-          }}>
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
-              className="clay-btn-blue"
-              style={{
-                padding: '8px 16px',
-                fontSize: '13px',
-                opacity: currentPage === 1 ? 0.5 : 1,
-                cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
-              }}
-            >
-              ◀ {lang === 'en' ? 'Previous' : 'Anterior'}
-            </button>
 
-            <span style={{ fontSize: '13.5px', fontWeight: '800', color: '#1A1A2E', background: 'rgba(255, 255, 255, 0.95)', padding: '6px 16px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-              {lang === 'en' ? 'Page' : 'Página'} {currentPage} {lang === 'en' ? 'of' : 'de'} {totalPages}
-            </span>
-
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
-              className="clay-btn-blue"
-              style={{
-                padding: '8px 16px',
-                fontSize: '13.5px',
-                opacity: currentPage === totalPages ? 0.5 : 1,
-                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
-              }}
-            >
-              {lang === 'en' ? 'Next' : 'Siguiente'} ▶
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Animación Keyframes */}

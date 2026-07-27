@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -8,10 +8,25 @@ import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import NotificationDropdown from "@/components/ui/NotificationDropdown";
 
+import { getProfileSlug } from "@/lib/profileUtils";
+
 export default function Navbar({ activePage = "inicio", session, perfil, onLogout }) {
   const { t, lang } = useTranslation();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Cerrar desplegable al hacer clic afuera
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = async () => {
     if (onLogout) {
@@ -26,14 +41,11 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
     }
   };
 
-  const getProfileLink = () => {
-    if (perfil?.rol === "dueno" || perfil?.rol === "admin") return "/dashboard";
-    return "/perfil";
-  };
-
   const getProfileLabel = () => {
     return perfil?.nombre_completo || perfil?.email?.split("@")[0] || (lang === "en" ? "My Profile" : "Mi Perfil");
   };
+
+  const communityProfileLink = perfil ? `/comunidad/perfil/${getProfileSlug(perfil)}` : (session?.user?.id ? `/comunidad/perfil/${session.user.id}` : "/comunidad");
 
   return (
     <nav className="atlan-navbar-header">
@@ -84,41 +96,165 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
         {/* Far Right Actions */}
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }} className="hide-mobile">
           {session ? (
-            <>
-              <Link href={getProfileLink()} className={`nav-pill-link ${activePage === "perfil" || activePage === "dashboard" ? "active" : ""}`}>
-                {perfil?.avatar_url ? (
-                  <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
-                ) : (
-                  perfil?.rol === "dueno" || perfil?.rol === "admin" ? "💼" : "👤"
-                )}
-                <span>{getProfileLabel()}</span>
-              </Link>
-              <button
-                onClick={handleLogout}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  padding: "8px 16px",
-                  background: "rgba(239, 68, 68, 0.08)",
-                  border: "1px solid rgba(239, 68, 68, 0.25)",
-                  color: "#ef4444",
-                  borderRadius: "var(--atlan-radius-full)",
-                  fontSize: "13px",
-                  fontWeight: "750",
-                  cursor: "pointer",
-                  transition: "all 0.2s"
-                }}
-                title={t("nav.logout") || "Cerrar Sesión"}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-                <span>{t("nav.logout") || "Cerrar Sesión"}</span>
-              </button>
-            </>
+            <div style={{ position: "relative" }} ref={dropdownRef}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                {/* Nombre de usuario -> Redirige al Perfil de la Comunidad */}
+                <Link
+                  href={communityProfileLink}
+                  className={`nav-pill-link ${activePage === "perfil-comunidad" ? "active" : ""}`}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}
+                >
+                  {perfil?.avatar_url ? (
+                    <div style={{ width: "22px", height: "22px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
+                  ) : (
+                    "👤"
+                  )}
+                  <span>{getProfileLabel()}</span>
+                </Link>
+
+                {/* Flecha desplegable del Menú */}
+                <button
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  style={{
+                    background: userDropdownOpen ? "rgba(20, 109, 158, 0.12)" : "rgba(20, 109, 158, 0.05)",
+                    border: "1px solid rgba(20, 109, 158, 0.15)",
+                    color: "var(--atlan-text-primary)",
+                    width: "28px",
+                    height: "28px",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    fontSize: "10px",
+                    transition: "all 0.2s"
+                  }}
+                  title={lang === "en" ? "User Options" : "Opciones de Usuario"}
+                >
+                  ▼
+                </button>
+              </div>
+
+              {/* Menú Desplegable de Usuario */}
+              {userDropdownOpen && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "calc(100% + 8px)",
+                    right: 0,
+                    background: "#FFFFFF",
+                    border: "2px solid rgba(255, 255, 255, 0.95)",
+                    boxShadow: "inset 2px 2px 4px rgba(255, 255, 255, 1), inset -3px -3px 6px rgba(20, 109, 158, 0.06), 0 14px 35px rgba(0, 0, 0, 0.15)",
+                    borderRadius: "18px",
+                    padding: "8px",
+                    minWidth: "210px",
+                    zIndex: 100,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px"
+                  }}
+                  className="animate-fade-in-down"
+                >
+                  {/* Opción 1: Mi Perfil (Comunidad) */}
+                  <Link
+                    href={communityProfileLink}
+                    onClick={() => setUserDropdownOpen(false)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "10px 14px",
+                      borderRadius: "12px",
+                      color: "#1A1A2E",
+                      fontSize: "13px",
+                      fontWeight: "750",
+                      textDecoration: "none",
+                      transition: "background 0.15s"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
+                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                  >
+                    👤 {lang === "en" ? "My Profile" : "Mi Perfil"}
+                  </Link>
+
+                  {/* Opción 2: Mis Giras (Favoritos, Giras y Reservas guardadas) */}
+                  <Link
+                    href="/perfil"
+                    onClick={() => setUserDropdownOpen(false)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "10px 14px",
+                      borderRadius: "12px",
+                      color: "#1A1A2E",
+                      fontSize: "13px",
+                      fontWeight: "750",
+                      textDecoration: "none",
+                      transition: "background 0.15s"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
+                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                  >
+                    🎒 {lang === "en" ? "My Tours & Saved" : "Mis Giras"}
+                  </Link>
+
+                  {/* Opción 3: Mi Negocio (Si es dueño/admin) */}
+                  {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setUserDropdownOpen(false)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: "10px 14px",
+                        borderRadius: "12px",
+                        color: "#1A1A2E",
+                        fontSize: "13px",
+                        fontWeight: "750",
+                        textDecoration: "none",
+                        transition: "background 0.15s"
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                    >
+                      💼 {lang === "en" ? "My Business Hub" : "Mi Negocio"}
+                    </Link>
+                  )}
+
+                  <div style={{ height: "1px", background: "rgba(20, 109, 158, 0.08)", margin: "4px 0" }} />
+
+                  {/* Opción 4: Cerrar Sesión */}
+                  <button
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      handleLogout();
+                    }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "10px 14px",
+                      borderRadius: "12px",
+                      color: "#ef4444",
+                      background: "none",
+                      border: "none",
+                      fontSize: "13px",
+                      fontWeight: "750",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      width: "100%",
+                      transition: "background 0.15s"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(239, 68, 68, 0.08)"}
+                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                  >
+                    🚪 {t("nav.logout") || "Cerrar Sesión"}
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <>
               <Link href="/login" className="nav-pill-link">{t("nav.login")}</Link>
@@ -163,7 +299,11 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
           )}
           {session ? (
             <>
-              <Link href={getProfileLink()} className={`nav-pill-link ${activePage === "perfil" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>👤 {getProfileLabel()}</Link>
+              <Link href={communityProfileLink} className="nav-pill-link" onClick={() => setMenuOpen(false)}>👤 {lang === "en" ? "My Profile" : "Mi Perfil"}</Link>
+              <Link href="/perfil" className="nav-pill-link" onClick={() => setMenuOpen(false)}>🎒 {lang === "en" ? "My Tours & Saved" : "Mis Giras"}</Link>
+              {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
+                <Link href="/dashboard" className="nav-pill-link" onClick={() => setMenuOpen(false)}>💼 {lang === "en" ? "My Business" : "Mi Negocio"}</Link>
+              )}
               <button onClick={() => { setMenuOpen(false); handleLogout(); }} style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", padding: "10px", borderRadius: "10px", fontSize: "14px", fontWeight: "700", cursor: "pointer", width: "100%", textAlign: "left" }}>
                 🚪 {t("nav.logout") || "Cerrar Sesión"}
               </button>

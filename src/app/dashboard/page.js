@@ -10,6 +10,24 @@ import NotificationDropdown from "@/components/ui/NotificationDropdown";
 import Navbar from "@/components/ui/Navbar";
 import { uploadMedia } from "@/lib/storage";
 
+// Helper para obtener imagen por defecto según la categoría del negocio
+const getCategoryFallbackImage = (categoria) => {
+  const cat = (categoria || "").toLowerCase();
+  if (cat.includes("comideria") || cat.includes("restaurante") || cat.includes("comida")) {
+    return "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80";
+  }
+  if (cat.includes("hotel") || cat.includes("hostal") || cat.includes("hospedaje")) {
+    return "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80";
+  }
+  if (cat.includes("playa") || cat.includes("mar")) {
+    return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80";
+  }
+  if (cat.includes("tour") || cat.includes("artesanal") || cat.includes("tienda")) {
+    return "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=600&q=80";
+  }
+  return "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80";
+};
+
 export default function DashboardPage() {
   const { t, lang } = useTranslation();
   const router = useRouter();
@@ -21,6 +39,9 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [misNegocios, setMisNegocios] = useState([]);
   const [negocio, setNegocio] = useState(null);
+
+  // Modo de vista: 'hub' (galería multi-negocio) | 'manage' (gestión del negocio seleccionado)
+  const [viewMode, setViewMode] = useState("hub");
 
   // Estados de navegación interna (Pestañas)
   const [activeTab, setActiveTab] = useState("overview"); // overview | general | excentricidades | menu | reservas | resenas | horarios
@@ -86,6 +107,9 @@ export default function DashboardPage() {
   // Modal de Verificación de Reclamo
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
+  const [showSearchClaimModal, setShowSearchClaimModal] = useState(false);
+  const [claimSearchTerm, setClaimSearchTerm] = useState("");
+  const [claimSearchPage, setClaimSearchPage] = useState(1);
   const [claimTargetPunto, setClaimTargetPunto] = useState(null); // punto objeto o 'gps'
   const [solicitanteNombre, setSolicitanteNombre] = useState("");
   const [solicitanteCedula, setSolicitanteCedula] = useState("");
@@ -183,6 +207,14 @@ export default function DashboardPage() {
       .select("*")
       .eq("dueno_id", userId);
 
+    // Cargar siempre puntos comunitarios libres disponibles para reclamos adicionales
+    const { data: puntosLibres } = await supabase
+      .from("puntos")
+      .select("*")
+      .eq("estado", "sin_reclamar")
+      .is("negocio_id", null);
+    setPuntosDisponibles(puntosLibres || []);
+
     if (negociosData && negociosData.length > 0) {
       setMisNegocios(negociosData);
 
@@ -196,13 +228,7 @@ export default function DashboardPage() {
     } else {
       setMisNegocios([]);
       setNegocio(null);
-      // Si no tiene negocio, cargar puntos libres para reclamar
-      const { data: puntosLibres } = await supabase
-        .from("puntos")
-        .select("*")
-        .eq("estado", "sin_reclamar")
-        .is("negocio_id", null);
-      setPuntosDisponibles(puntosLibres || []);
+      setViewMode("hub");
     }
   };
 
@@ -896,97 +922,260 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* CASO A: EL DUEÑO NO TIENE NEGOCIOS */}
-      {misNegocios.length === 0 ? (
-        <div style={styles.noNegocioContainer} className="glass-card animate-fade-in-up">
-          <h2 style={{ fontSize: "24px", color: "var(--atlan-gold)", fontWeight: "800", marginBottom: "8px" }}>
-            {lang === "en" ? "Claim or Register Your Business" : "Reclama o Registra tu Negocio"}
-          </h2>
-          <p style={{ color: "#4A5568", fontSize: "14px", marginBottom: "24px", lineHeight: "1.5" }}>
-            {lang === "en" 
-              ? "You can claim a point that a tourist previously added to the map, or register a new one." 
-              : "Puedes reclamar un punto que un turista haya agregado previamente al mapa, o registrar uno nuevo."}
-          </p>
+      {/* HUB MULTI-NEGOCIO: SE MUESTRA SIEMPRE QUE VIEWMODE ES 'hub' O NO HAY NEGOCIO SELECCIONADO */}
+      {viewMode === "hub" || !negocio ? (
+        <div style={{ ...styles.dashboardOverviewLayout, marginTop: "20px" }} className="animate-fade-in-up">
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "16px",
+            marginBottom: "28px"
+          }}>
+            <div>
+              <div style={{
+                fontSize: "12px",
+                fontWeight: "800",
+                color: "var(--atlan-gold)",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+                marginBottom: "6px"
+              }}>
+                🏬 {lang === "en" ? "Business Management Hub" : "Panel de Gestión de Negocios"}
+              </div>
+              <h2 style={{ fontSize: "32px", fontWeight: "900", color: "#1A1A2E", margin: 0 }}>
+                {lang === "en" ? "My Businesses" : "Mis Negocios"}
+              </h2>
+              <p style={{ color: "var(--atlan-text-secondary)", margin: "4px 0 0", fontSize: "14.5px" }}>
+                {lang === "en"
+                  ? "Manage your registered properties or claim/register new locations on the map."
+                  : "Administra las fotos, menús y horarios de tus locales o reclama/registra nuevos puntos en el mapa."}
+              </p>
+            </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "24px" }}>
-            {/* Opción 1: Reclamar */}
-            <div style={styles.claimSection}>
-              <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#1A1A2E", marginBottom: "12px" }}>
-                🏷️ {lang === "en" ? "Unclaimed Points Nearby" : "Puntos sin Reclamar Disponibles"}
-              </h3>
-              {(!puntosDisponibles || puntosDisponibles.length === 0) ? (
-                <p style={{ fontSize: "13px", color: "#9CA3AF" }}>
-                  {lang === "en" ? "No unclaimed points found." : "No se hallaron puntos sin reclamar en este momento."}
-                </p>
-              ) : (
-                <div style={styles.pointsList}>
-                  {(puntosDisponibles || []).map((p) => (
-                    <div key={p.id} style={styles.pointRow}>
-                      <div>
-                        <div style={{ fontWeight: "750", fontSize: "13.5px" }}>{p.nombre}</div>
-                        <div style={{ fontSize: "11px", color: "#4A5568" }}>{p.categoria}</div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleInitiateClaim(p)}
-                        disabled={isClaiming}
-                        style={styles.claimBtn}
-                      >
-                        {lang === "en" ? "Claim" : "Reclamar"}
-                      </button>
+            {negocio && (
+              <button
+                onClick={() => setViewMode("manage")}
+                className="clay-btn-gold"
+                style={{ padding: "10px 20px", fontSize: "13px" }}
+              >
+                ⚡ {lang === "en" ? "Manage Selected Business" : "Administrar Negocio Actual"}
+              </button>
+            )}
+          </div>
+
+          {/* Grid de tarjetas por negocio (Compacto) */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+            gap: "16px"
+          }}>
+            {(misNegocios || []).map((n) => {
+              const bgImg = n.logo_url || (n.fotos && n.fotos.length > 0 ? n.fotos[0] : getCategoryFallbackImage(n.tipo));
+              const isSelected = negocio?.id === n.id;
+
+              return (
+                <div
+                  key={n.id}
+                  className="clay-card"
+                  style={{
+                    borderRadius: "18px",
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    background: "#FFFFFF",
+                    border: isSelected ? "2px solid #FFD700" : "1.5px solid rgba(20, 109, 158, 0.12)",
+                    boxShadow: isSelected
+                      ? "0 8px 20px rgba(255, 215, 0, 0.25), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                      : "0 6px 16px rgba(0, 0, 0, 0.05), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
+                    transition: "all 0.3s ease"
+                  }}
+                >
+                  {/* Encabezado con imagen del negocio */}
+                  <div style={{ position: "relative", height: "110px", width: "100%", background: "#F1F5F9" }}>
+                    <img
+                      src={bgImg}
+                      alt={n.nombre}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                    <div style={{
+                      position: "absolute",
+                      inset: 0,
+                      background: "linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 60%)"
+                    }} />
+
+                    {/* Insignia de Estado */}
+                    <div style={{
+                      position: "absolute",
+                      top: "8px",
+                      right: "8px",
+                      background: n.activo
+                        ? "#17AA4A"
+                        : n.motivo_rechazo
+                        ? "#ef4444"
+                        : "#E6A800",
+                      color: "#FFFFFF",
+                      padding: "3px 9px",
+                      borderRadius: "16px",
+                      fontSize: "10px",
+                      fontWeight: "850",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+                      textTransform: "uppercase"
+                    }}>
+                      {n.activo
+                        ? (lang === "en" ? "✅ Active" : "✅ Activo")
+                        : n.motivo_rechazo
+                        ? (lang === "en" ? "❌ Rejected" : "❌ Rechazado")
+                        : (lang === "en" ? "⌛ In Verification" : "⌛ En Verificación")}
                     </div>
-                  ))}
+
+                    {/* Categoría Badge */}
+                    <div style={{
+                      position: "absolute",
+                      bottom: "8px",
+                      left: "8px",
+                      background: "rgba(255, 255, 255, 0.95)",
+                      color: "#1A1A2E",
+                      padding: "3px 8px",
+                      borderRadius: "10px",
+                      fontSize: "10px",
+                      fontWeight: "800",
+                      textTransform: "uppercase"
+                    }}>
+                      🏷️ {n.tipo || "Comercial"}
+                    </div>
+                  </div>
+
+                  {/* Cuerpo de la tarjeta */}
+                  <div style={{ padding: "14px 16px", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "10px" }}>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "850", color: "#1A1A2E" }}>
+                        {n.nombre}
+                      </h3>
+                      {n.descripcion && (
+                        <p style={{
+                          margin: "4px 0 0",
+                          fontSize: "12px",
+                          color: "#4A5568",
+                          lineHeight: "1.35",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden"
+                        }}>
+                          {n.descripcion}
+                        </p>
+                      )}
+                    </div>
+
+                    <div style={{ fontSize: "11px", color: "#64748B", display: "flex", flexDirection: "column", gap: "2px" }}>
+                      {n.telefono && <span>📞 Tel: {n.telefono}</span>}
+                      {n.rango_precios && <span>💵 Precios: {n.rango_precios}</span>}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        selectNegocio(n);
+                        setViewMode("manage");
+                      }}
+                      className="clay-btn-blue"
+                      style={{
+                        width: "100%",
+                        padding: "7px 12px",
+                        fontSize: "12px",
+                        justifyContent: "center",
+                        borderRadius: "10px",
+                        marginTop: "4px"
+                      }}
+                    >
+                      ⚙️ {lang === "en" ? "Manage This Business" : "Administrar este Negocio"}
+                    </button>
+                  </div>
                 </div>
-              )}
+              );
+            })}
+
+            {/* Tarjeta Especial: Reclamar o Registrar Nuevo Negocio (Compacta) */}
+            <div
+              className="clay-card"
+              style={{
+                borderRadius: "18px",
+                padding: "16px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                background: "rgba(255, 255, 255, 0.9)",
+                border: "2px dashed rgba(20, 109, 158, 0.3)",
+                boxShadow: "0 6px 16px rgba(0, 0, 0, 0.04)",
+                minHeight: "220px",
+                gap: "10px"
+              }}
+            >
+              <div style={{
+                width: "44px",
+                height: "44px",
+                borderRadius: "50%",
+                background: "rgba(23, 170, 74, 0.12)",
+                color: "#17AA4A",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "22px",
+                fontWeight: "900"
+              }}>
+                ➕
+              </div>
+
+              <div>
+                <h3 style={{ margin: 0, fontSize: "15px", fontWeight: "850", color: "#1A1A2E" }}>
+                  {lang === "en" ? "Claim or Register New Business" : "Reclama o Registra Otro Negocio"}
+                </h3>
+                <p style={{ margin: "4px 0 0", fontSize: "11.5px", color: "#4A5568", lineHeight: "1.3" }}>
+                  {lang === "en"
+                    ? "Claim an existing point or register a new location."
+                    : "¿Posees otro local? Reclama un punto libre o registra uno nuevo."}
+                </p>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%", marginTop: "4px" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setClaimSearchTerm("");
+                    setShowSearchClaimModal(true);
+                  }}
+                  className="clay-btn-gold"
+                  style={{ width: "100%", height: "38px", padding: "0 12px", fontSize: "11.5px", justifyContent: "center", borderRadius: "10px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
+                >
+                  🔍 {lang === "en" ? "Search Unclaimed Point" : "Buscar Punto Existente a Reclamar"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleInitiateClaim("gps")}
+                  disabled={isClaiming}
+                  className="clay-btn-green"
+                  style={{ width: "100%", height: "38px", padding: "0 12px", fontSize: "11.5px", justifyContent: "center", borderRadius: "10px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
+                >
+                  📍 {lang === "en" ? "Register with GPS" : "Registrar con mi ubicación GPS"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleIrAlMapaParaMarcar}
+                  disabled={isClaiming}
+                  className="clay-btn-blue"
+                  style={{ width: "100%", height: "38px", padding: "0 12px", fontSize: "11.5px", justifyContent: "center", borderRadius: "10px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
+                >
+                  🗺️ {lang === "en" ? "Mark on Map Manually" : "Marcar punto en el mapa"}
+                </button>
+              </div>
             </div>
-
-            {/* Opción 2: Registrar Nuevo */}
-            <div style={{ borderTop: "1px dashed rgba(20, 109, 158, 0.12)", paddingTop: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
-              <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#1A1A2E", marginBottom: "4px" }}>
-                ✨ {lang === "en" ? "Register New Business" : "Registrar Nuevo Negocio"}
-              </h3>
-              
-              <button type="button" onClick={() => handleInitiateClaim("gps")} disabled={isClaiming} style={{...styles.createBtn, background: "rgba(23, 170, 74,0.15)", color: "#1FCC5C", border: "1px solid rgba(23, 170, 74,0.3)"}}>
-                📍 {lang === "en" ? "Use My Current GPS Location" : "Usar mi ubicación actual (GPS)"}
-              </button>
-
-              <button type="button" onClick={handleIrAlMapaParaMarcar} disabled={isClaiming} style={{...styles.createBtn, background: "rgba(59,130,246,0.15)", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.3)"}}>
-                🗺️ {lang === "en" ? "Mark manually on the map" : "Marcar punto manualmente en el mapa"}
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : !negocio ? (
-        /* CASO B: SELECTOR DE NEGOCIOS */
-        <div style={{...styles.dashboardOverviewLayout, marginTop: "40px"}} className="animate-fade-in-up">
-          <div style={styles.overviewHeader}>
-            <h2 style={{ fontSize: "28px", fontWeight: "800", color: "#1A1A2E" }}>
-              {lang === "en" ? "My Businesses" : "Mis Negocios"}
-            </h2>
-            <p style={{ color: "var(--atlan-text-secondary)", marginTop: "4px" }}>
-              {lang === "en" ? "Select a business to manage:" : "Selecciona un negocio para administrar:"}
-            </p>
-          </div>
-          <div style={{ ...styles.overviewGrid, marginTop: "24px" }}>
-            {(misNegocios || []).map(n => (
-              <button type="button" key={n.id} onClick={() => selectNegocio(n)} style={styles.dashboardCard} className="hover-card">
-                <div style={{ ...styles.cardIcon, background: "rgba(255, 215, 0,0.1)", color: "var(--atlan-gold)" }}>🏢</div>
-                <h3 style={styles.cardTitle}>{n.nombre}</h3>
-                <p style={styles.cardDesc}>{n.tipo || "Otro"}</p>
-                <div style={{ marginTop: "12px", fontSize: "11px", fontWeight: "800", color: n.activo ? "#17AA4A" : "#E6A800" }}>
-                  {n.activo ? (lang === "en" ? "VERIFIED" : "VERIFICADO") : (lang === "en" ? "PENDING" : "PENDIENTE")}
-                </div>
-              </button>
-            ))}
-            <button onClick={() => handleInitiateClaim("gps")} disabled={isClaiming} style={{ ...styles.dashboardCard, border: "2px dashed rgba(23, 170, 74,0.4)", background: "transparent", alignItems: "center", justifyContent: "center", textAlign: "center" }} className="hover-card">
-              <div style={{ fontSize: "32px", color: "#17AA4A", marginBottom: "8px" }}>📍</div>
-              <h3 style={{...styles.cardTitle, color: "#17AA4A"}}>{lang === "en" ? "Add Business here (GPS)" : "Agregar Negocio Aquí (GPS)"}</h3>
-            </button>
-
-            <button onClick={handleIrAlMapaParaMarcar} disabled={isClaiming} style={{ ...styles.dashboardCard, border: "2px dashed rgba(59,130,246,0.4)", background: "transparent", alignItems: "center", justifyContent: "center", textAlign: "center" }} className="hover-card">
-              <div style={{ fontSize: "32px", color: "#60a5fa", marginBottom: "8px" }}>🗺️</div>
-              <h3 style={{...styles.cardTitle, color: "#60a5fa"}}>{lang === "en" ? "Add manually on map" : "Agregar en el mapa manualmente"}</h3>
-            </button>
           </div>
         </div>
       ) : !negocio.activo ? (
@@ -1119,16 +1308,13 @@ export default function DashboardPage() {
                       </span>
                     </div>
                   </div>
-                  {misNegocios.length > 1 && (
-                    <button 
-                      onClick={() => setNegocio(null)} 
-                      style={{ background: "rgba(20, 109, 158, 0.05)", border: "1px solid rgba(20, 109, 158, 0.12)", color: "#1A1A2E", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: "700", cursor: "pointer", transition: "all 0.2s" }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.12)"}
-                      onMouseLeave={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.05)"}
-                    >
-                      🔁 {lang === "en" ? "Switch Business" : "Cambiar de Negocio"}
-                    </button>
-                  )}
+                  <button 
+                    onClick={() => setViewMode("hub")} 
+                    className="clay-btn-blue"
+                    style={{ padding: "10px 18px", fontSize: "13px" }}
+                  >
+                    🏢 {lang === "en" ? "My Businesses Hub" : "Mis Negocios (Galería)"}
+                  </button>
                 </div>
               </div>
 
@@ -2213,6 +2399,164 @@ export default function DashboardPage() {
                 {isResubmitting ? "..." : `🗑️ ${lang === "en" ? "Yes, Cancel Request" : "Sí, Cancelar Solicitud"}`}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE BÚSQUEDA DE PUNTOS LIBRES PARA RECLAMAR */}
+      {showSearchClaimModal && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, width: "100%", height: "100vh",
+          background: "rgba(10, 15, 28, 0.65)", backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)", zIndex: 1050, display: "flex",
+          alignItems: "center", justifyContent: "center", padding: "20px"
+        }} className="animate-fade-in">
+          <div style={{
+            maxWidth: "520px", width: "100%", background: "#FFFFFF",
+            border: "2px solid rgba(255, 255, 255, 0.95)",
+            boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.10), 0 24px 60px -10px rgba(20, 109, 158, 0.25)",
+            borderRadius: "28px", padding: "28px", display: "flex", flexDirection: "column", gap: "16px"
+          }} className="clay-modal animate-scale-up">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "850", color: "#1A1A2E" }}>
+                🔍 {lang === "en" ? "Search Unclaimed Business Point" : "Buscar Punto Turístico Libre"}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowSearchClaimModal(false)}
+                style={{ background: "none", border: "none", fontSize: "16px", cursor: "pointer", color: "#94A3B8" }}
+              >
+                ✖
+              </button>
+            </div>
+
+            <p style={{ margin: 0, fontSize: "13px", color: "#4A5568" }}>
+              {lang === "en"
+                ? "Enter the business name or category to find points added by tourists."
+                : "Ingresa el nombre o categoría del negocio para encontrar puntos agregados por turistas en el mapa:"}
+            </p>
+
+            <input
+              type="text"
+              placeholder={lang === "en" ? "🔍 Type business name or category..." : "🔍 Buscar por nombre o categoría..."}
+              value={claimSearchTerm}
+              onChange={(e) => {
+                setClaimSearchTerm(e.target.value);
+                setClaimSearchPage(1);
+              }}
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                borderRadius: "14px",
+                border: "1.5px solid rgba(20, 109, 158, 0.2)",
+                background: "#F8FAFC",
+                fontSize: "13.5px",
+                fontWeight: "600",
+                color: "#1A1A2E",
+                outline: "none"
+              }}
+              autoFocus
+            />
+
+            {/* Contador de resultados */}
+            {(() => {
+              const filtered = puntosDisponibles.filter((p) => {
+                if (!claimSearchTerm.trim()) return true;
+                const term = claimSearchTerm.toLowerCase();
+                return (
+                  p.nombre?.toLowerCase().includes(term) ||
+                  p.categoria?.toLowerCase().includes(term)
+                );
+              });
+              const perPage = 5;
+              const totalPages = Math.ceil(filtered.length / perPage) || 1;
+              const currentItems = filtered.slice(
+                (claimSearchPage - 1) * perPage,
+                claimSearchPage * perPage
+              );
+
+              return (
+                <>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", color: "#4A5568", fontWeight: "700", padding: "0 4px" }}>
+                    <span>🏷️ {filtered.length} {lang === "en" ? "unclaimed points found" : "puntos libres encontrados"}</span>
+                    {totalPages > 1 && (
+                      <span>{lang === "en" ? "Page" : "Pág"} {claimSearchPage} {lang === "en" ? "of" : "de"} {totalPages}</span>
+                    )}
+                  </div>
+
+                  <div style={{
+                    maxHeight: "260px",
+                    overflowY: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    marginTop: "2px"
+                  }}>
+                    {currentItems.map((p) => (
+                      <div
+                        key={p.id}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          padding: "12px 16px",
+                          background: "rgba(20, 109, 158, 0.03)",
+                          border: "1.5px solid rgba(20, 109, 158, 0.08)",
+                          borderRadius: "14px"
+                        }}
+                      >
+                        <div>
+                          <div style={{ fontWeight: "800", fontSize: "14px", color: "#1A1A2E" }}>{p.nombre}</div>
+                          <div style={{ fontSize: "11.5px", color: "#4A5568", textTransform: "capitalize" }}>🏷️ {p.categoria}</div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowSearchClaimModal(false);
+                            handleInitiateClaim(p);
+                          }}
+                          className="clay-btn-green"
+                          style={{ padding: "6px 14px", fontSize: "12px", borderRadius: "10px" }}
+                        >
+                          Reclamar
+                        </button>
+                      </div>
+                    ))}
+
+                    {filtered.length === 0 && (
+                      <div style={{ textAlign: "center", padding: "20px 0", color: "#94A3B8", fontSize: "13px" }}>
+                        {lang === "en" ? "No unclaimed points match your search." : "No se encontraron puntos sin reclamar con ese nombre."}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Paginación interna del Modal */}
+                  {totalPages > 1 && (
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px", borderTop: "1px solid rgba(20,109,158,0.1)", marginTop: "4px" }}>
+                      <button
+                        disabled={claimSearchPage === 1}
+                        onClick={() => setClaimSearchPage(p => Math.max(p - 1, 1))}
+                        className="clay-btn-blue"
+                        style={{ padding: "5px 12px", fontSize: "11.5px", borderRadius: "8px", opacity: claimSearchPage === 1 ? 0.5 : 1 }}
+                      >
+                        ◀ {lang === "en" ? "Prev" : "Ant"}
+                      </button>
+                      <span style={{ fontSize: "12px", fontWeight: "800", color: "#1A1A2E" }}>
+                        {claimSearchPage} / {totalPages}
+                      </span>
+                      <button
+                        disabled={claimSearchPage === totalPages}
+                        onClick={() => setClaimSearchPage(p => Math.min(p + 1, totalPages))}
+                        className="clay-btn-blue"
+                        style={{ padding: "5px 12px", fontSize: "11.5px", borderRadius: "8px", opacity: claimSearchPage === totalPages ? 0.5 : 1 }}
+                      >
+                        {lang === "en" ? "Next" : "Sig"} ▶
+                      </button>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
         </div>
       )}
