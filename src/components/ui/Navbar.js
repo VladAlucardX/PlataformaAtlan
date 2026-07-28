@@ -16,7 +16,37 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [hasBusinesses, setHasBusinesses] = useState(false);
   const dropdownRef = useRef(null);
+
+  // Comprobar si el usuario posee 1 o más negocios
+  useEffect(() => {
+    async function checkBusinesses() {
+      if (!session?.user?.id) {
+        setHasBusinesses(false);
+        return;
+      }
+      if (perfil?.rol === "dueno" || perfil?.rol === "admin") {
+        setHasBusinesses(true);
+        return;
+      }
+      try {
+        const { count, error } = await supabase
+          .from("negocios")
+          .select("id", { count: "exact", head: true })
+          .eq("dueno_id", session.user.id);
+
+        if (!error && count && count > 0) {
+          setHasBusinesses(true);
+        } else {
+          setHasBusinesses(false);
+        }
+      } catch (err) {
+        console.error("Error checking businesses:", err);
+      }
+    }
+    checkBusinesses();
+  }, [session?.user?.id, perfil?.rol]);
 
   // Cerrar desplegable al hacer clic afuera
   useEffect(() => {
@@ -103,7 +133,18 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
                 <Link
                   href={communityProfileLink}
                   className={`nav-pill-link ${activePage === "perfil-comunidad" ? "active" : ""}`}
-                  style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    background: "#FFFFFF",
+                    color: "#1A1A2E",
+                    fontWeight: "750",
+                    border: "1px solid rgba(0, 0, 0, 0.08)",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
+                    padding: "7px 14px",
+                    borderRadius: "20px"
+                  }}
                 >
                   {perfil?.avatar_url ? (
                     <div style={{ width: "22px", height: "22px", borderRadius: "50%", background: `url(${perfil.avatar_url}) center/cover`, border: "1px solid rgba(20, 109, 158, 0.15)", flexShrink: 0 }} />
@@ -117,22 +158,22 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                   style={{
-                    background: userDropdownOpen ? "rgba(20, 109, 158, 0.12)" : "rgba(20, 109, 158, 0.05)",
-                    border: "1px solid rgba(20, 109, 158, 0.15)",
-                    color: "var(--atlan-text-primary)",
-                    width: "28px",
-                    height: "28px",
+                    background: "#FFFFFF",
+                    border: "1px solid rgba(0, 0, 0, 0.08)",
+                    color: "#1A1A2E",
+                    width: "32px",
+                    height: "32px",
                     borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     cursor: "pointer",
-                    fontSize: "10px",
-                    transition: "all 0.2s"
+                    transition: "all 0.2s",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)"
                   }}
                   title={lang === "en" ? "User Options" : "Opciones de Usuario"}
                 >
-                  <Icon name="chevronDown" size={12} />
+                  <Icon name="chevronDown" size={14} />
                 </button>
               </div>
 
@@ -178,7 +219,31 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
                     <Icon name="user" size={16} /> {lang === "en" ? "My Profile" : "Mi Perfil"}
                   </Link>
 
-                  {/* Opción 2: Mis Giras (Favoritos, Giras y Reservas guardadas) */}
+                  {/* Opción 2: Mis Negocios (Solo si posee 1 o más negocios) */}
+                  {hasBusinesses && (
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setUserDropdownOpen(false)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: "10px 14px",
+                        borderRadius: "12px",
+                        color: "#1A1A2E",
+                        fontSize: "13px",
+                        fontWeight: "750",
+                        textDecoration: "none",
+                        transition: "background 0.15s"
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                    >
+                      <Icon name="briefcase" size={16} /> {lang === "en" ? "My Businesses" : "Mis Negocios"}
+                    </Link>
+                  )}
+
+                  {/* Opción 3: Mis Giras (Favoritos, Giras y Reservas guardadas) */}
                   <Link
                     href="/perfil"
                     onClick={() => setUserDropdownOpen(false)}
@@ -199,30 +264,6 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
                   >
                     <Icon name="compass" size={16} /> {lang === "en" ? "My Tours & Saved" : "Mis Giras"}
                   </Link>
-
-                  {/* Opción 3: Mi Negocio (Si es dueño/admin) */}
-                  {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setUserDropdownOpen(false)}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                        padding: "10px 14px",
-                        borderRadius: "12px",
-                        color: "#1A1A2E",
-                        fontSize: "13px",
-                        fontWeight: "750",
-                        textDecoration: "none",
-                        transition: "background 0.15s"
-                      }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
-                      onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
-                    >
-                      <Icon name="briefcase" size={16} /> {lang === "en" ? "My Business Hub" : "Mi Negocio"}
-                    </Link>
-                  )}
 
                   <div style={{ height: "1px", background: "rgba(20, 109, 158, 0.08)", margin: "4px 0" }} />
 

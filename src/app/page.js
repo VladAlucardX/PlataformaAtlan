@@ -9,11 +9,13 @@ import Navbar from "@/components/ui/Navbar";
 import VideoIntro from "@/components/VideoIntro";
 import { supabase } from "@/lib/supabase";
 import Icon from "@/components/ui/Icon";
+import NeonMapSign from "@/components/ui/NeonMapSign";
+import NeonBusinessSign from "@/components/ui/NeonBusinessSign";
 
 // Landing Page
 
 // Hero
-function HeroSection({ perfil }) {
+function HeroSection({ session, perfil }) {
   const { t, lang } = useTranslation();
 
   return (
@@ -48,25 +50,10 @@ function HeroSection({ perfil }) {
           {t("landing.hero.title")}
         </h1>
 
-        <p style={{ ...styles.heroSubtitle, color: "rgba(255, 255, 255, 0.9)" }}>
-          {t("landing.hero.subtitle")}
-        </p>
-
-        {/* Action Buttons */}
-        <div style={styles.heroActions}>
-          <Link href="/mapa" className="btn-primary" style={{ padding: "16px 36px", fontSize: "16px", background: "#FFD700", color: "#1A1A2E", fontWeight: "800", border: "none" }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="3 11 22 2 13 21 11 13 3 11" />
-            </svg>
-            <span>{t("landing.hero.cta")}</span>
-          </Link>
-          <Link href="#cta" className="btn-secondary" style={{ padding: "16px 36px", fontSize: "16px", background: "rgba(255, 255, 255, 0.15)", color: "#FFFFFF", border: "1.5px solid rgba(255, 255, 255, 0.4)" }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-              <path d="M16 21V5a2 2 0 0 1-2-2h-4a2 2 0 0 0-2 2v16" />
-            </svg>
-            <span>{t("landing.hero.ctaSecondary")}</span>
-          </Link>
+        {/* Carteles Neón Interactivos: Explorar Mapa + ¿Tienes un Negocio? */}
+        <div style={{ marginTop: "32px", display: "flex", gap: "72px", justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
+          <NeonMapSign />
+          <NeonBusinessSign session={session} />
         </div>
       </div>
     </section>
@@ -273,9 +260,7 @@ function CTASection({ session }) {
   return (
     <section id="cta" style={{
       ...styles.ctaSection,
-      background: "#146D9E",
-      borderTop: "2px solid #0F5579",
-      borderBottom: "2px solid #0F5579"
+      background: "url('/images/Frame 2.png') center / 100% 100% no-repeat"
     }}>
       <div style={{
         ...styles.ctaContent,
@@ -461,7 +446,7 @@ export default function Home() {
         }}
       >
         <Navbar activePage="inicio" session={session} perfil={perfil} onLogout={handleLogout} />
-        <HeroSection perfil={perfil} />
+        <HeroSection session={session} perfil={perfil} />
         <FeaturesSection />
         <CategoriesSection />
         <CTASection session={session} />
@@ -625,12 +610,13 @@ const styles = {
     marginTop: "0px",
   },
   heroTitle: {
-    fontSize: "clamp(42px, 6.5vw, 76px)",
+    fontSize: "clamp(28px, 6vw, 76px)",
     fontWeight: "900",
     lineHeight: "1.1",
     letterSpacing: "-0.03em",
     marginBottom: "28px",
     color: "var(--atlan-text-primary)",
+    whiteSpace: "nowrap",
   },
   heroSubtitle: {
     fontSize: "clamp(18px, 2.5vw, 22px)",

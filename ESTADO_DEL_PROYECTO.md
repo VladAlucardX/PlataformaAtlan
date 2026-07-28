@@ -41,6 +41,12 @@ La Plataforma Atlan es una aplicación web enfocada en turismo, mapas interactiv
       - Se agregó la columna `motivo_rechazo` en la base de datos Supabase (tabla `negocios`) para persistir la retroalimentación del admin.
       - Se integraron banners informativos dinámicos de estado (*Pendiente de Verificación* y *Reclamo Rechazado*) con acciones de reenvío (*Guardar y Reenviar*) y cancelación (*Cancelar Reclamo*) en el dashboard del propietario (`src/app/dashboard/page.js`).
 
+5. **Mejoras Recientes en Interfaz y Submenús (Julio 2026):**
+   - **Hero Title sin quiebre:** Ajuste del título "Descubre Nicaragua." a una sola línea con `whiteSpace: "nowrap"` y tamaño responsivo dinámico.
+   - **Carteles Neón Interactivos:** Separación ampliada entre "Explorar Mapa" y "¿Tienes un Negocio?", incorporación de delineado de letras con `-webkit-text-stroke` y eliminación de animaciones de parpadeo que causaban subpixel jittering en GPU.
+   - **Botonera de Usuario en Navbar:** Botón desplegable blanco sólido con menú de opciones dinámico: incluye acceso directo a *"Mis Negocios"* entre *"Mi Perfil"* y *"Mis Giras"* únicamente si el usuario posee 1 o más negocios.
+   - **Estética de Comunidad:** Ajuste del color de encabezado de banner de perfil en la comunidad al azul sólido `#0A192F` coincidiendo exactamente con el estilo de la barra de navegación principal.
+
 ## Siguientes Pasos
 Al retomar el desarrollo:
 - Monitorear el funcionamiento de la caché del Service Worker PWA en entornos de producción.

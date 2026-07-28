@@ -264,7 +264,7 @@ export default function PerfilPublico() {
       {/* Profile Header */}
       <div style={{ maxWidth: "800px", margin: "0 auto", padding: "90px 24px 40px 24px" }}>
         {/* Banner */}
-        <div style={{ height: "140px", background: "linear-gradient(135deg, #146D9E 0%, #0F5579 60%, #17AA4A 100%)", borderRadius: "0 0 24px 24px", position: "relative" }} />
+        <div style={{ height: "140px", background: "#0A192F", borderRadius: "0 0 24px 24px", position: "relative" }} />
 
         {/* Profile Info */}
         <div style={{ display: "flex", alignItems: "flex-end", gap: "20px", marginTop: "-44px", padding: "0 16px", flexWrap: "wrap" }}>
