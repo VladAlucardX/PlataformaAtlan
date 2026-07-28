@@ -51,10 +51,16 @@ La Plataforma Atlan es una aplicación web enfocada en turismo, mapas interactiv
      - **Borde del Croquis de Nicaragua (`#146D9E`):** Integración del contorno GeoJSON oficial de Nicaragua ([`public/nicaragua-boundary.json`](file:///c:/Users/Alucard/plataforma-atlan/public/nicaragua-boundary.json)) estilizado en el azul oficial de Atlan `#146D9E`.
      - **Grosor Adaptativo con Zoom:** El grosor del borde escala dinámicamente (`interpolate` de `1.0px` en vista lejana del país a `3.5px - 5.0px` en vista cercana) para evitar saturación visual al alejar el mapa.
 
+6. **Mapa por Departamentos, Ranking y Verificación GPS (> 1 km):**
+   - **Mapa de 17 Departamentos:** Nueva sección interactiva en `/departamentos` que renderiza los polígonos de los 15 departamentos y 2 regiones autónomas de Nicaragua ([`public/nicaragua-departments.json`](file:///c:/Users/Alucard/plataforma-atlan/public/nicaragua-departments.json)).
+   - **Ranking de Destinos:** Lista Top 10 interactiva ordenada por total de visitas reales, filtrable por departamento o visión nacional.
+   - **Verificación de Visitas GPS (> 1 km):** Detección automática al navegar más de 1 km hacia un destino con modal flotante Claymórfico para confirmar e incrementar el contador en la base de datos Supabase (`visitas_puntos` y `registrar_visita_turista`).
+   - **Sistema de Logros e Insignias:** Preparación del perfil de turista con medallas y rango (Turista, Mochilero, Leyenda).
+
 ## Siguientes Pasos
 Al retomar el desarrollo:
+- Expandir el catálogo de insignias y logros de turismo desbloqueables según el número de departamentos visitados.
 - Monitorear el funcionamiento de la caché del Service Worker PWA en entornos de producción.
-- Añadir nuevas excentricidades o servicios en el panel de propietario.
 
 ---
 *Documento actualizado por Antigravity (IA) para preservar el contexto de desarrollo.*

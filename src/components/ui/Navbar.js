@@ -107,6 +107,9 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
           <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`}>
             <Icon name="map" size={16} /> {t("nav.map")}
           </Link>
+          <Link href="/departamentos" className={`nav-pill-link ${activePage === "departamentos" ? "active" : ""}`}>
+            <Icon name="star" size={16} /> {lang === "en" ? "Ranking" : "Ranking"}
+          </Link>
           <Link href="/comunidad" className={`nav-pill-link ${activePage === "comunidad" ? "active" : ""}`}>
             <Icon name="users" size={16} /> {t("social.community")}
           </Link>

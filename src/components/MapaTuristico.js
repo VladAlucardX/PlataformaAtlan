@@ -115,6 +115,32 @@ export default function MapaTuristico() {
   const [routeInfo, setRouteInfo] = useState(null);
   const [previewRouteInfo, setPreviewRouteInfo] = useState(null);
 
+  // Registro de Visitas GPS > 1 km
+  const [showVisitPrompt, setShowVisitPrompt] = useState(false);
+  const [visitPromptData, setVisitPromptData] = useState(null);
+  const [isSubmittingVisit, setIsSubmittingVisit] = useState(false);
+
+  const handleConfirmarVisitaGPS = async () => {
+    if (!userSession?.user || !visitPromptData?.puntoId) return;
+    setIsSubmittingVisit(true);
+    try {
+      const { error } = await supabase.rpc('registrar_visita_turista', {
+        p_punto_id: visitPromptData.puntoId,
+        p_usuario_id: userSession.user.id,
+        p_distancia_km: visitPromptData.distanciaKm || 1.5
+      });
+
+      if (error) throw error;
+      setShowVisitPrompt(false);
+      alert(lang === 'en' ? '🎉 Visit successfully recorded in your Atlan passport!' : '🎉 ¡Visita registrada con éxito en tu pasaporte de turista Atlan!');
+    } catch (err) {
+      console.error("Error registrando visita:", err);
+      alert(lang === 'en' ? 'Could not record visit.' : 'No se pudo registrar la visita.');
+    } finally {
+      setIsSubmittingVisit(false);
+    }
+  };
+
   const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
@@ -3152,6 +3178,72 @@ export default function MapaTuristico() {
           <div style={{ marginTop: '8px', fontSize: '11px', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '6px' }}>
             <span>{lang === 'en' ? 'Arrival ETA:' : 'Llegada (ETA):'}</span>
             <span style={{ fontWeight: '800', color: 'white' }}>{routeInfo.eta}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Claymórfico de Registro de Visita GPS (> 1 km) */}
+      {showVisitPrompt && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(10, 25, 47, 0.75)',
+          backdropFilter: 'blur(12px)',
+          zIndex: 9999,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '20px'
+        }}>
+          <div style={{
+            background: 'linear-gradient(145deg, #102A45 0%, #0A192F 100%)',
+            border: '2px solid #FFD700',
+            borderRadius: '24px',
+            padding: '32px 28px',
+            maxWidth: '440px',
+            width: '100%',
+            textAlign: 'center',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,215,0,0.3)'
+          }}>
+            <div style={{
+              width: '64px', height: '64px', borderRadius: '50%',
+              background: 'linear-gradient(135deg, #FFE033 0%, #FFD700 100%)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '32px', margin: '0 auto 16px auto',
+              boxShadow: '0 8px 20px rgba(255,215,0,0.4)'
+            }}>
+              🏆
+            </div>
+            <h3 style={{ fontSize: "22px", fontWeight: "900", color: "#FFFFFF", margin: "0 0 10px 0" }}>
+              ¡Llegaste a tu Destino!
+            </h3>
+            <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.85)", lineHeight: "1.5", margin: "0 0 20px 0" }}>
+              Has recorrido más de <strong>1 km</strong> y arribado a <strong>{visitPromptData?.puntoNombre || 'tu destino'}</strong>. ¿Deseas registrar esta visita en tu pasaporte de logros Atlan?
+            </p>
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+              <button
+                onClick={() => setShowVisitPrompt(false)}
+                style={{
+                  padding: "12px 20px", background: "rgba(255,255,255,0.1)",
+                  border: "1px solid rgba(255,255,255,0.2)", borderRadius: "14px",
+                  color: "#FFFFFF", fontWeight: "700", cursor: "pointer"
+                }}
+              >
+                Omitir
+              </button>
+              <button
+                onClick={handleConfirmarVisitaGPS}
+                disabled={isSubmittingVisit}
+                style={{
+                  padding: "12px 24px", background: "linear-gradient(135deg, #FFE033 0%, #FFD700 100%)",
+                  border: "none", borderRadius: "14px", color: "#1A1A2E",
+                  fontWeight: "900", fontSize: "14px", cursor: "pointer",
+                  boxShadow: "0 6px 16px rgba(255,215,0,0.4)"
+                }}
+              >
+                {isSubmittingVisit ? 'Registrando...' : '🎯 Marcar como Visitado (+1 Visita)'}
+              </button>
+            </div>
           </div>
         </div>
       )}
