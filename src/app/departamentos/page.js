@@ -41,6 +41,9 @@ export default function DepartamentosPage() {
   const [userSession, setUserSession] = useState(null);
   const [userVisitsCount, setUserVisitsCount] = useState(0);
 
+  // Modo de Ranking: 'global' | 'propio'
+  const [rankingMode, setRankingMode] = useState('global');
+
   // Cargar sesión del usuario
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -74,17 +77,31 @@ export default function DepartamentosPage() {
     }
   };
 
-  // Cargar datos de ranking según el departamento seleccionado
-  const cargarRanking = async (dept) => {
+  // Cargar datos de ranking según el departamento seleccionado y el modo (Global vs Propio)
+  const cargarRanking = async (dept, mode = rankingMode) => {
     setLoading(true);
     try {
       const paramDept = (dept === "Todos" || !dept) ? null : dept;
-      const { data, error } = await supabase.rpc('obtener_ranking_lugares', {
-        p_departamento: paramDept
-      });
 
-      if (error) throw error;
-      setRankingData(data || []);
+      if (mode === 'propio') {
+        if (!userSession?.user) {
+          setRankingData([]);
+          setLoading(false);
+          return;
+        }
+        const { data, error } = await supabase.rpc('obtener_ranking_propio', {
+          p_usuario_id: userSession.user.id,
+          p_departamento: paramDept
+        });
+        if (error) throw error;
+        setRankingData(data || []);
+      } else {
+        const { data, error } = await supabase.rpc('obtener_ranking_lugares', {
+          p_departamento: paramDept
+        });
+        if (error) throw error;
+        setRankingData(data || []);
+      }
     } catch (err) {
       console.warn("[Atlan] Fallo en RPC ranking, buscando en tabla puntos:", err);
       try {
@@ -109,7 +126,7 @@ export default function DepartamentosPage() {
   };
 
   useEffect(() => {
-    cargarRanking(selectedDept);
+    cargarRanking(selectedDept, rankingMode);
 
     if (selectedDept === "Todos" && mapRef.current) {
       mapRef.current.flyTo({
@@ -120,7 +137,7 @@ export default function DepartamentosPage() {
         duration: 1000
       });
     }
-  }, [selectedDept]);
+  }, [selectedDept, rankingMode, userSession]);
 
   // Inicializar Mapbox GL Map con GeoJSON de Departamentos
   useEffect(() => {
@@ -387,13 +404,68 @@ export default function DepartamentosPage() {
 
           {/* Columna Derecha: Ranking Top Lugares */}
           <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
-              <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: "#FFFFFF" }}>
-                {selectedDept === "Todos" ? '🌟 Lugares Más Visitados en Nicaragua' : `📍 Más Visitados en ${selectedDept}`}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "10px" }}>
+              <h2 style={{ margin: 0, fontSize: "19px", fontWeight: "800", color: "#FFFFFF" }}>
+                {selectedDept === "Todos" 
+                  ? (rankingMode === 'global' ? '🌟 Lugares Más Visitados en Nicaragua' : '👤 Mis Lugares Más Visitados')
+                  : (rankingMode === 'global' ? `📍 Más Visitados en ${selectedDept}` : `👤 Mis Visitas en ${selectedDept}`)}
               </h2>
               <span style={{ fontSize: "12px", fontWeight: "700", color: "rgba(255,255,255,0.6)", background: "rgba(255,255,255,0.08)", padding: "4px 10px", borderRadius: "10px" }}>
                 {rankingData.length} Destinos
               </span>
+            </div>
+
+            {/* Selector de Modo: Ranking Global vs Ranking Propio */}
+            <div style={{ display: "flex", gap: "10px", marginBottom: "18px" }}>
+              <button
+                onClick={() => setRankingMode('global')}
+                style={{
+                  flex: 1,
+                  padding: "10px 14px",
+                  borderRadius: "14px",
+                  border: rankingMode === 'global' ? "1.5px solid #FFD700" : "1px solid rgba(255,255,255,0.15)",
+                  background: rankingMode === 'global'
+                    ? "linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(10, 25, 47, 0.8) 100%)"
+                    : "rgba(255, 255, 255, 0.05)",
+                  color: rankingMode === 'global' ? "#FFD700" : "rgba(255,255,255,0.7)",
+                  fontWeight: "800",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                  boxShadow: rankingMode === 'global' ? "0 4px 14px rgba(255,215,0,0.2)" : "none",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                🌐 Ranking Global
+              </button>
+
+              <button
+                onClick={() => setRankingMode('propio')}
+                style={{
+                  flex: 1,
+                  padding: "10px 14px",
+                  borderRadius: "14px",
+                  border: rankingMode === 'propio' ? "1.5px solid #38BDF8" : "1px solid rgba(255,255,255,0.15)",
+                  background: rankingMode === 'propio'
+                    ? "linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(10, 25, 47, 0.8) 100%)"
+                    : "rgba(255, 255, 255, 0.05)",
+                  color: rankingMode === 'propio' ? "#38BDF8" : "rgba(255,255,255,0.7)",
+                  fontWeight: "800",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                  boxShadow: rankingMode === 'propio' ? "0 4px 14px rgba(56,189,248,0.2)" : "none",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                👤 Ranking Propio
+              </button>
             </div>
 
             {loading ? (
@@ -401,12 +473,33 @@ export default function DepartamentosPage() {
                 <div style={{ width: "40px", height: "40px", border: "4px solid rgba(255,215,0,0.2)", borderTopColor: "#FFD700", borderRadius: "50%", margin: "0 auto 16px auto", animation: "spin 1s linear infinite" }} />
                 <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px" }}>Cargando ranking de destinos...</p>
               </div>
+            ) : rankingMode === 'propio' && !userSession ? (
+              <div style={{ background: "rgba(15, 23, 42, 0.75)", border: "1.5px dashed rgba(56, 189, 248, 0.4)", borderRadius: "20px", padding: "32px 20px", textAlign: "center" }}>
+                <div style={{ fontSize: "36px", marginBottom: "12px" }}>🔒</div>
+                <h3 style={{ margin: "0 0 8px 0", fontSize: "16px", color: "#FFFFFF" }}>Inicia sesión como turista</h3>
+                <p style={{ margin: "0 0 16px 0", fontSize: "13px", color: "rgba(255,255,255,0.7)", lineHeight: "1.5" }}>
+                  Inicia sesión para ver tu historial personalizado de los lugares que has visitado en Nicaragua.
+                </p>
+                <Link
+                  href="/login"
+                  style={{
+                    display: "inline-block", padding: "10px 20px", background: "linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)",
+                    borderRadius: "12px", color: "#FFFFFF", fontWeight: "800", textDecoration: "none", fontSize: "13.5px"
+                  }}
+                >
+                  Iniciar Sesión
+                </Link>
+              </div>
             ) : rankingData.length === 0 ? (
               <div style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.2)", borderRadius: "20px", padding: "40px 20px", textAlign: "center" }}>
                 <div style={{ fontSize: "36px", marginBottom: "12px" }}>🏕️</div>
-                <h3 style={{ margin: "0 0 6px 0", fontSize: "16px", color: "#FFFFFF" }}>Aún no hay visitas registradas</h3>
+                <h3 style={{ margin: "0 0 6px 0", fontSize: "16px", color: "#FFFFFF" }}>
+                  {rankingMode === 'propio' ? 'Aún no has registrado visitas' : 'Aún no hay visitas registradas'}
+                </h3>
                 <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.6)" }}>
-                  Sé el primer turista en explorar y marcar visitas en {selectedDept === "Todos" ? "Nicaragua" : selectedDept}.
+                  {rankingMode === 'propio' 
+                    ? `Visita un destino en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept} y márcalo en el mapa para sumarlo a tu ranking propio.`
+                    : `Sé el primer turista en explorar y marcar visitas en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept}.`}
                 </p>
               </div>
             ) : (
@@ -415,6 +508,7 @@ export default function DepartamentosPage() {
                   const pos = idx + 1;
                   const medal = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : `#${pos}`;
                   const medalColor = pos === 1 ? '#FFD700' : pos === 2 ? '#C0C0C0' : pos === 3 ? '#CD7F32' : 'rgba(255,255,255,0.6)';
+                  const countVisits = rankingMode === 'propio' ? (lugar.mis_visitas || 1) : (lugar.total_visitas || 0);
 
                   return (
                     <div 
@@ -459,8 +553,16 @@ export default function DepartamentosPage() {
 
                       {/* Contador de Visitas y Acción */}
                       <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "6px" }}>
-                        <div style={{ background: "rgba(255, 215, 0, 0.12)", border: "1px solid rgba(255, 215, 0, 0.3)", padding: "4px 10px", borderRadius: "10px", color: "#FFD700", fontWeight: "800", fontSize: "12px" }}>
-                          👁️ {lugar.total_visitas || 0} visitas
+                        <div style={{
+                          background: rankingMode === 'propio' ? "rgba(56, 189, 248, 0.15)" : "rgba(255, 215, 0, 0.12)",
+                          border: rankingMode === 'propio' ? "1px solid rgba(56, 189, 248, 0.3)" : "1px solid rgba(255, 215, 0, 0.3)",
+                          padding: "4px 10px",
+                          borderRadius: "10px",
+                          color: rankingMode === 'propio' ? "#38BDF8" : "#FFD700",
+                          fontWeight: "800",
+                          fontSize: "12px"
+                        }}>
+                          {rankingMode === 'propio' ? `🎯 ${countVisits} ${countVisits === 1 ? 'visita' : 'visitas'}` : `👁️ ${countVisits} visitas`}
                         </div>
                         <Link 
                           href={`/?lat=${lugar.lat}&lng=${lugar.lng}&punto=${lugar.id}`}
