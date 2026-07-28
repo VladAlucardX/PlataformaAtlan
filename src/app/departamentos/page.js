@@ -357,7 +357,7 @@ export default function DepartamentosPage() {
 
           {/* Columna Izquierda: Mapa de Departamentos Mapbox */}
           <div style={{ background: "rgba(15, 23, 42, 0.75)", border: "2px solid rgba(255, 255, 255, 0.12)", borderRadius: "24px", padding: "16px", backdropFilter: "blur(16px)", position: "sticky", top: "100px", boxShadow: "0 16px 36px rgba(0,0,0,0.4)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", padding: "0 4px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", padding: "0 4px" }}>
               <span style={{ fontSize: "14px", fontWeight: "800", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "6px" }}>
                 <Icon name="mapPin" size={16} color="#FFD700" /> Mapa de Departamentos
               </span>
@@ -368,24 +368,21 @@ export default function DepartamentosPage() {
               )}
             </div>
 
-            {/* Contenedor del Mapa Mapbox */}
-            <div ref={mapContainerRef} style={{ width: "100%", height: "420px", borderRadius: "18px", overflow: "hidden", position: "relative" }} />
-
-            {/* Selector de Departamento en Dropdown */}
-            <div style={{ marginTop: "16px" }}>
-              <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "rgba(255,255,255,0.7)", marginBottom: "6px" }}>
-                Filtrar por Departamento:
-              </label>
+            {/* Selector de Departamento en Dropdown (Ubicado debajo de Mapa de Departamentos) */}
+            <div style={{ marginBottom: "14px" }}>
               <select 
                 value={selectedDept}
                 onChange={(e) => setSelectedDept(e.target.value)}
-                style={{ width: "100%", padding: "12px 16px", background: "#0A192F", border: "1.5px solid rgba(20, 109, 158, 0.5)", borderRadius: "12px", color: "#FFFFFF", fontWeight: "700", fontSize: "14px", cursor: "pointer", outline: "none" }}
+                style={{ width: "100%", padding: "11px 14px", background: "#0A192F", border: "1.5px solid rgba(20, 109, 158, 0.5)", borderRadius: "12px", color: "#FFFFFF", fontWeight: "700", fontSize: "13.5px", cursor: "pointer", outline: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}
               >
                 {DEPARTAMENTOS_LISTA.map(d => (
                   <option key={d} value={d}>{d === "Todos" ? "🗺️ Todos los Departamentos" : `📍 ${d}`}</option>
                 ))}
               </select>
             </div>
+
+            {/* Contenedor del Mapa Mapbox */}
+            <div ref={mapContainerRef} style={{ width: "100%", height: "420px", borderRadius: "18px", overflow: "hidden", position: "relative" }} />
           </div>
 
           {/* Columna Derecha: Ranking Top Lugares */}
