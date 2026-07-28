@@ -110,6 +110,16 @@ export default function DepartamentosPage() {
 
   useEffect(() => {
     cargarRanking(selectedDept);
+
+    if (selectedDept === "Todos" && mapRef.current) {
+      mapRef.current.flyTo({
+        center: [-85.1, 12.9],
+        zoom: 6.0,
+        pitch: 0,
+        bearing: 0,
+        duration: 1000
+      });
+    }
   }, [selectedDept]);
 
   // Inicializar Mapbox GL Map con GeoJSON de Departamentos
@@ -119,11 +129,13 @@ export default function DepartamentosPage() {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/outdoors-v12?optimize=true',
-      center: [-85.2, 12.8], // Centro geográfico de Nicaragua
-      zoom: 6.6,
-      pitch: 15,
+      center: [-85.1, 12.9], // Centro exacto para encuadrar Nicaragua
+      zoom: 6.0,
+      minZoom: 5.8, // Límite de zoom alejado idéntico a la imagen por defecto
+      maxZoom: 14,
+      pitch: 0,
       projection: 'mercator',
-      maxBounds: [[-88.5, 10.2], [-82.0, 15.5]]
+      maxBounds: [[-88.5, 10.0], [-81.5, 15.5]]
     });
 
     mapRef.current = map;
@@ -150,6 +162,12 @@ export default function DepartamentosPage() {
       map.addSource('nicaragua-departments', {
         type: 'geojson',
         data: '/nicaragua-departments.json'
+      });
+
+      // Cargar GeoJSON de Centroides para Etiquetas Únicas
+      map.addSource('nicaragua-dept-centroids', {
+        type: 'geojson',
+        data: '/nicaragua-department-centroids.json'
       });
 
       // Capa Relleno Interactivo de Departamentos
@@ -185,11 +203,11 @@ export default function DepartamentosPage() {
         }
       });
 
-      // Capa de Nombres de los 17 Departamentos (Siempre Visibles en Blanco con Delineado Negro)
+      // Capa de Nombres Únicos de los 17 Departamentos (Siempre Visibles en Blanco con Delineado Negro)
       map.addLayer({
         id: 'dept-labels',
         type: 'symbol',
-        source: 'nicaragua-departments',
+        source: 'nicaragua-dept-centroids',
         layout: {
           'text-field': ['get', 'nombre'],
           'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
@@ -197,9 +215,9 @@ export default function DepartamentosPage() {
             'interpolate',
             ['linear'],
             ['zoom'],
-            5, 11,
-            8, 14,
-            12, 17
+            5, 10.5,
+            8, 13.5,
+            12, 16.5
           ],
           'text-allow-overlap': true,
           'text-ignore-placement': true,
