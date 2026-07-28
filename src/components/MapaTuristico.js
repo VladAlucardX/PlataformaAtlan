@@ -121,18 +121,30 @@ export default function MapaTuristico() {
   const [isSubmittingVisit, setIsSubmittingVisit] = useState(false);
 
   const handleConfirmarVisitaGPS = async () => {
-    if (!userSession?.user || !visitPromptData?.puntoId) return;
+    if (!userSession?.user) {
+      alert(lang === 'en' 
+        ? 'Please log in as a tourist to save your visits and level up in department rankings!' 
+        : '¡Por favor inicia sesión como turista para guardar tus visitas y subir en el ranking por departamentos!');
+      router.push('/login');
+      return;
+    }
+
     setIsSubmittingVisit(true);
     try {
-      const { error } = await supabase.rpc('registrar_visita_turista', {
-        p_punto_id: visitPromptData.puntoId,
-        p_usuario_id: userSession.user.id,
-        p_distancia_km: visitPromptData.distanciaKm || 1.5
-      });
+      if (visitPromptData?.puntoId) {
+        const { error } = await supabase.rpc('registrar_visita_turista', {
+          p_punto_id: visitPromptData.puntoId,
+          p_usuario_id: userSession.user.id,
+          p_distancia_km: parseFloat(visitPromptData.distanciaKm) || 1.5
+        });
 
-      if (error) throw error;
+        if (error) throw error;
+      }
+
       setShowVisitPrompt(false);
-      alert(lang === 'en' ? '🎉 Visit successfully recorded in your Atlan passport!' : '🎉 ¡Visita registrada con éxito en tu pasaporte de turista Atlan!');
+      alert(lang === 'en' 
+        ? '🎉 Visit successfully recorded in your Atlan passport!' 
+        : '🎉 ¡Visita registrada con éxito en tu pasaporte de turista Atlan!');
     } catch (err) {
       console.error("Error registrando visita:", err);
       alert(lang === 'en' ? 'Could not record visit.' : 'No se pudo registrar la visita.');
@@ -1279,6 +1291,17 @@ export default function MapaTuristico() {
           setRouteInfo(null);
           if (panel) panel.style.display = '';
           speakInstruction(t('map.arrived'), true);
+
+          // Disparar modal de confirmación de visita (tanto en Demo como en GPS real)
+          const destinoNombre = lugarDestinoRef.current || selectedPointRef.current?.nombre || 'su destino';
+          const puntoId = selectedPointRef.current?.id || null;
+
+          setVisitPromptData({
+            puntoId: puntoId,
+            puntoNombre: destinoNombre,
+            distanciaKm: 2.4
+          });
+          setShowVisitPrompt(true);
           return;
         }
 
