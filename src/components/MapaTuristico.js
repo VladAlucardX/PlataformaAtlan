@@ -1374,7 +1374,115 @@ export default function MapaTuristico() {
 
     mapRef.current.on('load', () => {
 
+      // Ocultar etiquetas, carreteras y divisiones departamentales de países vecinos (Costa Rica, Honduras, El Salvador, etc.)
+      // mostrando únicamente elementos pertenecientes a Nicaragua ('NI')
+      try {
+        const styleLayers = mapRef.current.getStyle().layers || [];
+        const nicaraguaFilter = ['any',
+          ['==', ['get', 'iso_3166_1'], 'NI'],
+          ['==', ['get', 'iso_3166_1'], 'NIC']
+        ];
 
+        styleLayers.forEach((layer) => {
+          // 1. Filtrar etiquetas de texto (ciudades, países, nombres de lugares)
+          if (layer.type === 'symbol' && layer.layout && layer.layout['text-field']) {
+            const existingFilter = mapRef.current.getFilter(layer.id);
+            if (existingFilter) {
+              mapRef.current.setFilter(layer.id, ['all', existingFilter, nicaraguaFilter]);
+            } else {
+              mapRef.current.setFilter(layer.id, nicaraguaFilter);
+            }
+          }
+          // 2. Filtrar divisiones administrativas de departamentos/estados (admin-1, admin-2, etc.)
+          if (layer.id.includes('admin-1') || layer.id.includes('admin-2') || layer.id.includes('admin-3') || layer.id.includes('boundary')) {
+            const existingFilter = mapRef.current.getFilter(layer.id);
+            if (existingFilter) {
+              mapRef.current.setFilter(layer.id, ['all', existingFilter, nicaraguaFilter]);
+            } else {
+              mapRef.current.setFilter(layer.id, nicaraguaFilter);
+            }
+          }
+          // 3. Filtrar carreteras, puentes y túneles (road, bridge, tunnel)
+          if (layer.id.startsWith('road') || layer.id.startsWith('bridge') || layer.id.startsWith('tunnel') || (layer['source-layer'] && layer['source-layer'] === 'road')) {
+            const existingFilter = mapRef.current.getFilter(layer.id);
+            if (existingFilter) {
+              mapRef.current.setFilter(layer.id, ['all', existingFilter, nicaraguaFilter]);
+            } else {
+              mapRef.current.setFilter(layer.id, nicaraguaFilter);
+            }
+          }
+        });
+      } catch (err) {
+        console.warn('[Atlan] Error al filtrar elementos por país:', err);
+      }
+
+      // Cargar la capa del borde externo (croquis) de Nicaragua
+      if (mapRef.current) {
+        try {
+          mapRef.current.addSource('nicaragua-boundary', {
+            type: 'geojson',
+            data: '/nicaragua-boundary.json'
+          });
+
+          // Resplandor neón en azul Atlan (#146D9E) dinámico según nivel de zoom
+          mapRef.current.addLayer({
+            id: 'nicaragua-border-glow',
+            type: 'line',
+            source: 'nicaragua-boundary',
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round'
+            },
+            paint: {
+              'line-color': '#146D9E',
+              'line-width': [
+                'interpolate',
+                ['exponential', 1.2],
+                ['zoom'],
+                5, 2.5,
+                8, 5.0,
+                12, 10.0,
+                16, 16.0
+              ],
+              'line-blur': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                5, 2.0,
+                8, 4.0,
+                12, 6.0
+              ],
+              'line-opacity': 0.65
+            }
+          });
+
+          // Línea principal del croquis externo de Nicaragua (#146D9E) dinámica según nivel de zoom
+          mapRef.current.addLayer({
+            id: 'nicaragua-border-main',
+            type: 'line',
+            source: 'nicaragua-boundary',
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round'
+            },
+            paint: {
+              'line-color': '#146D9E',
+              'line-width': [
+                'interpolate',
+                ['exponential', 1.2],
+                ['zoom'],
+                5, 1.0,
+                8, 2.0,
+                12, 3.5,
+                16, 5.0
+              ],
+              'line-opacity': 0.95
+            }
+          });
+        } catch (borderErr) {
+          console.warn('[Atlan] Error cargando borde externo de Nicaragua:', borderErr);
+        }
+      }
 
       // Estilización premium de carreteras
       const roadStyles = [

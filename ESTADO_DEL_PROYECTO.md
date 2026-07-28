@@ -46,6 +46,10 @@ La Plataforma Atlan es una aplicación web enfocada en turismo, mapas interactiv
    - **Carteles Neón Interactivos:** Separación ampliada entre "Explorar Mapa" y "¿Tienes un Negocio?", incorporación de delineado de letras con `-webkit-text-stroke` y eliminación de animaciones de parpadeo que causaban subpixel jittering en GPU.
    - **Botonera de Usuario en Navbar:** Botón desplegable blanco sólido con menú de opciones dinámico: incluye acceso directo a *"Mis Negocios"* entre *"Mi Perfil"* y *"Mis Giras"* únicamente si el usuario posee 1 o más negocios.
    - **Estética de Comunidad:** Ajuste del color de encabezado de banner de perfil en la comunidad al azul sólido `#0A192F` coincidiendo exactamente con el estilo de la barra de navegación principal.
+   - **Delimitación Nacional en Mapa Turístico:**
+     - **Filtrado Exclusivo para Nicaragua (`iso_3166_1 === 'NI'`):** Se filtraron todas las etiquetas de ciudades, nombres, carreteras y divisiones departamentales exteriores, ocultando líneas y textos de países vecinos (Costa Rica, Honduras, El Salvador) mientras se preserva el terreno y las aguas naturales de Mapbox intactas.
+     - **Borde del Croquis de Nicaragua (`#146D9E`):** Integración del contorno GeoJSON oficial de Nicaragua ([`public/nicaragua-boundary.json`](file:///c:/Users/Alucard/plataforma-atlan/public/nicaragua-boundary.json)) estilizado en el azul oficial de Atlan `#146D9E`.
+     - **Grosor Adaptativo con Zoom:** El grosor del borde escala dinámicamente (`interpolate` de `1.0px` en vista lejana del país a `3.5px - 5.0px` en vista cercana) para evitar saturación visual al alejar el mapa.
 
 ## Siguientes Pasos
 Al retomar el desarrollo:
