@@ -119,21 +119,46 @@ export default function MapaTuristico() {
   const [showVisitPrompt, setShowVisitPrompt] = useState(false);
   const [visitPromptData, setVisitPromptData] = useState(null);
   const [isSubmittingVisit, setIsSubmittingVisit] = useState(false);
+  const [notificationBanner, setNotificationBanner] = useState(null);
+
+  const showNotification = (type, title, message) => {
+    setNotificationBanner({ type, title, message });
+    setTimeout(() => {
+      setNotificationBanner(null);
+    }, 4500);
+  };
 
   const handleConfirmarVisitaGPS = async () => {
     if (!userSession?.user) {
-      alert(lang === 'en' 
-        ? 'Please log in as a tourist to save your visits and level up in department rankings!' 
-        : '¡Por favor inicia sesión como turista para guardar tus visitas y subir en el ranking por departamentos!');
-      router.push('/login');
+      showNotification(
+        'warning',
+        'Inicio de Sesión Requerido 🔒',
+        lang === 'en' 
+          ? 'Please log in as a tourist to save your visits and level up in department rankings!' 
+          : '¡Inicia sesión como turista para guardar tus visitas y subir en el ranking por departamentos!'
+      );
+      setTimeout(() => router.push('/login'), 1800);
       return;
     }
 
     setIsSubmittingVisit(true);
     try {
-      if (visitPromptData?.puntoId) {
+      let targetPuntoId = visitPromptData?.puntoId;
+
+      // Buscar por nombre si no había ID directo
+      if (!targetPuntoId && visitPromptData?.puntoNombre) {
+        const { data: found } = await supabase
+          .from('puntos')
+          .select('id')
+          .ilike('nombre', `%${visitPromptData.puntoNombre}%`)
+          .limit(1)
+          .maybeSingle();
+        if (found) targetPuntoId = found.id;
+      }
+
+      if (targetPuntoId) {
         const { error } = await supabase.rpc('registrar_visita_turista', {
-          p_punto_id: visitPromptData.puntoId,
+          p_punto_id: targetPuntoId,
           p_usuario_id: userSession.user.id,
           p_distancia_km: parseFloat(visitPromptData.distanciaKm) || 1.5
         });
@@ -142,12 +167,14 @@ export default function MapaTuristico() {
       }
 
       setShowVisitPrompt(false);
-      alert(lang === 'en' 
-        ? '🎉 Visit successfully recorded in your Atlan passport!' 
-        : '🎉 ¡Visita registrada con éxito en tu pasaporte de turista Atlan!');
+      showNotification(
+        'success',
+        '¡Visita Registrada con Éxito! 🏆',
+        `Has sumado +1 visita en tu pasaporte a ${visitPromptData?.puntoNombre || 'este destino'}.`
+      );
     } catch (err) {
       console.error("Error registrando visita:", err);
-      alert(lang === 'en' ? 'Could not record visit.' : 'No se pudo registrar la visita.');
+      showNotification('error', 'Error al Registrar', 'No se pudo guardar la visita.');
     } finally {
       setIsSubmittingVisit(false);
     }
@@ -3267,7 +3294,46 @@ export default function MapaTuristico() {
                 {isSubmittingVisit ? 'Registrando...' : '🎯 Marcar como Visitado (+1 Visita)'}
               </button>
             </div>
+      {/* Banner Flotante 3D Claymórfico de Notificaciones */}
+      {notificationBanner && (
+        <div style={{
+          position: 'fixed',
+          top: '90px',
+          right: '20px',
+          zIndex: 10000,
+          background: notificationBanner.type === 'success'
+            ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(6, 78, 59, 0.95) 100%)'
+            : notificationBanner.type === 'warning'
+            ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.95) 0%, rgba(120, 53, 15, 0.95) 100%)'
+            : 'linear-gradient(135deg, rgba(239, 68, 68, 0.95) 0%, rgba(127, 29, 29, 0.95) 100%)',
+          color: '#FFFFFF',
+          padding: '16px 22px',
+          borderRadius: '20px',
+          border: '2px solid rgba(255, 255, 255, 0.3)',
+          boxShadow: '0 16px 36px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4)',
+          backdropFilter: 'blur(16px)',
+          maxWidth: '380px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '14px'
+        }}>
+          <div style={{ fontSize: '26px' }}>
+            {notificationBanner.type === 'success' ? '🏆' : notificationBanner.type === 'warning' ? '🔒' : '⚠️'}
           </div>
+          <div style={{ flex: 1 }}>
+            <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '900', color: '#FFFFFF' }}>
+              {notificationBanner.title}
+            </h4>
+            <p style={{ margin: '3px 0 0 0', fontSize: '12.5px', color: 'rgba(255, 255, 255, 0.9)', lineHeight: '1.3' }}>
+              {notificationBanner.message}
+            </p>
+          </div>
+          <button
+            onClick={() => setNotificationBanner(null)}
+            style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer', fontSize: '16px', fontWeight: 'bold' }}
+          >
+            ✕
+          </button>
         </div>
       )}
     </div>
