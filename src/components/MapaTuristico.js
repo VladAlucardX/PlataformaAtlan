@@ -3294,6 +3294,10 @@ export default function MapaTuristico() {
                 {isSubmittingVisit ? 'Registrando...' : '🎯 Marcar como Visitado (+1 Visita)'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
       {/* Banner Flotante 3D Claymórfico de Notificaciones */}
       {notificationBanner && (
         <div style={{
