@@ -135,7 +135,13 @@ export default function DepartamentosPage() {
       maxZoom: 14,
       pitch: 0,
       projection: 'mercator',
-      maxBounds: [[-88.5, 10.0], [-81.5, 15.5]]
+      maxBounds: [[-88.5, 10.0], [-81.5, 15.5]],
+      scrollZoom: false,       // Desactivar zoom manual con rueda de mouse
+      doubleClickZoom: false,  // Desactivar zoom manual con doble clic
+      boxZoom: false,          // Desactivar zoom manual con caja
+      dragRotate: false,       // Desactivar rotación
+      touchZoomRotate: false,  // Desactivar pellizco zoom en pantallas táctiles
+      keyboard: false          // Desactivar controles de teclado
     });
 
     mapRef.current = map;
