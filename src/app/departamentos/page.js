@@ -188,24 +188,31 @@ export default function DepartamentosPage() {
 
       // Eventos Hover
       map.on('mousemove', 'dept-fill', (e) => {
-        if (e.features.length > 0) {
-          if (hoveredId !== null) {
-            map.setFeatureState({ source: 'nicaragua-departments', id: hoveredId }, { hover: false });
+        if (e.features && e.features.length > 0) {
+          if (hoveredId !== null && hoveredId !== undefined) {
+            try {
+              map.setFeatureState({ source: 'nicaragua-departments', id: hoveredId }, { hover: false });
+            } catch (_) {}
           }
-          hoveredId = e.features[0].id || e.features[0].properties.id;
-          const deptName = e.features[0].properties.nombre || e.features[0].properties.name;
+          const feat = e.features[0];
+          hoveredId = feat.id !== undefined ? feat.id : (feat.properties && feat.properties.id);
+          const deptName = feat.properties ? (feat.properties.nombre || feat.properties.name) : null;
           setHoveredDept(deptName);
           map.getCanvas().style.cursor = 'pointer';
 
-          if (hoveredId !== undefined) {
-            map.setFeatureState({ source: 'nicaragua-departments', id: hoveredId }, { hover: true });
+          if (hoveredId !== null && hoveredId !== undefined) {
+            try {
+              map.setFeatureState({ source: 'nicaragua-departments', id: hoveredId }, { hover: true });
+            } catch (_) {}
           }
         }
       });
 
       map.on('mouseleave', 'dept-fill', () => {
-        if (hoveredId !== null) {
-          map.setFeatureState({ source: 'nicaragua-departments', id: hoveredId }, { hover: false });
+        if (hoveredId !== null && hoveredId !== undefined) {
+          try {
+            map.setFeatureState({ source: 'nicaragua-departments', id: hoveredId }, { hover: false });
+          } catch (_) {}
         }
         hoveredId = null;
         setHoveredDept(null);

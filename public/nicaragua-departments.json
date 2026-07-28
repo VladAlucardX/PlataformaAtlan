@@ -25,7 +25,7 @@
   "features": [
     {
       "type": "Feature",
-      "id": "NI.AS",
+      "id": 1,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.46,
@@ -874,7 +874,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.AN",
+      "id": 2,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.45,
@@ -1647,7 +1647,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.224",
+      "id": 3,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.4,
@@ -1822,7 +1822,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.6330",
+      "id": 4,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.31,
@@ -2185,7 +2185,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.CA",
+      "id": 5,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.61,
@@ -2328,7 +2328,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.GR",
+      "id": 6,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.51,
@@ -2463,7 +2463,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.JI",
+      "id": 7,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.5,
@@ -2886,7 +2886,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.LE",
+      "id": 8,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.62,
@@ -3157,7 +3157,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.MN",
+      "id": 9,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.53,
@@ -3396,7 +3396,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.MS",
+      "id": 10,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.63,
@@ -3499,7 +3499,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.CI",
+      "id": 11,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.57,
@@ -3806,7 +3806,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.ES",
+      "id": 12,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.45,
@@ -4009,7 +4009,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.MD",
+      "id": 13,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.46,
@@ -4212,7 +4212,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.MT",
+      "id": 14,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.47,
@@ -4579,7 +4579,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.NS",
+      "id": 15,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.69,
@@ -4854,7 +4854,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.BO",
+      "id": 16,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.44,
@@ -5117,7 +5117,7 @@
     },
     {
       "type": "Feature",
-      "id": "NI.CO",
+      "id": 17,
       "properties": {
         "hc-group": "admin1",
         "hc-middle-x": 0.43,
