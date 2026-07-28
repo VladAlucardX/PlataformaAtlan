@@ -129,18 +129,19 @@ export default function DepartamentosPage() {
     mapRef.current = map;
 
     map.on('load', () => {
-      // Ocultar etiquetas de países vecinos
+      // Ocultar carreteras y líneas para dejar un mapa 100% liso y limpio
       try {
         const styleLayers = map.getStyle().layers || [];
-        const nicaraguaFilter = ['any',
-          ['==', ['get', 'iso_3166_1'], 'NI'],
-          ['==', ['get', 'iso_3166_1'], 'NIC']
-        ];
         styleLayers.forEach((layer) => {
-          if (layer.type === 'symbol' && layer.layout && layer.layout['text-field']) {
-            const existing = map.getFilter(layer.id);
-            if (existing) map.setFilter(layer.id, ['all', existing, nicaraguaFilter]);
-            else map.setFilter(layer.id, nicaraguaFilter);
+          if (
+            layer.id.startsWith('road') ||
+            layer.id.startsWith('bridge') ||
+            layer.id.startsWith('tunnel') ||
+            layer.id.includes('admin') ||
+            layer.id.includes('boundary') ||
+            layer.type === 'symbol'
+          ) {
+            map.setLayoutProperty(layer.id, 'visibility', 'none');
           }
         });
       } catch (_) {}
@@ -181,6 +182,34 @@ export default function DepartamentosPage() {
           'line-color': '#146D9E',
           'line-width': 2,
           'line-opacity': 0.8
+        }
+      });
+
+      // Capa de Nombres de los 17 Departamentos (Siempre Visibles en Blanco con Delineado Negro)
+      map.addLayer({
+        id: 'dept-labels',
+        type: 'symbol',
+        source: 'nicaragua-departments',
+        layout: {
+          'text-field': ['get', 'nombre'],
+          'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+          'text-size': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            5, 11,
+            8, 14,
+            12, 17
+          ],
+          'text-allow-overlap': true,
+          'text-ignore-placement': true,
+          'text-anchor': 'center'
+        },
+        paint: {
+          'text-color': '#FFFFFF',
+          'text-halo-color': '#000000',
+          'text-halo-width': 1.8,
+          'text-halo-blur': 0.5
         }
       });
 
