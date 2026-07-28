@@ -306,16 +306,10 @@ export default function DepartamentosPage() {
       <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "100px 20px 60px 20px" }}>
         
         {/* Encabezado Principal */}
-        <div style={{ textAlign: "center", marginBottom: "36px" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(255, 215, 0, 0.12)", border: "1.5px solid rgba(255, 215, 0, 0.3)", padding: "6px 16px", borderRadius: "20px", fontSize: "13px", fontWeight: "800", color: "#FFD700", marginBottom: "12px" }}>
-            🏆 Ranking Nacional & Exploración Territorial
-          </div>
-          <h1 style={{ fontSize: "clamp(28px, 5vw, 46px)", fontWeight: "900", letterSpacing: "-0.02em", color: "#FFFFFF", marginBottom: "12px", textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
-            Departamentos de <span style={{ color: "#FFD700" }}>Nicaragua</span>
+        <div style={{ textAlign: "center", marginBottom: "32px" }}>
+          <h1 style={{ fontSize: "clamp(24px, 4.5vw, 42px)", fontWeight: "900", letterSpacing: "-0.02em", color: "#FFFFFF", margin: 0, textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
+            Ranking de Lugares visitados en los distintos Departamentos de <span style={{ color: "#FFD700" }}>Nicaragua</span>
           </h1>
-          <p style={{ fontSize: "15px", color: "rgba(255, 255, 255, 0.8)", maxWidth: "680px", margin: "0 auto", lineHeight: "1.6" }}>
-            Haz clic en cualquier departamento para filtrar los destinos más visitados, descubrir joyas ocultas y llevar tu registro personal de viajes verificados GPS.
-          </p>
         </div>
 
         {/* Banner de Logros y Gamificación del Usuario */}
