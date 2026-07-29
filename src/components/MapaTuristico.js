@@ -3082,30 +3082,6 @@ export default function MapaTuristico() {
                             </a>
                           )}
 
-                          {phone && (
-                            <a
-                              href={`tel:${phone}`}
-                              title={`Llamar a ${phone}`}
-                              style={{
-                                padding: '7px 12px',
-                                borderRadius: '10px',
-                                background: '#F1F5F9',
-                                border: '1.5px solid #CBD5E1',
-                                color: '#0F172A',
-                                fontSize: '12.5px',
-                                fontWeight: '800',
-                                textDecoration: 'none',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '5px'
-                              }}
-                            >
-                              <Icon name="phone" size={14} color="#2563EB" />
-                              <span>{phone}</span>
-                            </a>
-                          )}
-
                           {fbUrl && (
                             <a
                               href={fbUrl}
