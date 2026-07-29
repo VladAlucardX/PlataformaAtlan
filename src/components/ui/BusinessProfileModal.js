@@ -492,56 +492,187 @@ export default function BusinessProfileModal({
                 </p>
               </div>
 
-              {/* BARRA DE CONTACTO (Teléfono, WhatsApp) */}
-              {(details?.telefono || details?.whatsapp) && (
-                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                  {details.telefono && (
-                    <a
-                      href={`tel:${details.telefono}`}
-                      style={{
-                        padding: '8px 14px',
-                        borderRadius: '10px',
-                        background: '#F1F5F9',
-                        border: '1px solid #E2E8F0',
-                        color: '#0F172A',
-                        fontSize: '13px',
-                        fontWeight: '700',
-                        textDecoration: 'none',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '7px'
-                      }}
-                    >
-                      <Icon name="phone" size={15} color="#2563EB" />
-                      <span>{details.telefono}</span>
-                    </a>
-                  )}
+              {/* BARRA DE CONTACTO Y REDES SOCIALES */}
+              {(() => {
+                const phone = details?.telefono;
+                const whatsapp = details?.whatsapp;
+                const facebook = details?.facebook;
+                const instagram = details?.instagram;
+                const tiktok = details?.tiktok;
+                const website = details?.website;
 
-                  {details.whatsapp && (
-                    <a
-                      href={`https://wa.me/${details.whatsapp.replace(/\D/g, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        padding: '8px 14px',
-                        borderRadius: '10px',
-                        background: 'rgba(34, 197, 94, 0.12)',
-                        border: '1px solid rgba(34, 197, 94, 0.3)',
-                        color: '#15803D',
-                        fontSize: '13px',
-                        fontWeight: '700',
-                        textDecoration: 'none',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '7px'
-                      }}
-                    >
-                      <Icon name="whatsapp" size={15} color="#16A34A" />
-                      <span>WhatsApp</span>
-                    </a>
-                  )}
-                </div>
-              )}
+                const hasAnyContact = phone || whatsapp || facebook || instagram || tiktok || website;
+
+                if (!hasAnyContact) return null;
+
+                const formatUrl = (val, prefix) => {
+                  if (!val) return null;
+                  if (val.startsWith('http://') || val.startsWith('https://')) return val;
+                  return `${prefix}${val.replace(/^@/, '')}`;
+                };
+
+                const waUrl = whatsapp ? (whatsapp.startsWith('http') ? whatsapp : `https://wa.me/${whatsapp.replace(/\D/g, '')}`) : null;
+                const fbUrl = formatUrl(facebook, 'https://facebook.com/');
+                const igUrl = formatUrl(instagram, 'https://instagram.com/');
+                const ttUrl = formatUrl(tiktok, 'https://tiktok.com/@');
+                const webUrl = website ? (website.startsWith('http') ? website : `https://${website}`) : null;
+
+                return (
+                  <div>
+                    <h4 style={{ margin: '0 0 10px', fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Icon name="phone" size={15} color={theme.accent} />
+                      <span>{lang === 'en' ? 'Contact & Social Media' : 'Contacto y Redes Sociales'}</span>
+                    </h4>
+                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                      {whatsapp && (
+                        <a
+                          href={waUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            padding: '8px 16px',
+                            borderRadius: '12px',
+                            background: 'rgba(34, 197, 94, 0.12)',
+                            border: '1px solid rgba(34, 197, 94, 0.3)',
+                            color: '#15803D',
+                            fontSize: '13px',
+                            fontWeight: '800',
+                            textDecoration: 'none',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '7px'
+                          }}
+                        >
+                          <Icon name="whatsapp" size={16} color="#16A34A" />
+                          <span>WhatsApp ({whatsapp})</span>
+                        </a>
+                      )}
+
+                      {phone && (
+                        <a
+                          href={`tel:${phone}`}
+                          style={{
+                            padding: '8px 16px',
+                            borderRadius: '12px',
+                            background: '#F1F5F9',
+                            border: '1px solid #E2E8F0',
+                            color: '#0F172A',
+                            fontSize: '13px',
+                            fontWeight: '800',
+                            textDecoration: 'none',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '7px'
+                          }}
+                        >
+                          <Icon name="phone" size={15} color="#2563EB" />
+                          <span>{phone}</span>
+                        </a>
+                      )}
+
+                      {fbUrl && (
+                        <a
+                          href={fbUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Facebook"
+                          style={{
+                            padding: '8px 14px',
+                            borderRadius: '12px',
+                            background: 'rgba(24, 119, 242, 0.12)',
+                            border: '1px solid rgba(24, 119, 242, 0.25)',
+                            color: '#1877F2',
+                            fontSize: '13px',
+                            fontWeight: '800',
+                            textDecoration: 'none',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '7px'
+                          }}
+                        >
+                          <Icon name="facebook" size={16} color="#1877F2" />
+                          <span>Facebook</span>
+                        </a>
+                      )}
+
+                      {igUrl && (
+                        <a
+                          href={igUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Instagram"
+                          style={{
+                            padding: '8px 14px',
+                            borderRadius: '12px',
+                            background: 'rgba(228, 64, 95, 0.12)',
+                            border: '1px solid rgba(228, 64, 95, 0.25)',
+                            color: '#E4405F',
+                            fontSize: '13px',
+                            fontWeight: '800',
+                            textDecoration: 'none',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '7px'
+                          }}
+                        >
+                          <Icon name="instagram" size={16} color="#E4405F" />
+                          <span>Instagram</span>
+                        </a>
+                      )}
+
+                      {ttUrl && (
+                        <a
+                          href={ttUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="TikTok"
+                          style={{
+                            padding: '8px 14px',
+                            borderRadius: '12px',
+                            background: 'rgba(15, 23, 42, 0.08)',
+                            border: '1px solid rgba(15, 23, 42, 0.2)',
+                            color: '#0F172A',
+                            fontSize: '13px',
+                            fontWeight: '800',
+                            textDecoration: 'none',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '7px'
+                          }}
+                        >
+                          <Icon name="tiktok" size={16} color="#0F172A" />
+                          <span>TikTok</span>
+                        </a>
+                      )}
+
+                      {webUrl && (
+                        <a
+                          href={webUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Website"
+                          style={{
+                            padding: '8px 14px',
+                            borderRadius: '12px',
+                            background: 'rgba(20, 109, 158, 0.12)',
+                            border: '1px solid rgba(20, 109, 158, 0.25)',
+                            color: '#146D9E',
+                            fontSize: '13px',
+                            fontWeight: '800',
+                            textDecoration: 'none',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '7px'
+                          }}
+                        >
+                          <Icon name="globe" size={16} color="#146D9E" />
+                          <span>{lang === 'en' ? 'Website' : 'Sitio Web'}</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* SERVICIOS / AMENIDADES DE NEGOCIO */}
               {activeServiceList.length > 0 && (

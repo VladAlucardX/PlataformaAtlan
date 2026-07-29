@@ -63,6 +63,10 @@ export default function DashboardPage() {
   const [descripcion, setDescripcion] = useState("");
   const [telefono, setTelefono] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [website, setWebsite] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [tiktok, setTiktok] = useState("");
   const [rangoPrecios, setRangoPrecios] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -262,6 +266,10 @@ export default function DashboardPage() {
       setDescripcion(negocioData.descripcion || "");
       setTelefono(negocioData.telefono || "");
       setWhatsapp(negocioData.whatsapp || "");
+      setWebsite(negocioData.website || "");
+      setFacebook(negocioData.facebook || "");
+      setInstagram(negocioData.instagram || "");
+      setTiktok(negocioData.tiktok || "");
       setRangoPrecios(negocioData.rango_precios || "");
       setLogoUrl(negocioData.logo_url || "");
       setFotos(negocioData.fotos || []);
@@ -678,6 +686,10 @@ export default function DashboardPage() {
         descripcion: descripcion || null,
         telefono: telefono || null,
         whatsapp: whatsapp || null,
+        website: website || null,
+        facebook: facebook || null,
+        instagram: instagram || null,
+        tiktok: tiktok || null,
         rango_precios: rangoPrecios || null,
         logo_url: logoUrl || null,
         fotos: fotos || []
@@ -1756,6 +1768,7 @@ export default function DashboardPage() {
                         type="text"
                         value={telefono}
                         onChange={(e) => setTelefono(e.target.value)}
+                        placeholder="Ej: +505 8888 8888"
                         style={styles.input}
                       />
                     </div>
@@ -1765,8 +1778,75 @@ export default function DashboardPage() {
                         type="text"
                         value={whatsapp}
                         onChange={(e) => setWhatsapp(e.target.value)}
+                        placeholder="Ej: +505 8888 8888"
                         style={styles.input}
                       />
+                    </div>
+                  </div>
+
+                  {/* Redes Sociales y Sitio Web */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px", margin: "16px 0 8px", borderTop: "1px dashed rgba(20, 109, 158, 0.10)", paddingTop: "16px" }}>
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#146D9E", margin: 0, display: "flex", alignItems: "center", gap: "6px" }}>
+                      <Icon name="share2" size={16} color="#146D9E" />
+                      <span>{lang === "en" ? "Social Media & Contact Links" : "Redes Sociales y Enlaces de Contacto"}</span>
+                    </h4>
+
+                    <div className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                      <div style={styles.inputGroup}>
+                        <label style={{ ...styles.label, display: "flex", alignItems: "center", gap: "6px" }}>
+                          <Icon name="facebook" size={14} color="#1877F2" />
+                          <span>Facebook</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={facebook}
+                          onChange={(e) => setFacebook(e.target.value)}
+                          placeholder="https://facebook.com/tunegocio"
+                          style={styles.input}
+                        />
+                      </div>
+
+                      <div style={styles.inputGroup}>
+                        <label style={{ ...styles.label, display: "flex", alignItems: "center", gap: "6px" }}>
+                          <Icon name="instagram" size={14} color="#E4405F" />
+                          <span>Instagram</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={instagram}
+                          onChange={(e) => setInstagram(e.target.value)}
+                          placeholder="https://instagram.com/tunegocio"
+                          style={styles.input}
+                        />
+                      </div>
+
+                      <div style={styles.inputGroup}>
+                        <label style={{ ...styles.label, display: "flex", alignItems: "center", gap: "6px" }}>
+                          <Icon name="tiktok" size={14} color="#000000" />
+                          <span>TikTok</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={tiktok}
+                          onChange={(e) => setTiktok(e.target.value)}
+                          placeholder="https://tiktok.com/@tunegocio"
+                          style={styles.input}
+                        />
+                      </div>
+
+                      <div style={styles.inputGroup}>
+                        <label style={{ ...styles.label, display: "flex", alignItems: "center", gap: "6px" }}>
+                          <Icon name="globe" size={14} color="#146D9E" />
+                          <span>{lang === "en" ? "Website URL" : "Sitio Web"}</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={website}
+                          onChange={(e) => setWebsite(e.target.value)}
+                          placeholder="https://tunegocio.com"
+                          style={styles.input}
+                        />
+                      </div>
                     </div>
                   </div>
 

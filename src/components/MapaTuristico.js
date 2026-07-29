@@ -2870,6 +2870,171 @@ export default function MapaTuristico() {
                     </button>
                   </div>
 
+                  {/* BARRA DE CONTACTO DIRECTO Y REDES SOCIALES (EN VISTA GENERAL) */}
+                  {(() => {
+                    const phone = selectedPointDetails?.telefono;
+                    const whatsapp = selectedPointDetails?.whatsapp;
+                    const facebook = selectedPointDetails?.facebook;
+                    const instagram = selectedPointDetails?.instagram;
+                    const tiktok = selectedPointDetails?.tiktok;
+                    const website = selectedPointDetails?.website;
+
+                    const hasAnyContact = phone || whatsapp || facebook || instagram || tiktok || website;
+
+                    if (!hasAnyContact) return null;
+
+                    const formatUrl = (val, prefix) => {
+                      if (!val) return null;
+                      if (val.startsWith('http://') || val.startsWith('https://')) return val;
+                      return `${prefix}${val.replace(/^@/, '')}`;
+                    };
+
+                    const waUrl = whatsapp ? (whatsapp.startsWith('http') ? whatsapp : `https://wa.me/${whatsapp.replace(/\D/g, '')}`) : null;
+                    const fbUrl = formatUrl(facebook, 'https://facebook.com/');
+                    const igUrl = formatUrl(instagram, 'https://instagram.com/');
+                    const ttUrl = formatUrl(tiktok, 'https://tiktok.com/@');
+                    const webUrl = website ? (website.startsWith('http') ? website : `https://${website}`) : null;
+
+                    return (
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+                        {whatsapp && (
+                          <a
+                            href={waUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Contactar por WhatsApp"
+                            style={{
+                              padding: '8px 14px',
+                              borderRadius: '12px',
+                              background: 'rgba(34, 197, 94, 0.14)',
+                              border: '1.5px solid rgba(34, 197, 94, 0.35)',
+                              color: '#15803D',
+                              fontSize: '13px',
+                              fontWeight: '850',
+                              textDecoration: 'none',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '6px',
+                              flex: '1 1 auto'
+                            }}
+                          >
+                            <Icon name="whatsapp" size={16} color="#16A34A" />
+                            <span>WhatsApp</span>
+                          </a>
+                        )}
+
+                        {phone && (
+                          <a
+                            href={`tel:${phone}`}
+                            title={`Llamar a ${phone}`}
+                            style={{
+                              padding: '8px 14px',
+                              borderRadius: '12px',
+                              background: '#F1F5F9',
+                              border: '1.5px solid #CBD5E1',
+                              color: '#0F172A',
+                              fontSize: '13px',
+                              fontWeight: '800',
+                              textDecoration: 'none',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '6px'
+                            }}
+                          >
+                            <Icon name="phone" size={15} color="#2563EB" />
+                            <span>{phone}</span>
+                          </a>
+                        )}
+
+                        {fbUrl && (
+                          <a
+                            href={fbUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Facebook"
+                            style={{
+                              width: '36px',
+                              height: '36px',
+                              borderRadius: '10px',
+                              background: 'rgba(24, 119, 242, 0.12)',
+                              border: '1.5px solid rgba(24, 119, 242, 0.25)',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            <Icon name="facebook" size={17} color="#1877F2" />
+                          </a>
+                        )}
+
+                        {igUrl && (
+                          <a
+                            href={igUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Instagram"
+                            style={{
+                              width: '36px',
+                              height: '36px',
+                              borderRadius: '10px',
+                              background: 'rgba(228, 64, 95, 0.12)',
+                              border: '1.5px solid rgba(228, 64, 95, 0.25)',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            <Icon name="instagram" size={17} color="#E4405F" />
+                          </a>
+                        )}
+
+                        {ttUrl && (
+                          <a
+                            href={ttUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="TikTok"
+                            style={{
+                              width: '36px',
+                              height: '36px',
+                              borderRadius: '10px',
+                              background: 'rgba(15, 23, 42, 0.08)',
+                              border: '1.5px solid rgba(15, 23, 42, 0.2)',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            <Icon name="tiktok" size={17} color="#0F172A" />
+                          </a>
+                        )}
+
+                        {webUrl && (
+                          <a
+                            href={webUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Sitio Web"
+                            style={{
+                              width: '36px',
+                              height: '36px',
+                              borderRadius: '10px',
+                              background: 'rgba(20, 109, 158, 0.12)',
+                              border: '1.5px solid rgba(20, 109, 158, 0.25)',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            <Icon name="globe" size={17} color="#146D9E" />
+                          </a>
+                        )}
+                      </div>
+                    );
+                  })()}
+
                   {/* CHIPS DE AMENIDADES RÁPIDAS */}
                   {activeServiceList.length > 0 && (
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
