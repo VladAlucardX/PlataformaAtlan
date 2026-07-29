@@ -2887,7 +2887,7 @@ export default function MapaTuristico() {
                       >
                         {lang === 'en' ? 'Show More' : 'Mostrar más'}
                       </span>
-                      <img src="/images/more1.svg" alt="Mostrar más" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))' }} />
+                      <img src="/images/more.svg" alt="Mostrar más" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }} />
                     </button>
                   </div>
 
