@@ -2591,295 +2591,418 @@ export default function MapaTuristico() {
 
       </div>
 
-      {/* Panel de detalles resumido */}
+      {/* Panel de detalles resumido en el mapa */}
       {selectedPoint && (
-        <div className="detail-sheet">
-          {/* Cabecera del Panel */}
-          <div style={{
-            padding: '24px 20px 16px',
-            borderBottom: '1px solid rgba(20, 109, 158, 0.08)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'start'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              {selectedPointDetails?.logo_url ? (
-                <img
-                  src={selectedPointDetails.logo_url}
-                  alt={selectedPoint.nombre}
-                  style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    objectFit: 'cover',
-                    border: '1.5px solid rgba(20, 109, 158, 0.15)',
-                  }}
-                />
-              ) : (
-                <div style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)',
-                  color: '#FFFFFF',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '20px',
-                  fontWeight: '800'
-                }}>
-                  {selectedPoint.nombre?.charAt(0)?.toUpperCase() || '🏢'}
-                </div>
-              )}
-              <div>
-                {(() => {
-                  let statusText = '';
-                  let statusColor = '';
-                  let statusBg = '';
+        <div className="detail-sheet" style={{ overflow: 'hidden', padding: 0 }}>
+          {(() => {
+            const cat = (selectedPoint.category || '').toLowerCase();
+            let coverGradient = 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)';
+            let accentColor = '#146D9E';
 
-                  if (selectedPoint.estado === 'en_verificacion') {
-                    statusText = lang === 'en' ? 'Awaiting Verification' : 'En Espera de Verificación';
-                    statusColor = '#f97316';
-                    statusBg = 'rgba(249, 115, 22, 0.15)';
-                  } else if (selectedPoint.estado === 'aprobado') {
-                    statusText = lang === 'en' ? 'Verified Business' : 'Negocio Verificado';
-                    statusColor = '#10b981';
-                    statusBg = 'rgba(16, 185, 129, 0.15)';
-                  } else {
-                    const isClaimed = !!selectedPoint.negocio_id;
-                    statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
-                    statusColor = isClaimed ? '#10b981' : '#f59e0b';
-                    statusBg = isClaimed ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)';
-                  }
+            if (cat.includes('restaurante') || cat.includes('comida') || cat.includes('café') || cat.includes('bar')) {
+              coverGradient = 'linear-gradient(135deg, #FF6B6B 0%, #D93838 100%)';
+              accentColor = '#D93838';
+            } else if (cat.includes('hotel') || cat.includes('hospedaje') || cat.includes('hostal')) {
+              coverGradient = 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)';
+              accentColor = '#1D4ED8';
+            } else if (cat.includes('naturaleza') || cat.includes('tour') || cat.includes('aventura')) {
+              coverGradient = 'linear-gradient(135deg, #10B981 0%, #047857 100%)';
+              accentColor = '#047857';
+            } else if (cat.includes('cultura') || cat.includes('arte') || cat.includes('museo')) {
+              coverGradient = 'linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%)';
+              accentColor = '#6D28D9';
+            }
 
-                  return (
-                    <span style={{
-                      fontSize: '11px',
-                      fontWeight: '800',
-                      textTransform: 'uppercase',
-                      color: statusColor,
-                      background: statusBg,
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      display: 'inline-block',
-                      marginBottom: '8px',
-                      border: `1px solid ${statusColor}40`
-                    }}>
-                      {statusText}
-                    </span>
-                  );
-                })()}
-                <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '850', color: '#1A1A2E', lineHeight: '1.2' }}>
-                  {selectedPoint.nombre}
-                </h2>
-                <p style={{ margin: '4px 0 0', fontSize: '12.5px', color: '#4A5568', fontWeight: '600' }}>
-                  📍 {t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}
-                </p>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              {/* Botón Favorito */}
-              {userSession && (
-                <button
-                  onClick={handleToggleFavorite}
-                  title={isFavorite ? (lang === 'en' ? 'Remove from Favorites' : 'Quitar de Favoritos') : (lang === 'en' ? 'Add to Favorites' : 'Guardar en Favoritos')}
+            const heroImg = selectedPointDetails?.fotos && selectedPointDetails.fotos.length > 0 ? selectedPointDetails.fotos[0] : null;
+
+            // Servicios activos
+            const servs = selectedPointDetails?.servicios || {};
+            const activeServiceList = [
+              { key: 'has_wifi', label: 'WiFi', icon: 'wifi' },
+              { key: 'has_parking', label: lang === 'en' ? 'Parking' : 'Parqueo', icon: 'parking' },
+              { key: 'has_pets', label: 'Pet Friendly', icon: 'pet' },
+              { key: 'has_card_payment', label: lang === 'en' ? 'Cards' : 'Tarjetas', icon: 'creditCard' },
+              { key: 'has_delivery', label: 'Delivery', icon: 'delivery' },
+              { key: 'has_ac', label: 'A/C', icon: 'ac' },
+            ].filter(s => !!servs[s.key]);
+
+            const avgRating = pointReviews.length > 0
+              ? (pointReviews.reduce((acc, r) => acc + Number(r.estrellas || 5), 0) / pointReviews.length).toFixed(1)
+              : null;
+
+            return (
+              <>
+                {/* PORTADA / HERO COVER DEL NEGOCIO */}
+                <div
                   style={{
-                    background: isFavorite ? 'rgba(255, 215, 0, 0.18)' : 'rgba(20, 109, 158, 0.08)',
-                    border: isFavorite ? '1.5px solid #FFD700' : '1.5px solid rgba(20, 109, 158, 0.12)',
-                    color: isFavorite ? '#B8960E' : '#4A5568',
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '18px',
-                    transition: 'all 0.25s ease'
+                    height: heroImg ? '110px' : '75px',
+                    background: heroImg ? `url(${heroImg}) center/cover no-repeat` : coverGradient,
+                    position: 'relative',
+                    flexShrink: 0
                   }}
                 >
-                  {isFavorite ? '★' : '☆'}
-                </button>
-              )}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: heroImg
+                        ? 'linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(10,15,28,0.7) 100%)'
+                        : 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 100%)'
+                    }}
+                  />
 
-              <button
-                onClick={() => {
-                  setSelectedPoint(null);
-                  setShowFullProfileModal(false);
-                }}
-                style={{
-                  background: 'rgba(20, 109, 158, 0.08)',
-                  border: '1.5px solid rgba(20, 109, 158, 0.12)',
-                  color: '#1A1A2E',
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 'bold',
-                  fontSize: '14px',
-                  transition: 'all 0.2s'
-                }}
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-
-          {/* Cuerpo Scrollable Resumido */}
-          <div style={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px',
-            scrollbarWidth: 'thin',
-            scrollbarColor: 'rgba(20,109,158,0.1) transparent'
-          }}>
-            {/* BOTÓN PRINCIPAL INICIAR VIAJE */}
-            <button
-              onClick={() => handleIniciarViaje(selectedPoint)}
-              className="clay-btn-blue"
-              style={{
-                width: '100%',
-                padding: '14px 20px',
-                fontSize: '15px',
-                color: '#FFFFFF',
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="3 11 22 2 13 21 11 13 3 11" />
-              </svg>
-              <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
-            </button>
-
-            {/* BOTÓN DESTACADO MOSTRAR MÁS / VER PERFIL COMPLETO */}
-            <button
-              onClick={() => setShowFullProfileModal(true)}
-              className="clay-btn-gold"
-              style={{
-                width: '100%',
-                padding: '13px 20px',
-                fontSize: '14px',
-                fontWeight: '800',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                boxShadow: '0 4px 15px rgba(212, 175, 55, 0.25)'
-              }}
-            >
-              <span>✨</span>
-              <span>{lang === 'en' ? 'Show More & Services' : 'Mostrar más (Perfil y Servicios)'}</span>
-            </button>
-
-            {/* TARJETA DE VISTA PREVIA RESUMIDA */}
-            <div className="clay-card-static" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {/* Indicador de abierto/cerrado si hay horarios */}
-              {selectedPointDetails?.servicios?.has_hours && selectedPointDetails?.horarios && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '12px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase' }}>
-                    ⏰ {lang === 'en' ? 'Status' : 'Horario'}
-                  </span>
-                  {isBusinessOpenNow(selectedPointDetails.horarios) !== null && (
-                    <span style={{
-                      fontSize: '11px',
-                      fontWeight: '850',
-                      textTransform: 'uppercase',
-                      padding: '3px 8px',
-                      borderRadius: '6px',
-                      backgroundColor: isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.12)' : 'rgba(239,68,68,0.12)',
-                      color: isBusinessOpenNow(selectedPointDetails.horarios) ? '#17AA4A' : '#ef4444',
-                      border: `1px solid ${isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.25)' : 'rgba(239,68,68,0.25)'}`
-                    }}>
-                      {isBusinessOpenNow(selectedPointDetails.horarios)
-                        ? (lang === 'en' ? 'Open Now' : 'Abierto Ahora')
-                        : (lang === 'en' ? 'Closed' : 'Cerrado')}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {/* Descripción rápida */}
-              <div>
-                <h4 style={{ margin: '0 0 4px', fontSize: '12px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase' }}>
-                  {lang === 'en' ? 'About' : 'Acerca de'}
-                </h4>
-                <p style={{
-                  margin: 0,
-                  fontSize: '13.5px',
-                  color: '#4A5568',
-                  lineHeight: '1.5',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 3,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden'
-                }}>
-                  {selectedPoint.descripcion || (lang === 'en' ? 'No description available.' : 'Sin descripción disponible.')}
-                </p>
-              </div>
-
-              {/* Previsualización de Fotos Miniatura */}
-              {selectedPointDetails?.fotos && selectedPointDetails.fotos.length > 0 && (
-                <div>
-                  <h4 style={{ margin: '0 0 6px', fontSize: '12px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase' }}>
-                    📸 {lang === 'en' ? 'Photos' : 'Fotos'} ({selectedPointDetails.fotos.length})
-                  </h4>
-                  <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
-                    {selectedPointDetails.fotos.slice(0, 3).map((url, i) => (
-                      <img
-                        key={i}
-                        src={url}
-                        alt="Preview"
+                  {/* ACCIONES SUPERIORES FLOTANTES */}
+                  <div style={{ position: 'absolute', top: '12px', right: '14px', display: 'flex', gap: '6px', zIndex: 2 }}>
+                    {userSession && (
+                      <button
+                        onClick={handleToggleFavorite}
+                        title={isFavorite ? (lang === 'en' ? 'Remove Favorite' : 'Quitar de Favoritos') : (lang === 'en' ? 'Save Favorite' : 'Guardar Favorito')}
                         style={{
-                          width: '80px',
-                          height: '60px',
-                          borderRadius: '8px',
-                          objectFit: 'cover',
-                          border: '1px solid rgba(20, 109, 158, 0.1)'
+                          background: 'rgba(255, 255, 255, 0.88)',
+                          backdropFilter: 'blur(8px)',
+                          border: isFavorite ? '1.5px solid #FFD700' : '1px solid rgba(255,255,255,0.4)',
+                          color: isFavorite ? '#B8960E' : '#475569',
+                          width: '34px',
+                          height: '34px',
+                          borderRadius: '50%',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+                          transition: 'transform 0.2s'
                         }}
-                      />
-                    ))}
+                      >
+                        <Icon name={isFavorite ? 'heartFilled' : 'heart'} size={16} color={isFavorite ? '#B8960E' : '#475569'} />
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => {
+                        setSelectedPoint(null);
+                        setShowFullProfileModal(false);
+                      }}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.88)',
+                        backdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(255,255,255,0.4)',
+                        color: '#1E293B',
+                        width: '34px',
+                        height: '34px',
+                        borderRadius: '50%',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+                        transition: 'transform 0.2s'
+                      }}
+                    >
+                      <Icon name="x" size={16} color="#1E293B" />
+                    </button>
                   </div>
                 </div>
-              )}
 
-              {/* Calificación de Reseñas Rápida */}
-              {pointReviews.length > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed rgba(20, 109, 158, 0.1)', paddingTop: '8px' }}>
-                  <span style={{ fontSize: '12.5px', fontWeight: '700', color: '#64748B' }}>
-                    ⭐ {lang === 'en' ? 'Reviews' : 'Reseñas'}
-                  </span>
-                  <span style={{ fontSize: '13px', fontWeight: '800', color: '#B8960E' }}>
-                    ★ {(pointReviews.reduce((acc, r) => acc + Number(r.estrellas || 5), 0) / pointReviews.length).toFixed(1)} ({pointReviews.length})
-                  </span>
+                {/* DATOS PRINCIPALES NEGOCIO */}
+                <div style={{ padding: '0 20px 14px', position: 'relative', marginTop: '-30px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '14px', marginBottom: '10px' }}>
+                    {selectedPointDetails?.logo_url ? (
+                      <img
+                        src={selectedPointDetails.logo_url}
+                        alt={selectedPoint.nombre}
+                        style={{
+                          width: '60px',
+                          height: '60px',
+                          borderRadius: '16px',
+                          objectFit: 'cover',
+                          border: '3px solid #FFFFFF',
+                          boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+                          background: '#FFFFFF',
+                          flexShrink: 0
+                        }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: '60px',
+                          height: '60px',
+                          borderRadius: '16px',
+                          background: coverGradient,
+                          color: '#FFFFFF',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '24px',
+                          fontWeight: '800',
+                          border: '3px solid #FFFFFF',
+                          boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+                          flexShrink: 0
+                        }}
+                      >
+                        {selectedPoint.nombre?.charAt(0)?.toUpperCase() || <Icon name="building" size={26} color="#FFFFFF" />}
+                      </div>
+                    )}
+
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '3px' }}>
+                        {(() => {
+                          let statusText = '';
+                          let statusColor = '';
+                          let statusBg = '';
+
+                          if (selectedPoint.estado === 'en_verificacion') {
+                            statusText = lang === 'en' ? 'Awaiting Verification' : 'En Verificación';
+                            statusColor = '#f97316';
+                            statusBg = 'rgba(249, 115, 22, 0.12)';
+                          } else if (selectedPoint.estado === 'aprobado') {
+                            statusText = lang === 'en' ? 'Verified' : 'Verificado';
+                            statusColor = '#10b981';
+                            statusBg = 'rgba(16, 185, 129, 0.12)';
+                          } else {
+                            const isClaimed = !!selectedPoint.negocio_id;
+                            statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
+                            statusColor = isClaimed ? '#10b981' : '#f59e0b';
+                            statusBg = isClaimed ? 'rgba(16, 185, 129, 0.12)' : 'rgba(245, 158, 11, 0.12)';
+                          }
+
+                          return (
+                            <span style={{
+                              fontSize: '10.5px',
+                              fontWeight: '800',
+                              textTransform: 'uppercase',
+                              color: statusColor,
+                              background: statusBg,
+                              padding: '2px 7px',
+                              borderRadius: '5px',
+                              border: `1px solid ${statusColor}35`,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px'
+                            }}>
+                              <Icon name={selectedPoint.estado === 'aprobado' ? 'checkCircle' : 'shield'} size={11} color={statusColor} />
+                              {statusText}
+                            </span>
+                          );
+                        })()}
+
+                        {avgRating && (
+                          <span style={{
+                            fontSize: '11px',
+                            fontWeight: '800',
+                            color: '#B8960E',
+                            background: 'rgba(255, 215, 0, 0.18)',
+                            padding: '2px 6px',
+                            borderRadius: '5px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '3px'
+                          }}>
+                            <Icon name="starFilled" size={12} color="#B8960E" />
+                            {avgRating} ({pointReviews.length})
+                          </span>
+                        )}
+                      </div>
+
+                      <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '850', color: '#0F172A', lineHeight: '1.2' }}>
+                        {selectedPoint.nombre}
+                      </h2>
+                      <p style={{ margin: '3px 0 0', fontSize: '12px', color: '#64748B', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Icon name="mapPin" size={13} color="#64748B" />
+                        <span>{t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}</span>
+                        {selectedPointDetails?.rango_precios && (
+                          <span style={{ color: '#0F172A', fontWeight: '800', marginLeft: '4px' }}>• {selectedPointDetails.rango_precios}</span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
 
-            {/* BOTÓN RECLAMAR NEGOCIO SI APLICA */}
-            {!selectedPoint.negocio_id && selectedPoint.estado === 'sin_reclamar' && (
-              <Link
-                href="/dashboard"
-                style={{
-                  padding: '10px 14px',
-                  fontSize: '12.5px',
-                  color: '#B8960E',
-                  background: 'rgba(255, 215, 0, 0.1)',
-                  border: '1px solid rgba(255, 215, 0, 0.3)',
-                  borderRadius: '10px',
-                  textDecoration: 'none',
-                  textAlign: 'center',
-                  fontWeight: '700'
-                }}
-              >
-                🏢 {lang === 'en' ? 'Claim this business' : '¿Eres el dueño? Reclamar este negocio'}
-              </Link>
-            )}
-          </div>
+                {/* CUERPO SCROLLABLE DEL PANEL */}
+                <div style={{
+                  flex: 1,
+                  overflowY: 'auto',
+                  padding: '0 20px 20px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '14px',
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: 'rgba(20,109,158,0.1) transparent'
+                }}>
+                  {/* BOTONES DE ACCIÓN PRINCIPALES */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <button
+                      onClick={() => handleIniciarViaje(selectedPoint)}
+                      className="clay-btn-blue"
+                      style={{
+                        width: '100%',
+                        padding: '12px 18px',
+                        fontSize: '14px',
+                        color: '#FFFFFF',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        borderRadius: '12px'
+                      }}
+                    >
+                      <Icon name="navigation" size={16} color="#FFFFFF" />
+                      <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
+                    </button>
+
+                    <button
+                      onClick={() => setShowFullProfileModal(true)}
+                      className="clay-btn-gold"
+                      style={{
+                        width: '100%',
+                        padding: '12px 18px',
+                        fontSize: '13.5px',
+                        fontWeight: '800',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 14px rgba(212, 175, 55, 0.25)'
+                      }}
+                    >
+                      <Icon name="sparkles" size={16} color="#1A1A2E" />
+                      <span>{lang === 'en' ? 'Show More & Services' : 'Mostrar más (Perfil y Servicios)'}</span>
+                    </button>
+                  </div>
+
+                  {/* CHIPS DE AMENIDADES RÁPIDAS */}
+                  {activeServiceList.length > 0 && (
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      {activeServiceList.map((s) => (
+                        <span
+                          key={s.key}
+                          style={{
+                            fontSize: '11.5px',
+                            fontWeight: '700',
+                            color: '#334155',
+                            background: '#F8FAFC',
+                            border: '1px solid #E2E8F0',
+                            padding: '4px 9px',
+                            borderRadius: '14px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px'
+                          }}
+                        >
+                          <Icon name={s.icon} size={12} color={accentColor} />
+                          <span>{s.label}</span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* TARJETA DE VISTA PREVIA RESUMIDA */}
+                  <div className="clay-card-static" style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {/* Indicador de abierto/cerrado */}
+                    {selectedPointDetails?.servicios?.has_hours && selectedPointDetails?.horarios && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <Icon name="clock" size={13} color="#64748B" />
+                          <span>{lang === 'en' ? 'Status' : 'Horario'}</span>
+                        </span>
+                        {isBusinessOpenNow(selectedPointDetails.horarios) !== null && (
+                          <span style={{
+                            fontSize: '11px',
+                            fontWeight: '850',
+                            textTransform: 'uppercase',
+                            padding: '3px 8px',
+                            borderRadius: '6px',
+                            backgroundColor: isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.12)' : 'rgba(239,68,68,0.12)',
+                            color: isBusinessOpenNow(selectedPointDetails.horarios) ? '#17AA4A' : '#ef4444',
+                            border: `1px solid ${isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.25)' : 'rgba(239,68,68,0.25)'}`,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}>
+                            <Icon name={isBusinessOpenNow(selectedPointDetails.horarios) ? 'check' : 'x'} size={11} color={isBusinessOpenNow(selectedPointDetails.horarios) ? '#17AA4A' : '#ef4444'} />
+                            {isBusinessOpenNow(selectedPointDetails.horarios)
+                              ? (lang === 'en' ? 'Open Now' : 'Abierto Ahora')
+                              : (lang === 'en' ? 'Closed' : 'Cerrado')}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Descripción rápida */}
+                    <div>
+                      <h4 style={{ margin: '0 0 4px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <Icon name="info" size={13} color="#64748B" />
+                        <span>{lang === 'en' ? 'About' : 'Acerca de'}</span>
+                      </h4>
+                      <p style={{
+                        margin: 0,
+                        fontSize: '13px',
+                        color: '#475569',
+                        lineHeight: '1.5',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                      }}>
+                        {selectedPoint.descripcion || (lang === 'en' ? 'No description available.' : 'Sin descripción disponible.')}
+                      </p>
+                    </div>
+
+                    {/* Previsualización de Fotos Miniatura */}
+                    {selectedPointDetails?.fotos && selectedPointDetails.fotos.length > 0 && (
+                      <div>
+                        <h4 style={{ margin: '0 0 6px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <Icon name="image" size={13} color="#64748B" />
+                          <span>{lang === 'en' ? 'Photos' : 'Fotos'} ({selectedPointDetails.fotos.length})</span>
+                        </h4>
+                        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '2px' }}>
+                          {selectedPointDetails.fotos.slice(0, 3).map((url, i) => (
+                            <img
+                              key={i}
+                              src={url}
+                              alt="Preview"
+                              style={{
+                                width: '76px',
+                                height: '56px',
+                                borderRadius: '8px',
+                                objectFit: 'cover',
+                                border: '1px solid rgba(20, 109, 158, 0.1)'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* BOTÓN RECLAMAR NEGOCIO SI APLICA */}
+                  {!selectedPoint.negocio_id && selectedPoint.estado === 'sin_reclamar' && (
+                    <Link
+                      href="/dashboard"
+                      style={{
+                        padding: '10px 14px',
+                        fontSize: '12.5px',
+                        color: '#B8960E',
+                        background: 'rgba(255, 215, 0, 0.1)',
+                        border: '1px solid rgba(255, 215, 0, 0.3)',
+                        borderRadius: '10px',
+                        textDecoration: 'none',
+                        textAlign: 'center',
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <Icon name="claim" size={14} color="#B8960E" />
+                      <span>{lang === 'en' ? 'Claim this business' : '¿Eres el dueño? Reclamar este negocio'}</span>
+                    </Link>
+                  )}
+                </div>
+              </>
+            );
+          })()}
         </div>
       )}
 
