@@ -1907,7 +1907,9 @@ export default function DashboardPage() {
 
                       {/* Photo Gallery Upload */}
                       <div>
-                        <label style={styles.label}>{lang === "en" ? "Photo Gallery" : "Galería de Fotos"}</label>
+                        <label style={styles.label}>
+                          {lang === "en" ? "Photo Gallery (Tourist View - Up to 6 Photos)" : "Galería de Fotos del Local (Vista del Turista - Hasta 6 fotos)"}
+                        </label>
                         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "8px" }}>
                           {(fotos || []).map((url, index) => (
                             <div key={index} style={{

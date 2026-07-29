@@ -2893,7 +2893,7 @@ export default function MapaTuristico() {
 
                   {/* CHIPS DE AMENIDADES RÁPIDAS */}
                   {activeServiceList.length > 0 && (
-                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '12px' }}>
                       {activeServiceList.map((s) => (
                         <span
                           key={s.key}
