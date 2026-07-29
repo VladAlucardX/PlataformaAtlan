@@ -11,6 +11,7 @@ import { supabase } from '../lib/supabase';
 import { useTranslation } from '../hooks/useTranslation';
 import LanguageToggle from './ui/LanguageToggle';
 import Icon from './ui/Icon';
+import BusinessProfileModal from './ui/BusinessProfileModal';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -85,6 +86,7 @@ export default function MapaTuristico() {
   // --- ESTADOS PANEL DETALLES LATERAL ---
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [selectedPointDetails, setSelectedPointDetails] = useState(null);
+  const [showFullProfileModal, setShowFullProfileModal] = useState(false);
   const [pointReviews, setPointReviews] = useState([]);
   const [pointMenu, setPointMenu] = useState([]);
   const [userSession, setUserSession] = useState(null);
@@ -2589,19 +2591,19 @@ export default function MapaTuristico() {
 
       </div>
 
-      {/* Panel de detalles */}
+      {/* Panel de detalles resumido */}
       {selectedPoint && (
         <div className="detail-sheet">
           {/* Cabecera del Panel */}
           <div style={{
             padding: '24px 20px 16px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            borderBottom: '1px solid rgba(20, 109, 158, 0.08)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'start'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              {selectedPointDetails?.logo_url && (
+              {selectedPointDetails?.logo_url ? (
                 <img
                   src={selectedPointDetails.logo_url}
                   alt={selectedPoint.nombre}
@@ -2610,9 +2612,24 @@ export default function MapaTuristico() {
                     height: '48px',
                     borderRadius: '50%',
                     objectFit: 'cover',
-                    border: '1.5px solid rgba(255, 255, 255, 0.1)',
+                    border: '1.5px solid rgba(20, 109, 158, 0.15)',
                   }}
                 />
+              ) : (
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)',
+                  color: '#FFFFFF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '20px',
+                  fontWeight: '800'
+                }}>
+                  {selectedPoint.nombre?.charAt(0)?.toUpperCase() || '🏢'}
+                </div>
               )}
               <div>
                 {(() => {
@@ -2686,7 +2703,10 @@ export default function MapaTuristico() {
               )}
 
               <button
-                onClick={() => setSelectedPoint(null)}
+                onClick={() => {
+                  setSelectedPoint(null);
+                  setShowFullProfileModal(false);
+                }}
                 style={{
                   background: 'rgba(20, 109, 158, 0.08)',
                   border: '1.5px solid rgba(20, 109, 158, 0.12)',
@@ -2708,18 +2728,18 @@ export default function MapaTuristico() {
             </div>
           </div>
 
-          {/* Cuerpo Scrollable */}
+          {/* Cuerpo Scrollable Resumido */}
           <div style={{
             flex: 1,
             overflowY: 'auto',
             padding: '20px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '24px',
+            gap: '16px',
             scrollbarWidth: 'thin',
-            scrollbarColor: 'rgba(255,255,255,0.1) transparent'
+            scrollbarColor: 'rgba(20,109,158,0.1) transparent'
           }}>
-            {/* BOTÓN INICIAR VIAJE */}
+            {/* BOTÓN PRINCIPAL INICIAR VIAJE */}
             <button
               onClick={() => handleIniciarViaje(selectedPoint)}
               className="clay-btn-blue"
@@ -2728,7 +2748,6 @@ export default function MapaTuristico() {
                 padding: '14px 20px',
                 fontSize: '15px',
                 color: '#FFFFFF',
-                marginBottom: '4px'
               }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -2737,108 +2756,40 @@ export default function MapaTuristico() {
               <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
             </button>
 
-            {/* BOTÓN RECLAMAR NEGOCIO (SOLO SI ESTÁ COMPLETAMENTE LIBRE / SIN RECLAMO PENDIENTE) */}
-            {!selectedPoint.negocio_id && selectedPoint.estado === 'sin_reclamar' && (
-              <Link
-                href="/dashboard"
-                className="clay-btn-gold"
-                style={{
-                  width: '100%',
-                  padding: '12px 18px',
-                  fontSize: '13.5px',
-                  textDecoration: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px'
-                }}
-              >
-                🏢 {lang === 'en' ? 'Are you the owner? Claim this business' : '¿Eres el dueño? Reclamar este negocio'}
-              </Link>
-            )}
-
-            {/* Banner Informativo si está en verificación */}
-            {selectedPoint.estado === 'en_verificacion' && (
-              <div style={{
-                padding: '12px 16px',
-                background: 'rgba(230, 194, 0, 0.12)',
-                border: '1.5px solid rgba(230, 194, 0, 0.3)',
-                borderRadius: '14px',
-                fontSize: '13px',
-                color: '#B8960E',
+            {/* BOTÓN DESTACADO MOSTRAR MÁS / VER PERFIL COMPLETO */}
+            <button
+              onClick={() => setShowFullProfileModal(true)}
+              className="clay-btn-gold"
+              style={{
+                width: '100%',
+                padding: '13px 20px',
+                fontSize: '14px',
+                fontWeight: '800',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '10px'
-              }}>
-                <span style={{ fontSize: '20px' }}>⏳</span>
-                <div>
-                  <strong style={{ color: '#1A1A2E' }}>
-                    {lang === 'en' ? 'Claim Under Review' : 'Solicitud de Reclamo en Verificación'}
-                  </strong>
-                  <div style={{ fontSize: '12px', color: '#4A5568', marginTop: '2px', lineHeight: 1.4 }}>
-                    {lang === 'en' 
-                      ? 'A owner verification claim is currently being evaluated by Atlan administration.' 
-                      : 'Una solicitud de verificación de propiedad sobre este local se encuentra actualmente en revisión por la administración.'}
-                  </div>
-                </div>
-              </div>
-            )}
-            {/* Descripción */}
-            <div>
-              <h4 style={{ margin: '0 0 6px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                {lang === 'en' ? 'About' : 'Acerca de'}
-              </h4>
-              <p style={{ margin: 0, fontSize: '14px', color: '#4A5568', lineHeight: '1.6' }}>
-                {selectedPoint.descripcion || (lang === 'en' ? 'No description available.' : 'Sin descripción disponible.')}
-              </p>
-            </div>
+                justifyContent: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 15px rgba(212, 175, 55, 0.25)'
+              }}
+            >
+              <span>✨</span>
+              <span>{lang === 'en' ? 'Show More & Services' : 'Mostrar más (Perfil y Servicios)'}</span>
+            </button>
 
-            {/* Galería de Fotos del Negocio */}
-            {selectedPointDetails?.fotos && selectedPointDetails.fotos.length > 0 && (
-              <div>
-                <h4 style={{ margin: '0 0 10px', fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  📸 {lang === 'en' ? 'Photos' : 'Fotos'}
-                </h4>
-                <div style={{
-                  display: 'flex',
-                  gap: '12px',
-                  overflowX: 'auto',
-                  paddingBottom: '8px',
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: 'rgba(255,255,255,0.1) transparent'
-                }}>
-                  {selectedPointDetails.fotos.map((url, i) => (
-                    <img
-                      key={i}
-                      src={url}
-                      alt={`${selectedPoint.nombre} - ${i + 1}`}
-                      style={{
-                        width: '180px',
-                        height: '120px',
-                        borderRadius: '12px',
-                        objectFit: 'cover',
-                        flexShrink: 0,
-                        border: '1px solid rgba(255, 255, 255, 0.08)'
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Horarios del Negocio */}
-            {selectedPointDetails?.servicios?.has_hours && selectedPointDetails?.horarios && (
-              <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.08)', paddingTop: '20px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    ⏰ {lang === 'en' ? 'Opening Hours' : 'Horarios de Atención'}
-                  </h4>
+            {/* TARJETA DE VISTA PREVIA RESUMIDA */}
+            <div className="clay-card-static" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {/* Indicador de abierto/cerrado si hay horarios */}
+              {selectedPointDetails?.servicios?.has_hours && selectedPointDetails?.horarios && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '12px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase' }}>
+                    ⏰ {lang === 'en' ? 'Status' : 'Horario'}
+                  </span>
                   {isBusinessOpenNow(selectedPointDetails.horarios) !== null && (
                     <span style={{
                       fontSize: '11px',
                       fontWeight: '850',
                       textTransform: 'uppercase',
-                      padding: '4px 8px',
+                      padding: '3px 8px',
                       borderRadius: '6px',
                       backgroundColor: isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.12)' : 'rgba(239,68,68,0.12)',
                       color: isBusinessOpenNow(selectedPointDetails.horarios) ? '#17AA4A' : '#ef4444',
@@ -2850,329 +2801,124 @@ export default function MapaTuristico() {
                     </span>
                   )}
                 </div>
-                <div className="clay-card-static" style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {Object.entries(selectedPointDetails.horarios).map(([day, info]) => {
-                    const dayLabels = {
-                      lunes: lang === 'en' ? 'Monday' : 'Lunes',
-                      martes: lang === 'en' ? 'Tuesday' : 'Martes',
-                      miercoles: lang === 'en' ? 'Wednesday' : 'Miércoles',
-                      jueves: lang === 'en' ? 'Thursday' : 'Jueves',
-                      viernes: lang === 'en' ? 'Friday' : 'Viernes',
-                      sabado: lang === 'en' ? 'Saturday' : 'Sábado',
-                      domingo: lang === 'en' ? 'Sunday' : 'Domingo',
-                    };
-                    const isToday = new Date().getDay() === {
-                      domingo: 0, lunes: 1, martes: 2, miercoles: 3, jueves: 4, viernes: 5, sabado: 6
-                    }[day];
-
-                    return (
-                      <div key={day} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: isToday ? '#1A1A2E' : '#4A5568', fontWeight: isToday ? '800' : '500' }}>
-                        <span>{dayLabels[day]} {isToday && '•'}</span>
-                        <span>
-                          {info.abierto
-                            ? `${info.apertura} - ${info.cierre}`
-                            : (lang === 'en' ? 'Closed' : 'Cerrado')}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Menú del Negocio */}
-            {selectedPointDetails?.servicios?.has_menu && (
-              <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.08)', paddingTop: '20px' }}>
-                <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  🍽️ {t('dashboard.menu')}
-                </h4>
-                {pointMenu.length === 0 ? (
-                  <p style={{ margin: 0, fontSize: '13px', color: '#4A5568', fontStyle: 'italic' }}>
-                    {lang === 'en' ? 'No menu items published yet.' : 'No hay platillos publicados aún.'}
-                  </p>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {pointMenu.map((item) => (
-                      <div key={item.id} className="clay-card-static" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          {item.foto_url ? (
-                            <img
-                              src={item.foto_url}
-                              alt={item.nombre}
-                              style={{
-                                width: '44px',
-                                height: '44px',
-                                borderRadius: '10px',
-                                objectFit: 'cover',
-                                border: '1px solid rgba(20, 109, 158, 0.1)'
-                              }}
-                            />
-                          ) : (
-                            <div style={{
-                              width: '44px',
-                              height: '44px',
-                              borderRadius: '10px',
-                              background: '#F4F6F9',
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              fontSize: '18px',
-                              border: '1px solid rgba(20, 109, 158, 0.1)'
-                            }}>
-                              🍲
-                            </div>
-                          )}
-                          <div>
-                            <p style={{ margin: 0, fontSize: '14px', fontWeight: '800', color: '#1A1A2E' }}>{item.nombre}</p>
-                            {item.descripcion && (
-                              <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#4A5568' }}>{item.descripcion}</p>
-                            )}
-                          </div>
-                        </div>
-                        <span style={{ fontSize: '14px', fontWeight: '800', color: 'var(--atlan-gold-dark, #B8960E)' }}>
-                          C$ {item.precio}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Reservas directas */}
-            {selectedPointDetails?.servicios?.has_lodging && (
-              <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.08)', paddingTop: '20px' }}>
-                <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  🏨 {t('reservations.title')}
-                </h4>
-
-                {reservaSuccess ? (
-                  <div className="clay-card-static" style={{ background: 'rgba(23, 170, 74, 0.10)', border: '1px solid #17AA4A', color: '#17AA4A', padding: '14px', textAlign: 'center', fontWeight: '700' }}>
-                    🎉 {t('reservations.success')}
-                  </div>
-                ) : !userSession ? (
-                  <div className="clay-card-static" style={{ padding: '14px', textAlign: 'center' }}>
-                    <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#4A5568', fontWeight: '600' }}>
-                      🔑 {t('reservations.loginRequired')}
-                    </p>
-                    <a
-                      href="/login"
-                      className="clay-btn-gold"
-                      style={{
-                        display: 'inline-flex',
-                        padding: '8px 18px',
-                        fontSize: '12px',
-                        textDecoration: 'none'
-                      }}
-                    >
-                      {t('nav.login')}
-                    </a>
-                  </div>
-                ) : (
-                  <form onSubmit={handleCrearReserva} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <div>
-                      <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                        {t('reservations.type')}
-                      </label>
-                      <select
-                        value={reservaTipo}
-                        onChange={(e) => setReservaTipo(e.target.value)}
-                        className="clay-input"
-                        style={{ padding: '10px 14px' }}
-                      >
-                        <option value="mesa">{t('reservations.types.mesa')}</option>
-                        <option value="habitacion">{t('reservations.types.habitacion')}</option>
-                        <option value="tour">{t('reservations.types.tour')}</option>
-                        <option value="transporte">{t('reservations.types.transporte')}</option>
-                      </select>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                      <div style={{ flex: 1 }}>
-                        <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                          {t('reservations.date')} / {t('reservations.time')}
-                        </label>
-                        <input
-                          type="datetime-local"
-                          required
-                          value={reservaFechaHora}
-                          onChange={(e) => setReservaFechaHora(e.target.value)}
-                          className="clay-input"
-                          style={{ padding: '9px 12px' }}
-                        />
-                      </div>
-                      <div style={{ width: '90px' }}>
-                        <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                          🧑‍🤝‍🧑 {t('reservations.people')}
-                        </label>
-                        <input
-                          type="number"
-                          min="1"
-                          required
-                          value={reservaPersonas}
-                          onChange={(e) => setReservaPersonas(e.target.value)}
-                          className="clay-input"
-                          style={{ padding: '9px 12px' }}
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                        📝 {t('reservations.notes')}
-                      </label>
-                      <textarea
-                        rows="2"
-                        value={reservaNotas}
-                        onChange={(e) => setReservaNotas(e.target.value)}
-                        placeholder="..."
-                        className="clay-textarea"
-                        style={{ padding: '10px 14px' }}
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={isSubmittingReserva}
-                      className="clay-btn-gold"
-                      style={{ width: '100%', padding: '12px' }}
-                    >
-                      {isSubmittingReserva ? '...' : t('reservations.submit')}
-                    </button>
-                  </form>
-                )}
-              </div>
-            )}
-
-            {/* Panel de Reseñas */}
-            <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.08)', paddingTop: '20px' }}>
-              <h4 style={{ margin: '0 0 16px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                ⭐ {t('reviews.title')}
-              </h4>
-
-              {/* Formulario de Reseña */}
-              {!userSession ? (
-                <div className="clay-card-static" style={{ padding: '14px', textAlign: 'center', marginBottom: '20px' }}>
-                  <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#4A5568', fontWeight: '600' }}>
-                    🔑 {lang === 'en' ? 'Log in to write reviews & comments' : 'Inicia sesión para escribir reseñas y comentarios'}
-                  </p>
-                  <a
-                    href="/login"
-                    className="clay-btn-gold"
-                    style={{
-                      display: 'inline-flex',
-                      padding: '8px 18px',
-                      fontSize: '12px',
-                      textDecoration: 'none'
-                    }}
-                  >
-                    {t('nav.login')}
-                  </a>
-                </div>
-              ) : (
-                <form onSubmit={handleCrearResena} className="clay-card-static" style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px', marginBottom: '20px' }}>
-                  <p style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: 'var(--atlan-gold-dark, #B8960E)' }}>
-                    {t('reviews.writeReview')}
-                  </p>
-
-                  {reviewErrorMsg && (
-                    <div style={{ color: '#ef4444', fontSize: '12px', fontWeight: '600', background: 'rgba(239,68,68,0.1)', padding: '8px 10px', borderRadius: '8px' }}>
-                      ⚠ {reviewErrorMsg}
-                    </div>
-                  )}
-
-                  <div>
-                    <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                      👤 {t('reviews.yourName')}
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      disabled={!!userSession}
-                      value={newReviewNombre}
-                      onChange={(e) => setNewReviewNombre(e.target.value)}
-                      placeholder="Ej: Carlos"
-                      className="clay-input"
-                      style={{ padding: '9px 12px' }}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                      ⭐ {t('reviews.rating')}
-                    </label>
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          onClick={() => setNewReviewEstrellas(star)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            fontSize: '22px',
-                            cursor: 'pointer',
-                            padding: 0,
-                            color: star <= newReviewEstrellas ? '#B8960E' : 'rgba(20, 109, 158, 0.2)',
-                            transition: 'transform 0.1s'
-                          }}
-                        >
-                          ★
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                      💬 {t('reviews.yourComment')}
-                    </label>
-                    <textarea
-                      required
-                      rows="3"
-                      value={newReviewComment}
-                      onChange={(e) => setNewReviewComment(e.target.value)}
-                      placeholder="..."
-                      className="clay-textarea"
-                      style={{ padding: '10px 14px' }}
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmittingReview}
-                    className="clay-btn-green"
-                    style={{ width: '100%', padding: '10px' }}
-                  >
-                    {isSubmittingReview ? '...' : t('reviews.submit')}
-                  </button>
-                </form>
               )}
 
-              {/* Listado de Reseñas */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {pointReviews.length === 0 ? (
-                  <p style={{ margin: 0, fontSize: '13px', color: '#4A5568', fontStyle: 'italic', textAlign: 'center', padding: '10px 0' }}>
-                    {lang === 'en' ? 'No reviews yet. Be the first!' : 'No hay reseñas aún. ¡Sé el primero!'}
-                  </p>
-                ) : (
-                  pointReviews.map((rev) => (
-                    <div key={rev.id} className="clay-card-static" style={{ padding: '14px 16px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                        <span style={{ fontSize: '13.5px', fontWeight: '800', color: '#1A1A2E' }}>{rev.autor_nombre}</span>
-                        <span style={{ fontSize: '12px', color: '#B8960E' }}>
-                          {'★'.repeat(rev.estrellas)}{'☆'.repeat(5 - rev.estrellas)}
-                        </span>
-                      </div>
-                      <p style={{ margin: 0, fontSize: '13px', color: '#4A5568', lineHeight: '1.5' }}>{rev.comentario}</p>
-                    </div>
-                  ))
-                )}
+              {/* Descripción rápida */}
+              <div>
+                <h4 style={{ margin: '0 0 4px', fontSize: '12px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase' }}>
+                  {lang === 'en' ? 'About' : 'Acerca de'}
+                </h4>
+                <p style={{
+                  margin: 0,
+                  fontSize: '13.5px',
+                  color: '#4A5568',
+                  lineHeight: '1.5',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden'
+                }}>
+                  {selectedPoint.descripcion || (lang === 'en' ? 'No description available.' : 'Sin descripción disponible.')}
+                </p>
               </div>
+
+              {/* Previsualización de Fotos Miniatura */}
+              {selectedPointDetails?.fotos && selectedPointDetails.fotos.length > 0 && (
+                <div>
+                  <h4 style={{ margin: '0 0 6px', fontSize: '12px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase' }}>
+                    📸 {lang === 'en' ? 'Photos' : 'Fotos'} ({selectedPointDetails.fotos.length})
+                  </h4>
+                  <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+                    {selectedPointDetails.fotos.slice(0, 3).map((url, i) => (
+                      <img
+                        key={i}
+                        src={url}
+                        alt="Preview"
+                        style={{
+                          width: '80px',
+                          height: '60px',
+                          borderRadius: '8px',
+                          objectFit: 'cover',
+                          border: '1px solid rgba(20, 109, 158, 0.1)'
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Calificación de Reseñas Rápida */}
+              {pointReviews.length > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed rgba(20, 109, 158, 0.1)', paddingTop: '8px' }}>
+                  <span style={{ fontSize: '12.5px', fontWeight: '700', color: '#64748B' }}>
+                    ⭐ {lang === 'en' ? 'Reviews' : 'Reseñas'}
+                  </span>
+                  <span style={{ fontSize: '13px', fontWeight: '800', color: '#B8960E' }}>
+                    ★ {(pointReviews.reduce((acc, r) => acc + Number(r.estrellas || 5), 0) / pointReviews.length).toFixed(1)} ({pointReviews.length})
+                  </span>
+                </div>
+              )}
             </div>
+
+            {/* BOTÓN RECLAMAR NEGOCIO SI APLICA */}
+            {!selectedPoint.negocio_id && selectedPoint.estado === 'sin_reclamar' && (
+              <Link
+                href="/dashboard"
+                style={{
+                  padding: '10px 14px',
+                  fontSize: '12.5px',
+                  color: '#B8960E',
+                  background: 'rgba(255, 215, 0, 0.1)',
+                  border: '1px solid rgba(255, 215, 0, 0.3)',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  textAlign: 'center',
+                  fontWeight: '700'
+                }}
+              >
+                🏢 {lang === 'en' ? 'Claim this business' : '¿Eres el dueño? Reclamar este negocio'}
+              </Link>
+            )}
           </div>
         </div>
       )}
+
+      {/* Modal de Perfil Completo Multi-pestaña */}
+      <BusinessProfileModal
+        isOpen={showFullProfileModal}
+        onClose={() => setShowFullProfileModal(false)}
+        point={selectedPoint}
+        details={selectedPointDetails}
+        reviews={pointReviews}
+        menu={pointMenu}
+        userSession={userSession}
+        lang={lang}
+        t={t}
+        isFavorite={isFavorite}
+        onToggleFavorite={handleToggleFavorite}
+        onIniciarViaje={handleIniciarViaje}
+        isBusinessOpenNow={isBusinessOpenNow}
+        reservaTipo={reservaTipo}
+        setReservaTipo={setReservaTipo}
+        reservaFechaHora={reservaFechaHora}
+        setReservaFechaHora={setReservaFechaHora}
+        reservaPersonas={reservaPersonas}
+        setReservaPersonas={setReservaPersonas}
+        reservaNotas={reservaNotas}
+        setReservaNotas={setReservaNotas}
+        isSubmittingReserva={isSubmittingReserva}
+        reservaSuccess={reservaSuccess}
+        handleCrearReserva={handleCrearReserva}
+        newReviewNombre={newReviewNombre}
+        setNewReviewNombre={setNewReviewNombre}
+        newReviewEstrellas={newReviewEstrellas}
+        setNewReviewEstrellas={setNewReviewEstrellas}
+        newReviewComment={newReviewComment}
+        setNewReviewComment={setNewReviewComment}
+        isSubmittingReview={isSubmittingReview}
+        reviewErrorMsg={reviewErrorMsg}
+        handleCrearResena={handleCrearResena}
+      />
 
       {/* HUD Waze de Ruta */}
       {routeInfo && (
