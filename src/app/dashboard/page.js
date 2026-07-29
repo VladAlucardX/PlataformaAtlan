@@ -8,6 +8,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import NotificationDropdown from "@/components/ui/NotificationDropdown";
 import Navbar from "@/components/ui/Navbar";
+import Icon from "@/components/ui/Icon";
 import { uploadMedia } from "@/lib/storage";
 
 // Helper para obtener imagen por defecto según la categoría del negocio
@@ -77,6 +78,16 @@ export default function DashboardPage() {
   const [hasHours, setHasHours] = useState(false);
   const [hasLodging, setHasLodging] = useState(false);
   const [hasTransport, setHasTransport] = useState(false);
+  const [hasWifi, setHasWifi] = useState(false);
+  const [hasParking, setHasParking] = useState(false);
+  const [hasPets, setHasPets] = useState(false);
+  const [hasCardPayment, setHasCardPayment] = useState(false);
+  const [hasAccessibility, setHasAccessibility] = useState(false);
+  const [hasDelivery, setHasDelivery] = useState(false);
+  const [hasOnlineBooking, setHasOnlineBooking] = useState(false);
+  const [hasAc, setHasAc] = useState(false);
+  const [hasKidsArea, setHasKidsArea] = useState(false);
+  const [hasLiveMusic, setHasLiveMusic] = useState(false);
 
   // Menú (menu_items)
   const [menuItems, setMenuItems] = useState([]);
@@ -86,6 +97,16 @@ export default function DashboardPage() {
   const [newPlatoFotoUrl, setNewPlatoFotoUrl] = useState("");
   const [uploadingPlatoFoto, setUploadingPlatoFoto] = useState(false);
   const [isAddingPlato, setIsAddingPlato] = useState(false);
+
+  // Edición de Platillo (Modal)
+  const [editingPlato, setEditingPlato] = useState(null); // Objeto plato a editar o null
+  const [editPlatoNombre, setEditPlatoNombre] = useState("");
+  const [editPlatoPrecio, setEditPlatoPrecio] = useState("");
+  const [editPlatoDesc, setEditPlatoDesc] = useState("");
+  const [editPlatoFotoUrl, setEditPlatoFotoUrl] = useState("");
+  const [editPlatoDisponible, setEditPlatoDisponible] = useState(true);
+  const [uploadingEditPlatoFoto, setUploadingEditPlatoFoto] = useState(false);
+  const [isSavingEditPlato, setIsSavingEditPlato] = useState(false);
 
   // Reservas
   const [reservas, setReservas] = useState([]);
@@ -263,6 +284,16 @@ export default function DashboardPage() {
       setHasHours(!!serv.has_hours);
       setHasLodging(!!serv.has_lodging);
       setHasTransport(!!serv.has_transport);
+      setHasWifi(!!serv.has_wifi);
+      setHasParking(!!serv.has_parking);
+      setHasPets(!!serv.has_pets);
+      setHasCardPayment(!!serv.has_card_payment);
+      setHasAccessibility(!!serv.has_accessibility);
+      setHasDelivery(!!serv.has_delivery);
+      setHasOnlineBooking(!!serv.has_online_booking);
+      setHasAc(!!serv.has_ac);
+      setHasKidsArea(!!serv.has_kids_area);
+      setHasLiveMusic(!!serv.has_live_music);
     }
 
     // Cargar detalles asociados
@@ -682,7 +713,17 @@ export default function DashboardPage() {
         has_menu: hasMenu,
         has_hours: hasHours,
         has_lodging: hasLodging,
-        has_transport: hasTransport
+        has_transport: hasTransport,
+        has_wifi: hasWifi,
+        has_parking: hasParking,
+        has_pets: hasPets,
+        has_card_payment: hasCardPayment,
+        has_accessibility: hasAccessibility,
+        has_delivery: hasDelivery,
+        has_online_booking: hasOnlineBooking,
+        has_ac: hasAc,
+        has_kids_area: hasKidsArea,
+        has_live_music: hasLiveMusic
       };
 
       const { error } = await supabase
@@ -841,6 +882,62 @@ export default function DashboardPage() {
       loadMenuItems(negocio.id);
     } catch (err) {
       console.error("Error eliminando plato:", err);
+    }
+  };
+
+  // Menú: Iniciar edición de plato
+  const handleStartEditPlato = (item) => {
+    setEditingPlato(item);
+    setEditPlatoNombre(item.nombre || "");
+    setEditPlatoPrecio(item.precio != null ? item.precio.toString() : "");
+    setEditPlatoDesc(item.descripcion || "");
+    setEditPlatoFotoUrl(item.foto_url || "");
+    setEditPlatoDisponible(item.disponible !== false);
+  };
+
+  // Menú: Subir foto en edición
+  const handleEditPlatoFotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingEditPlatoFoto(true);
+    try {
+      const url = await uploadMedia(file, "negocios/menu");
+      setEditPlatoFotoUrl(url);
+    } catch (err) {
+      console.error("Error al subir foto de edición del platillo:", err);
+      alert(lang === "en" ? "Error uploading menu photo" : "Error al subir la foto del platillo");
+    } finally {
+      setUploadingEditPlatoFoto(false);
+    }
+  };
+
+  // Menú: Guardar cambios de edición
+  const handleSaveEditPlato = async (e) => {
+    if (e) e.preventDefault();
+    if (!editingPlato || !editPlatoNombre || !editPlatoPrecio) return;
+    setIsSavingEditPlato(true);
+    try {
+      const { error } = await supabase
+        .from("menu_items")
+        .update({
+          nombre: editPlatoNombre,
+          precio: parseFloat(editPlatoPrecio),
+          descripcion: editPlatoDesc,
+          foto_url: editPlatoFotoUrl,
+          disponible: editPlatoDisponible
+        })
+        .eq("id", editingPlato.id);
+
+      if (error) throw error;
+
+      showToast(lang === "en" ? "Dish updated successfully!" : "¡Platillo actualizado exitosamente!", "success");
+      setEditingPlato(null);
+      loadMenuItems(negocio.id);
+    } catch (err) {
+      console.error("Error al editar platillo:", err);
+      showToast(lang === "en" ? "Error updating dish" : "Error al actualizar platillo", "error");
+    } finally {
+      setIsSavingEditPlato(false);
     }
   };
 
@@ -1473,9 +1570,12 @@ export default function DashboardPage() {
                     opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
-                  <div style={{ ...styles.cardIcon, background: "#4F46E5", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(79, 70, 229, 0.35)" }}>ℹ️</div>
-                  <h3 style={{ ...styles.cardTitle, color: "#3730A3" }}>
-                    {lang === "en" ? "Business Profile" : "Perfil del Negocio"} {negocio && !negocio.activo && "🔒"}
+                  <div style={{ ...styles.cardIcon, background: "#4F46E5", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(79, 70, 229, 0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Icon name="info" size={22} color="#FFFFFF" />
+                  </div>
+                  <h3 style={{ ...styles.cardTitle, color: "#3730A3", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <span>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</span>
+                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#3730A3" />}
                   </h3>
                   <p style={{ ...styles.cardDesc, color: "#4338CA" }}>{lang === "en" ? "Update photos, description, logo and contact info" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
                 </button>
@@ -1493,11 +1593,14 @@ export default function DashboardPage() {
                     opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
-                  <div style={{ ...styles.cardIcon, background: "#16A34A", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(22, 163, 74, 0.35)" }}>⚙️</div>
-                  <h3 style={{ ...styles.cardTitle, color: "#166534" }}>
-                    {lang === "en" ? "Services Checklist" : "Checklist de Servicios"} {negocio && !negocio.activo && "🔒"}
+                  <div style={{ ...styles.cardIcon, background: "#16A34A", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(22, 163, 74, 0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Icon name="settings" size={22} color="#FFFFFF" />
+                  </div>
+                  <h3 style={{ ...styles.cardTitle, color: "#166534", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <span>{lang === "en" ? "Services Checklist" : "Checklist de Servicios"}</span>
+                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#166534" />}
                   </h3>
-                  <p style={{ ...styles.cardDesc, color: "#15803D" }}>{lang === "en" ? "Enable menu, lodging, or transport modules" : "Activa módulos de menú, hospedaje o transporte"}</p>
+                  <p style={{ ...styles.cardDesc, color: "#15803D" }}>{lang === "en" ? "Enable menu, wifi, parking or lodging modules" : "Activa wifi, parqueo, menú, hospedaje o amenidades"}</p>
                 </button>
 
                 {/* Hours Card */}
@@ -1514,9 +1617,12 @@ export default function DashboardPage() {
                       opacity: negocio && !negocio.activo ? 0.75 : 1
                     }}
                   >
-                    <div style={{ ...styles.cardIcon, background: "#D97706", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(217, 119, 6, 0.35)" }}>⏰</div>
-                    <h3 style={{ ...styles.cardTitle, color: "#92400E" }}>
-                      {lang === "en" ? "Opening Hours" : "Horarios de Atención"} {negocio && !negocio.activo && "🔒"}
+                    <div style={{ ...styles.cardIcon, background: "#D97706", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(217, 119, 6, 0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Icon name="clock" size={22} color="#FFFFFF" />
+                    </div>
+                    <h3 style={{ ...styles.cardTitle, color: "#92400E", display: "flex", alignItems: "center", gap: "6px" }}>
+                      <span>{lang === "en" ? "Opening Hours" : "Horarios de Atención"}</span>
+                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#92400E" />}
                     </h3>
                     <p style={{ ...styles.cardDesc, color: "#B45309" }}>{lang === "en" ? "Manage your daily opening and closing times" : "Configura tus horarios de apertura y cierre"}</p>
                   </button>
@@ -1536,11 +1642,14 @@ export default function DashboardPage() {
                       opacity: negocio && !negocio.activo ? 0.75 : 1
                     }}
                   >
-                    <div style={{ ...styles.cardIcon, background: "#2563EB", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(37, 99, 235, 0.35)" }}>🍲</div>
-                    <h3 style={{ ...styles.cardTitle, color: "#1E40AF" }}>
-                      {lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"} {negocio && !negocio.activo && "🔒"}
+                    <div style={{ ...styles.cardIcon, background: "#2563EB", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(37, 99, 235, 0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Icon name="utensils" size={22} color="#FFFFFF" />
+                    </div>
+                    <h3 style={{ ...styles.cardTitle, color: "#1E40AF", display: "flex", alignItems: "center", gap: "6px" }}>
+                      <span>{lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"}</span>
+                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#1E40AF" />}
                     </h3>
-                    <p style={{ ...styles.cardDesc, color: "#1D4ED8" }}>{lang === "en" ? "Add or remove dishes, photos, and set prices" : "Agrega o elimina platillos, fotos y precios"}</p>
+                    <p style={{ ...styles.cardDesc, color: "#1D4ED8" }}>{lang === "en" ? "Add or remove dishes, photos, and set prices" : "Agrega, edita o elimina platillos, fotos y precios"}</p>
                   </button>
                 )}
 
@@ -1558,9 +1667,12 @@ export default function DashboardPage() {
                       opacity: negocio && !negocio.activo ? 0.75 : 1
                     }}
                   >
-                    <div style={{ ...styles.cardIcon, background: "#9333EA", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(147, 51, 234, 0.35)" }}>📅</div>
-                    <h3 style={{ ...styles.cardTitle, color: "#6B21A8" }}>
-                      {lang === "en" ? "Reservations Manager" : "Gestor de Reservas"} {negocio && !negocio.activo && "🔒"}
+                    <div style={{ ...styles.cardIcon, background: "#9333EA", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(147, 51, 234, 0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Icon name="calendar" size={22} color="#FFFFFF" />
+                    </div>
+                    <h3 style={{ ...styles.cardTitle, color: "#6B21A8", display: "flex", alignItems: "center", gap: "6px" }}>
+                      <span>{lang === "en" ? "Reservations Manager" : "Gestor de Reservas"}</span>
+                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#6B21A8" />}
                     </h3>
                     <p style={{ ...styles.cardDesc, color: "#7E22CE" }}>{lang === "en" ? "Approve or cancel incoming booking requests" : "Aprueba o cancela solicitudes de reserva"}</p>
                     {(reservas || []).filter(r => r.estado_reserva === "pendiente").length > 0 && (
@@ -1584,9 +1696,12 @@ export default function DashboardPage() {
                     opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
-                  <div style={{ ...styles.cardIcon, background: "#E11D48", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(225, 29, 72, 0.35)" }}>⭐</div>
-                  <h3 style={{ ...styles.cardTitle, color: "#9F1239" }}>
-                    {lang === "en" ? "Customer Reviews" : "Reseñas de Clientes"} {negocio && !negocio.activo && "🔒"}
+                  <div style={{ ...styles.cardIcon, background: "#E11D48", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(225, 29, 72, 0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Icon name="star" size={22} color="#FFFFFF" />
+                  </div>
+                  <h3 style={{ ...styles.cardTitle, color: "#9F1239", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <span>{lang === "en" ? "Customer Reviews" : "Reseñas de Clientes"}</span>
+                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#9F1239" />}
                   </h3>
                   <p style={{ ...styles.cardDesc, color: "#BE123C" }}>{lang === "en" ? "Read what tourists think about your business" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
                 </button>
@@ -1848,60 +1963,138 @@ export default function DashboardPage() {
                     : "Selecciona las opciones que aplican a tu negocio. Esto habilitará secciones personalizadas en tu panel."}
                 </p>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "24px" }}>
-                  {/* Menú Gastronómico */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+                  {/* Módulos de Plataforma */}
                   <label style={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      checked={hasMenu}
-                      onChange={(e) => setHasMenu(e.target.checked)}
-                      style={styles.checkbox}
-                    />
+                    <input type="checkbox" checked={hasMenu} onChange={(e) => setHasMenu(e.target.checked)} style={styles.checkbox} />
                     <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E" }}>🍲 {lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"}</div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="utensils" size={16} color="#146D9E" />
+                        <span>{lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"}</span>
+                      </div>
                       <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Display list of dishes and prices to tourists" : "Muestra lista de platillos y precios a los turistas"}</div>
                     </div>
                   </label>
 
-                  {/* Horarios */}
                   <label style={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      checked={hasHours}
-                      onChange={(e) => setHasHours(e.target.checked)}
-                      style={styles.checkbox}
-                    />
+                    <input type="checkbox" checked={hasHours} onChange={(e) => setHasHours(e.target.checked)} style={styles.checkbox} />
                     <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E" }}>⏰ {lang === "en" ? "Opening Hours" : "Horarios de Atención"}</div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="clock" size={16} color="#D97706" />
+                        <span>{lang === "en" ? "Opening Hours" : "Horarios de Atención"}</span>
+                      </div>
                       <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Specify opening and closing schedules" : "Especifica horarios de apertura y cierre"}</div>
                     </div>
                   </label>
 
-                  {/* Hospedaje */}
                   <label style={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      checked={hasLodging}
-                      onChange={(e) => setHasLodging(e.target.checked)}
-                      style={styles.checkbox}
-                    />
+                    <input type="checkbox" checked={hasLodging} onChange={(e) => setHasLodging(e.target.checked)} style={styles.checkbox} />
                     <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E" }}>🏨 {lang === "en" ? "Lodging Services" : "Servicios de Hospedaje"}</div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="hotel" size={16} color="#9333EA" />
+                        <span>{lang === "en" ? "Lodging Services" : "Servicios de Hospedaje"}</span>
+                      </div>
                       <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Accept room/bed reservations directly" : "Acepta reservas de habitaciones directamente"}</div>
                     </div>
                   </label>
 
-                  {/* Transporte */}
                   <label style={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      checked={hasTransport}
-                      onChange={(e) => setHasTransport(e.target.checked)}
-                      style={styles.checkbox}
-                    />
+                    <input type="checkbox" checked={hasTransport} onChange={(e) => setHasTransport(e.target.checked)} style={styles.checkbox} />
                     <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E" }}>🚌 {lang === "en" ? "Transport / Tours" : "Transporte o Tours"}</div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="car" size={16} color="#2563EB" />
+                        <span>{lang === "en" ? "Transport / Tours" : "Transporte o Tours"}</span>
+                      </div>
                       <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Provide tourist routing and itineraries" : "Provee itinerarios y rutas de viaje"}</div>
+                    </div>
+                  </label>
+
+                  {/* Amenidades y Servicios del Local */}
+                  <label style={styles.checkboxLabel}>
+                    <input type="checkbox" checked={hasWifi} onChange={(e) => setHasWifi(e.target.checked)} style={styles.checkbox} />
+                    <div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="wifi" size={16} color="#0284C7" />
+                        <span>{lang === "en" ? "Free Wi-Fi" : "WiFi Gratis"}</span>
+                      </div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "High speed internet for customers" : "Internet para clientes"}</div>
+                    </div>
+                  </label>
+
+                  <label style={styles.checkboxLabel}>
+                    <input type="checkbox" checked={hasParking} onChange={(e) => setHasParking(e.target.checked)} style={styles.checkbox} />
+                    <div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="parking" size={16} color="#4F46E5" />
+                        <span>{lang === "en" ? "Customer Parking" : "Estacionamiento"}</span>
+                      </div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "On-site or reserved parking space" : "Parqueo propio o reservado"}</div>
+                    </div>
+                  </label>
+
+                  <label style={styles.checkboxLabel}>
+                    <input type="checkbox" checked={hasPets} onChange={(e) => setHasPets(e.target.checked)} style={styles.checkbox} />
+                    <div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="pet" size={16} color="#D97706" />
+                        <span>{lang === "en" ? "Pet Friendly" : "Mascotas Bienvenidas"}</span>
+                      </div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Pets allowed on premises" : "Acepta mascotas en las instalaciones"}</div>
+                    </div>
+                  </label>
+
+                  <label style={styles.checkboxLabel}>
+                    <input type="checkbox" checked={hasCardPayment} onChange={(e) => setHasCardPayment(e.target.checked)} style={styles.checkbox} />
+                    <div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="creditCard" size={16} color="#16A34A" />
+                        <span>{lang === "en" ? "Card Payment" : "Pagos con Tarjeta"}</span>
+                      </div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Accept credit and debit cards" : "Acepta tarjetas de crédito/débito"}</div>
+                    </div>
+                  </label>
+
+                  <label style={styles.checkboxLabel}>
+                    <input type="checkbox" checked={hasAccessibility} onChange={(e) => setHasAccessibility(e.target.checked)} style={styles.checkbox} />
+                    <div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="accessibility" size={16} color="#0D9488" />
+                        <span>{lang === "en" ? "Wheelchair Accessible" : "Accesibilidad"}</span>
+                      </div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Ramps and accessible entry" : "Rampas y acceso para sillas de ruedas"}</div>
+                    </div>
+                  </label>
+
+                  <label style={styles.checkboxLabel}>
+                    <input type="checkbox" checked={hasDelivery} onChange={(e) => setHasDelivery(e.target.checked)} style={styles.checkbox} />
+                    <div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="delivery" size={16} color="#E11D48" />
+                        <span>{lang === "en" ? "Delivery Service" : "Servicio de Delivery"}</span>
+                      </div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Home delivery service available" : "Envío a domicilio disponible"}</div>
+                    </div>
+                  </label>
+
+                  <label style={styles.checkboxLabel}>
+                    <input type="checkbox" checked={hasAc} onChange={(e) => setHasAc(e.target.checked)} style={styles.checkbox} />
+                    <div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="ac" size={16} color="#0284C7" />
+                        <span>{lang === "en" ? "Air Conditioning" : "Aire Acondicionado"}</span>
+                      </div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Climatized environment" : "Ambiente climatizado"}</div>
+                    </div>
+                  </label>
+
+                  <label style={styles.checkboxLabel}>
+                    <input type="checkbox" checked={hasLiveMusic} onChange={(e) => setHasLiveMusic(e.target.checked)} style={styles.checkbox} />
+                    <div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="music" size={16} color="#8B5CF6" />
+                        <span>{lang === "en" ? "Live Music / Events" : "Música en Vivo / Eventos"}</span>
+                      </div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Live entertainment and shows" : "Shows y presentaciones de música"}</div>
                     </div>
                   </label>
                 </div>
@@ -2083,44 +2276,292 @@ export default function DashboardPage() {
                     <p style={{ color: "#9CA3AF", fontSize: "13px" }}>{lang === "en" ? "No dishes added yet." : "Aún no has agregado platillos a tu menú."}</p>
                   ) : (
                     (menuItems || []).map((item) => (
-                      <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: "rgba(20, 109, 158, 0.03)", border: "1px solid rgba(20, 109, 158, 0.08)", borderRadius: "12px" }}>
+                      <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: "rgba(20, 109, 158, 0.03)", border: "1px solid rgba(20, 109, 158, 0.08)", borderRadius: "12px", opacity: item.disponible === false ? 0.65 : 1 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
                           {item.foto_url ? (
                             <div style={{
-                              width: "48px",
-                              height: "48px",
-                              borderRadius: "8px",
+                              width: "52px",
+                              height: "52px",
+                              borderRadius: "10px",
                               background: `url(${item.foto_url}) center/cover no-repeat`,
-                              border: "1px solid rgba(20, 109, 158, 0.10)"
+                              border: "1px solid rgba(20, 109, 158, 0.10)",
+                              flexShrink: 0
                             }} />
                           ) : (
                             <div style={{
-                              width: "48px",
-                              height: "48px",
-                              borderRadius: "8px",
-                              background: "rgba(20, 109, 158, 0.03)",
+                              width: "52px",
+                              height: "52px",
+                              borderRadius: "10px",
+                              background: "rgba(20, 109, 158, 0.05)",
                               display: "flex",
                               justifyContent: "center",
                               alignItems: "center",
-                              fontSize: "20px",
-                              border: "1px solid rgba(20, 109, 158, 0.05)"
+                              border: "1px solid rgba(20, 109, 158, 0.08)",
+                              flexShrink: 0
                             }}>
-                              🍲
+                              <Icon name="utensils" size={22} color="#146D9E" />
                             </div>
                           )}
                           <div>
-                            <div style={{ fontWeight: "750", fontSize: "14px" }}>{item.nombre}</div>
-                            {item.descripcion && <div style={{ fontSize: "11px", color: "#4A5568", marginTop: "2px" }}>{item.descripcion}</div>}
+                            <div style={{ fontWeight: "750", fontSize: "14px", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "8px" }}>
+                              <span>{item.nombre}</span>
+                              {item.disponible === false && (
+                                <span style={{ fontSize: "10px", fontWeight: "800", color: "#EF4444", background: "rgba(239,68,68,0.12)", padding: "2px 6px", borderRadius: "4px" }}>
+                                  {lang === "en" ? "Unavailable" : "Agotado / No disponible"}
+                                </span>
+                              )}
+                            </div>
+                            {item.descripcion && <div style={{ fontSize: "12px", color: "#4A5568", marginTop: "2px" }}>{item.descripcion}</div>}
                           </div>
                         </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                          <span style={{ fontWeight: "800", color: "var(--atlan-gold)" }}>${item.precio}</span>
-                          <button type="button" onClick={() => handleDeletePlato(item.id)} style={styles.deleteBtn}>🗑️</button>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <span style={{ fontWeight: "800", color: "var(--atlan-gold)", fontSize: "15px" }}>C$ {item.precio}</span>
+                          
+                          <button
+                            type="button"
+                            onClick={() => handleStartEditPlato(item)}
+                            title={lang === "en" ? "Edit dish" : "Editar platillo"}
+                            style={{
+                              background: "rgba(20, 109, 158, 0.08)",
+                              border: "1px solid rgba(20, 109, 158, 0.18)",
+                              color: "#146D9E",
+                              padding: "6px 12px",
+                              borderRadius: "8px",
+                              cursor: "pointer",
+                              fontSize: "12.5px",
+                              fontWeight: "700",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "4px"
+                            }}
+                          >
+                            <Icon name="edit" size={13} color="#146D9E" />
+                            <span>{lang === "en" ? "Edit" : "Editar"}</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeletePlato(item.id)}
+                            title={lang === "en" ? "Delete dish" : "Eliminar platillo"}
+                            style={{
+                              ...styles.deleteBtn,
+                              background: "rgba(239, 68, 68, 0.08)",
+                              border: "1px solid rgba(239, 68, 68, 0.18)",
+                              color: "#EF4444",
+                              padding: "6px 10px",
+                              borderRadius: "8px",
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              justifyContent: "center"
+                            }}
+                          >
+                            <Icon name="trash" size={14} color="#EF4444" />
+                          </button>
                         </div>
                       </div>
                     ))
                   )}
                 </div>
+
+                {/* MODAL DE EDICIÓN DE PLATILLO */}
+                {editingPlato && (
+                  <div
+                    style={{
+                      position: "fixed",
+                      inset: 0,
+                      zIndex: 10000,
+                      backgroundColor: "rgba(10, 15, 28, 0.75)",
+                      backdropFilter: "blur(8px)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "16px",
+                      animation: "fadeIn 0.2s ease-out"
+                    }}
+                    onClick={(e) => {
+                      if (e.target === e.currentTarget) setEditingPlato(null);
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "100%",
+                        maxWidth: "520px",
+                        backgroundColor: "#FFFFFF",
+                        borderRadius: "20px",
+                        boxShadow: "0 20px 50px rgba(0, 0, 0, 0.3)",
+                        padding: "24px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "18px",
+                        position: "relative",
+                        animation: "scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)"
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(20, 109, 158, 0.1)", paddingBottom: "12px" }}>
+                        <h4 style={{ margin: 0, fontSize: "17px", fontWeight: "850", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "8px" }}>
+                          <Icon name="edit" size={18} color="#146D9E" />
+                          <span>{lang === "en" ? "Edit Dish / Service" : "Editar Platillo o Servicio"}</span>
+                        </h4>
+                        <button
+                          type="button"
+                          onClick={() => setEditingPlato(null)}
+                          style={{ background: "none", border: "none", cursor: "pointer", padding: "4px" }}
+                        >
+                          <Icon name="x" size={18} color="#64748B" />
+                        </button>
+                      </div>
+
+                      <form onSubmit={handleSaveEditPlato} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "12px" }}>
+                          <div>
+                            <label style={{ fontSize: "12px", fontWeight: "800", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
+                              {lang === "en" ? "Dish Name" : "Nombre del Platillo"}
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={editPlatoNombre}
+                              onChange={(e) => setEditPlatoNombre(e.target.value)}
+                              style={styles.input}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ fontSize: "12px", fontWeight: "800", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
+                              {lang === "en" ? "Price (C$)" : "Precio (C$)"}
+                            </label>
+                            <input
+                              type="number"
+                              required
+                              step="0.01"
+                              value={editPlatoPrecio}
+                              onChange={(e) => setEditPlatoPrecio(e.target.value)}
+                              style={styles.input}
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label style={{ fontSize: "12px", fontWeight: "800", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
+                            {lang === "en" ? "Description" : "Descripción"}
+                          </label>
+                          <textarea
+                            rows="3"
+                            value={editPlatoDesc}
+                            onChange={(e) => setEditPlatoDesc(e.target.value)}
+                            placeholder={lang === "en" ? "Short description..." : "Descripción corta..."}
+                            style={{ ...styles.input, resize: "none" }}
+                          />
+                        </div>
+
+                        {/* Foto del Platillo */}
+                        <div>
+                          <label style={{ fontSize: "12px", fontWeight: "800", color: "#1A1A2E", display: "block", marginBottom: "6px" }}>
+                            {lang === "en" ? "Dish Photo" : "Foto del Platillo"}
+                          </label>
+                          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                            {editPlatoFotoUrl ? (
+                              <img
+                                src={editPlatoFotoUrl}
+                                alt="Dish preview"
+                                style={{
+                                  width: "60px",
+                                  height: "60px",
+                                  borderRadius: "10px",
+                                  objectFit: "cover",
+                                  border: "1px solid rgba(20, 109, 158, 0.15)"
+                                }}
+                              />
+                            ) : (
+                              <div
+                                style={{
+                                  width: "60px",
+                                  height: "60px",
+                                  borderRadius: "10px",
+                                  background: "#F1F5F9",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  border: "1.5px dashed rgba(20, 109, 158, 0.2)"
+                                }}
+                              >
+                                <Icon name="utensils" size={24} color="#94A3B8" />
+                              </div>
+                            )}
+
+                            <label
+                              style={{
+                                padding: "8px 14px",
+                                background: "rgba(20, 109, 158, 0.08)",
+                                border: "1.5px solid rgba(20, 109, 158, 0.18)",
+                                borderRadius: "10px",
+                                fontSize: "12px",
+                                fontWeight: "800",
+                                cursor: "pointer",
+                                color: "#146D9E"
+                              }}
+                            >
+                              {uploadingEditPlatoFoto ? "..." : (lang === "en" ? "📷 Change Photo" : "📷 Cambiar Foto")}
+                              <input type="file" accept="image/*" onChange={handleEditPlatoFotoUpload} style={{ display: "none" }} />
+                            </label>
+                          </div>
+                        </div>
+
+                        {/* Toggle Disponibilidad */}
+                        <div style={{ padding: "10px 14px", background: "#F8FAFC", borderRadius: "10px", border: "1px solid #E2E8F0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                          <div>
+                            <div style={{ fontSize: "13px", fontWeight: "800", color: "#1A1A2E" }}>
+                              {lang === "en" ? "Item Availability" : "Disponibilidad del Platillo"}
+                            </div>
+                            <div style={{ fontSize: "11.5px", color: "#64748B" }}>
+                              {editPlatoDisponible
+                                ? (lang === "en" ? "Visible and available for order" : "Disponible para los clientes")
+                                : (lang === "en" ? "Marked as sold out / unavailable" : "Marcado como agotado / no disponible")}
+                            </div>
+                          </div>
+                          <label style={{ display: "flex", alignItems: "center", cursor: "pointer", gap: "8px" }}>
+                            <input
+                              type="checkbox"
+                              checked={editPlatoDisponible}
+                              onChange={(e) => setEditPlatoDisponible(e.target.checked)}
+                              style={{ width: "18px", height: "18px", cursor: "pointer" }}
+                            />
+                            <span style={{ fontSize: "12.5px", fontWeight: "750", color: editPlatoDisponible ? "#16A34A" : "#EF4444" }}>
+                              {editPlatoDisponible ? (lang === "en" ? "Available" : "Disponible") : (lang === "en" ? "Sold Out" : "Agotado")}
+                            </span>
+                          </label>
+                        </div>
+
+                        <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                          <button
+                            type="submit"
+                            disabled={isSavingEditPlato || uploadingEditPlatoFoto}
+                            className="clay-btn-blue"
+                            style={{ flex: 1, padding: "11px", fontSize: "13.5px", fontWeight: "800" }}
+                          >
+                            {isSavingEditPlato ? "..." : (lang === "en" ? "Save Changes" : "Guardar Cambios")}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditingPlato(null)}
+                            style={{
+                              padding: "11px 18px",
+                              background: "#F1F5F9",
+                              border: "1px solid #CBD5E1",
+                              borderRadius: "12px",
+                              color: "#475569",
+                              fontWeight: "700",
+                              cursor: "pointer",
+                              fontSize: "13.5px"
+                            }}
+                          >
+                            {lang === "en" ? "Cancel" : "Cancelar"}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

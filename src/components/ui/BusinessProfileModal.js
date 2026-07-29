@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Icon from './Icon';
 
 export default function BusinessProfileModal({
   isOpen,
@@ -50,15 +51,61 @@ export default function BusinessProfileModal({
     ? (reviews.reduce((acc, r) => acc + Number(r.estrellas || 5), 0) / reviews.length).toFixed(1)
     : null;
 
+  // Estilos de gradiente según la categoría
+  const getCategoryTheme = (cat) => {
+    const category = (cat || '').toLowerCase();
+    if (category.includes('restaurante') || category.includes('comida') || category.includes('café') || category.includes('bar')) {
+      return {
+        cover: 'linear-gradient(135deg, #FF6B6B 0%, #D93838 100%)',
+        accent: '#D93838'
+      };
+    } else if (category.includes('hotel') || category.includes('hospedaje') || category.includes('hostal')) {
+      return {
+        cover: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+        accent: '#1D4ED8'
+      };
+    } else if (category.includes('naturaleza') || category.includes('tour') || category.includes('aventura') || category.includes('parque')) {
+      return {
+        cover: 'linear-gradient(135deg, #10B981 0%, #047857 100%)',
+        accent: '#047857'
+      };
+    } else if (category.includes('cultura') || category.includes('arte') || category.includes('museo')) {
+      return {
+        cover: 'linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%)',
+        accent: '#6D28D9'
+      };
+    }
+    return {
+      cover: 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)',
+      accent: '#146D9E'
+    };
+  };
+
+  const theme = getCategoryTheme(point.category);
+  const heroPhoto = details?.fotos && details.fotos.length > 0 ? details.fotos[0] : null;
+
+  // Servicios activos en el negocio
+  const servs = details?.servicios || {};
+  const activeServiceList = [
+    { key: 'has_wifi', label: lang === 'en' ? 'Free Wi-Fi' : 'WiFi Gratis', icon: 'wifi' },
+    { key: 'has_parking', label: lang === 'en' ? 'Parking' : 'Estacionamiento', icon: 'parking' },
+    { key: 'has_pets', label: lang === 'en' ? 'Pet Friendly' : 'Mascotas Bienvenidas', icon: 'pet' },
+    { key: 'has_card_payment', label: lang === 'en' ? 'Card Payment' : 'Pagos con Tarjeta', icon: 'creditCard' },
+    { key: 'has_accessibility', label: lang === 'en' ? 'Accessible' : 'Accesibilidad', icon: 'accessibility' },
+    { key: 'has_delivery', label: lang === 'en' ? 'Delivery' : 'Envíos / Delivery', icon: 'delivery' },
+    { key: 'has_ac', label: lang === 'en' ? 'A/C' : 'Aire Acondicionado', icon: 'ac' },
+    { key: 'has_live_music', label: lang === 'en' ? 'Live Music' : 'Música en Vivo', icon: 'music' },
+  ].filter(s => !!servs[s.key]);
+
   return (
     <div
       style={{
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
-        backgroundColor: 'rgba(10, 15, 28, 0.75)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
+        backgroundColor: 'rgba(10, 15, 28, 0.8)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -73,11 +120,11 @@ export default function BusinessProfileModal({
         className="business-profile-modal"
         style={{
           width: '100%',
-          maxWidth: '860px',
-          maxHeight: '90vh',
+          maxWidth: '880px',
+          maxHeight: '92vh',
           backgroundColor: '#FFFFFF',
           borderRadius: '24px',
-          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.35), 0 0 1px rgba(0,0,0,0.1)',
+          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.4), 0 0 1px rgba(0,0,0,0.1)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
@@ -85,49 +132,118 @@ export default function BusinessProfileModal({
           position: 'relative'
         }}
       >
-        {/* CABECERA DE LA MODAL */}
+        {/* BANNER COVER HERO DE CABECERA */}
         <div
           style={{
-            padding: '24px 28px 20px',
-            borderBottom: '1px solid rgba(20, 109, 158, 0.1)',
-            background: 'linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px'
+            height: heroPhoto ? '140px' : '90px',
+            background: heroPhoto ? `url(${heroPhoto}) center/cover no-repeat` : theme.cover,
+            position: 'relative',
+            flexShrink: 0
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: heroPhoto
+                ? 'linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(10,15,28,0.75) 100%)'
+                : 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.25) 100%)'
+            }}
+          />
+
+          {/* BOTONES SUPERIORES FLOTANTES */}
+          <div style={{ position: 'absolute', top: '14px', right: '16px', display: 'flex', gap: '8px', zIndex: 2 }}>
+            {userSession && (
+              <button
+                onClick={onToggleFavorite}
+                title={isFavorite ? (lang === 'en' ? 'Remove Favorite' : 'Quitar de Favoritos') : (lang === 'en' ? 'Save Favorite' : 'Guardar Favorito')}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.85)',
+                  backdropFilter: 'blur(8px)',
+                  border: isFavorite ? '1.5px solid #FFD700' : '1px solid rgba(255,255,255,0.4)',
+                  color: isFavorite ? '#B8960E' : '#475569',
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '50%',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  transition: 'transform 0.2s'
+                }}
+              >
+                <Icon name={isFavorite ? 'heartFilled' : 'heart'} size={18} color={isFavorite ? '#B8960E' : '#475569'} />
+              </button>
+            )}
+
+            <button
+              onClick={onClose}
+              style={{
+                background: 'rgba(255, 255, 255, 0.85)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(255,255,255,0.4)',
+                color: '#1E293B',
+                width: '38px',
+                height: '38px',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                transition: 'transform 0.2s'
+              }}
+            >
+              <Icon name="x" size={18} color="#1E293B" />
+            </button>
+          </div>
+        </div>
+
+        {/* CONTENIDO PRINCIPAL CABECERA */}
+        <div
+          style={{
+            padding: '0 28px 16px',
+            borderBottom: '1px solid rgba(20, 109, 158, 0.1)',
+            background: '#FFFFFF',
+            position: 'relative',
+            marginTop: '-36px'
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '16px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px' }}>
               {details?.logo_url ? (
                 <img
                   src={details.logo_url}
                   alt={point.nombre}
                   style={{
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '50%',
+                    width: '76px',
+                    height: '76px',
+                    borderRadius: '20px',
                     objectFit: 'cover',
-                    border: '2px solid rgba(20, 109, 158, 0.2)',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
+                    border: '3px solid #FFFFFF',
+                    boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
+                    background: '#FFFFFF'
                   }}
                 />
               ) : (
                 <div
                   style={{
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)',
+                    width: '76px',
+                    height: '76px',
+                    borderRadius: '20px',
+                    background: theme.cover,
                     color: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '26px',
+                    fontSize: '30px',
                     fontWeight: '800',
-                    boxShadow: '0 4px 12px rgba(20, 109, 158, 0.25)'
+                    border: '3px solid #FFFFFF',
+                    boxShadow: '0 8px 20px rgba(0,0,0,0.15)'
                   }}
                 >
-                  {point.nombre?.charAt(0)?.toUpperCase() || '🏢'}
+                  {point.nombre?.charAt(0)?.toUpperCase() || <Icon name="building" size={32} color="#FFFFFF" />}
                 </div>
               )}
 
@@ -163,9 +279,13 @@ export default function BusinessProfileModal({
                           background: statusBg,
                           padding: '3px 9px',
                           borderRadius: '6px',
-                          border: `1px solid ${statusColor}40`
+                          border: `1px solid ${statusColor}40`,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px'
                         }}
                       >
+                        <Icon name={point.estado === 'aprobado' ? 'checkCircle' : 'shield'} size={12} color={statusColor} />
                         {statusText}
                       </span>
                     );
@@ -177,109 +297,82 @@ export default function BusinessProfileModal({
                         fontSize: '12px',
                         fontWeight: '800',
                         color: '#B8960E',
-                        background: 'rgba(255, 215, 0, 0.15)',
+                        background: 'rgba(255, 215, 0, 0.18)',
                         padding: '3px 8px',
                         borderRadius: '6px',
-                        display: 'flex',
+                        display: 'inline-flex',
                         alignItems: 'center',
                         gap: '4px'
                       }}
                     >
-                      ★ {avgRating} ({reviews.length})
+                      <Icon name="starFilled" size={13} color="#B8960E" />
+                      {avgRating} ({reviews.length})
+                    </span>
+                  )}
+
+                  {details?.rango_precios && (
+                    <span
+                      style={{
+                        fontSize: '11px',
+                        fontWeight: '800',
+                        color: '#1E293B',
+                        background: '#F1F5F9',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        border: '1px solid #E2E8F0'
+                      }}
+                    >
+                      {details.rango_precios}
                     </span>
                   )}
                 </div>
 
-                <h2 style={{ margin: 0, fontSize: '24px', fontWeight: '850', color: '#1A1A2E', lineHeight: '1.2' }}>
+                <h2 style={{ margin: 0, fontSize: '24px', fontWeight: '850', color: '#0F172A', lineHeight: '1.2' }}>
                   {point.nombre}
                 </h2>
-                <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#64748B', fontWeight: '600' }}>
-                  📍 {t(`addPoint.categories.${point.category || 'otro'}`) || point.category}
+                <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#64748B', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <Icon name="mapPin" size={14} color="#64748B" />
+                  <span>{t(`addPoint.categories.${point.category || 'otro'}`) || point.category}</span>
                 </p>
               </div>
             </div>
 
-            {/* BOTONES DE ACCIÓN RÁPIDA */}
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <button
-                onClick={() => onIniciarViaje(point)}
-                className="clay-btn-blue"
-                style={{
-                  padding: '8px 16px',
-                  fontSize: '13px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                  <polygon points="3 11 22 2 13 21 11 13 3 11" />
-                </svg>
-                <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
-              </button>
-
-              {userSession && (
-                <button
-                  onClick={onToggleFavorite}
-                  title={isFavorite ? (lang === 'en' ? 'Remove from Favorites' : 'Quitar de Favoritos') : (lang === 'en' ? 'Add to Favorites' : 'Guardar en Favoritos')}
-                  style={{
-                    background: isFavorite ? 'rgba(255, 215, 0, 0.18)' : 'rgba(20, 109, 158, 0.08)',
-                    border: isFavorite ? '1.5px solid #FFD700' : '1.5px solid rgba(20, 109, 158, 0.12)',
-                    color: isFavorite ? '#B8960E' : '#4A5568',
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '50%',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '18px',
-                    transition: 'all 0.25s ease'
-                  }}
-                >
-                  {isFavorite ? '★' : '☆'}
-                </button>
-              )}
-
-              <button
-                onClick={onClose}
-                style={{
-                  background: 'rgba(20, 109, 158, 0.08)',
-                  border: '1.5px solid rgba(20, 109, 158, 0.12)',
-                  color: '#1A1A2E',
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '50%',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 'bold',
-                  fontSize: '16px',
-                  transition: 'all 0.2s'
-                }}
-              >
-                ✕
-              </button>
-            </div>
+            {/* BOTÓN DE INICIAR VIAJE */}
+            <button
+              onClick={() => onIniciarViaje(point)}
+              className="clay-btn-blue"
+              style={{
+                padding: '10px 20px',
+                fontSize: '13.5px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                borderRadius: '12px',
+                boxShadow: '0 4px 14px rgba(20, 109, 158, 0.3)'
+              }}
+            >
+              <Icon name="navigation" size={16} color="#FFFFFF" />
+              <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
+            </button>
           </div>
 
-          {/* NAVEGACIÓN MULTI-PESTAÑA */}
+          {/* NAVEGACIÓN MULTI-PESTAÑA CON ICONOS SVG */}
           <div
             style={{
               display: 'flex',
               gap: '6px',
               borderBottom: '1px solid rgba(20, 109, 158, 0.1)',
               paddingBottom: '2px',
+              marginTop: '20px',
               overflowX: 'auto',
               scrollbarWidth: 'none'
             }}
           >
             {[
-              { id: 'info', label: lang === 'en' ? 'Information' : 'Información', icon: 'ℹ️' },
-              { id: 'menu', label: lang === 'en' ? 'Menu & Services' : 'Menú y Servicios', icon: '🍽️', count: menu.length },
-              { id: 'reservas', label: lang === 'en' ? 'Reservations' : 'Reservas', icon: '🏨' },
-              { id: 'reseñas', label: lang === 'en' ? 'Reviews' : 'Reseñas', icon: '⭐', count: reviews.length }
+              { id: 'info', label: lang === 'en' ? 'Information' : 'Información', iconName: 'info' },
+              { id: 'menu', label: lang === 'en' ? 'Menu & Services' : 'Menú y Servicios', iconName: 'utensils', count: menu.length },
+              { id: 'reservas', label: lang === 'en' ? 'Reservations' : 'Reservas', iconName: 'calendar' },
+              { id: 'reseñas', label: lang === 'en' ? 'Reviews' : 'Reseñas', iconName: 'star', count: reviews.length }
             ].map((tab) => {
               const isActive = activeTab === tab.id;
               return (
@@ -290,10 +383,10 @@ export default function BusinessProfileModal({
                     padding: '10px 18px',
                     fontSize: '13.5px',
                     fontWeight: isActive ? '800' : '600',
-                    color: isActive ? '#146D9E' : '#64748B',
-                    background: isActive ? 'rgba(20, 109, 158, 0.1)' : 'transparent',
+                    color: isActive ? theme.accent : '#64748B',
+                    background: isActive ? 'rgba(20, 109, 158, 0.08)' : 'transparent',
                     border: 'none',
-                    borderBottom: isActive ? '2.5px solid #146D9E' : '2.5px solid transparent',
+                    borderBottom: isActive ? `2.5px solid ${theme.accent}` : '2.5px solid transparent',
                     borderRadius: '10px 10px 0 0',
                     cursor: 'pointer',
                     display: 'flex',
@@ -303,7 +396,7 @@ export default function BusinessProfileModal({
                     whiteSpace: 'nowrap'
                   }}
                 >
-                  <span>{tab.icon}</span>
+                  <Icon name={tab.iconName} size={16} color={isActive ? theme.accent : '#64748B'} />
                   <span>{tab.label}</span>
                   {tab.count > 0 && (
                     <span
@@ -312,7 +405,7 @@ export default function BusinessProfileModal({
                         fontWeight: '800',
                         padding: '2px 7px',
                         borderRadius: '10px',
-                        background: isActive ? '#146D9E' : 'rgba(100, 116, 139, 0.15)',
+                        background: isActive ? theme.accent : 'rgba(100, 116, 139, 0.15)',
                         color: isActive ? '#FFFFFF' : '#64748B'
                       }}
                     >
@@ -353,7 +446,7 @@ export default function BusinessProfileModal({
                     gap: '12px'
                   }}
                 >
-                  <span style={{ fontSize: '24px' }}>⏳</span>
+                  <Icon name="hourglass" size={24} color="#f97316" />
                   <div>
                     <strong style={{ color: '#1A1A2E' }}>
                       {lang === 'en' ? 'Claim Under Review' : 'Solicitud de Reclamo en Verificación'}
@@ -383,31 +476,118 @@ export default function BusinessProfileModal({
                     gap: '8px'
                   }}
                 >
-                  🏢 {lang === 'en' ? 'Are you the owner? Claim this business' : '¿Eres el dueño? Reclamar este negocio'}
+                  <Icon name="claim" size={18} color="#1A1A2E" />
+                  <span>{lang === 'en' ? 'Are you the owner? Claim this business' : '¿Eres el dueño? Reclamar este negocio'}</span>
                 </Link>
               )}
 
               {/* Descripción */}
               <div>
-                <h4 style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  {lang === 'en' ? 'About this Business' : 'Acerca de este Negocio'}
+                <h4 style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Icon name="info" size={15} color={theme.accent} />
+                  <span>{lang === 'en' ? 'About this Business' : 'Acerca de este Negocio'}</span>
                 </h4>
-                <p style={{ margin: 0, fontSize: '14.5px', color: '#4A5568', lineHeight: '1.65' }}>
+                <p style={{ margin: 0, fontSize: '14.5px', color: '#475569', lineHeight: '1.65' }}>
                   {point.descripcion || (lang === 'en' ? 'No description available.' : 'Sin descripción disponible.')}
                 </p>
               </div>
 
+              {/* BARRA DE CONTACTO (Teléfono, WhatsApp) */}
+              {(details?.telefono || details?.whatsapp) && (
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                  {details.telefono && (
+                    <a
+                      href={`tel:${details.telefono}`}
+                      style={{
+                        padding: '8px 14px',
+                        borderRadius: '10px',
+                        background: '#F1F5F9',
+                        border: '1px solid #E2E8F0',
+                        color: '#0F172A',
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        textDecoration: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '7px'
+                      }}
+                    >
+                      <Icon name="phone" size={15} color="#2563EB" />
+                      <span>{details.telefono}</span>
+                    </a>
+                  )}
+
+                  {details.whatsapp && (
+                    <a
+                      href={`https://wa.me/${details.whatsapp.replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        padding: '8px 14px',
+                        borderRadius: '10px',
+                        background: 'rgba(34, 197, 94, 0.12)',
+                        border: '1px solid rgba(34, 197, 94, 0.3)',
+                        color: '#15803D',
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        textDecoration: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '7px'
+                      }}
+                    >
+                      <Icon name="whatsapp" size={15} color="#16A34A" />
+                      <span>WhatsApp</span>
+                    </a>
+                  )}
+                </div>
+              )}
+
+              {/* SERVICIOS / AMENIDADES DE NEGOCIO */}
+              {activeServiceList.length > 0 && (
+                <div>
+                  <h4 style={{ margin: '0 0 10px', fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Icon name="sparkles" size={15} color={theme.accent} />
+                    <span>{lang === 'en' ? 'Amenities & Features' : 'Servicios y Amenidades'}</span>
+                  </h4>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {activeServiceList.map((s) => (
+                      <span
+                        key={s.key}
+                        style={{
+                          fontSize: '12.5px',
+                          fontWeight: '700',
+                          color: '#0F172A',
+                          background: '#F8FAFC',
+                          border: '1.5px solid #E2E8F0',
+                          padding: '6px 12px',
+                          borderRadius: '20px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
+                        }}
+                      >
+                        <Icon name={s.icon} size={14} color={theme.accent} />
+                        <span>{s.label}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Galería de Fotos */}
               {details?.fotos && details.fotos.length > 0 && (
                 <div>
-                  <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    📸 {lang === 'en' ? 'Photos Gallery' : 'Galería de Fotos'}
+                  <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Icon name="image" size={15} color={theme.accent} />
+                    <span>{lang === 'en' ? 'Photo Gallery' : 'Galería de Fotos'}</span>
                   </h4>
                   <div
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-                      gap: '14px'
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))',
+                      gap: '12px'
                     }}
                   >
                     {details.fotos.map((url, i) => (
@@ -417,7 +597,7 @@ export default function BusinessProfileModal({
                         style={{
                           borderRadius: '14px',
                           overflow: 'hidden',
-                          height: '130px',
+                          height: '125px',
                           cursor: 'pointer',
                           border: '1px solid rgba(20, 109, 158, 0.12)',
                           boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
@@ -475,11 +655,14 @@ export default function BusinessProfileModal({
                       borderRadius: '50%',
                       width: '40px',
                       height: '40px',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
                     }}
                     onClick={() => setSelectedPhoto(null)}
                   >
-                    ✕
+                    <Icon name="x" size={20} color="#FFFFFF" />
                   </button>
                 </div>
               )}
@@ -488,8 +671,9 @@ export default function BusinessProfileModal({
               {details?.servicios?.has_hours && details?.horarios && (
                 <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.1)', paddingTop: '20px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                    <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      ⏰ {lang === 'en' ? 'Opening Hours' : 'Horarios de Atención'}
+                    <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Icon name="clock" size={15} color={theme.accent} />
+                      <span>{lang === 'en' ? 'Opening Hours' : 'Horarios de Atención'}</span>
                     </h4>
                     {isBusinessOpenNow && isBusinessOpenNow(details.horarios) !== null && (
                       <span
@@ -501,9 +685,13 @@ export default function BusinessProfileModal({
                           borderRadius: '6px',
                           backgroundColor: isBusinessOpenNow(details.horarios) ? 'rgba(23, 170, 74, 0.12)' : 'rgba(239,68,68,0.12)',
                           color: isBusinessOpenNow(details.horarios) ? '#17AA4A' : '#ef4444',
-                          border: `1px solid ${isBusinessOpenNow(details.horarios) ? 'rgba(23, 170, 74, 0.25)' : 'rgba(239,68,68,0.25)'}`
+                          border: `1px solid ${isBusinessOpenNow(details.horarios) ? 'rgba(23, 170, 74, 0.25)' : 'rgba(239,68,68,0.25)'}`,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px'
                         }}
                       >
+                        <Icon name={isBusinessOpenNow(details.horarios) ? 'check' : 'x'} size={12} color={isBusinessOpenNow(details.horarios) ? '#17AA4A' : '#ef4444'} />
                         {isBusinessOpenNow(details.horarios)
                           ? (lang === 'en' ? 'Open Now' : 'Abierto Ahora')
                           : (lang === 'en' ? 'Closed' : 'Cerrado')}
@@ -532,7 +720,7 @@ export default function BusinessProfileModal({
                             display: 'flex',
                             justifyContent: 'space-between',
                             fontSize: '13.5px',
-                            color: isToday ? '#1A1A2E' : '#4A5568',
+                            color: isToday ? '#1E293B' : '#64748B',
                             fontWeight: isToday ? '800' : '500',
                             padding: '4px 0',
                             borderBottom: '1px dashed rgba(20, 109, 158, 0.08)'
@@ -556,15 +744,16 @@ export default function BusinessProfileModal({
           {/* PESTAÑA 2: MENÚ & SERVICIOS */}
           {activeTab === 'menu' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                🍽️ {t('dashboard.menu') || 'Platillos y Servicios'}
+              <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Icon name="utensils" size={16} color={theme.accent} />
+                <span>{t('dashboard.menu') || 'Platillos y Servicios'}</span>
               </h4>
 
               {menu.length === 0 ? (
                 <div
                   className="clay-card-static"
                   style={{
-                    padding: '32px 20px',
+                    padding: '36px 20px',
                     textAlign: 'center',
                     display: 'flex',
                     flexDirection: 'column',
@@ -572,9 +761,11 @@ export default function BusinessProfileModal({
                     gap: '12px'
                   }}
                 >
-                  <span style={{ fontSize: '40px' }}>🍲</span>
+                  <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Icon name="utensils" size={28} color="#94A3B8" />
+                  </div>
                   <p style={{ margin: 0, fontSize: '14px', color: '#64748B', fontWeight: '600' }}>
-                    {lang === 'en' ? 'No menu or services items published yet.' : 'No hay platillos o servicios publicados aún para este negocio.'}
+                    {lang === 'en' ? 'No menu or services published yet.' : 'No hay platillos o servicios publicados aún para este negocio.'}
                   </p>
                 </div>
               ) : (
@@ -594,7 +785,8 @@ export default function BusinessProfileModal({
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-between',
-                        gap: '12px'
+                        gap: '12px',
+                        opacity: item.disponible === false ? 0.6 : 1
                       }}
                     >
                       <div style={{ display: 'flex', gap: '14px' }}>
@@ -603,9 +795,9 @@ export default function BusinessProfileModal({
                             src={item.foto_url}
                             alt={item.nombre}
                             style={{
-                              width: '56px',
-                              height: '56px',
-                              borderRadius: '12px',
+                              width: '58px',
+                              height: '58px',
+                              borderRadius: '14px',
                               objectFit: 'cover',
                               border: '1px solid rgba(20, 109, 158, 0.12)',
                               flexShrink: 0
@@ -614,24 +806,30 @@ export default function BusinessProfileModal({
                         ) : (
                           <div
                             style={{
-                              width: '56px',
-                              height: '56px',
-                              borderRadius: '12px',
+                              width: '58px',
+                              height: '58px',
+                              borderRadius: '14px',
                               background: '#F1F5F9',
                               display: 'flex',
                               justifyContent: 'center',
                               alignItems: 'center',
-                              fontSize: '22px',
                               border: '1px solid rgba(20, 109, 158, 0.12)',
                               flexShrink: 0
                             }}
                           >
-                            🍲
+                            <Icon name="utensils" size={24} color="#94A3B8" />
                           </div>
                         )}
 
                         <div style={{ flex: 1 }}>
-                          <p style={{ margin: 0, fontSize: '15px', fontWeight: '800', color: '#1A1A2E' }}>{item.nombre}</p>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <p style={{ margin: 0, fontSize: '15px', fontWeight: '800', color: '#0F172A' }}>{item.nombre}</p>
+                            {item.disponible === false && (
+                              <span style={{ fontSize: '10px', fontWeight: '800', color: '#EF4444', background: '#FEE2E2', padding: '2px 6px', borderRadius: '4px' }}>
+                                {lang === 'en' ? 'Unavailable' : 'Agotado'}
+                              </span>
+                            )}
+                          </div>
                           {item.descripcion && (
                             <p style={{ margin: '4px 0 0', fontSize: '12.5px', color: '#64748B', lineHeight: 1.4 }}>
                               {item.descripcion}
@@ -656,8 +854,9 @@ export default function BusinessProfileModal({
           {activeTab === 'reservas' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '580px', margin: '0 auto', width: '100%' }}>
               <div style={{ textAlign: 'center' }}>
-                <h4 style={{ margin: '0 0 6px', fontSize: '18px', fontWeight: '850', color: '#1A1A2E' }}>
-                  🏨 {t('reservations.title') || 'Reserva Directa'}
+                <h4 style={{ margin: '0 0 6px', fontSize: '18px', fontWeight: '850', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <Icon name="calendar" size={20} color={theme.accent} />
+                  <span>{t('reservations.title') || 'Reserva Directa'}</span>
                 </h4>
                 <p style={{ margin: 0, fontSize: '13.5px', color: '#64748B' }}>
                   {lang === 'en' ? 'Reserve your spot directly with this business' : 'Reserva directamente con este establecimiento sin intermediarios'}
@@ -665,17 +864,20 @@ export default function BusinessProfileModal({
               </div>
 
               {reservaSuccess ? (
-                <div className="clay-card-static" style={{ background: 'rgba(23, 170, 74, 0.10)', border: '1.5px solid #17AA4A', color: '#17AA4A', padding: '20px', textAlign: 'center', fontWeight: '700', borderRadius: '16px' }}>
-                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>🎉</div>
+                <div className="clay-card-static" style={{ background: 'rgba(23, 170, 74, 0.10)', border: '1.5px solid #17AA4A', color: '#17AA4A', padding: '24px', textAlign: 'center', fontWeight: '700', borderRadius: '16px' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                    <Icon name="checkCircle" size={28} color="#16A34A" />
+                  </div>
                   <div style={{ fontSize: '16px', fontWeight: '850' }}>{t('reservations.success') || '¡Reserva enviada con éxito!'}</div>
-                  <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#4A5568', fontWeight: 'normal' }}>
+                  <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#475569', fontWeight: 'normal' }}>
                     {lang === 'en' ? 'The business will contact you shortly to confirm your booking.' : 'El negocio se pondrá en contacto contigo muy pronto para confirmar tu reserva.'}
                   </p>
                 </div>
               ) : !userSession ? (
                 <div className="clay-card-static" style={{ padding: '24px', textAlign: 'center' }}>
-                  <p style={{ margin: '0 0 14px', fontSize: '14px', color: '#4A5568', fontWeight: '600' }}>
-                    🔑 {t('reservations.loginRequired') || 'Inicia sesión para realizar reservas'}
+                  <p style={{ margin: '0 0 14px', fontSize: '14px', color: '#475569', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <Icon name="lock" size={16} color="#64748B" />
+                    <span>{t('reservations.loginRequired') || 'Inicia sesión para realizar reservas'}</span>
                   </p>
                   <a
                     href="/login"
@@ -693,7 +895,7 @@ export default function BusinessProfileModal({
               ) : (
                 <form onSubmit={handleCrearReserva} className="clay-card-static" style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px' }}>
                   <div>
-                    <label style={{ fontSize: '12.5px', fontWeight: '800', color: '#1A1A2E', display: 'block', marginBottom: '6px' }}>
+                    <label style={{ fontSize: '12.5px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '6px' }}>
                       {t('reservations.type') || 'Tipo de Reserva'}
                     </label>
                     <select
@@ -711,8 +913,9 @@ export default function BusinessProfileModal({
 
                   <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
                     <div>
-                      <label style={{ fontSize: '12.5px', fontWeight: '800', color: '#1A1A2E', display: 'block', marginBottom: '6px' }}>
-                        📅 {t('reservations.date') || 'Fecha y Hora'}
+                      <label style={{ fontSize: '12.5px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
+                        <Icon name="calendar" size={14} color="#64748B" />
+                        <span>{t('reservations.date') || 'Fecha y Hora'}</span>
                       </label>
                       <input
                         type="datetime-local"
@@ -725,8 +928,9 @@ export default function BusinessProfileModal({
                     </div>
 
                     <div>
-                      <label style={{ fontSize: '12.5px', fontWeight: '800', color: '#1A1A2E', display: 'block', marginBottom: '6px' }}>
-                        🧑‍🤝‍🧑 {t('reservations.people') || 'Personas'}
+                      <label style={{ fontSize: '12.5px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
+                        <Icon name="users" size={14} color="#64748B" />
+                        <span>{t('reservations.people') || 'Personas'}</span>
                       </label>
                       <input
                         type="number"
@@ -741,8 +945,9 @@ export default function BusinessProfileModal({
                   </div>
 
                   <div>
-                    <label style={{ fontSize: '12.5px', fontWeight: '800', color: '#1A1A2E', display: 'block', marginBottom: '6px' }}>
-                      📝 {t('reservations.notes') || 'Notas especiales o peticiones'}
+                    <label style={{ fontSize: '12.5px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
+                      <Icon name="fileText" size={14} color="#64748B" />
+                      <span>{t('reservations.notes') || 'Notas especiales o peticiones'}</span>
                     </label>
                     <textarea
                       rows="3"
@@ -771,12 +976,14 @@ export default function BusinessProfileModal({
           {activeTab === 'reseñas' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-                <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  ⭐ {t('reviews.title') || 'Reseñas de la Comunidad'}
+                <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#0F172A', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Icon name="star" size={16} color="#B8960E" />
+                  <span>{t('reviews.title') || 'Reseñas de la Comunidad'}</span>
                 </h4>
                 {avgRating && (
-                  <div style={{ fontSize: '14px', fontWeight: '800', color: '#B8960E' }}>
-                    Calificación promedio: ★ {avgRating} / 5.0
+                  <div style={{ fontSize: '14px', fontWeight: '800', color: '#B8960E', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <Icon name="starFilled" size={15} color="#B8960E" />
+                    <span>Calificación promedio: {avgRating} / 5.0</span>
                   </div>
                 )}
               </div>
@@ -784,8 +991,9 @@ export default function BusinessProfileModal({
               {/* Formulario de Reseña */}
               {!userSession ? (
                 <div className="clay-card-static" style={{ padding: '18px', textAlign: 'center' }}>
-                  <p style={{ margin: '0 0 10px', fontSize: '13.5px', color: '#4A5568', fontWeight: '600' }}>
-                    🔑 {lang === 'en' ? 'Log in to write reviews & comments' : 'Inicia sesión para escribir reseñas y comentarios'}
+                  <p style={{ margin: '0 0 10px', fontSize: '13.5px', color: '#475569', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <Icon name="lock" size={16} color="#64748B" />
+                    <span>{lang === 'en' ? 'Log in to write reviews & comments' : 'Inicia sesión para escribir reseñas y comentarios'}</span>
                   </p>
                   <a
                     href="/login"
@@ -802,20 +1010,22 @@ export default function BusinessProfileModal({
                 </div>
               ) : (
                 <form onSubmit={handleCrearResena} className="clay-card-static" style={{ display: 'flex', flexDirection: 'column', gap: '14px', padding: '20px' }}>
-                  <p style={{ margin: 0, fontSize: '14px', fontWeight: '800', color: '#B8960E' }}>
-                    ✍️ {t('reviews.writeReview') || 'Escribir una Reseña'}
+                  <p style={{ margin: 0, fontSize: '14px', fontWeight: '800', color: '#B8960E', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Icon name="edit" size={16} color="#B8960E" />
+                    <span>{t('reviews.writeReview') || 'Escribir una Reseña'}</span>
                   </p>
 
                   {reviewErrorMsg && (
-                    <div style={{ color: '#ef4444', fontSize: '12.5px', fontWeight: '600', background: 'rgba(239,68,68,0.1)', padding: '10px 12px', borderRadius: '8px' }}>
-                      ⚠ {reviewErrorMsg}
+                    <div style={{ color: '#ef4444', fontSize: '12.5px', fontWeight: '600', background: 'rgba(239,68,68,0.1)', padding: '10px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Icon name="alertTriangle" size={16} color="#ef4444" />
+                      <span>{reviewErrorMsg}</span>
                     </div>
                   )}
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                     <div>
-                      <label style={{ fontSize: '12px', fontWeight: '800', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                        👤 {t('reviews.yourName') || 'Tu Nombre'}
+                      <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                        {t('reviews.yourName') || 'Tu Nombre'}
                       </label>
                       <input
                         type="text"
@@ -830,8 +1040,8 @@ export default function BusinessProfileModal({
                     </div>
 
                     <div>
-                      <label style={{ fontSize: '12px', fontWeight: '800', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                        ⭐ {t('reviews.rating') || 'Calificación'}
+                      <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                        {t('reviews.rating') || 'Calificación'}
                       </label>
                       <div style={{ display: 'flex', gap: '6px', alignItems: 'center', paddingTop: '4px' }}>
                         {[1, 2, 3, 4, 5].map((star) => (
@@ -842,14 +1052,16 @@ export default function BusinessProfileModal({
                             style={{
                               background: 'none',
                               border: 'none',
-                              fontSize: '24px',
                               cursor: 'pointer',
                               padding: 0,
-                              color: star <= newReviewEstrellas ? '#B8960E' : 'rgba(20, 109, 158, 0.2)',
                               transition: 'transform 0.1s ease'
                             }}
                           >
-                            ★
+                            <Icon
+                              name={star <= newReviewEstrellas ? 'starFilled' : 'star'}
+                              size={22}
+                              color={star <= newReviewEstrellas ? '#B8960E' : '#CBD5E1'}
+                            />
                           </button>
                         ))}
                       </div>
@@ -857,8 +1069,8 @@ export default function BusinessProfileModal({
                   </div>
 
                   <div>
-                    <label style={{ fontSize: '12px', fontWeight: '800', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                      💬 {t('reviews.yourComment') || 'Tu Comentario'}
+                    <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                      {t('reviews.yourComment') || 'Tu Comentario'}
                     </label>
                     <textarea
                       required
@@ -892,12 +1104,22 @@ export default function BusinessProfileModal({
                   reviews.map((rev) => (
                     <div key={rev.id} className="clay-card-static" style={{ padding: '16px 20px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '800', color: '#1A1A2E' }}>{rev.autor_nombre}</span>
-                        <span style={{ fontSize: '14px', color: '#B8960E' }}>
-                          {'★'.repeat(rev.estrellas)}{'☆'.repeat(5 - rev.estrellas)}
+                        <span style={{ fontSize: '14px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Icon name="user" size={14} color="#64748B" />
+                          <span>{rev.autor_nombre}</span>
                         </span>
+                        <div style={{ display: 'flex', gap: '2px' }}>
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <Icon
+                              key={s}
+                              name={s <= rev.estrellas ? 'starFilled' : 'star'}
+                              size={14}
+                              color={s <= rev.estrellas ? '#B8960E' : '#E2E8F0'}
+                            />
+                          ))}
+                        </div>
                       </div>
-                      <p style={{ margin: 0, fontSize: '13.5px', color: '#4A5568', lineHeight: '1.55' }}>{rev.comentario}</p>
+                      <p style={{ margin: 0, fontSize: '13.5px', color: '#475569', lineHeight: '1.55' }}>{rev.comentario}</p>
                     </div>
                   ))
                 )}

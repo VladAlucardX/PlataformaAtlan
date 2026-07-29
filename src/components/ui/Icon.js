@@ -211,6 +211,47 @@ const icons = {
   family: (p) => (
     <svg {...p}><circle cx="8" cy="5" r="3" /><circle cx="16" cy="5" r="3" /><path d="M3 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" /><path d="M13 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" /></svg>
   ),
+
+  // Servicios y características de negocio
+  wifi: (p) => (
+    <svg {...p}><path d="M5 12.55a11 11 0 0 1 14.08 0" /><path d="M1.42 9a16 16 0 0 1 21.16 0" /><path d="M8.53 16.11a6 6 0 0 1 6.95 0" /><line x1="12" y1="20" x2="12.01" y2="20" /></svg>
+  ),
+  parking: (p) => (
+    <svg {...p}><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 17V7h4a3 3 0 0 1 0 6H9" /></svg>
+  ),
+  pet: (p) => (
+    <svg {...p}><path d="M12 13c-2.5 0-4.5 1.5-4.5 3.5 0 1.5 1 2.5 2.5 2.5 1.2 0 1.6-.7 2-1.2.4.5.8 1.2 2 1.2 1.5 0 2.5-1 2.5-2.5 0-2-2-3.5-4.5-3.5z" /><circle cx="7" cy="8.5" r="1.8" /><circle cx="10.5" cy="6" r="1.8" /><circle cx="13.5" cy="6" r="1.8" /><circle cx="17" cy="8.5" r="1.8" /></svg>
+  ),
+  creditCard: (p) => (
+    <svg {...p}><rect x="1" y="4" width="22" height="16" rx="2" ry="2" /><line x1="1" y1="10" x2="23" y2="10" /></svg>
+  ),
+  phone: (p) => (
+    <svg {...p}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
+  ),
+  whatsapp: (p) => (
+    <svg {...p}><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" strokeWidth="2.2" /></svg>
+  ),
+  info: (p) => (
+    <svg {...p}><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+  ),
+  hourglass: (p) => (
+    <svg {...p}><path d="M5 22h14" /><path d="M5 2h14" /><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22" /><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" /></svg>
+  ),
+  accessibility: (p) => (
+    <svg {...p}><circle cx="12" cy="4" r="2" /><path d="M12 6v7" /><path d="M8 9h8" /><path d="M8 20l4-7 4 7" /></svg>
+  ),
+  delivery: (p) => (
+    <svg {...p}><rect x="1" y="3" width="14" height="12" rx="2" /><polygon points="15 7 19 7 22 10 22 15 15 15 15 7" /><circle cx="5.5" cy="17.5" r="2.5" /><circle cx="17.5" cy="17.5" r="2.5" /></svg>
+  ),
+  ac: (p) => (
+    <svg {...p}><rect x="2" y="4" width="20" height="8" rx="2" /><path d="M6 16v4" /><path d="M12 16v4" /><path d="M18 16v4" /></svg>
+  ),
+  music: (p) => (
+    <svg {...p}><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>
+  ),
+  claim: (p) => (
+    <svg {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><polyline points="16 11 18 13 22 9" /></svg>
+  ),
 };
 
 export default function Icon({ name, size = 18, color = "currentColor", strokeWidth = 2, className = "", style = {}, fill }) {
