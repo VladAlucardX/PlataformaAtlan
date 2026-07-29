@@ -2828,22 +2828,22 @@ export default function MapaTuristico() {
                   scrollbarWidth: 'thin',
                   scrollbarColor: 'rgba(20,109,158,0.1) transparent'
                 }}>
-                  {/* BOTONES DE ACCIÓN: AZUL Y AMARILLO CON ESTILO CARTEL NEÓN DE LA SECCIÓN DESCUBRE NICARAGUA */}
+                  {/* BOTONES DE ACCIÓN: CARTEL NEÓN OSCURO (INICIAR VIAJE) Y CARTEL NEÓN AMARILLO (MOSTRAR MÁS) */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <button
                       onClick={() => handleIniciarViaje(selectedPoint)}
-                      className="neon-btn-blue"
+                      className="neon-map-btn-dark"
                       style={{
                         width: '100%',
-                        padding: '12px 8px',
+                        padding: '13px 8px',
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '7px'
                       }}
                     >
-                      <img src="/ir.svg" alt="Ir" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 0 6px #FFD700) brightness(0) invert(1)' }} />
                       <span
+                        className="neon-sign-text"
                         style={{
                           fontSize: '12.5px',
                           fontWeight: '900',
@@ -2857,33 +2857,37 @@ export default function MapaTuristico() {
                       >
                         {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
                       </span>
+                      <img src="/ir.svg" alt="Ir" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 0 6px #FFD700) brightness(0) invert(1)' }} />
                     </button>
 
                     <button
                       onClick={() => setShowFullProfileModal(true)}
-                      className="neon-btn-gold"
+                      className="neon-map-btn-yellow"
                       style={{
                         width: '100%',
-                        padding: '12px 8px',
+                        padding: '13px 8px',
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '7px'
                       }}
                     >
-                      <img src="/more.svg" alt="Mostrar más" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 0 3px rgba(0,0,0,0.3))' }} />
                       <span
+                        className="neon-sign-text-white-bg"
                         style={{
-                          fontSize: '12.5px',
+                          fontSize: '12px',
                           fontWeight: '900',
-                          letterSpacing: '1px',
-                          color: '#1A1A2E',
+                          letterSpacing: '0.8px',
+                          color: '#FFFFFF',
                           textTransform: 'uppercase',
-                          textShadow: '0 1px 2px rgba(255, 255, 255, 0.6)'
+                          WebkitTextStroke: '1.2px #000000',
+                          paintOrder: 'stroke fill',
+                          textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)'
                         }}
                       >
                         {lang === 'en' ? 'Show More' : 'Mostrar más'}
                       </span>
+                      <img src="/more.svg" alt="Mostrar más" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }} />
                     </button>
                   </div>
 
