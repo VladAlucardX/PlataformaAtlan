@@ -2828,45 +2828,45 @@ export default function MapaTuristico() {
                   scrollbarWidth: 'thin',
                   scrollbarColor: 'rgba(20,109,158,0.1) transparent'
                 }}>
-                  {/* BOTONES DE ACCIÓN PRINCIPALES */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {/* BOTONES DE ACCIÓN PRINCIPALES EN UNA MISMA FILA */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                     <button
                       onClick={() => handleIniciarViaje(selectedPoint)}
-                      className="clay-btn-blue"
+                      className="clay-btn-blue shine-sweep-btn"
                       style={{
                         width: '100%',
-                        padding: '12px 18px',
-                        fontSize: '14px',
+                        padding: '11px 12px',
+                        fontSize: '13.5px',
                         color: '#FFFFFF',
-                        display: 'flex',
+                        display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '8px',
+                        gap: '6px',
                         borderRadius: '12px'
                       }}
                     >
-                      <Icon name="navigation" size={16} color="#FFFFFF" />
+                      <Icon name="ir" size={17} color="#FFFFFF" />
                       <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
                     </button>
 
                     <button
                       onClick={() => setShowFullProfileModal(true)}
-                      className="clay-btn-gold"
+                      className="clay-btn-gold shine-sweep-btn"
                       style={{
                         width: '100%',
-                        padding: '12px 18px',
-                        fontSize: '13.5px',
+                        padding: '11px 12px',
+                        fontSize: '13px',
                         fontWeight: '800',
-                        display: 'flex',
+                        display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '8px',
+                        gap: '6px',
                         borderRadius: '12px',
                         boxShadow: '0 4px 14px rgba(212, 175, 55, 0.25)'
                       }}
                     >
-                      <Icon name="sparkles" size={16} color="#1A1A2E" />
-                      <span>{lang === 'en' ? 'Show More & Services' : 'Mostrar más (Perfil y Servicios)'}</span>
+                      <Icon name="more" size={17} color="#1A1A2E" />
+                      <span>{lang === 'en' ? 'Show More' : 'Mostrar más'}</span>
                     </button>
                   </div>
 
@@ -2948,7 +2948,66 @@ export default function MapaTuristico() {
                       </p>
                     </div>
 
-                    {/* BARRA DE CONTACTO DIRECTO Y REDES SOCIALES (JUSTO DEBAJO DE ACERCA DE) */}
+                    {/* GALERÍA DE 6 ESPACIOS (3 COLUMNAS X 2 FILAS) CON PLACEHOLDER PRÓXIMAMENTE */}
+                    <div>
+                      <h4 style={{ margin: '0 0 8px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <Icon name="image" size={13} color="#64748B" />
+                        <span>{lang === 'en' ? 'Photos & Media' : 'Galería de Fotos'} ({selectedPointDetails?.fotos?.length || 0}/6)</span>
+                      </h4>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                        {[0, 1, 2, 3, 4, 5].map((index) => {
+                          const photoUrl = selectedPointDetails?.fotos?.[index];
+
+                          if (photoUrl) {
+                            return (
+                              <div
+                                key={index}
+                                style={{
+                                  height: '70px',
+                                  borderRadius: '10px',
+                                  overflow: 'hidden',
+                                  border: '1px solid rgba(20, 109, 158, 0.12)',
+                                  boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
+                                }}
+                              >
+                                <img
+                                  src={photoUrl}
+                                  alt={`Foto ${index + 1}`}
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <div
+                              key={index}
+                              style={{
+                                height: '70px',
+                                borderRadius: '10px',
+                                border: '1.5px dashed rgba(20, 109, 158, 0.22)',
+                                background: 'rgba(20, 109, 158, 0.03)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '3px',
+                                padding: '4px',
+                                textAlign: 'center'
+                              }}
+                            >
+                              <Icon name="image" size={17} color="#94A3B8" />
+                              <span style={{ fontSize: '9.5px', fontWeight: '750', color: '#94A3B8', lineHeight: '1.1' }}>
+                                {lang === 'en' ? 'Coming Soon' : 'Próximamente'}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* BARRA DE CONTACTO DIRECTO Y REDES SOCIALES (JUSTO DEBAJO DE LAS IMÁGENES) */}
                     {(() => {
                       const phone = selectedPointDetails?.telefono;
                       const whatsapp = selectedPointDetails?.whatsapp;
@@ -3112,65 +3171,6 @@ export default function MapaTuristico() {
                         </div>
                       );
                     })()}
-
-                    {/* GALERÍA DE 5 ESPACIOS (3 COLUMNAS) CON PLACEHOLDER PRÓXIMAMENTE */}
-                    <div>
-                      <h4 style={{ margin: '0 0 8px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <Icon name="image" size={13} color="#64748B" />
-                        <span>{lang === 'en' ? 'Photos & Media' : 'Galería de Fotos'} ({selectedPointDetails?.fotos?.length || 0}/5)</span>
-                      </h4>
-
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                        {[0, 1, 2, 3, 4].map((index) => {
-                          const photoUrl = selectedPointDetails?.fotos?.[index];
-
-                          if (photoUrl) {
-                            return (
-                              <div
-                                key={index}
-                                style={{
-                                  height: '72px',
-                                  borderRadius: '10px',
-                                  overflow: 'hidden',
-                                  border: '1px solid rgba(20, 109, 158, 0.12)',
-                                  boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
-                                }}
-                              >
-                                <img
-                                  src={photoUrl}
-                                  alt={`Foto ${index + 1}`}
-                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                />
-                              </div>
-                            );
-                          }
-
-                          return (
-                            <div
-                              key={index}
-                              style={{
-                                height: '72px',
-                                borderRadius: '10px',
-                                border: '1.5px dashed rgba(20, 109, 158, 0.22)',
-                                background: 'rgba(20, 109, 158, 0.03)',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '3px',
-                                padding: '4px',
-                                textAlign: 'center'
-                              }}
-                            >
-                              <Icon name="image" size={18} color="#94A3B8" />
-                              <span style={{ fontSize: '9.5px', fontWeight: '750', color: '#94A3B8', lineHeight: '1.1' }}>
-                                {lang === 'en' ? 'Coming Soon' : 'Próximamente'}
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
                   </div>
 
                   {/* BOTÓN RECLAMAR NEGOCIO SI APLICA */}

@@ -261,6 +261,12 @@ const icons = {
   claim: (p) => (
     <svg {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><polyline points="16 11 18 13 22 9" /></svg>
   ),
+  ir: (p) => (
+    <svg {...p}><polygon points="3 11 22 2 13 21 11 13 3 11" fill="currentColor" fillOpacity="0.2" /></svg>
+  ),
+  more: (p) => (
+    <svg {...p}><path d="M12 2v20M2 12h20" strokeWidth="2.5" strokeLinecap="round" /><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" strokeWidth="1.5" /></svg>
+  ),
 };
 
 export default function Icon({ name, size = 18, color = "currentColor", strokeWidth = 2, className = "", style = {}, fill }) {
