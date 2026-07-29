@@ -2857,7 +2857,7 @@ export default function MapaTuristico() {
                       >
                         {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
                       </span>
-                      <img src="/ir.svg" alt="Ir" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 0 6px #FFD700) brightness(0) invert(1)' }} />
+                      <img src="/images/ir.svg" alt="Ir" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 0 6px #FFD700) brightness(0) invert(1)' }} />
                     </button>
 
                     <button
@@ -2887,7 +2887,7 @@ export default function MapaTuristico() {
                       >
                         {lang === 'en' ? 'Show More' : 'Mostrar más'}
                       </span>
-                      <img src="/more1.svg" alt="Mostrar más" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }} />
+                      <img src="/images/more1.svg" alt="Mostrar más" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5)) brightness(0) invert(1)' }} />
                     </button>
                   </div>
 
