@@ -2828,24 +2828,26 @@ export default function MapaTuristico() {
                   scrollbarWidth: 'thin',
                   scrollbarColor: 'rgba(20,109,158,0.1) transparent'
                 }}>
-                  {/* BOTONES DE ACCIÓN PRINCIPALES EN UNA MISMA FILA */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  {/* BOTONES DE ACCIÓN PRINCIPALES EN UNA MISMA FILA CON ESTILO PÁGINA PRINCIPAL */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <button
                       onClick={() => handleIniciarViaje(selectedPoint)}
                       className="clay-btn-blue shine-sweep-btn"
                       style={{
                         width: '100%',
-                        padding: '11px 12px',
+                        padding: '12px 14px',
                         fontSize: '13.5px',
+                        fontWeight: '850',
                         color: '#FFFFFF',
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '6px',
-                        borderRadius: '12px'
+                        gap: '8px',
+                        borderRadius: '9999px',
+                        boxShadow: 'inset 3px 3px 6px rgba(255, 255, 255, 0.4), inset -4px -4px 8px rgba(13, 78, 114, 0.4), 0 8px 20px -4px rgba(20, 109, 158, 0.35)'
                       }}
                     >
-                      <Icon name="ir" size={17} color="#FFFFFF" />
+                      <img src="/ir.svg" alt="Ir" style={{ width: '18px', height: '18px', filter: 'brightness(0) invert(1)' }} />
                       <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
                     </button>
 
@@ -2854,18 +2856,19 @@ export default function MapaTuristico() {
                       className="clay-btn-gold shine-sweep-btn"
                       style={{
                         width: '100%',
-                        padding: '11px 12px',
-                        fontSize: '13px',
-                        fontWeight: '800',
+                        padding: '12px 14px',
+                        fontSize: '13.5px',
+                        fontWeight: '850',
+                        color: '#1A1A2E',
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '6px',
-                        borderRadius: '12px',
-                        boxShadow: '0 4px 14px rgba(212, 175, 55, 0.25)'
+                        gap: '8px',
+                        borderRadius: '9999px',
+                        boxShadow: 'inset 3px 3px 6px rgba(255, 255, 255, 0.8), inset -4px -4px 8px rgba(180, 140, 0, 0.35), 0 8px 20px -4px rgba(255, 215, 0, 0.45)'
                       }}
                     >
-                      <Icon name="more" size={17} color="#1A1A2E" />
+                      <img src="/more.svg" alt="Mostrar más" style={{ width: '18px', height: '18px' }} />
                       <span>{lang === 'en' ? 'Show More' : 'Mostrar más'}</span>
                     </button>
                   </div>
