@@ -2828,11 +2828,11 @@ export default function MapaTuristico() {
                   scrollbarWidth: 'thin',
                   scrollbarColor: 'rgba(20,109,158,0.1) transparent'
                 }}>
-                  {/* BOTONES DE ACCIÓN CON ESTILO CARTEL NEÓN (DESCUBRE NICARAGUA) */}
+                  {/* BOTONES DE ACCIÓN: AZUL Y AMARILLO CON ESTILO CARTEL NEÓN DE LA SECCIÓN DESCUBRE NICARAGUA */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <button
                       onClick={() => handleIniciarViaje(selectedPoint)}
-                      className="neon-btn-sign"
+                      className="neon-btn-blue"
                       style={{
                         width: '100%',
                         padding: '12px 8px',
@@ -2861,7 +2861,7 @@ export default function MapaTuristico() {
 
                     <button
                       onClick={() => setShowFullProfileModal(true)}
-                      className="neon-btn-sign"
+                      className="neon-btn-gold"
                       style={{
                         width: '100%',
                         padding: '12px 8px',
@@ -2871,17 +2871,15 @@ export default function MapaTuristico() {
                         gap: '7px'
                       }}
                     >
-                      <img src="/more.svg" alt="Mostrar más" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 0 6px #FFD700) brightness(0) invert(1)' }} />
+                      <img src="/more.svg" alt="Mostrar más" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 0 3px rgba(0,0,0,0.3))' }} />
                       <span
                         style={{
                           fontSize: '12.5px',
                           fontWeight: '900',
                           letterSpacing: '1px',
-                          color: '#FFFFFF',
+                          color: '#1A1A2E',
                           textTransform: 'uppercase',
-                          WebkitTextStroke: '1px #FFD700',
-                          paintOrder: 'stroke fill',
-                          textShadow: '0 0 8px rgba(255, 215, 0, 0.85)'
+                          textShadow: '0 1px 2px rgba(255, 255, 255, 0.6)'
                         }}
                       >
                         {lang === 'en' ? 'Show More' : 'Mostrar más'}
