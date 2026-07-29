@@ -7,6 +7,10 @@
 
 /* ── PALETA DE COLORES ────────────────────────────────────────────────────── */
 :root {
+  /* Fuentes */
+  --font-outfit:         'Outfit', system-ui, -apple-system, sans-serif;
+  --font-inter:          'Inter', system-ui, -apple-system, sans-serif;
+
   /* Primarios — Gold */
   --atlan-gold:          #FFD700;
   --atlan-gold-light:    #FFDF33;
