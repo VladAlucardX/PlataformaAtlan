@@ -2635,7 +2635,7 @@ export default function MapaTuristico() {
                 {/* PORTADA / HERO COVER DEL NEGOCIO */}
                 <div
                   style={{
-                    height: heroImg ? '110px' : '75px',
+                    height: heroImg ? '150px' : '120px',
                     background: heroImg ? `url(${heroImg}) center/cover no-repeat` : coverGradient,
                     position: 'relative',
                     flexShrink: 0
@@ -2646,34 +2646,34 @@ export default function MapaTuristico() {
                       position: 'absolute',
                       inset: 0,
                       background: heroImg
-                        ? 'linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(10,15,28,0.7) 100%)'
+                        ? 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(10,15,28,0.7) 100%)'
                         : 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 100%)'
                     }}
                   />
 
                   {/* ACCIONES SUPERIORES FLOTANTES */}
-                  <div style={{ position: 'absolute', top: '12px', right: '14px', display: 'flex', gap: '6px', zIndex: 2 }}>
+                  <div style={{ position: 'absolute', top: '14px', right: '14px', display: 'flex', gap: '8px', zIndex: 2 }}>
                     {userSession && (
                       <button
                         onClick={handleToggleFavorite}
                         title={isFavorite ? (lang === 'en' ? 'Remove Favorite' : 'Quitar de Favoritos') : (lang === 'en' ? 'Save Favorite' : 'Guardar Favorito')}
                         style={{
-                          background: 'rgba(255, 255, 255, 0.88)',
+                          background: 'rgba(255, 255, 255, 0.9)',
                           backdropFilter: 'blur(8px)',
-                          border: isFavorite ? '1.5px solid #FFD700' : '1px solid rgba(255,255,255,0.4)',
+                          border: isFavorite ? '1.5px solid #FFD700' : '1px solid rgba(255,255,255,0.5)',
                           color: isFavorite ? '#B8960E' : '#475569',
-                          width: '34px',
-                          height: '34px',
+                          width: '36px',
+                          height: '36px',
                           borderRadius: '50%',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
                           transition: 'transform 0.2s'
                         }}
                       >
-                        <Icon name={isFavorite ? 'heartFilled' : 'heart'} size={16} color={isFavorite ? '#B8960E' : '#475569'} />
+                        <Icon name={isFavorite ? 'heartFilled' : 'heart'} size={17} color={isFavorite ? '#B8960E' : '#475569'} />
                       </button>
                     )}
 
@@ -2683,40 +2683,40 @@ export default function MapaTuristico() {
                         setShowFullProfileModal(false);
                       }}
                       style={{
-                        background: 'rgba(255, 255, 255, 0.88)',
+                        background: 'rgba(255, 255, 255, 0.9)',
                         backdropFilter: 'blur(8px)',
-                        border: '1px solid rgba(255,255,255,0.4)',
+                        border: '1px solid rgba(255,255,255,0.5)',
                         color: '#1E293B',
-                        width: '34px',
-                        height: '34px',
+                        width: '36px',
+                        height: '36px',
                         borderRadius: '50%',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
                         transition: 'transform 0.2s'
                       }}
                     >
-                      <Icon name="x" size={16} color="#1E293B" />
+                      <Icon name="x" size={17} color="#1E293B" />
                     </button>
                   </div>
                 </div>
 
                 {/* DATOS PRINCIPALES NEGOCIO */}
-                <div style={{ padding: '0 20px 14px', position: 'relative', marginTop: '-30px' }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '14px', marginBottom: '10px' }}>
+                <div style={{ padding: '0 20px 14px', position: 'relative', marginTop: '-42px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '14px', marginBottom: '8px' }}>
                     {selectedPointDetails?.logo_url ? (
                       <img
                         src={selectedPointDetails.logo_url}
                         alt={selectedPoint.nombre}
                         style={{
-                          width: '60px',
-                          height: '60px',
-                          borderRadius: '16px',
+                          width: '76px',
+                          height: '76px',
+                          borderRadius: '20px',
                           objectFit: 'cover',
-                          border: '3px solid #FFFFFF',
-                          boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+                          border: '3.5px solid #FFFFFF',
+                          boxShadow: '0 8px 20px rgba(0,0,0,0.16)',
                           background: '#FFFFFF',
                           flexShrink: 0
                         }}
@@ -2724,27 +2724,27 @@ export default function MapaTuristico() {
                     ) : (
                       <div
                         style={{
-                          width: '60px',
-                          height: '60px',
-                          borderRadius: '16px',
+                          width: '76px',
+                          height: '76px',
+                          borderRadius: '20px',
                           background: coverGradient,
                           color: '#FFFFFF',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontSize: '24px',
+                          fontSize: '30px',
                           fontWeight: '800',
-                          border: '3px solid #FFFFFF',
-                          boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+                          border: '3.5px solid #FFFFFF',
+                          boxShadow: '0 8px 20px rgba(0,0,0,0.16)',
                           flexShrink: 0
                         }}
                       >
-                        {selectedPoint.nombre?.charAt(0)?.toUpperCase() || <Icon name="building" size={26} color="#FFFFFF" />}
+                        {selectedPoint.nombre?.charAt(0)?.toUpperCase() || <Icon name="building" size={32} color="#FFFFFF" />}
                       </div>
                     )}
 
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '3px' }}>
+                    <div style={{ flex: 1, paddingTop: '10px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '4px' }}>
                         {(() => {
                           let statusText = '';
                           let statusColor = '';
@@ -2772,8 +2772,8 @@ export default function MapaTuristico() {
                               textTransform: 'uppercase',
                               color: statusColor,
                               background: statusBg,
-                              padding: '2px 7px',
-                              borderRadius: '5px',
+                              padding: '2.5px 7.5px',
+                              borderRadius: '6px',
                               border: `1px solid ${statusColor}35`,
                               display: 'inline-flex',
                               alignItems: 'center',
@@ -2791,8 +2791,8 @@ export default function MapaTuristico() {
                             fontWeight: '800',
                             color: '#B8960E',
                             background: 'rgba(255, 215, 0, 0.18)',
-                            padding: '2px 6px',
-                            borderRadius: '5px',
+                            padding: '2.5px 6.5px',
+                            borderRadius: '6px',
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '3px'
@@ -2803,10 +2803,10 @@ export default function MapaTuristico() {
                         )}
                       </div>
 
-                      <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '850', color: '#0F172A', lineHeight: '1.2' }}>
+                      <h2 style={{ margin: 0, fontSize: '21px', fontWeight: '850', color: '#0F172A', lineHeight: '1.25' }}>
                         {selectedPoint.nombre}
                       </h2>
-                      <p style={{ margin: '3px 0 0', fontSize: '12px', color: '#64748B', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <p style={{ margin: '4px 0 0', fontSize: '12.5px', color: '#64748B', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <Icon name="mapPin" size={13} color="#64748B" />
                         <span>{t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}</span>
                         {selectedPointDetails?.rango_precios && (
@@ -3113,31 +3113,64 @@ export default function MapaTuristico() {
                       );
                     })()}
 
-                    {/* Previsualización de Fotos Miniatura */}
-                    {selectedPointDetails?.fotos && selectedPointDetails.fotos.length > 0 && (
-                      <div>
-                        <h4 style={{ margin: '0 0 6px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <Icon name="image" size={13} color="#64748B" />
-                          <span>{lang === 'en' ? 'Photos' : 'Fotos'} ({selectedPointDetails.fotos.length})</span>
-                        </h4>
-                        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '2px' }}>
-                          {selectedPointDetails.fotos.slice(0, 3).map((url, i) => (
-                            <img
-                              key={i}
-                              src={url}
-                              alt="Preview"
+                    {/* GALERÍA DE 5 ESPACIOS (3 COLUMNAS) CON PLACEHOLDER PRÓXIMAMENTE */}
+                    <div>
+                      <h4 style={{ margin: '0 0 8px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <Icon name="image" size={13} color="#64748B" />
+                        <span>{lang === 'en' ? 'Photos & Media' : 'Galería de Fotos'} ({selectedPointDetails?.fotos?.length || 0}/5)</span>
+                      </h4>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                        {[0, 1, 2, 3, 4].map((index) => {
+                          const photoUrl = selectedPointDetails?.fotos?.[index];
+
+                          if (photoUrl) {
+                            return (
+                              <div
+                                key={index}
+                                style={{
+                                  height: '72px',
+                                  borderRadius: '10px',
+                                  overflow: 'hidden',
+                                  border: '1px solid rgba(20, 109, 158, 0.12)',
+                                  boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
+                                }}
+                              >
+                                <img
+                                  src={photoUrl}
+                                  alt={`Foto ${index + 1}`}
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <div
+                              key={index}
                               style={{
-                                width: '76px',
-                                height: '56px',
-                                borderRadius: '8px',
-                                objectFit: 'cover',
-                                border: '1px solid rgba(20, 109, 158, 0.1)'
+                                height: '72px',
+                                borderRadius: '10px',
+                                border: '1.5px dashed rgba(20, 109, 158, 0.22)',
+                                background: 'rgba(20, 109, 158, 0.03)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '3px',
+                                padding: '4px',
+                                textAlign: 'center'
                               }}
-                            />
-                          ))}
-                        </div>
+                            >
+                              <Icon name="image" size={18} color="#94A3B8" />
+                              <span style={{ fontSize: '9.5px', fontWeight: '750', color: '#94A3B8', lineHeight: '1.1' }}>
+                                {lang === 'en' ? 'Coming Soon' : 'Próximamente'}
+                              </span>
+                            </div>
+                          );
+                        })}
                       </div>
-                    )}
+                    </div>
                   </div>
 
                   {/* BOTÓN RECLAMAR NEGOCIO SI APLICA */}

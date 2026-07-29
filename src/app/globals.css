@@ -1499,15 +1499,7 @@ a:hover {
 }
 
 .detail-sheet::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #FFD700 0%, #146D9E 50%, #17AA4A 100%);
-  opacity: 0.85;
-  z-index: 2;
+  display: none !important;
 }
 
 .map-page-wrapper {
