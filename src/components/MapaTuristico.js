@@ -2828,48 +2828,64 @@ export default function MapaTuristico() {
                   scrollbarWidth: 'thin',
                   scrollbarColor: 'rgba(20,109,158,0.1) transparent'
                 }}>
-                  {/* BOTONES DE ACCIÓN PRINCIPALES EN UNA MISMA FILA CON ESTILO PÁGINA PRINCIPAL */}
+                  {/* BOTONES DE ACCIÓN CON ESTILO CARTEL NEÓN (DESCUBRE NICARAGUA) */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <button
                       onClick={() => handleIniciarViaje(selectedPoint)}
-                      className="clay-btn-blue shine-sweep-btn"
+                      className="neon-btn-sign"
                       style={{
                         width: '100%',
-                        padding: '12px 14px',
-                        fontSize: '13.5px',
-                        fontWeight: '850',
-                        color: '#FFFFFF',
+                        padding: '12px 8px',
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '8px',
-                        borderRadius: '9999px',
-                        boxShadow: 'inset 3px 3px 6px rgba(255, 255, 255, 0.4), inset -4px -4px 8px rgba(13, 78, 114, 0.4), 0 8px 20px -4px rgba(20, 109, 158, 0.35)'
+                        gap: '7px'
                       }}
                     >
-                      <img src="/ir.svg" alt="Ir" style={{ width: '18px', height: '18px', filter: 'brightness(0) invert(1)' }} />
-                      <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
+                      <img src="/ir.svg" alt="Ir" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 0 6px #FFD700) brightness(0) invert(1)' }} />
+                      <span
+                        style={{
+                          fontSize: '12.5px',
+                          fontWeight: '900',
+                          letterSpacing: '1px',
+                          color: '#FFFFFF',
+                          textTransform: 'uppercase',
+                          WebkitTextStroke: '1px #FFD700',
+                          paintOrder: 'stroke fill',
+                          textShadow: '0 0 8px rgba(255, 215, 0, 0.85)'
+                        }}
+                      >
+                        {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
+                      </span>
                     </button>
 
                     <button
                       onClick={() => setShowFullProfileModal(true)}
-                      className="clay-btn-gold shine-sweep-btn"
+                      className="neon-btn-sign"
                       style={{
                         width: '100%',
-                        padding: '12px 14px',
-                        fontSize: '13.5px',
-                        fontWeight: '850',
-                        color: '#1A1A2E',
+                        padding: '12px 8px',
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '8px',
-                        borderRadius: '9999px',
-                        boxShadow: 'inset 3px 3px 6px rgba(255, 255, 255, 0.8), inset -4px -4px 8px rgba(180, 140, 0, 0.35), 0 8px 20px -4px rgba(255, 215, 0, 0.45)'
+                        gap: '7px'
                       }}
                     >
-                      <img src="/more.svg" alt="Mostrar más" style={{ width: '18px', height: '18px' }} />
-                      <span>{lang === 'en' ? 'Show More' : 'Mostrar más'}</span>
+                      <img src="/more.svg" alt="Mostrar más" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 0 6px #FFD700) brightness(0) invert(1)' }} />
+                      <span
+                        style={{
+                          fontSize: '12.5px',
+                          fontWeight: '900',
+                          letterSpacing: '1px',
+                          color: '#FFFFFF',
+                          textTransform: 'uppercase',
+                          WebkitTextStroke: '1px #FFD700',
+                          paintOrder: 'stroke fill',
+                          textShadow: '0 0 8px rgba(255, 215, 0, 0.85)'
+                        }}
+                      >
+                        {lang === 'en' ? 'Show More' : 'Mostrar más'}
+                      </span>
                     </button>
                   </div>
 
