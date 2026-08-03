@@ -57,6 +57,19 @@ La Plataforma Atlan es una aplicación web enfocada en turismo, mapas interactiv
    - **Verificación de Visitas GPS (> 1 km):** Detección automática al navegar más de 1 km hacia un destino con modal flotante Claymórfico para confirmar e incrementar el contador en la base de datos Supabase (`visitas_puntos` y `registrar_visita_turista`).
    - **Sistema de Logros e Insignias:** Preparación del perfil de turista con medallas y rango (Turista, Mochilero, Leyenda).
 
+7. **Sección Enciclopedia "Más de Nicaragua" (`src/app/mas-de-nicaragua`):**
+   - **Navegación e Integración:** Nuevo enlace *"Más de Nicaragua"* integrado en la barra de navegación principal (`Navbar.js`) tanto en menú desktop como en el drawer móvil responsive.
+   - **Mapa GL Interactivo & Grid de Departamentos (`/mas-de-nicaragua`):** Vista general con mapa Mapbox de los 17 departamentos interaccionable (efectos hover en amarillo `#FFD700`, tooltip y clic para navegar) junto a una botonera de filtros regionales (Pacífico, Central, Caribe) y grid de 17 tarjetas con diseño elevado 3D.
+   - **Ficha Departamental con 6 Pestañas (`/mas-de-nicaragua/[slug]`):** Ficha dinámica con encabezado de metadatos (Cabecera, Extensión, Población, Fundación, Coordenadas GPS) y sistema de navegación adhesiva (`DepartmentTabs.js`) organizada en 6 pestañas sin cascada:
+     - 📜 **Historia:** Resumen narrativo, timeline interactivo de hitos históricos por años y contexto fundacional.
+     - 💰 **Economía:** Descripción macroeconómica y tarjetas con iconos de los principales sectores productivos.
+     - 🏖️ **Turismo:** Atractivos destacados y enlace directo *"Explorar en el Mapa"* filtrado por coordenadas del departamento.
+     - 🎭 **Pasatiempos y Cultura:** Experiencias auténticas, costumbres populares y gastronomía tradicional numerada.
+     - 📍 **Lugares Importantes:** Tarjetas de sitios emblemáticos e icónicos de la región.
+     - 🎉 **Actividades:** Fiestas patronales, hípicas, desfiles y festivales anuales con sus respectivas fechas tradicionales.
+   - **Base de Datos Estática (`src/data/departamentos-data.js`):** Archivo JS centralizado con investigación histórica, económica, geográfica y cultural verídica para los 17 departamentos de Nicaragua.
+   - **Soporte Bilingüe (i18n):** Claves agregadas en `es.json` y `en.json` para renderizado fluido en Español e Inglés.
+
 ## Siguientes Pasos
 Al retomar el desarrollo:
 - Expandir el catálogo de insignias y logros de turismo desbloqueables según el número de departamentos visitados.
