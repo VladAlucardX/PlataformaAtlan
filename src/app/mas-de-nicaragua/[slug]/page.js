@@ -172,10 +172,6 @@ export default function DepartamentoDetailPage() {
               <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "700" }}>Fundación / Hito</span>
               <span style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF" }}>{dept.fundacion}</span>
             </div>
-            <div>
-              <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "700" }}>Coordenadas GPS</span>
-              <span style={{ fontSize: "15px", fontWeight: "800", color: "#38BDF8" }}>{dept.coordenadas[1]}, {dept.coordenadas[0]}</span>
-            </div>
           </div>
 
         </div>

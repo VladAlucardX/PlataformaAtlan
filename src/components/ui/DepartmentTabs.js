@@ -66,7 +66,7 @@ export default function DepartmentTabs({ activeTab, onSelectTab }) {
               }}
               className="dept-tab-btn"
             >
-              <span style={{ fontSize: "16px" }}>{tab.emoji}</span>
+              <Icon name={tab.icon} size={17} color={isActive ? "#FFD700" : "rgba(255, 255, 255, 0.75)"} />
               <span>{tab.label}</span>
             </button>
           );
