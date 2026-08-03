@@ -110,6 +110,9 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
           <Link href="/departamentos" className={`nav-pill-link ${activePage === "departamentos" ? "active" : ""}`}>
             <Icon name="star" size={16} /> {lang === "en" ? "Ranking" : "Ranking"}
           </Link>
+          <Link href="/mas-de-nicaragua" className={`nav-pill-link ${activePage === "mas-de-nicaragua" ? "active" : ""}`}>
+            <Icon name="book" size={16} /> {t("nav.moreNicaragua") || (lang === "en" ? "More of Nicaragua" : "Más de Nicaragua")}
+          </Link>
           <Link href="/comunidad" className={`nav-pill-link ${activePage === "comunidad" ? "active" : ""}`}>
             <Icon name="users" size={16} /> {t("social.community")}
           </Link>
@@ -335,6 +338,8 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
         <div style={{ padding: "12px 24px 20px", display: "flex", flexDirection: "column", gap: "10px", borderTop: "1px solid rgba(20,109,158,0.08)" }} className="animate-fade-in-down hide-desktop">
           <Link href="/" className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="home" size={16} /> {lang === "en" ? "Home" : "Inicio"}</Link>
           <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="map" size={16} /> {t("nav.map")}</Link>
+          <Link href="/departamentos" className={`nav-pill-link ${activePage === "departamentos" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="star" size={16} /> {lang === "en" ? "Ranking" : "Ranking"}</Link>
+          <Link href="/mas-de-nicaragua" className={`nav-pill-link ${activePage === "mas-de-nicaragua" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="book" size={16} /> {t("nav.moreNicaragua") || (lang === "en" ? "More of Nicaragua" : "Más de Nicaragua")}</Link>
           <Link href="/comunidad" className={`nav-pill-link ${activePage === "comunidad" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="users" size={16} /> {t("social.community")}</Link>
           {session && <Link href="/chat" className={`nav-pill-link ${activePage === "chat" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="messageCircle" size={16} /> {t("chat.title")}</Link>}
           {perfil?.rol === "admin" && (

@@ -30,7 +30,26 @@
     "myReservations": "My Reservations",
     "logout": "Sign Out",
     "language": "Language",
-    "community": "Community"
+    "community": "Community",
+    "moreNicaragua": "More of Nicaragua"
+  },
+  "nicaragua": {
+    "title": "More of Nicaragua",
+    "subtitle": "Explore the history, culture, economy, and beauty of each department of our country",
+    "history": "History",
+    "economy": "Economy",
+    "tourism": "Tourism",
+    "hobbies": "Hobbies & Culture",
+    "landmarks": "Landmarks",
+    "activities": "Activities & Events",
+    "back": "Back to Departments",
+    "region": "Region",
+    "capital": "Capital City",
+    "area": "Area",
+    "population": "Population",
+    "founded": "Founded",
+    "exploreMap": "Explore on Map",
+    "viewRanking": "View Department Ranking"
   },
   "landing": {
     "hero": {

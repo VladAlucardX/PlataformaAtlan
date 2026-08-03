@@ -30,7 +30,26 @@
     "myReservations": "Mis Reservas",
     "logout": "Cerrar Sesión",
     "language": "Idioma",
-    "community": "Comunidad"
+    "community": "Comunidad",
+    "moreNicaragua": "Más de Nicaragua"
+  },
+  "nicaragua": {
+    "title": "Más de Nicaragua",
+    "subtitle": "Explora la historia, cultura, economía y belleza de cada departamento de nuestro país",
+    "history": "Historia",
+    "economy": "Economía",
+    "tourism": "Turismo",
+    "hobbies": "Pasatiempos",
+    "landmarks": "Lugares Importantes",
+    "activities": "Actividades",
+    "back": "Volver a Departamentos",
+    "region": "Región",
+    "capital": "Cabecera",
+    "area": "Extensión",
+    "population": "Población",
+    "founded": "Fundación",
+    "exploreMap": "Explorar en el Mapa",
+    "viewRanking": "Ver Ranking del Departamento"
   },
   "landing": {
     "hero": {

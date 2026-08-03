@@ -211,6 +211,21 @@ const icons = {
   family: (p) => (
     <svg {...p}><circle cx="8" cy="5" r="3" /><circle cx="16" cy="5" r="3" /><path d="M3 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" /><path d="M13 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" /></svg>
   ),
+  book: (p) => (
+    <svg {...p}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></svg>
+  ),
+  landmark: (p) => (
+    <svg {...p}><line x1="3" y1="22" x2="21" y2="22" /><line x1="6" y1="18" x2="6" y2="11" /><line x1="10" y1="18" x2="10" y2="11" /><line x1="14" y1="18" x2="14" y2="11" /><line x1="18" y1="18" x2="18" y2="11" /><polygon points="12 2 20 7 4 7 12 2" /></svg>
+  ),
+  trendingUp: (p) => (
+    <svg {...p}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
+  ),
+  music: (p) => (
+    <svg {...p}><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>
+  ),
+  globe2: (p) => (
+    <svg {...p}><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></svg>
+  ),
 };
 
 export default function Icon({ name, size = 18, color = "currentColor", strokeWidth = 2, className = "", style = {}, fill }) {
