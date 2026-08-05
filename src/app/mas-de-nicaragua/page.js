@@ -362,28 +362,7 @@ export default function MasDeNicaraguaPage() {
     <div style={{ minHeight: "100vh", backgroundColor: "#0A192F", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif" }}>
       <Navbar activePage="mas-de-nicaragua" />
 
-      {/* Hero Header */}
-      <div style={{
-        background: "linear-gradient(180deg, rgba(20, 109, 158, 0.25) 0%, rgba(10, 25, 47, 1) 100%)",
-        padding: "85px 20px 8px",
-        textAlign: "center",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.08)"
-      }}>
-        <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-          <h1 style={{
-            fontSize: "clamp(18px, 3.2vw, 34px)",
-            fontWeight: "900",
-            color: "#FFFFFF",
-            margin: "0",
-            lineHeight: 1.2,
-            whiteSpace: "nowrap"
-          }}>
-            Enciclopedia Viva de sus <span style={{ color: "#FFD700" }}>17 departamentos</span>
-          </h1>
-        </div>
-      </div>
-
-      <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "15px 20px 60px" }}>
+      <main style={{ maxWidth: "1240px", margin: "0 auto", padding: "85px 20px 50px" }}>
 
         {/* Mapa Protagonista Principal */}
         <section>
@@ -391,17 +370,17 @@ export default function MasDeNicaraguaPage() {
             background: "rgba(15, 23, 42, 0.85)",
             border: "2px solid rgba(255, 215, 0, 0.25)",
             borderRadius: "24px",
-            padding: "20px",
+            padding: "16px 20px",
             boxShadow: "0 20px 50px rgba(0,0,0,0.5)",
             position: "relative"
           }}>
-            {/* Header de Controles del Mapa (Fijo sin desplazamientos) */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
+            {/* Header de Controles del Mapa con Título Integrado */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "12px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Icon name="map" size={22} color="#FFD700" />
-                <h2 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF" }}>
-                  Selecciona un Departamento
-                </h2>
+                <Icon name="book" size={22} color="#FFD700" />
+                <h1 style={{ margin: 0, fontSize: "clamp(16px, 2.2vw, 22px)", fontWeight: "900", color: "#FFFFFF", letterSpacing: "0.5px" }}>
+                  Enciclopedia Viva de sus <span style={{ color: "#FFD700" }}>17 departamentos</span>
+                </h1>
               </div>
 
               <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
@@ -439,10 +418,10 @@ export default function MasDeNicaraguaPage() {
                 {/* Filtros Rápidos de Regiones para Enfoque en el Mapa */}
                 <div style={{ display: "flex", gap: "6px" }}>
                   {[
-                    { name: "Todos", center: [-85.1, 12.8], zoom: 6.1 },
-                    { name: "Pacífico", icon: "waves", center: [-86.3, 12.1], zoom: 6.1 },
-                    { name: "Central", icon: "mountain", center: [-85.5, 12.9], zoom: 6.1 },
-                    { name: "Caribe", icon: "island", center: [-84.0, 13.5], zoom: 6.1 }
+                    { name: "Todos", center: [-85.15, 12.8], zoom: 6.25 },
+                    { name: "Pacífico", icon: "waves", center: [-86.3, 12.1], zoom: 6.25 },
+                    { name: "Central", icon: "mountain", center: [-85.5, 12.9], zoom: 6.25 },
+                    { name: "Caribe", icon: "island", center: [-84.0, 13.5], zoom: 6.25 }
                   ].map((reg) => {
                     const isActive = selectedRegion === reg.name;
                     return (
@@ -479,7 +458,7 @@ export default function MasDeNicaraguaPage() {
             </div>
 
             {/* Contenedor del Mapa Protagonista */}
-            <div style={{ position: "relative", width: "100%", height: "620px", borderRadius: "20px", overflow: "hidden" }}>
+            <div style={{ position: "relative", width: "100%", height: "clamp(440px, 56vh, 520px)", borderRadius: "20px", overflow: "hidden" }}>
               <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
 
               {/* Insignia Flotante Estática del Departamento Bajo el Cursor (sin mover la cabecera) */}
