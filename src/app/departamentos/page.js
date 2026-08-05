@@ -41,8 +41,9 @@ export default function DepartamentosPage() {
   const [userSession, setUserSession] = useState(null);
   const [userVisitsCount, setUserVisitsCount] = useState(0);
 
-  // Modo de Ranking: 'global' | 'propio'
+  // Modo de Ranking: 'global' | 'propio' y Límite de Paginación Top 5
   const [rankingMode, setRankingMode] = useState('global');
+  const [visibleCount, setVisibleCount] = useState(5);
 
   // Cargar sesión del usuario
   useEffect(() => {
@@ -126,6 +127,7 @@ export default function DepartamentosPage() {
   };
 
   useEffect(() => {
+    setVisibleCount(5);
     cargarRanking(selectedDept, rankingMode);
 
     if (selectedDept === "Todos" && mapRef.current) {
@@ -402,21 +404,21 @@ export default function DepartamentosPage() {
             <div ref={mapContainerRef} style={{ width: "100%", height: "420px", borderRadius: "18px", overflow: "hidden", position: "relative" }} />
           </div>
 
-          {/* Columna Derecha: Ranking Top Lugares */}
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "10px" }}>
-              <h2 style={{ margin: 0, fontSize: "19px", fontWeight: "800", color: "#FFFFFF" }}>
+          {/* Columna Derecha: Ranking Top Lugares (Alineada con el mapa y con Scroll Interno + Paginación) */}
+          <div style={{ display: "flex", flexDirection: "column", height: "510px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
+              <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "#FFFFFF" }}>
                 {selectedDept === "Todos" 
-                  ? (rankingMode === 'global' ? '🌟 Lugares Más Visitados en Nicaragua' : '👤 Mis Lugares Más Visitados')
+                  ? (rankingMode === 'global' ? '🌟 Lugares Más Visitados' : '👤 Mis Lugares Más Visitados')
                   : (rankingMode === 'global' ? `📍 Más Visitados en ${selectedDept}` : `👤 Mis Visitas en ${selectedDept}`)}
               </h2>
-              <span style={{ fontSize: "12px", fontWeight: "700", color: "rgba(255,255,255,0.6)", background: "rgba(255,255,255,0.08)", padding: "4px 10px", borderRadius: "10px" }}>
+              <span style={{ fontSize: "12px", fontWeight: "700", color: "rgba(255,255,255,0.6)", background: "rgba(255,255,255,0.08)", padding: "3px 8px", borderRadius: "10px" }}>
                 {rankingData.length} Destinos
               </span>
             </div>
 
             {/* Selector de Modo: Ranking Global vs Ranking Propio */}
-            <div style={{ display: "flex", gap: "10px", marginBottom: "18px" }}>
+            <div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
               <button
                 onClick={() => setRankingMode('global')}
                 style={{
@@ -468,114 +470,142 @@ export default function DepartamentosPage() {
               </button>
             </div>
 
-            {loading ? (
-              <div style={{ textAlign: "center", padding: "60px 0" }}>
-                <div style={{ width: "40px", height: "40px", border: "4px solid rgba(255,215,0,0.2)", borderTopColor: "#FFD700", borderRadius: "50%", margin: "0 auto 16px auto", animation: "spin 1s linear infinite" }} />
-                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px" }}>Cargando ranking de destinos...</p>
-              </div>
-            ) : rankingMode === 'propio' && !userSession ? (
-              <div style={{ background: "rgba(15, 23, 42, 0.75)", border: "1.5px dashed rgba(56, 189, 248, 0.4)", borderRadius: "20px", padding: "32px 20px", textAlign: "center" }}>
-                <div style={{ fontSize: "36px", marginBottom: "12px" }}>🔒</div>
-                <h3 style={{ margin: "0 0 8px 0", fontSize: "16px", color: "#FFFFFF" }}>Inicia sesión como turista</h3>
-                <p style={{ margin: "0 0 16px 0", fontSize: "13px", color: "rgba(255,255,255,0.7)", lineHeight: "1.5" }}>
-                  Inicia sesión para ver tu historial personalizado de los lugares que has visitado en Nicaragua.
-                </p>
-                <Link
-                  href="/login"
-                  style={{
-                    display: "inline-block", padding: "10px 20px", background: "linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)",
-                    borderRadius: "12px", color: "#FFFFFF", fontWeight: "800", textDecoration: "none", fontSize: "13.5px"
-                  }}
-                >
-                  Iniciar Sesión
-                </Link>
-              </div>
-            ) : rankingData.length === 0 ? (
-              <div style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.2)", borderRadius: "20px", padding: "40px 20px", textAlign: "center" }}>
-                <div style={{ fontSize: "36px", marginBottom: "12px" }}>🏕️</div>
-                <h3 style={{ margin: "0 0 6px 0", fontSize: "16px", color: "#FFFFFF" }}>
-                  {rankingMode === 'propio' ? 'Aún no has registrado visitas' : 'Aún no hay visitas registradas'}
-                </h3>
-                <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.6)" }}>
-                  {rankingMode === 'propio' 
-                    ? `Visita un destino en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept} y márcalo en el mapa para sumarlo a tu ranking propio.`
-                    : `Sé el primer turista en explorar y marcar visitas en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept}.`}
-                </p>
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-                {rankingData.map((lugar, idx) => {
-                  const pos = idx + 1;
-                  const medal = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : `#${pos}`;
-                  const medalColor = pos === 1 ? '#FFD700' : pos === 2 ? '#C0C0C0' : pos === 3 ? '#CD7F32' : 'rgba(255,255,255,0.6)';
-                  const countVisits = rankingMode === 'propio' ? (lugar.mis_visitas || 1) : (lugar.total_visitas || 0);
+            {/* Contenedor desplazable con Scroll Interno + Paginación Top 5 */}
+            <div className="dept-tabs-scroll" style={{ flex: 1, overflowY: "auto", paddingRight: "4px", display: "flex", flexDirection: "column", gap: "12px" }}>
+              {loading ? (
+                <div style={{ textAlign: "center", padding: "60px 0" }}>
+                  <div style={{ width: "40px", height: "40px", border: "4px solid rgba(255,215,0,0.2)", borderTopColor: "#FFD700", borderRadius: "50%", margin: "0 auto 16px auto", animation: "spin 1s linear infinite" }} />
+                  <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px" }}>Cargando ranking de destinos...</p>
+                </div>
+              ) : rankingMode === 'propio' && !userSession ? (
+                <div style={{ background: "rgba(15, 23, 42, 0.75)", border: "1.5px dashed rgba(56, 189, 248, 0.4)", borderRadius: "20px", padding: "32px 20px", textAlign: "center" }}>
+                  <div style={{ fontSize: "36px", marginBottom: "12px" }}>🔒</div>
+                  <h3 style={{ margin: "0 0 8px 0", fontSize: "16px", color: "#FFFFFF" }}>Inicia sesión como turista</h3>
+                  <p style={{ margin: "0 0 16px 0", fontSize: "13px", color: "rgba(255,255,255,0.7)", lineHeight: "1.5" }}>
+                    Inicia sesión para ver tu historial personalizado de los lugares que has visitado en Nicaragua.
+                  </p>
+                  <Link
+                    href="/login"
+                    style={{
+                      display: "inline-block", padding: "10px 20px", background: "linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)",
+                      borderRadius: "12px", color: "#FFFFFF", fontWeight: "800", textDecoration: "none", fontSize: "13.5px"
+                    }}
+                  >
+                    Iniciar Sesión
+                  </Link>
+                </div>
+              ) : rankingData.length === 0 ? (
+                <div style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.2)", borderRadius: "20px", padding: "40px 20px", textAlign: "center" }}>
+                  <div style={{ fontSize: "36px", marginBottom: "12px" }}>🏕️</div>
+                  <h3 style={{ margin: "0 0 6px 0", fontSize: "16px", color: "#FFFFFF" }}>
+                    {rankingMode === 'propio' ? 'Aún no has registrado visitas' : 'Aún no hay visitas registradas'}
+                  </h3>
+                  <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.6)" }}>
+                    {rankingMode === 'propio' 
+                      ? `Visita un destino en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept} y márcalo en el mapa para sumarlo a tu ranking propio.`
+                      : `Sé el primer turista en explorar y marcar visitas en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept}.`}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    {rankingData.slice(0, visibleCount).map((lugar, idx) => {
+                      const pos = idx + 1;
+                      const medal = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : `#${pos}`;
+                      const medalColor = pos === 1 ? '#FFD700' : pos === 2 ? '#C0C0C0' : pos === 3 ? '#CD7F32' : 'rgba(255,255,255,0.6)';
+                      const countVisits = rankingMode === 'propio' ? (lugar.mis_visitas || 1) : (lugar.total_visitas || 0);
 
-                  return (
-                    <div 
-                      key={lugar.id}
-                      style={{ 
-                        background: pos === 1 
-                          ? "linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(15, 23, 42, 0.85) 100%)"
-                          : "rgba(15, 23, 42, 0.7)", 
-                        border: pos === 1 ? "1.5px solid rgba(255, 215, 0, 0.4)" : "1px solid rgba(255, 255, 255, 0.1)",
-                        borderRadius: "18px",
-                        padding: "16px 20px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: "16px",
-                        boxShadow: pos === 1 ? "0 8px 24px rgba(255,215,0,0.15)" : "0 4px 12px rgba(0,0,0,0.2)",
+                      return (
+                        <div 
+                          key={lugar.id}
+                          style={{ 
+                            background: pos === 1 
+                              ? "linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(15, 23, 42, 0.85) 100%)"
+                              : "rgba(15, 23, 42, 0.7)", 
+                            border: pos === 1 ? "1.5px solid rgba(255, 215, 0, 0.4)" : "1px solid rgba(255, 255, 255, 0.1)",
+                            borderRadius: "16px",
+                            padding: "12px 16px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: "12px",
+                            boxShadow: pos === 1 ? "0 8px 24px rgba(255,215,0,0.15)" : "0 4px 12px rgba(0,0,0,0.2)",
+                            transition: "all 0.2s ease"
+                          }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            {/* Medalla o Posición */}
+                            <div style={{ minWidth: "34px", height: "34px", borderRadius: "10px", background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: pos <= 3 ? "18px" : "13px", fontWeight: "900", color: medalColor }}>
+                              {medal}
+                            </div>
+
+                            {/* Info del Lugar */}
+                            <div>
+                              <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "2px" }}>
+                                <h3 style={{ margin: 0, fontSize: "14.5px", fontWeight: "800", color: "#FFFFFF" }}>
+                                  {lugar.nombre}
+                                </h3>
+                                <span style={{ fontSize: "9.5px", fontWeight: "800", textTransform: "uppercase", background: "rgba(56, 189, 248, 0.15)", color: "#38BDF8", padding: "2px 5px", borderRadius: "5px" }}>
+                                  {lugar.categoria}
+                                </span>
+                              </div>
+                              <p style={{ margin: 0, fontSize: "11.5px", color: "rgba(255,255,255,0.7)", display: "flex", alignItems: "center", gap: "10px" }}>
+                                <span>📍 {lugar.departamento || 'Nicaragua'}</span>
+                                <span>⭐ {lugar.negocio_rating || '5.0'}</span>
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Contador de Visitas y Acción */}
+                          <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" }}>
+                            <div style={{
+                              background: rankingMode === 'propio' ? "rgba(56, 189, 248, 0.15)" : "rgba(255, 215, 0, 0.12)",
+                              border: rankingMode === 'propio' ? "1px solid rgba(56, 189, 248, 0.3)" : "1px solid rgba(255, 215, 0, 0.3)",
+                              padding: "3px 8px",
+                              borderRadius: "8px",
+                              color: rankingMode === 'propio' ? "#38BDF8" : "#FFD700",
+                              fontWeight: "800",
+                              fontSize: "11.5px"
+                            }}>
+                              {rankingMode === 'propio' ? `🎯 ${countVisits} ${countVisits === 1 ? 'visita' : 'visitas'}` : `👁️ ${countVisits} visitas`}
+                            </div>
+                            <Link 
+                              href={`/?lat=${lugar.lat}&lng=${lugar.lng}&punto=${lugar.id}`}
+                              style={{ fontSize: "11px", fontWeight: "800", color: "#38BDF8", textDecoration: "none" }}
+                            >
+                              Ir al Mapa ➔
+                            </Link>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {rankingData.length > visibleCount && (
+                    <button
+                      onClick={() => setVisibleCount(prev => prev + 5)}
+                      style={{
+                        width: "100%",
+                        padding: "11px 16px",
+                        borderRadius: "14px",
+                        background: "rgba(255, 215, 0, 0.12)",
+                        border: "1.5px dashed rgba(255, 215, 0, 0.4)",
+                        color: "#FFD700",
+                        fontWeight: "800",
+                        fontSize: "13px",
+                        cursor: "pointer",
+                        textAlign: "center",
+                        marginTop: "4px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
                         transition: "all 0.2s ease"
                       }}
                     >
-                      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                        {/* Medalla o Posición */}
-                        <div style={{ minWidth: "38px", height: "38px", borderRadius: "12px", background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: pos <= 3 ? "20px" : "14px", fontWeight: "900", color: medalColor }}>
-                          {medal}
-                        </div>
-
-                        {/* Info del Lugar */}
-                        <div>
-                          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "4px" }}>
-                            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#FFFFFF" }}>
-                              {lugar.nombre}
-                            </h3>
-                            <span style={{ fontSize: "10px", fontWeight: "800", textTransform: "uppercase", background: "rgba(56, 189, 248, 0.15)", color: "#38BDF8", padding: "2px 6px", borderRadius: "6px" }}>
-                              {lugar.categoria}
-                            </span>
-                          </div>
-                          <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.7)", display: "flex", alignItems: "center", gap: "12px" }}>
-                            <span>📍 {lugar.departamento || 'Nicaragua'}</span>
-                            <span>⭐ {lugar.negocio_rating || '5.0'}</span>
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Contador de Visitas y Acción */}
-                      <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "6px" }}>
-                        <div style={{
-                          background: rankingMode === 'propio' ? "rgba(56, 189, 248, 0.15)" : "rgba(255, 215, 0, 0.12)",
-                          border: rankingMode === 'propio' ? "1px solid rgba(56, 189, 248, 0.3)" : "1px solid rgba(255, 215, 0, 0.3)",
-                          padding: "4px 10px",
-                          borderRadius: "10px",
-                          color: rankingMode === 'propio' ? "#38BDF8" : "#FFD700",
-                          fontWeight: "800",
-                          fontSize: "12px"
-                        }}>
-                          {rankingMode === 'propio' ? `🎯 ${countVisits} ${countVisits === 1 ? 'visita' : 'visitas'}` : `👁️ ${countVisits} visitas`}
-                        </div>
-                        <Link 
-                          href={`/?lat=${lugar.lat}&lng=${lugar.lng}&punto=${lugar.id}`}
-                          style={{ fontSize: "11px", fontWeight: "800", color: "#38BDF8", textDecoration: "none" }}
-                        >
-                          Ir al Mapa ➔
-                        </Link>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                      ✨ Cargar Más Destinos (+{Math.min(5, rankingData.length - visibleCount)})
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
           </div>
 
         </div>
