@@ -365,7 +365,7 @@ export default function MasDeNicaraguaPage() {
       {/* Hero Header */}
       <div style={{
         background: "linear-gradient(180deg, rgba(20, 109, 158, 0.25) 0%, rgba(10, 25, 47, 1) 100%)",
-        padding: "110px 20px 30px",
+        padding: "90px 20px 10px",
         textAlign: "center",
         borderBottom: "1px solid rgba(255, 255, 255, 0.08)"
       }}>
@@ -376,58 +376,32 @@ export default function MasDeNicaraguaPage() {
             gap: "8px",
             background: "rgba(255, 215, 0, 0.15)",
             border: "1px solid rgba(255, 215, 0, 0.35)",
-            padding: "6px 16px",
+            padding: "5px 14px",
             borderRadius: "30px",
             color: "#FFD700",
-            fontSize: "13px",
+            fontSize: "12px",
             fontWeight: "800",
             textTransform: "uppercase",
             letterSpacing: "1px",
-            marginBottom: "14px"
+            marginBottom: "10px"
           }}>
-            <Icon name="book" size={16} color="#FFD700" />
+            <Icon name="book" size={15} color="#FFD700" />
             <span>{t("nicaragua.title") || "Más de Nicaragua"}</span>
           </div>
 
           <h1 style={{
-            fontSize: "clamp(28px, 4.5vw, 48px)",
+            fontSize: "clamp(24px, 3.8vw, 40px)",
             fontWeight: "900",
             color: "#FFFFFF",
-            margin: "0 0 12px",
+            margin: "0",
             lineHeight: 1.15
           }}>
-            Enciclopedia Viva de los <span style={{ color: "#FFD700" }}>17 Departamentos</span>
+            Enciclopedia Viva de sus <span style={{ color: "#FFD700" }}>17 departamentos</span>
           </h1>
-
-          <p style={{
-            fontSize: "clamp(14px, 1.8vw, 17px)",
-            color: "rgba(255, 255, 255, 0.8)",
-            margin: "0 auto 20px",
-            lineHeight: 1.6,
-            maxWidth: "750px"
-          }}>
-            {t("nicaragua.subtitle") || "Explora la historia, cultura, economía y belleza de cada departamento de nuestro país directamente sobre el mapa."}
-          </p>
-
-          {/* Badges estadísticos */}
-          <div style={{ display: "flex", justifyContent: "center", gap: "16px", flexWrap: "wrap" }}>
-            <div style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", padding: "8px 18px", borderRadius: "14px", textAlign: "center" }}>
-              <span style={{ display: "block", fontSize: "18px", fontWeight: "900", color: "#FFD700" }}>17</span>
-              <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.7)", textTransform: "uppercase", fontWeight: "700" }}>Departamentos</span>
-            </div>
-            <div style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", padding: "8px 18px", borderRadius: "14px", textAlign: "center" }}>
-              <span style={{ display: "block", fontSize: "18px", fontWeight: "900", color: "#38BDF8" }}>153</span>
-              <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.7)", textTransform: "uppercase", fontWeight: "700" }}>Municipios</span>
-            </div>
-            <div style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", padding: "8px 18px", borderRadius: "14px", textAlign: "center" }}>
-              <span style={{ display: "block", fontSize: "18px", fontWeight: "900", color: "#10B981" }}>3</span>
-              <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.7)", textTransform: "uppercase", fontWeight: "700" }}>Regiones</span>
-            </div>
-          </div>
         </div>
       </div>
 
-      <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "30px 20px 60px" }}>
+      <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "15px 20px 60px" }}>
 
         {/* Mapa Protagonista Principal */}
         <section>
