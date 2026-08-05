@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/lib/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import NotificationDropdown from "@/components/ui/NotificationDropdown";
@@ -13,6 +14,9 @@ import { uploadMedia } from "@/lib/storage";
 export default function PerfilPage() {
   const { t, lang } = useTranslation();
   const router = useRouter();
+
+  // Autenticación centralizada desde AuthContext
+  const { session: authSession, perfil: authPerfil, loading: authLoading, logout } = useAuth();
 
   const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
@@ -51,61 +55,65 @@ export default function PerfilPage() {
 
   // Cargar datos del usuario y sus registros
   useEffect(() => {
+    if (authLoading) return;
+    if (!authSession) {
+      router.push("/login");
+      return;
+    }
+
     const fetchProfileData = async () => {
       try {
-        const { data: { session: activeSession }, error: sessionError } = await supabase.auth.getSession();
-        if (sessionError || !activeSession) {
-          router.push("/login");
-          return;
-        }
-
-        setSession(activeSession);
-        const currentUser = activeSession.user;
+        setSession(authSession);
+        const currentUser = authSession.user;
         setUser(currentUser);
 
         // Cargar perfil
-        const { data: perfilData, error: perfilError } = await supabase
-          .from("perfiles")
-          .select("*")
-          .eq("id", currentUser.id)
-          .single();
-
-        if (perfilError) throw perfilError;
+        let perfilData = authPerfil;
+        if (!perfilData) {
+          const { data } = await supabase
+            .from("perfiles")
+            .select("*")
+            .eq("id", currentUser.id)
+            .single();
+          perfilData = data;
+        }
         setPerfil(perfilData);
 
-        // Cargar Reservas del Cliente
+        // Cargar Reservas del Usuario
         const { data: reservasData } = await supabase
           .from("reservas")
-          .select("*, negocios(nombre), lugares(nombre)")
-          .eq("cliente_id", currentUser.id)
-          .order("fecha_hora", { ascending: false });
-        setReservas(reservasData || []);
-
-        // Cargar Reseñas del Cliente
-        const { data: resenasData } = await supabase
-          .from("resenas")
-          .select("*, puntos(nombre), negocios(nombre)")
-          .eq("autor_id", currentUser.id)
-          .order("created_at", { ascending: false });
-        setResenas(resenasData || []);
-
-        // Cargar Favoritos del Cliente
-        const { data: favoritosData } = await supabase
-          .from("favoritos")
-          .select("*, puntos(id, nombre, categoria, ubicacion)")
+          .select("*, negocios(nombre, id, logo_url)")
           .eq("usuario_id", currentUser.id)
           .order("created_at", { ascending: false });
-        setFavoritos(favoritosData || []);
 
+        setReservas(reservasData || []);
+
+        // Cargar Reseñas del Usuario
+        const { data: resenasData } = await supabase
+          .from("resenas")
+          .select("*, negocios(nombre, id)")
+          .eq("usuario_id", currentUser.id)
+          .order("created_at", { ascending: false });
+
+        setResenas(resenasData || []);
+
+        // Cargar Favoritos del Usuario
+        const { data: favsData } = await supabase
+          .from("favoritos")
+          .select("*, negocios(*)")
+          .eq("usuario_id", currentUser.id)
+          .order("created_at", { ascending: false });
+
+        setFavoritos(favsData || []);
       } catch (err) {
-        console.error("Error loading profile details:", err);
+        console.error("Error al cargar perfil:", err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfileData();
-  }, [router]);
+  }, [authLoading, authSession, authPerfil, router]);
 
   // Cancelar una Reserva
   const handleCancelarReserva = async (reservaId) => {
@@ -186,7 +194,7 @@ export default function PerfilPage() {
 
   // Cerrar Sesión
   const handleCerrarSesion = async () => {
-    await supabase.auth.signOut();
+    await logout();
     router.push("/login");
   };
 

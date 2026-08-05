@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/lib/AuthContext";
 import { uploadMedia } from "@/lib/storage";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
@@ -44,8 +45,9 @@ export default function PerfilPublico() {
   const params = useParams();
   const rawUserId = params.id;
 
-  const [session, setSession] = useState(null);
-  const [myPerfil, setMyPerfil] = useState(null);
+  // Sesión centralizada desde AuthContext
+  const { session, perfil: myPerfil } = useAuth();
+
   const [targetPerfil, setTargetPerfil] = useState(null);
 
   const userId = targetPerfil?.id || rawUserId;
@@ -99,20 +101,7 @@ export default function PerfilPublico() {
     }
   };
 
-  // Init
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const { data: { session: s } } = await supabase.auth.getSession();
-        setSession(s);
-        if (s?.user) {
-          const { data: p } = await supabase.from("perfiles").select("*").eq("id", s.user.id).single();
-          setMyPerfil(p);
-        }
-      } catch (err) { console.warn(err); }
-    };
-    init();
-  }, []);
+
 
   // Fetch target profile
   useEffect(() => {

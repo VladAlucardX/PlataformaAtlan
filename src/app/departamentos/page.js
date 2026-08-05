@@ -6,6 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import Navbar from '../../components/ui/Navbar';
 import Icon from '../../components/ui/Icon';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../lib/AuthContext';
 import Link from 'next/link';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -38,31 +39,23 @@ export default function DepartamentosPage() {
   const [hoveredDept, setHoveredDept] = useState(null);
   const [rankingData, setRankingData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userSession, setUserSession] = useState(null);
   const [userVisitsCount, setUserVisitsCount] = useState(0);
+
+  // Sesión centralizada desde AuthContext
+  const { session: userSession, perfil } = useAuth();
 
   // Modo de Ranking: 'global' | 'propio' y Límite de Paginación Top 5
   const [rankingMode, setRankingMode] = useState('global');
   const [visibleCount, setVisibleCount] = useState(5);
 
-  // Cargar sesión del usuario
+  // Cargar visitas del usuario cuando la sesión cambia
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUserSession(session);
-      if (session?.user) {
-        cargarVisitasUsuario(session.user.id);
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUserSession(session);
-      if (session?.user) {
-        cargarVisitasUsuario(session.user.id);
-      }
-    });
-
-    return () => subscription?.unsubscribe();
-  }, []);
+    if (userSession?.user) {
+      cargarVisitasUsuario(userSession.user.id);
+    } else {
+      setUserVisitsCount(0);
+    }
+  }, [userSession?.user?.id]);
 
   const cargarVisitasUsuario = async (userId) => {
     try {
@@ -339,7 +332,7 @@ export default function DepartamentosPage() {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#0A192F", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif" }}>
-      <Navbar />
+      <Navbar activePage="departamentos" session={userSession} perfil={perfil} />
 
       <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "85px 20px 40px 20px" }}>
         

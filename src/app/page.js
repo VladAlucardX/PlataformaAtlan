@@ -8,6 +8,7 @@ import NotificationDropdown from "@/components/ui/NotificationDropdown";
 import Navbar from "@/components/ui/Navbar";
 import VideoIntro from "@/components/VideoIntro";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/lib/AuthContext";
 import Icon from "@/components/ui/Icon";
 import NeonMapSign from "@/components/ui/NeonMapSign";
 import NeonBusinessSign from "@/components/ui/NeonBusinessSign";
@@ -359,8 +360,7 @@ function Footer() {
 // Componente Principal
 export default function Home() {
   const [introDone, setIntroDone] = React.useState(false);
-  const [session, setSession] = React.useState(null);
-  const [perfil, setPerfil] = React.useState(null);
+  const { session, perfil, logout } = useAuth();
 
   React.useEffect(() => {
     if (typeof window !== "undefined" && sessionStorage.getItem("introSeen") === "true") {
@@ -368,59 +368,8 @@ export default function Home() {
     }
   }, []);
 
-  React.useEffect(() => {
-    // 1. Obtener sesión actual
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      setSession(currentSession);
-      if (currentSession?.user) {
-        fetchUserProfile(currentSession.user.id);
-      }
-    }).catch(async (err) => {
-      console.warn("[Atlan] Fallo al recuperar sesión (token inválido). Limpiando almacenamiento:", err);
-      try {
-        await supabase.auth.signOut();
-      } catch (_) { }
-      if (typeof window !== 'undefined') {
-        localStorage.clear();
-      }
-      setSession(null);
-      setPerfil(null);
-    });
-
-    // 2. Suscribirse a cambios de autenticación
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, currentSession) => {
-      setSession(currentSession);
-      if (currentSession?.user) {
-        fetchUserProfile(currentSession.user.id);
-      } else {
-        setPerfil(null);
-      }
-    });
-
-    return () => {
-      if (subscription) subscription.unsubscribe();
-    };
-  }, []);
-
-  const fetchUserProfile = async (userId) => {
-    try {
-      const { data, error } = await supabase
-        .from("perfiles")
-        .select("rol, avatar_url, nombre_completo")
-        .eq("id", userId)
-        .single();
-      if (!error && data) {
-        setPerfil(data);
-      }
-    } catch (err) {
-      console.error("Error fetching user profile in landing:", err);
-    }
-  };
-
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setSession(null);
-    setPerfil(null);
+    await logout();
     window.location.reload();
   };
 

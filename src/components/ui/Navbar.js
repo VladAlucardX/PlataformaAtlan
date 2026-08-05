@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/lib/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import NotificationDropdown from "@/components/ui/NotificationDropdown";
@@ -11,7 +12,12 @@ import Icon from "@/components/ui/Icon";
 
 import { getProfileSlug } from "@/lib/profileUtils";
 
-export default function Navbar({ activePage = "inicio", session, perfil, onLogout }) {
+export default function Navbar({ activePage = "inicio", session: sessionProp, perfil: perfilProp, onLogout }) {
+  // Obtener sesión del contexto global (fuente de verdad)
+  // Props se mantienen como fallback para compatibilidad
+  const auth = useAuth();
+  const session = sessionProp || auth.session;
+  const perfil = perfilProp || auth.perfil;
   const { t, lang } = useTranslation();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -64,12 +70,9 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
       onLogout();
       return;
     }
-    try {
-      await supabase.auth.signOut();
-      router.push("/login");
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
+    // Usar logout centralizado del AuthContext
+    await auth.logout();
+    router.push("/login");
   };
 
   const getProfileLabel = () => {
