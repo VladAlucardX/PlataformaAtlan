@@ -458,7 +458,7 @@ export default function MasDeNicaraguaPage() {
             </div>
 
             {/* Contenedor del Mapa Protagonista */}
-            <div style={{ position: "relative", width: "100%", height: "clamp(440px, 56vh, 520px)", borderRadius: "20px", overflow: "hidden" }}>
+            <div style={{ position: "relative", width: "100%", height: "clamp(560px, 72vh, 700px)", borderRadius: "20px", overflow: "hidden" }}>
               <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
 
               {/* Insignia Flotante Estática del Departamento Bajo el Cursor (sin mover la cabecera) */}
