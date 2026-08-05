@@ -77,10 +77,10 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
 
   const getProfileLabel = () => {
     if (perfil?.nombre_completo) {
-      return perfil.nombre_completo.trim().split(" ")[0];
+      return perfil.nombre_completo;
     }
     if (session?.user?.user_metadata?.full_name) {
-      return session.user.user_metadata.full_name.trim().split(" ")[0];
+      return session.user.user_metadata.full_name;
     }
     if (perfil?.email || session?.user?.email) {
       const email = perfil?.email || session?.user?.email;
