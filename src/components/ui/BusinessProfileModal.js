@@ -207,11 +207,11 @@ export default function BusinessProfileModal({
             borderBottom: '1px solid rgba(20, 109, 158, 0.1)',
             background: '#FFFFFF',
             position: 'relative',
-            marginTop: '-36px'
+            marginTop: '16px'
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '16px', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
               {details?.logo_url ? (
                 <img
                   src={details.logo_url}
@@ -340,19 +340,30 @@ export default function BusinessProfileModal({
             {/* BOTÓN DE INICIAR VIAJE */}
             <button
               onClick={() => onIniciarViaje(point)}
-              className="clay-btn-blue"
+              className="neon-map-btn-dark"
               style={{
-                padding: '10px 20px',
-                fontSize: '13.5px',
+                padding: '9px 18px',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
-                borderRadius: '12px',
-                boxShadow: '0 4px 14px rgba(20, 109, 158, 0.3)'
+                justifyContent: 'center',
+                gap: '7px'
               }}
             >
-              <Icon name="navigation" size={16} color="#FFFFFF" />
-              <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
+              <span
+                className="neon-sign-text"
+                style={{
+                  fontSize: '15px',
+                  fontWeight: '900',
+                  letterSpacing: '0.5px',
+                  color: '#FFFFFF',
+                  textTransform: 'uppercase',
+                  WebkitTextStroke: '1px #FFD700',
+                  paintOrder: 'stroke fill'
+                }}
+              >
+                {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
+              </span>
+              <img src="/images/ir.svg" alt="Ir" style={{ width: '22px', height: '22px', filter: 'brightness(0) invert(1)' }} />
             </button>
           </div>
 
@@ -492,314 +503,8 @@ export default function BusinessProfileModal({
                 </p>
               </div>
 
-              {/* BARRA DE CONTACTO Y REDES SOCIALES */}
-              {(() => {
-                const phone = details?.telefono;
-                const whatsapp = details?.whatsapp;
-                const facebook = details?.facebook;
-                const instagram = details?.instagram;
-                const tiktok = details?.tiktok;
-                const website = details?.website;
-
-                const hasAnyContact = phone || whatsapp || facebook || instagram || tiktok || website;
-
-                if (!hasAnyContact) return null;
-
-                const formatUrl = (val, prefix) => {
-                  if (!val) return null;
-                  if (val.startsWith('http://') || val.startsWith('https://')) return val;
-                  return `${prefix}${val.replace(/^@/, '')}`;
-                };
-
-                const waUrl = whatsapp ? (whatsapp.startsWith('http') ? whatsapp : `https://wa.me/${whatsapp.replace(/\D/g, '')}`) : null;
-                const fbUrl = formatUrl(facebook, 'https://facebook.com/');
-                const igUrl = formatUrl(instagram, 'https://instagram.com/');
-                const ttUrl = formatUrl(tiktok, 'https://tiktok.com/@');
-                const webUrl = website ? (website.startsWith('http') ? website : `https://${website}`) : null;
-
-                return (
-                  <div>
-                    <h4 style={{ margin: '0 0 10px', fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <Icon name="phone" size={15} color={theme.accent} />
-                      <span>{lang === 'en' ? 'Contact & Social Media' : 'Contacto y Redes Sociales'}</span>
-                    </h4>
-                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
-                      {whatsapp && (
-                        <a
-                          href={waUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            padding: '8px 16px',
-                            borderRadius: '12px',
-                            background: 'rgba(34, 197, 94, 0.12)',
-                            border: '1px solid rgba(34, 197, 94, 0.3)',
-                            color: '#15803D',
-                            fontSize: '13px',
-                            fontWeight: '800',
-                            textDecoration: 'none',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '7px'
-                          }}
-                        >
-                          <Icon name="whatsapp" size={16} color="#16A34A" />
-                          <span>WhatsApp ({whatsapp})</span>
-                        </a>
-                      )}
-
-                      {phone && (
-                        <a
-                          href={`tel:${phone}`}
-                          style={{
-                            padding: '8px 16px',
-                            borderRadius: '12px',
-                            background: '#F1F5F9',
-                            border: '1px solid #E2E8F0',
-                            color: '#0F172A',
-                            fontSize: '13px',
-                            fontWeight: '800',
-                            textDecoration: 'none',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '7px'
-                          }}
-                        >
-                          <Icon name="phone" size={15} color="#2563EB" />
-                          <span>{phone}</span>
-                        </a>
-                      )}
-
-                      {fbUrl && (
-                        <a
-                          href={fbUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title="Facebook"
-                          style={{
-                            padding: '8px 14px',
-                            borderRadius: '12px',
-                            background: 'rgba(24, 119, 242, 0.12)',
-                            border: '1px solid rgba(24, 119, 242, 0.25)',
-                            color: '#1877F2',
-                            fontSize: '13px',
-                            fontWeight: '800',
-                            textDecoration: 'none',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '7px'
-                          }}
-                        >
-                          <Icon name="facebook" size={16} color="#1877F2" />
-                          <span>Facebook</span>
-                        </a>
-                      )}
-
-                      {igUrl && (
-                        <a
-                          href={igUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title="Instagram"
-                          style={{
-                            padding: '8px 14px',
-                            borderRadius: '12px',
-                            background: 'rgba(228, 64, 95, 0.12)',
-                            border: '1px solid rgba(228, 64, 95, 0.25)',
-                            color: '#E4405F',
-                            fontSize: '13px',
-                            fontWeight: '800',
-                            textDecoration: 'none',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '7px'
-                          }}
-                        >
-                          <Icon name="instagram" size={16} color="#E4405F" />
-                          <span>Instagram</span>
-                        </a>
-                      )}
-
-                      {ttUrl && (
-                        <a
-                          href={ttUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title="TikTok"
-                          style={{
-                            padding: '8px 14px',
-                            borderRadius: '12px',
-                            background: 'rgba(15, 23, 42, 0.08)',
-                            border: '1px solid rgba(15, 23, 42, 0.2)',
-                            color: '#0F172A',
-                            fontSize: '13px',
-                            fontWeight: '800',
-                            textDecoration: 'none',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '7px'
-                          }}
-                        >
-                          <Icon name="tiktok" size={16} color="#0F172A" />
-                          <span>TikTok</span>
-                        </a>
-                      )}
-
-                      {webUrl && (
-                        <a
-                          href={webUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title="Website"
-                          style={{
-                            padding: '8px 14px',
-                            borderRadius: '12px',
-                            background: 'rgba(20, 109, 158, 0.12)',
-                            border: '1px solid rgba(20, 109, 158, 0.25)',
-                            color: '#146D9E',
-                            fontSize: '13px',
-                            fontWeight: '800',
-                            textDecoration: 'none',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '7px'
-                          }}
-                        >
-                          <Icon name="globe" size={16} color="#146D9E" />
-                          <span>{lang === 'en' ? 'Website' : 'Sitio Web'}</span>
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {/* SERVICIOS / AMENIDADES DE NEGOCIO */}
-              {activeServiceList.length > 0 && (
-                <div>
-                  <h4 style={{ margin: '0 0 10px', fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Icon name="sparkles" size={15} color={theme.accent} />
-                    <span>{lang === 'en' ? 'Amenities & Features' : 'Servicios y Amenidades'}</span>
-                  </h4>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {activeServiceList.map((s) => (
-                      <span
-                        key={s.key}
-                        style={{
-                          fontSize: '12.5px',
-                          fontWeight: '700',
-                          color: '#0F172A',
-                          background: '#F8FAFC',
-                          border: '1.5px solid #E2E8F0',
-                          padding: '6px 12px',
-                          borderRadius: '20px',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
-                        }}
-                      >
-                        <Icon name={s.icon} size={14} color={theme.accent} />
-                        <span>{s.label}</span>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Galería de Fotos */}
-              {details?.fotos && details.fotos.length > 0 && (
-                <div>
-                  <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Icon name="image" size={15} color={theme.accent} />
-                    <span>{lang === 'en' ? 'Photo Gallery' : 'Galería de Fotos'}</span>
-                  </h4>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))',
-                      gap: '12px'
-                    }}
-                  >
-                    {details.fotos.map((url, i) => (
-                      <div
-                        key={i}
-                        onClick={() => setSelectedPhoto(url)}
-                        style={{
-                          borderRadius: '14px',
-                          overflow: 'hidden',
-                          height: '125px',
-                          cursor: 'pointer',
-                          border: '1px solid rgba(20, 109, 158, 0.12)',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                          transition: 'transform 0.2s ease, boxShadow 0.2s ease'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'scale(1.03)';
-                          e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.12)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'scale(1)';
-                          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
-                        }}
-                      >
-                        <img
-                          src={url}
-                          alt={`${point.nombre} photo ${i + 1}`}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Lightbox Preview de Foto */}
-              {selectedPhoto && (
-                <div
-                  style={{
-                    position: 'fixed',
-                    inset: 0,
-                    zIndex: 10000,
-                    backgroundColor: 'rgba(0,0,0,0.85)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '20px'
-                  }}
-                  onClick={() => setSelectedPhoto(null)}
-                >
-                  <img
-                    src={selectedPhoto}
-                    alt="Preview"
-                    style={{ maxWidth: '90vw', maxHeight: '85vh', borderRadius: '16px', objectFit: 'contain' }}
-                  />
-                  <button
-                    style={{
-                      position: 'absolute',
-                      top: '20px',
-                      right: '20px',
-                      background: 'rgba(255,255,255,0.2)',
-                      border: 'none',
-                      color: 'white',
-                      fontSize: '20px',
-                      borderRadius: '50%',
-                      width: '40px',
-                      height: '40px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                    onClick={() => setSelectedPhoto(null)}
-                  >
-                    <Icon name="x" size={20} color="#FFFFFF" />
-                  </button>
-                </div>
-              )}
-
               {/* Horarios de Atención */}
-              {details?.servicios?.has_hours && details?.horarios && (
+              {details?.horarios && Object.keys(details.horarios).length > 0 && (
                 <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.1)', paddingTop: '20px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
                     <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -857,10 +562,10 @@ export default function BusinessProfileModal({
                             borderBottom: '1px dashed rgba(20, 109, 158, 0.08)'
                           }}
                         >
-                          <span>{dayLabels[day]} {isToday && '• (Hoy)'}</span>
+                          <span>{dayLabels[day] || day} {isToday && '• (Hoy)'}</span>
                           <span>
-                            {info.abierto
-                              ? `${info.apertura} - ${info.cierre}`
+                            {info?.abierto
+                              ? `${info.apertura || ''} - ${info.cierre || ''}`
                               : (lang === 'en' ? 'Closed' : 'Cerrado')}
                           </span>
                         </div>

@@ -87,6 +87,7 @@ export default function MapaTuristico() {
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [selectedPointDetails, setSelectedPointDetails] = useState(null);
   const [showFullProfileModal, setShowFullProfileModal] = useState(false);
+  const [previewPhotoModal, setPreviewPhotoModal] = useState(null);
   const [pointReviews, setPointReviews] = useState([]);
   const [pointMenu, setPointMenu] = useState([]);
   const [userSession, setUserSession] = useState(null);
@@ -2622,8 +2623,10 @@ export default function MapaTuristico() {
               { key: 'has_parking', label: lang === 'en' ? 'Parking' : 'Parqueo', icon: 'parking' },
               { key: 'has_pets', label: 'Pet Friendly', icon: 'pet' },
               { key: 'has_card_payment', label: lang === 'en' ? 'Cards' : 'Tarjetas', icon: 'creditCard' },
+              { key: 'has_accessibility', label: lang === 'en' ? 'Accessible' : 'Accesibilidad', icon: 'accessibility' },
               { key: 'has_delivery', label: 'Delivery', icon: 'delivery' },
               { key: 'has_ac', label: 'A/C', icon: 'ac' },
+              { key: 'has_live_music', label: lang === 'en' ? 'Live Music' : 'Música en Vivo', icon: 'music' },
             ].filter(s => !!servs[s.key]);
 
             const avgRating = pointReviews.length > 0
@@ -2704,8 +2707,8 @@ export default function MapaTuristico() {
                 </div>
 
                 {/* DATOS PRINCIPALES NEGOCIO */}
-                <div style={{ padding: '0 20px 14px', position: 'relative', marginTop: '-42px' }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '14px', marginBottom: '8px' }}>
+                <div style={{ padding: '0 20px 14px', position: 'relative', marginTop: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '8px' }}>
                     {selectedPointDetails?.logo_url ? (
                       <img
                         src={selectedPointDetails.logo_url}
@@ -2743,7 +2746,7 @@ export default function MapaTuristico() {
                       </div>
                     )}
 
-                    <div style={{ flex: 1, paddingTop: '10px' }}>
+                    <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '4px' }}>
                         {(() => {
                           let statusText = '';
@@ -2835,29 +2838,28 @@ export default function MapaTuristico() {
                       className="neon-map-btn-dark"
                       style={{
                         width: '100%',
-                        padding: '13px 8px',
+                        padding: '8px 6px',
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '7px'
+                        gap: '5px'
                       }}
                     >
                       <span
                         className="neon-sign-text"
                         style={{
-                          fontSize: '12.5px',
+                          fontSize: '16px',
                           fontWeight: '900',
-                          letterSpacing: '1px',
+                          letterSpacing: '0.4px',
                           color: '#FFFFFF',
                           textTransform: 'uppercase',
                           WebkitTextStroke: '1px #FFD700',
-                          paintOrder: 'stroke fill',
-                          textShadow: '0 0 8px rgba(255, 215, 0, 0.85)'
+                          paintOrder: 'stroke fill'
                         }}
                       >
                         {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
                       </span>
-                      <img src="/images/ir.svg" alt="Ir" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 0 6px #FFD700) brightness(0) invert(1)' }} />
+                      <img src="/images/ir.svg" alt="Ir" style={{ width: '22px', height: '22px', filter: 'brightness(0) invert(1)' }} />
                     </button>
 
                     <button
@@ -2865,29 +2867,28 @@ export default function MapaTuristico() {
                       className="neon-map-btn-yellow"
                       style={{
                         width: '100%',
-                        padding: '13px 8px',
+                        padding: '8px 6px',
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '7px'
+                        gap: '5px'
                       }}
                     >
                       <span
                         className="neon-sign-text-white-bg"
                         style={{
-                          fontSize: '12px',
+                          fontSize: '16px',
                           fontWeight: '900',
-                          letterSpacing: '0.8px',
+                          letterSpacing: '0.4px',
                           color: '#FFFFFF',
                           textTransform: 'uppercase',
                           WebkitTextStroke: '1.2px #000000',
-                          paintOrder: 'stroke fill',
-                          textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)'
+                          paintOrder: 'stroke fill'
                         }}
                       >
                         {lang === 'en' ? 'Show More' : 'Mostrar más'}
                       </span>
-                      <img src="/images/more.svg" alt="Mostrar más" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }} />
+                      <img src="/images/more.svg" alt="Mostrar más" style={{ width: '24px', height: '24px' }} />
                     </button>
                   </div>
 
@@ -2984,13 +2985,18 @@ export default function MapaTuristico() {
                             return (
                               <div
                                 key={index}
+                                onClick={() => setPreviewPhotoModal(photoUrl)}
                                 style={{
                                   height: '70px',
                                   borderRadius: '10px',
                                   overflow: 'hidden',
                                   border: '1px solid rgba(20, 109, 158, 0.12)',
-                                  boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
+                                  boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+                                  cursor: 'pointer',
+                                  transition: 'transform 0.2s ease'
                                 }}
+                                onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.04)'; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
                               >
                                 <img
                                   src={photoUrl}
@@ -3198,6 +3204,63 @@ export default function MapaTuristico() {
               </>
             );
           })()}
+        </div>
+      )}
+
+      {/* Modal Lightbox de Vista Previa de Imagen Agrandada */}
+      {previewPhotoModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 10001,
+            backgroundColor: 'rgba(10, 15, 28, 0.88)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            animation: 'fadeIn 0.2s ease-out'
+          }}
+          onClick={() => setPreviewPhotoModal(null)}
+        >
+          <div style={{ position: 'relative', maxWidth: '92vw', maxHeight: '88vh' }} onClick={(e) => e.stopPropagation()}>
+            <img
+              src={previewPhotoModal}
+              alt="Foto ampliada"
+              style={{
+                maxWidth: '92vw',
+                maxHeight: '88vh',
+                borderRadius: '18px',
+                objectFit: 'contain',
+                boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
+                border: '2px solid rgba(255,255,255,0.2)'
+              }}
+            />
+            <button
+              onClick={() => setPreviewPhotoModal(null)}
+              style={{
+                position: 'absolute',
+                top: '-16px',
+                right: '-16px',
+                background: '#FFFFFF',
+                border: 'none',
+                color: '#0F172A',
+                borderRadius: '50%',
+                width: '38px',
+                height: '38px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.35)',
+                transition: 'transform 0.2s'
+              }}
+            >
+              <Icon name="x" size={18} color="#0F172A" />
+            </button>
+          </div>
         </div>
       )}
 
