@@ -1,19 +1,6 @@
-import { Outfit, Inter } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "../lib/i18n/LanguageContext";
-
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600", "700", "800", "900"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
+import PWARegister from "../components/PWARegister";
 
 export const metadata = {
   title: "Atlan — Tu GPS Turístico de Nicaragua",
@@ -58,12 +45,16 @@ export const metadata = {
   },
 };
 
-import PWARegister from "../components/PWARegister";
-
 export default function RootLayout({ children }) {
   return (
-    <html lang="es" className={`${outfit.variable} ${inter.variable}`}>
+    <html lang="es">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet"
+        />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#FFD700" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -79,3 +70,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+

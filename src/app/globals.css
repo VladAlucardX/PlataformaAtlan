@@ -7,6 +7,10 @@
 
 /* ── PALETA DE COLORES ────────────────────────────────────────────────────── */
 :root {
+  /* Fuentes */
+  --font-outfit:         'Outfit', system-ui, -apple-system, sans-serif;
+  --font-inter:          'Inter', system-ui, -apple-system, sans-serif;
+
   /* Primarios — Gold */
   --atlan-gold:          #FFD700;
   --atlan-gold-light:    #FFDF33;
@@ -1495,15 +1499,7 @@ a:hover {
 }
 
 .detail-sheet::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #FFD700 0%, #146D9E 50%, #17AA4A 100%);
-  opacity: 0.85;
-  z-index: 2;
+  display: none !important;
 }
 
 .map-page-wrapper {
@@ -1580,21 +1576,14 @@ a:hover {
     max-width: 100% !important;
     height: 70vh !important;
     border-left: none !important;
-    border-top: 1px solid rgba(20, 109, 158, 0.12) !important;
+    border-top: none !important;
     border-radius: 24px 24px 0 0 !important;
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.12) !important;
     animation: slideInUpDetail 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 
   .detail-sheet::before {
-    content: "" !important;
-    display: block !important;
-    width: 40px !important;
-    height: 4px !important;
-    background: rgba(20, 109, 158, 0.2) !important;
-    border-radius: 2px !important;
-    margin: 12px auto 0 !important;
-    flex-shrink: 0 !important;
+    display: none !important;
   }
 
   /* Responsive Filter Bar */
@@ -1850,6 +1839,52 @@ a:hover {
     0 30px 60px rgba(0, 0, 0, 0.7);
 }
 
+.neon-map-btn-dark {
+  background: rgba(10, 20, 38, 0.92) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2.5px solid #FFFFFF !important;
+  border-radius: 20px !important;
+  box-shadow: 
+    0 0 12px rgba(255, 255, 255, 0.5),
+    0 0 25px rgba(255, 215, 0, 0.35),
+    inset 0 0 10px rgba(255, 255, 255, 0.3),
+    0 10px 24px rgba(0, 0, 0, 0.4) !important;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  cursor: pointer;
+}
+
+.neon-map-btn-dark:hover {
+  transform: translateY(-3px) scale(1.03) !important;
+  box-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.8),
+    0 0 40px rgba(255, 215, 0, 0.6),
+    inset 0 0 15px rgba(255, 255, 255, 0.5),
+    0 14px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+.neon-map-btn-yellow {
+  background: linear-gradient(145deg, #FFE033 0%, #FFD700 70%, #E6C200 100%) !important;
+  border: 2.5px solid #FFFFFF !important;
+  border-radius: 20px !important;
+  box-shadow: 
+    0 0 16px rgba(255, 215, 0, 0.8),
+    0 0 35px rgba(255, 215, 0, 0.45),
+    inset 0 2px 4px rgba(255, 255, 255, 0.9),
+    0 10px 24px rgba(0, 0, 0, 0.35) !important;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  cursor: pointer;
+}
+
+.neon-map-btn-yellow:hover {
+  transform: translateY(-3px) scale(1.03) !important;
+  box-shadow: 
+    0 0 25px rgba(255, 215, 0, 1),
+    0 0 50px rgba(255, 224, 51, 0.8),
+    inset 0 2px 6px rgba(255, 255, 255, 1),
+    0 14px 32px rgba(0, 0, 0, 0.45) !important;
+}
+
 .neon-map-wrapper {
   display: flex;
   align-items: center;
@@ -1992,6 +2027,26 @@ a:hover {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* --- ESTILOS MODAL PERFIL DE NEGOCIO (MULTI-PESTAÑAS) --- */
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .business-profile-modal {
+    max-height: 95vh !important;
+    border-radius: 20px 20px 0 0 !important;
+    margin-top: auto !important;
   }
 }
 

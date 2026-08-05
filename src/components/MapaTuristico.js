@@ -11,6 +11,7 @@ import { supabase } from '../lib/supabase';
 import { useTranslation } from '../hooks/useTranslation';
 import LanguageToggle from './ui/LanguageToggle';
 import Icon from './ui/Icon';
+import BusinessProfileModal from './ui/BusinessProfileModal';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -85,6 +86,7 @@ export default function MapaTuristico() {
   // --- ESTADOS PANEL DETALLES LATERAL ---
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [selectedPointDetails, setSelectedPointDetails] = useState(null);
+  const [showFullProfileModal, setShowFullProfileModal] = useState(false);
   const [pointReviews, setPointReviews] = useState([]);
   const [pointMenu, setPointMenu] = useState([]);
   const [userSession, setUserSession] = useState(null);
@@ -2589,590 +2591,652 @@ export default function MapaTuristico() {
 
       </div>
 
-      {/* Panel de detalles */}
+      {/* Panel de detalles resumido en el mapa */}
       {selectedPoint && (
-        <div className="detail-sheet">
-          {/* Cabecera del Panel */}
-          <div style={{
-            padding: '24px 20px 16px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'start'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              {selectedPointDetails?.logo_url && (
-                <img
-                  src={selectedPointDetails.logo_url}
-                  alt={selectedPoint.nombre}
-                  style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    objectFit: 'cover',
-                    border: '1.5px solid rgba(255, 255, 255, 0.1)',
-                  }}
-                />
-              )}
-              <div>
-                {(() => {
-                  let statusText = '';
-                  let statusColor = '';
-                  let statusBg = '';
+        <div className="detail-sheet" style={{ overflow: 'hidden', padding: 0 }}>
+          {(() => {
+            const cat = (selectedPoint.category || '').toLowerCase();
+            let coverGradient = 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)';
+            let accentColor = '#146D9E';
 
-                  if (selectedPoint.estado === 'en_verificacion') {
-                    statusText = lang === 'en' ? 'Awaiting Verification' : 'En Espera de Verificación';
-                    statusColor = '#f97316';
-                    statusBg = 'rgba(249, 115, 22, 0.15)';
-                  } else if (selectedPoint.estado === 'aprobado') {
-                    statusText = lang === 'en' ? 'Verified Business' : 'Negocio Verificado';
-                    statusColor = '#10b981';
-                    statusBg = 'rgba(16, 185, 129, 0.15)';
-                  } else {
-                    const isClaimed = !!selectedPoint.negocio_id;
-                    statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
-                    statusColor = isClaimed ? '#10b981' : '#f59e0b';
-                    statusBg = isClaimed ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)';
-                  }
+            if (cat.includes('restaurante') || cat.includes('comida') || cat.includes('café') || cat.includes('bar')) {
+              coverGradient = 'linear-gradient(135deg, #FF6B6B 0%, #D93838 100%)';
+              accentColor = '#D93838';
+            } else if (cat.includes('hotel') || cat.includes('hospedaje') || cat.includes('hostal')) {
+              coverGradient = 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)';
+              accentColor = '#1D4ED8';
+            } else if (cat.includes('naturaleza') || cat.includes('tour') || cat.includes('aventura')) {
+              coverGradient = 'linear-gradient(135deg, #10B981 0%, #047857 100%)';
+              accentColor = '#047857';
+            } else if (cat.includes('cultura') || cat.includes('arte') || cat.includes('museo')) {
+              coverGradient = 'linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%)';
+              accentColor = '#6D28D9';
+            }
 
-                  return (
-                    <span style={{
-                      fontSize: '11px',
-                      fontWeight: '800',
-                      textTransform: 'uppercase',
-                      color: statusColor,
-                      background: statusBg,
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      display: 'inline-block',
-                      marginBottom: '8px',
-                      border: `1px solid ${statusColor}40`
-                    }}>
-                      {statusText}
-                    </span>
-                  );
-                })()}
-                <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '850', color: '#1A1A2E', lineHeight: '1.2' }}>
-                  {selectedPoint.nombre}
-                </h2>
-                <p style={{ margin: '4px 0 0', fontSize: '12.5px', color: '#4A5568', fontWeight: '600' }}>
-                  📍 {t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}
-                </p>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              {/* Botón Favorito */}
-              {userSession && (
-                <button
-                  onClick={handleToggleFavorite}
-                  title={isFavorite ? (lang === 'en' ? 'Remove from Favorites' : 'Quitar de Favoritos') : (lang === 'en' ? 'Add to Favorites' : 'Guardar en Favoritos')}
+            const heroImg = selectedPointDetails?.fotos && selectedPointDetails.fotos.length > 0 ? selectedPointDetails.fotos[0] : null;
+
+            // Servicios activos
+            const servs = selectedPointDetails?.servicios || {};
+            const activeServiceList = [
+              { key: 'has_wifi', label: 'WiFi', icon: 'wifi' },
+              { key: 'has_parking', label: lang === 'en' ? 'Parking' : 'Parqueo', icon: 'parking' },
+              { key: 'has_pets', label: 'Pet Friendly', icon: 'pet' },
+              { key: 'has_card_payment', label: lang === 'en' ? 'Cards' : 'Tarjetas', icon: 'creditCard' },
+              { key: 'has_delivery', label: 'Delivery', icon: 'delivery' },
+              { key: 'has_ac', label: 'A/C', icon: 'ac' },
+            ].filter(s => !!servs[s.key]);
+
+            const avgRating = pointReviews.length > 0
+              ? (pointReviews.reduce((acc, r) => acc + Number(r.estrellas || 5), 0) / pointReviews.length).toFixed(1)
+              : null;
+
+            return (
+              <>
+                {/* PORTADA / HERO COVER DEL NEGOCIO */}
+                <div
                   style={{
-                    background: isFavorite ? 'rgba(255, 215, 0, 0.18)' : 'rgba(20, 109, 158, 0.08)',
-                    border: isFavorite ? '1.5px solid #FFD700' : '1.5px solid rgba(20, 109, 158, 0.12)',
-                    color: isFavorite ? '#B8960E' : '#4A5568',
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '18px',
-                    transition: 'all 0.25s ease'
+                    height: heroImg ? '150px' : '120px',
+                    background: heroImg ? `url(${heroImg}) center/cover no-repeat` : coverGradient,
+                    position: 'relative',
+                    flexShrink: 0
                   }}
                 >
-                  {isFavorite ? '★' : '☆'}
-                </button>
-              )}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: heroImg
+                        ? 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(10,15,28,0.7) 100%)'
+                        : 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 100%)'
+                    }}
+                  />
 
-              <button
-                onClick={() => setSelectedPoint(null)}
-                style={{
-                  background: 'rgba(20, 109, 158, 0.08)',
-                  border: '1.5px solid rgba(20, 109, 158, 0.12)',
-                  color: '#1A1A2E',
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 'bold',
-                  fontSize: '14px',
-                  transition: 'all 0.2s'
-                }}
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-
-          {/* Cuerpo Scrollable */}
-          <div style={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '24px',
-            scrollbarWidth: 'thin',
-            scrollbarColor: 'rgba(255,255,255,0.1) transparent'
-          }}>
-            {/* BOTÓN INICIAR VIAJE */}
-            <button
-              onClick={() => handleIniciarViaje(selectedPoint)}
-              className="clay-btn-blue"
-              style={{
-                width: '100%',
-                padding: '14px 20px',
-                fontSize: '15px',
-                color: '#FFFFFF',
-                marginBottom: '4px'
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="3 11 22 2 13 21 11 13 3 11" />
-              </svg>
-              <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
-            </button>
-
-            {/* BOTÓN RECLAMAR NEGOCIO (SOLO SI ESTÁ COMPLETAMENTE LIBRE / SIN RECLAMO PENDIENTE) */}
-            {!selectedPoint.negocio_id && selectedPoint.estado === 'sin_reclamar' && (
-              <Link
-                href="/dashboard"
-                className="clay-btn-gold"
-                style={{
-                  width: '100%',
-                  padding: '12px 18px',
-                  fontSize: '13.5px',
-                  textDecoration: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px'
-                }}
-              >
-                🏢 {lang === 'en' ? 'Are you the owner? Claim this business' : '¿Eres el dueño? Reclamar este negocio'}
-              </Link>
-            )}
-
-            {/* Banner Informativo si está en verificación */}
-            {selectedPoint.estado === 'en_verificacion' && (
-              <div style={{
-                padding: '12px 16px',
-                background: 'rgba(230, 194, 0, 0.12)',
-                border: '1.5px solid rgba(230, 194, 0, 0.3)',
-                borderRadius: '14px',
-                fontSize: '13px',
-                color: '#B8960E',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px'
-              }}>
-                <span style={{ fontSize: '20px' }}>⏳</span>
-                <div>
-                  <strong style={{ color: '#1A1A2E' }}>
-                    {lang === 'en' ? 'Claim Under Review' : 'Solicitud de Reclamo en Verificación'}
-                  </strong>
-                  <div style={{ fontSize: '12px', color: '#4A5568', marginTop: '2px', lineHeight: 1.4 }}>
-                    {lang === 'en' 
-                      ? 'A owner verification claim is currently being evaluated by Atlan administration.' 
-                      : 'Una solicitud de verificación de propiedad sobre este local se encuentra actualmente en revisión por la administración.'}
-                  </div>
-                </div>
-              </div>
-            )}
-            {/* Descripción */}
-            <div>
-              <h4 style={{ margin: '0 0 6px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                {lang === 'en' ? 'About' : 'Acerca de'}
-              </h4>
-              <p style={{ margin: 0, fontSize: '14px', color: '#4A5568', lineHeight: '1.6' }}>
-                {selectedPoint.descripcion || (lang === 'en' ? 'No description available.' : 'Sin descripción disponible.')}
-              </p>
-            </div>
-
-            {/* Galería de Fotos del Negocio */}
-            {selectedPointDetails?.fotos && selectedPointDetails.fotos.length > 0 && (
-              <div>
-                <h4 style={{ margin: '0 0 10px', fontSize: '13px', fontWeight: '750', color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  📸 {lang === 'en' ? 'Photos' : 'Fotos'}
-                </h4>
-                <div style={{
-                  display: 'flex',
-                  gap: '12px',
-                  overflowX: 'auto',
-                  paddingBottom: '8px',
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: 'rgba(255,255,255,0.1) transparent'
-                }}>
-                  {selectedPointDetails.fotos.map((url, i) => (
-                    <img
-                      key={i}
-                      src={url}
-                      alt={`${selectedPoint.nombre} - ${i + 1}`}
-                      style={{
-                        width: '180px',
-                        height: '120px',
-                        borderRadius: '12px',
-                        objectFit: 'cover',
-                        flexShrink: 0,
-                        border: '1px solid rgba(255, 255, 255, 0.08)'
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Horarios del Negocio */}
-            {selectedPointDetails?.servicios?.has_hours && selectedPointDetails?.horarios && (
-              <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.08)', paddingTop: '20px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    ⏰ {lang === 'en' ? 'Opening Hours' : 'Horarios de Atención'}
-                  </h4>
-                  {isBusinessOpenNow(selectedPointDetails.horarios) !== null && (
-                    <span style={{
-                      fontSize: '11px',
-                      fontWeight: '850',
-                      textTransform: 'uppercase',
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      backgroundColor: isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.12)' : 'rgba(239,68,68,0.12)',
-                      color: isBusinessOpenNow(selectedPointDetails.horarios) ? '#17AA4A' : '#ef4444',
-                      border: `1px solid ${isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.25)' : 'rgba(239,68,68,0.25)'}`
-                    }}>
-                      {isBusinessOpenNow(selectedPointDetails.horarios)
-                        ? (lang === 'en' ? 'Open Now' : 'Abierto Ahora')
-                        : (lang === 'en' ? 'Closed' : 'Cerrado')}
-                    </span>
-                  )}
-                </div>
-                <div className="clay-card-static" style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {Object.entries(selectedPointDetails.horarios).map(([day, info]) => {
-                    const dayLabels = {
-                      lunes: lang === 'en' ? 'Monday' : 'Lunes',
-                      martes: lang === 'en' ? 'Tuesday' : 'Martes',
-                      miercoles: lang === 'en' ? 'Wednesday' : 'Miércoles',
-                      jueves: lang === 'en' ? 'Thursday' : 'Jueves',
-                      viernes: lang === 'en' ? 'Friday' : 'Viernes',
-                      sabado: lang === 'en' ? 'Saturday' : 'Sábado',
-                      domingo: lang === 'en' ? 'Sunday' : 'Domingo',
-                    };
-                    const isToday = new Date().getDay() === {
-                      domingo: 0, lunes: 1, martes: 2, miercoles: 3, jueves: 4, viernes: 5, sabado: 6
-                    }[day];
-
-                    return (
-                      <div key={day} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: isToday ? '#1A1A2E' : '#4A5568', fontWeight: isToday ? '800' : '500' }}>
-                        <span>{dayLabels[day]} {isToday && '•'}</span>
-                        <span>
-                          {info.abierto
-                            ? `${info.apertura} - ${info.cierre}`
-                            : (lang === 'en' ? 'Closed' : 'Cerrado')}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Menú del Negocio */}
-            {selectedPointDetails?.servicios?.has_menu && (
-              <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.08)', paddingTop: '20px' }}>
-                <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  🍽️ {t('dashboard.menu')}
-                </h4>
-                {pointMenu.length === 0 ? (
-                  <p style={{ margin: 0, fontSize: '13px', color: '#4A5568', fontStyle: 'italic' }}>
-                    {lang === 'en' ? 'No menu items published yet.' : 'No hay platillos publicados aún.'}
-                  </p>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {pointMenu.map((item) => (
-                      <div key={item.id} className="clay-card-static" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          {item.foto_url ? (
-                            <img
-                              src={item.foto_url}
-                              alt={item.nombre}
-                              style={{
-                                width: '44px',
-                                height: '44px',
-                                borderRadius: '10px',
-                                objectFit: 'cover',
-                                border: '1px solid rgba(20, 109, 158, 0.1)'
-                              }}
-                            />
-                          ) : (
-                            <div style={{
-                              width: '44px',
-                              height: '44px',
-                              borderRadius: '10px',
-                              background: '#F4F6F9',
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              fontSize: '18px',
-                              border: '1px solid rgba(20, 109, 158, 0.1)'
-                            }}>
-                              🍲
-                            </div>
-                          )}
-                          <div>
-                            <p style={{ margin: 0, fontSize: '14px', fontWeight: '800', color: '#1A1A2E' }}>{item.nombre}</p>
-                            {item.descripcion && (
-                              <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#4A5568' }}>{item.descripcion}</p>
-                            )}
-                          </div>
-                        </div>
-                        <span style={{ fontSize: '14px', fontWeight: '800', color: 'var(--atlan-gold-dark, #B8960E)' }}>
-                          C$ {item.precio}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Reservas directas */}
-            {selectedPointDetails?.servicios?.has_lodging && (
-              <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.08)', paddingTop: '20px' }}>
-                <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  🏨 {t('reservations.title')}
-                </h4>
-
-                {reservaSuccess ? (
-                  <div className="clay-card-static" style={{ background: 'rgba(23, 170, 74, 0.10)', border: '1px solid #17AA4A', color: '#17AA4A', padding: '14px', textAlign: 'center', fontWeight: '700' }}>
-                    🎉 {t('reservations.success')}
-                  </div>
-                ) : !userSession ? (
-                  <div className="clay-card-static" style={{ padding: '14px', textAlign: 'center' }}>
-                    <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#4A5568', fontWeight: '600' }}>
-                      🔑 {t('reservations.loginRequired')}
-                    </p>
-                    <a
-                      href="/login"
-                      className="clay-btn-gold"
-                      style={{
-                        display: 'inline-flex',
-                        padding: '8px 18px',
-                        fontSize: '12px',
-                        textDecoration: 'none'
-                      }}
-                    >
-                      {t('nav.login')}
-                    </a>
-                  </div>
-                ) : (
-                  <form onSubmit={handleCrearReserva} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <div>
-                      <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                        {t('reservations.type')}
-                      </label>
-                      <select
-                        value={reservaTipo}
-                        onChange={(e) => setReservaTipo(e.target.value)}
-                        className="clay-input"
-                        style={{ padding: '10px 14px' }}
+                  {/* ACCIONES SUPERIORES FLOTANTES */}
+                  <div style={{ position: 'absolute', top: '14px', right: '14px', display: 'flex', gap: '8px', zIndex: 2 }}>
+                    {userSession && (
+                      <button
+                        onClick={handleToggleFavorite}
+                        title={isFavorite ? (lang === 'en' ? 'Remove Favorite' : 'Quitar de Favoritos') : (lang === 'en' ? 'Save Favorite' : 'Guardar Favorito')}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.9)',
+                          backdropFilter: 'blur(8px)',
+                          border: isFavorite ? '1.5px solid #FFD700' : '1px solid rgba(255,255,255,0.5)',
+                          color: isFavorite ? '#B8960E' : '#475569',
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '50%',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
+                          transition: 'transform 0.2s'
+                        }}
                       >
-                        <option value="mesa">{t('reservations.types.mesa')}</option>
-                        <option value="habitacion">{t('reservations.types.habitacion')}</option>
-                        <option value="tour">{t('reservations.types.tour')}</option>
-                        <option value="transporte">{t('reservations.types.transporte')}</option>
-                      </select>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                      <div style={{ flex: 1 }}>
-                        <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                          {t('reservations.date')} / {t('reservations.time')}
-                        </label>
-                        <input
-                          type="datetime-local"
-                          required
-                          value={reservaFechaHora}
-                          onChange={(e) => setReservaFechaHora(e.target.value)}
-                          className="clay-input"
-                          style={{ padding: '9px 12px' }}
-                        />
-                      </div>
-                      <div style={{ width: '90px' }}>
-                        <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                          🧑‍🤝‍🧑 {t('reservations.people')}
-                        </label>
-                        <input
-                          type="number"
-                          min="1"
-                          required
-                          value={reservaPersonas}
-                          onChange={(e) => setReservaPersonas(e.target.value)}
-                          className="clay-input"
-                          style={{ padding: '9px 12px' }}
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                        📝 {t('reservations.notes')}
-                      </label>
-                      <textarea
-                        rows="2"
-                        value={reservaNotas}
-                        onChange={(e) => setReservaNotas(e.target.value)}
-                        placeholder="..."
-                        className="clay-textarea"
-                        style={{ padding: '10px 14px' }}
-                      />
-                    </div>
+                        <Icon name={isFavorite ? 'heartFilled' : 'heart'} size={17} color={isFavorite ? '#B8960E' : '#475569'} />
+                      </button>
+                    )}
 
                     <button
-                      type="submit"
-                      disabled={isSubmittingReserva}
-                      className="clay-btn-gold"
-                      style={{ width: '100%', padding: '12px' }}
+                      onClick={() => {
+                        setSelectedPoint(null);
+                        setShowFullProfileModal(false);
+                      }}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.9)',
+                        backdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(255,255,255,0.5)',
+                        color: '#1E293B',
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '50%',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
+                        transition: 'transform 0.2s'
+                      }}
                     >
-                      {isSubmittingReserva ? '...' : t('reservations.submit')}
+                      <Icon name="x" size={17} color="#1E293B" />
                     </button>
-                  </form>
-                )}
-              </div>
-            )}
-
-            {/* Panel de Reseñas */}
-            <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.08)', paddingTop: '20px' }}>
-              <h4 style={{ margin: '0 0 16px', fontSize: '13px', fontWeight: '800', color: '#1A1A2E', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                ⭐ {t('reviews.title')}
-              </h4>
-
-              {/* Formulario de Reseña */}
-              {!userSession ? (
-                <div className="clay-card-static" style={{ padding: '14px', textAlign: 'center', marginBottom: '20px' }}>
-                  <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#4A5568', fontWeight: '600' }}>
-                    🔑 {lang === 'en' ? 'Log in to write reviews & comments' : 'Inicia sesión para escribir reseñas y comentarios'}
-                  </p>
-                  <a
-                    href="/login"
-                    className="clay-btn-gold"
-                    style={{
-                      display: 'inline-flex',
-                      padding: '8px 18px',
-                      fontSize: '12px',
-                      textDecoration: 'none'
-                    }}
-                  >
-                    {t('nav.login')}
-                  </a>
+                  </div>
                 </div>
-              ) : (
-                <form onSubmit={handleCrearResena} className="clay-card-static" style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px', marginBottom: '20px' }}>
-                  <p style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: 'var(--atlan-gold-dark, #B8960E)' }}>
-                    {t('reviews.writeReview')}
-                  </p>
 
-                  {reviewErrorMsg && (
-                    <div style={{ color: '#ef4444', fontSize: '12px', fontWeight: '600', background: 'rgba(239,68,68,0.1)', padding: '8px 10px', borderRadius: '8px' }}>
-                      ⚠ {reviewErrorMsg}
+                {/* DATOS PRINCIPALES NEGOCIO */}
+                <div style={{ padding: '0 20px 14px', position: 'relative', marginTop: '-42px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '14px', marginBottom: '8px' }}>
+                    {selectedPointDetails?.logo_url ? (
+                      <img
+                        src={selectedPointDetails.logo_url}
+                        alt={selectedPoint.nombre}
+                        style={{
+                          width: '76px',
+                          height: '76px',
+                          borderRadius: '20px',
+                          objectFit: 'cover',
+                          border: '3.5px solid #FFFFFF',
+                          boxShadow: '0 8px 20px rgba(0,0,0,0.16)',
+                          background: '#FFFFFF',
+                          flexShrink: 0
+                        }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: '76px',
+                          height: '76px',
+                          borderRadius: '20px',
+                          background: coverGradient,
+                          color: '#FFFFFF',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '30px',
+                          fontWeight: '800',
+                          border: '3.5px solid #FFFFFF',
+                          boxShadow: '0 8px 20px rgba(0,0,0,0.16)',
+                          flexShrink: 0
+                        }}
+                      >
+                        {selectedPoint.nombre?.charAt(0)?.toUpperCase() || <Icon name="building" size={32} color="#FFFFFF" />}
+                      </div>
+                    )}
+
+                    <div style={{ flex: 1, paddingTop: '10px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                        {(() => {
+                          let statusText = '';
+                          let statusColor = '';
+                          let statusBg = '';
+
+                          if (selectedPoint.estado === 'en_verificacion') {
+                            statusText = lang === 'en' ? 'Awaiting Verification' : 'En Verificación';
+                            statusColor = '#f97316';
+                            statusBg = 'rgba(249, 115, 22, 0.12)';
+                          } else if (selectedPoint.estado === 'aprobado') {
+                            statusText = lang === 'en' ? 'Verified' : 'Verificado';
+                            statusColor = '#10b981';
+                            statusBg = 'rgba(16, 185, 129, 0.12)';
+                          } else {
+                            const isClaimed = !!selectedPoint.negocio_id;
+                            statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
+                            statusColor = isClaimed ? '#10b981' : '#f59e0b';
+                            statusBg = isClaimed ? 'rgba(16, 185, 129, 0.12)' : 'rgba(245, 158, 11, 0.12)';
+                          }
+
+                          return (
+                            <span style={{
+                              fontSize: '10.5px',
+                              fontWeight: '800',
+                              textTransform: 'uppercase',
+                              color: statusColor,
+                              background: statusBg,
+                              padding: '2.5px 7.5px',
+                              borderRadius: '6px',
+                              border: `1px solid ${statusColor}35`,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px'
+                            }}>
+                              <Icon name={selectedPoint.estado === 'aprobado' ? 'checkCircle' : 'shield'} size={11} color={statusColor} />
+                              {statusText}
+                            </span>
+                          );
+                        })()}
+
+                        {avgRating && (
+                          <span style={{
+                            fontSize: '11px',
+                            fontWeight: '800',
+                            color: '#B8960E',
+                            background: 'rgba(255, 215, 0, 0.18)',
+                            padding: '2.5px 6.5px',
+                            borderRadius: '6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '3px'
+                          }}>
+                            <Icon name="starFilled" size={12} color="#B8960E" />
+                            {avgRating} ({pointReviews.length})
+                          </span>
+                        )}
+                      </div>
+
+                      <h2 style={{ margin: 0, fontSize: '21px', fontWeight: '850', color: '#0F172A', lineHeight: '1.25' }}>
+                        {selectedPoint.nombre}
+                      </h2>
+                      <p style={{ margin: '4px 0 0', fontSize: '12.5px', color: '#64748B', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Icon name="mapPin" size={13} color="#64748B" />
+                        <span>{t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}</span>
+                        {selectedPointDetails?.rango_precios && (
+                          <span style={{ color: '#0F172A', fontWeight: '800', marginLeft: '4px' }}>• {selectedPointDetails.rango_precios}</span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CUERPO SCROLLABLE DEL PANEL */}
+                <div style={{
+                  flex: 1,
+                  overflowY: 'auto',
+                  padding: '0 20px 20px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '14px',
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: 'rgba(20,109,158,0.1) transparent'
+                }}>
+                  {/* BOTONES DE ACCIÓN: CARTEL NEÓN OSCURO (INICIAR VIAJE) Y CARTEL NEÓN AMARILLO (MOSTRAR MÁS) */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <button
+                      onClick={() => handleIniciarViaje(selectedPoint)}
+                      className="neon-map-btn-dark"
+                      style={{
+                        width: '100%',
+                        padding: '13px 8px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '7px'
+                      }}
+                    >
+                      <span
+                        className="neon-sign-text"
+                        style={{
+                          fontSize: '12.5px',
+                          fontWeight: '900',
+                          letterSpacing: '1px',
+                          color: '#FFFFFF',
+                          textTransform: 'uppercase',
+                          WebkitTextStroke: '1px #FFD700',
+                          paintOrder: 'stroke fill',
+                          textShadow: '0 0 8px rgba(255, 215, 0, 0.85)'
+                        }}
+                      >
+                        {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
+                      </span>
+                      <img src="/images/ir.svg" alt="Ir" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 0 6px #FFD700) brightness(0) invert(1)' }} />
+                    </button>
+
+                    <button
+                      onClick={() => setShowFullProfileModal(true)}
+                      className="neon-map-btn-yellow"
+                      style={{
+                        width: '100%',
+                        padding: '13px 8px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '7px'
+                      }}
+                    >
+                      <span
+                        className="neon-sign-text-white-bg"
+                        style={{
+                          fontSize: '12px',
+                          fontWeight: '900',
+                          letterSpacing: '0.8px',
+                          color: '#FFFFFF',
+                          textTransform: 'uppercase',
+                          WebkitTextStroke: '1.2px #000000',
+                          paintOrder: 'stroke fill',
+                          textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)'
+                        }}
+                      >
+                        {lang === 'en' ? 'Show More' : 'Mostrar más'}
+                      </span>
+                      <img src="/images/more.svg" alt="Mostrar más" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }} />
+                    </button>
+                  </div>
+
+                  {/* CHIPS DE AMENIDADES RÁPIDAS */}
+                  {activeServiceList.length > 0 && (
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '12px' }}>
+                      {activeServiceList.map((s) => (
+                        <span
+                          key={s.key}
+                          style={{
+                            fontSize: '11.5px',
+                            fontWeight: '700',
+                            color: '#334155',
+                            background: '#F8FAFC',
+                            border: '1px solid #E2E8F0',
+                            padding: '4px 9px',
+                            borderRadius: '14px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px'
+                          }}
+                        >
+                          <Icon name={s.icon} size={12} color={accentColor} />
+                          <span>{s.label}</span>
+                        </span>
+                      ))}
                     </div>
                   )}
 
-                  <div>
-                    <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                      👤 {t('reviews.yourName')}
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      disabled={!!userSession}
-                      value={newReviewNombre}
-                      onChange={(e) => setNewReviewNombre(e.target.value)}
-                      placeholder="Ej: Carlos"
-                      className="clay-input"
-                      style={{ padding: '9px 12px' }}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                      ⭐ {t('reviews.rating')}
-                    </label>
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          onClick={() => setNewReviewEstrellas(star)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            fontSize: '22px',
-                            cursor: 'pointer',
-                            padding: 0,
-                            color: star <= newReviewEstrellas ? '#B8960E' : 'rgba(20, 109, 158, 0.2)',
-                            transition: 'transform 0.1s'
-                          }}
-                        >
-                          ★
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label style={{ fontSize: '12px', fontWeight: '750', color: '#1A1A2E', display: 'block', marginBottom: '4px' }}>
-                      💬 {t('reviews.yourComment')}
-                    </label>
-                    <textarea
-                      required
-                      rows="3"
-                      value={newReviewComment}
-                      onChange={(e) => setNewReviewComment(e.target.value)}
-                      placeholder="..."
-                      className="clay-textarea"
-                      style={{ padding: '10px 14px' }}
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmittingReview}
-                    className="clay-btn-green"
-                    style={{ width: '100%', padding: '10px' }}
-                  >
-                    {isSubmittingReview ? '...' : t('reviews.submit')}
-                  </button>
-                </form>
-              )}
-
-              {/* Listado de Reseñas */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {pointReviews.length === 0 ? (
-                  <p style={{ margin: 0, fontSize: '13px', color: '#4A5568', fontStyle: 'italic', textAlign: 'center', padding: '10px 0' }}>
-                    {lang === 'en' ? 'No reviews yet. Be the first!' : 'No hay reseñas aún. ¡Sé el primero!'}
-                  </p>
-                ) : (
-                  pointReviews.map((rev) => (
-                    <div key={rev.id} className="clay-card-static" style={{ padding: '14px 16px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                        <span style={{ fontSize: '13.5px', fontWeight: '800', color: '#1A1A2E' }}>{rev.autor_nombre}</span>
-                        <span style={{ fontSize: '12px', color: '#B8960E' }}>
-                          {'★'.repeat(rev.estrellas)}{'☆'.repeat(5 - rev.estrellas)}
+                  {/* TARJETA DE VISTA PREVIA RESUMIDA */}
+                  <div className="clay-card-static" style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {/* Indicador de abierto/cerrado */}
+                    {selectedPointDetails?.servicios?.has_hours && selectedPointDetails?.horarios && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <Icon name="clock" size={13} color="#64748B" />
+                          <span>{lang === 'en' ? 'Status' : 'Horario'}</span>
                         </span>
+                        {isBusinessOpenNow(selectedPointDetails.horarios) !== null && (
+                          <span style={{
+                            fontSize: '11px',
+                            fontWeight: '850',
+                            textTransform: 'uppercase',
+                            padding: '3px 8px',
+                            borderRadius: '6px',
+                            backgroundColor: isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.12)' : 'rgba(239,68,68,0.12)',
+                            color: isBusinessOpenNow(selectedPointDetails.horarios) ? '#17AA4A' : '#ef4444',
+                            border: `1px solid ${isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.25)' : 'rgba(239,68,68,0.25)'}`,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}>
+                            <Icon name={isBusinessOpenNow(selectedPointDetails.horarios) ? 'check' : 'x'} size={11} color={isBusinessOpenNow(selectedPointDetails.horarios) ? '#17AA4A' : '#ef4444'} />
+                            {isBusinessOpenNow(selectedPointDetails.horarios)
+                              ? (lang === 'en' ? 'Open Now' : 'Abierto Ahora')
+                              : (lang === 'en' ? 'Closed' : 'Cerrado')}
+                          </span>
+                        )}
                       </div>
-                      <p style={{ margin: 0, fontSize: '13px', color: '#4A5568', lineHeight: '1.5' }}>{rev.comentario}</p>
+                    )}
+
+                    {/* Descripción rápida (Acerca de) */}
+                    <div>
+                      <h4 style={{ margin: '0 0 4px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <Icon name="info" size={13} color="#64748B" />
+                        <span>{lang === 'en' ? 'About' : 'Acerca de'}</span>
+                      </h4>
+                      <p style={{
+                        margin: 0,
+                        fontSize: '13px',
+                        color: '#475569',
+                        lineHeight: '1.5',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                      }}>
+                        {selectedPoint.descripcion || (lang === 'en' ? 'No description available.' : 'Sin descripción disponible.')}
+                      </p>
                     </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
+
+                    {/* GALERÍA DE 6 ESPACIOS (3 COLUMNAS X 2 FILAS) CON PLACEHOLDER PRÓXIMAMENTE */}
+                    <div>
+                      <h4 style={{ margin: '0 0 8px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <Icon name="image" size={13} color="#64748B" />
+                        <span>{lang === 'en' ? 'Photos & Media' : 'Galería de Fotos'} ({selectedPointDetails?.fotos?.length || 0}/6)</span>
+                      </h4>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                        {[0, 1, 2, 3, 4, 5].map((index) => {
+                          const photoUrl = selectedPointDetails?.fotos?.[index];
+
+                          if (photoUrl) {
+                            return (
+                              <div
+                                key={index}
+                                style={{
+                                  height: '70px',
+                                  borderRadius: '10px',
+                                  overflow: 'hidden',
+                                  border: '1px solid rgba(20, 109, 158, 0.12)',
+                                  boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
+                                }}
+                              >
+                                <img
+                                  src={photoUrl}
+                                  alt={`Foto ${index + 1}`}
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <div
+                              key={index}
+                              style={{
+                                height: '70px',
+                                borderRadius: '10px',
+                                border: '1.5px dashed rgba(20, 109, 158, 0.22)',
+                                background: 'rgba(20, 109, 158, 0.03)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '3px',
+                                padding: '4px',
+                                textAlign: 'center'
+                              }}
+                            >
+                              <Icon name="image" size={17} color="#94A3B8" />
+                              <span style={{ fontSize: '9.5px', fontWeight: '750', color: '#94A3B8', lineHeight: '1.1' }}>
+                                {lang === 'en' ? 'Coming Soon' : 'Próximamente'}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* BARRA DE CONTACTO DIRECTO Y REDES SOCIALES (JUSTO DEBAJO DE LAS IMÁGENES) */}
+                    {(() => {
+                      const phone = selectedPointDetails?.telefono;
+                      const whatsapp = selectedPointDetails?.whatsapp;
+                      const facebook = selectedPointDetails?.facebook;
+                      const instagram = selectedPointDetails?.instagram;
+                      const tiktok = selectedPointDetails?.tiktok;
+                      const website = selectedPointDetails?.website;
+
+                      const hasAnyContact = phone || whatsapp || facebook || instagram || tiktok || website;
+
+                      if (!hasAnyContact) return null;
+
+                      const formatUrl = (val, prefix) => {
+                        if (!val) return null;
+                        if (val.startsWith('http://') || val.startsWith('https://')) return val;
+                        return `${prefix}${val.replace(/^@/, '')}`;
+                      };
+
+                      const waUrl = whatsapp ? (whatsapp.startsWith('http') ? whatsapp : `https://wa.me/${whatsapp.replace(/\D/g, '')}`) : null;
+                      const fbUrl = formatUrl(facebook, 'https://facebook.com/');
+                      const igUrl = formatUrl(instagram, 'https://instagram.com/');
+                      const ttUrl = formatUrl(tiktok, 'https://tiktok.com/@');
+                      const webUrl = website ? (website.startsWith('http') ? website : `https://${website}`) : null;
+
+                      return (
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', borderTop: '1px dashed rgba(20, 109, 158, 0.12)', paddingTop: '10px', marginTop: '2px' }}>
+                          {whatsapp && (
+                            <a
+                              href={waUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Contactar por WhatsApp"
+                              style={{
+                                padding: '7px 12px',
+                                borderRadius: '10px',
+                                background: 'rgba(34, 197, 94, 0.14)',
+                                border: '1.5px solid rgba(34, 197, 94, 0.35)',
+                                color: '#15803D',
+                                fontSize: '12.5px',
+                                fontWeight: '850',
+                                textDecoration: 'none',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '6px',
+                                flex: '1 1 auto'
+                              }}
+                            >
+                              <Icon name="whatsapp" size={15} color="#16A34A" />
+                              <span>WhatsApp ({whatsapp})</span>
+                            </a>
+                          )}
+
+                          {fbUrl && (
+                            <a
+                              href={fbUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Facebook"
+                              style={{
+                                width: '34px',
+                                height: '34px',
+                                borderRadius: '9px',
+                                background: 'rgba(24, 119, 242, 0.12)',
+                                border: '1.5px solid rgba(24, 119, 242, 0.25)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                            >
+                              <Icon name="facebook" size={16} color="#1877F2" />
+                            </a>
+                          )}
+
+                          {igUrl && (
+                            <a
+                              href={igUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Instagram"
+                              style={{
+                                width: '34px',
+                                height: '34px',
+                                borderRadius: '9px',
+                                background: 'rgba(228, 64, 95, 0.12)',
+                                border: '1.5px solid rgba(228, 64, 95, 0.25)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                            >
+                              <Icon name="instagram" size={16} color="#E4405F" />
+                            </a>
+                          )}
+
+                          {ttUrl && (
+                            <a
+                              href={ttUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="TikTok"
+                              style={{
+                                width: '34px',
+                                height: '34px',
+                                borderRadius: '9px',
+                                background: 'rgba(15, 23, 42, 0.08)',
+                                border: '1.5px solid rgba(15, 23, 42, 0.2)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                            >
+                              <Icon name="tiktok" size={16} color="#0F172A" />
+                            </a>
+                          )}
+
+                          {webUrl && (
+                            <a
+                              href={webUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Sitio Web"
+                              style={{
+                                width: '34px',
+                                height: '34px',
+                                borderRadius: '9px',
+                                background: 'rgba(20, 109, 158, 0.12)',
+                                border: '1.5px solid rgba(20, 109, 158, 0.25)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                            >
+                              <Icon name="globe" size={16} color="#146D9E" />
+                            </a>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+
+                  {/* BOTÓN RECLAMAR NEGOCIO SI APLICA */}
+                  {!selectedPoint.negocio_id && selectedPoint.estado === 'sin_reclamar' && (
+                    <Link
+                      href="/dashboard"
+                      style={{
+                        padding: '10px 14px',
+                        fontSize: '12.5px',
+                        color: '#B8960E',
+                        background: 'rgba(255, 215, 0, 0.1)',
+                        border: '1px solid rgba(255, 215, 0, 0.3)',
+                        borderRadius: '10px',
+                        textDecoration: 'none',
+                        textAlign: 'center',
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <Icon name="claim" size={14} color="#B8960E" />
+                      <span>{lang === 'en' ? 'Claim this business' : '¿Eres el dueño? Reclamar este negocio'}</span>
+                    </Link>
+                  )}
+                </div>
+              </>
+            );
+          })()}
         </div>
       )}
+
+      {/* Modal de Perfil Completo Multi-pestaña */}
+      <BusinessProfileModal
+        isOpen={showFullProfileModal}
+        onClose={() => setShowFullProfileModal(false)}
+        point={selectedPoint}
+        details={selectedPointDetails}
+        reviews={pointReviews}
+        menu={pointMenu}
+        userSession={userSession}
+        lang={lang}
+        t={t}
+        isFavorite={isFavorite}
+        onToggleFavorite={handleToggleFavorite}
+        onIniciarViaje={handleIniciarViaje}
+        isBusinessOpenNow={isBusinessOpenNow}
+        reservaTipo={reservaTipo}
+        setReservaTipo={setReservaTipo}
+        reservaFechaHora={reservaFechaHora}
+        setReservaFechaHora={setReservaFechaHora}
+        reservaPersonas={reservaPersonas}
+        setReservaPersonas={setReservaPersonas}
+        reservaNotas={reservaNotas}
+        setReservaNotas={setReservaNotas}
+        isSubmittingReserva={isSubmittingReserva}
+        reservaSuccess={reservaSuccess}
+        handleCrearReserva={handleCrearReserva}
+        newReviewNombre={newReviewNombre}
+        setNewReviewNombre={setNewReviewNombre}
+        newReviewEstrellas={newReviewEstrellas}
+        setNewReviewEstrellas={setNewReviewEstrellas}
+        newReviewComment={newReviewComment}
+        setNewReviewComment={setNewReviewComment}
+        isSubmittingReview={isSubmittingReview}
+        reviewErrorMsg={reviewErrorMsg}
+        handleCrearResena={handleCrearResena}
+      />
 
       {/* HUD Waze de Ruta */}
       {routeInfo && (
