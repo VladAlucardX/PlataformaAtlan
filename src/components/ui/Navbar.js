@@ -76,7 +76,17 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
   };
 
   const getProfileLabel = () => {
-    return perfil?.nombre_completo || perfil?.email?.split("@")[0] || (lang === "en" ? "My Profile" : "Mi Perfil");
+    if (perfil?.nombre_completo) {
+      return perfil.nombre_completo.trim().split(" ")[0];
+    }
+    if (session?.user?.user_metadata?.full_name) {
+      return session.user.user_metadata.full_name.trim().split(" ")[0];
+    }
+    if (perfil?.email || session?.user?.email) {
+      const email = perfil?.email || session?.user?.email;
+      return email.split("@")[0];
+    }
+    return lang === "en" ? "Profile" : "Perfil";
   };
 
   const communityProfileLink = perfil ? `/comunidad/perfil/${getProfileSlug(perfil)}` : (session?.user?.id ? `/comunidad/perfil/${session.user.id}` : "/comunidad");
