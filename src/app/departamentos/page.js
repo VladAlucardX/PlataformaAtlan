@@ -349,7 +349,7 @@ export default function DepartamentosPage() {
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Icon name="shield" size={18} color="#FFD700" />
               <span style={{ fontSize: "13.5px", fontWeight: "800", color: "#FFFFFF" }}>
-                Registro Turista Atlan: <span style={{ color: "#FFD700" }}>{userVisitsCount}</span> {userVisitsCount === 1 ? 'visita verificada' : 'visitas verificadas'}
+                Registro de <span style={{ color: "#FFD700" }}>{perfil?.nombre_completo || perfil?.nombre || userSession?.user?.user_metadata?.nombre_completo || 'Turista'}</span>: <span style={{ color: "#FFD700" }}>{userVisitsCount}</span> {userVisitsCount === 1 ? 'visita verificada' : 'visitas verificadas'}
               </span>
             </div>
 

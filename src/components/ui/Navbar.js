@@ -76,11 +76,23 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
   };
 
   const getProfileLabel = () => {
-    if (perfil?.nombre_completo) {
-      return perfil.nombre_completo;
+    if (perfil?.nombre_completo && perfil.nombre_completo.trim()) {
+      return perfil.nombre_completo.trim();
     }
-    if (session?.user?.user_metadata?.full_name) {
-      return session.user.user_metadata.full_name;
+    if (perfil?.nombre && perfil.nombre.trim()) {
+      return perfil.nombre.trim();
+    }
+    if (perfil?.full_name && perfil.full_name.trim()) {
+      return perfil.full_name.trim();
+    }
+    if (session?.user?.user_metadata?.nombre_completo && session.user.user_metadata.nombre_completo.trim()) {
+      return session.user.user_metadata.nombre_completo.trim();
+    }
+    if (session?.user?.user_metadata?.full_name && session.user.user_metadata.full_name.trim()) {
+      return session.user.user_metadata.full_name.trim();
+    }
+    if (session?.user?.user_metadata?.name && session.user.user_metadata.name.trim()) {
+      return session.user.user_metadata.name.trim();
     }
     if (perfil?.email || session?.user?.email) {
       const email = perfil?.email || session?.user?.email;

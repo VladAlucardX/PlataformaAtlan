@@ -19,7 +19,7 @@ export function AuthProvider({ children }) {
     try {
       const { data, error } = await supabase
         .from("perfiles")
-        .select("id, rol, avatar_url, nombre_completo, email")
+        .select("*")
         .eq("id", userId)
         .single();
       if (!error && data) {
