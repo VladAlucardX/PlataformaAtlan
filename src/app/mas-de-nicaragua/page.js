@@ -365,36 +365,18 @@ export default function MasDeNicaraguaPage() {
       {/* Hero Header */}
       <div style={{
         background: "linear-gradient(180deg, rgba(20, 109, 158, 0.25) 0%, rgba(10, 25, 47, 1) 100%)",
-        padding: "90px 20px 10px",
+        padding: "85px 20px 8px",
         textAlign: "center",
         borderBottom: "1px solid rgba(255, 255, 255, 0.08)"
       }}>
-        <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-          <div style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            background: "rgba(255, 215, 0, 0.15)",
-            border: "1px solid rgba(255, 215, 0, 0.35)",
-            padding: "5px 14px",
-            borderRadius: "30px",
-            color: "#FFD700",
-            fontSize: "12px",
-            fontWeight: "800",
-            textTransform: "uppercase",
-            letterSpacing: "1px",
-            marginBottom: "10px"
-          }}>
-            <Icon name="book" size={15} color="#FFD700" />
-            <span>{t("nicaragua.title") || "Más de Nicaragua"}</span>
-          </div>
-
+        <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
           <h1 style={{
-            fontSize: "clamp(24px, 3.8vw, 40px)",
+            fontSize: "clamp(18px, 3.2vw, 34px)",
             fontWeight: "900",
             color: "#FFFFFF",
             margin: "0",
-            lineHeight: 1.15
+            lineHeight: 1.2,
+            whiteSpace: "nowrap"
           }}>
             Enciclopedia Viva de sus <span style={{ color: "#FFD700" }}>17 departamentos</span>
           </h1>
