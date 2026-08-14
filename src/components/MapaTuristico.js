@@ -71,6 +71,7 @@ export default function MapaTuristico() {
   const [showRecenterBtn, setShowRecenterBtn] = useState(false);
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [showDirectionsPopup, setShowDirectionsPopup] = useState(false);
 
   // Agregar Punto
   const [isAddingPoint, setIsAddingPoint] = useState(false);
@@ -214,15 +215,49 @@ export default function MapaTuristico() {
     }
   }, [selectedPoint]);
 
-  // Manejar previsualización de ruta y ocultación del panel de direcciones de Mapbox
+  // Control de visibilidad del PopUp de Direcciones (Punto A y B)
   useEffect(() => {
     const directionsPanel = document.querySelector('.mapboxgl-ctrl-directions');
-    
+    if (!directionsPanel) return;
+
+    // Agregar cabecera flotante con título y botón cerrar ✕ al panel de Mapbox
+    if (!directionsPanel.querySelector('.directions-popup-header')) {
+      const header = document.createElement('div');
+      header.className = 'directions-popup-header';
+      header.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255, 215, 0, 0.15); border-bottom: 1px solid rgba(255, 215, 0, 0.3);">
+          <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13.5px; color: #FFD700;">
+            <span>🧭</span>
+            <span>Planificar Ruta (A ➔ B)</span>
+          </div>
+          <button id="close-directions-popup-btn" type="button" style="background: rgba(255, 255, 255, 0.2); border: none; color: #FFFFFF; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
+            ✕
+          </button>
+        </div>
+      `;
+      directionsPanel.insertBefore(header, directionsPanel.firstChild);
+
+      const closeBtn = header.querySelector('#close-directions-popup-btn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          setShowDirectionsPopup(false);
+        });
+      }
+    }
+
+    if (showDirectionsPopup) {
+      directionsPanel.classList.add('directions-popup-active');
+      directionsPanel.style.setProperty('display', 'block', 'important');
+    } else {
+      directionsPanel.classList.remove('directions-popup-active');
+      directionsPanel.style.setProperty('display', 'none', 'important');
+    }
+  }, [showDirectionsPopup]);
+
+  // Manejar previsualización de ruta al seleccionar punto
+  useEffect(() => {
     if (!selectedPoint) {
       setPreviewRouteInfo(null);
-      if (directionsPanel && !isNavigatingRef.current) {
-        directionsPanel.style.display = '';
-      }
       if (mapRef.current && mapRef.current.isStyleLoaded()) {
         const source = mapRef.current.getSource('preview-route');
         if (source) {
@@ -236,10 +271,6 @@ export default function MapaTuristico() {
         }
       }
       return;
-    }
-
-    if (directionsPanel) {
-      directionsPanel.style.display = 'none';
     }
 
     const fetchPreviewRoute = () => {
@@ -606,6 +637,7 @@ export default function MapaTuristico() {
     if (directionsRef.current) {
       directionsRef.current.setOrigin([currLng, currLat]);
       directionsRef.current.setDestination([punto.lng, punto.lat]);
+      setShowDirectionsPopup(true);
     }
 
     mapRef.current.flyTo({
@@ -2343,6 +2375,26 @@ export default function MapaTuristico() {
             </Link>
 
             <button
+              onClick={() => setShowDirectionsPopup((prev) => !prev)}
+              style={{
+                padding: '10px 16px',
+                background: showDirectionsPopup ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : 'rgba(255, 255, 255, 0.08)',
+                border: showDirectionsPopup ? '1.5px solid #FFD700' : '1px solid rgba(255, 255, 255, 0.18)',
+                color: showDirectionsPopup ? '#0A192F' : '#FFD700',
+                borderRadius: '14px',
+                fontWeight: '800',
+                fontSize: '13px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.25s ease'
+              }}
+            >
+              🧭 <span className="mobile-hide-text">{lang === 'en' ? 'Route A-B' : 'Trazar Ruta'}</span>
+            </button>
+
+            <button
               onClick={activarLevantarPunto}
               style={{
                 padding: '10px 20px',
@@ -2394,6 +2446,30 @@ export default function MapaTuristico() {
       {/* Panel de filtros */}
       {!selectedPoint && !routeInfo && !isDemoRunning && (
         <div className="filter-bar">
+        {/* Botón Píldora Trazar Ruta A-B */}
+        <button
+          onClick={() => setShowDirectionsPopup((prev) => !prev)}
+          style={{
+            flexShrink: 0,
+            padding: '8px 16px',
+            background: showDirectionsPopup ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : '#0A192F',
+            color: showDirectionsPopup ? '#0A192F' : '#FFD700',
+            border: '1.5px solid #FFD700',
+            borderRadius: '14px',
+            fontWeight: '850',
+            fontSize: '12.5px',
+            cursor: 'pointer',
+            backdropFilter: 'blur(12px)',
+            boxShadow: showDirectionsPopup ? '0 4px 14px rgba(255,215,0,0.4)' : '0 4px 10px rgba(0,0,0,0.25)',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+        >
+          🧭 {showDirectionsPopup ? (lang === 'en' ? 'Close Route' : 'Cerrar Ruta') : (lang === 'en' ? 'Trazar Ruta' : 'Trazar Ruta')}
+        </button>
+
         {/* Píldora "Todas" */}
         <button
           onClick={() => aplicarFiltro(null)}
