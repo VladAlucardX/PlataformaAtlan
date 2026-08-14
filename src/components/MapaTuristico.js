@@ -248,6 +248,15 @@ export default function MapaTuristico() {
     if (showDirectionsPopup) {
       directionsPanel.classList.add('directions-popup-active');
       directionsPanel.style.setProperty('display', 'block', 'important');
+      if (directionsRef.current) {
+        try {
+          const originInput = directionsPanel.querySelector('.mapbox-directions-origin input');
+          if (originInput && !originInput.value && currentPosRef.current) {
+            const [cLng, cLat] = currentPosRef.current;
+            directionsRef.current.setOrigin([cLng, cLat]);
+          }
+        } catch (e) {}
+      }
     } else {
       directionsPanel.classList.remove('directions-popup-active');
       directionsPanel.style.setProperty('display', 'none', 'important');
@@ -1722,7 +1731,7 @@ export default function MapaTuristico() {
       accessToken: mapboxgl.accessToken,
       unit: 'metric',
       profile: 'mapbox/driving-traffic',
-      interactive: false,
+      interactive: true,
       language: lang === 'en' ? 'en' : 'es',
       controls: { inputs: true, instructions: true, profileSwitcher: true },
     });
