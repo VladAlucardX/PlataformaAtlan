@@ -1246,6 +1246,14 @@ export default function MapaTuristico() {
     const now = Date.now();
     const silenceSec = (now - lastAnnouncementTimeRef.current) / 1000;
 
+    // Actualizar maniobra y distancia actual para el indicador de giro estilo Waze
+    setCurrentManeuver({
+      instruction: next.instruction,
+      distance: dist,
+      distanceFormatted: formatDistanceDisplay(dist),
+      icon: next.icon || getManeuverIcon(next.type, next.modifier)
+    });
+
     if (dist < 50 && !next.announcedArrive) {
       next.announcedArrive = true;
       speakInstruction(next.instruction, true);
@@ -1770,8 +1778,13 @@ export default function MapaTuristico() {
           destinationName: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : 'Destino')
         });
 
-        // Ocultar la ventana flotante de búsqueda al trazar la ruta automáticamente
+        // Ocultar la ventana gigante de búsqueda/pasos al trazar la ruta automáticamente
         setShowDirectionsPopup(false);
+        const directionsPanel = document.querySelector('.mapboxgl-ctrl-directions');
+        if (directionsPanel) {
+          directionsPanel.classList.remove('directions-popup-active');
+          directionsPanel.style.setProperty('display', 'none', 'important');
+        }
 
         if (steps.length > 0) {
           const firstStep = steps[0];
