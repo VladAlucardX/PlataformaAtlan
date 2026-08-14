@@ -2372,6 +2372,17 @@ html body .mapbox-directions-step-distance {
   z-index: 50 !important;
 }
 
+.mapboxgl-popup-content,
+.mapboxgl-popup-content *,
+.mapboxgl-popup-content h3,
+.mapboxgl-popup-content button,
+.mapboxgl-popup-content span,
+.mapboxgl-popup-content p {
+  font-family: 'Delight', 'Delight Static', var(--font-inter), system-ui, -apple-system, sans-serif !important;
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
+}
+
 .mapboxgl-popup-content {
   background: linear-gradient(145deg, rgba(20, 109, 158, 0.94) 0%, rgba(15, 85, 125, 0.96) 100%) !important;
   backdrop-filter: blur(18px) !important;
@@ -2379,9 +2390,15 @@ html body .mapbox-directions-step-distance {
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   border-radius: 22px !important;
   box-shadow: 0 16px 40px rgba(10, 35, 60, 0.4), 0 0 20px rgba(255, 215, 0, 0.15) !important;
-  padding: 16px 18px !important;
+  padding: 18px 16px 20px !important;
   color: #FFFFFF !important;
   box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 270px !important;
+  max-width: 270px !important;
   text-align: center !important;
 }
 
@@ -2421,6 +2438,7 @@ html body .mapbox-directions-step-distance {
   background: rgba(255, 255, 255, 0.2) !important;
   color: #FFFFFF !important;
 }
+
 
 
 
