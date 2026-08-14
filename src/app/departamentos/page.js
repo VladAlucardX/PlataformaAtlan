@@ -7,6 +7,7 @@ import Navbar from '../../components/ui/Navbar';
 import Icon from '../../components/ui/Icon';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/AuthContext';
+import { obtenerDepartamentoPorCoordenadas } from '../../lib/geoUtils';
 import Link from 'next/link';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -71,12 +72,49 @@ export default function DepartamentosPage() {
     }
   };
 
+  // Corregir departamento de cada lugar usando detección por coordenadas (GeoJSON polygons)
+  // y filtrar por departamento seleccionado. También auto-corrige datos incorrectos en la BD.
+  const corregirYFiltrarDepartamentos = async (data, dept) => {
+    if (!data || data.length === 0) return [];
+
+    const corrected = await Promise.all(data.map(async (lugar) => {
+      // Solo corregir si tiene coordenadas válidas
+      if (lugar.lat != null && lugar.lng != null) {
+        const lng = typeof lugar.lng === 'string' ? parseFloat(lugar.lng) : lugar.lng;
+        const lat = typeof lugar.lat === 'string' ? parseFloat(lugar.lat) : lugar.lat;
+        if (!isNaN(lng) && !isNaN(lat)) {
+          try {
+            const deptReal = await obtenerDepartamentoPorCoordenadas(lng, lat);
+            if (deptReal && deptReal !== lugar.departamento) {
+              // Auto-corregir el departamento en la BD (fire-and-forget)
+              supabase
+                .from('puntos')
+                .update({ departamento: deptReal })
+                .eq('id', lugar.id)
+                .then(({ error }) => {
+                  if (error) console.warn('[Atlan] No se pudo auto-corregir departamento para:', lugar.nombre, error);
+                });
+              return { ...lugar, departamento: deptReal };
+            }
+          } catch (_) { /* mantener departamento original si falla */ }
+        }
+      }
+      return lugar;
+    }));
+
+    // Filtrar por departamento si no es "Todos"
+    if (dept && dept !== "Todos") {
+      return corrected.filter(lugar => lugar.departamento === dept);
+    }
+    return corrected;
+  };
+
   // Cargar datos de ranking según el departamento seleccionado y el modo (Global vs Propio)
   const cargarRanking = async (dept, mode = rankingMode) => {
     setLoading(true);
     try {
-      const paramDept = (dept === "Todos" || !dept) ? null : dept;
-
+      // Siempre traer TODOS los lugares del RPC (sin filtro de departamento)
+      // para poder corregir departamentos client-side con geo-detección
       if (mode === 'propio') {
         if (!userSession?.user) {
           setRankingData([]);
@@ -85,32 +123,32 @@ export default function DepartamentosPage() {
         }
         const { data, error } = await supabase.rpc('obtener_ranking_propio', {
           p_usuario_id: userSession.user.id,
-          p_departamento: paramDept
+          p_departamento: null
         });
         if (error) throw error;
-        setRankingData(data || []);
+        const resultado = await corregirYFiltrarDepartamentos(data || [], dept);
+        setRankingData(resultado);
       } else {
         const { data, error } = await supabase.rpc('obtener_ranking_lugares', {
-          p_departamento: paramDept
+          p_departamento: null
         });
         if (error) throw error;
-        setRankingData(data || []);
+        const resultado = await corregirYFiltrarDepartamentos(data || [], dept);
+        setRankingData(resultado);
       }
     } catch (err) {
       console.warn("[Atlan] Fallo en RPC ranking, buscando en tabla puntos:", err);
       try {
+        // Fallback: traer todos y corregir/filtrar client-side
         let query = supabase
           .from('puntos')
           .select('*')
           .order('total_visitas', { ascending: false })
-          .limit(20);
-
-        if (dept && dept !== "Todos") {
-          query = query.ilike('departamento', `%${dept}%`);
-        }
+          .limit(50);
 
         const { data: fallbackData } = await query;
-        setRankingData(fallbackData || []);
+        const resultado = await corregirYFiltrarDepartamentos(fallbackData || [], dept);
+        setRankingData(resultado);
       } catch (fErr) {
         console.error("Error fallback ranking:", fErr);
       }
@@ -189,7 +227,57 @@ export default function DepartamentosPage() {
         data: '/nicaragua-department-centroids.json'
       });
 
-      // Capa Relleno Interactivo de Departamentos (Colores y Resplandor Estilo Más de Nicaragua)
+      // Paleta de Colores Única por Departamento (idéntica a Más de Nicaragua)
+      const COLOR_MATCH_EXPR = [
+        'match',
+        ['coalesce', ['get', 'nombre'], ['get', 'name_es'], ['get', 'name'], ''],
+        'Managua', '#FF5722',
+        'León', '#E91E63',
+        'Chinandega', '#FF9800',
+        'Granada', '#3F51B5',
+        'Masaya', '#9C27B0',
+        'Carazo', '#00BCD4',
+        'Rivas', '#009688',
+        'Matagalpa', '#8D6E63',
+        'Jinotega', '#2E7D32',
+        'Estelí', '#F59E0B',
+        'Madriz', '#D97706',
+        'Nueva Segovia', '#8BC34A',
+        'Boaco', '#673AB7',
+        'Chontales', '#10B981',
+        'Río San Juan', '#0284C7',
+        'Rio San Juan', '#0284C7',
+        'RACCN (Caribe Norte)', '#E11D48',
+        'Atlántico Norte', '#E11D48',
+        'RACCS (Caribe Sur)', '#EC4899',
+        'Atlántico Sur', '#EC4899',
+        '#FFD700' // fallback
+      ];
+
+      // Capa de Aura/Resplandor Neón para el Departamento Seleccionado
+      map.addLayer({
+        id: 'dept-glow',
+        type: 'line',
+        source: 'nicaragua-departments',
+        paint: {
+          'line-color': COLOR_MATCH_EXPR,
+          'line-width': [
+            'case',
+            ['to-boolean', ['feature-state', 'selected']], 14,
+            0
+          ],
+          'line-blur': 8,
+          'line-opacity': [
+            'case',
+            ['to-boolean', ['feature-state', 'selected']], 0.85,
+            0
+          ],
+          'line-width-transition': { duration: 350, delay: 0 },
+          'line-opacity-transition': { duration: 350, delay: 0 }
+        }
+      });
+
+      // Capa Relleno Interactivo Multicolor con Transición Suave
       map.addLayer({
         id: 'dept-fill',
         type: 'fill',
@@ -197,20 +285,22 @@ export default function DepartamentosPage() {
         paint: {
           'fill-color': [
             'case',
-            ['to-boolean', ['feature-state', 'selected']], '#7C3AED',
-            ['to-boolean', ['feature-state', 'hover']], '#FFD700',
+            ['to-boolean', ['feature-state', 'selected']], COLOR_MATCH_EXPR,
+            ['to-boolean', ['feature-state', 'hover']], COLOR_MATCH_EXPR,
             '#146D9E'
           ],
+          'fill-color-transition': { duration: 300, delay: 0 },
           'fill-opacity': [
             'case',
-            ['to-boolean', ['feature-state', 'selected']], 0.75,
-            ['to-boolean', ['feature-state', 'hover']], 0.55,
+            ['to-boolean', ['feature-state', 'selected']], 0.88,
+            ['to-boolean', ['feature-state', 'hover']], 0.68,
             0.28
-          ]
+          ],
+          'fill-opacity-transition': { duration: 300, delay: 0 }
         }
       });
 
-      // Capa Línea de Borde de Departamentos (Bordes Dorado / Blanco Neón)
+      // Capa de Borde Adaptativo con Halo Blanco en Selección
       map.addLayer({
         id: 'dept-borders',
         type: 'line',
@@ -219,15 +309,17 @@ export default function DepartamentosPage() {
           'line-color': [
             'case',
             ['to-boolean', ['feature-state', 'selected']], '#FFFFFF',
-            ['to-boolean', ['feature-state', 'hover']], '#FFD700',
+            ['to-boolean', ['feature-state', 'hover']], '#FFFFFF',
             '#FFD700'
           ],
+          'line-color-transition': { duration: 300, delay: 0 },
           'line-width': [
             'case',
-            ['to-boolean', ['feature-state', 'selected']], 3.5,
-            ['to-boolean', ['feature-state', 'hover']], 2.5,
+            ['to-boolean', ['feature-state', 'selected']], 4.0,
+            ['to-boolean', ['feature-state', 'hover']], 2.8,
             1.5
           ],
+          'line-width-transition': { duration: 300, delay: 0 },
           'line-opacity': 0.95
         }
       });
@@ -245,8 +337,8 @@ export default function DepartamentosPage() {
             ['linear'],
             ['zoom'],
             5, 10.5,
-            8, 13.5,
-            12, 16.5
+            8, 14,
+            12, 17
           ],
           'text-allow-overlap': true,
           'text-anchor': 'center'

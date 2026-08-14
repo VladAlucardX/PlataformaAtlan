@@ -336,16 +336,28 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           )}
         </div>
 
-        {/* Mobile Hamburger */}
-        <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        {/* Mobile Hamburger Button */}
+        <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           {session && <NotificationDropdown session={session} />}
           <LanguageToggle variant="icon" />
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Menu"
-            style={{ background: "none", border: "none", color: "var(--atlan-text-primary)", cursor: "pointer", padding: "8px" }}
+            style={{
+              background: menuOpen ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.08)",
+              border: "1.5px solid rgba(255, 215, 0, 0.4)",
+              borderRadius: "12px",
+              color: "#FFD700",
+              cursor: "pointer",
+              padding: "8px 10px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.25)",
+              transition: "all 0.2s ease"
+            }}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2.5" strokeLinecap="round">
               {menuOpen ? <path d="M6 6l12 12M6 18L18 6" /> : (
                 <>
                   <line x1="3" y1="6" x2="21" y2="6" />
@@ -360,7 +372,18 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
 
       {/* Mobile Drawer */}
       {menuOpen && (
-        <div style={{ padding: "12px 24px 20px", display: "flex", flexDirection: "column", gap: "10px", borderTop: "1px solid rgba(20,109,158,0.08)" }} className="animate-fade-in-down hide-desktop">
+        <div
+          style={{
+            padding: "16px 20px 24px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            background: "#0A192F",
+            borderTop: "1.5px solid rgba(255, 215, 0, 0.25)",
+            boxShadow: "0 16px 36px rgba(0, 0, 0, 0.6)"
+          }}
+          className="animate-fade-in-down hide-desktop"
+        >
           <Link href="/" className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="home" size={16} /> {lang === "en" ? "Home" : "Inicio"}</Link>
           <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="map" size={16} /> {t("nav.map")}</Link>
           <Link href="/departamentos" className={`nav-pill-link ${activePage === "departamentos" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="star" size={16} /> {lang === "en" ? "Ranking" : "Ranking"}</Link>

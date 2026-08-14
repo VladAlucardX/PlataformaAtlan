@@ -59,6 +59,9 @@
       "cta": "Explorar el Mapa",
       "ctaSecondary": "¿Tienes un negocio?"
     },
+    "categories": {
+      "subtitle": "Encuentra gastronomía, hospedajes, cultura y experiencias únicas organizadas para ti"
+    },
     "features": {
       "title": "Todo lo que necesitas para tu aventura",
       "subtitle": "Tecnología de punta al servicio del turismo nicaragüense",

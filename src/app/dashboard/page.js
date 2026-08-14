@@ -11,6 +11,7 @@ import NotificationDropdown from "@/components/ui/NotificationDropdown";
 import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
 import { uploadMedia } from "@/lib/storage";
+import { obtenerDepartamentoPorCoordenadas } from "@/lib/geoUtils";
 
 // Helper para obtener imagen por defecto según la categoría del negocio
 const getCategoryFallbackImage = (categoria) => {
@@ -562,6 +563,7 @@ export default function DashboardPage() {
 
               if (negocioError) throw negocioError;
 
+              const deptDetectado = await obtenerDepartamentoPorCoordenadas(longitude, latitude);
               const { error: puntoError } = await supabase
                 .from("puntos")
                 .insert([{
@@ -569,6 +571,7 @@ export default function DashboardPage() {
                   nombre: nuevoNegocio.nombre,
                   categoria: "otro",
                   ubicacion: `POINT(${longitude} ${latitude})`,
+                  departamento: deptDetectado,
                   estado: "en_verificacion",
                   nombre_creador: perfil?.nombre_completo || "Propietario"
                 }]);
