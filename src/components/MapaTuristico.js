@@ -939,53 +939,62 @@ export default function MapaTuristico() {
         const btnInfoId = `btn-info-${punto.id}`;
 
         const popupHTML = `
-          <div style="color:#FFFFFF; width:100%; min-width:220px; max-width:265px; font-family:var(--font-outfit), system-ui, sans-serif; box-sizing:border-box; text-align:center;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.18); padding-bottom:8px; width:100%; box-sizing:border-box;">
-              <span style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:flex; align-items:center; gap:6px; letter-spacing:0.3px;">
+          <div style="color:#FFFFFF; width:100%; min-width:230px; max-width:265px; font-family:var(--font-outfit), system-ui, sans-serif; box-sizing:border-box; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto;">
+            <!-- Status & Rating Header (Centered Pill) -->
+            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.18); padding-bottom:8px; width:100%; box-sizing:border-box;">
+              <span style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-flex; align-items:center; gap:6px; letter-spacing:0.3px; background:rgba(255,255,255,0.08); padding:3px 10px; border-radius:10px;">
                 <span style="width:7px; height:7px; border-radius:50%; background-color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-block; box-shadow:0 0 6px ${statusColor};"></span>
                 ${statusText}
               </span>
-              ${ratingText ? `<span style="font-size:12px; font-weight:800; color:#FFD700; background:rgba(255,215,0,0.18); padding:2px 8px; border-radius:8px; border:0.5px solid rgba(255,215,0,0.4);">${ratingText}</span>` : ''}
+              ${ratingText ? `<span style="font-size:11.5px; font-weight:800; color:#FFD700; background:rgba(255,215,0,0.18); padding:3px 8px; border-radius:10px; border:0.5px solid rgba(255,215,0,0.4);">${ratingText}</span>` : ''}
             </div>
 
-            <div style="margin-bottom:8px; text-align:center; width:100%;">
-              <h3 style="margin:0 0 5px; font-size:16.5px; font-weight:850; color:#FFFFFF; line-height:1.25; letter-spacing:-0.2px; font-family:var(--font-outfit); text-align:center;">
+            <!-- Title & Category Badge (Centered) -->
+            <div style="margin-bottom:8px; text-align:center; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+              <h3 style="margin:0 0 5px; font-size:16.5px; font-weight:850; color:#FFFFFF; line-height:1.25; letter-spacing:-0.2px; font-family:var(--font-outfit); text-align:center; width:100%;">
                 ${punto.nombre}
               </h3>
-              <span style="display:inline-block; font-size:10.5px; font-weight:750; color:#FFD700; text-transform:uppercase; letter-spacing:0.5px; background:rgba(255, 215, 0, 0.12); padding:3px 9px; border-radius:8px; border:1px solid rgba(255, 215, 0, 0.3); margin:0 auto;">
+              <span style="display:inline-block; font-size:10.5px; font-weight:750; color:#FFD700; text-transform:uppercase; letter-spacing:0.5px; background:rgba(255, 215, 0, 0.12); padding:3px 10px; border-radius:8px; border:1px solid rgba(255, 215, 0, 0.3); margin:0 auto; text-align:center;">
                 ${t(`addPoint.categories.${punto.categoria}`) || punto.categoria || 'Turismo'}
               </span>
             </div>
 
-            <p style="margin:0 0 10px; font-size:12.5px; color:#E2E8F0; line-height:1.45; text-align:center; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">
+            <!-- Description -->
+            <p style="margin:0 0 10px; font-size:12.5px; color:#E2E8F0; line-height:1.45; text-align:center; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; width:100%;">
               ${punto.descripcion || ''}
             </p>
             
             ${punto.negocio_rango_precios ? `
-              <div style="margin-bottom:10px; font-size:11px; font-weight:750; color:#2DD4BF; background:rgba(45,212,191,0.15); border:1px solid rgba(45,212,191,0.35); padding:4px 9px; border-radius:8px; display:inline-block; text-align:center;">
+              <div style="margin-bottom:10px; font-size:11px; font-weight:750; color:#2DD4BF; background:rgba(45,212,191,0.15); border:1px solid rgba(45,212,191,0.35); padding:4px 9px; border-radius:8px; display:inline-block; text-align:center; margin:0 auto;">
                 🏷️ ${punto.negocio_rango_precios}
               </div>
             ` : ''}
 
-            <div style="font-size:11px; color:rgba(255,255,255,0.7); margin-bottom:12px; border-top:1px dashed rgba(255,255,255,0.18); padding-top:8px; text-align:center;">
+            <!-- Added By Footer -->
+            <div style="font-size:11px; color:rgba(255,255,255,0.7); margin-bottom:12px; border-top:1px dashed rgba(255,255,255,0.18); padding-top:8px; text-align:center; width:100%;">
               ${t('map.addedBy')}: <span style="font-weight:750; color:#FFD700;">${punto.nombre_creador || 'Equipo Atlan'}</span>
             </div>
             
-            <div style="display:flex; flex-direction:column; gap:8px; width:100%; box-sizing:border-box; align-items:stretch;">
-              <button id="${btnId}" style="width:100%; box-sizing:border-box; margin:0; padding:11px 14px; background:#FFD700; color:#0A192F; border:none; border-radius:12px; font-weight:900; font-size:13px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:8px; text-align:center; box-shadow:0 4px 16px rgba(255,215,0,0.4); transition:all 0.2s ease;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0A192F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-                <span style="display:inline-block; text-align:center;">${t('map.startNavigation')}</span>
+            <!-- Centered Action Buttons Container -->
+            <div style="display:flex; flex-direction:column; gap:8px; width:100%; box-sizing:border-box; align-items:center; justify-content:center;">
+              <button id="${btnId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:11px 14px; background:#FFD700; color:#0A192F; border:none; border-radius:12px; font-weight:900; font-size:13px; cursor:pointer; box-shadow:0 4px 16px rgba(255,215,0,0.4); transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
+                <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0A192F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                  <span style="display:inline-block; text-align:center; line-height:1.2;">${t('map.startNavigation')}</span>
+                </div>
               </button>
 
-              <button id="${btnInfoId}" style="width:100%; box-sizing:border-box; margin:0; padding:10px 14px; background:rgba(255,255,255,0.12); color:#FFFFFF; border:1px solid rgba(255,255,255,0.25); border-radius:12px; font-weight:800; font-size:12px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:8px; text-align:center; transition:all 0.2s ease;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                <span style="display:inline-block; text-align:center;">${lang === 'en' ? 'Details & Booking' : 'Detalles y Reservas'}</span>
+              <button id="${btnInfoId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:10px 14px; background:rgba(255,255,255,0.12); color:#FFFFFF; border:1px solid rgba(255,255,255,0.25); border-radius:12px; font-weight:800; font-size:12px; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
+                <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  <span style="display:inline-block; text-align:center; line-height:1.2;">${lang === 'en' ? 'Details & Booking' : 'Detalles y Reservas'}</span>
+                </div>
               </button>
             </div>
           </div>
         `;
 
-        const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(popupHTML);
+        const popup = new mapboxgl.Popup({ offset: [0, -14], anchor: 'bottom', closeButton: false }).setHTML(popupHTML);
 
         el.addEventListener('click', () => {
           lugarDestinoRef.current = punto.nombre;
