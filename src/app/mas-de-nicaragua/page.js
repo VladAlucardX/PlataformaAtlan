@@ -379,8 +379,7 @@ export default function MasDeNicaraguaPage() {
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "100%",
-          width: "100%",
-          filter: "brightness(0.6) contrast(1.1)"
+          width: "100%"
         }} />
         {/* Columna 2: art5.png */}
         <div style={{
@@ -388,8 +387,7 @@ export default function MasDeNicaraguaPage() {
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "100%",
-          width: "100%",
-          filter: "brightness(0.6) contrast(1.1)"
+          width: "100%"
         }} />
         {/* Columna 3: art3.jpeg */}
         <div style={{
@@ -397,20 +395,7 @@ export default function MasDeNicaraguaPage() {
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "100%",
-          width: "100%",
-          filter: "brightness(0.6) contrast(1.1)"
-        }} />
-
-        {/* Overlay de degradado oscuro y difuminado suave para legibilidad */}
-        <div style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          background: "linear-gradient(to bottom, rgba(10, 25, 47, 0.72) 0%, rgba(10, 25, 47, 0.85) 50%, rgba(10, 25, 47, 0.95) 100%)",
-          backdropFilter: "blur(4px)",
-          WebkitBackdropFilter: "blur(4px)"
+          width: "100%"
         }} />
       </div>
 
