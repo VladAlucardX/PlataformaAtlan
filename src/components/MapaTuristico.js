@@ -647,7 +647,6 @@ export default function MapaTuristico() {
     if (directionsRef.current) {
       directionsRef.current.setOrigin([currLng, currLat]);
       directionsRef.current.setDestination([punto.lng, punto.lat]);
-      setShowDirectionsPopup(true);
     }
 
     mapRef.current.flyTo({
@@ -2673,68 +2672,69 @@ export default function MapaTuristico() {
         </div>
       )}
 
-      {/* Widget Circular Flotante de Indicaciones y Giros (Waze HUD Style) */}
-      {routeInfo && !selectedPoint && (
+      {/* BURBUJA FLOTANTE ESTILO WHATSAPP DE NAVEGACIÓN Y RUTA */}
+      {!selectedPoint && (
         <div
           onClick={() => setShowDirectionsPopup((prev) => !prev)}
           style={{
             position: 'absolute',
-            top: '155px',
+            bottom: '100px',
             left: '20px',
-            zIndex: 25,
+            zIndex: 35,
+            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
-            background: 'rgba(10, 25, 47, 0.92)',
+            gap: '10px',
+            background: '#0A192F',
+            color: '#FFFFFF',
+            border: '2.5px solid #FFD700',
+            borderRadius: '50px',
+            padding: '6px 16px 6px 6px',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.3)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
-            border: '2px solid #FFD700',
-            borderRadius: '50px',
-            padding: '8px 20px 8px 10px',
-            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.25)',
-            cursor: 'pointer',
-            animation: 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            maxWidth: 'calc(100vw - 40px)'
+            transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
           }}
-          title={lang === 'en' ? 'Click to open route planner' : 'Clic para abrir planificador de ruta'}
+          title={showDirectionsPopup ? (lang === 'en' ? 'Close route panel' : 'Cerrar panel de ruta') : (lang === 'en' ? 'Open route planner' : 'Trazar o ver ruta')}
         >
-          {/* Insignia Circular con Ícono de Giro */}
+          {/* Círculo Flotante tipo WhatsApp / Messenger con ícono de maniobra */}
           <div style={{
-            width: '46px',
-            height: '46px',
+            width: '42px',
+            height: '42px',
             borderRadius: '50%',
             background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
             color: '#0A192F',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '24px',
+            fontSize: '22px',
             fontWeight: '900',
             flexShrink: 0,
-            boxShadow: '0 4px 14px rgba(255, 215, 0, 0.5)',
+            boxShadow: '0 4px 12px rgba(255, 215, 0, 0.5)',
           }}>
-            {currentManeuver?.icon || '⬆'}
+            {routeInfo ? (currentManeuver?.icon || '⬆') : '🧭'}
           </div>
 
-          {/* Texto de maniobra y distancia */}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '15px', fontWeight: '900', color: '#FFD700', letterSpacing: '-0.3px' }}>
-                {currentManeuver?.distanceFormatted || formatDistanceDisplay(routeInfo.distance)}
-              </span>
-              <span style={{ fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', background: 'rgba(56, 189, 248, 0.2)', color: '#38BDF8', padding: '2px 6px', borderRadius: '6px' }}>
-                {formatDurationDisplay(routeInfo.duration)}
+          {/* Información corta cuando hay ruta trazada */}
+          {routeInfo ? (
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.2' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '14.5px', fontWeight: '900', color: '#FFD700' }}>
+                  {currentManeuver?.distanceFormatted || formatDistanceDisplay(routeInfo.distance)}
+                </span>
+                <span style={{ fontSize: '10.5px', fontWeight: '800', textTransform: 'uppercase', background: 'rgba(56, 189, 248, 0.2)', color: '#38BDF8', padding: '1px 5px', borderRadius: '5px' }}>
+                  {formatDurationDisplay(routeInfo.duration)}
+                </span>
+              </div>
+              <span style={{ fontSize: '12px', fontWeight: '700', color: '#FFFFFF', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '170px' }}>
+                {currentManeuver?.instruction || routeInfo.destinationName || (lang === 'en' ? 'En route...' : 'En camino...')}
               </span>
             </div>
-            <span style={{ fontSize: '12.5px', fontWeight: '700', color: '#FFFFFF', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '210px' }}>
-              {currentManeuver?.instruction || routeInfo.destinationName || (lang === 'en' ? 'En route...' : 'En camino...')}
+          ) : (
+            <span style={{ fontSize: '13px', fontWeight: '850', color: '#FFD700', letterSpacing: '0.2px', paddingRight: '4px' }}>
+              {lang === 'en' ? 'Route A-B' : 'Trazar Ruta'}
             </span>
-          </div>
-
-          {/* Ícono de Ajustes / Expandir */}
-          <span style={{ color: '#FFD700', fontSize: '14px', marginLeft: '4px', opacity: 0.8 }}>
-            ⚙️
-          </span>
+          )}
         </div>
       )}
 
