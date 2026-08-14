@@ -2416,26 +2416,6 @@ export default function MapaTuristico() {
             </Link>
 
             <button
-              onClick={() => setShowDirectionsPopup((prev) => !prev)}
-              style={{
-                padding: '10px 16px',
-                background: showDirectionsPopup ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : 'rgba(255, 255, 255, 0.08)',
-                border: showDirectionsPopup ? '1.5px solid #FFD700' : '1px solid rgba(255, 255, 255, 0.18)',
-                color: showDirectionsPopup ? '#0A192F' : '#FFD700',
-                borderRadius: '14px',
-                fontWeight: '800',
-                fontSize: '13px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                transition: 'all 0.25s ease'
-              }}
-            >
-              🧭 <span className="mobile-hide-text">{lang === 'en' ? 'Route A-B' : 'Trazar Ruta'}</span>
-            </button>
-
-            <button
               onClick={activarLevantarPunto}
               style={{
                 padding: '10px 20px',
@@ -2487,30 +2467,6 @@ export default function MapaTuristico() {
       {/* Panel de filtros */}
       {!selectedPoint && !routeInfo && !isDemoRunning && (
         <div className="filter-bar">
-        {/* Botón Píldora Trazar Ruta A-B */}
-        <button
-          onClick={() => setShowDirectionsPopup((prev) => !prev)}
-          style={{
-            flexShrink: 0,
-            padding: '8px 16px',
-            background: showDirectionsPopup ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : '#0A192F',
-            color: showDirectionsPopup ? '#0A192F' : '#FFD700',
-            border: '1.5px solid #FFD700',
-            borderRadius: '14px',
-            fontWeight: '850',
-            fontSize: '12.5px',
-            cursor: 'pointer',
-            backdropFilter: 'blur(12px)',
-            boxShadow: showDirectionsPopup ? '0 4px 14px rgba(255,215,0,0.4)' : '0 4px 10px rgba(0,0,0,0.25)',
-            transition: 'all 0.2s',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px'
-          }}
-        >
-          🧭 {showDirectionsPopup ? (lang === 'en' ? 'Close Route' : 'Cerrar Ruta') : (lang === 'en' ? 'Trazar Ruta' : 'Trazar Ruta')}
-        </button>
-
         {/* Píldora "Todas" */}
         <button
           onClick={() => aplicarFiltro(null)}
@@ -2672,7 +2628,7 @@ export default function MapaTuristico() {
         </div>
       )}
 
-      {/* BURBUJA FLOTANTE ESTILO WHATSAPP DE NAVEGACIÓN Y RUTA */}
+      {/* BOTÓN ÚNICO FLOTANTE / BURBUJA CIRCULAR DE GIRO (ESTILO WAZE / GOOGLE MAPS) */}
       {!selectedPoint && (
         <div
           onClick={() => setShowDirectionsPopup((prev) => !prev)}
@@ -2680,60 +2636,69 @@ export default function MapaTuristico() {
             position: 'absolute',
             bottom: '100px',
             left: '20px',
-            zIndex: 35,
+            zIndex: 40,
             cursor: 'pointer',
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
-            gap: '10px',
-            background: '#0A192F',
-            color: '#FFFFFF',
-            border: '2.5px solid #FFD700',
-            borderRadius: '50px',
-            padding: '6px 16px 6px 6px',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.3)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            justifyContent: 'center',
+            transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
           }}
           title={showDirectionsPopup ? (lang === 'en' ? 'Close route panel' : 'Cerrar panel de ruta') : (lang === 'en' ? 'Open route planner' : 'Trazar o ver ruta')}
         >
-          {/* Círculo Flotante tipo WhatsApp / Messenger con ícono de maniobra */}
-          <div style={{
-            width: '42px',
-            height: '42px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-            color: '#0A192F',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '22px',
-            fontWeight: '900',
-            flexShrink: 0,
-            boxShadow: '0 4px 12px rgba(255, 215, 0, 0.5)',
-          }}>
-            {routeInfo ? (currentManeuver?.icon || '⬆') : '🧭'}
-          </div>
-
-          {/* Información corta cuando hay ruta trazada */}
-          {routeInfo ? (
-            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.2' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ fontSize: '14.5px', fontWeight: '900', color: '#FFD700' }}>
-                  {currentManeuver?.distanceFormatted || formatDistanceDisplay(routeInfo.distance)}
-                </span>
-                <span style={{ fontSize: '10.5px', fontWeight: '800', textTransform: 'uppercase', background: 'rgba(56, 189, 248, 0.2)', color: '#38BDF8', padding: '1px 5px', borderRadius: '5px' }}>
-                  {formatDurationDisplay(routeInfo.duration)}
-                </span>
+          {routeInfo && !showDirectionsPopup ? (
+            /* MODO NAVEGACIÓN ACTIVA: Círculo de giro + Insignia de distancia */
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+              <div style={{
+                width: '54px',
+                height: '54px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                color: '#0A192F',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '28px',
+                fontWeight: '900',
+                boxShadow: '0 8px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.4)',
+                border: '2.5px solid #FFFFFF',
+                transition: 'transform 0.2s ease',
+              }}>
+                {currentManeuver?.icon || '⬆'}
               </div>
-              <span style={{ fontSize: '12px', fontWeight: '700', color: '#FFFFFF', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '170px' }}>
-                {currentManeuver?.instruction || routeInfo.destinationName || (lang === 'en' ? 'En route...' : 'En camino...')}
+              <span style={{
+                background: '#0A192F',
+                color: '#FFD700',
+                border: '1.5px solid #FFD700',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                fontSize: '11px',
+                fontWeight: '900',
+                boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+                whiteSpace: 'nowrap'
+              }}>
+                {currentManeuver?.distanceFormatted || formatDistanceDisplay(routeInfo.distance)}
               </span>
             </div>
           ) : (
-            <span style={{ fontSize: '13px', fontWeight: '850', color: '#FFD700', letterSpacing: '0.2px', paddingRight: '4px' }}>
-              {lang === 'en' ? 'Route A-B' : 'Trazar Ruta'}
-            </span>
+            /* MODO INICIAL: Botón flotante "Trazar Ruta" */
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: showDirectionsPopup ? '#EF4444' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+              color: showDirectionsPopup ? '#FFFFFF' : '#0A192F',
+              border: showDirectionsPopup ? '2px solid #EF4444' : '2px solid #FFFFFF',
+              borderRadius: '25px',
+              padding: '10px 18px',
+              fontWeight: '900',
+              fontSize: '13.5px',
+              boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
+              transition: 'all 0.25s ease'
+            }}>
+              <span>🧭</span>
+              <span>{showDirectionsPopup ? (lang === 'en' ? 'Close Route' : 'Cerrar Ruta') : (lang === 'en' ? 'Route A-B' : 'Trazar Ruta')}</span>
+            </div>
           )}
         </div>
       )}
