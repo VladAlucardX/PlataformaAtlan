@@ -72,6 +72,7 @@ export default function MapaTuristico() {
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [showDirectionsPopup, setShowDirectionsPopup] = useState(false);
+  const [currentManeuver, setCurrentManeuver] = useState(null);
 
   // Agregar Punto
   const [isAddingPoint, setIsAddingPoint] = useState(false);
@@ -1193,6 +1194,20 @@ export default function MapaTuristico() {
     return t;
   };
 
+  const getManeuverIcon = (type, modifier) => {
+    const mod = (modifier || '').toLowerCase();
+    const typ = (type || '').toLowerCase();
+
+    if (typ.includes('arrive') || typ.includes('destination')) return '🏁';
+    if (typ.includes('roundabout') || typ.includes('rotary')) return '🔄';
+    if (mod.includes('sharp right')) return '↳';
+    if (mod.includes('sharp left')) return '↲';
+    if (mod.includes('slight right') || mod.includes('right')) return '↱';
+    if (mod.includes('slight left') || mod.includes('left')) return '↰';
+    if (mod.includes('uturn')) return '↩';
+    return '⬆';
+  };
+
   const buildManeuverList = (steps) => {
     const list = [];
     steps.forEach((step) => {
@@ -1756,8 +1771,25 @@ export default function MapaTuristico() {
           destinationName: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : 'Destino')
         });
 
+        // Ocultar la ventana flotante de búsqueda al trazar la ruta automáticamente
+        setShowDirectionsPopup(false);
+
         if (steps.length > 0) {
-          const instr = steps[0].maneuver.instruction;
+          const firstStep = steps[0];
+          const type = firstStep.maneuver?.type || '';
+          const modifier = firstStep.maneuver?.modifier || '';
+          const instr = limpiarInstruccion(firstStep.maneuver?.instruction || '');
+          const dist = firstStep.distance || route.distance;
+
+          setCurrentManeuver({
+            type,
+            modifier,
+            instruction: instr,
+            distance: dist,
+            distanceFormatted: formatDistanceDisplay(dist),
+            icon: getManeuverIcon(type, modifier)
+          });
+
           if (instr && instr !== lastSpokenRef.current) {
             lastSpokenRef.current = instr;
             setTimeout(() => speakInstruction(instr), 600);
@@ -1769,6 +1801,7 @@ export default function MapaTuristico() {
     directions.on('clear', () => {
       rutaCoordenadasRef.current = [];
       setRouteInfo(null);
+      setCurrentManeuver(null);
     });
 
     // Geolocalización y animaciones de inicio
@@ -2637,6 +2670,71 @@ export default function MapaTuristico() {
               </div>
             </form>
           </div>
+        </div>
+      )}
+
+      {/* Widget Circular Flotante de Indicaciones y Giros (Waze HUD Style) */}
+      {routeInfo && !selectedPoint && (
+        <div
+          onClick={() => setShowDirectionsPopup((prev) => !prev)}
+          style={{
+            position: 'absolute',
+            top: '155px',
+            left: '20px',
+            zIndex: 25,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            background: 'rgba(10, 25, 47, 0.92)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '2px solid #FFD700',
+            borderRadius: '50px',
+            padding: '8px 20px 8px 10px',
+            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.25)',
+            cursor: 'pointer',
+            animation: 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+            maxWidth: 'calc(100vw - 40px)'
+          }}
+          title={lang === 'en' ? 'Click to open route planner' : 'Clic para abrir planificador de ruta'}
+        >
+          {/* Insignia Circular con Ícono de Giro */}
+          <div style={{
+            width: '46px',
+            height: '46px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+            color: '#0A192F',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '24px',
+            fontWeight: '900',
+            flexShrink: 0,
+            boxShadow: '0 4px 14px rgba(255, 215, 0, 0.5)',
+          }}>
+            {currentManeuver?.icon || '⬆'}
+          </div>
+
+          {/* Texto de maniobra y distancia */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '15px', fontWeight: '900', color: '#FFD700', letterSpacing: '-0.3px' }}>
+                {currentManeuver?.distanceFormatted || formatDistanceDisplay(routeInfo.distance)}
+              </span>
+              <span style={{ fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', background: 'rgba(56, 189, 248, 0.2)', color: '#38BDF8', padding: '2px 6px', borderRadius: '6px' }}>
+                {formatDurationDisplay(routeInfo.duration)}
+              </span>
+            </div>
+            <span style={{ fontSize: '12.5px', fontWeight: '700', color: '#FFFFFF', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '210px' }}>
+              {currentManeuver?.instruction || routeInfo.destinationName || (lang === 'en' ? 'En route...' : 'En camino...')}
+            </span>
+          </div>
+
+          {/* Ícono de Ajustes / Expandir */}
+          <span style={{ color: '#FFD700', fontSize: '14px', marginLeft: '4px', opacity: 0.8 }}>
+            ⚙️
+          </span>
         </div>
       )}
 

@@ -1395,7 +1395,7 @@ a:hover {
 
 /* ── MAPBOX DIRECTIONS (POPUP DE RUTA A Y B) ESTILO WAZE / ATLAN ── */
 .mapboxgl-ctrl-top-left {
-  top: 95px !important;
+  top: 160px !important;
   left: 20px !important;
   z-index: 100 !important;
 }
@@ -1420,6 +1420,17 @@ a:hover {
 
 .mapboxgl-ctrl-directions.directions-popup-active {
   display: block !important;
+}
+
+/* Eliminar fondos blancos nativos de los íconos de Mapbox */
+html body .mapbox-directions-icon,
+html body .mapbox-directions-icon-origin,
+html body .mapbox-directions-icon-destination,
+html body .mapbox-directions-icon-close,
+html body .mapbox-directions-icon-reverse,
+html body .mapbox-directions-clear-input,
+html body .mapbox-directions-reverse-input {
+  background-color: transparent !important;
 }
 
 /* Reglas de alta especificidad para garantizar el fondo oscuro en los contenedores */
