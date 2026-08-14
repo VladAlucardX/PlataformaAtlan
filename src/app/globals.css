@@ -2381,6 +2381,8 @@ html body .mapbox-directions-step-distance {
   box-shadow: 0 16px 40px rgba(10, 35, 60, 0.4), 0 0 20px rgba(255, 215, 0, 0.15) !important;
   padding: 16px 18px !important;
   color: #FFFFFF !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
 }
 
 .mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
