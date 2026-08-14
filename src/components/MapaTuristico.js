@@ -2437,10 +2437,10 @@ export default function MapaTuristico() {
             <button
               onClick={activarLevantarPunto}
               style={{
-                padding: '10px 20px',
-                background: isAddingPoint ? '#EF4444' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                padding: '10px 18px',
+                background: isAddingPoint ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
                 color: isAddingPoint ? '#FFFFFF' : '#0A192F',
-                border: 'none',
+                border: isAddingPoint ? '1px solid rgba(239, 68, 68, 0.6)' : '1px solid rgba(255, 215, 0, 0.8)',
                 borderRadius: '14px',
                 fontWeight: '900',
                 fontSize: '13px',
@@ -2448,11 +2448,11 @@ export default function MapaTuristico() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
-                boxShadow: '0 4px 14px rgba(255, 215, 0, 0.35)',
+                boxShadow: isAddingPoint ? '0 4px 16px rgba(239, 68, 68, 0.4)' : '0 4px 16px rgba(255, 215, 0, 0.4)',
                 transition: 'all 0.25s ease'
               }}
             >
-              ➕ {isAddingPoint ? t('common.cancel') : t('map.addPoint')}
+              <Icon name={isAddingPoint ? "x" : "plus"} size={16} /> {isAddingPoint ? t('common.cancel') : t('map.addPoint')}
             </button>
             <LanguageToggle variant="pill" />
           </div>
@@ -2463,23 +2463,69 @@ export default function MapaTuristico() {
       {isAddingPoint && (
         <div style={{
           position: 'absolute',
-          top: '90px',
+          top: '85px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '85%',
-          maxWidth: '450px',
-          background: 'rgba(239, 68, 68, 0.9)',
-          color: 'white',
-          padding: '10px 16px',
-          borderRadius: '12px',
-          fontWeight: '700',
-          fontSize: '13px',
-          textAlign: 'center',
-          boxShadow: '0 8px 24px rgba(239,68,68,0.4)',
-          zIndex: 10,
-          animation: 'pulse 1.5s infinite'
+          width: '90%',
+          maxWidth: '460px',
+          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(10, 15, 28, 0.96) 100%)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          border: '1.5px solid rgba(255, 215, 0, 0.45)',
+          borderRadius: '18px',
+          padding: '12px 18px',
+          boxShadow: '0 12px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.2)',
+          zIndex: 100,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '12px',
+          animation: 'fadeInDown 0.3s ease-out'
         }}>
-          🎯 {t('addPoint.tapMap')}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+            <div style={{
+              width: '38px',
+              height: '38px',
+              borderRadius: '12px',
+              background: 'rgba(255, 215, 0, 0.15)',
+              border: '1px solid rgba(255, 215, 0, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#FFD700',
+              flexShrink: 0
+            }}>
+              <Icon name="mapPin" size={20} color="#FFD700" />
+            </div>
+            <div>
+              <div style={{ fontSize: '13.5px', fontWeight: '800', color: '#FFD700', letterSpacing: '0.2px' }}>
+                {lang === 'en' ? 'Add Point Mode' : 'Modo Levantar Punto'}
+              </div>
+              <div style={{ fontSize: '12px', color: '#CBD5E1', fontWeight: '500' }}>
+                {t('addPoint.tapMap')}
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={activarLevantarPunto}
+            style={{
+              padding: '6px 12px',
+              background: 'rgba(239, 68, 68, 0.2)',
+              border: '1px solid rgba(239, 68, 68, 0.5)',
+              color: '#F87171',
+              borderRadius: '10px',
+              fontSize: '11.5px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <Icon name="x" size={13} /> {t('common.cancel')}
+          </button>
         </div>
       )}
 
@@ -2541,36 +2587,120 @@ export default function MapaTuristico() {
 
       {/* Modal agregar punto */}
       {showAddModal && tempPointCoords && (
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          background: 'rgba(10, 15, 28, 0.65)',
-          backdropFilter: 'blur(10px)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 20
-        }}>
-          <div className="add-point-modal">
-            <h2 style={{ margin: '0 0 4px', fontSize: '20px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
-              <Icon name="mapPin" size={20} /> {t('addPoint.title')}
-            </h2>
-            <p style={{ margin: '0 0 20px', fontSize: '13px', color: '#94a3b8' }}>
-              {t('addPoint.subtitle')}
-            </p>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(10, 15, 28, 0.78)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+            zIndex: 9999,
+            animation: 'fadeIn 0.25s ease-out'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowAddModal(false);
+              setTempPointCoords(null);
+            }
+          }}
+        >
+          <div
+            className="add-point-modal"
+            style={{
+              width: '100%',
+              maxWidth: '520px',
+              maxHeight: '90vh',
+              backgroundColor: '#0F172A',
+              backgroundImage: 'linear-gradient(145deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 15, 28, 0.99) 100%)',
+              border: '1px solid rgba(255, 215, 0, 0.3)',
+              borderRadius: '24px',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.15)',
+              padding: '24px',
+              overflowY: 'auto',
+              position: 'relative',
+              animation: 'scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+              color: '#F8FAFC'
+            }}
+          >
+            {/* Header del modal */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '18px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '14px',
+                  background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%)',
+                  border: '1px solid rgba(255, 215, 0, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#FFD700',
+                  boxShadow: '0 4px 14px rgba(255, 215, 0, 0.2)'
+                }}>
+                  <Icon name="mapPin" size={24} color="#FFD700" />
+                </div>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: '#FFD700', letterSpacing: '-0.3px', fontFamily: 'var(--font-outfit)' }}>
+                    {t('addPoint.title')}
+                  </h2>
+                  <p style={{ margin: '3px 0 0', fontSize: '13px', color: '#94A3B8' }}>
+                    {t('addPoint.subtitle')}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setShowAddModal(false); setTempPointCoords(null); }}
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#94A3B8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <Icon name="x" size={16} />
+              </button>
+            </div>
 
-            <form onSubmit={handleGuardarPunto} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {/* Coordenadas informativas */}
-              <div style={{ background: 'rgba(255,255,255,0.05)', padding: '10px 14px', borderRadius: '10px', fontSize: '11px', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <Icon name="mapPin" size={12} /> Coords: {tempPointCoords[1].toFixed(5)}, {tempPointCoords[0].toFixed(5)}
+            <form onSubmit={handleGuardarPunto} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Coordenadas informativas estilizadas */}
+              <div style={{
+                background: 'rgba(255, 215, 0, 0.06)',
+                border: '1px solid rgba(255, 215, 0, 0.2)',
+                padding: '10px 14px',
+                borderRadius: '14px',
+                fontSize: '12px',
+                color: '#E2E8F0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 8px #10B981' }}></span>
+                  <span style={{ fontWeight: '700', color: '#FFD700' }}>{lang === 'en' ? 'Selected Location' : 'Ubicación seleccionada'}:</span>
+                </div>
+                <span style={{ fontFamily: 'monospace', fontSize: '12px', color: '#CBD5E1', background: 'rgba(0,0,0,0.35)', padding: '3px 8px', borderRadius: '6px' }}>
+                  {tempPointCoords[1].toFixed(5)}, {tempPointCoords[0].toFixed(5)}
+                </span>
               </div>
 
               <div>
-                <label style={{ fontSize: '12px', fontWeight: '750', color: '#cbd5e1', display: 'block', marginBottom: '5px' }}>
-                  {t('addPoint.placeName')} *
+                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                  <Icon name="tag" size={14} color="#FFD700" />
+                  {t('addPoint.placeName')} <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <input
                   type="text"
@@ -2578,12 +2708,31 @@ export default function MapaTuristico() {
                   placeholder={t('addPoint.placeNamePlaceholder')}
                   value={newPointNombre}
                   onChange={(e) => setNewPointNombre(e.target.value)}
-                  style={{ width: '100%', padding: '11px 14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', outline: 'none', fontSize: '13.5px' }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    outline: 'none',
+                    fontSize: '13.5px',
+                    transition: 'border-color 0.2s, box-shadow 0.2s'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#FFD700';
+                    e.target.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.25)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: '12px', fontWeight: '750', color: '#cbd5e1', display: 'block', marginBottom: '5px' }}>
+                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                  <Icon name="user" size={14} color="#FFD700" />
                   {t('addPoint.yourName')}
                 </label>
                 <input
@@ -2591,21 +2740,59 @@ export default function MapaTuristico() {
                   placeholder={t('addPoint.yourNamePlaceholder')}
                   value={newPointCreador}
                   onChange={(e) => setNewPointCreador(e.target.value)}
-                  style={{ width: '100%', padding: '11px 14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', outline: 'none', fontSize: '13.5px' }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    outline: 'none',
+                    fontSize: '13.5px',
+                    transition: 'border-color 0.2s, box-shadow 0.2s'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#FFD700';
+                    e.target.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.25)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: '12px', fontWeight: '750', color: '#cbd5e1', display: 'block', marginBottom: '5px' }}>
-                  {t('addPoint.category')} *
+                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                  <Icon name="layers" size={14} color="#FFD700" />
+                  {t('addPoint.category')} <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <select
                   value={newPointCategoria}
                   onChange={(e) => setNewPointCategoria(e.target.value)}
-                  style={{ width: '100%', padding: '11px 14px', background: '#141b2d', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', outline: 'none', fontSize: '13.5px' }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    background: '#0F172A',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    outline: 'none',
+                    fontSize: '13.5px',
+                    cursor: 'pointer',
+                    transition: 'border-color 0.2s, box-shadow 0.2s'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#FFD700';
+                    e.target.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.25)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 >
                   {Object.keys(CATEGORIAS_CONFIG).map((key) => (
-                    <option key={key} value={key}>
+                    <option key={key} value={key} style={{ background: '#0F172A', color: '#FFFFFF', padding: '8px' }}>
                       {t(`addPoint.categories.${key}`)}
                     </option>
                   ))}
@@ -2613,8 +2800,9 @@ export default function MapaTuristico() {
               </div>
 
               <div>
-                <label style={{ fontSize: '12px', fontWeight: '750', color: '#cbd5e1', display: 'block', marginBottom: '5px' }}>
-                  {t('addPoint.description')} *
+                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                  <Icon name="alignLeft" size={14} color="#FFD700" />
+                  {t('addPoint.description')} <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <textarea
                   required
@@ -2622,24 +2810,85 @@ export default function MapaTuristico() {
                   placeholder={t('addPoint.descriptionPlaceholder')}
                   value={newPointDesc}
                   onChange={(e) => setNewPointDesc(e.target.value)}
-                  style={{ width: '100%', padding: '11px 14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', outline: 'none', fontSize: '13.5px', resize: 'none' }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    outline: 'none',
+                    fontSize: '13.5px',
+                    resize: 'none',
+                    transition: 'border-color 0.2s, box-shadow 0.2s'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#FFD700';
+                    e.target.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.25)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                 <button
                   type="button"
                   onClick={() => { setShowAddModal(false); setTempPointCoords(null); }}
-                  style={{ flex: 1, padding: '12px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', color: 'white', fontWeight: '700', fontSize: '13px', cursor: 'pointer' }}
+                  style={{
+                    flex: 1,
+                    padding: '12px 16px',
+                    background: 'rgba(255, 255, 255, 0.06)',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    borderRadius: '14px',
+                    color: '#CBD5E1',
+                    fontWeight: '700',
+                    fontSize: '13.5px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
                 >
+                  <Icon name="x" size={15} />
                   {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmittingPoint}
-                  style={{ flex: 1, padding: '12px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', border: 'none', borderRadius: '12px', color: 'white', fontWeight: '800', fontSize: '13px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(16,185,129,0.25)' }}
+                  style={{
+                    flex: 1.2,
+                    padding: '12px 16px',
+                    background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                    border: 'none',
+                    borderRadius: '14px',
+                    color: '#0A192F',
+                    fontWeight: '900',
+                    fontSize: '13.5px',
+                    cursor: isSubmittingPoint ? 'not-allowed' : 'pointer',
+                    boxShadow: '0 4px 18px rgba(255, 215, 0, 0.35)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    transition: 'all 0.25s ease',
+                    opacity: isSubmittingPoint ? 0.7 : 1
+                  }}
                 >
-                  {isSubmittingPoint ? '...' : t('addPoint.submit')}
+                  {isSubmittingPoint ? (
+                    <>
+                      <Icon name="hourglass" size={16} /> ...
+                    </>
+                  ) : (
+                    <>
+                      <Icon name="checkCircle" size={16} />
+                      {t('addPoint.submit')}
+                    </>
+                  )}
                 </button>
               </div>
             </form>
