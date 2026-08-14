@@ -3343,31 +3343,29 @@ export default function MapaTuristico() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <button
                       onClick={() => handleIniciarViaje(selectedPoint)}
-                      className="neon-map-btn-dark"
                       style={{
                         width: '100%',
-                        padding: '8px 6px',
+                        padding: '10px 14px',
+                        background: 'rgba(20, 109, 158, 0.12)',
+                        color: '#146D9E',
+                        border: '1.5px solid rgba(20, 109, 158, 0.25)',
+                        borderRadius: '12px',
+                        fontWeight: '800',
+                        fontSize: '13px',
+                        cursor: 'pointer',
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '5px'
+                        gap: '8px',
+                        backdropFilter: 'blur(10px)',
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 4px 12px rgba(20, 109, 158, 0.08)'
                       }}
                     >
-                      <span
-                        className="neon-sign-text"
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: '900',
-                          letterSpacing: '0.4px',
-                          color: '#FFFFFF',
-                          textTransform: 'uppercase',
-                          WebkitTextStroke: '1px #FFD700',
-                          paintOrder: 'stroke fill'
-                        }}
-                      >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#146D9E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                      <span style={{ fontWeight: '800', fontSize: '13px', color: '#146D9E' }}>
                         {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
                       </span>
-                      <img src="/images/ir.svg" alt="Ir" style={{ width: '22px', height: '22px', filter: 'brightness(0) invert(1)' }} />
                     </button>
 
                     <button
