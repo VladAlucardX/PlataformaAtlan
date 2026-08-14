@@ -203,7 +203,7 @@ export default function MasDeNicaraguaPage() {
           "line-color": [
             "case",
             ["to-boolean", ["feature-state", "selected"]], "#FFFFFF",
-            ["to-boolean", ["feature-state", "hover"]], COLOR_MATCH_EXPR,
+            ["to-boolean", ["feature-state", "hover"]], "#FFFFFF",
             "#FFD700"
           ],
           "line-color-transition": { duration: 300, delay: 0 },
@@ -359,8 +359,63 @@ export default function MasDeNicaraguaPage() {
   }, []);
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#0A192F", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif" }}>
-      <Navbar activePage="mas-de-nicaragua" />
+    <div style={{ minHeight: "100vh", backgroundColor: "#0A192F", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif", position: "relative", overflow: "hidden" }}>
+      {/* Fondo de 3 columnas compuestas: art4.png, art5.png, art3.jpeg */}
+      <div style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr 1fr",
+        zIndex: 0,
+        pointerEvents: "none",
+        overflow: "hidden"
+      }}>
+        {/* Columna 1: art4.png */}
+        <div style={{
+          backgroundImage: "url('/images/art4.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%",
+          filter: "brightness(0.6) contrast(1.1)"
+        }} />
+        {/* Columna 2: art5.png */}
+        <div style={{
+          backgroundImage: "url('/images/art5.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%",
+          filter: "brightness(0.6) contrast(1.1)"
+        }} />
+        {/* Columna 3: art3.jpeg */}
+        <div style={{
+          backgroundImage: "url('/images/art3.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%",
+          filter: "brightness(0.6) contrast(1.1)"
+        }} />
+
+        {/* Overlay de degradado oscuro y difuminado suave para legibilidad */}
+        <div style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: "linear-gradient(to bottom, rgba(10, 25, 47, 0.72) 0%, rgba(10, 25, 47, 0.85) 50%, rgba(10, 25, 47, 0.95) 100%)",
+          backdropFilter: "blur(4px)",
+          WebkitBackdropFilter: "blur(4px)"
+        }} />
+      </div>
+
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <Navbar activePage="mas-de-nicaragua" />
 
       <main style={{ maxWidth: "1240px", margin: "0 auto", padding: "85px 20px 50px" }}>
 
@@ -1004,6 +1059,7 @@ export default function MasDeNicaraguaPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
