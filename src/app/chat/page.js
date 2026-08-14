@@ -394,17 +394,44 @@ function ChatContent() {
       position: "relative",
       overflow: "hidden"
     }}>
-      {/* Fondo en 3 columnas con difuminado únicamente en las líneas de conexión */}
+      {/* Fondo de 3 columnas compuestas: art1.jpeg, art2.jpeg, art3.jpeg */}
       <div style={{
-        position: "absolute",
+        position: "fixed",
         top: 0,
         left: 0,
-        right: 0,
-        bottom: 0,
-        background: "linear-gradient(to right, #146D9E 0%, #146D9E 28%, #17AA4A 38%, #17AA4A 62%, #FFD700 72%, #FFD700 100%)",
+        width: "100%",
+        height: "100%",
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr 1fr",
         zIndex: 0,
-        pointerEvents: "none"
-      }} />
+        pointerEvents: "none",
+        overflow: "hidden"
+      }}>
+        {/* Columna 1: art1.jpeg */}
+        <div style={{
+          backgroundImage: "url('/images/art1.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%"
+        }} />
+        {/* Columna 2: art2.jpeg */}
+        <div style={{
+          backgroundImage: "url('/images/art2.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%"
+        }} />
+        {/* Columna 3: art3.jpeg */}
+        <div style={{
+          backgroundImage: "url('/images/art3.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%"
+        }} />
+      </div>
 
       {/* Navbar */}
       <Navbar activePage="chat" session={session} perfil={perfil} onLogout={handleLogout} />
