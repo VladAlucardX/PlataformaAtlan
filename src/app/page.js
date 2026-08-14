@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
@@ -18,13 +18,64 @@ import NeonBusinessSign from "@/components/ui/NeonBusinessSign";
 // Hero
 function HeroSection({ session, perfil }) {
   const { t, lang } = useTranslation();
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+    }
+  }, []);
+
+  const handleEnded = () => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+    }
+  };
 
   return (
     <section style={{
       ...styles.hero,
-      background: "url('/images/Frame 4.png') center / 100% 100% no-repeat"
+      position: 'relative',
+      overflow: 'hidden',
+      background: '#0A192F'
     }}>
-      <div style={styles.heroContent} className="animate-fade-in-up">
+      {/* Video de Fondo Fullscreen */}
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        onLoadedMetadata={() => {
+          if (videoRef.current) videoRef.current.currentTime = 0;
+        }}
+        onEnded={handleEnded}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: 0
+        }}
+      >
+        <source src="/videos/AtlanHero.mp4" type="video/mp4" />
+      </video>
+      {/* Overlay oscuro para legibilidad del texto */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        background: 'linear-gradient(to bottom, rgba(10, 25, 47, 0.25) 0%, rgba(10, 25, 47, 0.35) 100%)',
+        zIndex: 1
+      }} />
+      <div style={{ ...styles.heroContent, position: 'relative', zIndex: 2 }} className="animate-fade-in-up">
         {perfil?.nombre_completo && (
           <div style={{
             fontSize: "15px",
@@ -214,14 +265,14 @@ function CategoriesSection() {
   ];
 
   return (
-    <section style={{ ...styles.section, background: "url('/images/Frame 5.png') center / 100% 100% no-repeat", position: "relative" }}>
+    <section style={{ ...styles.section, background: "url('/images/Frame 4.png') center / 100% 100% no-repeat", position: "relative" }}>
       {/* Transición leve superior con Features */}
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "70px", background: "linear-gradient(to bottom, rgba(23, 170, 74, 0.25) 0%, transparent 100%)", pointerEvents: "none", zIndex: 1 }} />
 
       <div style={{ ...styles.sectionInner, position: "relative", zIndex: 2 }}>
         <div style={styles.sectionHeader} className="animate-fade-in-up">
-          <h2 style={{ ...styles.sectionTitle, color: "#1A1A2E" }}>{t("map.categories")}</h2>
-          <p style={{ ...styles.sectionSubtitle, color: "#333333" }}>{t("landing.features.subtitle")}</p>
+          <h2 style={{ ...styles.sectionTitle, color: "#FFFFFF" }}>{t("map.categories")}</h2>
+          <p style={{ ...styles.sectionSubtitle, color: "#FFFFFF", opacity: 0.9 }}>{t("landing.categories.subtitle")}</p>
         </div>
 
         <div className="categories-grid-5">
@@ -261,7 +312,7 @@ function CTASection({ session }) {
   return (
     <section id="cta" style={{
       ...styles.ctaSection,
-      background: "url('/images/Frame 2.png') center / 100% 100% no-repeat"
+      background: "url('/images/Frame 5.png') center / 100% 100% no-repeat"
     }}>
       <div style={{
         ...styles.ctaContent,
