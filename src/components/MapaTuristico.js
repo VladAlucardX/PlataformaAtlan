@@ -1759,7 +1759,7 @@ export default function MapaTuristico() {
       accessToken: mapboxgl.accessToken,
       unit: 'metric',
       profile: 'mapbox/driving-traffic',
-      interactive: true,
+      interactive: false, // Restringir navegación estrictamente entre puntos registrados (Punto A -> Punto B)
       language: lang === 'en' ? 'en' : 'es',
       controls: { inputs: true, instructions: true, profileSwitcher: true },
     });
