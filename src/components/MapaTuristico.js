@@ -218,50 +218,56 @@ export default function MapaTuristico() {
 
   // Control de visibilidad del PopUp de Direcciones (Punto A y B)
   useEffect(() => {
-    const directionsPanel = document.querySelector('.mapboxgl-ctrl-directions');
-    if (!directionsPanel) return;
+    const updatePanelVisibility = () => {
+      const directionsPanel = document.querySelector('.mapboxgl-ctrl-directions');
+      if (!directionsPanel) return;
 
-    // Agregar cabecera flotante con título y botón cerrar ✕ al panel de Mapbox
-    if (!directionsPanel.querySelector('.directions-popup-header')) {
-      const header = document.createElement('div');
-      header.className = 'directions-popup-header';
-      header.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255, 215, 0, 0.15); border-bottom: 1px solid rgba(255, 215, 0, 0.3);">
-          <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13.5px; color: #FFD700;">
-            <span>🧭</span>
-            <span>Planificar Ruta (A ➔ B)</span>
+      // Agregar cabecera flotante con título y botón cerrar ✕ al panel de Mapbox
+      if (!directionsPanel.querySelector('.directions-popup-header')) {
+        const header = document.createElement('div');
+        header.className = 'directions-popup-header';
+        header.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255, 215, 0, 0.15); border-bottom: 1px solid rgba(255, 215, 0, 0.3);">
+            <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13.5px; color: #FFD700;">
+              <span>🧭</span>
+              <span>Planificar Ruta (A ➔ B)</span>
+            </div>
+            <button id="close-directions-popup-btn" type="button" style="background: rgba(255, 255, 255, 0.2); border: none; color: #FFFFFF; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
+              ✕
+            </button>
           </div>
-          <button id="close-directions-popup-btn" type="button" style="background: rgba(255, 255, 255, 0.2); border: none; color: #FFFFFF; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
-            ✕
-          </button>
-        </div>
-      `;
-      directionsPanel.insertBefore(header, directionsPanel.firstChild);
+        `;
+        directionsPanel.insertBefore(header, directionsPanel.firstChild);
 
-      const closeBtn = header.querySelector('#close-directions-popup-btn');
-      if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-          setShowDirectionsPopup(false);
-        });
+        const closeBtn = header.querySelector('#close-directions-popup-btn');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => {
+            setShowDirectionsPopup(false);
+          });
+        }
       }
-    }
 
-    if (showDirectionsPopup) {
-      directionsPanel.classList.add('directions-popup-active');
-      directionsPanel.style.setProperty('display', 'block', 'important');
-      if (directionsRef.current) {
-        try {
-          const originInput = directionsPanel.querySelector('.mapbox-directions-origin input');
-          if (originInput && !originInput.value && currentPosRef.current) {
-            const [cLng, cLat] = currentPosRef.current;
-            directionsRef.current.setOrigin([cLng, cLat]);
-          }
-        } catch (e) {}
+      if (showDirectionsPopup) {
+        directionsPanel.classList.add('directions-popup-active');
+        directionsPanel.style.setProperty('display', 'block', 'important');
+        if (directionsRef.current) {
+          try {
+            const originInput = directionsPanel.querySelector('.mapbox-directions-origin input');
+            if (originInput && !originInput.value && currentPosRef.current) {
+              const [cLng, cLat] = currentPosRef.current;
+              directionsRef.current.setOrigin([cLng, cLat]);
+            }
+          } catch (e) {}
+        }
+      } else {
+        directionsPanel.classList.remove('directions-popup-active');
+        directionsPanel.style.setProperty('display', 'none', 'important');
       }
-    } else {
-      directionsPanel.classList.remove('directions-popup-active');
-      directionsPanel.style.setProperty('display', 'none', 'important');
-    }
+    };
+
+    updatePanelVisibility();
+    const intervalId = setInterval(updatePanelVisibility, 200);
+    return () => clearInterval(intervalId);
   }, [showDirectionsPopup]);
 
   // Manejar previsualización de ruta al seleccionar punto

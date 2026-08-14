@@ -1400,6 +1400,8 @@ a:hover {
   z-index: 100 !important;
 }
 
+html body .mapboxgl-ctrl-directions,
+div.mapboxgl-ctrl-directions,
 .mapboxgl-ctrl-directions {
   display: none !important;
   width: 380px !important;
@@ -1418,6 +1420,8 @@ a:hover {
   animation: scaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
+html body .mapboxgl-ctrl-directions.directions-popup-active,
+div.mapboxgl-ctrl-directions.directions-popup-active,
 .mapboxgl-ctrl-directions.directions-popup-active {
   display: block !important;
 }
