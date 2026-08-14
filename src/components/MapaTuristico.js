@@ -8,6 +8,7 @@ import '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../lib/supabase';
+import { obtenerDepartamentoPorCoordenadas } from '../lib/geoUtils';
 import { useTranslation } from '../hooks/useTranslation';
 import LanguageToggle from './ui/LanguageToggle';
 import Icon from './ui/Icon';
@@ -1396,12 +1397,14 @@ export default function MapaTuristico() {
 
     try {
       const [lng, lat] = tempPointCoords;
+      const deptDetectado = await obtenerDepartamentoPorCoordenadas(lng, lat);
       const { error } = await supabase.from('puntos').insert([{
         nombre: newPointNombre,
         descripcion: newPointDesc,
         nombre_creador: userSession?.user?.user_metadata?.nombre_completo || newPointCreador || 'Turista Registrado',
         categoria: newPointCategoria,
         ubicacion: `POINT(${lng} ${lat})`,
+        departamento: deptDetectado,
         estado: 'sin_reclamar' // por defecto los del usuario están sin reclamar
       }]);
 
@@ -2130,174 +2133,238 @@ export default function MapaTuristico() {
           </div>
         )}
 
-      {/* Cabecera flotante */}
+      {/* Cabecera flotante con identidad visual Atlan ampliada */}
       {!selectedPoint && (
         <div className="map-header" style={{
-        position: 'absolute',
-        top: '20px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: '90%',
-        maxWidth: '700px',
-        background: 'rgba(10, 15, 28, 0.75)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        borderRadius: '20px',
-        padding: '12px 20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        zIndex: 10,
-        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.4)'
-      }}>
-        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span className="logoText" style={{ fontSize: '22px', fontWeight: '800', background: 'linear-gradient(135deg, #D4AF37 0%, #FFF 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: "'LC Mogi', var(--font-outfit), sans-serif" }}>
-            atlan
-          </span>
-        </Link>
-
-        {/* BUSCADOR GLOBAL */}
-        <div style={{ flex: 1, margin: '0 20px', position: 'relative' }}>
-          <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '6px 12px', gap: '8px' }}>
-            <span style={{ color: '#94a3b8' }}><Icon name="search" size={16} /></span>
-            <input
-              type="text"
-              placeholder={lang === 'en' ? 'Search destinations...' : 'Buscar destinos...'}
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-              onFocus={() => setShowResults(true)}
-              style={{
-                width: '100%',
-                background: 'transparent',
-                border: 'none',
-                color: 'white',
-                fontSize: '13px',
-                outline: 'none',
-              }}
+          position: 'absolute',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '95%',
+          maxWidth: '1150px',
+          background: '#0A192F',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          border: '2.5px solid rgba(255, 255, 255, 0.15)',
+          borderRadius: '26px',
+          padding: '14px 28px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          zIndex: 10,
+          boxShadow: '0 16px 40px -4px rgba(0, 0, 0, 0.5), 0 0 25px rgba(20, 109, 158, 0.25)'
+        }}>
+          {/* Brand Logo igual al Navbar */}
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+            <img
+              src="/mapaicono.png"
+              alt="Logo Atlan"
+              style={{ width: '32px', height: '32px', objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}
             />
-            {searchQuery && (
-              <button
-                onClick={() => handleSearch('')}
+            <span className="logoText" style={{ fontSize: '26px', fontWeight: '900', color: '#FFD700', letterSpacing: '-0.5px' }}>
+              atlan
+            </span>
+          </Link>
+
+          {/* BUSCADOR GLOBAL GRANDE, AMPLIO Y DESTACADO */}
+          <div style={{ flex: 1, margin: '0 24px', position: 'relative' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: 'rgba(255, 255, 255, 0.07)',
+              border: '1.5px solid rgba(255, 215, 0, 0.35)',
+              borderRadius: '18px',
+              padding: '11px 20px',
+              gap: '12px',
+              boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 4px 14px rgba(0, 0, 0, 0.15)',
+              transition: 'all 0.2s ease'
+            }}>
+              <span style={{ color: '#FFD700', display: 'flex', alignItems: 'center' }}>
+                <Icon name="search" size={20} />
+              </span>
+              <input
+                type="text"
+                placeholder={lang === 'en' ? 'Search destinations, places, categories...' : 'Buscar destinos, lugares, categorías...'}
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                onFocus={() => setShowResults(true)}
                 style={{
-                  background: 'none',
+                  width: '100%',
+                  background: 'transparent',
                   border: 'none',
-                  color: '#94a3b8',
-                  cursor: 'pointer',
-                  padding: '2px',
-                  fontSize: '12px'
+                  color: '#FFFFFF',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  outline: 'none',
                 }}
-              >
-                ✕
-              </button>
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => handleSearch('')}
+                  style={{
+                    background: 'rgba(255,255,255,0.12)',
+                    border: 'none',
+                    color: '#FFFFFF',
+                    cursor: 'pointer',
+                    borderRadius: '50%',
+                    width: '24px',
+                    height: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Resultados de búsqueda Espaciosos y Elegantes */}
+            {showResults && searchResults.length > 0 && (
+              <div style={{
+                position: 'absolute',
+                top: '58px',
+                left: 0,
+                right: 0,
+                background: '#0A192F',
+                backdropFilter: 'blur(24px)',
+                border: '2px solid rgba(255, 215, 0, 0.4)',
+                borderRadius: '20px',
+                maxHeight: '350px',
+                overflowY: 'auto',
+                zIndex: 99,
+                boxShadow: '0 20px 50px rgba(0,0,0,0.7), 0 0 20px rgba(255, 215, 0, 0.15)',
+                padding: '8px 0'
+              }}>
+                {searchResults.map((p) => {
+                  const catKey = (p.categoria || 'otro').toLowerCase();
+                  const catConf = CATEGORIAS_CONFIG[catKey] || CATEGORIAS_CONFIG['otro'];
+                  return (
+                    <div
+                      key={p.id}
+                      onClick={() => selectSearchResult(p)}
+                      style={{
+                        padding: '12px 20px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '16px',
+                        borderBottom: '1px solid rgba(255,255,255,0.06)',
+                        transition: 'all 0.2s ease',
+                      }}
+                      className="search-result-item"
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 215, 0, 0.12)';
+                        e.currentTarget.style.paddingLeft = '24px';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'transparent';
+                        e.currentTarget.style.paddingLeft = '20px';
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                        <div style={{
+                          width: '38px',
+                          height: '38px',
+                          borderRadius: '12px',
+                          background: catConf.color + '22',
+                          border: `1.5px solid ${catConf.color}55`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: catConf.color,
+                          flexShrink: 0
+                        }}>
+                          <Icon name={catConf.icon} size={18} />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '15px', fontWeight: '800', color: '#FFFFFF', lineHeight: '1.2' }}>{p.nombre}</div>
+                          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.65)', marginTop: '3px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span><Icon name="mapPin" size={12} color="#FFD700" /> {p.departamento || 'Nicaragua'}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '10.5px', fontWeight: '800', textTransform: 'uppercase', background: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8', padding: '3px 8px', borderRadius: '6px' }}>
+                          {t(`addPoint.categories.${catKey}`)}
+                        </span>
+                        <span style={{ color: '#FFD700', fontWeight: '900', fontSize: '14px' }}>➔</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </div>
 
-          {/* Resultados de búsqueda */}
-          {showResults && searchResults.length > 0 && (
-            <div style={{
-              position: 'absolute',
-              top: '45px',
-              left: 0,
-              right: 0,
-              background: 'rgba(10, 15, 28, 0.95)',
-              backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '12px',
-              maxHeight: '220px',
-              overflowY: 'auto',
-              zIndex: 99,
-              boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-              padding: '6px 0'
-            }}>
-              {searchResults.map((p) => (
-                <div
-                  key={p.id}
-                  onClick={() => selectSearchResult(p)}
-                  style={{
-                    padding: '10px 16px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    borderBottom: '1px solid rgba(255,255,255,0.04)',
-                    transition: 'background 0.2s',
-                  }}
-                  className="search-result-item"
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                >
-                  <span style={{ fontSize: '13.5px', fontWeight: '750', color: 'white' }}>{p.nombre}</span>
-                  <span style={{ fontSize: '11px', color: '#94a3b8' }}><Icon name="mapPin" size={11} /> {t(`addPoint.categories.${p.categoria || 'otro'}`)}</span>
-                </div>
-              ))}
-            </div>
-          )}
+          {/* Acciones derecha */}
+          <div className="map-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+            <Link
+              href="/"
+              style={{
+                padding: '10px 16px',
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
+                color: '#FFFFFF',
+                borderRadius: '14px',
+                fontWeight: '750',
+                fontSize: '13px',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.25s ease'
+              }}
+            >
+              <Icon name="home" size={15} /> <span className="mobile-hide-text">{lang === 'en' ? 'Home' : 'Inicio'}</span>
+            </Link>
+
+            <Link
+              href="/comunidad"
+              style={{
+                padding: '10px 16px',
+                background: 'rgba(56, 189, 248, 0.12)',
+                border: '1px solid rgba(56, 189, 248, 0.35)',
+                color: '#38BDF8',
+                borderRadius: '14px',
+                fontWeight: '750',
+                fontSize: '13px',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.25s ease'
+              }}
+            >
+              <Icon name="users" size={15} /> <span className="mobile-hide-text">{lang === 'en' ? 'Community' : 'Comunidad'}</span>
+            </Link>
+
+            <button
+              onClick={activarLevantarPunto}
+              style={{
+                padding: '10px 20px',
+                background: isAddingPoint ? '#EF4444' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                color: isAddingPoint ? '#FFFFFF' : '#0A192F',
+                border: 'none',
+                borderRadius: '14px',
+                fontWeight: '900',
+                fontSize: '13px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 4px 14px rgba(255, 215, 0, 0.35)',
+                transition: 'all 0.25s ease'
+              }}
+            >
+              ➕ {isAddingPoint ? t('common.cancel') : t('map.addPoint')}
+            </button>
+            <LanguageToggle variant="pill" />
+          </div>
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Link
-            href="/"
-            style={{
-              padding: '8px 14px',
-              background: 'rgba(255, 255, 255, 0.06)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              color: 'white',
-              borderRadius: '12px',
-              fontWeight: '750',
-              fontSize: '12px',
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.25s ease'
-            }}
-          >
-            <Icon name="home" size={14} /> {lang === 'en' ? 'Home' : 'Inicio'}
-          </Link>
-
-          <Link
-            href="/comunidad"
-            style={{
-              padding: '8px 14px',
-              background: 'rgba(255, 215, 0, 0.12)',
-              border: '1px solid rgba(255, 215, 0, 0.3)',
-              color: '#FFD700',
-              borderRadius: '12px',
-              fontWeight: '750',
-              fontSize: '12px',
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.25s ease'
-            }}
-          >
-            <Icon name="users" size={14} /> {lang === 'en' ? 'Community' : 'Comunidad'}
-          </Link>
-
-          <button
-            onClick={activarLevantarPunto}
-            style={{
-              padding: '8px 16px',
-              background: isAddingPoint ? '#ef4444' : 'linear-gradient(135deg, #D4AF37 0%, #b89324 100%)',
-              color: isAddingPoint ? 'white' : '#0a0f1c',
-              border: 'none',
-              borderRadius: '12px',
-              fontWeight: '800',
-              fontSize: '12px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              boxShadow: '0 4px 10px rgba(212, 175, 55, 0.25)',
-              transition: 'all 0.25s ease'
-            }}
-          >
-            ➕ {isAddingPoint ? t('common.cancel') : t('map.addPoint')}
-          </button>
-          <LanguageToggle variant="pill" />
-        </div>
-      </div>
       )}
 
       {/* Banner modo agregar punto */}
@@ -2333,14 +2400,15 @@ export default function MapaTuristico() {
           style={{
             flexShrink: 0,
             padding: '8px 16px',
-            background: filtroCategoria === null ? 'var(--atlan-gold)' : 'rgba(10, 15, 28, 0.8)',
-            color: filtroCategoria === null ? '#0a0f1c' : 'white',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '12px',
-            fontWeight: '700',
-            fontSize: '12px',
+            background: filtroCategoria === null ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : '#0A192F',
+            color: filtroCategoria === null ? '#0A192F' : '#FFFFFF',
+            border: filtroCategoria === null ? '1px solid #FFD700' : '1px solid rgba(255, 255, 255, 0.15)',
+            borderRadius: '14px',
+            fontWeight: '800',
+            fontSize: '12.5px',
             cursor: 'pointer',
-            backdropFilter: 'blur(8px)',
+            backdropFilter: 'blur(12px)',
+            boxShadow: filtroCategoria === null ? '0 4px 12px rgba(255,215,0,0.3)' : '0 4px 10px rgba(0,0,0,0.25)',
             transition: 'all 0.2s'
           }}
         >
@@ -2356,14 +2424,15 @@ export default function MapaTuristico() {
               style={{
                 flexShrink: 0,
                 padding: '8px 16px',
-                background: isSelected ? config.color : 'rgba(10, 15, 28, 0.8)',
-                color: isSelected ? 'white' : '#e2e8f0',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '12px',
-                fontWeight: '700',
-                fontSize: '12px',
+                background: isSelected ? config.color : '#0A192F',
+                color: isSelected ? '#FFFFFF' : '#E2E8F0',
+                border: isSelected ? `1.5px solid ${config.color}` : '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '14px',
+                fontWeight: '750',
+                fontSize: '12.5px',
                 cursor: 'pointer',
-                backdropFilter: 'blur(8px)',
+                backdropFilter: 'blur(12px)',
+                boxShadow: isSelected ? `0 4px 14px ${config.color}55` : '0 4px 10px rgba(0,0,0,0.25)',
                 transition: 'all 0.2s',
                 display: 'flex',
                 alignItems: 'center',

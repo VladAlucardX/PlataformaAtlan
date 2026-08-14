@@ -1393,31 +1393,149 @@ a:hover {
   }
 }
 
-/* Minimalist Waze-like UI for Mapbox Directions */
+/* ── MAPBOX DIRECTIONS (PANEL PUNTO A Y B) ESTILO WAZE / ATLAN DE ALTO CONTRASTE ── */
 .mapboxgl-ctrl-top-left {
-  top: 160px !important;
-  left: 10px !important;
+  top: 95px !important;
+  left: 20px !important;
+  z-index: 15 !important;
 }
 
 .mapboxgl-ctrl-directions {
-  max-width: 320px !important;
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(8px);
+  max-width: 380px !important;
+  background: #0A192F !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 2px solid rgba(255, 215, 0, 0.4) !important;
+  box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.15) !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  color: #FFFFFF !important;
+  font-family: var(--font-outfit), sans-serif !important;
+}
+
+.mapbox-directions-inputs {
+  background: #0A192F !important;
+  padding: 10px !important;
+}
+
+.mapbox-directions-component,
+.mapbox-directions-origin,
+.mapbox-directions-destination {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 12px !important;
+  margin-bottom: 8px !important;
+  padding: 4px 8px !important;
+}
+
+.mapbox-directions-component input,
+.mapbox-directions-origin input,
+.mapbox-directions-destination input,
+.mapbox-directions-inputs input[type='text'],
+.mapboxgl-ctrl-directions input,
+.mapboxgl-ctrl-directions input[type='text'] {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #FFFFFF !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  outline: none !important;
+  box-shadow: none !important;
   border: none !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
-  border-radius: 16px !important;
-  overflow: hidden;
-  margin: 16px !important;
+}
+
+.mapbox-directions-component input::placeholder,
+.mapbox-directions-origin input::placeholder,
+.mapbox-directions-destination input::placeholder,
+.mapboxgl-ctrl-directions input::placeholder {
+  color: rgba(255, 255, 255, 0.65) !important;
 }
 
 .mapbox-directions-profile {
-  background: white !important;
-  border-bottom: 1px solid #f1f5f9 !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #FFD700 !important;
+  padding: 4px 6px !important;
+  display: flex !important;
+  justify-content: space-around !important;
 }
 
-.mapbox-directions-instructions {
-  max-height: 40vh !important;
-  overflow-y: auto !important;
+.mapbox-directions-profile label {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #FFD700 !important;
+  font-weight: 800 !important;
+  font-size: 11.5px !important;
+  border-radius: 10px !important;
+  padding: 6px 12px !important;
+  height: auto !important;
+  line-height: 1.2 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.mapbox-directions-profile input[type='radio']:checked + label,
+.mapbox-directions-profile label.active {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
+  color: #0A192F !important;
+  font-weight: 900 !important;
+}
+
+.mapbox-directions-component-key {
+  background: #FFD700 !important;
+  color: #0A192F !important;
+  font-weight: 900 !important;
+  border-radius: 8px !important;
+}
+
+.mapbox-directions-reverse-input,
+.mapbox-directions-clear-input {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-radius: 8px !important;
+}
+
+.mapbox-directions-reverse-input:hover,
+.mapbox-directions-clear-input:hover {
+  background: rgba(255, 215, 0, 0.3) !important;
+}
+
+/* Sugerencias y pasos de direcciones */
+.mapbox-directions-instructions,
+.suggestions,
+.mapbox-directions-route-summary,
+.mapbox-directions-instructions-wrapper {
+  background: #0A192F !important;
+  color: #FFFFFF !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.suggestions li,
+.mapbox-directions-step {
+  color: #FFFFFF !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  font-size: 13px !important;
+  padding: 10px 14px !important;
+}
+
+.suggestions li:hover,
+.suggestions .active {
+  background: rgba(255, 215, 0, 0.15) !important;
+  color: #FFD700 !important;
+}
+
+.mapbox-directions-step-maneuver {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
+.mapbox-directions-step-distance {
+  color: #38BDF8 !important;
+  font-weight: 800 !important;
+}
+
+.mapbox-directions-icon {
+  filter: brightness(0) invert(1) !important;
 }
 
 /* Animación de pulso para la flecha de navegación del usuario */
@@ -1557,17 +1675,103 @@ a:hover {
     display: none !important;
   }
 
+  .mobile-hide-text {
+    display: none !important;
+  }
+
+  /* Cabecera flotante en móvil */
+  .map-header {
+    width: calc(100% - 20px) !important;
+    max-width: calc(100vw - 20px) !important;
+    top: 10px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    padding: 8px 12px !important;
+    border-radius: 20px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Buscador toma 100% de la 2da fila en móvil */
+  .map-header > div:nth-child(2) {
+    order: 3 !important;
+    width: 100% !important;
+    margin: 2px 0 0 0 !important;
+  }
+
+  .map-header .logoText {
+    font-size: 20px !important;
+  }
+
+  .map-header-actions {
+    gap: 6px !important;
+  }
+
+  .map-header-actions a,
+  .map-header-actions button {
+    padding: 6px 10px !important;
+    font-size: 11.5px !important;
+    border-radius: 10px !important;
+  }
+
+  /* Reposicionar y estilizar panel de direcciones Mapbox (Punto A y B) */
+  .mapboxgl-ctrl-top-left {
+    top: 125px !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: calc(100vw - 20px) !important;
+    z-index: 15 !important;
+  }
+
   .mapboxgl-ctrl-directions {
-    max-width: calc(100vw - 32px) !important;
-    margin: 8px !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    border-radius: 16px !important;
+  }
+
+  /* Barra de filtros en móvil (Píldoras horizontales deslizables) */
+  .filter-bar {
+    top: 125px !important;
+    bottom: auto !important;
+    left: 10px !important;
+    right: 10px !important;
+    height: auto !important;
+    max-height: 48px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 5px 8px !important;
+    background: rgba(10, 25, 47, 0.9) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border-radius: 16px !important;
+    border: 1.5px solid rgba(255, 215, 0, 0.3) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+    z-index: 10 !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .filter-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .filter-bar button {
+    height: 34px !important;
+    line-height: 1 !important;
+    align-self: center !important;
+    flex-shrink: 0 !important;
+    font-size: 12px !important;
+    padding: 6px 12px !important;
     border-radius: 12px !important;
   }
 
-  .mapboxgl-ctrl-top-left {
-    top: 80px !important;
-  }
-
-  /* Details sheet bottom sheet behavior */
+  /* Detalle de punto estilo Bottom Sheet */
   .detail-sheet {
     top: auto !important;
     bottom: 0 !important;
@@ -1578,7 +1782,7 @@ a:hover {
     border-left: none !important;
     border-top: none !important;
     border-radius: 24px 24px 0 0 !important;
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4) !important;
     animation: slideInUpDetail 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 
@@ -1586,26 +1790,31 @@ a:hover {
     display: none !important;
   }
 
-  /* Responsive Filter Bar */
-  .filter-bar {
-    top: auto !important;
-    bottom: 20px !important;
-    left: 20px !important;
-    right: 90px !important;
-    padding: 4px !important;
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-    border-radius: 16px !important;
-    border: 1px solid rgba(20, 109, 158, 0.12) !important;
-  }
-
-  /* Add Point Modal scrollability */
+  /* Modal Agregar Punto */
   .add-point-modal {
     max-height: 85vh !important;
     overflow-y: auto !important;
     padding: 20px !important;
     border-radius: 20px !important;
+  }
+
+  .form-grid-2 {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Botones flotantes inferiores */
+  .btn-demo {
+    bottom: 85px !important;
+    right: 12px !important;
+    padding: 9px 14px !important;
+    font-size: 12.5px !important;
+  }
+
+  .recenter-btn {
+    bottom: 85px !important;
+    padding: 10px 18px !important;
+    font-size: 12.5px !important;
   }
 
   /* Owner Dashboard Responsiveness */
@@ -1673,28 +1882,6 @@ a:hover {
     gap: 16px !important;
     padding-bottom: 16px !important;
   }
-}
-
-@media (max-width: 600px) {
-  .map-header {
-    width: 92% !important;
-    top: 12px !important;
-    padding: 8px 12px !important;
-    border-radius: 16px !important;
-  }
-  .map-header span {
-    font-size: 16px !important;
-  }
-  .map-header button {
-    padding: 6px 12px !important;
-    font-size: 11px !important;
-    border-radius: 10px !important;
-  }
-
-  .form-grid-2 {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-  }
 
   .admin-card-header {
     flex-direction: column !important;
@@ -1713,6 +1900,18 @@ a:hover {
     width: 100% !important;
     padding: 10px 0 !important;
     font-size: 12px !important;
+  }
+}
+
+/* Pantallas Extra Grandes y Televisores (>= 1600px) */
+@media (min-width: 1600px) {
+  .map-header {
+    max-width: 1300px !important;
+    padding: 16px 32px !important;
+  }
+
+  .categories-grid-5 {
+    max-width: 1300px !important;
   }
 }
 
