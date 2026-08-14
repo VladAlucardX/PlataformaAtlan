@@ -16,16 +16,16 @@ import NeonBusinessSign from "@/components/ui/NeonBusinessSign";
 // Landing Page
 
 // Hero
-function HeroSection({ session, perfil }) {
+function HeroSection({ session, perfil, introDone }) {
   const { t, lang } = useTranslation();
   const videoRef = useRef(null);
 
   useEffect(() => {
-    if (videoRef.current) {
+    if (introDone && videoRef.current) {
       videoRef.current.currentTime = 0;
       videoRef.current.play().catch(() => {});
     }
-  }, []);
+  }, [introDone]);
 
   const handleEnded = () => {
     if (videoRef.current) {
@@ -50,7 +50,7 @@ function HeroSection({ session, perfil }) {
         playsInline
         preload="auto"
         onLoadedMetadata={() => {
-          if (videoRef.current) videoRef.current.currentTime = 0;
+          if (videoRef.current && introDone) videoRef.current.currentTime = 0;
         }}
         onEnded={handleEnded}
         style={{
@@ -446,7 +446,7 @@ export default function Home() {
         }}
       >
         <Navbar activePage="inicio" session={session} perfil={perfil} onLogout={handleLogout} />
-        <HeroSection session={session} perfil={perfil} />
+        <HeroSection session={session} perfil={perfil} introDone={introDone} />
         <FeaturesSection />
         <CategoriesSection />
         <CTASection session={session} />
