@@ -1332,10 +1332,15 @@ export default function MapaTuristico() {
     steps.forEach((step) => {
       if (!step.maneuver?.instruction) return;
       const [mLng, mLat] = step.maneuver.location;
+      const mType = step.maneuver.type || '';
+      const mModifier = step.maneuver.modifier || '';
       list.push({
         lng: mLng,
         lat: mLat,
         instruction: limpiarInstruccion(step.maneuver.instruction),
+        type: mType,
+        modifier: mModifier,
+        icon: getManeuverIcon(mType, mModifier),
         segmentDist: step.distance || 0,
         announcedFar: false,
         announcedMid: false,
@@ -3933,60 +3938,125 @@ export default function MapaTuristico() {
         handleCrearResena={handleCrearResena}
       />
 
-      {/* HUD Waze de Ruta */}
+      {/* HUD Waze de Ruta — Diseño Premium con Maniobra Integrada */}
       {routeInfo && (
         <div style={{
           position: 'absolute',
-          bottom: '30px',
-          left: '20px',
-          background: 'rgba(10, 15, 28, 0.85)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          borderRadius: '16px',
-          padding: '10px 14px',
-          width: '220px',
-          boxShadow: '0 12px 40px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.15)',
+          bottom: '24px',
+          left: '16px',
+          background: 'linear-gradient(145deg, rgba(10, 18, 35, 0.92) 0%, rgba(8, 14, 28, 0.96) 100%)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255, 215, 0, 0.25)',
+          borderRadius: '18px',
+          padding: '0',
+          width: '260px',
+          boxShadow: '0 16px 48px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.1)',
           zIndex: 15,
           color: 'white',
+          overflow: 'hidden',
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '10px', fontWeight: '800', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
-              🚗 {lang === 'en' ? 'Active Route' : 'Ruta Activa'}
-            </span>
-            <button
-              onClick={() => {
-                if (directionsRef.current) directionsRef.current.clean();
-                setRouteInfo(null);
-              }}
-              style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}
-            >
-              ✕
-            </button>
-          </div>
-          <div style={{ fontSize: '13px', fontWeight: '800', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '10px' }}>
-            {routeInfo.destinationName}
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-            <div>
-              <div style={{ fontSize: '9.5px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>
-                {lang === 'en' ? 'Duration' : 'Tiempo'}
+          {/* Cabecera con maniobra actual */}
+          {currentManeuver && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '12px 14px',
+              background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.08) 100%)',
+              borderBottom: '1px solid rgba(255, 215, 0, 0.2)',
+            }}>
+              <div style={{
+                width: '44px',
+                height: '44px',
+                minWidth: '44px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                color: '#0A192F',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '22px',
+                fontWeight: '900',
+                boxShadow: '0 4px 14px rgba(255, 215, 0, 0.4)',
+              }}>
+                {currentManeuver.icon || '⬆'}
               </div>
-              <div style={{ fontSize: '16px', fontWeight: '900', color: '#10b981' }}>
-                {formatDurationDisplay(routeInfo.duration)}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontSize: '13px',
+                  fontWeight: '800',
+                  color: '#FFD700',
+                  marginBottom: '2px',
+                }}>
+                  {currentManeuver.distanceFormatted || formatDistanceDisplay(routeInfo.distance)}
+                </div>
+                <div style={{
+                  fontSize: '11px',
+                  fontWeight: '600',
+                  color: 'rgba(255, 255, 255, 0.85)',
+                  lineHeight: '1.3',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                }}>
+                  {currentManeuver.instruction || ''}
+                </div>
               </div>
             </div>
-            <div>
-              <div style={{ fontSize: '9.5px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>
-                {lang === 'en' ? 'Distance' : 'Distancia'}
+          )}
+
+          {/* Cuerpo del HUD */}
+          <div style={{ padding: '10px 14px 12px' }}>
+            {/* Header: label + botón cerrar */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+              <span style={{ fontSize: '9.5px', fontWeight: '800', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                🚗 {lang === 'en' ? 'Active Route' : 'Ruta Activa'}
+              </span>
+              <button
+                onClick={() => {
+                  if (directionsRef.current) directionsRef.current.clean();
+                  setRouteInfo(null);
+                  setCurrentManeuver(null);
+                }}
+                style={{ background: 'rgba(255,255,255,0.08)', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold', width: '22px', height: '22px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s ease' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Nombre del destino */}
+            <div style={{ fontSize: '13px', fontWeight: '800', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '10px' }}>
+              📍 {routeInfo.destinationName}
+            </div>
+
+            {/* Grid: Tiempo / Distancia */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <div style={{ background: 'rgba(16, 185, 129, 0.08)', borderRadius: '10px', padding: '6px 8px', border: '1px solid rgba(16, 185, 129, 0.15)' }}>
+                <div style={{ fontSize: '9px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', marginBottom: '2px' }}>
+                  {lang === 'en' ? 'Duration' : 'Tiempo'}
+                </div>
+                <div style={{ fontSize: '16px', fontWeight: '900', color: '#10b981' }}>
+                  {formatDurationDisplay(routeInfo.duration)}
+                </div>
               </div>
-              <div style={{ fontSize: '16px', fontWeight: '900', color: 'var(--atlan-gold)' }}>
-                {formatDistanceDisplay(routeInfo.distance)}
+              <div style={{ background: 'rgba(255, 215, 0, 0.06)', borderRadius: '10px', padding: '6px 8px', border: '1px solid rgba(255, 215, 0, 0.12)' }}>
+                <div style={{ fontSize: '9px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', marginBottom: '2px' }}>
+                  {lang === 'en' ? 'Distance' : 'Distancia'}
+                </div>
+                <div style={{ fontSize: '16px', fontWeight: '900', color: '#FFD700' }}>
+                  {formatDistanceDisplay(routeInfo.distance)}
+                </div>
               </div>
             </div>
-          </div>
-          <div style={{ marginTop: '8px', fontSize: '11px', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '6px' }}>
-            <span>{lang === 'en' ? 'Arrival ETA:' : 'Llegada (ETA):'}</span>
-            <span style={{ fontWeight: '800', color: 'white' }}>{routeInfo.eta}</span>
+
+            {/* ETA */}
+            <div style={{ marginTop: '8px', fontSize: '11px', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '6px' }}>
+              <span>{lang === 'en' ? 'Arrival ETA:' : 'Llegada (ETA):'}</span>
+              <span style={{ fontWeight: '800', color: 'white' }}>{routeInfo.eta}</span>
+            </div>
           </div>
         </div>
       )}

@@ -1619,24 +1619,121 @@ html body .mapbox-directions-profile label.active {
   box-shadow: 0 4px 12px rgba(255, 215, 0, 0.35) !important;
 }
 
-/* Sugerencias y Pasos de Ruta */
+/* Sugerencias y Pasos de Ruta — Exhaustivo para eliminar fondos blancos */
 html body .mapbox-directions-instructions,
 html body .suggestions,
 html body .mapbox-directions-route-summary,
-html body .mapbox-directions-instructions-wrapper {
+html body .mapbox-directions-instructions-wrapper,
+html body .mapbox-directions-instructions-wrapper *,
+html body .mapbox-directions-route-summary *,
+html body .directions-control-instructions {
   background: #0A192F !important;
   background-color: #0A192F !important;
   color: #FFFFFF !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-top: none !important;
 }
 
-html body .suggestions li,
+/* Route summary (resumen km + min) */
+html body .mapbox-directions-route-summary {
+  padding: 10px 14px !important;
+  border-top: 1px solid rgba(255, 215, 0, 0.2) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  font-weight: 800 !important;
+  font-size: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  color: #FFD700 !important;
+}
+
+html body .mapbox-directions-route-summary h1 {
+  color: #FFD700 !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+/* Lista de instrucciones: scroll y altura máxima */
+html body .mapbox-directions-instructions,
+html body .mapbox-directions-instructions-wrapper {
+  max-height: 320px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255, 215, 0, 0.3) transparent !important;
+}
+
+html body .mapbox-directions-instructions::-webkit-scrollbar,
+html body .mapbox-directions-instructions-wrapper::-webkit-scrollbar {
+  width: 5px !important;
+}
+
+html body .mapbox-directions-instructions::-webkit-scrollbar-track,
+html body .mapbox-directions-instructions-wrapper::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+html body .mapbox-directions-instructions::-webkit-scrollbar-thumb,
+html body .mapbox-directions-instructions-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 0, 0.25) !important;
+  border-radius: 10px !important;
+}
+
+/* OL y LI dentro de instrucciones */
+html body .mapbox-directions-instructions ol,
+html body .mapbox-directions-instructions ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+html body .mapbox-directions-instructions li,
 html body .mapbox-directions-step {
   color: #FFFFFF !important;
   background: transparent !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-  font-size: 13px !important;
+  font-size: 12.5px !important;
   padding: 10px 14px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  transition: background 0.15s ease !important;
+  line-height: 1.4 !important;
+}
+
+html body .mapbox-directions-instructions li:hover,
+html body .mapbox-directions-step:hover {
+  background: rgba(255, 215, 0, 0.06) !important;
+}
+
+html body .mapbox-directions-instructions li:last-child,
+html body .mapbox-directions-step:last-child {
+  border-bottom: none !important;
+}
+
+/* Sugerencias de autocompletar */
+html body .suggestions {
+  background: #0F2440 !important;
+  border: 1px solid rgba(255, 215, 0, 0.2) !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+  margin-top: 4px !important;
+}
+
+html body .suggestions li {
+  color: #FFFFFF !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  font-size: 12.5px !important;
+  padding: 10px 14px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
 }
 
 html body .suggestions li:hover,
@@ -1645,18 +1742,66 @@ html body .suggestions .active {
   color: #FFD700 !important;
 }
 
+html body .suggestions li:last-child {
+  border-bottom: none !important;
+}
+
+/* Texto de la instrucción de paso */
 html body .mapbox-directions-step-maneuver {
   color: #FFFFFF !important;
   font-weight: 700 !important;
+  flex: 1 !important;
 }
 
+/* Distancia de cada paso */
 html body .mapbox-directions-step-distance {
   color: #38BDF8 !important;
   font-weight: 800 !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+  background: rgba(56, 189, 248, 0.1) !important;
+  padding: 2px 8px !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(56, 189, 248, 0.15) !important;
 }
 
+/* Ícono de maniobra dentro de cada paso */
+html body .mapbox-directions-step .directions-icon,
+html body .directions-icon {
+  filter: brightness(0) invert(1) !important;
+  opacity: 0.85 !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+}
+
+/* Íconos globales de Mapbox Directions */
 .mapbox-directions-icon {
   filter: brightness(0) invert(1) !important;
+}
+
+/* Errores de ruta */
+html body .mapbox-directions-error {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #FCA5A5 !important;
+  border: 1px solid rgba(239, 68, 68, 0.25) !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  margin: 8px 12px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+/* Catch-all: forzar fondo oscuro en cualquier div hijo desconocido */
+html body .mapboxgl-ctrl-directions *,
+html body .mapboxgl-ctrl-directions div,
+html body .mapboxgl-ctrl-directions span,
+html body .mapboxgl-ctrl-directions table,
+html body .mapboxgl-ctrl-directions td,
+html body .mapboxgl-ctrl-directions th,
+html body .mapboxgl-ctrl-directions tr {
+  background-color: transparent !important;
+  color: inherit !important;
 }
 
 /* Animación de pulso para la flecha de navegación del usuario */
