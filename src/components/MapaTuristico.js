@@ -947,7 +947,20 @@ export default function MapaTuristico() {
                 <img src="${pointImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
                 <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
               </div>
-            ` : ''}
+            ` : `
+              <div style="width:100%; height:96px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:linear-gradient(135deg, rgba(20,109,158,0.22) 0%, rgba(10,25,47,0.85) 100%); border:1.5px dashed rgba(255,215,0,0.35); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; box-sizing:border-box; padding:8px;">
+                <div style="width:34px; height:34px; border-radius:50%; background:rgba(255,215,0,0.12); border:1px solid rgba(255,215,0,0.3); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(255,215,0,0.2);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                </div>
+                <span style="font-size:10.5px; font-weight:850; color:#FFD700; letter-spacing:0.5px; text-transform:uppercase; background:rgba(255,215,0,0.15); padding:2px 10px; border-radius:8px; border:0.5px solid rgba(255,215,0,0.4);">
+                  📷 ${lang === 'en' ? 'Photos Coming Soon' : 'Próximamente'}
+                </span>
+              </div>
+            `}
             <!-- Status & Rating Header (Centered Pill) -->
             <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.18); padding-bottom:8px; width:100%; box-sizing:border-box;">
               <span style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-flex; align-items:center; gap:6px; letter-spacing:0.3px; background:rgba(255,255,255,0.08); padding:3px 10px; border-radius:10px;">
@@ -3169,6 +3182,35 @@ export default function MapaTuristico() {
                         : 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 100%)'
                     }}
                   />
+
+                  {!heroImg && (
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 1
+                    }}>
+                      <span style={{
+                        fontSize: '11px',
+                        fontWeight: '800',
+                        color: '#FFD700',
+                        letterSpacing: '0.5px',
+                        textTransform: 'uppercase',
+                        background: 'rgba(255, 215, 0, 0.15)',
+                        padding: '4px 12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 215, 0, 0.35)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}>
+                        <Icon name="camera" size={13} color="#FFD700" />
+                        {lang === 'en' ? 'Photos Coming Soon' : 'Próximamente'}
+                      </span>
+                    </div>
+                  )}
 
                   {/* ACCIONES SUPERIORES FLOTANTES */}
                   <div style={{ position: 'absolute', top: '14px', right: '14px', display: 'flex', gap: '8px', zIndex: 2 }}>
