@@ -3,7 +3,7 @@
  */
 
 /**
- * Verifica si una URL corresponde a una foto personalizada real subida por un negocio/usuario.
+ * Verifica si una URL corresponde a una foto o logo personalizado real subido por un negocio/usuario.
  * Filtra y descarta URLs de stock genéricas (Unsplash, rutas locales por defecto).
  */
 export const isRealCustomUrl = (url) => {
@@ -16,17 +16,32 @@ export const isRealCustomUrl = (url) => {
 };
 
 /**
- * Resuelve ÚNICAMENTE imágenes reales subidas por un negocio o creador del punto.
- * Si el punto no posee una foto personalizada real, devuelve null (para renderizar tarjeta SVG "Próximamente").
+ * Resuelve ÚNICAMENTE imágenes o logos reales subidos por un negocio o creador del punto.
+ * Si el punto no posee una foto ni logo personalizado real, devuelve null (para renderizar tarjeta SVG "PRÓXIMAMENTE").
  */
 export const getCustomPointImage = (punto, selectedPointDetails = null) => {
+  // 1. Fotos del negocio asociadas en el detalle
   if (selectedPointDetails?.fotos && Array.isArray(selectedPointDetails.fotos) && selectedPointDetails.fotos.length > 0) {
     const first = selectedPointDetails.fotos[0];
     if (isRealCustomUrl(first)) return first;
   }
+  // 2. Logo del negocio en el detalle
   if (isRealCustomUrl(selectedPointDetails?.logo_url)) {
     return selectedPointDetails.logo_url;
   }
+  // 3. Logo del negocio adjunto en el objeto del punto (RPC / Supabase query)
+  if (isRealCustomUrl(punto?.negocio_logo_url)) {
+    return punto.negocio_logo_url;
+  }
+  if (isRealCustomUrl(punto?.logo_url)) {
+    return punto.logo_url;
+  }
+  // 4. Fotos del negocio adjuntas en el objeto del punto
+  if (punto?.negocio_fotos && Array.isArray(punto.negocio_fotos) && punto.negocio_fotos.length > 0) {
+    const first = punto.negocio_fotos[0];
+    if (isRealCustomUrl(first)) return first;
+  }
+  // 5. Imagen/foto del punto subida por usuario o creador
   if (isRealCustomUrl(punto?.imagen_url)) {
     return punto.imagen_url;
   }
