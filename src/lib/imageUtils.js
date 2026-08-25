@@ -3,27 +3,42 @@
  */
 
 /**
+ * Verifica si una URL corresponde a una foto personalizada real subida por un negocio/usuario.
+ * Filtra y descarta URLs de stock genéricas (Unsplash, rutas locales por defecto).
+ */
+export const isRealCustomUrl = (url) => {
+  if (!url || typeof url !== 'string') return false;
+  const trimmed = url.trim();
+  if (trimmed === '') return false;
+  if (trimmed.includes('images.unsplash.com')) return false;
+  if (trimmed.includes('/images/departamentos/')) return false;
+  return true;
+};
+
+/**
  * Resuelve ÚNICAMENTE imágenes reales subidas por un negocio o creador del punto.
- * Si el punto no posee una foto personalizada, devuelve null (para renderizar tarjeta SVG "Próximamente").
+ * Si el punto no posee una foto personalizada real, devuelve null (para renderizar tarjeta SVG "Próximamente").
  */
 export const getCustomPointImage = (punto, selectedPointDetails = null) => {
   if (selectedPointDetails?.fotos && Array.isArray(selectedPointDetails.fotos) && selectedPointDetails.fotos.length > 0) {
-    return selectedPointDetails.fotos[0];
+    const first = selectedPointDetails.fotos[0];
+    if (isRealCustomUrl(first)) return first;
   }
-  if (selectedPointDetails?.logo_url) {
+  if (isRealCustomUrl(selectedPointDetails?.logo_url)) {
     return selectedPointDetails.logo_url;
   }
-  if (punto?.imagen_url && typeof punto.imagen_url === 'string' && punto.imagen_url.trim() !== '') {
+  if (isRealCustomUrl(punto?.imagen_url)) {
     return punto.imagen_url;
   }
-  if (punto?.imagen && typeof punto.imagen === 'string' && punto.imagen.trim() !== '' && !punto.imagen.includes('/images/departamentos/')) {
+  if (isRealCustomUrl(punto?.imagen)) {
     return punto.imagen;
   }
-  if (punto?.foto_url && typeof punto.foto_url === 'string' && punto.foto_url.trim() !== '') {
+  if (isRealCustomUrl(punto?.foto_url)) {
     return punto.foto_url;
   }
   if (punto?.fotos && Array.isArray(punto.fotos) && punto.fotos.length > 0) {
-    return punto.fotos[0];
+    const first = punto.fotos[0];
+    if (isRealCustomUrl(first)) return first;
   }
 
   return null;
