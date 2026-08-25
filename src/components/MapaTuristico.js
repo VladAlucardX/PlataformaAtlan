@@ -482,6 +482,19 @@ export default function MapaTuristico() {
         cinematicTimeoutsRef.current.forEach(t => clearTimeout(t));
         cinematicTimeoutsRef.current = [];
       }
+
+      // Centrar suavemente la cámara con margen adaptativo según el dispositivo
+      if (mapRef.current) {
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+        mapRef.current.easeTo({
+          center: [selectedPoint.lng, selectedPoint.lat],
+          padding: isMobile
+            ? { top: 180, bottom: 260, left: 20, right: 20 }
+            : { top: 140, bottom: 80, left: 380, right: 40 },
+          duration: 600,
+          essential: true
+        });
+      }
     } else if (isNavigatingRef.current) {
       // Si se cierra el panel de detalles y estamos en navegación activa,
       // reanudamos el centrado de la cámara de manera inmediata.
@@ -1022,6 +1035,19 @@ export default function MapaTuristico() {
         });
 
         popup.on('open', () => {
+          // Autocentrar el mapa para garantizar espacio superior holgado al desplegar el popup
+          if (mapRef.current) {
+            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+            mapRef.current.easeTo({
+              center: [punto.lng, punto.lat],
+              padding: isMobile
+                ? { top: 220, bottom: 80, left: 20, right: 20 }
+                : { top: 220, bottom: 80, left: 60, right: 60 },
+              duration: 500,
+              essential: true
+            });
+          }
+
           const btn = document.getElementById(btnId);
           if (btn) {
             btn.onclick = () => {
