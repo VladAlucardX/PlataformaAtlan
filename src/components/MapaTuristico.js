@@ -957,7 +957,7 @@ export default function MapaTuristico() {
                   </svg>
                 </div>
                 <span style="font-size:10.5px; font-weight:850; color:#FFD700; letter-spacing:0.5px; text-transform:uppercase; background:rgba(255,215,0,0.15); padding:2px 10px; border-radius:8px; border:0.5px solid rgba(255,215,0,0.4);">
-                  📷 ${lang === 'en' ? 'Photos Coming Soon' : 'Próximamente'}
+                  ${lang === 'en' ? 'Photos Coming Soon' : 'PRÓXIMAMENTE'}
                 </span>
               </div>
             `}
@@ -3206,8 +3206,7 @@ export default function MapaTuristico() {
                         alignItems: 'center',
                         gap: '6px'
                       }}>
-                        <Icon name="camera" size={13} color="#FFD700" />
-                        {lang === 'en' ? 'Photos Coming Soon' : 'Próximamente'}
+                        {lang === 'en' ? 'Photos Coming Soon' : 'PRÓXIMAMENTE'}
                       </span>
                     </div>
                   )}
