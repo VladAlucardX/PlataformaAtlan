@@ -13,7 +13,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import LanguageToggle from './ui/LanguageToggle';
 import Icon from './ui/Icon';
 import BusinessProfileModal from './ui/BusinessProfileModal';
-import { getPointImage, prefetchPointImages } from '../lib/imageUtils';
+import { getPointImage, prefetchPointImages, isRealCustomUrl } from '../lib/imageUtils';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -955,25 +955,27 @@ export default function MapaTuristico() {
 
         const popupHTML = `
           <div style="color:#FFFFFF; width:100%; min-width:230px; max-width:265px; font-family:var(--font-outfit), system-ui, sans-serif; box-sizing:border-box; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto;">
-            ${pointImg ? `
-              <div style="width:100%; height:115px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15);">
-                <img src="${pointImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
-                <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
-              </div>
-            ` : `
-              <div style="width:100%; height:96px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:linear-gradient(135deg, rgba(20,109,158,0.22) 0%, rgba(10,25,47,0.85) 100%); border:1.5px dashed rgba(255,215,0,0.35); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; box-sizing:border-box; padding:8px;">
-                <div style="width:34px; height:34px; border-radius:50%; background:rgba(255,215,0,0.12); border:1px solid rgba(255,215,0,0.3); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(255,215,0,0.2);">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <polyline points="21 15 16 10 5 21"/>
-                  </svg>
+            <div id="popup-img-container-${punto.id}" style="width:100%;">
+              ${pointImg ? `
+                <div style="width:100%; height:115px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15);">
+                  <img src="${pointImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
+                  <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
                 </div>
-                <span style="font-size:10.5px; font-weight:850; color:#FFD700; letter-spacing:0.5px; text-transform:uppercase; background:rgba(255,215,0,0.15); padding:2px 10px; border-radius:8px; border:0.5px solid rgba(255,215,0,0.4);">
-                  ${lang === 'en' ? 'Photos Coming Soon' : 'PRÓXIMAMENTE'}
-                </span>
-              </div>
-            `}
+              ` : `
+                <div style="width:100%; height:96px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:linear-gradient(135deg, rgba(20,109,158,0.22) 0%, rgba(10,25,47,0.85) 100%); border:1.5px dashed rgba(255,215,0,0.35); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; box-sizing:border-box; padding:8px;">
+                  <div style="width:34px; height:34px; border-radius:50%; background:rgba(255,215,0,0.12); border:1px solid rgba(255,215,0,0.3); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(255,215,0,0.2);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                  </div>
+                  <span style="font-size:10.5px; font-weight:850; color:#FFD700; letter-spacing:0.5px; text-transform:uppercase; background:rgba(255,215,0,0.15); padding:2px 10px; border-radius:8px; border:0.5px solid rgba(255,215,0,0.4);">
+                    ${lang === 'en' ? 'Photos Coming Soon' : 'PRÓXIMAMENTE'}
+                  </span>
+                </div>
+              `}
+            </div>
             <!-- Status & Rating Header (Centered Pill) -->
             <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.18); padding-bottom:8px; width:100%; box-sizing:border-box;">
               <span style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-flex; align-items:center; gap:6px; letter-spacing:0.3px; background:rgba(255,255,255,0.08); padding:3px 10px; border-radius:10px;">
@@ -1042,7 +1044,7 @@ export default function MapaTuristico() {
           }
         });
 
-        popup.on('open', () => {
+        popup.on('open', async () => {
           // Autocentrar la cámara desplazando el punto 160px abajo para dar espacio completo al popup arriba
           if (mapRef.current) {
             mapRef.current.easeTo({
@@ -1051,6 +1053,40 @@ export default function MapaTuristico() {
               duration: 500,
               essential: true
             });
+          }
+
+          // Si el punto pertenece a un negocio y aún no tiene foto/logo en el punto, consultar la tabla negocios
+          if (punto.negocio_id && !getPointImage(punto)) {
+            try {
+              const { data: bizData } = await supabase
+                .from('negocios')
+                .select('logo_url, fotos')
+                .eq('id', punto.negocio_id)
+                .maybeSingle();
+
+              if (bizData) {
+                const fetchedImg = (bizData.fotos && bizData.fotos.length > 0 && isRealCustomUrl(bizData.fotos[0]))
+                  ? bizData.fotos[0]
+                  : (isRealCustomUrl(bizData.logo_url) ? bizData.logo_url : null);
+
+                if (fetchedImg) {
+                  punto.logo_url = fetchedImg;
+                  punto.imagen_url = fetchedImg;
+
+                  const imgContainer = document.getElementById(`popup-img-container-${punto.id}`);
+                  if (imgContainer) {
+                    imgContainer.innerHTML = `
+                      <div style="width:100%; height:115px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15);">
+                        <img src="${fetchedImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
+                        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
+                      </div>
+                    `;
+                  }
+                }
+              }
+            } catch (e) {
+              console.warn('[Atlan] Error cargando foto/logo de negocio en popup:', e);
+            }
           }
 
           const btn = document.getElementById(btnId);
