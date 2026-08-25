@@ -1032,17 +1032,22 @@ export default function MapaTuristico() {
 
         el.addEventListener('click', () => {
           lugarDestinoRef.current = punto.nombre;
+          if (mapRef.current) {
+            mapRef.current.easeTo({
+              center: [punto.lng, punto.lat],
+              offset: [0, 160],
+              duration: 500,
+              essential: true
+            });
+          }
         });
 
         popup.on('open', () => {
-          // Autocentrar el mapa para garantizar espacio superior holgado al desplegar el popup
+          // Autocentrar la cámara desplazando el punto 160px abajo para dar espacio completo al popup arriba
           if (mapRef.current) {
-            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
             mapRef.current.easeTo({
               center: [punto.lng, punto.lat],
-              padding: isMobile
-                ? { top: 220, bottom: 80, left: 20, right: 20 }
-                : { top: 220, bottom: 80, left: 60, right: 60 },
+              offset: [0, 160],
               duration: 500,
               essential: true
             });
