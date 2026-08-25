@@ -955,7 +955,7 @@ export default function MapaTuristico() {
         const pointImg = getPointImage(punto);
 
         const popupHTML = `
-          <div style="color:#FFFFFF; width:100%; min-width:230px; max-width:265px; font-family:var(--font-outfit), system-ui, sans-serif; box-sizing:border-box; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto;">
+          <div style="color:#FFFFFF; width:100%; min-width:245px; max-width:265px; font-family:var(--font-outfit), system-ui, sans-serif; box-sizing:border-box; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto;">
             <div id="popup-img-container-${punto.id}" style="width:100%;">
               ${pointImg ? `
                 <div style="width:100%; height:115px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15);">
