@@ -46,6 +46,7 @@ export default function MapaTuristico() {
   const rutaCoordenadasRef = useRef([]);
   const demoIntervalRef = useRef(null);
   const userMarkerRef = useRef(null);
+  const activePopupRef = useRef(null);
   const markersRef = useRef([]);  // Lista de marcadores cargados en el mapa
   const currentPosRef = useRef([-86.2504, 12.1364]);  // Managua, Nicaragua
   const isNavigatingRef = useRef(false);
@@ -1045,6 +1046,8 @@ export default function MapaTuristico() {
         });
 
         popup.on('open', async () => {
+          activePopupRef.current = popup;
+
           // Autocentrar la cámara desplazando el punto 240px abajo para ubicar la tarjeta exactamente en el centro de pantalla
           if (mapRef.current) {
             mapRef.current.easeTo({
@@ -1632,6 +1635,13 @@ export default function MapaTuristico() {
       pitch: 0,
       projection: 'mercator',
       maxBounds: CENTRAL_AMERICA_BOUNDS, // Restringir memoria al área estrictamente necesaria
+    });
+
+    mapRef.current.on('dragstart', () => {
+      if (activePopupRef.current) {
+        activePopupRef.current.remove();
+        activePopupRef.current = null;
+      }
     });
 
     mapRef.current.on('load', () => {
