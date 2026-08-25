@@ -1037,7 +1037,7 @@ export default function MapaTuristico() {
           if (mapRef.current) {
             mapRef.current.easeTo({
               center: [punto.lng, punto.lat],
-              offset: [0, 160],
+              offset: [0, 240],
               duration: 500,
               essential: true
             });
@@ -1045,11 +1045,11 @@ export default function MapaTuristico() {
         });
 
         popup.on('open', async () => {
-          // Autocentrar la cámara desplazando el punto 160px abajo para dar espacio completo al popup arriba
+          // Autocentrar la cámara desplazando el punto 240px abajo para ubicar la tarjeta exactamente en el centro de pantalla
           if (mapRef.current) {
             mapRef.current.easeTo({
               center: [punto.lng, punto.lat],
-              offset: [0, 160],
+              offset: [0, 240],
               duration: 500,
               essential: true
             });
