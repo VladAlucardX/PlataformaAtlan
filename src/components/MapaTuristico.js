@@ -232,7 +232,7 @@ export default function MapaTuristico() {
           <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255, 215, 0, 0.15); border-bottom: 1px solid rgba(255, 215, 0, 0.3);">
             <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13.5px; color: #FFD700;">
               <span>🧭</span>
-              <span>Planificar Ruta (A ➔ B)</span>
+              <span>${lang === 'en' ? 'Plan Route (A ➔ B)' : 'Planificar Ruta (A ➔ B)'}</span>
             </div>
             <button id="close-directions-popup-btn" type="button" style="background: rgba(255, 255, 255, 0.2); border: none; color: #FFFFFF; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
               ✕
@@ -249,15 +249,60 @@ export default function MapaTuristico() {
         }
       }
 
+      // ── Traducir las etiquetas del selector de perfil (Traffic, Driving, Walking, Cycling) ──
+      const profileLabels = directionsPanel.querySelectorAll('.mapbox-directions-profile label');
+      const translations = lang === 'en'
+        ? { 'Traffic': 'Traffic', 'Driving': 'Driving', 'Walking': 'Walking', 'Cycling': 'Cycling' }
+        : { 'Traffic': 'Tráfico', 'Driving': 'Auto', 'Walking': 'A Pie', 'Cycling': 'Bici' };
+      profileLabels.forEach((label) => {
+        const text = label.textContent.trim();
+        if (translations[text]) {
+          label.textContent = translations[text];
+        }
+      });
+
+      // ── Configurar placeholders e inputs de Origen (A) y Destino (B) ──
+      const originInput = directionsPanel.querySelector('.mapbox-directions-origin input');
+      const destInput = directionsPanel.querySelector('.mapbox-directions-destination input');
+
+      if (originInput) {
+        originInput.setAttribute('placeholder', lang === 'en' ? 'Current Location' : 'Ubicación actual');
+      }
+      if (destInput) {
+        destInput.setAttribute('placeholder', lang === 'en' ? 'Search destination…' : 'Buscar destino…');
+      }
+
       if (showDirectionsPopup) {
         directionsPanel.classList.add('directions-popup-active');
         directionsPanel.style.setProperty('display', 'block', 'important');
         if (directionsRef.current) {
           try {
-            const originInput = directionsPanel.querySelector('.mapbox-directions-origin input');
-            if (originInput && !originInput.value && currentPosRef.current) {
+            // Auto-rellenar origen con ubicación actual
+            if (originInput && currentPosRef.current) {
               const [cLng, cLat] = currentPosRef.current;
-              directionsRef.current.setOrigin([cLng, cLat]);
+              if (!originInput.value || originInput.value.includes(',')) {
+                directionsRef.current.setOrigin([cLng, cLat]);
+                // Reemplazar coordenadas visibles con "Ubicación actual"
+                setTimeout(() => {
+                  const oInput = directionsPanel.querySelector('.mapbox-directions-origin input');
+                  if (oInput && oInput.value && oInput.value.match(/^-?\d/)) {
+                    oInput.value = lang === 'en' ? 'Current Location' : 'Ubicación actual';
+                  }
+                }, 300);
+              }
+            }
+
+            // Auto-rellenar destino con nombre del punto seleccionado
+            if (destInput && selectedPointRef.current && destinationRef.current) {
+              if (!destInput.value || destInput.value.match(/^-?\d/)) {
+                directionsRef.current.setDestination(destinationRef.current);
+                setTimeout(() => {
+                  const dInput = directionsPanel.querySelector('.mapbox-directions-destination input');
+                  if (dInput && selectedPointRef.current) {
+                    dInput.value = selectedPointRef.current.nombre || lugarDestinoRef.current || '';
+                  }
+                }, 300);
+              }
             }
           } catch (e) {}
         }
