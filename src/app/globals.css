@@ -2372,6 +2372,8 @@ html body .mapbox-directions-step-distance {
   z-index: 50 !important;
   transition: none !important;
   transform-origin: bottom center !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .mapboxgl-popup-content,
@@ -2386,23 +2388,25 @@ html body .mapbox-directions-step-distance {
 }
 
 .mapboxgl-popup-content {
-  background: linear-gradient(145deg, rgba(20, 109, 158, 0.94) 0%, rgba(15, 85, 125, 0.96) 100%) !important;
+  background: linear-gradient(145deg, rgba(20, 109, 158, 0.96) 0%, rgba(15, 85, 125, 0.98) 100%) !important;
   backdrop-filter: blur(18px) !important;
   -webkit-backdrop-filter: blur(18px) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  border-radius: 22px !important;
+  border-radius: 20px !important;
   box-shadow: 0 16px 40px rgba(10, 35, 60, 0.4), 0 0 20px rgba(255, 215, 0, 0.15) !important;
-  padding: 18px 16px 20px !important;
+  padding: 14px !important;
   color: #FFFFFF !important;
   box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 270px !important;
-  max-width: 270px !important;
+  width: 260px !important;
+  min-width: 260px !important;
+  max-width: 260px !important;
   text-align: center !important;
   transition: none !important;
+  margin: 0 !important;
 }
 
 .mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
