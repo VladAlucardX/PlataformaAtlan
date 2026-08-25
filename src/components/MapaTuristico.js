@@ -335,14 +335,14 @@ export default function MapaTuristico() {
   }, []);
 
   useEffect(() => {
-    if (!selectedPoint) {
-      setSelectedPointDetails(null);
-      setPointReviews([]);
-      setPointMenu([]);
-      setIsFavorite(false);
-      setFavoriteId(null);
-      return;
-    }
+    // Resetear inmediatamente estados previos para evitar fuga de información entre puntos
+    setSelectedPointDetails(null);
+    setPointReviews([]);
+    setPointMenu([]);
+    setIsFavorite(false);
+    setFavoriteId(null);
+
+    if (!selectedPoint) return;
 
     const loadPointDetails = async () => {
       const cacheKey = `atlan_point_details_${selectedPoint.id}`;
