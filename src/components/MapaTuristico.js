@@ -8,6 +8,7 @@ import '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../lib/supabase';
+import { obtenerDepartamentoPorCoordenadas } from '../lib/geoUtils';
 import { useTranslation } from '../hooks/useTranslation';
 import LanguageToggle from './ui/LanguageToggle';
 import Icon from './ui/Icon';
@@ -71,6 +72,8 @@ export default function MapaTuristico() {
   const [showRecenterBtn, setShowRecenterBtn] = useState(false);
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [showDirectionsPopup, setShowDirectionsPopup] = useState(false);
+  const [currentManeuver, setCurrentManeuver] = useState(null);
 
   // Agregar Punto
   const [isAddingPoint, setIsAddingPoint] = useState(false);
@@ -214,15 +217,64 @@ export default function MapaTuristico() {
     }
   }, [selectedPoint]);
 
-  // Manejar previsualización de ruta y ocultación del panel de direcciones de Mapbox
+  // Control de visibilidad del PopUp de Direcciones (Punto A y B)
   useEffect(() => {
-    const directionsPanel = document.querySelector('.mapboxgl-ctrl-directions');
-    
+    const updatePanelVisibility = () => {
+      const directionsPanel = document.querySelector('.mapboxgl-ctrl-directions');
+      if (!directionsPanel) return;
+
+      // Agregar cabecera flotante con título y botón cerrar ✕ al panel de Mapbox
+      if (!directionsPanel.querySelector('.directions-popup-header')) {
+        const header = document.createElement('div');
+        header.className = 'directions-popup-header';
+        header.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255, 215, 0, 0.15); border-bottom: 1px solid rgba(255, 215, 0, 0.3);">
+            <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13.5px; color: #FFD700;">
+              <span>🧭</span>
+              <span>Planificar Ruta (A ➔ B)</span>
+            </div>
+            <button id="close-directions-popup-btn" type="button" style="background: rgba(255, 255, 255, 0.2); border: none; color: #FFFFFF; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
+              ✕
+            </button>
+          </div>
+        `;
+        directionsPanel.insertBefore(header, directionsPanel.firstChild);
+
+        const closeBtn = header.querySelector('#close-directions-popup-btn');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => {
+            setShowDirectionsPopup(false);
+          });
+        }
+      }
+
+      if (showDirectionsPopup) {
+        directionsPanel.classList.add('directions-popup-active');
+        directionsPanel.style.setProperty('display', 'block', 'important');
+        if (directionsRef.current) {
+          try {
+            const originInput = directionsPanel.querySelector('.mapbox-directions-origin input');
+            if (originInput && !originInput.value && currentPosRef.current) {
+              const [cLng, cLat] = currentPosRef.current;
+              directionsRef.current.setOrigin([cLng, cLat]);
+            }
+          } catch (e) {}
+        }
+      } else {
+        directionsPanel.classList.remove('directions-popup-active');
+        directionsPanel.style.setProperty('display', 'none', 'important');
+      }
+    };
+
+    updatePanelVisibility();
+    const intervalId = setInterval(updatePanelVisibility, 200);
+    return () => clearInterval(intervalId);
+  }, [showDirectionsPopup]);
+
+  // Manejar previsualización de ruta al seleccionar punto
+  useEffect(() => {
     if (!selectedPoint) {
       setPreviewRouteInfo(null);
-      if (directionsPanel && !isNavigatingRef.current) {
-        directionsPanel.style.display = '';
-      }
       if (mapRef.current && mapRef.current.isStyleLoaded()) {
         const source = mapRef.current.getSource('preview-route');
         if (source) {
@@ -236,10 +288,6 @@ export default function MapaTuristico() {
         }
       }
       return;
-    }
-
-    if (directionsPanel) {
-      directionsPanel.style.display = 'none';
     }
 
     const fetchPreviewRoute = () => {
@@ -893,45 +941,68 @@ export default function MapaTuristico() {
         const pointImg = getPointImage(punto);
 
         const popupHTML = `
-          <div style="color:#0f172a; min-width:215px; max-width:265px; font-family:var(--font-outfit), sans-serif; padding:4px;">
+          <div style="color:#FFFFFF; width:100%; min-width:230px; max-width:265px; font-family:var(--font-outfit), system-ui, sans-serif; box-sizing:border-box; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto;">
             ${pointImg ? `
-              <div style="width:100%; height:110px; border-radius:10px; overflow:hidden; margin-bottom:8px; position:relative; background:#0f172a;">
+              <div style="width:100%; height:115px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15);">
                 <img src="${pointImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
-                <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(15,23,42,0.6) 100%);"></div>
+                <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
               </div>
             ` : ''}
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1.5px solid #f1f5f9; padding-bottom:6px;">
-              <span style="font-size:10px; font-weight:800; text-transform:uppercase; color:${statusColor}; display:flex; align-items:center; gap:5px;">
-                <span style="width:6px; height:6px; border-radius:50%; background-color:${statusColor}; display:inline-block; animation: pulse 2s infinite;"></span>
+            <!-- Status & Rating Header (Centered Pill) -->
+            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.18); padding-bottom:8px; width:100%; box-sizing:border-box;">
+              <span style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-flex; align-items:center; gap:6px; letter-spacing:0.3px; background:rgba(255,255,255,0.08); padding:3px 10px; border-radius:10px;">
+                <span style="width:7px; height:7px; border-radius:50%; background-color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-block; box-shadow:0 0 6px ${statusColor};"></span>
                 ${statusText}
               </span>
-              <span style="font-size:12px; font-weight:700; color:#475569;">${ratingText}</span>
+              ${ratingText ? `<span style="font-size:11.5px; font-weight:800; color:#FFD700; background:rgba(255,215,0,0.18); padding:3px 8px; border-radius:10px; border:0.5px solid rgba(255,215,0,0.4);">${ratingText}</span>` : ''}
             </div>
-            <h3 style="margin:0 0 6px; font-size:15px; font-weight:850; color:#1e3a8a; line-height:1.2; letter-spacing:-0.01em;">${punto.nombre}</h3>
-            <p style="margin:0 0 10px; font-size:12.5px; color:#475569; line-height:1.4;">${punto.descripcion || ''}</p>
+
+            <!-- Title & Category Badge (Centered) -->
+            <div style="margin-bottom:8px; text-align:center; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+              <h3 style="margin:0 0 5px; font-size:16.5px; font-weight:850; color:#FFFFFF; line-height:1.25; letter-spacing:-0.2px; font-family:var(--font-outfit); text-align:center; width:100%;">
+                ${punto.nombre}
+              </h3>
+              <span style="display:inline-block; font-size:10.5px; font-weight:750; color:#FFD700; text-transform:uppercase; letter-spacing:0.5px; background:rgba(255, 215, 0, 0.12); padding:3px 10px; border-radius:8px; border:1px solid rgba(255, 215, 0, 0.3); margin:0 auto; text-align:center;">
+                ${t(`addPoint.categories.${punto.categoria}`) || punto.categoria || 'Turismo'}
+              </span>
+            </div>
+
+            <!-- Description -->
+            <p style="margin:0 0 10px; font-size:12.5px; color:#E2E8F0; line-height:1.45; text-align:center; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; width:100%;">
+              ${punto.descripcion || ''}
+            </p>
             
             ${punto.negocio_rango_precios ? `
-              <div style="margin-bottom:8px; font-size:11px; font-weight:600; color:#0f766e; background:#f0fdfa; padding:3px 6px; border-radius:4px; display:inline-block;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> ${punto.negocio_rango_precios}
+              <div style="margin-bottom:10px; font-size:11px; font-weight:750; color:#2DD4BF; background:rgba(45,212,191,0.15); border:1px solid rgba(45,212,191,0.35); padding:4px 9px; border-radius:8px; display:inline-block; text-align:center; margin:0 auto;">
+                🏷️ ${punto.negocio_rango_precios}
               </div>
             ` : ''}
 
-            <div style="font-size:11px; color:#94a3b8; margin-bottom:12px; border-top: 1px dashed #e2e8f0; padding-top:6px;">
-              ${t('map.addedBy')}: <span style="font-weight:700; color:#334155;">${punto.nombre_creador || 'Equipo Atlan'}</span>
+            <!-- Added By Footer -->
+            <div style="font-size:11px; color:rgba(255,255,255,0.7); margin-bottom:12px; border-top:1px dashed rgba(255,255,255,0.18); padding-top:8px; text-align:center; width:100%;">
+              ${t('map.addedBy')}: <span style="font-weight:750; color:#FFD700;">${punto.nombre_creador || 'Equipo Atlan'}</span>
             </div>
             
-            <button id="${btnId}" style="width:100%; padding:10px 14px; background:linear-gradient(135deg, #1a3a6e 0%, #10b981 100%); color:white; border:none; border-radius:10px; font-weight:800; font-size:12.5px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:8px; box-shadow: 0 4px 12px rgba(16,185,129,0.3); transition:all 0.2s ease-in-out;">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-              ${t('map.startNavigation')}
-            </button>
+            <!-- Centered Action Buttons Container -->
+            <div style="display:flex; flex-direction:column; gap:8px; width:100%; box-sizing:border-box; align-items:center; justify-content:center;">
+              <button id="${btnId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:11px 14px; background:#FFD700; color:#0A192F; border:none; border-radius:12px; font-weight:900; font-size:13px; cursor:pointer; box-shadow:0 4px 16px rgba(255,215,0,0.4); transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
+                <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0A192F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                  <span style="display:inline-block; text-align:center; line-height:1.2;">${t('map.startNavigation')}</span>
+                </div>
+              </button>
 
-            <button id="${btnInfoId}" style="width:100%; margin-top:8px; padding:10px 14px; background:rgba(255,255,255,0.05); color:#1e3a8a; border:1px solid rgba(30,58,138,0.2); border-radius:10px; font-weight:850; font-size:12px; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:8px; transition:all 0.2s ease-in-out;">
-              ℹ️ ${lang === 'en' ? 'Details & Booking' : 'Detalles y Reservas'}
-            </button>
+              <button id="${btnInfoId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:10px 14px; background:rgba(255,255,255,0.12); color:#FFFFFF; border:1px solid rgba(255,255,255,0.25); border-radius:12px; font-weight:800; font-size:12px; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
+                <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  <span style="display:inline-block; text-align:center; line-height:1.2;">${lang === 'en' ? 'Details & Booking' : 'Detalles y Reservas'}</span>
+                </div>
+              </button>
+            </div>
           </div>
         `;
 
-        const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(popupHTML);
+        const popup = new mapboxgl.Popup({ offset: [0, -14], anchor: 'bottom', closeButton: false }).setHTML(popupHTML);
 
         el.addEventListener('click', () => {
           lugarDestinoRef.current = punto.nombre;
@@ -1159,6 +1230,20 @@ export default function MapaTuristico() {
     return t;
   };
 
+  const getManeuverIcon = (type, modifier) => {
+    const mod = (modifier || '').toLowerCase();
+    const typ = (type || '').toLowerCase();
+
+    if (typ.includes('arrive') || typ.includes('destination')) return '🏁';
+    if (typ.includes('roundabout') || typ.includes('rotary')) return '🔄';
+    if (mod.includes('sharp right')) return '↳';
+    if (mod.includes('sharp left')) return '↲';
+    if (mod.includes('slight right') || mod.includes('right')) return '↱';
+    if (mod.includes('slight left') || mod.includes('left')) return '↰';
+    if (mod.includes('uturn')) return '↩';
+    return '⬆';
+  };
+
   const buildManeuverList = (steps) => {
     const list = [];
     steps.forEach((step) => {
@@ -1197,6 +1282,14 @@ export default function MapaTuristico() {
     const dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
     const now = Date.now();
     const silenceSec = (now - lastAnnouncementTimeRef.current) / 1000;
+
+    // Actualizar maniobra y distancia actual para el indicador de giro estilo Waze
+    setCurrentManeuver({
+      instruction: next.instruction,
+      distance: dist,
+      distanceFormatted: formatDistanceDisplay(dist),
+      icon: next.icon || getManeuverIcon(next.type, next.modifier)
+    });
 
     if (dist < 50 && !next.announcedArrive) {
       next.announcedArrive = true;
@@ -1404,12 +1497,14 @@ export default function MapaTuristico() {
 
     try {
       const [lng, lat] = tempPointCoords;
+      const deptDetectado = await obtenerDepartamentoPorCoordenadas(lng, lat);
       const { error } = await supabase.from('puntos').insert([{
         nombre: newPointNombre,
         descripcion: newPointDesc,
         nombre_creador: userSession?.user?.user_metadata?.nombre_completo || newPointCreador || 'Turista Registrado',
         categoria: newPointCategoria,
         ubicacion: `POINT(${lng} ${lat})`,
+        departamento: deptDetectado,
         estado: 'sin_reclamar' // por defecto los del usuario están sin reclamar
       }]);
 
@@ -1695,7 +1790,7 @@ export default function MapaTuristico() {
       accessToken: mapboxgl.accessToken,
       unit: 'metric',
       profile: 'mapbox/driving-traffic',
-      interactive: false,
+      interactive: false, // Restringir navegación estrictamente entre puntos registrados (Punto A -> Punto B)
       language: lang === 'en' ? 'en' : 'es',
       controls: { inputs: true, instructions: true, profileSwitcher: true },
     });
@@ -1720,8 +1815,30 @@ export default function MapaTuristico() {
           destinationName: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : 'Destino')
         });
 
+        // Ocultar la ventana gigante de búsqueda/pasos al trazar la ruta automáticamente
+        setShowDirectionsPopup(false);
+        const directionsPanel = document.querySelector('.mapboxgl-ctrl-directions');
+        if (directionsPanel) {
+          directionsPanel.classList.remove('directions-popup-active');
+          directionsPanel.style.setProperty('display', 'none', 'important');
+        }
+
         if (steps.length > 0) {
-          const instr = steps[0].maneuver.instruction;
+          const firstStep = steps[0];
+          const type = firstStep.maneuver?.type || '';
+          const modifier = firstStep.maneuver?.modifier || '';
+          const instr = limpiarInstruccion(firstStep.maneuver?.instruction || '');
+          const dist = firstStep.distance || route.distance;
+
+          setCurrentManeuver({
+            type,
+            modifier,
+            instruction: instr,
+            distance: dist,
+            distanceFormatted: formatDistanceDisplay(dist),
+            icon: getManeuverIcon(type, modifier)
+          });
+
           if (instr && instr !== lastSpokenRef.current) {
             lastSpokenRef.current = instr;
             setTimeout(() => speakInstruction(instr), 600);
@@ -1733,6 +1850,7 @@ export default function MapaTuristico() {
     directions.on('clear', () => {
       rutaCoordenadasRef.current = [];
       setRouteInfo(null);
+      setCurrentManeuver(null);
     });
 
     // Geolocalización y animaciones de inicio
@@ -2138,197 +2256,307 @@ export default function MapaTuristico() {
           </div>
         )}
 
-      {/* Cabecera flotante */}
+      {/* Cabecera flotante con identidad visual Atlan ampliada */}
       {!selectedPoint && (
         <div className="map-header" style={{
-        position: 'absolute',
-        top: '20px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: '90%',
-        maxWidth: '700px',
-        background: 'rgba(10, 15, 28, 0.75)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        borderRadius: '20px',
-        padding: '12px 20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        zIndex: 10,
-        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.4)'
-      }}>
-        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span className="logoText" style={{ fontSize: '22px', fontWeight: '800', background: 'linear-gradient(135deg, #D4AF37 0%, #FFF 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: "'LC Mogi', var(--font-outfit), sans-serif" }}>
-            atlan
-          </span>
-        </Link>
-
-        {/* BUSCADOR GLOBAL */}
-        <div style={{ flex: 1, margin: '0 20px', position: 'relative' }}>
-          <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '6px 12px', gap: '8px' }}>
-            <span style={{ color: '#94a3b8' }}><Icon name="search" size={16} /></span>
-            <input
-              type="text"
-              placeholder={lang === 'en' ? 'Search destinations...' : 'Buscar destinos...'}
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-              onFocus={() => setShowResults(true)}
-              style={{
-                width: '100%',
-                background: 'transparent',
-                border: 'none',
-                color: 'white',
-                fontSize: '13px',
-                outline: 'none',
-              }}
+          position: 'absolute',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '95%',
+          maxWidth: '1150px',
+          background: '#0A192F',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          border: '2.5px solid rgba(255, 255, 255, 0.15)',
+          borderRadius: '26px',
+          padding: '14px 28px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          zIndex: 10,
+          boxShadow: '0 16px 40px -4px rgba(0, 0, 0, 0.5), 0 0 25px rgba(20, 109, 158, 0.25)'
+        }}>
+          {/* Brand Logo igual al Navbar */}
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+            <img
+              src="/mapaicono.png"
+              alt="Logo Atlan"
+              style={{ width: '32px', height: '32px', objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}
             />
-            {searchQuery && (
-              <button
-                onClick={() => handleSearch('')}
+            <span className="logoText" style={{ fontSize: '26px', fontWeight: '900', color: '#FFD700', letterSpacing: '-0.5px' }}>
+              atlan
+            </span>
+          </Link>
+
+          {/* BUSCADOR GLOBAL GRANDE, AMPLIO Y DESTACADO */}
+          <div style={{ flex: 1, margin: '0 24px', position: 'relative' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: 'rgba(255, 255, 255, 0.07)',
+              border: '1.5px solid rgba(255, 215, 0, 0.35)',
+              borderRadius: '18px',
+              padding: '11px 20px',
+              gap: '12px',
+              boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 4px 14px rgba(0, 0, 0, 0.15)',
+              transition: 'all 0.2s ease'
+            }}>
+              <span style={{ color: '#FFD700', display: 'flex', alignItems: 'center' }}>
+                <Icon name="search" size={20} />
+              </span>
+              <input
+                type="text"
+                placeholder={lang === 'en' ? 'Search destinations, places, categories...' : 'Buscar destinos, lugares, categorías...'}
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                onFocus={() => setShowResults(true)}
                 style={{
-                  background: 'none',
+                  width: '100%',
+                  background: 'transparent',
                   border: 'none',
-                  color: '#94a3b8',
-                  cursor: 'pointer',
-                  padding: '2px',
-                  fontSize: '12px'
+                  color: '#FFFFFF',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  outline: 'none',
                 }}
-              >
-                ✕
-              </button>
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => handleSearch('')}
+                  style={{
+                    background: 'rgba(255,255,255,0.12)',
+                    border: 'none',
+                    color: '#FFFFFF',
+                    cursor: 'pointer',
+                    borderRadius: '50%',
+                    width: '24px',
+                    height: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Resultados de búsqueda Espaciosos y Elegantes */}
+            {showResults && searchResults.length > 0 && (
+              <div style={{
+                position: 'absolute',
+                top: '58px',
+                left: 0,
+                right: 0,
+                background: '#0A192F',
+                backdropFilter: 'blur(24px)',
+                border: '2px solid rgba(255, 215, 0, 0.4)',
+                borderRadius: '20px',
+                maxHeight: '350px',
+                overflowY: 'auto',
+                zIndex: 99,
+                boxShadow: '0 20px 50px rgba(0,0,0,0.7), 0 0 20px rgba(255, 215, 0, 0.15)',
+                padding: '8px 0'
+              }}>
+                {searchResults.map((p) => {
+                  const catKey = (p.categoria || 'otro').toLowerCase();
+                  const catConf = CATEGORIAS_CONFIG[catKey] || CATEGORIAS_CONFIG['otro'];
+                  return (
+                    <div
+                      key={p.id}
+                      onClick={() => selectSearchResult(p)}
+                      style={{
+                        padding: '12px 20px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '16px',
+                        borderBottom: '1px solid rgba(255,255,255,0.06)',
+                        transition: 'all 0.2s ease',
+                      }}
+                      className="search-result-item"
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 215, 0, 0.12)';
+                        e.currentTarget.style.paddingLeft = '24px';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'transparent';
+                        e.currentTarget.style.paddingLeft = '20px';
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                        <div style={{
+                          width: '38px',
+                          height: '38px',
+                          borderRadius: '12px',
+                          background: catConf.color + '22',
+                          border: `1.5px solid ${catConf.color}55`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: catConf.color,
+                          flexShrink: 0
+                        }}>
+                          <Icon name={catConf.icon} size={18} />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '15px', fontWeight: '800', color: '#FFFFFF', lineHeight: '1.2' }}>{p.nombre}</div>
+                          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.65)', marginTop: '3px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span><Icon name="mapPin" size={12} color="#FFD700" /> {p.departamento || 'Nicaragua'}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '10.5px', fontWeight: '800', textTransform: 'uppercase', background: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8', padding: '3px 8px', borderRadius: '6px' }}>
+                          {t(`addPoint.categories.${catKey}`)}
+                        </span>
+                        <span style={{ color: '#FFD700', fontWeight: '900', fontSize: '14px' }}>➔</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </div>
 
-          {/* Resultados de búsqueda */}
-          {showResults && searchResults.length > 0 && (
-            <div style={{
-              position: 'absolute',
-              top: '45px',
-              left: 0,
-              right: 0,
-              background: 'rgba(10, 15, 28, 0.95)',
-              backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '12px',
-              maxHeight: '220px',
-              overflowY: 'auto',
-              zIndex: 99,
-              boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-              padding: '6px 0'
-            }}>
-              {searchResults.map((p) => (
-                <div
-                  key={p.id}
-                  onClick={() => selectSearchResult(p)}
-                  style={{
-                    padding: '10px 16px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    borderBottom: '1px solid rgba(255,255,255,0.04)',
-                    transition: 'background 0.2s',
-                  }}
-                  className="search-result-item"
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                >
-                  <span style={{ fontSize: '13.5px', fontWeight: '750', color: 'white' }}>{p.nombre}</span>
-                  <span style={{ fontSize: '11px', color: '#94a3b8' }}><Icon name="mapPin" size={11} /> {t(`addPoint.categories.${p.categoria || 'otro'}`)}</span>
-                </div>
-              ))}
-            </div>
-          )}
+          {/* Acciones derecha */}
+          <div className="map-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+            <Link
+              href="/"
+              style={{
+                padding: '10px 16px',
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
+                color: '#FFFFFF',
+                borderRadius: '14px',
+                fontWeight: '750',
+                fontSize: '13px',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.25s ease'
+              }}
+            >
+              <Icon name="home" size={15} /> <span className="mobile-hide-text">{lang === 'en' ? 'Home' : 'Inicio'}</span>
+            </Link>
+
+            <Link
+              href="/comunidad"
+              style={{
+                padding: '10px 16px',
+                background: 'rgba(56, 189, 248, 0.12)',
+                border: '1px solid rgba(56, 189, 248, 0.35)',
+                color: '#38BDF8',
+                borderRadius: '14px',
+                fontWeight: '750',
+                fontSize: '13px',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.25s ease'
+              }}
+            >
+              <Icon name="users" size={15} /> <span className="mobile-hide-text">{lang === 'en' ? 'Community' : 'Comunidad'}</span>
+            </Link>
+
+            <button
+              onClick={activarLevantarPunto}
+              style={{
+                padding: '10px 18px',
+                background: isAddingPoint ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                color: isAddingPoint ? '#FFFFFF' : '#0A192F',
+                border: isAddingPoint ? '1px solid rgba(239, 68, 68, 0.6)' : '1px solid rgba(255, 215, 0, 0.8)',
+                borderRadius: '14px',
+                fontWeight: '900',
+                fontSize: '13px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: isAddingPoint ? '0 4px 16px rgba(239, 68, 68, 0.4)' : '0 4px 16px rgba(255, 215, 0, 0.4)',
+                transition: 'all 0.25s ease'
+              }}
+            >
+              <Icon name={isAddingPoint ? "x" : "plus"} size={16} /> {isAddingPoint ? t('common.cancel') : t('map.addPoint')}
+            </button>
+            <LanguageToggle variant="pill" />
+          </div>
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Link
-            href="/"
-            style={{
-              padding: '8px 14px',
-              background: 'rgba(255, 255, 255, 0.06)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              color: 'white',
-              borderRadius: '12px',
-              fontWeight: '750',
-              fontSize: '12px',
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.25s ease'
-            }}
-          >
-            <Icon name="home" size={14} /> {lang === 'en' ? 'Home' : 'Inicio'}
-          </Link>
-
-          <Link
-            href="/comunidad"
-            style={{
-              padding: '8px 14px',
-              background: 'rgba(255, 215, 0, 0.12)',
-              border: '1px solid rgba(255, 215, 0, 0.3)',
-              color: '#FFD700',
-              borderRadius: '12px',
-              fontWeight: '750',
-              fontSize: '12px',
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.25s ease'
-            }}
-          >
-            <Icon name="users" size={14} /> {lang === 'en' ? 'Community' : 'Comunidad'}
-          </Link>
-
-          <button
-            onClick={activarLevantarPunto}
-            style={{
-              padding: '8px 16px',
-              background: isAddingPoint ? '#ef4444' : 'linear-gradient(135deg, #D4AF37 0%, #b89324 100%)',
-              color: isAddingPoint ? 'white' : '#0a0f1c',
-              border: 'none',
-              borderRadius: '12px',
-              fontWeight: '800',
-              fontSize: '12px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              boxShadow: '0 4px 10px rgba(212, 175, 55, 0.25)',
-              transition: 'all 0.25s ease'
-            }}
-          >
-            ➕ {isAddingPoint ? t('common.cancel') : t('map.addPoint')}
-          </button>
-          <LanguageToggle variant="pill" />
-        </div>
-      </div>
       )}
 
       {/* Banner modo agregar punto */}
       {isAddingPoint && (
         <div style={{
           position: 'absolute',
-          top: '90px',
+          top: '85px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '85%',
-          maxWidth: '450px',
-          background: 'rgba(239, 68, 68, 0.9)',
-          color: 'white',
-          padding: '10px 16px',
-          borderRadius: '12px',
-          fontWeight: '700',
-          fontSize: '13px',
-          textAlign: 'center',
-          boxShadow: '0 8px 24px rgba(239,68,68,0.4)',
-          zIndex: 10,
-          animation: 'pulse 1.5s infinite'
+          width: '90%',
+          maxWidth: '460px',
+          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(10, 15, 28, 0.96) 100%)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          border: '1.5px solid rgba(255, 215, 0, 0.45)',
+          borderRadius: '18px',
+          padding: '12px 18px',
+          boxShadow: '0 12px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.2)',
+          zIndex: 100,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '12px',
+          animation: 'fadeInDown 0.3s ease-out'
         }}>
-          🎯 {t('addPoint.tapMap')}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+            <div style={{
+              width: '38px',
+              height: '38px',
+              borderRadius: '12px',
+              background: 'rgba(255, 215, 0, 0.15)',
+              border: '1px solid rgba(255, 215, 0, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#FFD700',
+              flexShrink: 0
+            }}>
+              <Icon name="mapPin" size={20} color="#FFD700" />
+            </div>
+            <div>
+              <div style={{ fontSize: '13.5px', fontWeight: '800', color: '#FFD700', letterSpacing: '0.2px' }}>
+                {lang === 'en' ? 'Add Point Mode' : 'Modo Levantar Punto'}
+              </div>
+              <div style={{ fontSize: '12px', color: '#CBD5E1', fontWeight: '500' }}>
+                {t('addPoint.tapMap')}
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={activarLevantarPunto}
+            style={{
+              padding: '6px 12px',
+              background: 'rgba(239, 68, 68, 0.2)',
+              border: '1px solid rgba(239, 68, 68, 0.5)',
+              color: '#F87171',
+              borderRadius: '10px',
+              fontSize: '11.5px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <Icon name="x" size={13} /> {t('common.cancel')}
+          </button>
         </div>
       )}
 
@@ -2341,14 +2569,15 @@ export default function MapaTuristico() {
           style={{
             flexShrink: 0,
             padding: '8px 16px',
-            background: filtroCategoria === null ? 'var(--atlan-gold)' : 'rgba(10, 15, 28, 0.8)',
-            color: filtroCategoria === null ? '#0a0f1c' : 'white',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '12px',
-            fontWeight: '700',
-            fontSize: '12px',
+            background: filtroCategoria === null ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : '#0A192F',
+            color: filtroCategoria === null ? '#0A192F' : '#FFFFFF',
+            border: filtroCategoria === null ? '1px solid #FFD700' : '1px solid rgba(255, 255, 255, 0.15)',
+            borderRadius: '14px',
+            fontWeight: '800',
+            fontSize: '12.5px',
             cursor: 'pointer',
-            backdropFilter: 'blur(8px)',
+            backdropFilter: 'blur(12px)',
+            boxShadow: filtroCategoria === null ? '0 4px 12px rgba(255,215,0,0.3)' : '0 4px 10px rgba(0,0,0,0.25)',
             transition: 'all 0.2s'
           }}
         >
@@ -2364,14 +2593,15 @@ export default function MapaTuristico() {
               style={{
                 flexShrink: 0,
                 padding: '8px 16px',
-                background: isSelected ? config.color : 'rgba(10, 15, 28, 0.8)',
-                color: isSelected ? 'white' : '#e2e8f0',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '12px',
-                fontWeight: '700',
-                fontSize: '12px',
+                background: isSelected ? config.color : '#0A192F',
+                color: isSelected ? '#FFFFFF' : '#E2E8F0',
+                border: isSelected ? `1.5px solid ${config.color}` : '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '14px',
+                fontWeight: '750',
+                fontSize: '12.5px',
                 cursor: 'pointer',
-                backdropFilter: 'blur(8px)',
+                backdropFilter: 'blur(12px)',
+                boxShadow: isSelected ? `0 4px 14px ${config.color}55` : '0 4px 10px rgba(0,0,0,0.25)',
                 transition: 'all 0.2s',
                 display: 'flex',
                 alignItems: 'center',
@@ -2388,36 +2618,120 @@ export default function MapaTuristico() {
 
       {/* Modal agregar punto */}
       {showAddModal && tempPointCoords && (
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          background: 'rgba(10, 15, 28, 0.65)',
-          backdropFilter: 'blur(10px)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 20
-        }}>
-          <div className="add-point-modal">
-            <h2 style={{ margin: '0 0 4px', fontSize: '20px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
-              <Icon name="mapPin" size={20} /> {t('addPoint.title')}
-            </h2>
-            <p style={{ margin: '0 0 20px', fontSize: '13px', color: '#94a3b8' }}>
-              {t('addPoint.subtitle')}
-            </p>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(10, 15, 28, 0.78)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+            zIndex: 9999,
+            animation: 'fadeIn 0.25s ease-out'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowAddModal(false);
+              setTempPointCoords(null);
+            }
+          }}
+        >
+          <div
+            className="add-point-modal"
+            style={{
+              width: '100%',
+              maxWidth: '520px',
+              maxHeight: '90vh',
+              backgroundColor: '#0F172A',
+              backgroundImage: 'linear-gradient(145deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 15, 28, 0.99) 100%)',
+              border: '1px solid rgba(255, 215, 0, 0.3)',
+              borderRadius: '24px',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.15)',
+              padding: '24px',
+              overflowY: 'auto',
+              position: 'relative',
+              animation: 'scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+              color: '#F8FAFC'
+            }}
+          >
+            {/* Header del modal */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '18px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '14px',
+                  background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%)',
+                  border: '1px solid rgba(255, 215, 0, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#FFD700',
+                  boxShadow: '0 4px 14px rgba(255, 215, 0, 0.2)'
+                }}>
+                  <Icon name="mapPin" size={24} color="#FFD700" />
+                </div>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: '#FFD700', letterSpacing: '-0.3px', fontFamily: 'var(--font-outfit)' }}>
+                    {t('addPoint.title')}
+                  </h2>
+                  <p style={{ margin: '3px 0 0', fontSize: '13px', color: '#94A3B8' }}>
+                    {t('addPoint.subtitle')}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setShowAddModal(false); setTempPointCoords(null); }}
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#94A3B8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <Icon name="x" size={16} />
+              </button>
+            </div>
 
-            <form onSubmit={handleGuardarPunto} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {/* Coordenadas informativas */}
-              <div style={{ background: 'rgba(255,255,255,0.05)', padding: '10px 14px', borderRadius: '10px', fontSize: '11px', color: '#cbd5e1', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <Icon name="mapPin" size={12} /> Coords: {tempPointCoords[1].toFixed(5)}, {tempPointCoords[0].toFixed(5)}
+            <form onSubmit={handleGuardarPunto} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Coordenadas informativas estilizadas */}
+              <div style={{
+                background: 'rgba(255, 215, 0, 0.06)',
+                border: '1px solid rgba(255, 215, 0, 0.2)',
+                padding: '10px 14px',
+                borderRadius: '14px',
+                fontSize: '12px',
+                color: '#E2E8F0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 8px #10B981' }}></span>
+                  <span style={{ fontWeight: '700', color: '#FFD700' }}>{lang === 'en' ? 'Selected Location' : 'Ubicación seleccionada'}:</span>
+                </div>
+                <span style={{ fontFamily: 'monospace', fontSize: '12px', color: '#CBD5E1', background: 'rgba(0,0,0,0.35)', padding: '3px 8px', borderRadius: '6px' }}>
+                  {tempPointCoords[1].toFixed(5)}, {tempPointCoords[0].toFixed(5)}
+                </span>
               </div>
 
               <div>
-                <label style={{ fontSize: '12px', fontWeight: '750', color: '#cbd5e1', display: 'block', marginBottom: '5px' }}>
-                  {t('addPoint.placeName')} *
+                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                  <Icon name="tag" size={14} color="#FFD700" />
+                  {t('addPoint.placeName')} <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <input
                   type="text"
@@ -2425,12 +2739,31 @@ export default function MapaTuristico() {
                   placeholder={t('addPoint.placeNamePlaceholder')}
                   value={newPointNombre}
                   onChange={(e) => setNewPointNombre(e.target.value)}
-                  style={{ width: '100%', padding: '11px 14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', outline: 'none', fontSize: '13.5px' }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    outline: 'none',
+                    fontSize: '13.5px',
+                    transition: 'border-color 0.2s, box-shadow 0.2s'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#FFD700';
+                    e.target.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.25)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: '12px', fontWeight: '750', color: '#cbd5e1', display: 'block', marginBottom: '5px' }}>
+                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                  <Icon name="user" size={14} color="#FFD700" />
                   {t('addPoint.yourName')}
                 </label>
                 <input
@@ -2438,21 +2771,59 @@ export default function MapaTuristico() {
                   placeholder={t('addPoint.yourNamePlaceholder')}
                   value={newPointCreador}
                   onChange={(e) => setNewPointCreador(e.target.value)}
-                  style={{ width: '100%', padding: '11px 14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', outline: 'none', fontSize: '13.5px' }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    outline: 'none',
+                    fontSize: '13.5px',
+                    transition: 'border-color 0.2s, box-shadow 0.2s'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#FFD700';
+                    e.target.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.25)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: '12px', fontWeight: '750', color: '#cbd5e1', display: 'block', marginBottom: '5px' }}>
-                  {t('addPoint.category')} *
+                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                  <Icon name="layers" size={14} color="#FFD700" />
+                  {t('addPoint.category')} <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <select
                   value={newPointCategoria}
                   onChange={(e) => setNewPointCategoria(e.target.value)}
-                  style={{ width: '100%', padding: '11px 14px', background: '#141b2d', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', outline: 'none', fontSize: '13.5px' }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    background: '#0F172A',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    outline: 'none',
+                    fontSize: '13.5px',
+                    cursor: 'pointer',
+                    transition: 'border-color 0.2s, box-shadow 0.2s'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#FFD700';
+                    e.target.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.25)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 >
                   {Object.keys(CATEGORIAS_CONFIG).map((key) => (
-                    <option key={key} value={key}>
+                    <option key={key} value={key} style={{ background: '#0F172A', color: '#FFFFFF', padding: '8px' }}>
                       {t(`addPoint.categories.${key}`)}
                     </option>
                   ))}
@@ -2460,8 +2831,9 @@ export default function MapaTuristico() {
               </div>
 
               <div>
-                <label style={{ fontSize: '12px', fontWeight: '750', color: '#cbd5e1', display: 'block', marginBottom: '5px' }}>
-                  {t('addPoint.description')} *
+                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                  <Icon name="alignLeft" size={14} color="#FFD700" />
+                  {t('addPoint.description')} <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <textarea
                   required
@@ -2469,28 +2841,164 @@ export default function MapaTuristico() {
                   placeholder={t('addPoint.descriptionPlaceholder')}
                   value={newPointDesc}
                   onChange={(e) => setNewPointDesc(e.target.value)}
-                  style={{ width: '100%', padding: '11px 14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', outline: 'none', fontSize: '13.5px', resize: 'none' }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    outline: 'none',
+                    fontSize: '13.5px',
+                    resize: 'none',
+                    transition: 'border-color 0.2s, box-shadow 0.2s'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#FFD700';
+                    e.target.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.25)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                 <button
                   type="button"
                   onClick={() => { setShowAddModal(false); setTempPointCoords(null); }}
-                  style={{ flex: 1, padding: '12px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', color: 'white', fontWeight: '700', fontSize: '13px', cursor: 'pointer' }}
+                  style={{
+                    flex: 1,
+                    padding: '12px 16px',
+                    background: 'rgba(255, 255, 255, 0.06)',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    borderRadius: '14px',
+                    color: '#CBD5E1',
+                    fontWeight: '700',
+                    fontSize: '13.5px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
                 >
+                  <Icon name="x" size={15} />
                   {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmittingPoint}
-                  style={{ flex: 1, padding: '12px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', border: 'none', borderRadius: '12px', color: 'white', fontWeight: '800', fontSize: '13px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(16,185,129,0.25)' }}
+                  style={{
+                    flex: 1.2,
+                    padding: '12px 16px',
+                    background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                    border: 'none',
+                    borderRadius: '14px',
+                    color: '#0A192F',
+                    fontWeight: '900',
+                    fontSize: '13.5px',
+                    cursor: isSubmittingPoint ? 'not-allowed' : 'pointer',
+                    boxShadow: '0 4px 18px rgba(255, 215, 0, 0.35)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    transition: 'all 0.25s ease',
+                    opacity: isSubmittingPoint ? 0.7 : 1
+                  }}
                 >
-                  {isSubmittingPoint ? '...' : t('addPoint.submit')}
+                  {isSubmittingPoint ? (
+                    <>
+                      <Icon name="hourglass" size={16} /> ...
+                    </>
+                  ) : (
+                    <>
+                      <Icon name="checkCircle" size={16} />
+                      {t('addPoint.submit')}
+                    </>
+                  )}
                 </button>
               </div>
             </form>
           </div>
+        </div>
+      )}
+
+      {/* BOTÓN ÚNICO FLOTANTE / BURBUJA CIRCULAR DE GIRO (ESTILO WAZE / GOOGLE MAPS) */}
+      {!selectedPoint && (
+        <div
+          onClick={() => setShowDirectionsPopup((prev) => !prev)}
+          style={{
+            position: 'absolute',
+            bottom: '100px',
+            left: '20px',
+            zIndex: 40,
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+          }}
+          title={showDirectionsPopup ? (lang === 'en' ? 'Close route panel' : 'Cerrar panel de ruta') : (lang === 'en' ? 'Open route planner' : 'Trazar o ver ruta')}
+        >
+          {routeInfo && !showDirectionsPopup ? (
+            /* MODO NAVEGACIÓN ACTIVA: Círculo de giro + Insignia de distancia */
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+              <div style={{
+                width: '54px',
+                height: '54px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                color: '#0A192F',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '28px',
+                fontWeight: '900',
+                boxShadow: '0 8px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.4)',
+                border: '2.5px solid #FFFFFF',
+                transition: 'transform 0.2s ease',
+              }}>
+                {currentManeuver?.icon || '⬆'}
+              </div>
+              <span style={{
+                background: '#0A192F',
+                color: '#FFD700',
+                border: '1.5px solid #FFD700',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                fontSize: '11px',
+                fontWeight: '900',
+                boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+                whiteSpace: 'nowrap'
+              }}>
+                {currentManeuver?.distanceFormatted || formatDistanceDisplay(routeInfo.distance)}
+              </span>
+            </div>
+          ) : (
+            /* MODO INICIAL: Botón flotante "Trazar Ruta" */
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: showDirectionsPopup ? '#EF4444' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+              color: showDirectionsPopup ? '#FFFFFF' : '#0A192F',
+              border: showDirectionsPopup ? '2px solid #EF4444' : '2px solid #FFFFFF',
+              borderRadius: '25px',
+              padding: '10px 18px',
+              fontWeight: '900',
+              fontSize: '13.5px',
+              boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
+              transition: 'all 0.25s ease'
+            }}>
+              <span>🧭</span>
+              <span>{showDirectionsPopup ? (lang === 'en' ? 'Close Route' : 'Cerrar Ruta') : (lang === 'en' ? 'Route A-B' : 'Trazar Ruta')}</span>
+            </div>
+          )}
         </div>
       )}
 
@@ -2843,31 +3351,29 @@ export default function MapaTuristico() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <button
                       onClick={() => handleIniciarViaje(selectedPoint)}
-                      className="neon-map-btn-dark"
                       style={{
                         width: '100%',
-                        padding: '8px 6px',
+                        padding: '10px 14px',
+                        background: 'rgba(20, 109, 158, 0.12)',
+                        color: '#146D9E',
+                        border: '1.5px solid rgba(20, 109, 158, 0.25)',
+                        borderRadius: '12px',
+                        fontWeight: '800',
+                        fontSize: '13px',
+                        cursor: 'pointer',
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '5px'
+                        gap: '8px',
+                        backdropFilter: 'blur(10px)',
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 4px 12px rgba(20, 109, 158, 0.08)'
                       }}
                     >
-                      <span
-                        className="neon-sign-text"
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: '900',
-                          letterSpacing: '0.4px',
-                          color: '#FFFFFF',
-                          textTransform: 'uppercase',
-                          WebkitTextStroke: '1px #FFD700',
-                          paintOrder: 'stroke fill'
-                        }}
-                      >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#146D9E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                      <span style={{ fontWeight: '800', fontSize: '13px', color: '#146D9E' }}>
                         {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
                       </span>
-                      <img src="/images/ir.svg" alt="Ir" style={{ width: '22px', height: '22px', filter: 'brightness(0) invert(1)' }} />
                     </button>
 
                     <button

@@ -57,8 +57,48 @@ export default function DepartamentoDetailPage() {
   const regionColor = dept.region === "Pacífico" ? "#38BDF8" : dept.region === "Central" ? "#10B981" : "#F59E0B";
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#0A192F", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif" }}>
-      <Navbar activePage="mas-de-nicaragua" />
+    <div style={{ minHeight: "100vh", backgroundColor: "#0A192F", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif", position: "relative", overflow: "hidden" }}>
+      {/* Fondo de 3 columnas compuestas: art4.png, art5.png, art3.jpeg */}
+      <div style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr 1fr",
+        zIndex: 0,
+        pointerEvents: "none",
+        overflow: "hidden"
+      }}>
+        {/* Columna 1: art4.png */}
+        <div style={{
+          backgroundImage: "url('/images/art4.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%"
+        }} />
+        {/* Columna 2: art5.png */}
+        <div style={{
+          backgroundImage: "url('/images/art5.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%"
+        }} />
+        {/* Columna 3: art3.jpeg */}
+        <div style={{
+          backgroundImage: "url('/images/art3.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%"
+        }} />
+      </div>
+
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <Navbar activePage="mas-de-nicaragua" />
 
       {/* Hero Header del Departamento */}
       <div style={{
@@ -421,6 +461,7 @@ export default function DepartamentoDetailPage() {
         )}
 
       </main>
+      </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/lib/AuthContext";
 import { uploadMedia } from "@/lib/storage";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
@@ -41,8 +42,8 @@ function ChatContent() {
   const searchParams = useSearchParams();
   const targetUserId = searchParams.get("user");
 
-  const [session, setSession] = useState(null);
-  const [perfil, setPerfil] = useState(null);
+  // Sesión centralizada desde AuthContext
+  const { session, perfil, loading: authLoading, logout } = useAuth();
   const [loading, setLoading] = useState(true);
 
   // Conversaciones
@@ -76,24 +77,16 @@ function ChatContent() {
   // Unread counts
   const [unreadCounts, setUnreadCounts] = useState({});
 
-  // ── Auth ────────────────────────────────────────────────────────────────
+  // ── Auth Guard ──────────────────────────────────────────────────────────────────
   useEffect(() => {
-    const init = async () => {
-      try {
-        const { data: { session: s } } = await supabase.auth.getSession();
-        if (!s) { router.push("/login"); return; }
-        setSession(s);
-        const { data: p } = await supabase.from("perfiles").select("*").eq("id", s.user.id).single();
-        setPerfil(p);
-      } catch (err) {
-        console.error("Auth error:", err);
+    if (!authLoading) {
+      if (!session) {
         router.push("/login");
-      } finally {
+      } else {
         setLoading(false);
       }
-    };
-    init();
-  }, [router]);
+    }
+  }, [authLoading, session, router]);
 
   // ── Load conversations ─────────────────────────────────────────────────
   const loadConversaciones = useCallback(async () => {
@@ -356,7 +349,7 @@ function ChatContent() {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await logout();
     router.push("/login");
   };
 
@@ -401,17 +394,44 @@ function ChatContent() {
       position: "relative",
       overflow: "hidden"
     }}>
-      {/* Fondo en 3 columnas con difuminado únicamente en las líneas de conexión */}
+      {/* Fondo de 3 columnas compuestas: art1.jpeg, art2.jpeg, art3.jpeg */}
       <div style={{
-        position: "absolute",
+        position: "fixed",
         top: 0,
         left: 0,
-        right: 0,
-        bottom: 0,
-        background: "linear-gradient(to right, #146D9E 0%, #146D9E 28%, #17AA4A 38%, #17AA4A 62%, #FFD700 72%, #FFD700 100%)",
+        width: "100%",
+        height: "100%",
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr 1fr",
         zIndex: 0,
-        pointerEvents: "none"
-      }} />
+        pointerEvents: "none",
+        overflow: "hidden"
+      }}>
+        {/* Columna 1: art1.jpeg */}
+        <div style={{
+          backgroundImage: "url('/images/art1.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%"
+        }} />
+        {/* Columna 2: art2.jpeg */}
+        <div style={{
+          backgroundImage: "url('/images/art2.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%"
+        }} />
+        {/* Columna 3: art3.jpeg */}
+        <div style={{
+          backgroundImage: "url('/images/art3.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%"
+        }} />
+      </div>
 
       {/* Navbar */}
       <Navbar activePage="chat" session={session} perfil={perfil} onLogout={handleLogout} />
