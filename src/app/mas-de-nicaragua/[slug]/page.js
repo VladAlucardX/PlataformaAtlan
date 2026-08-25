@@ -8,6 +8,7 @@ import Icon from "@/components/ui/Icon";
 import DepartmentTabs from "@/components/ui/DepartmentTabs";
 import { useTranslation } from "@/hooks/useTranslation";
 import { DEPARTAMENTOS_DATA } from "@/data/departamentos-data";
+import { getPointImage } from "@/lib/imageUtils";
 
 export default function DepartamentoDetailPage() {
   const { t, lang } = useTranslation();
@@ -338,35 +339,43 @@ export default function DepartamentoDetailPage() {
               📍 Sitios Emblemáticos Imperdibles
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px" }}>
-              {dept.lugaresImportantes.map((lugar, idx) => (
-                <div key={idx} style={{
-                  background: "rgba(15, 23, 42, 0.75)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  borderRadius: "20px",
-                  padding: "24px",
-                  boxShadow: "0 8px 24px rgba(0,0,0,0.3)"
-                }}>
-                  <div style={{
-                    height: "160px",
-                    borderRadius: "14px",
-                    background: "linear-gradient(135deg, rgba(20, 109, 158, 0.4) 0%, rgba(10, 25, 47, 0.8) 100%)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: "16px",
-                    border: "1px solid rgba(255,255,255,0.1)"
+              {dept.lugaresImportantes.map((lugar, idx) => {
+                const siteImg = getPointImage(lugar);
+                return (
+                  <div key={idx} style={{
+                    background: "rgba(15, 23, 42, 0.75)",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    borderRadius: "20px",
+                    padding: "24px",
+                    boxShadow: "0 8px 24px rgba(0,0,0,0.3)"
                   }}>
-                    <span style={{ fontSize: "42px" }}>🏛️</span>
-                  </div>
+                    <div style={{
+                      height: "160px",
+                      borderRadius: "14px",
+                      overflow: "hidden",
+                      marginBottom: "16px",
+                      position: "relative",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      background: "#0F172A"
+                    }}>
+                      <img
+                        src={siteImg}
+                        alt={lugar.nombre}
+                        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                        loading="lazy"
+                      />
+                      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(15,23,42,0.7) 100%)" }} />
+                    </div>
 
-                  <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#FFD700", margin: "0 0 8px" }}>
-                    {lugar.nombre}
-                  </h3>
-                  <p style={{ margin: 0, fontSize: "14px", color: "rgba(255,255,255,0.8)", lineHeight: 1.6 }}>
-                    {lugar.desc}
-                  </p>
-                </div>
-              ))}
+                    <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#FFD700", margin: "0 0 8px" }}>
+                      {lugar.nombre}
+                    </h3>
+                    <p style={{ margin: 0, fontSize: "14px", color: "rgba(255,255,255,0.8)", lineHeight: 1.6 }}>
+                      {lugar.desc}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

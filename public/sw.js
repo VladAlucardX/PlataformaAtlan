@@ -37,11 +37,11 @@ self.addEventListener('fetch', (event) => {
   // Solo cachear peticiones GET
   if (event.request.method !== 'GET') return;
 
-  // Evitar interceptar consultas directas a Supabase o Mapbox API/Tiles
-  if (
-    event.request.url.includes('supabase.co') ||
-    event.request.url.includes('mapbox.com')
-  ) {
+  // Evitar interceptar consultas RPC/REST directas de Supabase o Mapbox API (excepto imágenes de Supabase Storage)
+  const isSupabaseImage = event.request.url.includes('supabase.co') && event.request.url.includes('/storage/v1/object/public/');
+  const isSupabaseData = event.request.url.includes('supabase.co') && !isSupabaseImage;
+
+  if (isSupabaseData || event.request.url.includes('mapbox.com')) {
     return;
   }
 
@@ -51,10 +51,20 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        // No cachear respuestas no exitosas o llamadas dinámicas que no sean de tipo 'basic'
-        if (!response || response.status !== 200 || response.type !== 'basic') {
+    caches.match(event.request).then((cachedResponse) => {
+      // Si está en caché, devolver de inmediato (0ms delay) e intentar actualizar en segundo plano
+      if (cachedResponse) {
+        fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200 && (networkResponse.type === 'basic' || networkResponse.type === 'cors')) {
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
+          }
+        }).catch(() => {});
+        return cachedResponse;
+      }
+
+      return fetch(event.request).then((response) => {
+        // Cachear respuestas exitosas (incluyendo imágenes CORS como Supabase o Unsplash)
+        if (!response || response.status !== 200 || (response.type !== 'basic' && response.type !== 'cors')) {
           return response;
         }
 
@@ -64,17 +74,15 @@ self.addEventListener('fetch', (event) => {
         });
 
         return response;
-      })
-      .catch(() => {
-        // Fallback a caché si no hay internet
-        return caches.match(event.request).then((cachedResponse) => {
-          if (cachedResponse) return cachedResponse;
-          
-          // Solo si es una solicitud de navegación de página HTML, retornar el fallback '/'
-          if (event.request.headers.get('accept')?.includes('text/html')) {
-            return caches.match('/');
-          }
-        });
-      })
+      });
+    }).catch(() => {
+      // Fallback a caché si no hay internet
+      return caches.match(event.request).then((fallback) => {
+        if (fallback) return fallback;
+        if (event.request.headers.get('accept')?.includes('text/html')) {
+          return caches.match('/');
+        }
+      });
+    })
   );
 });

@@ -12,6 +12,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import LanguageToggle from './ui/LanguageToggle';
 import Icon from './ui/Icon';
 import BusinessProfileModal from './ui/BusinessProfileModal';
+import { getPointImage, prefetchPointImages } from '../lib/imageUtils';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -889,9 +890,16 @@ export default function MapaTuristico() {
 
         const btnId = `btn-nav-${punto.id}`;
         const btnInfoId = `btn-info-${punto.id}`;
+        const pointImg = getPointImage(punto);
 
         const popupHTML = `
-          <div style="color:#0f172a; min-width:210px; max-width:260px; font-family:var(--font-outfit), sans-serif; padding:6px 4px 2px;">
+          <div style="color:#0f172a; min-width:215px; max-width:265px; font-family:var(--font-outfit), sans-serif; padding:4px;">
+            ${pointImg ? `
+              <div style="width:100%; height:110px; border-radius:10px; overflow:hidden; margin-bottom:8px; position:relative; background:#0f172a;">
+                <img src="${pointImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
+                <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(15,23,42,0.6) 100%);"></div>
+              </div>
+            ` : ''}
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1.5px solid #f1f5f9; padding-bottom:6px;">
               <span style="font-size:10px; font-weight:800; text-transform:uppercase; color:${statusColor}; display:flex; align-items:center; gap:5px;">
                 <span style="width:6px; height:6px; border-radius:50%; background-color:${statusColor}; display:inline-block; animation: pulse 2s infinite;"></span>
@@ -2614,7 +2622,7 @@ export default function MapaTuristico() {
               accentColor = '#6D28D9';
             }
 
-            const heroImg = selectedPointDetails?.fotos && selectedPointDetails.fotos.length > 0 ? selectedPointDetails.fotos[0] : null;
+            const heroImg = getPointImage(selectedPoint, selectedPointDetails);
 
             // Servicios activos
             const servs = selectedPointDetails?.servicios || {};

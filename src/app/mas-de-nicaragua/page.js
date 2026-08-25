@@ -10,6 +10,7 @@ import Icon from "@/components/ui/Icon";
 import DepartmentTabs from "@/components/ui/DepartmentTabs";
 import { useTranslation } from "@/hooks/useTranslation";
 import { DEPARTAMENTOS_DATA } from "@/data/departamentos-data";
+import { getPointImage } from "@/lib/imageUtils";
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -932,34 +933,42 @@ export default function MasDeNicaraguaPage() {
                     <span>Sitios Emblemáticos Imperdibles</span>
                   </h3>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
-                    {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => (
-                      <div key={idx} style={{
-                        background: "rgba(15, 23, 42, 0.8)",
-                        border: "1px solid rgba(255,255,255,0.12)",
-                        borderRadius: "18px",
-                        padding: "20px"
-                      }}>
-                        <div style={{
-                          height: "120px",
-                          borderRadius: "12px",
-                          background: "linear-gradient(135deg, rgba(20, 109, 158, 0.4) 0%, rgba(10, 25, 47, 0.8) 100%)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          marginBottom: "14px",
-                          border: "1px solid rgba(255,255,255,0.1)"
+                    {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => {
+                      const siteImg = getPointImage(lugar);
+                      return (
+                        <div key={idx} style={{
+                          background: "rgba(15, 23, 42, 0.8)",
+                          border: "1px solid rgba(255,255,255,0.12)",
+                          borderRadius: "18px",
+                          padding: "20px"
                         }}>
-                          <Icon name="landmark" size={38} color="#FFD700" />
-                        </div>
+                          <div style={{
+                            height: "135px",
+                            borderRadius: "12px",
+                            overflow: "hidden",
+                            marginBottom: "14px",
+                            position: "relative",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                            background: "#0F172A"
+                          }}>
+                            <img
+                              src={siteImg}
+                              alt={lugar.nombre}
+                              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                              loading="lazy"
+                            />
+                            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(15,23,42,0.7) 100%)" }} />
+                          </div>
 
-                        <h4 style={{ fontSize: "17px", fontWeight: "800", color: "#FFD700", margin: "0 0 6px" }}>
-                          {lugar.nombre}
-                        </h4>
-                        <p style={{ margin: 0, fontSize: "13.5px", color: "rgba(255,255,255,0.8)", lineHeight: 1.5 }}>
-                          {lugar.desc}
-                        </p>
-                      </div>
-                    ))}
+                          <h4 style={{ fontSize: "17px", fontWeight: "800", color: "#FFD700", margin: "0 0 6px" }}>
+                            {lugar.nombre}
+                          </h4>
+                          <p style={{ margin: 0, fontSize: "13.5px", color: "rgba(255,255,255,0.8)", lineHeight: 1.5 }}>
+                            {lugar.desc}
+                          </p>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
