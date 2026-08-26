@@ -61,7 +61,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
     return Scaffold(
       backgroundColor: AtlanTheme.background,
       body: SafeArea(
-        top: true,
+        top: false,
         bottom: false,
         child: Stack(
           children: [

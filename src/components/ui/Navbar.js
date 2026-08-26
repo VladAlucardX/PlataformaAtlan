@@ -345,7 +345,12 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           {session && <NotificationDropdown session={session} />}
           <LanguageToggle variant="icon" />
           <button
+            type="button"
             onClick={() => setMenuOpen(!menuOpen)}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              setMenuOpen(!menuOpen);
+            }}
             aria-label="Menu"
             style={{
               background: menuOpen ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.08)",
@@ -358,7 +363,8 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
               alignItems: "center",
               justifyContent: "center",
               boxShadow: "0 4px 12px rgba(0, 0, 0, 0.25)",
-              transition: "all 0.2s ease"
+              transition: "all 0.2s ease",
+              touchAction: "manipulation"
             }}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2.5" strokeLinecap="round">
@@ -374,19 +380,26 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer Dropdown Overlay */}
       {menuOpen && (
         <div
           style={{
-            padding: "16px 20px 24px",
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            right: 0,
+            width: "100%",
+            padding: "20px 24px 28px",
             display: "flex",
             flexDirection: "column",
-            gap: "10px",
+            gap: "12px",
             background: "#0A192F",
-            borderTop: "1.5px solid rgba(255, 215, 0, 0.25)",
-            boxShadow: "0 16px 36px rgba(0, 0, 0, 0.6)",
-            maxHeight: "85vh",
-            overflowY: "auto"
+            borderTop: "1.5px solid rgba(255, 215, 0, 0.3)",
+            borderBottom: "1.5px solid rgba(255, 215, 0, 0.3)",
+            boxShadow: "0 20px 50px rgba(0, 0, 0, 0.95)",
+            maxHeight: "calc(100vh - 70px)",
+            overflowY: "auto",
+            zIndex: 99999
           }}
           className="animate-fade-in-down hide-desktop"
         >
