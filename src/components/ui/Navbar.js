@@ -69,69 +69,6 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Auto-ocultar/mostrar la barra de navegación en móviles al desplazar o hacer gesto hacia arriba
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const resetHideTimer = () => {
-      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-      if (window.innerWidth <= 768 && !menuOpen && !userDropdownOpen) {
-        hideTimerRef.current = setTimeout(() => {
-          setNavVisible(false);
-        }, 5000);
-      }
-    };
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY <= 10) {
-        setNavVisible(true);
-        resetHideTimer();
-        return;
-      }
-
-      if (currentScrollY < lastScrollYRef.current) {
-        setNavVisible(true);
-        resetHideTimer();
-      } else if (currentScrollY > lastScrollYRef.current + 10 && !menuOpen && !userDropdownOpen) {
-        setNavVisible(false);
-      }
-      lastScrollYRef.current = currentScrollY;
-    };
-
-    const handleTouchStart = (e) => {
-      if (e.touches && e.touches.length > 0) {
-        touchStartYRef.current = e.touches[0].clientY;
-      }
-    };
-
-    const handleTouchMove = (e) => {
-      if (!e.touches || e.touches.length === 0) return;
-      const currentY = e.touches[0].clientY;
-      const diffY = currentY - touchStartYRef.current;
-
-      if (diffY > 15) {
-        setNavVisible(true);
-        resetHideTimer();
-      } else if (diffY < -15 && !menuOpen && !userDropdownOpen) {
-        setNavVisible(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchmove", handleTouchMove, { passive: true });
-
-    resetHideTimer();
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
-      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-    };
-  }, [menuOpen, userDropdownOpen]);
-
   const handleLogout = async () => {
     if (onLogout) {
       onLogout();
@@ -171,13 +108,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
   const communityProfileLink = perfil ? `/comunidad/perfil/${getProfileSlug(perfil)}` : (session?.user?.id ? `/comunidad/perfil/${session.user.id}` : "/comunidad");
 
   return (
-    <nav
-      className="atlan-navbar-header"
-      style={{
-        transform: navVisible || menuOpen ? "translateY(0)" : "translateY(-100%)",
-        transition: "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)"
-      }}
-    >
+    <nav className="atlan-navbar-header">
       <div className="atlan-navbar-inner" style={{
         width: "100%",
         padding: "0 32px",

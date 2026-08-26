@@ -2219,7 +2219,34 @@ html body .mapboxgl-ctrl-directions tr {
 }
 
 /* ── RESPONSIVE UTILITIES & NAVBAR ────────────────────────── */
-@media (min-width: 769px) {
+.atlan-navbar-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-width: 100vw;
+  z-index: 9999;
+  background: #0A192F;
+  background: rgba(10, 25, 47, 0.96);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 215, 0, 0.25);
+  box-sizing: border-box;
+}
+
+.atlan-navbar-inner {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  box-sizing: border-box;
+}
+
+@media (min-width: 1025px) {
   .hide-desktop {
     display: none !important;
   }
@@ -2228,7 +2255,7 @@ html body .mapboxgl-ctrl-directions tr {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .hide-mobile {
     display: none !important;
   }
@@ -2237,6 +2264,9 @@ html body .mapboxgl-ctrl-directions tr {
   }
   .atlan-navbar-inner {
     padding: 0 16px !important;
+  }
+  .logoText {
+    font-size: 20px !important;
   }
   /* Community page: collapse 3-column grid to 1 column */
   .profile-grid {
