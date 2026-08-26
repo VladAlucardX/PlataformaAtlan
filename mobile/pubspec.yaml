@@ -1,0 +1,67 @@
+name: plataforma_atlan_mobile
+description: "Plataforma Atlan — App de turismo, mapas interactivos y comunidad de Nicaragua."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Core - Supabase Backend
+  supabase_flutter: ^2.8.0
+
+  # Maps - Mapbox Native SDK
+  mapbox_maps_flutter: ^2.5.0
+
+  # Webview
+  flutter_inappwebview: ^6.1.5
+
+  # State Management
+  flutter_riverpod: ^2.6.0
+
+  # Navigation
+  go_router: ^14.8.0
+
+  # Environment Variables
+  flutter_dotenv: ^5.2.1
+
+  # Geolocation
+  geolocator: ^13.0.2
+  geocoding: ^3.0.0
+
+  # UI & Design
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.2.1
+  cached_network_image: ^3.4.1
+  shimmer: ^3.0.0
+  flutter_animate: ^4.5.2
+
+  # Media
+  video_player: ^2.9.5
+  image_picker: ^1.1.2
+
+  # Utilities
+  share_plus: ^10.1.4
+  url_launcher: ^6.3.1
+  intl: ^0.20.2
+  path_provider: ^2.1.5
+  shared_preferences: ^2.3.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - .env
+    - assets/images/
+    - assets/geojson/

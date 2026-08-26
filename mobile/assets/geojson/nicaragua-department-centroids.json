@@ -1,0 +1,243 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 1,
+      "properties": {
+        "nombre": "Río San Juan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.7,
+          11.2
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "properties": {
+        "nombre": "RACCN (Caribe Norte)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.2,
+          14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "properties": {
+        "nombre": "Jinotega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.6,
+          13.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 4,
+      "properties": {
+        "nombre": "Nueva Segovia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.23305375609755,
+          13.722343821138208
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 5,
+      "properties": {
+        "nombre": "Chinandega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.13917510000002,
+          12.905293546666668
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 6,
+      "properties": {
+        "nombre": "Madriz"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.4992794222222,
+          13.468648455555556
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 7,
+      "properties": {
+        "nombre": "Rivas"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.75392604411765,
+          11.35610026470588
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 8,
+      "properties": {
+        "nombre": "RACCS (Caribe Sur)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.3,
+          12.2
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 9,
+      "properties": {
+        "nombre": "León"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.62398582733817,
+          12.504828215827336
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 10,
+      "properties": {
+        "nombre": "Managua"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.3,
+          12.1
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 11,
+      "properties": {
+        "nombre": "Carazo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.25158397999999,
+          11.7407826
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 12,
+      "properties": {
+        "nombre": "Matagalpa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.6,
+          12.9
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 13,
+      "properties": {
+        "nombre": "Boaco"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.42268275595241,
+          12.539993892857145
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 14,
+      "properties": {
+        "nombre": "Chontales"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.04161655371901,
+          12.124137173553716
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 15,
+      "properties": {
+        "nombre": "Estelí"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.38655940277776,
+          13.146700402777784
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 16,
+      "properties": {
+        "nombre": "Granada"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.95,
+          11.85
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 17,
+      "properties": {
+        "nombre": "Masaya"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.09,
+          11.97
+        ]
+      }
+    }
+  ]
+}

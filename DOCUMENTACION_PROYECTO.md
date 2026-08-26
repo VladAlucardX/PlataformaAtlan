@@ -98,6 +98,24 @@ plataforma-atlan/
 │       ├── supabase.js                   # Cliente inicializado de Supabase JS
 │       └── i18n/                         # Traducciones bilingües (`es.json`, `en.json`)
 │
+├── mobile/                               # 📱 APLICACIÓN MÓVIL FLUTTER (Monorepo)
+│   ├── assets/                           # Recurso GeoJSON, imágenes y videos nativos
+│   ├── lib/                              # Código Dart principal (Flutter 3.38)
+│   │   ├── config/                       # Tema Atlan, rutas (GoRouter) y constantes
+│   │   ├── l10n/                         # Traducciones i18n en formato ARB (app_es, app_en)
+│   │   ├── models/                       # Modelos Dart (Perfil, Negocio, Punto, Publicacion, Mensaje)
+│   │   ├── providers/                    # State management reactivo con Riverpod
+│   │   ├── screens/                      # Pantallas (Home, Mapa, Perfil, Comunidad, Chat, Admin, etc.)
+│   │   ├── services/                     # Servicios Supabase, Storage, GPS, Social y Chat
+│   │   ├── utils/                        # Resolución de imágenes y utilidades
+│   │   ├── widgets/                      # Shell de navegación (BottomNavigationBar)
+│   │   ├── app.dart                      # Configuración de MaterialApp.router
+│   │   └── main.dart                     # Punto de entrada nativo
+│   ├── android/                          # Proyecto nativo Android
+│   ├── ios/                              # Proyecto nativo iOS
+│   ├── .env                              # Variables de entorno móvil
+│   └── pubspec.yaml                      # Dependencias de Flutter (Supabase, Mapbox, Riverpod)
+│
 ├── .env.local                            # Variables de entorno secretas (Local)
 ├── .gitignore                            # Archivos excluidos del control de versiones
 ├── AGENTS.md                             # Protocolos de desarrollo, GitFlow y Commits
