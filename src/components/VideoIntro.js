@@ -11,9 +11,8 @@ export default function VideoIntro({ onComplete }) {
 
   // Fade-out
   const startFadeOut = useCallback(() => {
-    if (phase !== "playing") return;
-    setPhase("fading");
-  }, [phase]);
+    setPhase((prev) => (prev === "playing" ? "fading" : prev));
+  }, []);
 
   // Forzar reproducción en Chrome
   useEffect(() => {
@@ -23,7 +22,6 @@ export default function VideoIntro({ onComplete }) {
       videoRef.current.defaultMuted = true;
       videoRef.current.play().catch((err) => {
         console.warn("Autoplay bloqueado por el navegador:", err);
-        // Si falla el autoplay, igual mostramos la UI y esperamos el click
       });
 
       if (videoRef.current.readyState >= 3) {
@@ -38,31 +36,64 @@ export default function VideoIntro({ onComplete }) {
       const timer = setTimeout(() => {
         setPhase("done");
         onComplete?.();
-      }, 1800); // duración del fade-out CSS
+      }, 800); // duración acelerada del fade-out CSS
       return () => clearTimeout(timer);
     }
   }, [phase, onComplete]);
 
-  // Timeout de seguridad
+  // Timeout de seguridad (Máximo 4.5 segundos para no trabar al usuario en móvil)
   useEffect(() => {
     const safety = setTimeout(() => {
       startFadeOut();
-    }, 9000); // 9s
+    }, 4500);
     return () => clearTimeout(safety);
   }, [startFadeOut]);
-
-
 
   if (phase === "done") return null;
 
   return (
     <div
+      onClick={startFadeOut}
+      onTouchEnd={startFadeOut}
       style={{
         ...introStyles.overlay,
         opacity: phase === "fading" ? 0 : 1,
         pointerEvents: phase === "fading" ? "none" : "auto",
+        cursor: "pointer"
       }}
     >
+      {/* Botón de Omitir Video en la esquina superior derecha */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          startFadeOut();
+        }}
+        style={{
+          position: "absolute",
+          top: "24px",
+          right: "24px",
+          zIndex: 10,
+          background: "rgba(10, 25, 47, 0.75)",
+          border: "1.5px solid rgba(255, 215, 0, 0.4)",
+          color: "#FFD700",
+          padding: "8px 16px",
+          borderRadius: "20px",
+          fontSize: "12.5px",
+          fontWeight: "800",
+          cursor: "pointer",
+          backdropFilter: "blur(8px)",
+          boxShadow: "0 4px 14px rgba(0,0,0,0.5)",
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          letterSpacing: "0.5px"
+        }}
+      >
+        <span>Omitir</span>
+        <span>➔</span>
+      </button>
+
       {/* Video de fondo */}
       <video
         ref={videoRef}
@@ -72,6 +103,8 @@ export default function VideoIntro({ onComplete }) {
         playsInline
         preload="auto"
         onCanPlayThrough={() => setVideoReady(true)}
+        onError={startFadeOut}
+        onStalled={startFadeOut}
         onLoadedData={() => {
           if (videoRef.current && videoRef.current.readyState >= 3) {
             setVideoReady(true);

@@ -7,16 +7,17 @@ import 'services/supabase_service.dart';
 
 /// Punto de entrada de la app Plataforma Atlan Mobile
 void main() async {
-  // Asegurar que los bindings de Flutter estén inicializados
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Forzar orientación vertical (portrait)
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  try {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  } catch (e) {
+    debugPrint("SystemChrome orientations error: $e");
+  }
 
-  // Estilo de la barra de estado (transparente, iconos claros)
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.light,
@@ -24,19 +25,24 @@ void main() async {
     systemNavigationBarIconBrightness: Brightness.light,
   ));
 
-  // Activar Modo Inmersivo Pegajoso (Immersive Sticky Mode):
-  // Oculta la barra de botones de navegación nativos del sistema en móvil.
-  // Solo se muestra temporalmente al deslizar hacia arriba desde el borde inferior
-  // y vuelve a desaparecer automáticamente tras unos segundos.
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  try {
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  } catch (e) {
+    debugPrint("SystemChrome immersive error: $e");
+  }
 
-  // Cargar variables de entorno
-  await dotenv.load(fileName: '.env');
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (e) {
+    debugPrint("dotenv load warning: $e");
+  }
 
-  // Inicializar Supabase
-  await SupabaseService.initialize();
+  try {
+    await SupabaseService.initialize();
+  } catch (e) {
+    debugPrint("SupabaseService initialize warning: $e");
+  }
 
-  // Ejecutar la app con Riverpod
   runApp(
     const ProviderScope(
       child: AtlanApp(),
