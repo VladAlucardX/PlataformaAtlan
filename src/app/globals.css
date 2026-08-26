@@ -2218,18 +2218,26 @@ html body .mapboxgl-ctrl-directions tr {
   }
 }
 
-/* ── COMUNIDAD: Responsive ────────────────────────────────────── */
+/* ── RESPONSIVE UTILITIES & NAVBAR ────────────────────────── */
 @media (min-width: 769px) {
   .hide-desktop {
     display: none !important;
   }
+  .hide-mobile {
+    display: flex !important;
+  }
 }
 
 @media (max-width: 768px) {
-  .hide-desktop {
-    /* show on mobile */
+  .hide-mobile {
+    display: none !important;
   }
-
+  .hide-desktop {
+    display: flex !important;
+  }
+  .atlan-navbar-inner {
+    padding: 0 16px !important;
+  }
   /* Community page: collapse 3-column grid to 1 column */
   .profile-grid {
     grid-template-columns: 1fr !important;

@@ -338,7 +338,7 @@ export default function MapaTuristico() {
 
     const fetchPreviewRoute = () => {
       const [oLng, oLat] = currentPosRef.current;
-      actualizarPrevisualizacionRuta(oLng, oLat, selectedPoint.lng, selectedPoint.lat);
+      actualizarPrevisualizacionRuta(oLng, oLat, selectedPoint.lng, selectedPoint.lat, true);
     };
 
     // Dar un breve delay para asegurar que el mapa y los estilos estén listos
@@ -1208,7 +1208,7 @@ export default function MapaTuristico() {
     }
   };
 
-  const actualizarPrevisualizacionRuta = async (oLng, oLat, dLng, dLat) => {
+  const actualizarPrevisualizacionRuta = async (oLng, oLat, dLng, dLat, isInitialFit = false) => {
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`;
     try {
       const res = await fetch(url);
@@ -1231,8 +1231,8 @@ export default function MapaTuristico() {
           }
         }
 
-        // Encuadrar la trayectoria en la pantalla para ver inicio (A) y fin (B) automáticamente
-        if (mapRef.current && coords.length > 0) {
+        // Solo encuadrar la trayectoria la primera vez que se selecciona el punto
+        if (isInitialFit && mapRef.current && coords.length > 0 && !isInteractionPausedRef.current) {
           const bounds = new mapboxgl.LngLatBounds();
           coords.forEach(coord => bounds.extend(coord));
           mapRef.current.fitBounds(bounds, {
@@ -1304,7 +1304,7 @@ export default function MapaTuristico() {
 
     // Rediseñar la trayectoria futura en tiempo real si el usuario cambia de ubicación
     if (selectedPointRef.current && !isNavigatingRef.current) {
-      actualizarPrevisualizacionRuta(longitude, latitude, selectedPointRef.current.lng, selectedPointRef.current.lat);
+      actualizarPrevisualizacionRuta(longitude, latitude, selectedPointRef.current.lng, selectedPointRef.current.lat, false);
     }
 
     // Si estamos en viaje (navegación real) y no en demo, verificar si el usuario se desvió para recalcular ruta
@@ -1918,7 +1918,7 @@ export default function MapaTuristico() {
     // Controles nativos
     const geolocate = new mapboxgl.GeolocateControl({
       positionOptions: { enableHighAccuracy: true },
-      trackUserLocation: true,
+      trackUserLocation: false,
       showUserHeading: true,
       showUserLocation: false,
     });

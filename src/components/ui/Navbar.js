@@ -105,7 +105,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
 
   return (
     <nav className="atlan-navbar-header">
-      <div style={{
+      <div className="atlan-navbar-inner" style={{
         width: "100%",
         padding: "0 32px",
         height: "64px",
@@ -380,7 +380,9 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
             gap: "10px",
             background: "#0A192F",
             borderTop: "1.5px solid rgba(255, 215, 0, 0.25)",
-            boxShadow: "0 16px 36px rgba(0, 0, 0, 0.6)"
+            boxShadow: "0 16px 36px rgba(0, 0, 0, 0.6)",
+            maxHeight: "85vh",
+            overflowY: "auto"
           }}
           className="animate-fade-in-down hide-desktop"
         >
