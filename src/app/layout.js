@@ -1,5 +1,5 @@
 import "./globals.css";
-import { LanguageProvider } from "../lib/i18n/LanguageContext";
+import ClientProviders from "../components/ClientProviders";
 import PWARegister from "../components/PWARegister";
 
 export const metadata = {
@@ -62,12 +62,13 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-title" content="Atlan" />
       </head>
       <body>
-        <LanguageProvider>
+        <ClientProviders>
           <PWARegister />
           {children}
-        </LanguageProvider>
+        </ClientProviders>
       </body>
     </html>
   );
 }
+
 

@@ -122,8 +122,19 @@ La Plataforma Atlan es una aplicación web enfocada en turismo, mapas interactiv
    - **Base de Datos Estática (`src/data/departamentos-data.js`):** Archivo JS centralizado con información verídica para los 17 departamentos.
    - **Soporte Bilingüe (i18n):** Claves en `es.json` y `en.json` para renderizado fluido en Español e Inglés.
 
+8. **Creación de la Aplicación Móvil en Flutter 3.38 / Dart 3.10 (Monorepo `mobile/`):**
+   - **Arquitectura de Monorepo:** Creación e integración completa de la carpeta `mobile/` dentro de este proyecto, compartiendo credenciales de Supabase y tokens de Mapbox.
+   - **Integración con Supabase BaaS:** Conexión directa mediante `supabase_flutter` con soporte para Autenticación, RPCs (`buscar_puntos_cercanos`, `registrar_visita_turista`), Storage (`atlan-media`) y Mensajería en tiempo real con Supabase Realtime.
+   - **Diseño Premium Atlan:** Tema nativo oscuro (`#070B14`) con acentos dorados (`#D4AF37`), azul Atlan (`#146D9E`), decoraciones Glassmorphism/Claymorphism y soporte de fuentes Google Fonts (Inter).
+   - **Navegación y Shell Móvil:** Implementación de `go_router` con `BottomNavigationBar` de 5 pestañas (*Inicio, Mapa, Comunidad, Chat, Perfil*).
+   - **Servicios y Modelos Dart:** Modelos tipados para `Perfil`, `Negocio`, `Punto`, `Publicacion`, `Mensaje` y `Departamento` con gestión de estado mediante **Riverpod**.
+   - **12 Pantallas Móviles Implementadas:** Splash animado, Login, Registro, Home, Mapa, Perfil, Comunidad, Chat, Dashboard multi-negocio, Admin, Departamentos y Enciclopedia "Más de Nicaragua".
+   - **Internacionalización (i18n):** Migración de traducciones a formato ARB (`app_es.arb`, `app_en.arb`) con persistencia en SharedPreferences.
+
 ## Siguientes Pasos
 Al retomar el desarrollo:
+- Conectar el dispositivo Samsung Galaxy S24 Ultra por USB con depuración ADB activada y ejecutar `cd mobile && flutter run` para probar en vivo.
+- Configurar el Mapbox Secret Token en `mobile/android/gradle.properties` para renderizar mapas nativos vectoriales con el SDK de Mapbox para Flutter.
 - Expandir el catálogo de insignias y logros de turismo desbloqueables según el número de departamentos visitados.
 - Monitorear el funcionamiento de la caché del Service Worker PWA en entornos de producción.
 

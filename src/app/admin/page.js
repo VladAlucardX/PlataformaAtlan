@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../lib/AuthContext';
 import { useTranslation } from '../../hooks/useTranslation';
 import LanguageToggle from '../../components/ui/LanguageToggle';
 import Navbar from '../../components/ui/Navbar';
@@ -70,42 +71,45 @@ export default function AdminDashboard() {
     setToastBanner({ message, type });
     setTimeout(() => setToastBanner(null), 4000);
   };
+  
+  // Sesión centralizada desde AuthContext
+  const { session: authSession, perfil: authPerfil, loading: authLoading } = useAuth();
 
   // Verificar rol de admin
   useEffect(() => {
-    const checkAdmin = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          router.replace('/login');
-          return;
-        }
-        setUserSession(session);
+    if (authLoading) return;
 
-        const { data: profile, error } = await supabase
+    if (!authSession) {
+      router.replace('/login');
+      return;
+    }
+
+    setUserSession(authSession);
+
+    const verifyRole = async () => {
+      let profile = authPerfil;
+      if (!profile) {
+        const { data } = await supabase
           .from('perfiles')
           .select('*')
-          .eq('id', session.user.id)
+          .eq('id', authSession.user.id)
           .single();
-
-        if (error || profile?.rol !== 'admin') {
-          console.warn('[Atlan Admin] Acceso denegado. Rol insuficiente.');
-          router.replace('/mapa');
-          return;
-        }
-
-        setUserPerfil(profile);
-        setIsAdmin(true);
-      } catch (err) {
-        console.error('[Atlan Admin] Error de verificación de rol:', err);
-        router.replace('/mapa');
-      } finally {
-        setLoadingAuth(false);
+        profile = data;
       }
+
+      if (!profile || profile.rol !== 'admin') {
+        console.warn('[Atlan Admin] Acceso denegado. Rol insuficiente.');
+        router.replace('/mapa');
+        return;
+      }
+
+      setUserPerfil(profile);
+      setIsAdmin(true);
+      setLoadingAuth(false);
     };
 
-    checkAdmin();
-  }, [router]);
+    verifyRole();
+  }, [authLoading, authSession, authPerfil, router]);
 
   // Cargar datos cuando isAdmin cambia a true
   useEffect(() => {

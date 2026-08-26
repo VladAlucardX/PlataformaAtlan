@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/lib/AuthContext";
 import { uploadMedia } from "@/lib/storage";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
@@ -654,8 +655,9 @@ export default function ComunidadPage() {
   const { t, lang } = useTranslation();
   const router = useRouter();
 
-  const [session, setSession] = useState(null);
-  const [perfil, setPerfil] = useState(null);
+  // Sesión centralizada desde AuthContext
+  const { session, perfil, logout } = useAuth();
+
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -673,31 +675,6 @@ export default function ComunidadPage() {
   const loaderRef = useRef(null);
 
   const PAGE_SIZE = 10;
-
-  // Fetch session + profile
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const { data: { session: s } } = await supabase.auth.getSession();
-        setSession(s);
-        if (s?.user) {
-          const { data: p } = await supabase.from("perfiles").select("*").eq("id", s.user.id).single();
-          setPerfil(p);
-        }
-      } catch (err) {
-        console.warn("Session error:", err);
-      }
-    };
-    init();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
-      if (s?.user) {
-        supabase.from("perfiles").select("*").eq("id", s.user.id).single().then(({ data }) => setPerfil(data));
-      } else { setPerfil(null); }
-    });
-    return () => subscription?.unsubscribe();
-  }, []);
 
   // Fetch posts
   const fetchPosts = useCallback(async (pageNum = 0, append = false) => {
@@ -803,9 +780,7 @@ export default function ComunidadPage() {
   }, [hasMore, loadingMore, page, fetchPosts]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setSession(null);
-    setPerfil(null);
+    await logout();
     window.location.reload();
   };
 

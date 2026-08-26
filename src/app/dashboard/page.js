@@ -4,12 +4,14 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/lib/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import NotificationDropdown from "@/components/ui/NotificationDropdown";
 import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
 import { uploadMedia } from "@/lib/storage";
+import { obtenerDepartamentoPorCoordenadas } from "@/lib/geoUtils";
 
 // Helper para obtener imagen por defecto según la categoría del negocio
 const getCategoryFallbackImage = (categoria) => {
@@ -33,7 +35,9 @@ export default function DashboardPage() {
   const { t, lang } = useTranslation();
   const router = useRouter();
 
-  // Estados del usuario y carga
+  // Autenticación centralizada desde AuthContext
+  const { session: authSession, perfil: authPerfil, loading: authLoading, logout } = useAuth();
+
   const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
   const [perfil, setPerfil] = useState(null);
@@ -157,29 +161,29 @@ export default function DashboardPage() {
 
   // Cargar datos al montar
   useEffect(() => {
+    if (authLoading) return;
+    if (!authSession) {
+      router.push("/login");
+      return;
+    }
+
     const fetchUserData = async () => {
       try {
-        const { data: { session: activeSession }, error: sessionError } = await supabase.auth.getSession();
-        if (sessionError || !activeSession) {
-          router.push("/login");
-          return;
+        setSession(authSession);
+        setUser(authSession.user);
+
+        if (authPerfil) {
+          setPerfil(authPerfil);
+        } else {
+          const { data: perfilData } = await supabase
+            .from("perfiles")
+            .select("*")
+            .eq("id", authSession.user.id)
+            .single();
+          setPerfil(perfilData);
         }
 
-        setSession(activeSession);
-        const currentUser = activeSession.user;
-        setUser(currentUser);
-
-        // Perfil
-        const { data: perfilData } = await supabase
-          .from("perfiles")
-          .select("*")
-          .eq("id", currentUser.id)
-          .single();
-
-        setPerfil(perfilData);
-
-        // Cargar datos de negocio (si el usuario ya tiene uno o va a reclamar/crear)
-        await loadNegocioData(currentUser.id, true);
+        await loadNegocioData(authSession.user.id, true);
       } catch (err) {
         console.error("Dashboard init error:", err);
       } finally {
@@ -188,7 +192,7 @@ export default function DashboardPage() {
     };
 
     fetchUserData();
-  }, []);
+  }, [authLoading, authSession, authPerfil, router]);
 
   // Supabase Realtime WebSockets + Polling automático de estado de solicitud
   useEffect(() => {
@@ -559,6 +563,7 @@ export default function DashboardPage() {
 
               if (negocioError) throw negocioError;
 
+              const deptDetectado = await obtenerDepartamentoPorCoordenadas(longitude, latitude);
               const { error: puntoError } = await supabase
                 .from("puntos")
                 .insert([{
@@ -566,6 +571,7 @@ export default function DashboardPage() {
                   nombre: nuevoNegocio.nombre,
                   categoria: "otro",
                   ubicacion: `POINT(${longitude} ${latitude})`,
+                  departamento: deptDetectado,
                   estado: "en_verificacion",
                   nombre_creador: perfil?.nombre_completo || "Propietario"
                 }]);
@@ -968,7 +974,7 @@ export default function DashboardPage() {
 
   // Desconexión
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await logout();
     router.push("/login");
   };
 

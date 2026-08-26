@@ -10,6 +10,7 @@ import Icon from "@/components/ui/Icon";
 import DepartmentTabs from "@/components/ui/DepartmentTabs";
 import { useTranslation } from "@/hooks/useTranslation";
 import { DEPARTAMENTOS_DATA } from "@/data/departamentos-data";
+import { getPointImage } from "@/lib/imageUtils";
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -203,7 +204,7 @@ export default function MasDeNicaraguaPage() {
           "line-color": [
             "case",
             ["to-boolean", ["feature-state", "selected"]], "#FFFFFF",
-            ["to-boolean", ["feature-state", "hover"]], COLOR_MATCH_EXPR,
+            ["to-boolean", ["feature-state", "hover"]], "#FFFFFF",
             "#FFD700"
           ],
           "line-color-transition": { duration: 300, delay: 0 },
@@ -359,75 +360,50 @@ export default function MasDeNicaraguaPage() {
   }, []);
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#0A192F", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif" }}>
-      <Navbar activePage="mas-de-nicaragua" />
-
-      {/* Hero Header */}
+    <div style={{ minHeight: "100vh", backgroundColor: "#0A192F", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif", position: "relative", overflow: "hidden" }}>
+      {/* Fondo de 3 columnas compuestas: art4.png, art5.png, art3.jpeg */}
       <div style={{
-        background: "linear-gradient(180deg, rgba(20, 109, 158, 0.25) 0%, rgba(10, 25, 47, 1) 100%)",
-        padding: "110px 20px 30px",
-        textAlign: "center",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.08)"
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr 1fr",
+        zIndex: 0,
+        pointerEvents: "none",
+        overflow: "hidden"
       }}>
-        <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-          <div style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            background: "rgba(255, 215, 0, 0.15)",
-            border: "1px solid rgba(255, 215, 0, 0.35)",
-            padding: "6px 16px",
-            borderRadius: "30px",
-            color: "#FFD700",
-            fontSize: "13px",
-            fontWeight: "800",
-            textTransform: "uppercase",
-            letterSpacing: "1px",
-            marginBottom: "14px"
-          }}>
-            <Icon name="book" size={16} color="#FFD700" />
-            <span>{t("nicaragua.title") || "Más de Nicaragua"}</span>
-          </div>
-
-          <h1 style={{
-            fontSize: "clamp(28px, 4.5vw, 48px)",
-            fontWeight: "900",
-            color: "#FFFFFF",
-            margin: "0 0 12px",
-            lineHeight: 1.15
-          }}>
-            Enciclopedia Viva de los <span style={{ color: "#FFD700" }}>17 Departamentos</span>
-          </h1>
-
-          <p style={{
-            fontSize: "clamp(14px, 1.8vw, 17px)",
-            color: "rgba(255, 255, 255, 0.8)",
-            margin: "0 auto 20px",
-            lineHeight: 1.6,
-            maxWidth: "750px"
-          }}>
-            {t("nicaragua.subtitle") || "Explora la historia, cultura, economía y belleza de cada departamento de nuestro país directamente sobre el mapa."}
-          </p>
-
-          {/* Badges estadísticos */}
-          <div style={{ display: "flex", justifyContent: "center", gap: "16px", flexWrap: "wrap" }}>
-            <div style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", padding: "8px 18px", borderRadius: "14px", textAlign: "center" }}>
-              <span style={{ display: "block", fontSize: "18px", fontWeight: "900", color: "#FFD700" }}>17</span>
-              <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.7)", textTransform: "uppercase", fontWeight: "700" }}>Departamentos</span>
-            </div>
-            <div style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", padding: "8px 18px", borderRadius: "14px", textAlign: "center" }}>
-              <span style={{ display: "block", fontSize: "18px", fontWeight: "900", color: "#38BDF8" }}>153</span>
-              <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.7)", textTransform: "uppercase", fontWeight: "700" }}>Municipios</span>
-            </div>
-            <div style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", padding: "8px 18px", borderRadius: "14px", textAlign: "center" }}>
-              <span style={{ display: "block", fontSize: "18px", fontWeight: "900", color: "#10B981" }}>3</span>
-              <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.7)", textTransform: "uppercase", fontWeight: "700" }}>Regiones</span>
-            </div>
-          </div>
-        </div>
+        {/* Columna 1: art4.png */}
+        <div style={{
+          backgroundImage: "url('/images/art4.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%"
+        }} />
+        {/* Columna 2: art5.png */}
+        <div style={{
+          backgroundImage: "url('/images/art5.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%"
+        }} />
+        {/* Columna 3: art3.jpeg */}
+        <div style={{
+          backgroundImage: "url('/images/art3.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100%",
+          width: "100%"
+        }} />
       </div>
 
-      <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "30px 20px 60px" }}>
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <Navbar activePage="mas-de-nicaragua" />
+
+      <main style={{ maxWidth: "1240px", margin: "0 auto", padding: "85px 20px 50px" }}>
 
         {/* Mapa Protagonista Principal */}
         <section>
@@ -435,17 +411,17 @@ export default function MasDeNicaraguaPage() {
             background: "rgba(15, 23, 42, 0.85)",
             border: "2px solid rgba(255, 215, 0, 0.25)",
             borderRadius: "24px",
-            padding: "20px",
+            padding: "16px 20px",
             boxShadow: "0 20px 50px rgba(0,0,0,0.5)",
             position: "relative"
           }}>
-            {/* Header de Controles del Mapa (Fijo sin desplazamientos) */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
+            {/* Header de Controles del Mapa con Título Integrado */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "12px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Icon name="map" size={22} color="#FFD700" />
-                <h2 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF" }}>
-                  Selecciona un Departamento
-                </h2>
+                <Icon name="book" size={22} color="#FFD700" />
+                <h1 style={{ margin: 0, fontSize: "clamp(16px, 2.2vw, 22px)", fontWeight: "900", color: "#FFFFFF", letterSpacing: "0.5px" }}>
+                  Enciclopedia Viva de sus <span style={{ color: "#FFD700" }}>17 departamentos</span>
+                </h1>
               </div>
 
               <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
@@ -483,10 +459,10 @@ export default function MasDeNicaraguaPage() {
                 {/* Filtros Rápidos de Regiones para Enfoque en el Mapa */}
                 <div style={{ display: "flex", gap: "6px" }}>
                   {[
-                    { name: "Todos", center: [-85.1, 12.8], zoom: 6.1 },
-                    { name: "Pacífico", icon: "waves", center: [-86.3, 12.1], zoom: 6.1 },
-                    { name: "Central", icon: "mountain", center: [-85.5, 12.9], zoom: 6.1 },
-                    { name: "Caribe", icon: "island", center: [-84.0, 13.5], zoom: 6.1 }
+                    { name: "Todos", center: [-85.15, 12.8], zoom: 6.25 },
+                    { name: "Pacífico", icon: "waves", center: [-86.3, 12.1], zoom: 6.25 },
+                    { name: "Central", icon: "mountain", center: [-85.5, 12.9], zoom: 6.25 },
+                    { name: "Caribe", icon: "island", center: [-84.0, 13.5], zoom: 6.25 }
                   ].map((reg) => {
                     const isActive = selectedRegion === reg.name;
                     return (
@@ -523,7 +499,7 @@ export default function MasDeNicaraguaPage() {
             </div>
 
             {/* Contenedor del Mapa Protagonista */}
-            <div style={{ position: "relative", width: "100%", height: "620px", borderRadius: "20px", overflow: "hidden" }}>
+            <div style={{ position: "relative", width: "100%", height: "clamp(560px, 72vh, 700px)", borderRadius: "20px", overflow: "hidden" }}>
               <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
 
               {/* Insignia Flotante Estática del Departamento Bajo el Cursor (sin mover la cabecera) */}
@@ -932,34 +908,42 @@ export default function MasDeNicaraguaPage() {
                     <span>Sitios Emblemáticos Imperdibles</span>
                   </h3>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
-                    {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => (
-                      <div key={idx} style={{
-                        background: "rgba(15, 23, 42, 0.8)",
-                        border: "1px solid rgba(255,255,255,0.12)",
-                        borderRadius: "18px",
-                        padding: "20px"
-                      }}>
-                        <div style={{
-                          height: "120px",
-                          borderRadius: "12px",
-                          background: "linear-gradient(135deg, rgba(20, 109, 158, 0.4) 0%, rgba(10, 25, 47, 0.8) 100%)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          marginBottom: "14px",
-                          border: "1px solid rgba(255,255,255,0.1)"
+                    {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => {
+                      const siteImg = getPointImage(lugar);
+                      return (
+                        <div key={idx} style={{
+                          background: "rgba(15, 23, 42, 0.8)",
+                          border: "1px solid rgba(255,255,255,0.12)",
+                          borderRadius: "18px",
+                          padding: "20px"
                         }}>
-                          <Icon name="landmark" size={38} color="#FFD700" />
-                        </div>
+                          <div style={{
+                            height: "135px",
+                            borderRadius: "12px",
+                            overflow: "hidden",
+                            marginBottom: "14px",
+                            position: "relative",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                            background: "#0F172A"
+                          }}>
+                            <img
+                              src={siteImg}
+                              alt={lugar.nombre}
+                              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                              loading="lazy"
+                            />
+                            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(15,23,42,0.7) 100%)" }} />
+                          </div>
 
-                        <h4 style={{ fontSize: "17px", fontWeight: "800", color: "#FFD700", margin: "0 0 6px" }}>
-                          {lugar.nombre}
-                        </h4>
-                        <p style={{ margin: 0, fontSize: "13.5px", color: "rgba(255,255,255,0.8)", lineHeight: 1.5 }}>
-                          {lugar.desc}
-                        </p>
-                      </div>
-                    ))}
+                          <h4 style={{ fontSize: "17px", fontWeight: "800", color: "#FFD700", margin: "0 0 6px" }}>
+                            {lugar.nombre}
+                          </h4>
+                          <p style={{ margin: 0, fontSize: "13.5px", color: "rgba(255,255,255,0.8)", lineHeight: 1.5 }}>
+                            {lugar.desc}
+                          </p>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -1069,6 +1053,7 @@ export default function MasDeNicaraguaPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

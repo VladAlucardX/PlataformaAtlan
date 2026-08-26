@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/lib/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import NotificationDropdown from "@/components/ui/NotificationDropdown";
@@ -11,13 +12,22 @@ import Icon from "@/components/ui/Icon";
 
 import { getProfileSlug } from "@/lib/profileUtils";
 
-export default function Navbar({ activePage = "inicio", session, perfil, onLogout }) {
+export default function Navbar({ activePage = "inicio", session: sessionProp, perfil: perfilProp, onLogout }) {
+  // Obtener sesión del contexto global (fuente de verdad)
+  // Props se mantienen como fallback para compatibilidad
+  const auth = useAuth();
+  const session = sessionProp || auth.session;
+  const perfil = perfilProp || auth.perfil;
   const { t, lang } = useTranslation();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [hasBusinesses, setHasBusinesses] = useState(false);
+  const [navVisible, setNavVisible] = useState(true);
   const dropdownRef = useRef(null);
+  const hideTimerRef = useRef(null);
+  const lastScrollYRef = useRef(0);
+  const touchStartYRef = useRef(0);
 
   // Comprobar si el usuario posee 1 o más negocios
   useEffect(() => {
@@ -64,23 +74,42 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
       onLogout();
       return;
     }
-    try {
-      await supabase.auth.signOut();
-      router.push("/login");
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
+    // Usar logout centralizado del AuthContext
+    await auth.logout();
+    router.push("/login");
   };
 
   const getProfileLabel = () => {
-    return perfil?.nombre_completo || perfil?.email?.split("@")[0] || (lang === "en" ? "My Profile" : "Mi Perfil");
+    if (perfil?.nombre_completo && perfil.nombre_completo.trim()) {
+      return perfil.nombre_completo.trim();
+    }
+    if (perfil?.nombre && perfil.nombre.trim()) {
+      return perfil.nombre.trim();
+    }
+    if (perfil?.full_name && perfil.full_name.trim()) {
+      return perfil.full_name.trim();
+    }
+    if (session?.user?.user_metadata?.nombre_completo && session.user.user_metadata.nombre_completo.trim()) {
+      return session.user.user_metadata.nombre_completo.trim();
+    }
+    if (session?.user?.user_metadata?.full_name && session.user.user_metadata.full_name.trim()) {
+      return session.user.user_metadata.full_name.trim();
+    }
+    if (session?.user?.user_metadata?.name && session.user.user_metadata.name.trim()) {
+      return session.user.user_metadata.name.trim();
+    }
+    if (perfil?.email || session?.user?.email) {
+      const email = perfil?.email || session?.user?.email;
+      return email.split("@")[0];
+    }
+    return lang === "en" ? "Profile" : "Perfil";
   };
 
   const communityProfileLink = perfil ? `/comunidad/perfil/${getProfileSlug(perfil)}` : (session?.user?.id ? `/comunidad/perfil/${session.user.id}` : "/comunidad");
 
   return (
     <nav className="atlan-navbar-header">
-      <div style={{
+      <div className="atlan-navbar-inner" style={{
         width: "100%",
         padding: "0 32px",
         height: "64px",
@@ -311,16 +340,34 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
           )}
         </div>
 
-        {/* Mobile Hamburger */}
-        <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        {/* Mobile Hamburger Button */}
+        <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           {session && <NotificationDropdown session={session} />}
           <LanguageToggle variant="icon" />
           <button
+            type="button"
             onClick={() => setMenuOpen(!menuOpen)}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              setMenuOpen(!menuOpen);
+            }}
             aria-label="Menu"
-            style={{ background: "none", border: "none", color: "var(--atlan-text-primary)", cursor: "pointer", padding: "8px" }}
+            style={{
+              background: menuOpen ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.08)",
+              border: "1.5px solid rgba(255, 215, 0, 0.4)",
+              borderRadius: "12px",
+              color: "#FFD700",
+              cursor: "pointer",
+              padding: "8px 10px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.25)",
+              transition: "all 0.2s ease",
+              touchAction: "manipulation"
+            }}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2.5" strokeLinecap="round">
               {menuOpen ? <path d="M6 6l12 12M6 18L18 6" /> : (
                 <>
                   <line x1="3" y1="6" x2="21" y2="6" />
@@ -333,9 +380,29 @@ export default function Navbar({ activePage = "inicio", session, perfil, onLogou
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer Dropdown Overlay */}
       {menuOpen && (
-        <div style={{ padding: "12px 24px 20px", display: "flex", flexDirection: "column", gap: "10px", borderTop: "1px solid rgba(20,109,158,0.08)" }} className="animate-fade-in-down hide-desktop">
+        <div
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            right: 0,
+            width: "100%",
+            padding: "20px 24px 28px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+            background: "#0A192F",
+            borderTop: "1.5px solid rgba(255, 215, 0, 0.3)",
+            borderBottom: "1.5px solid rgba(255, 215, 0, 0.3)",
+            boxShadow: "0 20px 50px rgba(0, 0, 0, 0.95)",
+            maxHeight: "calc(100vh - 70px)",
+            overflowY: "auto",
+            zIndex: 99999
+          }}
+          className="animate-fade-in-down hide-desktop"
+        >
           <Link href="/" className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="home" size={16} /> {lang === "en" ? "Home" : "Inicio"}</Link>
           <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="map" size={16} /> {t("nav.map")}</Link>
           <Link href="/departamentos" className={`nav-pill-link ${activePage === "departamentos" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="star" size={16} /> {lang === "en" ? "Ranking" : "Ranking"}</Link>
