@@ -1913,8 +1913,8 @@ html body .mapboxgl-ctrl-directions tr {
 }
 
 .web-category-trigger-btn {
+  display: none !important;
   pointer-events: auto;
-  display: flex;
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
@@ -1989,13 +1989,20 @@ html body .mapboxgl-ctrl-directions tr {
   scroll-behavior: smooth;
   flex: 1;
   min-width: 0;
+  cursor: grab;
+  user-select: none;
+}
+.filter-bar:active {
+  cursor: grabbing;
 }
 .filter-bar::-webkit-scrollbar {
   display: none;
 }
 
+/* Mostrar botón de Categorías únicamente cuando la pantalla web es más pequeña (Tablet / ventana reducida de 769px a 1200px) */
 @media (min-width: 769px) and (max-width: 1200px) {
   .web-category-trigger-btn {
+    display: flex !important;
     animation: glowPulseGold 2.5s infinite ease-in-out;
   }
 

@@ -64,6 +64,32 @@ export default function MapaTuristico() {
   const selectedPointRef = useRef(null);
   const lastRecalculateTimeRef = useRef(0);
   const filterScrollRef = useRef(null);
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+
+  const handleMouseDownFilterBar = (e) => {
+    if (!filterScrollRef.current) return;
+    isDraggingRef.current = true;
+    startXRef.current = e.pageX - filterScrollRef.current.offsetLeft;
+    scrollLeftRef.current = filterScrollRef.current.scrollLeft;
+  };
+
+  const handleMouseLeaveFilterBar = () => {
+    isDraggingRef.current = false;
+  };
+
+  const handleMouseUpFilterBar = () => {
+    isDraggingRef.current = false;
+  };
+
+  const handleMouseMoveFilterBar = (e) => {
+    if (!isDraggingRef.current || !filterScrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - filterScrollRef.current.offsetLeft;
+    const walk = (x - startXRef.current) * 1.5;
+    filterScrollRef.current.scrollLeft = scrollLeftRef.current - walk;
+  };
 
 
   // --- ESTADO DE REACT ---
@@ -2728,7 +2754,14 @@ export default function MapaTuristico() {
             </span>
           </button>
 
-          <div className="filter-bar" ref={filterScrollRef}>
+          <div
+            className="filter-bar"
+            ref={filterScrollRef}
+            onMouseDown={handleMouseDownFilterBar}
+            onMouseLeave={handleMouseLeaveFilterBar}
+            onMouseUp={handleMouseUpFilterBar}
+            onMouseMove={handleMouseMoveFilterBar}
+          >
             {/* Píldora "Todas" */}
             <button
               onClick={() => aplicarFiltro(null)}
