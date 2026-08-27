@@ -1407,17 +1407,55 @@ export default function MapaTuristico() {
     return t;
   };
 
-  const getManeuverIcon = (type, modifier) => {
+  const getManeuverIcon = (type = '', modifier = '', instruction = '') => {
     const mod = (modifier || '').toLowerCase();
     const typ = (type || '').toLowerCase();
+    const text = (instruction || '').toLowerCase();
 
-    if (typ.includes('arrive') || typ.includes('destination')) return '🏁';
-    if (typ.includes('roundabout') || typ.includes('rotary')) return '🔄';
-    if (mod.includes('sharp right')) return '↳';
-    if (mod.includes('sharp left')) return '↲';
-    if (mod.includes('slight right') || mod.includes('right')) return '↱';
-    if (mod.includes('slight left') || mod.includes('left')) return '↰';
-    if (mod.includes('uturn')) return '↩';
+    // 1. Llegada al destino
+    if (typ.includes('arrive') || typ.includes('destination') || text.includes('llegad') || text.includes('destino') || text.includes('arrived')) {
+      return '🏁';
+    }
+
+    // 2. Rotonda / Glorieta
+    if (typ.includes('roundabout') || typ.includes('rotary') || text.includes('rotonda') || text.includes('roundabout') || text.includes('glorieta')) {
+      return '🔄';
+    }
+
+    // 3. Giro en U / Retorno
+    if (mod.includes('uturn') || text.includes('vuelta en u') || text.includes('giro en u') || text.includes('retorno') || text.includes('u-turn')) {
+      return '↩';
+    }
+
+    // 4. Giro pronunciado / agudo
+    if (mod.includes('sharp right') || text.includes('giro pronunciado a la derecha')) return '↳';
+    if (mod.includes('sharp left') || text.includes('giro pronunciado a la izquierda')) return '↲';
+
+    // 5. Giro a la derecha (normal, pronunciado o leve)
+    if (
+      mod.includes('right') ||
+      text.includes('derecha') ||
+      text.includes('right') ||
+      text.includes('vuelta a la derecha') ||
+      text.includes('gire a la derecha')
+    ) {
+      if (mod.includes('slight') || text.includes('leve')) return '↗';
+      return '↱';
+    }
+
+    // 6. Giro a la izquierda (normal, pronunciado o leve)
+    if (
+      mod.includes('left') ||
+      text.includes('izquierda') ||
+      text.includes('left') ||
+      text.includes('vuelta a la izquierda') ||
+      text.includes('gire a la izquierda')
+    ) {
+      if (mod.includes('slight') || text.includes('leve')) return '↖';
+      return '↰';
+    }
+
+    // 7. Seguir recto / mantener rumbo por defecto
     return '⬆';
   };
 
@@ -1428,13 +1466,15 @@ export default function MapaTuristico() {
       const [mLng, mLat] = step.maneuver.location;
       const mType = step.maneuver.type || '';
       const mModifier = step.maneuver.modifier || '';
+      const rawInstr = step.maneuver.instruction || '';
+      const cleanInstr = limpiarInstruccion(rawInstr);
       list.push({
         lng: mLng,
         lat: mLat,
-        instruction: limpiarInstruccion(step.maneuver.instruction),
+        instruction: cleanInstr,
         type: mType,
         modifier: mModifier,
-        icon: getManeuverIcon(mType, mModifier),
+        icon: getManeuverIcon(mType, mModifier, cleanInstr || rawInstr),
         segmentDist: step.distance || 0,
         announcedFar: false,
         announcedMid: false,
@@ -1470,7 +1510,7 @@ export default function MapaTuristico() {
       instruction: next.instruction,
       distance: dist,
       distanceFormatted: formatDistanceDisplay(dist),
-      icon: next.icon || getManeuverIcon(next.type, next.modifier)
+      icon: next.icon || getManeuverIcon(next.type, next.modifier, next.instruction)
     });
 
     if (dist < 50 && !next.announcedArrive) {
@@ -2025,7 +2065,7 @@ export default function MapaTuristico() {
             instruction: instr,
             distance: dist,
             distanceFormatted: formatDistanceDisplay(dist),
-            icon: getManeuverIcon(type, modifier)
+            icon: getManeuverIcon(type, modifier, instr || firstStep.maneuver?.instruction)
           });
 
           if (instr && instr !== lastSpokenRef.current) {
