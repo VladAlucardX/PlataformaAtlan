@@ -557,8 +557,9 @@ export default function MapaTuristico() {
             center: [currLng, currLat],
             zoom: 15.5,
             pitch: 45,
-            speed: 0.9,
-            curve: 1.25,
+            speed: 0.45,
+            curve: 1.4,
+            duration: 2200,
             padding: { top: 0, bottom: 0, left: 0, right: 0 },
             essential: true
           });
