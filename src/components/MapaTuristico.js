@@ -1397,15 +1397,13 @@ export default function MapaTuristico() {
     let t = texto;
     t = t.replace(/\b(\d+)\s*k\b/gi, "$1 km");
     t = t.replace(/\b(\d+)\s*km\b/gi, "$1 km");
-    t = t.replace(/en dirección al? (oeste|este|norte|sur)/gi, "recto");
-    t = t.replace(/hacia el (oeste|este|norte|sur)/gi, "recto");
-    t = t.replace(/vuelta al oeste/gi, "da vuelta a la derecha");
-    t = t.replace(/vuelta al este/gi, "da vuelta a la izquierda");
-    t = t.replace(/vuelta al norte/gi, "siga recto");
-    t = t.replace(/vuelta al sur/gi, "siga recto");
+    t = t.replace(/en dirección (al?|hacia el?) (norte|sur|este|oeste)/gi, "recto");
+    t = t.replace(/hacia el (norte|sur|este|oeste)/gi, "recto");
+    t = t.replace(/dirígete (al|hacia el) (norte|sur|este|oeste)/gi, "siga recto");
+    t = t.replace(/conduzca (al|hacia el) (norte|sur|este|oeste)/gi, "siga recto");
     t = t.replace(/\s*\.\s*$/g, "");
     t = t.replace(/\s+/g, " ").trim();
-    if (t.toLowerCase() === 'conduzca' || t.toLowerCase() === 'conduzca.' || t.toLowerCase() === 'siga') {
+    if (t.toLowerCase() === 'conduzca' || t.toLowerCase() === 'conduzca.' || t.toLowerCase() === 'siga' || t.toLowerCase() === 'conduzca recto') {
       t = 'Siga recto';
     }
     return t;
@@ -1432,34 +1430,36 @@ export default function MapaTuristico() {
     }
 
     // 4. Giro pronunciado / agudo
-    if (mod.includes('sharp right') || text.includes('giro pronunciado a la derecha')) return '↳';
-    if (mod.includes('sharp left') || text.includes('giro pronunciado a la izquierda')) return '↲';
+    if (mod.includes('sharp right') || text.includes('giro pronunciado a la derecha') || text.includes('doble bruscamente a la derecha')) return '↳';
+    if (mod.includes('sharp left') || text.includes('giro pronunciado a la izquierda') || text.includes('doble bruscamente a la izquierda')) return '↲';
 
-    // 5. Giro a la derecha (normal, pronunciado o leve)
+    // 5. Giro a la derecha (normal o leve)
     if (
       mod.includes('right') ||
-      text.includes('derecha') ||
-      text.includes('right') ||
+      text.includes('gire a la derecha') ||
       text.includes('vuelta a la derecha') ||
-      text.includes('gire a la derecha')
+      text.includes('doble a la derecha') ||
+      text.includes('doblar a la derecha') ||
+      text.includes('turn right')
     ) {
       if (mod.includes('slight') || text.includes('leve')) return '↗';
       return '↱';
     }
 
-    // 6. Giro a la izquierda (normal, pronunciado o leve)
+    // 6. Giro a la izquierda (normal o leve)
     if (
       mod.includes('left') ||
-      text.includes('izquierda') ||
-      text.includes('left') ||
+      text.includes('gire a la izquierda') ||
       text.includes('vuelta a la izquierda') ||
-      text.includes('gire a la izquierda')
+      text.includes('doble a la izquierda') ||
+      text.includes('doblar a la izquierda') ||
+      text.includes('turn left')
     ) {
       if (mod.includes('slight') || text.includes('leve')) return '↖';
       return '↰';
     }
 
-    // 7. Seguir recto / mantener rumbo por defecto
+    // 7. Seguir recto por defecto
     return '⬆';
   };
 
