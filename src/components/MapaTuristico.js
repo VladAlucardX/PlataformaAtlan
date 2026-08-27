@@ -1508,8 +1508,11 @@ export default function MapaTuristico() {
     let next = maneuvers[0];
     let dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
 
-    // Avanzar a la siguiente maniobra cuando el vehículo alcance el punto de giro (< 35m)
-    if (dist < 35 && maneuvers.length > 1) {
+    // Detectar si el vehículo alcanzó o sobrepasó la maniobra actual
+    const isCloseToTurn = dist < 50;
+    const isPassingTurn = next.lastDist !== undefined && dist > next.lastDist && next.lastDist < 100;
+
+    if ((isCloseToTurn || isPassingTurn) && maneuvers.length > 1) {
       if (!next.announcedArrive) {
         next.announcedArrive = true;
         speakInstruction(next.instruction, true);
@@ -1518,19 +1521,32 @@ export default function MapaTuristico() {
       maneuvers.shift();
       next = maneuvers[0];
       dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
+    } else {
+      next.lastDist = dist;
     }
 
-    const icon = next.icon || getManeuverIcon(next.type, next.modifier, next.instruction);
-    const now = Date.now();
-    const silenceSec = (now - lastAnnouncementTimeRef.current) / 1000;
+    const nextIcon = next.icon || getManeuverIcon(next.type, next.modifier, next.instruction);
+    const isArrive = next.type?.includes('arrive') || next.type?.includes('destination') || nextIcon === '🏁';
+
+    // Si la próxima maniobra de giro está a más de 300m (y no es la llegada), mostramos "Siga recto"
+    let currentIcon = nextIcon;
+    let currentInstr = next.instruction;
+
+    if (dist > 300 && !isArrive) {
+      currentIcon = '⬆';
+      currentInstr = lang === 'en' ? 'Continue straight' : 'Siga recto';
+    }
 
     // Actualizar la maniobra en tiempo real para reflejar el icono y la distancia exacta en la UI
     setCurrentManeuver({
-      instruction: next.instruction,
+      instruction: currentInstr,
       distance: dist,
       distanceFormatted: formatDistanceDisplay(dist),
-      icon: icon
+      icon: currentIcon
     });
+
+    const now = Date.now();
+    const silenceSec = (now - lastAnnouncementTimeRef.current) / 1000;
 
     if (dist < 300 && !next.announcedClose) {
       next.announcedClose = true;
@@ -1557,7 +1573,7 @@ export default function MapaTuristico() {
     }
 
     if (silenceSec >= 12 && dist > 300 && dist < 5000) {
-      const msg = lang === 'en' ? `Continue straight. In ${formatDistance(dist)}, ${next.instruction}` : `Continúe recto. En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
+      const msg = lang === 'en' ? `Continue straight.` : `Continúe recto.`;
       speakInstruction(msg);
       lastAnnouncementTimeRef.current = now;
     }
@@ -1667,7 +1683,7 @@ export default function MapaTuristico() {
         let target = index + 1;
         while (target < pts.length - 1) {
           const gap = calcDistanceMeters(pts[index], pts[target]);
-          if (gap >= 50) break;
+          if (gap >= 25) break;
           target++;
         }
 
@@ -1693,7 +1709,7 @@ export default function MapaTuristico() {
         });
 
         index = target;
-      }, 2000);
+      }, 1200);
     }, 4000);
   };
 
