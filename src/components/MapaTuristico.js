@@ -1465,10 +1465,13 @@ export default function MapaTuristico() {
 
   const buildManeuverList = (steps) => {
     const list = [];
-    steps.forEach((step) => {
+    steps.forEach((step, idx) => {
       if (!step.maneuver?.instruction) return;
+      const mType = (step.maneuver.type || '').toLowerCase();
+      // Omitir la maniobra de salida (depart) en el punto de origen (idx === 0) para enfocarse en los giros reales de la ruta
+      if (idx === 0 && (mType.includes('depart') || mType.includes('head'))) return;
+
       const [mLng, mLat] = step.maneuver.location;
-      const mType = step.maneuver.type || '';
       const mModifier = step.maneuver.modifier || '';
       const rawInstr = step.maneuver.instruction || '';
       const cleanInstr = limpiarInstruccion(rawInstr);
@@ -1607,17 +1610,12 @@ export default function MapaTuristico() {
       return;
     }
 
-    let coords = rutaCoordenadasRef.current;
-
-    if (!coords || coords.length === 0) {
-      coords = await fetchRouteCoords(currentPosRef.current, destinationRef.current);
-      rutaCoordenadasRef.current = coords;
-    }
-
+    let coords = await fetchRouteCoords(currentPosRef.current, destinationRef.current);
     if (!coords || coords.length === 0) {
       speakInstruction(t('map.noRoute'), true);
       return;
     }
+    rutaCoordenadasRef.current = coords;
 
     setIsDemoRunning(true);
     isDemoRunningRef.current = true;
