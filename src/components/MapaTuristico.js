@@ -866,14 +866,7 @@ export default function MapaTuristico() {
     setShowResults(false);
     setSearchQuery('');
     if (mapRef.current && punto && punto.lng !== undefined && punto.lat !== undefined && !isNaN(punto.lng) && !isNaN(punto.lat)) {
-      mapRef.current.flyTo({
-        center: [punto.lng, punto.lat],
-        zoom: 16.5,
-        pitch: 45,
-        speed: 0.85,    // Velocidad optimizada para permitir la descarga de tiles en segundo plano
-        curve: 1.15,    // Trayectoria más plana que evita un zoom-out excesivo y recarga de texturas
-        essential: true
-      });
+      mapRef.current.stop(); // Detener cualquier vuelo previo para que el mouse quede liberado
       cargarPuntosCercanos(punto.lng, punto.lat, filtroCategoria);
       setSelectedPoint(punto);
     }
@@ -1297,9 +1290,13 @@ export default function MapaTuristico() {
         if (isInitialFit && mapRef.current && coords.length > 0 && !isInteractionPausedRef.current) {
           const bounds = new mapboxgl.LngLatBounds();
           coords.forEach(coord => bounds.extend(coord));
+          mapRef.current.stop();
+          const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
           mapRef.current.fitBounds(bounds, {
-            padding: { top: 100, bottom: 100, left: 100, right: 100 },
-            duration: 1200,
+            padding: isMobile
+              ? { top: 140, bottom: 240, left: 30, right: 30 }
+              : { top: 120, bottom: 120, left: 120, right: 380 },
+            duration: 1600,
             essential: true
           });
         }
@@ -2004,6 +2001,9 @@ export default function MapaTuristico() {
         pauseCamera();
       }
     };
+    mapRef.current.on('mousedown', () => {
+      clearCinematicTimeouts();
+    });
     mapRef.current.on('movestart', handleMoveStart);
     mapRef.current.on('dragstart', pauseCamera);
     mapRef.current.on('touchstart', pauseCamera);
