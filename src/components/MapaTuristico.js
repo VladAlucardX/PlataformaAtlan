@@ -1397,13 +1397,17 @@ export default function MapaTuristico() {
     let t = texto;
     t = t.replace(/\b(\d+)\s*k\b/gi, "$1 km");
     t = t.replace(/\b(\d+)\s*km\b/gi, "$1 km");
-    t = t.replace(/en dirección al? (oeste|este|norte|sur)/gi, "");
-    t = t.replace(/hacia el (oeste|este|norte|sur)/gi, "");
+    t = t.replace(/en dirección al? (oeste|este|norte|sur)/gi, "recto");
+    t = t.replace(/hacia el (oeste|este|norte|sur)/gi, "recto");
     t = t.replace(/vuelta al oeste/gi, "da vuelta a la derecha");
     t = t.replace(/vuelta al este/gi, "da vuelta a la izquierda");
     t = t.replace(/vuelta al norte/gi, "siga recto");
     t = t.replace(/vuelta al sur/gi, "siga recto");
+    t = t.replace(/\s*\.\s*$/g, "");
     t = t.replace(/\s+/g, " ").trim();
+    if (t.toLowerCase() === 'conduzca' || t.toLowerCase() === 'conduzca.' || t.toLowerCase() === 'siga') {
+      t = 'Siga recto';
+    }
     return t;
   };
 
@@ -1495,31 +1499,35 @@ export default function MapaTuristico() {
   };
 
   const checkDistanceAnnouncements = (currentLng, currentLat) => {
-    const maneuvers = maneuversRef.current;
-    if (!maneuvers.length) return;
+    let maneuvers = maneuversRef.current;
+    if (!maneuvers || !maneuvers.length) return;
 
-    const next = maneuvers[0];
-    if (!next) return;
+    let next = maneuvers[0];
+    let dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
 
-    const dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
+    // Avanzar a la siguiente maniobra cuando el vehículo alcance el punto de giro (< 35m)
+    if (dist < 35 && maneuvers.length > 1) {
+      if (!next.announcedArrive) {
+        next.announcedArrive = true;
+        speakInstruction(next.instruction, true);
+        lastAnnouncementTimeRef.current = Date.now();
+      }
+      maneuvers.shift();
+      next = maneuvers[0];
+      dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
+    }
+
+    const icon = next.icon || getManeuverIcon(next.type, next.modifier, next.instruction);
     const now = Date.now();
     const silenceSec = (now - lastAnnouncementTimeRef.current) / 1000;
 
-    // Actualizar maniobra y distancia actual para el indicador de giro estilo Waze
+    // Actualizar la maniobra en tiempo real para reflejar el icono y la distancia exacta en la UI
     setCurrentManeuver({
       instruction: next.instruction,
       distance: dist,
       distanceFormatted: formatDistanceDisplay(dist),
-      icon: next.icon || getManeuverIcon(next.type, next.modifier, next.instruction)
+      icon: icon
     });
-
-    if (dist < 50 && !next.announcedArrive) {
-      next.announcedArrive = true;
-      speakInstruction(next.instruction, true);
-      lastAnnouncementTimeRef.current = now;
-      maneuvers.shift();
-      return;
-    }
 
     if (dist < 300 && !next.announcedClose) {
       next.announcedClose = true;
