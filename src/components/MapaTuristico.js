@@ -62,6 +62,7 @@ export default function MapaTuristico() {
   const isAddingPointRef = useRef(false);
   const cinematicTimeoutsRef = useRef([]);
   const selectedPointRef = useRef(null);
+  const prevSelectedPointRef = useRef(null);
   const lastRecalculateTimeRef = useRef(0);
 
 
@@ -519,9 +520,11 @@ export default function MapaTuristico() {
 
   // Sincronizar el ref del punto seleccionado y controlar el recentrado de navegación
   useEffect(() => {
+    const wasSelected = prevSelectedPointRef.current;
     selectedPointRef.current = selectedPoint;
 
     if (selectedPoint) {
+      prevSelectedPointRef.current = selectedPoint;
       // Si el usuario abre detalles, cancelamos cualquier animación inicial de aproximación
       if (cinematicTimeoutsRef.current.length > 0) {
         console.log('[Atlan] Cancelando animación cinematográfica inicial por apertura de punto');
@@ -541,19 +544,33 @@ export default function MapaTuristico() {
           essential: true
         });
       }
-    } else if (isNavigatingRef.current) {
-      // Si se cierra el panel de detalles y estamos en navegación activa,
-      // reanudamos el centrado de la cámara de manera inmediata.
-      isInteractionPausedRef.current = false;
-      if (mapRef.current) {
-        mapRef.current.flyTo({
-          center: currentPosRef.current,
-          zoom: 16.5,
-          pitch: 60,
-          speed: 0.85,  // Velocidad óptima para renderizado
-          curve: 1.1,   // Trayectoria plana para transiciones fluidas
-          essential: true
-        });
+    } else {
+      // Si se cierra el panel de detalles (de un punto previamente seleccionado),
+      // recargar los marcadores en el área actual para asegurar que todos los demás puntos reaparezcan
+      if (wasSelected) {
+        prevSelectedPointRef.current = null;
+        if (mapRef.current) {
+          const center = mapRef.current.getCenter();
+          cargarPuntosCercanos(center.lng, center.lat, filtroCategoria);
+        } else if (currentPosRef.current) {
+          cargarPuntosCercanos(currentPosRef.current[0], currentPosRef.current[1], filtroCategoria);
+        }
+      }
+
+      if (isNavigatingRef.current) {
+        // Si se cierra el panel de detalles y estamos en navegación activa,
+        // reanudamos el centrado de la cámara de manera inmediata.
+        isInteractionPausedRef.current = false;
+        if (mapRef.current) {
+          mapRef.current.flyTo({
+            center: currentPosRef.current,
+            zoom: 16.5,
+            pitch: 60,
+            speed: 0.85,  // Velocidad óptima para renderizado
+            curve: 1.1,   // Trayectoria plana para transiciones fluidas
+            essential: true
+          });
+        }
       }
     }
   }, [selectedPoint]);
@@ -2179,7 +2196,8 @@ export default function MapaTuristico() {
   // Recargar marcadores al cambiar categoría
   const aplicarFiltro = (cat) => {
     setFiltroCategoria(cat);
-    cargarPuntosCercanos(currentPosRef.current[0], currentPosRef.current[1], cat);
+    const center = mapRef.current ? [mapRef.current.getCenter().lng, mapRef.current.getCenter().lat] : currentPosRef.current;
+    cargarPuntosCercanos(center[0], center[1], cat);
   };
 
   const handleRecenter = () => {
