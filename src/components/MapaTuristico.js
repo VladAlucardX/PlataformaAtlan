@@ -546,10 +546,10 @@ export default function MapaTuristico() {
         if (mapRef.current && lastPoint && lastPoint.lng !== undefined && lastPoint.lat !== undefined) {
           mapRef.current.easeTo({
             center: [lastPoint.lng, lastPoint.lat],
-            zoom: 14.2,
-            pitch: 30,
+            zoom: 12.8,
+            pitch: 25,
             padding: { top: 0, bottom: 0, left: 0, right: 0 },
-            duration: 900,
+            duration: 1800,
             essential: true
           });
           cargarPuntosCercanos(lastPoint.lng, lastPoint.lat, filtroCategoria);
@@ -557,10 +557,10 @@ export default function MapaTuristico() {
           const center = mapRef.current.getCenter();
           mapRef.current.easeTo({
             center: [center.lng, center.lat],
-            zoom: 14.2,
-            pitch: 30,
+            zoom: 12.8,
+            pitch: 25,
             padding: { top: 0, bottom: 0, left: 0, right: 0 },
-            duration: 900,
+            duration: 1800,
             essential: true
           });
           cargarPuntosCercanos(center.lng, center.lat, filtroCategoria);
