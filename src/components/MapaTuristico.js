@@ -147,6 +147,7 @@ export default function MapaTuristico() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [routeInfo, setRouteInfo] = useState(null);
   const [previewRouteInfo, setPreviewRouteInfo] = useState(null);
 
@@ -2477,7 +2478,13 @@ export default function MapaTuristico() {
                 placeholder={lang === 'en' ? 'Search destinations, places, categories...' : 'Buscar destinos, lugares, categorías...'}
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
-                onFocus={() => setShowResults(true)}
+                onFocus={() => {
+                  setIsSearchFocused(true);
+                  setShowResults(true);
+                }}
+                onBlur={() => {
+                  setTimeout(() => setIsSearchFocused(false), 250);
+                }}
                 style={{
                   width: '100%',
                   background: 'transparent',
@@ -2727,8 +2734,8 @@ export default function MapaTuristico() {
         </div>
       )}
 
-      {/* Panel de filtros */}
-      {!selectedPoint && !routeInfo && !isDemoRunning && (
+      {/* Panel de filtros (se oculta si hay punto seleccionado, ruta en curso, demo activa, o si se usa el buscador) */}
+      {!selectedPoint && !routeInfo && !isDemoRunning && !isSearchFocused && !searchQuery.trim() && !showResults && (
         <div className="filter-bar-wrapper">
           <button
             type="button"
