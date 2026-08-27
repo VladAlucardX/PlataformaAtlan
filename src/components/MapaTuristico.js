@@ -64,6 +64,7 @@ export default function MapaTuristico() {
   const selectedPointRef = useRef(null);
   const lastRecalculateTimeRef = useRef(0);
   const filterScrollRef = useRef(null);
+  const searchContainerRef = useRef(null);
   const isDraggingRef = useRef(false);
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
@@ -90,6 +91,25 @@ export default function MapaTuristico() {
     const walk = (x - startXRef.current) * 1.5;
     filterScrollRef.current.scrollLeft = scrollLeftRef.current - walk;
   };
+
+  // Escuchar clics fuera del buscador para ocultar resultados y restaurar categorías al hacer clic en el mapa
+  useEffect(() => {
+    const handleClickOutsideSearch = (event) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        setShowResults(false);
+        setIsSearchFocused(false);
+        setSearchQuery('');
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutsideSearch);
+    document.addEventListener('touchstart', handleClickOutsideSearch);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideSearch);
+      document.removeEventListener('touchstart', handleClickOutsideSearch);
+    };
+  }, []);
 
 
   // --- ESTADO DE REACT ---
@@ -833,6 +853,7 @@ export default function MapaTuristico() {
 
   const selectSearchResult = (punto) => {
     setShowResults(false);
+    setIsSearchFocused(false);
     setSearchQuery('');
     if (mapRef.current) {
       mapRef.current.flyTo({
@@ -2458,7 +2479,7 @@ export default function MapaTuristico() {
           </Link>
 
           {/* BUSCADOR GLOBAL GRANDE, AMPLIO Y DESTACADO */}
-          <div style={{ flex: 1, margin: '0 24px', position: 'relative' }}>
+          <div ref={searchContainerRef} style={{ flex: 1, margin: '0 24px', position: 'relative' }}>
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -2480,10 +2501,7 @@ export default function MapaTuristico() {
                 onChange={(e) => handleSearch(e.target.value)}
                 onFocus={() => {
                   setIsSearchFocused(true);
-                  setShowResults(true);
-                }}
-                onBlur={() => {
-                  setTimeout(() => setIsSearchFocused(false), 250);
+                  if (searchQuery.trim()) setShowResults(true);
                 }}
                 style={{
                   width: '100%',
@@ -2497,7 +2515,11 @@ export default function MapaTuristico() {
               />
               {searchQuery && (
                 <button
-                  onClick={() => handleSearch('')}
+                  onClick={() => {
+                    handleSearch('');
+                    setShowResults(false);
+                    setIsSearchFocused(false);
+                  }}
                   style={{
                     background: 'rgba(255,255,255,0.12)',
                     border: 'none',
