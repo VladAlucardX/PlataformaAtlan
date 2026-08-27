@@ -1528,13 +1528,19 @@ export default function MapaTuristico() {
     const nextIcon = next.icon || getManeuverIcon(next.type, next.modifier, next.instruction);
     const isArrive = next.type?.includes('arrive') || next.type?.includes('destination') || nextIcon === '🏁';
 
-    // Si la próxima maniobra de giro está a más de 300m (y no es la llegada), mostramos "Siga recto"
+    // Si la próxima maniobra de giro está a más de 300m (y no es la llegada), mostramos "Siga recto" / "Continúe en [Carretera]"
     let currentIcon = nextIcon;
     let currentInstr = next.instruction;
 
     if (dist > 300 && !isArrive) {
       currentIcon = '⬆';
-      currentInstr = lang === 'en' ? 'Continue straight' : 'Siga recto';
+      const matchContinue = next.instruction.match(/(continúe|siga|conduzca)\s+(en|por)?\s*([^.]+)/i);
+      if (matchContinue && matchContinue[3]) {
+        const roadName = matchContinue[3].trim();
+        currentInstr = lang === 'en' ? `Continue on ${roadName}` : `Continúe en ${roadName}`;
+      } else {
+        currentInstr = lang === 'en' ? 'Continue straight' : 'Siga recto';
+      }
     }
 
     // Actualizar la maniobra en tiempo real para reflejar el icono y la distancia exacta en la UI
