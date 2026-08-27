@@ -1358,18 +1358,50 @@ export default function MapaTuristico() {
     return t;
   };
 
+  // Genera un ícono SVG de flecha direccional que rota según la maniobra
   const getManeuverIcon = (type, modifier) => {
     const mod = (modifier || '').toLowerCase();
     const typ = (type || '').toLowerCase();
 
-    if (typ.includes('arrive') || typ.includes('destination')) return '🏁';
-    if (typ.includes('roundabout') || typ.includes('rotary')) return '🔄';
-    if (mod.includes('sharp right')) return '↳';
-    if (mod.includes('sharp left')) return '↲';
-    if (mod.includes('slight right') || mod.includes('right')) return '↱';
-    if (mod.includes('slight left') || mod.includes('left')) return '↰';
-    if (mod.includes('uturn')) return '↩';
-    return '⬆';
+    if (typ.includes('arrive') || typ.includes('destination')) return { emoji: '🏁', rotation: 0, isEmoji: true };
+    if (typ.includes('roundabout') || typ.includes('rotary')) return { emoji: '🔄', rotation: 0, isEmoji: true };
+    if (mod.includes('uturn')) return { rotation: 180, isEmoji: false };
+    if (mod.includes('sharp right')) return { rotation: 135, isEmoji: false };
+    if (mod.includes('sharp left')) return { rotation: -135, isEmoji: false };
+    if (mod.includes('slight right')) return { rotation: 45, isEmoji: false };
+    if (mod.includes('slight left')) return { rotation: -45, isEmoji: false };
+    if (mod.includes('right')) return { rotation: 90, isEmoji: false };
+    if (mod.includes('left')) return { rotation: -90, isEmoji: false };
+    if (typ.includes('straight') || typ.includes('depart') || mod.includes('straight')) return { rotation: 0, isEmoji: false };
+    return { rotation: 0, isEmoji: false };
+  };
+
+  // Renderizar ícono de maniobra como SVG rotado o emoji
+  const renderManeuverIcon = (iconData, size = 22) => {
+    if (!iconData) return <span style={{ fontSize: `${size}px` }}>⬆</span>;
+    if (iconData.isEmoji) return <span style={{ fontSize: `${size}px` }}>{iconData.emoji}</span>;
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{
+          transform: `rotate(${iconData.rotation}deg)`,
+          transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          flexShrink: 0,
+        }}
+      >
+        <path
+          d="M12 3L12 21M12 3L6 9M12 3L18 9"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
   };
 
   const buildManeuverList = (steps) => {
@@ -3085,42 +3117,7 @@ export default function MapaTuristico() {
           }}
           title={showDirectionsPopup ? (lang === 'en' ? 'Close route panel' : 'Cerrar panel de ruta') : (lang === 'en' ? 'Open route planner' : 'Trazar o ver ruta')}
         >
-          {routeInfo && !showDirectionsPopup ? (
-            /* MODO NAVEGACIÓN ACTIVA: Círculo de giro + Insignia de distancia */
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-              <div style={{
-                width: '54px',
-                height: '54px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                color: '#0A192F',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '28px',
-                fontWeight: '900',
-                boxShadow: '0 8px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.4)',
-                border: '2.5px solid #FFFFFF',
-                transition: 'transform 0.2s ease',
-              }}>
-                {currentManeuver?.icon || '⬆'}
-              </div>
-              <span style={{
-                background: '#0A192F',
-                color: '#FFD700',
-                border: '1.5px solid #FFD700',
-                padding: '2px 8px',
-                borderRadius: '12px',
-                fontSize: '11px',
-                fontWeight: '900',
-                boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
-                whiteSpace: 'nowrap'
-              }}>
-                {currentManeuver?.distanceFormatted || formatDistanceDisplay(routeInfo.distance)}
-              </span>
-            </div>
-          ) : (
-            /* MODO INICIAL: Botón flotante "Trazar Ruta" */
+          {/* Botón flotante "Trazar Ruta" / "Cerrar Ruta" (sin círculo duplicado de maniobra) */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -3138,7 +3135,6 @@ export default function MapaTuristico() {
               <span>🧭</span>
               <span>{showDirectionsPopup ? (lang === 'en' ? 'Close Route' : 'Cerrar Ruta') : (lang === 'en' ? 'Route A-B' : 'Trazar Ruta')}</span>
             </div>
-          )}
         </div>
       )}
 
@@ -4025,7 +4021,7 @@ export default function MapaTuristico() {
                 fontWeight: '900',
                 boxShadow: '0 4px 14px rgba(255, 215, 0, 0.4)',
               }}>
-                {currentManeuver.icon || '⬆'}
+                {renderManeuverIcon(currentManeuver.icon, 24)}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
