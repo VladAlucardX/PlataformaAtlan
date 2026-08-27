@@ -548,14 +548,24 @@ export default function MapaTuristico() {
       }
     } else {
       // Si se cierra el panel de detalles (de un punto previamente seleccionado),
-      // recargar los marcadores en el área actual para asegurar que todos los demás puntos reaparezcan
+      // realizar una animación suavizada (flyTo) que recentre y haga zoom a la ubicación actual del usuario
       if (wasSelected) {
         prevSelectedPointRef.current = null;
-        if (mapRef.current) {
+        if (mapRef.current && currentPosRef.current) {
+          const [currLng, currLat] = currentPosRef.current;
+          mapRef.current.flyTo({
+            center: [currLng, currLat],
+            zoom: 15.5,
+            pitch: 45,
+            speed: 0.9,
+            curve: 1.25,
+            padding: { top: 0, bottom: 0, left: 0, right: 0 },
+            essential: true
+          });
+          cargarPuntosCercanos(currLng, currLat, filtroCategoria);
+        } else if (mapRef.current) {
           const center = mapRef.current.getCenter();
           cargarPuntosCercanos(center.lng, center.lat, filtroCategoria);
-        } else if (currentPosRef.current) {
-          cargarPuntosCercanos(currentPosRef.current[0], currentPosRef.current[1], filtroCategoria);
         }
       }
 
