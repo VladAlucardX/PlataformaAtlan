@@ -341,13 +341,13 @@ export default function MapaTuristico() {
 
     const fetchPreviewRoute = () => {
       const [oLng, oLat] = currentPosRef.current;
-      actualizarPrevisualizacionRuta(oLng, oLat, puntoNorm.lng, puntoNorm.lat, false);
+      actualizarPrevisualizacionRuta(oLng, oLat, puntoNorm.lng, puntoNorm.lat, true);
     };
 
     // Dar un breve delay para asegurar que el mapa y los estilos estén listos
     const timer = setTimeout(() => {
       fetchPreviewRoute();
-    }, 400);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [selectedPoint]);
@@ -527,58 +527,29 @@ export default function MapaTuristico() {
 
     if (selectedPoint) {
       prevSelectedPointRef.current = selectedPoint;
+      isInteractionPausedRef.current = false; // Resetear siempre para permitir que la ruta se encuadre al seleccionar punto nuevo
+
       // Si el usuario abre detalles, cancelamos cualquier animación inicial de aproximación
       if (cinematicTimeoutsRef.current.length > 0) {
         console.log('[Atlan] Cancelando animación cinematográfica inicial por apertura de punto');
         cinematicTimeoutsRef.current.forEach(t => clearTimeout(t));
         cinematicTimeoutsRef.current = [];
       }
-
-      // Centrar suavemente la cámara con margen adaptativo según el dispositivo y distancia
-      if (mapRef.current) {
-        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-        const currentCenter = mapRef.current.getCenter();
-        const distMeters = calcDistanceMeters([currentCenter.lng, currentCenter.lat], [selectedPoint.lng, selectedPoint.lat]);
-
-        const targetPadding = isMobile
-          ? { top: 180, bottom: 260, left: 20, right: 20 }
-          : { top: 140, bottom: 80, left: 380, right: 40 };
-
-        if (distMeters > 3000) {
-          // Para distancias largas (>3km), vuelo 3D parabólico fluido y cinematográfico (zoom-out suave, vuelo y aterrizaje)
-          mapRef.current.flyTo({
-            center: [selectedPoint.lng, selectedPoint.lat],
-            zoom: 15.5,
-            pitch: 45,
-            speed: 0.5,
-            curve: 1.4,
-            padding: targetPadding,
-            essential: true
-          });
-        } else {
-          // Para distancias cortas (<=3km), deslizamiento lateral suave
-          mapRef.current.easeTo({
-            center: [selectedPoint.lng, selectedPoint.lat],
-            padding: targetPadding,
-            duration: 700,
-            essential: true
-          });
-        }
-      }
     } else {
       // Si se cierra el panel de detalles (de un punto previamente seleccionado),
       // realizar una animación suavizada (flyTo) que recentre y haga zoom a la ubicación actual del usuario
       if (wasSelected) {
         prevSelectedPointRef.current = null;
+        isInteractionPausedRef.current = false;
         if (mapRef.current && currentPosRef.current) {
           const [currLng, currLat] = currentPosRef.current;
           mapRef.current.flyTo({
             center: [currLng, currLat],
             zoom: 15.5,
             pitch: 45,
-            speed: 0.45,
+            speed: 0.3,
             curve: 1.4,
-            duration: 2200,
+            duration: 2800,
             padding: { top: 0, bottom: 0, left: 0, right: 0 },
             essential: true
           });
@@ -1306,7 +1277,7 @@ export default function MapaTuristico() {
         }
 
         // Solo encuadrar la trayectoria la primera vez que se selecciona el punto
-        if (isInitialFit && mapRef.current && coords.length > 0 && !isInteractionPausedRef.current) {
+        if (isInitialFit && mapRef.current && coords.length > 0) {
           const bounds = new mapboxgl.LngLatBounds();
           coords.forEach(coord => bounds.extend(coord));
           mapRef.current.stop();
@@ -1315,7 +1286,7 @@ export default function MapaTuristico() {
             padding: isMobile
               ? { top: 140, bottom: 240, left: 30, right: 30 }
               : { top: 120, bottom: 120, left: 120, right: 380 },
-            duration: 1600,
+            duration: 2500,
             essential: true
           });
         }
