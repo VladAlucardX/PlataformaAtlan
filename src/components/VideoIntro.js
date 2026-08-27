@@ -100,17 +100,16 @@ export default function VideoIntro({ onComplete }) {
         src="/videos/portada2.0.mp4"
         autoPlay
         muted
+        loop
         playsInline
         preload="auto"
         onCanPlayThrough={() => setVideoReady(true)}
         onError={startFadeOut}
-        onStalled={startFadeOut}
         onLoadedData={() => {
           if (videoRef.current && videoRef.current.readyState >= 3) {
             setVideoReady(true);
           }
         }}
-        onEnded={startFadeOut}
         style={introStyles.video}
       />
 
