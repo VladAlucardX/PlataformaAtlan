@@ -341,7 +341,7 @@ export default function MapaTuristico() {
 
     const fetchPreviewRoute = () => {
       const [oLng, oLat] = currentPosRef.current;
-      actualizarPrevisualizacionRuta(oLng, oLat, puntoNorm.lng, puntoNorm.lat, true);
+      actualizarPrevisualizacionRuta(oLng, oLat, puntoNorm.lng, puntoNorm.lat, false);
     };
 
     // Dar un breve delay para asegurar que el mapa y los estilos estén listos
@@ -534,17 +534,36 @@ export default function MapaTuristico() {
         cinematicTimeoutsRef.current = [];
       }
 
-      // Centrar suavemente la cámara con margen adaptativo según el dispositivo
+      // Centrar suavemente la cámara con margen adaptativo según el dispositivo y distancia
       if (mapRef.current) {
         const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-        mapRef.current.easeTo({
-          center: [selectedPoint.lng, selectedPoint.lat],
-          padding: isMobile
-            ? { top: 180, bottom: 260, left: 20, right: 20 }
-            : { top: 140, bottom: 80, left: 380, right: 40 },
-          duration: 600,
-          essential: true
-        });
+        const currentCenter = mapRef.current.getCenter();
+        const distMeters = calcDistanceMeters([currentCenter.lng, currentCenter.lat], [selectedPoint.lng, selectedPoint.lat]);
+
+        const targetPadding = isMobile
+          ? { top: 180, bottom: 260, left: 20, right: 20 }
+          : { top: 140, bottom: 80, left: 380, right: 40 };
+
+        if (distMeters > 3000) {
+          // Para distancias largas (>3km), vuelo 3D parabólico fluido y cinematográfico (zoom-out suave, vuelo y aterrizaje)
+          mapRef.current.flyTo({
+            center: [selectedPoint.lng, selectedPoint.lat],
+            zoom: 15.5,
+            pitch: 45,
+            speed: 0.5,
+            curve: 1.4,
+            padding: targetPadding,
+            essential: true
+          });
+        } else {
+          // Para distancias cortas (<=3km), deslizamiento lateral suave
+          mapRef.current.easeTo({
+            center: [selectedPoint.lng, selectedPoint.lat],
+            padding: targetPadding,
+            duration: 700,
+            essential: true
+          });
+        }
       }
     } else {
       // Si se cierra el panel de detalles (de un punto previamente seleccionado),
