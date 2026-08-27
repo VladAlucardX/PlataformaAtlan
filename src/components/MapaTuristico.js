@@ -320,7 +320,9 @@ export default function MapaTuristico() {
 
   // Manejar previsualización de ruta al seleccionar punto
   useEffect(() => {
-    if (!selectedPoint) {
+    const puntoNorm = normalizarPunto(selectedPoint);
+
+    if (!puntoNorm || puntoNorm.lng === undefined || puntoNorm.lat === undefined || isNaN(puntoNorm.lng) || isNaN(puntoNorm.lat)) {
       setPreviewRouteInfo(null);
       if (mapRef.current && mapRef.current.isStyleLoaded()) {
         const source = mapRef.current.getSource('preview-route');
@@ -339,7 +341,7 @@ export default function MapaTuristico() {
 
     const fetchPreviewRoute = () => {
       const [oLng, oLat] = currentPosRef.current;
-      actualizarPrevisualizacionRuta(oLng, oLat, selectedPoint.lng, selectedPoint.lat, true);
+      actualizarPrevisualizacionRuta(oLng, oLat, puntoNorm.lng, puntoNorm.lat, true);
     };
 
     // Dar un breve delay para asegurar que el mapa y los estilos estén listos
@@ -682,7 +684,11 @@ export default function MapaTuristico() {
     }
   };
 
-  const handleIniciarViaje = (punto) => {
+  const handleIniciarViaje = (puntoParam = null) => {
+    const puntoRaw = puntoParam || selectedPoint;
+    const punto = normalizarPunto(puntoRaw);
+    if (!punto || punto.lng === undefined || punto.lat === undefined || isNaN(punto.lng) || isNaN(punto.lat)) return;
+
     const [currLng, currLat] = currentPosRef.current;
     const isUserInCA = currLng >= -93.0 && currLng <= -77.0 && currLat >= 7.0 && currLat <= 19.0;
 
@@ -791,6 +797,29 @@ export default function MapaTuristico() {
     return dist;
   };
 
+  const normalizarPunto = (punto) => {
+    if (!punto) return null;
+    let lng = punto.lng ?? punto.lon ?? punto.longitude;
+    let lat = punto.lat ?? punto.latitude;
+
+    if ((lng === undefined || lat === undefined || isNaN(lng) || isNaN(lat)) && punto.ubicacion && typeof punto.ubicacion === 'string') {
+      const match = punto.ubicacion.match(/POINT\(([-\d.]+) ([-\d.]+)\)/i);
+      if (match) {
+        lng = parseFloat(match[1]);
+        lat = parseFloat(match[2]);
+      }
+    }
+
+    const parsedLng = typeof lng === 'number' ? lng : parseFloat(lng);
+    const parsedLat = typeof lat === 'number' ? lat : parseFloat(lat);
+
+    return {
+      ...punto,
+      lng: !isNaN(parsedLng) ? parsedLng : punto.lng,
+      lat: !isNaN(parsedLat) ? parsedLat : punto.lat,
+    };
+  };
+
   const handleSearch = async (query) => {
     setSearchQuery(query);
     if (!query.trim()) {
@@ -803,15 +832,16 @@ export default function MapaTuristico() {
         query_text: query
       });
       if (error) throw error;
-      setSearchResults(data || []);
+      const normalized = (data || []).map(normalizarPunto);
+      setSearchResults(normalized);
       setShowResults(true);
     } catch (err) {
       console.warn("[Atlan Offline] Buscando en caché local debido a error de conexión:", err);
       const cached = localStorage.getItem('atlan_puntos_cercanos');
       if (cached) {
-        const cachedPoints = JSON.parse(cached);
+        const cachedPoints = JSON.parse(cached).map(normalizarPunto);
         const filtered = cachedPoints.filter(p =>
-          p.nombre.toLowerCase().includes(query.toLowerCase()) ||
+          p.nombre?.toLowerCase().includes(query.toLowerCase()) ||
           (p.descripcion && p.descripcion.toLowerCase().includes(query.toLowerCase()))
         );
         setSearchResults(filtered);
@@ -820,10 +850,11 @@ export default function MapaTuristico() {
     }
   };
 
-  const selectSearchResult = (punto) => {
+  const selectSearchResult = (rawPunto) => {
+    const punto = normalizarPunto(rawPunto);
     setShowResults(false);
     setSearchQuery('');
-    if (mapRef.current) {
+    if (mapRef.current && punto && punto.lng !== undefined && punto.lat !== undefined && !isNaN(punto.lng) && !isNaN(punto.lat)) {
       mapRef.current.flyTo({
         center: [punto.lng, punto.lat],
         zoom: 16.5,
@@ -899,15 +930,15 @@ export default function MapaTuristico() {
         console.warn('[Atlan Offline] Error cargando puntos online, intentando caché local:', error);
         const cached = localStorage.getItem('atlan_puntos_cercanos');
         if (cached) {
-          const allCached = JSON.parse(cached);
+          const allCached = JSON.parse(cached).map(normalizarPunto);
           pointsToRender = categoria
             ? allCached.filter(p => p.categoria === categoria)
             : allCached;
         }
       } else {
         // Filtrar en JavaScript para mostrar también 'en_verificacion'
-        const rawPoints = data || [];
-        pointsToRender = rawPoints.filter(p => p.estado === 'aprobado' || p.estado === 'sin_reclamar' || p.estado === 'en_verificacion');
+        const rawPoints = (data || []).map(normalizarPunto);
+        pointsToRender = rawPoints.filter(p => (p.estado === 'aprobado' || p.estado === 'sin_reclamar' || p.estado === 'en_verificacion') && p.lng !== undefined && p.lat !== undefined && !isNaN(p.lng) && !isNaN(p.lat));
         if (pointsToRender.length > 0) {
           localStorage.setItem('atlan_puntos_cercanos', JSON.stringify(pointsToRender));
         }
@@ -1226,6 +1257,9 @@ export default function MapaTuristico() {
   };
 
   const actualizarPrevisualizacionRuta = async (oLng, oLat, dLng, dLat, isInitialFit = false) => {
+    if (oLng === undefined || oLat === undefined || dLng === undefined || dLat === undefined || isNaN(oLng) || isNaN(oLat) || isNaN(dLng) || isNaN(dLat)) {
+      return;
+    }
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`;
     try {
       const res = await fetch(url);
