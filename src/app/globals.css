@@ -2226,19 +2226,44 @@ html body .mapboxgl-ctrl-directions tr {
     border-radius: 12px !important;
   }
 
-  /* Detalle de punto estilo Bottom Sheet */
-  .detail-sheet {
+  /* Layout Móvil al Seleccionar Punto: Mapa Arriba 32vh + Info Abajo 68vh */
+  .map-page-wrapper.has-selected-point {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+    position: fixed !important;
+    inset: 0 !important;
+  }
+
+  .map-page-wrapper.has-selected-point .map-pane {
+    height: 32vh !important;
+    min-height: 32vh !important;
+    max-height: 32vh !important;
+    width: 100vw !important;
+    flex: none !important;
+    position: relative !important;
+  }
+
+  .map-page-wrapper.has-selected-point .detail-sheet {
+    height: 68vh !important;
+    min-height: 68vh !important;
+    max-height: 68vh !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    position: relative !important;
     top: auto !important;
-    bottom: 0 !important;
+    bottom: auto !important;
     left: 0 !important;
     right: 0 !important;
-    max-width: 100% !important;
-    height: 70vh !important;
-    border-left: none !important;
-    border-top: none !important;
+    flex: none !important;
     border-radius: 24px 24px 0 0 !important;
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4) !important;
-    animation: slideInUpDetail 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6) !important;
+    overflow-y: auto !important;
+    z-index: 50 !important;
+    background: #FFFFFF !important;
+    border: none !important;
   }
 
   .detail-sheet::before {

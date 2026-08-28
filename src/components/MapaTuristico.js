@@ -1346,51 +1346,73 @@ export default function MapaTuristico() {
     if (oLng === undefined || oLat === undefined || dLng === undefined || dLat === undefined || isNaN(oLng) || isNaN(oLat) || isNaN(dLng) || isNaN(dLat)) {
       return;
     }
-    const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`;
+
+    let coords = [];
+    let routeDistance = 0;
+    let routeDuration = 0;
+
     try {
+      const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`;
       const res = await fetch(url);
       const data = await res.json();
       if (data.routes && data.routes.length > 0) {
-        const route = data.routes[0];
-        const coords = route.geometry.coordinates;
-
-        if (mapRef.current && mapRef.current.isStyleLoaded()) {
-          const source = mapRef.current.getSource('preview-route');
-          if (source) {
-            source.setData({
-              type: 'Feature',
-              properties: {},
-              geometry: {
-                type: 'LineString',
-                coordinates: coords
-              }
-            });
-          }
+        coords = data.routes[0].geometry.coordinates;
+        routeDistance = data.routes[0].distance;
+        routeDuration = data.routes[0].duration;
+      } else {
+        // Fallback a driving estándar
+        const fallbackUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`;
+        const resFb = await fetch(fallbackUrl);
+        const dataFb = await resFb.json();
+        if (dataFb.routes && dataFb.routes.length > 0) {
+          coords = dataFb.routes[0].geometry.coordinates;
+          routeDistance = dataFb.routes[0].distance;
+          routeDuration = dataFb.routes[0].duration;
         }
-
-        // Solo encuadrar la trayectoria la primera vez que se selecciona el punto
-        if (isInitialFit && mapRef.current && coords.length > 0) {
-          const bounds = new mapboxgl.LngLatBounds();
-          coords.forEach(coord => bounds.extend(coord));
-          mapRef.current.stop();
-          const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-          mapRef.current.fitBounds(bounds, {
-            padding: isMobile
-              ? { top: 140, bottom: 240, left: 30, right: 30 }
-              : { top: 120, bottom: 120, left: 120, right: 380 },
-            duration: 2500,
-            essential: true
-          });
-        }
-
-        setPreviewRouteInfo({
-          distance: route.distance,
-          duration: route.duration
-        });
       }
     } catch (err) {
-      console.error("Error updating preview route:", err);
+      console.warn('[Atlan] Error al consultar ruta de Mapbox:', err);
     }
+
+    // Si la API no devuelve coordenadas, trazar línea de proyección directa
+    if (coords.length === 0) {
+      coords = [[oLng, oLat], [dLng, dLat]];
+      routeDistance = calcDistanceMeters([oLng, oLat], [dLng, dLat]);
+      routeDuration = (routeDistance / 1000) * 120;
+    }
+
+    if (mapRef.current && mapRef.current.isStyleLoaded()) {
+      const source = mapRef.current.getSource('preview-route');
+      if (source) {
+        source.setData({
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates: coords
+          }
+        });
+      }
+    }
+
+    // Ajustar vista del mapa si es el fit inicial
+    if (isInitialFit && mapRef.current && coords.length > 0) {
+      const bounds = new mapboxgl.LngLatBounds();
+      coords.forEach(coord => bounds.extend(coord));
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+      mapRef.current.fitBounds(bounds, {
+        padding: isMobile
+          ? { top: 60, bottom: 40, left: 30, right: 30 }
+          : { top: 120, bottom: 120, left: 120, right: 380 },
+        duration: 1800,
+        essential: true
+      });
+    }
+
+    setPreviewRouteInfo({
+      distance: routeDistance,
+      duration: routeDuration
+    });
   };
 
   // Actualización de posición (GPS real + Demo)
@@ -2348,7 +2370,7 @@ export default function MapaTuristico() {
             // Detectar si el usuario está dentro de Centroamérica
             const isInCentralAmerica = longitude >= -93.0 && longitude <= -77.0 && latitude >= 7.0 && latitude <= 19.0;
 
-            // Esperar 5 segundos para que los tiles iniciales carguen por completo en segundo plano
+            // Volar de inmediato a la ubicación detectada
             const cinematicTimer = setTimeout(() => {
               setIsMapLoading(false);
 
@@ -2356,7 +2378,6 @@ export default function MapaTuristico() {
 
               // Si el usuario ya seleccionó un punto, no interrumpir con la animación de geolocalización
               if (selectedPointRef.current) {
-                console.log('[Atlan] Animación cinematográfica cancelada: punto seleccionado por el usuario');
                 return;
               }
 
@@ -2367,42 +2388,25 @@ export default function MapaTuristico() {
               }
 
               if (!isInCentralAmerica) {
-                // Usuario fuera de Centroamérica: levantar los límites del mapa para que pueda ver su ubicación
-                console.log('[Atlan] Usuario fuera de Centroamérica, levantando límites del mapa');
                 mapRef.current.setMaxBounds(null);
                 mapRef.current.flyTo({
                   center: [longitude, latitude],
-                  zoom: 14,
+                  zoom: 15,
                   pitch: 45,
-                  speed: 0.25,
-                  curve: 1.8,
+                  speed: 1.2,
                   essential: true,
                 });
               } else {
-                // Vuelo parabólico plano (top-down) para evitar cargar el horizonte 3D en movimiento y evitar distorsión
                 mapRef.current.flyTo({
                   center: [longitude, latitude],
-                  zoom: 14.8, // Zoom ligeramente más bajo para evitar forzar texturas extremas
-                  pitch: 0, // Volar en plano consume muchísima menos memoria y evita que se deforme la malla
-                  bearing: 0,
-                  speed: 0.25, // Velocidad súper lenta
-                  curve: 1.8,  // Curva alta (sube mucho hacia el espacio antes de caer)
+                  zoom: 15.5,
+                  pitch: 45,
+                  speed: 1.2,
+                  curve: 1.1,
                   essential: true,
                 });
-
-                // Una vez que aterrice suavemente, inclinamos la cámara para revelar el 3D
-                mapRef.current.once('moveend', () => {
-                  // Si el usuario seleccionó un punto mientras volábamos, no inclinar
-                  if (mapRef.current && !selectedPointRef.current) {
-                    mapRef.current.easeTo({
-                      pitch: 60, // Inclinación final épica para ver los edificios y el horizonte
-                      duration: 2500, // 2.5 segundos inclinando la cámara lentamente
-                      essential: true
-                    });
-                  }
-                });
               }
-            }, 5000); // 5 segundos de retraso para carga de texturas y estilos
+            }, 800); // 800ms para volar de inmediato a la ubicación del usuario
 
             // Registrar el timeout para que pueda cancelarse si el usuario selecciona un punto
             cinematicTimeoutsRef.current.push(cinematicTimer);
@@ -2510,7 +2514,7 @@ export default function MapaTuristico() {
   };
 
   return (
-    <div className="map-page-wrapper" style={{ position: 'relative' }}>
+    <div className={`map-page-wrapper ${selectedPoint ? 'has-selected-point' : ''}`} style={{ position: 'relative' }}>
       {/* Indicador Offline */}
       {!isOnline && (
         <div style={{
