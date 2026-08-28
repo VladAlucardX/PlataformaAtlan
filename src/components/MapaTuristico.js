@@ -389,24 +389,10 @@ export default function MapaTuristico() {
       return;
     }
 
-    // 1. Iniciar vuelo suave de cámara hacia la ubicación exacta del punto
-    if (mapRef.current && !isNavigatingRef.current) {
-      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-      mapRef.current.flyTo({
-        center: [puntoNorm.lng, puntoNorm.lat],
-        zoom: 15.5,
-        pitch: 40,
-        padding: isMobile ? { top: 0, bottom: 280, left: 0, right: 0 } : { top: 0, bottom: 0, left: 0, right: 380 },
-        speed: 0.9,
-        curve: 1.2,
-        essential: true
-      });
-    }
-
-    // 2. Trazar la trayectoria en la carretera en segundo plano
+    // Trazar la trayectoria en la carretera y encuadrar (fitBounds) para centrar la ruta completa
     const fetchPreviewRoute = () => {
       const [oLng, oLat] = currentPosRef.current;
-      actualizarPrevisualizacionRuta(oLng, oLat, puntoNorm.lng, puntoNorm.lat, false);
+      actualizarPrevisualizacionRuta(oLng, oLat, puntoNorm.lng, puntoNorm.lat, true);
     };
 
     const timer = setTimeout(() => {
@@ -1395,16 +1381,17 @@ export default function MapaTuristico() {
       }
     }
 
-    // Ajustar vista del mapa si es el fit inicial
+    // Ajustar vista del mapa si es el fit inicial (Centrar trayectoria completa)
     if (isInitialFit && mapRef.current && coords.length > 0) {
       const bounds = new mapboxgl.LngLatBounds();
       coords.forEach(coord => bounds.extend(coord));
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
       mapRef.current.fitBounds(bounds, {
         padding: isMobile
-          ? { top: 60, bottom: 40, left: 30, right: 30 }
-          : { top: 120, bottom: 120, left: 120, right: 380 },
-        duration: 1800,
+          ? { top: 40, bottom: 200, left: 25, right: 25 }
+          : { top: 120, bottom: 120, left: 120, right: 420 },
+        duration: 2200,
+        pitch: 35,
         essential: true
       });
     }
