@@ -3626,67 +3626,81 @@ export default function MapaTuristico() {
                       </div>
                     </div>
 
-                    {/* COLUMNA 2: A LA PAR, LOS DOS BOTONES APILADOS VERTICALMENTE */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', height: '150px' }}>
+                    {/* COLUMNA 2: A LA PAR, LOS DOS BOTONES NEÓN ADAPTADOS CON EFECTOS Y ANIMACIONES DEL HERO */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', height: '150px' }}>
+                      {/* BOTÓN 1: INICIAR VIAJE (ESTILO "EXPLORAR MAPA" DEL HERO CON SVG DE UBICACIÓN NEÓN) */}
                       <button
                         onClick={() => handleIniciarViaje(selectedPoint)}
+                        className="neon-btn-dark-hero"
                         style={{
                           flex: 1,
-                          width: '100%',
-                          padding: '8px',
-                          background: 'rgba(20, 109, 158, 0.12)',
-                          color: '#146D9E',
-                          border: '1.5px solid rgba(20, 109, 158, 0.25)',
-                          borderRadius: '14px',
-                          fontWeight: '800',
-                          fontSize: '12.5px',
-                          cursor: 'pointer',
+                          padding: '6px 8px',
                           display: 'flex',
-                          flexDirection: 'column',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '4px',
-                          backdropFilter: 'blur(10px)',
-                          transition: 'all 0.2s ease',
-                          boxShadow: '0 4px 12px rgba(20, 109, 158, 0.08)'
+                          gap: '6px'
                         }}
                       >
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#146D9E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-                        <span style={{ fontWeight: '800', fontSize: '12px', color: '#146D9E' }}>
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#FFD700"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          style={{ filter: 'drop-shadow(0 0 6px #FFD700)', flexShrink: 0 }}
+                        >
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
+                        <span
+                          className="neon-sign-text"
+                          style={{
+                            fontSize: '12.5px',
+                            fontWeight: '900',
+                            letterSpacing: '0.8px',
+                            color: '#FFFFFF',
+                            textTransform: 'uppercase',
+                            WebkitTextStroke: '1px #FFD700',
+                            paintOrder: 'stroke fill',
+                            textShadow: '0 0 8px rgba(255, 215, 0, 0.85)'
+                          }}
+                        >
                           {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
                         </span>
                       </button>
 
+                      {/* BOTÓN 2: MOSTRAR MÁS (ESTILO "¿TIENES UN NEGOCIO?" DEL HERO CON RESPLANDOR Y SOMBRAS NEÓN AMARILLAS) */}
                       <button
                         onClick={() => setShowFullProfileModal(true)}
-                        className="neon-map-btn-yellow"
+                        className="neon-btn-yellow-hero"
                         style={{
                           flex: 1,
-                          width: '100%',
-                          padding: '6px',
+                          padding: '6px 8px',
                           display: 'flex',
-                          flexDirection: 'column',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '3px',
-                          borderRadius: '14px'
+                          gap: '6px'
                         }}
                       >
                         <span
                           className="neon-sign-text-white-bg"
                           style={{
-                            fontSize: '13.5px',
+                            fontSize: '13px',
                             fontWeight: '900',
-                            letterSpacing: '0.4px',
+                            letterSpacing: '0.8px',
                             color: '#FFFFFF',
                             textTransform: 'uppercase',
                             WebkitTextStroke: '1px #000000',
-                            paintOrder: 'stroke fill'
+                            paintOrder: 'stroke fill',
+                            textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)'
                           }}
                         >
                           {lang === 'en' ? 'Show More' : 'Mostrar más'}
                         </span>
-                        <img src="/images/more.svg" alt="Mostrar más" style={{ width: '20px', height: '20px' }} />
+                        <img src="/images/more.svg" alt="Mostrar más" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))' }} />
                       </button>
                     </div>
                   </div>
