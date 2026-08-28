@@ -2340,9 +2340,31 @@ export default function MapaTuristico() {
     let isFirstPosition = true;
     let watchId = null;
 
+    // Timer de seguridad: Si el GPS de WebView tarda más de 1s, volar de inmediato a Managua para no quedarse atascado en Nicaragua
+    const fallbackTimer = setTimeout(() => {
+      if (isFirstPosition && mapRef.current) {
+        isFirstPosition = false;
+        setIsMapLoading(false);
+        const [defLng, defLat] = currentPosRef.current;
+        cargarPuntosCercanos(defLng, defLat, filtroCategoria);
+
+        if (!selectedPointRef.current) {
+          mapRef.current.flyTo({
+            center: [defLng, defLat],
+            zoom: 15.2,
+            pitch: 45,
+            speed: 1.0,
+            essential: true,
+          });
+        }
+      }
+    }, 1000);
+    cinematicTimeoutsRef.current.push(fallbackTimer);
+
     if ('geolocation' in navigator) {
       watchId = navigator.geolocation.watchPosition(
         (pos) => {
+          clearTimeout(fallbackTimer);
           if (isDemoRunningRef.current) return;
 
           const { longitude, latitude } = pos.coords;
@@ -2350,52 +2372,21 @@ export default function MapaTuristico() {
 
           if (isFirstPosition && mapRef.current) {
             isFirstPosition = false;
-
-            // Cargar marcadores iniciales en base a la ubicación detectada
             cargarPuntosCercanos(longitude, latitude, filtroCategoria);
 
-            // Detectar si el usuario está dentro de Centroamérica
-            const isInCentralAmerica = longitude >= -93.0 && longitude <= -77.0 && latitude >= 7.0 && latitude <= 19.0;
-
-            // Volar de inmediato a la ubicación detectada
             const cinematicTimer = setTimeout(() => {
               setIsMapLoading(false);
+              if (!mapRef.current || selectedPointRef.current) return;
 
-              if (!mapRef.current) return;
+              mapRef.current.flyTo({
+                center: [longitude, latitude],
+                zoom: 15.5,
+                pitch: 45,
+                speed: 1.0,
+                essential: true,
+              });
+            }, 300);
 
-              // Si el usuario ya seleccionó un punto, no interrumpir con la animación de geolocalización
-              if (selectedPointRef.current) {
-                return;
-              }
-
-              // Si viene de un punto específico por URL, no hacemos la animación inicial de geolocalización
-              const params = new URLSearchParams(window.location.search);
-              if (params.get('id')) {
-                return;
-              }
-
-              if (!isInCentralAmerica) {
-                mapRef.current.setMaxBounds(null);
-                mapRef.current.flyTo({
-                  center: [longitude, latitude],
-                  zoom: 15,
-                  pitch: 45,
-                  speed: 1.2,
-                  essential: true,
-                });
-              } else {
-                mapRef.current.flyTo({
-                  center: [longitude, latitude],
-                  zoom: 15.5,
-                  pitch: 45,
-                  speed: 1.2,
-                  curve: 1.1,
-                  essential: true,
-                });
-              }
-            }, 800); // 800ms para volar de inmediato a la ubicación del usuario
-
-            // Registrar el timeout para que pueda cancelarse si el usuario selecciona un punto
             cinematicTimeoutsRef.current.push(cinematicTimer);
           }
         },
