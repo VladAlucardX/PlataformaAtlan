@@ -62,6 +62,7 @@ export default function MapaTuristico() {
   const isAddingPointRef = useRef(false);
   const cinematicTimeoutsRef = useRef([]);
   const selectedPointRef = useRef(null);
+  const prevSelectedPointRef = useRef(null);
   const lastRecalculateTimeRef = useRef(0);
 
 
@@ -319,7 +320,9 @@ export default function MapaTuristico() {
 
   // Manejar previsualización de ruta al seleccionar punto
   useEffect(() => {
-    if (!selectedPoint) {
+    const puntoNorm = normalizarPunto(selectedPoint);
+
+    if (!puntoNorm || puntoNorm.lng === undefined || puntoNorm.lat === undefined || isNaN(puntoNorm.lng) || isNaN(puntoNorm.lat)) {
       setPreviewRouteInfo(null);
       if (mapRef.current && mapRef.current.isStyleLoaded()) {
         const source = mapRef.current.getSource('preview-route');
@@ -338,13 +341,13 @@ export default function MapaTuristico() {
 
     const fetchPreviewRoute = () => {
       const [oLng, oLat] = currentPosRef.current;
-      actualizarPrevisualizacionRuta(oLng, oLat, selectedPoint.lng, selectedPoint.lat, true);
+      actualizarPrevisualizacionRuta(oLng, oLat, puntoNorm.lng, puntoNorm.lat, true);
     };
 
     // Dar un breve delay para asegurar que el mapa y los estilos estén listos
     const timer = setTimeout(() => {
       fetchPreviewRoute();
-    }, 400);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [selectedPoint]);
@@ -519,41 +522,65 @@ export default function MapaTuristico() {
 
   // Sincronizar el ref del punto seleccionado y controlar el recentrado de navegación
   useEffect(() => {
+    const wasSelected = prevSelectedPointRef.current;
     selectedPointRef.current = selectedPoint;
 
     if (selectedPoint) {
+      prevSelectedPointRef.current = selectedPoint;
+      isInteractionPausedRef.current = false; // Resetear siempre para permitir que la ruta se encuadre al seleccionar punto nuevo
+
       // Si el usuario abre detalles, cancelamos cualquier animación inicial de aproximación
       if (cinematicTimeoutsRef.current.length > 0) {
         console.log('[Atlan] Cancelando animación cinematográfica inicial por apertura de punto');
         cinematicTimeoutsRef.current.forEach(t => clearTimeout(t));
         cinematicTimeoutsRef.current = [];
       }
+    } else {
+      // Si se cierra el panel de detalles (de un punto previamente seleccionado),
+      // realizar un zoom-out suavizado en la misma zona para seguir explorando otros puntos cercanos
+      if (wasSelected) {
+        const lastPoint = wasSelected;
+        prevSelectedPointRef.current = null;
+        isInteractionPausedRef.current = false;
 
-      // Centrar suavemente la cámara con margen adaptativo según el dispositivo
-      if (mapRef.current) {
-        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-        mapRef.current.easeTo({
-          center: [selectedPoint.lng, selectedPoint.lat],
-          padding: isMobile
-            ? { top: 180, bottom: 260, left: 20, right: 20 }
-            : { top: 140, bottom: 80, left: 380, right: 40 },
-          duration: 600,
-          essential: true
-        });
+        if (mapRef.current && lastPoint && lastPoint.lng !== undefined && lastPoint.lat !== undefined) {
+          mapRef.current.easeTo({
+            center: [lastPoint.lng, lastPoint.lat],
+            zoom: 12.8,
+            pitch: 25,
+            padding: { top: 0, bottom: 0, left: 0, right: 0 },
+            duration: 1800,
+            essential: true
+          });
+          cargarPuntosCercanos(lastPoint.lng, lastPoint.lat, filtroCategoria);
+        } else if (mapRef.current) {
+          const center = mapRef.current.getCenter();
+          mapRef.current.easeTo({
+            center: [center.lng, center.lat],
+            zoom: 12.8,
+            pitch: 25,
+            padding: { top: 0, bottom: 0, left: 0, right: 0 },
+            duration: 1800,
+            essential: true
+          });
+          cargarPuntosCercanos(center.lng, center.lat, filtroCategoria);
+        }
       }
-    } else if (isNavigatingRef.current) {
-      // Si se cierra el panel de detalles y estamos en navegación activa,
-      // reanudamos el centrado de la cámara de manera inmediata.
-      isInteractionPausedRef.current = false;
-      if (mapRef.current) {
-        mapRef.current.flyTo({
-          center: currentPosRef.current,
-          zoom: 16.5,
-          pitch: 60,
-          speed: 0.85,  // Velocidad óptima para renderizado
-          curve: 1.1,   // Trayectoria plana para transiciones fluidas
-          essential: true
-        });
+
+      if (isNavigatingRef.current) {
+        // Si se cierra el panel de detalles y estamos en navegación activa,
+        // reanudamos el centrado de la cámara de manera inmediata.
+        isInteractionPausedRef.current = false;
+        if (mapRef.current) {
+          mapRef.current.flyTo({
+            center: currentPosRef.current,
+            zoom: 16.5,
+            pitch: 60,
+            speed: 0.85,  // Velocidad óptima para renderizado
+            curve: 1.1,   // Trayectoria plana para transiciones fluidas
+            essential: true
+          });
+        }
       }
     }
   }, [selectedPoint]);
@@ -665,7 +692,11 @@ export default function MapaTuristico() {
     }
   };
 
-  const handleIniciarViaje = (punto) => {
+  const handleIniciarViaje = (puntoParam = null) => {
+    const puntoRaw = puntoParam || selectedPoint;
+    const punto = normalizarPunto(puntoRaw);
+    if (!punto || punto.lng === undefined || punto.lat === undefined || isNaN(punto.lng) || isNaN(punto.lat)) return;
+
     const [currLng, currLat] = currentPosRef.current;
     const isUserInCA = currLng >= -93.0 && currLng <= -77.0 && currLat >= 7.0 && currLat <= 19.0;
 
@@ -774,6 +805,29 @@ export default function MapaTuristico() {
     return dist;
   };
 
+  const normalizarPunto = (punto) => {
+    if (!punto) return null;
+    let lng = punto.lng ?? punto.lon ?? punto.longitude;
+    let lat = punto.lat ?? punto.latitude;
+
+    if ((lng === undefined || lat === undefined || isNaN(lng) || isNaN(lat)) && punto.ubicacion && typeof punto.ubicacion === 'string') {
+      const match = punto.ubicacion.match(/POINT\(([-\d.]+) ([-\d.]+)\)/i);
+      if (match) {
+        lng = parseFloat(match[1]);
+        lat = parseFloat(match[2]);
+      }
+    }
+
+    const parsedLng = typeof lng === 'number' ? lng : parseFloat(lng);
+    const parsedLat = typeof lat === 'number' ? lat : parseFloat(lat);
+
+    return {
+      ...punto,
+      lng: !isNaN(parsedLng) ? parsedLng : punto.lng,
+      lat: !isNaN(parsedLat) ? parsedLat : punto.lat,
+    };
+  };
+
   const handleSearch = async (query) => {
     setSearchQuery(query);
     if (!query.trim()) {
@@ -786,15 +840,16 @@ export default function MapaTuristico() {
         query_text: query
       });
       if (error) throw error;
-      setSearchResults(data || []);
+      const normalized = (data || []).map(normalizarPunto);
+      setSearchResults(normalized);
       setShowResults(true);
     } catch (err) {
       console.warn("[Atlan Offline] Buscando en caché local debido a error de conexión:", err);
       const cached = localStorage.getItem('atlan_puntos_cercanos');
       if (cached) {
-        const cachedPoints = JSON.parse(cached);
+        const cachedPoints = JSON.parse(cached).map(normalizarPunto);
         const filtered = cachedPoints.filter(p =>
-          p.nombre.toLowerCase().includes(query.toLowerCase()) ||
+          p.nombre?.toLowerCase().includes(query.toLowerCase()) ||
           (p.descripcion && p.descripcion.toLowerCase().includes(query.toLowerCase()))
         );
         setSearchResults(filtered);
@@ -803,18 +858,12 @@ export default function MapaTuristico() {
     }
   };
 
-  const selectSearchResult = (punto) => {
+  const selectSearchResult = (rawPunto) => {
+    const punto = normalizarPunto(rawPunto);
     setShowResults(false);
     setSearchQuery('');
-    if (mapRef.current) {
-      mapRef.current.flyTo({
-        center: [punto.lng, punto.lat],
-        zoom: 16.5,
-        pitch: 45,
-        speed: 0.85,    // Velocidad optimizada para permitir la descarga de tiles en segundo plano
-        curve: 1.15,    // Trayectoria más plana que evita un zoom-out excesivo y recarga de texturas
-        essential: true
-      });
+    if (mapRef.current && punto && punto.lng !== undefined && punto.lat !== undefined && !isNaN(punto.lng) && !isNaN(punto.lat)) {
+      mapRef.current.stop(); // Detener cualquier vuelo previo para que el mouse quede liberado
       cargarPuntosCercanos(punto.lng, punto.lat, filtroCategoria);
       setSelectedPoint(punto);
     }
@@ -882,15 +931,15 @@ export default function MapaTuristico() {
         console.warn('[Atlan Offline] Error cargando puntos online, intentando caché local:', error);
         const cached = localStorage.getItem('atlan_puntos_cercanos');
         if (cached) {
-          const allCached = JSON.parse(cached);
+          const allCached = JSON.parse(cached).map(normalizarPunto);
           pointsToRender = categoria
             ? allCached.filter(p => p.categoria === categoria)
             : allCached;
         }
       } else {
         // Filtrar en JavaScript para mostrar también 'en_verificacion'
-        const rawPoints = data || [];
-        pointsToRender = rawPoints.filter(p => p.estado === 'aprobado' || p.estado === 'sin_reclamar' || p.estado === 'en_verificacion');
+        const rawPoints = (data || []).map(normalizarPunto);
+        pointsToRender = rawPoints.filter(p => (p.estado === 'aprobado' || p.estado === 'sin_reclamar' || p.estado === 'en_verificacion') && p.lng !== undefined && p.lat !== undefined && !isNaN(p.lng) && !isNaN(p.lat));
         if (pointsToRender.length > 0) {
           localStorage.setItem('atlan_puntos_cercanos', JSON.stringify(pointsToRender));
         }
@@ -1209,6 +1258,9 @@ export default function MapaTuristico() {
   };
 
   const actualizarPrevisualizacionRuta = async (oLng, oLat, dLng, dLat, isInitialFit = false) => {
+    if (oLng === undefined || oLat === undefined || dLng === undefined || dLat === undefined || isNaN(oLng) || isNaN(oLat) || isNaN(dLng) || isNaN(dLat)) {
+      return;
+    }
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&access_token=${mapboxgl.accessToken}`;
     try {
       const res = await fetch(url);
@@ -1232,12 +1284,16 @@ export default function MapaTuristico() {
         }
 
         // Solo encuadrar la trayectoria la primera vez que se selecciona el punto
-        if (isInitialFit && mapRef.current && coords.length > 0 && !isInteractionPausedRef.current) {
+        if (isInitialFit && mapRef.current && coords.length > 0) {
           const bounds = new mapboxgl.LngLatBounds();
           coords.forEach(coord => bounds.extend(coord));
+          mapRef.current.stop();
+          const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
           mapRef.current.fitBounds(bounds, {
-            padding: { top: 100, bottom: 100, left: 100, right: 100 },
-            duration: 1200,
+            padding: isMobile
+              ? { top: 140, bottom: 240, left: 30, right: 30 }
+              : { top: 120, bottom: 120, left: 120, right: 380 },
+            duration: 2500,
             essential: true
           });
         }
@@ -1363,6 +1419,7 @@ export default function MapaTuristico() {
     const typ = (type || '').toLowerCase();
     const text = (instruction || '').toLowerCase();
 
+<<<<<<< HEAD
     // 1. Llegada
     if (typ.includes('arrive') || typ.includes('destination') || text.includes('llegad') || text.includes('destino') || text.includes('arrived')) {
       return 'arrive';
@@ -1504,6 +1561,47 @@ export default function MapaTuristico() {
           </svg>
         );
     }
+=======
+    if (typ.includes('arrive') || typ.includes('destination')) return { emoji: '🏁', rotation: 0, isEmoji: true };
+    if (typ.includes('roundabout') || typ.includes('rotary')) return { emoji: '🔄', rotation: 0, isEmoji: true };
+    if (mod.includes('uturn')) return { rotation: 180, isEmoji: false };
+    if (mod.includes('sharp right')) return { rotation: 135, isEmoji: false };
+    if (mod.includes('sharp left')) return { rotation: -135, isEmoji: false };
+    if (mod.includes('slight right')) return { rotation: 45, isEmoji: false };
+    if (mod.includes('slight left')) return { rotation: -45, isEmoji: false };
+    if (mod.includes('right')) return { rotation: 90, isEmoji: false };
+    if (mod.includes('left')) return { rotation: -90, isEmoji: false };
+    if (typ.includes('straight') || typ.includes('depart') || mod.includes('straight')) return { rotation: 0, isEmoji: false };
+    return { rotation: 0, isEmoji: false };
+  };
+
+  // Renderizar ícono de maniobra como SVG rotado o emoji
+  const renderManeuverIcon = (iconData, size = 22) => {
+    if (!iconData) return <span style={{ fontSize: `${size}px` }}>⬆</span>;
+    if (iconData.isEmoji) return <span style={{ fontSize: `${size}px` }}>{iconData.emoji}</span>;
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{
+          transform: `rotate(${iconData.rotation}deg)`,
+          transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          flexShrink: 0,
+        }}
+      >
+        <path
+          d="M12 3L12 21M12 3L6 9M12 3L18 9"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+>>>>>>> fix/flecha-navegacion-duplicada
   };
 
   const buildManeuverList = (steps) => {
@@ -2083,6 +2181,9 @@ export default function MapaTuristico() {
         pauseCamera();
       }
     };
+    mapRef.current.on('mousedown', () => {
+      clearCinematicTimeouts();
+    });
     mapRef.current.on('movestart', handleMoveStart);
     mapRef.current.on('dragstart', pauseCamera);
     mapRef.current.on('touchstart', pauseCamera);
@@ -2329,7 +2430,8 @@ export default function MapaTuristico() {
   // Recargar marcadores al cambiar categoría
   const aplicarFiltro = (cat) => {
     setFiltroCategoria(cat);
-    cargarPuntosCercanos(currentPosRef.current[0], currentPosRef.current[1], cat);
+    const center = mapRef.current ? [mapRef.current.getCenter().lng, mapRef.current.getCenter().lat] : currentPosRef.current;
+    cargarPuntosCercanos(center[0], center[1], cat);
   };
 
   const handleRecenter = () => {
@@ -4153,6 +4255,7 @@ export default function MapaTuristico() {
                 gap: '14px',
                 padding: '12px 14px',
               }}>
+
                 <div style={{
                   width: '48px',
                   height: '48px',

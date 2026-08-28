@@ -41,11 +41,11 @@ export default function VideoIntro({ onComplete }) {
     }
   }, [phase, onComplete]);
 
-  // Timeout de seguridad (Máximo 4.5 segundos para no trabar al usuario en móvil)
+  // Timeout de seguridad (Máximo 8 segundos para no trabar al usuario en móvil)
   useEffect(() => {
     const safety = setTimeout(() => {
       startFadeOut();
-    }, 4500);
+    }, 8000);
     return () => clearTimeout(safety);
   }, [startFadeOut]);
 
@@ -100,17 +100,16 @@ export default function VideoIntro({ onComplete }) {
         src="/videos/portada2.0.mp4"
         autoPlay
         muted
+        loop
         playsInline
         preload="auto"
         onCanPlayThrough={() => setVideoReady(true)}
         onError={startFadeOut}
-        onStalled={startFadeOut}
         onLoadedData={() => {
           if (videoRef.current && videoRef.current.readyState >= 3) {
             setVideoReady(true);
           }
         }}
-        onEnded={startFadeOut}
         style={introStyles.video}
       />
 
@@ -195,12 +194,12 @@ export default function VideoIntro({ onComplete }) {
         </div>
       </div>
 
-      {/* Barra de progreso de 9 segundos */}
+      {/* Barra de progreso de 8 segundos */}
       <div style={introStyles.progressBar}>
         <div
           style={{
             ...introStyles.progressFill,
-            animation: "introProgress 9s linear forwards, shimmerProgress 2s linear infinite",
+            animation: "introProgress 8s linear forwards, shimmerProgress 2s linear infinite",
             boxShadow: "0 0 10px rgba(212,175,55,0.5)",
           }}
         />
