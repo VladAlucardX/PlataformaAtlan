@@ -1358,34 +1358,174 @@ export default function MapaTuristico() {
     return t;
   };
 
-  const getManeuverIcon = (type, modifier) => {
+  const getManeuverIconKey = (type = '', modifier = '', instruction = '') => {
     const mod = (modifier || '').toLowerCase();
     const typ = (type || '').toLowerCase();
+    const text = (instruction || '').toLowerCase();
 
-    if (typ.includes('arrive') || typ.includes('destination')) return '🏁';
-    if (typ.includes('roundabout') || typ.includes('rotary')) return '🔄';
-    if (mod.includes('sharp right')) return '↳';
-    if (mod.includes('sharp left')) return '↲';
-    if (mod.includes('slight right') || mod.includes('right')) return '↱';
-    if (mod.includes('slight left') || mod.includes('left')) return '↰';
-    if (mod.includes('uturn')) return '↩';
-    return '⬆';
+    // 1. Llegada
+    if (typ.includes('arrive') || typ.includes('destination') || text.includes('llegad') || text.includes('destino') || text.includes('arrived')) {
+      return 'arrive';
+    }
+
+    // 2. Rotonda / Glorieta
+    if (typ.includes('roundabout') || typ.includes('rotary') || text.includes('rotonda') || text.includes('roundabout') || text.includes('glorieta')) {
+      return 'roundabout';
+    }
+
+    // 3. Retorno / Giro en U
+    if (mod.includes('uturn') || text.includes('vuelta en u') || text.includes('giro en u') || text.includes('retorno') || text.includes('u-turn')) {
+      return 'uturn';
+    }
+
+    // 4. Giros pronunciados
+    if (mod.includes('sharp right') || text.includes('pronunciado a la derecha') || text.includes('doble bruscamente a la derecha')) {
+      return 'sharp-right';
+    }
+    if (mod.includes('sharp left') || text.includes('pronunciado a la izquierda') || text.includes('doble bruscamente a la izquierda')) {
+      return 'sharp-left';
+    }
+
+    // 5. Giros leves / desviaciones
+    if (mod.includes('slight right') || text.includes('leve a la derecha') || text.includes('desvíese a la derecha') || text.includes('manténgase a la derecha') || text.includes('keep right')) {
+      return 'slight-right';
+    }
+    if (mod.includes('slight left') || text.includes('leve a la izquierda') || text.includes('desvíese a la izquierda') || text.includes('manténgase a la izquierda') || text.includes('keep left')) {
+      return 'slight-left';
+    }
+
+    // 6. Giros normales a la derecha
+    if (
+      mod.includes('right') ||
+      text.includes('derecha') ||
+      text.includes('turn right')
+    ) {
+      return 'turn-right';
+    }
+
+    // 7. Giros normales a la izquierda
+    if (
+      mod.includes('left') ||
+      text.includes('izquierda') ||
+      text.includes('turn left')
+    ) {
+      return 'turn-left';
+    }
+
+    return 'straight';
+  };
+
+  const getManeuverIcon = (type, modifier, instruction = '') => {
+    const key = getManeuverIconKey(type, modifier, instruction);
+    switch (key) {
+      case 'arrive': return '🏁';
+      case 'roundabout': return '🔄';
+      case 'uturn': return '↩';
+      case 'sharp-right': return '↳';
+      case 'sharp-left': return '↲';
+      case 'slight-right': return '↗';
+      case 'slight-left': return '↖';
+      case 'turn-right': return '↱';
+      case 'turn-left': return '↰';
+      case 'straight':
+      default: return '⬆';
+    }
+  };
+
+  const renderManeuverIcon = (iconKey, size = 26, color = '#FFFFFF') => {
+    switch (iconKey) {
+      case 'turn-right':
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M7 19V11a4 4 0 0 1 4-4h8" />
+            <polyline points="15 3 19 7 15 11" />
+          </svg>
+        );
+      case 'turn-left':
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17 19V11a4 4 0 0 0-4-4H5" />
+            <polyline points="9 3 5 7 9 11" />
+          </svg>
+        );
+      case 'slight-right':
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M8 19l4-8 6-3" />
+            <polyline points="14 4 19 7 17 12" />
+          </svg>
+        );
+      case 'slight-left':
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M16 19l-4-8-6-3" />
+            <polyline points="10 4 5 7 7 12" />
+          </svg>
+        );
+      case 'sharp-right':
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 19v-6a3 3 0 0 1 3-3h7a3 3 0 0 1 3 3v2" />
+            <polyline points="16 13 19 16 22 13" />
+          </svg>
+        );
+      case 'sharp-left':
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 19v-6a3 3 0 0 0-3-3H8a3 3 0 0 0-3 3v2" />
+            <polyline points="8 13 5 16 2 13" />
+          </svg>
+        );
+      case 'uturn':
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 19v-9a6 6 0 0 0-12 0v9" />
+            <polyline points="10 15 6 19 2 15" />
+          </svg>
+        );
+      case 'roundabout':
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="7" strokeDasharray="3 2" />
+            <path d="M12 19v-4" />
+            <polyline points="9 16 12 13 15 16" />
+          </svg>
+        );
+      case 'arrive':
+        return (
+          <span style={{ fontSize: `${size}px`, lineHeight: 1 }}>🏁</span>
+        );
+      case 'straight':
+      default:
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="12" y1="19" x2="12" y2="5" />
+            <polyline points="5 12 12 5 19 12" />
+          </svg>
+        );
+    }
   };
 
   const buildManeuverList = (steps) => {
     const list = [];
-    steps.forEach((step) => {
+    steps.forEach((step, idx) => {
       if (!step.maneuver?.instruction) return;
-      const [mLng, mLat] = step.maneuver.location;
       const mType = step.maneuver.type || '';
       const mModifier = step.maneuver.modifier || '';
+      if (idx === 0 && (mType.includes('depart') || mType.includes('head'))) return;
+
+      const [mLng, mLat] = step.maneuver.location;
+      const cleanInstr = limpiarInstruccion(step.maneuver.instruction);
+      const iconKey = getManeuverIconKey(mType, mModifier, cleanInstr || step.maneuver.instruction);
+
       list.push({
         lng: mLng,
         lat: mLat,
-        instruction: limpiarInstruccion(step.maneuver.instruction),
+        instruction: cleanInstr,
         type: mType,
         modifier: mModifier,
-        icon: getManeuverIcon(mType, mModifier),
+        iconKey: iconKey,
+        icon: getManeuverIcon(mType, mModifier, cleanInstr),
         segmentDist: step.distance || 0,
         announcedFar: false,
         announcedMid: false,
@@ -1407,21 +1547,30 @@ export default function MapaTuristico() {
 
   const checkDistanceAnnouncements = (currentLng, currentLat) => {
     const maneuvers = maneuversRef.current;
-    if (!maneuvers.length) return;
+    if (!maneuvers || !maneuvers.length) return;
 
-    const next = maneuvers[0];
+    let next = maneuvers[0];
     if (!next) return;
 
-    const dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
+    let dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
     const now = Date.now();
     const silenceSec = (now - lastAnnouncementTimeRef.current) / 1000;
+
+    const nextNext = maneuvers.length > 1 ? maneuvers[1] : null;
+    const iconKey = next.iconKey || getManeuverIconKey(next.type, next.modifier, next.instruction);
+    const nextNextIconKey = nextNext ? (nextNext.iconKey || getManeuverIconKey(nextNext.type, nextNext.modifier, nextNext.instruction)) : null;
 
     // Actualizar maniobra y distancia actual para el indicador de giro estilo Waze
     setCurrentManeuver({
       instruction: next.instruction,
       distance: dist,
       distanceFormatted: formatDistanceDisplay(dist),
-      icon: next.icon || getManeuverIcon(next.type, next.modifier)
+      iconKey: iconKey,
+      icon: next.icon || getManeuverIcon(next.type, next.modifier, next.instruction),
+      nextNext: nextNext ? {
+        instruction: nextNext.instruction,
+        iconKey: nextNextIconKey,
+      } : null
     });
 
     if (dist < 50 && !next.announcedArrive) {
@@ -1456,8 +1605,8 @@ export default function MapaTuristico() {
       return;
     }
 
-    if (silenceSec >= 12 && dist > 300 && dist < 5000) {
-      const msg = lang === 'en' ? `Continue straight. In ${formatDistance(dist)}, ${next.instruction}` : `Continúe recto. En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
+    if (silenceSec >= 15 && dist > 500 && dist < 5000) {
+      const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
       speakInstruction(msg);
       lastAnnouncementTimeRef.current = now;
     }
@@ -1970,13 +2119,22 @@ export default function MapaTuristico() {
           const instr = limpiarInstruccion(firstStep.maneuver?.instruction || '');
           const dist = firstStep.distance || route.distance;
 
+          const rawInstr = firstStep.maneuver?.instruction || '';
+          const iconKey = getManeuverIconKey(type, modifier, instr || rawInstr);
+          const nextNextStep = maneuversRef.current.length > 1 ? maneuversRef.current[1] : null;
+
           setCurrentManeuver({
             type,
             modifier,
             instruction: instr,
             distance: dist,
             distanceFormatted: formatDistanceDisplay(dist),
-            icon: getManeuverIcon(type, modifier)
+            iconKey: iconKey,
+            icon: getManeuverIcon(type, modifier, instr || rawInstr),
+            nextNext: nextNextStep ? {
+              instruction: nextNextStep.instruction,
+              iconKey: nextNextStep.iconKey
+            } : null
           });
 
           if (instr && instr !== lastSpokenRef.current) {
@@ -4001,55 +4159,89 @@ export default function MapaTuristico() {
           color: 'white',
           overflow: 'hidden',
         }}>
-          {/* Cabecera con maniobra actual */}
+          {/* Cabecera con maniobra actual estilo Waze / Google Maps */}
           {currentManeuver && (
             <div style={{
               display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '12px 14px',
-              background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.08) 100%)',
-              borderBottom: '1px solid rgba(255, 215, 0, 0.2)',
+              flexDirection: 'column',
+              background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 4px 16px rgba(4, 120, 87, 0.3)',
             }}>
               <div style={{
-                width: '44px',
-                height: '44px',
-                minWidth: '44px',
-                borderRadius: '12px',
-                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                color: '#0A192F',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '22px',
-                fontWeight: '900',
-                boxShadow: '0 4px 14px rgba(255, 215, 0, 0.4)',
+                gap: '14px',
+                padding: '12px 14px',
               }}>
-                {currentManeuver.icon || '⬆'}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
-                  fontSize: '13px',
-                  fontWeight: '800',
-                  color: '#FFD700',
-                  marginBottom: '2px',
+                  width: '48px',
+                  height: '48px',
+                  minWidth: '48px',
+                  borderRadius: '14px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  border: '1.5px solid rgba(255, 255, 255, 0.4)',
+                  color: '#FFFFFF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
                 }}>
-                  {currentManeuver.distanceFormatted || formatDistanceDisplay(routeInfo.distance)}
+                  {renderManeuverIcon(currentManeuver.iconKey, 30, '#FFFFFF')}
                 </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{
+                    fontSize: '15px',
+                    fontWeight: '900',
+                    color: '#FFFFFF',
+                    letterSpacing: '-0.2px',
+                    marginBottom: '2px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}>
+                    <span>{currentManeuver.distanceFormatted || formatDistanceDisplay(routeInfo.distance)}</span>
+                  </div>
+                  <div style={{
+                    fontSize: '12.5px',
+                    fontWeight: '700',
+                    color: 'rgba(255, 255, 255, 0.95)',
+                    lineHeight: '1.25',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                  }}>
+                    {currentManeuver.instruction || ''}
+                  </div>
+                </div>
+              </div>
+
+              {/* Siguiente paso ("Luego...") estilo Waze / Google Maps */}
+              {currentManeuver.nextNext && (
                 <div style={{
+                  padding: '5px 14px 7px 14px',
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
                   fontSize: '11px',
-                  fontWeight: '600',
                   color: 'rgba(255, 255, 255, 0.85)',
-                  lineHeight: '1.3',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
+                  fontWeight: '600',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.1)',
                 }}>
-                  {currentManeuver.instruction || ''}
+                  <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.5px', opacity: 0.85, fontWeight: '800' }}>
+                    {lang === 'en' ? 'Then' : 'Luego'}:
+                  </span>
+                  <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    {renderManeuverIcon(currentManeuver.nextNext.iconKey, 16, '#FFFFFF')}
+                  </div>
+                  <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {currentManeuver.nextNext.instruction}
+                  </span>
                 </div>
-              </div>
+              )}
             </div>
           )}
 
