@@ -654,26 +654,7 @@ export default function MapaTuristico() {
     }
   }, [selectedPoint]);
 
-  // Simular progreso de carga de 0 a 100 en 5 segundos
-  useEffect(() => {
-    if (isMapLoading) {
-      setLoadingProgress(0);
-      const startTime = Date.now();
-      const duration = 5000; // 5 segundos
 
-      const interval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(Math.round((elapsed / duration) * 100), 100);
-        setLoadingProgress(progress);
-
-        if (progress >= 100) {
-          clearInterval(interval);
-        }
-      }, 30);
-
-      return () => clearInterval(interval);
-    }
-  }, [isMapLoading]);
 
   // --- HANDLERS DE RESERVAS Y RESEÑAS ---
   const handleCrearReserva = async (e) => {
