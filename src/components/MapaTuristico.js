@@ -255,6 +255,24 @@ export default function MapaTuristico() {
     }
   }, []);
 
+  // Animación suave del progreso de la pantalla de carga (0% -> 100%)
+  useEffect(() => {
+    let progress = 0;
+    setLoadingProgress(0);
+    const interval = setInterval(() => {
+      progress += 4;
+      if (progress >= 100) {
+        progress = 100;
+        setLoadingProgress(100);
+        clearInterval(interval);
+      } else {
+        setLoadingProgress(progress);
+      }
+    }, 80);
+
+    return () => clearInterval(interval);
+  }, []);
+
   // Redimensionar el mapa cuando se abra o cierre el panel de detalles (Split-Screen)
   useEffect(() => {
     if (mapRef.current) {
@@ -2336,9 +2354,51 @@ export default function MapaTuristico() {
       setCurrentManeuver(null);
     });
 
-    // Geolocalización y animaciones de inicio
+    // Geolocalización y animaciones de inicio cinematográficas
     let isFirstPosition = true;
     let watchId = null;
+
+    const triggerCinematicDescent = (lng, lat) => {
+      if (!isFirstPosition || !mapRef.current) return;
+      isFirstPosition = false;
+
+      // Cargar marcadores iniciales en base a la ubicación detectada
+      cargarPuntosCercanos(lng, lat, filtroCategoria);
+
+      // Esperar 2.2s a que la pantalla de carga con el croquis de Nicaragua llegue al 100%
+      const cinematicTimer = setTimeout(() => {
+        setIsMapLoading(false);
+
+        if (!mapRef.current || selectedPointRef.current) return;
+
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('id')) return;
+
+        // Vuelo parabólico descendente lento y épico (speed: 0.35, curve: 1.8) desde el espacio hasta la ubicación
+        mapRef.current.flyTo({
+          center: [lng, lat],
+          zoom: 15.8,
+          pitch: 0,
+          bearing: 0,
+          speed: 0.35,
+          curve: 1.8,
+          essential: true,
+        });
+
+        // Una vez que aterriza suavemente, inclinamos la cámara a 60° para revelar los edificios y marcadores 3D
+        mapRef.current.once('moveend', () => {
+          if (mapRef.current && !selectedPointRef.current) {
+            mapRef.current.easeTo({
+              pitch: 60,
+              duration: 2000,
+              essential: true,
+            });
+          }
+        });
+      }, 2200);
+
+      cinematicTimeoutsRef.current.push(cinematicTimer);
+    };
 
     // Registrar puente para recibir coordenadas GPS nativas desde la App Móvil Flutter (Hardware real del teléfono)
     window.updateNativeGPSPosition = (lng, lat, heading = 0) => {
@@ -2346,43 +2406,16 @@ export default function MapaTuristico() {
       if (lng === undefined || lat === undefined || isNaN(lng) || isNaN(lat)) return;
 
       handlePositionUpdate(lng, lat, heading);
-
-      if (isFirstPosition && mapRef.current) {
-        isFirstPosition = false;
-        setIsMapLoading(false);
-        cargarPuntosCercanos(lng, lat, filtroCategoria);
-
-        if (!selectedPointRef.current) {
-          mapRef.current.flyTo({
-            center: [lng, lat],
-            zoom: 15.8,
-            pitch: 45,
-            speed: 1.0,
-            essential: true,
-          });
-        }
-      }
+      triggerCinematicDescent(lng, lat);
     };
 
-    // Timer de seguridad: Si el GPS tarda más de 1.2s, volar de inmediato a la posición por defecto para no congelar la pantalla
+    // Timer de seguridad: Si el GPS tarda más de 2.2s, volar de inmediato a la posición por defecto
     const fallbackTimer = setTimeout(() => {
       if (isFirstPosition && mapRef.current) {
-        isFirstPosition = false;
-        setIsMapLoading(false);
         const [defLng, defLat] = currentPosRef.current;
-        cargarPuntosCercanos(defLng, defLat, filtroCategoria);
-
-        if (!selectedPointRef.current) {
-          mapRef.current.flyTo({
-            center: [defLng, defLat],
-            zoom: 15.2,
-            pitch: 45,
-            speed: 1.0,
-            essential: true,
-          });
-        }
+        triggerCinematicDescent(defLng, defLat);
       }
-    }, 1200);
+    }, 2200);
     cinematicTimeoutsRef.current.push(fallbackTimer);
 
     if ('geolocation' in navigator) {
@@ -2393,35 +2426,18 @@ export default function MapaTuristico() {
 
           const { longitude, latitude } = pos.coords;
           handlePositionUpdate(longitude, latitude);
-
-          if (isFirstPosition && mapRef.current) {
-            isFirstPosition = false;
-            cargarPuntosCercanos(longitude, latitude, filtroCategoria);
-
-            const cinematicTimer = setTimeout(() => {
-              setIsMapLoading(false);
-              if (!mapRef.current || selectedPointRef.current) return;
-
-              mapRef.current.flyTo({
-                center: [longitude, latitude],
-                zoom: 15.5,
-                pitch: 45,
-                speed: 1.0,
-                essential: true,
-              });
-            }, 300);
-
-            cinematicTimeoutsRef.current.push(cinematicTimer);
-          }
+          triggerCinematicDescent(longitude, latitude);
         },
         (err) => {
           console.error('[Atlan] GPS error:', err);
-          setIsMapLoading(false);
+          const [defLng, defLat] = currentPosRef.current;
+          triggerCinematicDescent(defLng, defLat);
         },
         { enableHighAccuracy: true, maximumAge: 0 }
       );
     } else {
-      setIsMapLoading(false);
+      const [defLng, defLat] = currentPosRef.current;
+      triggerCinematicDescent(defLng, defLat);
     }
 
     return () => {
