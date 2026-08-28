@@ -2478,10 +2478,10 @@ html body .mapboxgl-ctrl-directions tr {
     inset 0 1px 3px rgba(255, 255, 255, 0.35) !important;
 }
 
-.neon-btn-yellow-hero {
+.neon-btn-green-hero, .neon-btn-yellow-hero {
   position: relative;
   width: 100% !important;
-  background: linear-gradient(145deg, #FFE033 0%, #FFD700 70%, #E6C200 100%) !important;
+  background: linear-gradient(145deg, #1FCC5C 0%, #17AA4A 70%, #128A3C 100%) !important;
   border: 2.5px solid #FFFFFF !important;
   border-radius: 14px !important;
   display: flex !important;
@@ -2496,7 +2496,7 @@ html body .mapboxgl-ctrl-directions tr {
   overflow: hidden;
 }
 
-.neon-btn-yellow-hero:hover {
+.neon-btn-green-hero:hover, .neon-btn-yellow-hero:hover {
   transform: translateY(-2px) scale(1.03) !important;
   border-color: #FFFFFF !important;
   box-shadow: 

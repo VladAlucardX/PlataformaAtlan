@@ -3726,10 +3726,10 @@ export default function MapaTuristico() {
                         </span>
                       </button>
 
-                      {/* BOTÓN 2: MOSTRAR MÁS */}
+                      {/* BOTÓN 2: MOSTRAR MÁS (VERDE ESMERALDA #17AA4A) */}
                       <button
                         onClick={() => setShowFullProfileModal(true)}
-                        className="neon-btn-yellow-hero"
+                        className="neon-btn-green-hero"
                         style={{
                           flex: 1,
                           padding: '6px 8px',
