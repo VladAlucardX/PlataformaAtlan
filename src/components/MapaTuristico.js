@@ -2212,11 +2212,6 @@ export default function MapaTuristico() {
       // Cargar puntos inmediatamente al estar listo el mapa
       const center = currentPosRef.current || [-86.2504, 12.1364];
       cargarPuntosCercanos(center[0], center[1], filtroCategoria);
-
-      // Timer de seguridad: Garantizar que la pantalla de carga se retire en máximo 3.5 segundos en móvil
-      setTimeout(() => {
-        setIsMapLoading(false);
-      }, 3500);
     });
 
     // Click en el mapa (agregar punto)
@@ -2406,28 +2401,16 @@ export default function MapaTuristico() {
         mapRef.current.resize();
       }
 
-      // Vuelo parabólico descendente fluido con duración fija de 3.5s
+      // Vuelo parabólico descendente fluido directo a la vista cercana (zoom 17.2, pitch 60)
       mapRef.current.flyTo({
         center: targetPos,
-        zoom: 15.8,
-        pitch: 0,
+        zoom: 17.2, // Vista cercana de calle alrededor de la posición del usuario
+        pitch: 60,  // Inclinación 3D de 60°
         bearing: 0,
-        duration: 3500, // 3.5 segundos exactos de vuelo suave
+        duration: 4000, // 4.0 segundos de vuelo descendente panorámico y suave
         curve: 1.4,
         essential: true,
       });
-
-      // Una vez que aterriza suavemente a los 3.5s, inclinamos la cámara a 60° para revelar los edificios 3D
-      const tiltTimer = setTimeout(() => {
-        if (mapRef.current && !selectedPointRef.current) {
-          mapRef.current.easeTo({
-            pitch: 60,
-            duration: 1800,
-            essential: true,
-          });
-        }
-      }, 3600);
-      cinematicTimeoutsRef.current.push(tiltTimer);
     }, 10000); // 10.0 segundos exactos — coincide con la pantalla de carga
 
     cinematicTimeoutsRef.current.push(cinematicTimer);
