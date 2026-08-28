@@ -3626,9 +3626,9 @@ export default function MapaTuristico() {
                       </div>
                     </div>
 
-                    {/* COLUMNA 2: A LA PAR, LOS DOS BOTONES NEÓN ADAPTADOS CON EFECTOS Y ANIMACIONES DEL HERO */}
+                    {/* COLUMNA 2: A LA PAR, LOS DOS BOTONES NEÓN ADAPTADOS CON TEXTO E ICONOS MÁS GRANDES */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', height: '150px' }}>
-                      {/* BOTÓN 1: INICIAR VIAJE (ESTILO NEÓN OSCURO CON BORDES BLANCOS NÍTIOS SIN LUZ DORADA) */}
+                      {/* BOTÓN 1: INICIAR VIAJE */}
                       <button
                         onClick={() => handleIniciarViaje(selectedPoint)}
                         className="neon-btn-dark-hero"
@@ -3638,12 +3638,12 @@ export default function MapaTuristico() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '6px'
+                          gap: '8px'
                         }}
                       >
                         <svg
-                          width="18"
-                          height="18"
+                          width="22"
+                          height="22"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="#FFFFFF"
@@ -3657,9 +3657,9 @@ export default function MapaTuristico() {
                         </svg>
                         <span
                           style={{
-                            fontSize: '13px',
+                            fontSize: '15.5px',
                             fontWeight: '900',
-                            letterSpacing: '0.8px',
+                            letterSpacing: '1px',
                             color: '#FFFFFF',
                             textTransform: 'uppercase'
                           }}
@@ -3668,7 +3668,7 @@ export default function MapaTuristico() {
                         </span>
                       </button>
 
-                      {/* BOTÓN 2: MOSTRAR MÁS (ESTILO "¿TIENES UN NEGOCIO?" DEL HERO CON RESPLANDOR Y SOMBRAS NEÓN AMARILLAS) */}
+                      {/* BOTÓN 2: MOSTRAR MÁS */}
                       <button
                         onClick={() => setShowFullProfileModal(true)}
                         className="neon-btn-yellow-hero"
@@ -3678,15 +3678,15 @@ export default function MapaTuristico() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '6px'
+                          gap: '8px'
                         }}
                       >
                         <span
                           className="neon-sign-text-white-bg"
                           style={{
-                            fontSize: '13px',
+                            fontSize: '15.5px',
                             fontWeight: '900',
-                            letterSpacing: '0.8px',
+                            letterSpacing: '1px',
                             color: '#FFFFFF',
                             textTransform: 'uppercase',
                             WebkitTextStroke: '1px #000000',
@@ -3696,7 +3696,7 @@ export default function MapaTuristico() {
                         >
                           {lang === 'en' ? 'Show More' : 'Mostrar más'}
                         </span>
-                        <img src="/images/more.svg" alt="Mostrar más" style={{ width: '18px', height: '18px', filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))' }} />
+                        <img src="/images/more.svg" alt="Mostrar más" style={{ width: '22px', height: '22px', filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))' }} />
                       </button>
                     </div>
                   </div>
