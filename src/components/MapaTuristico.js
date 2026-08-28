@@ -2377,21 +2377,25 @@ export default function MapaTuristico() {
       console.log('[Atlan Cinematic] Iniciando vuelo parabólico hacia:', targetPos);
       cargarPuntosCercanos(targetPos[0], targetPos[1], filtroCategoria);
 
-      // Redimensionar canvas del mapa para asegurar renderizado en WebView Android
-      if (mapRef.current) {
-        mapRef.current.resize();
-      }
+      // Retardo de 150ms para que la UI desvanezca la portada de carga y active el renderizado WebGL en WebView Android
+      const descentTimer = setTimeout(() => {
+        if (!mapRef.current) return;
 
-      // Vuelo parabólico descendente fluido directo a la vista cercana (zoom 17.2, pitch 60)
-      mapRef.current.flyTo({
-        center: targetPos,
-        zoom: 17.2, // Vista cercana de calle alrededor de la posición del usuario
-        pitch: 60,  // Inclinación 3D de 60°
-        bearing: 0,
-        duration: 4000, // 4.0 segundos de vuelo descendente panorámico y suave
-        curve: 1.4,
-        essential: true,
-      });
+        mapRef.current.resize();
+
+        // Vuelo parabólico descendente majestuoso, fluido y pausado (7.0 segundos) desde el espacio a la vista cercana (zoom 17.2, pitch 60)
+        mapRef.current.flyTo({
+          center: targetPos,
+          zoom: 17.2, // Vista cercana de calle alrededor de la posición del usuario
+          pitch: 60,  // Inclinación 3D de 60°
+          bearing: 0,
+          duration: 7000, // 7.0 segundos de vuelo lento, suave y épico
+          curve: 1.8,     // Curva parabólica alta desde el espacio
+          essential: true,
+        });
+      }, 150);
+
+      cinematicTimeoutsRef.current.push(descentTimer);
     }, 10000); // 10.0 segundos exactos — coincide con la pantalla de carga
 
     cinematicTimeoutsRef.current.push(cinematicTimer);
