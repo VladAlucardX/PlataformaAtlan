@@ -2393,15 +2393,27 @@ export default function MapaTuristico() {
 
         mapRef.current.resize();
 
-        // Vuelo descendente continuo, majestuoso y ultrasuave (7.5 segundos exactos) desde el espacio a la vista cercana (zoom 16.8, pitch 60)
-        mapRef.current.easeTo({
+        // FASE 1: Vuelo descendente 100% vertical y plano (pitch: 0, bearing: 0) desde el espacio hasta la posición GPS
+        // Sin giros de picada hacia la derecha durante el zoom. Súper fluido y liviano para la GPU en móvil.
+        mapRef.current.flyTo({
           center: targetPos,
-          zoom: 16.8, // Vista cercana de calle cristalina alrededor de la posición del usuario
-          pitch: 60,  // Inclinación 3D cinematográfica de 60°
+          zoom: 16.5,
+          pitch: 0,
           bearing: 0,
-          duration: 7500, // 7.5 segundos de descenso lento, pausado, fluido y natural
-          easing: (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t, // Easing in-out suave que nunca se congela a mitad de camino en móvil
+          duration: 5500, // 5.5 segundos de zoom descendente vertical, pausado, fluido y cristalino
+          curve: 1.6,
           essential: true,
+        });
+
+        // FASE 2: Una vez que aterriza verticalmente sobre el punto GPS, inclinamos suavemente a 60°
+        mapRef.current.once('moveend', () => {
+          if (mapRef.current && !selectedPointRef.current) {
+            mapRef.current.easeTo({
+              pitch: 60,
+              duration: 2000,
+              essential: true,
+            });
+          }
         });
       }, 150);
 
