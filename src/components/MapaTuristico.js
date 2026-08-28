@@ -3426,26 +3426,107 @@ export default function MapaTuristico() {
               ? (pointReviews.reduce((acc, r) => acc + Number(r.estrellas || 5), 0) / pointReviews.length).toFixed(1)
               : null;
 
+            const getCategoryIconName = (category) => {
+              const cat = (category || '').toLowerCase();
+              if (cat.includes('restaurante') || cat.includes('comida') || cat.includes('gastronom') || cat.includes('café') || cat.includes('bar') || cat.includes('comideria') || cat.includes('comidería')) {
+                return 'utensils';
+              }
+              if (cat.includes('hotel') || cat.includes('hospedaje') || cat.includes('hostal') || cat.includes('alojamiento')) {
+                return 'hotel';
+              }
+              if (cat.includes('naturaleza') || cat.includes('tour') || cat.includes('aventura') || cat.includes('parque') || cat.includes('playa')) {
+                return 'mountain';
+              }
+              if (cat.includes('cultura') || cat.includes('arte') || cat.includes('museo') || cat.includes('teatro')) {
+                return 'palette';
+              }
+              if (cat.includes('tienda') || cat.includes('comercio') || cat.includes('super') || cat.includes('compras') || cat.includes('mercado')) {
+                return 'store';
+              }
+              return 'store';
+            };
+
             return (
               <>
-                {/* BARRA SUPERIOR DE ACCIONES (FAVORITO Y CERRAR) */}
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '12px 16px 4px',
-                  position: 'relative',
-                  zIndex: 2
-                }}>
-                  {userSession && (
-                    <button
-                      onClick={handleToggleFavorite}
-                      title={isFavorite ? (lang === 'en' ? 'Remove Favorite' : 'Quitar de Favoritos') : (lang === 'en' ? 'Save Favorite' : 'Guardar Favorito')}
+                {/* CABECERA SUPERIOR EN AZUL NAVBAR (#146D9E) CON EL NOMBRE DEL NEGOCIO Y SU ICONO DE CATEGORÍA */}
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)',
+                    padding: '14px 18px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                    boxShadow: '0 4px 14px rgba(20, 109, 158, 0.25)'
+                  }}
+                >
+                  {/* IZQUIERDA: ICONO DE CATEGORÍA + NOMBRE DEL NEGOCIO EN LEVITACIÓN Y LETRAS BLANCAS */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
+                    <div
                       style={{
-                        background: '#F1F5F9',
-                        border: isFavorite ? '1.5px solid #FFD700' : '1px solid #E2E8F0',
-                        color: isFavorite ? '#B8960E' : '#475569',
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '10px',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        backdropFilter: 'blur(8px)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}
+                    >
+                      <Icon name={getCategoryIconName(selectedPoint.category)} size={20} color="#FFFFFF" />
+                    </div>
+
+                    <h2
+                      style={{
+                        margin: 0,
+                        fontSize: '20px',
+                        fontWeight: '850',
+                        color: '#FFFFFF',
+                        lineHeight: '1.25',
+                        wordBreak: 'break-word'
+                      }}
+                    >
+                      {selectedPoint.nombre}
+                    </h2>
+                  </div>
+
+                  {/* DERECHA: BOTONES DE ACCIÓN FLOTANTES (FAVORITO Y CERRAR X) */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                    {userSession && (
+                      <button
+                        onClick={handleToggleFavorite}
+                        title={isFavorite ? (lang === 'en' ? 'Remove Favorite' : 'Quitar de Favoritos') : (lang === 'en' ? 'Save Favorite' : 'Guardar Favorito')}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.2)',
+                          backdropFilter: 'blur(8px)',
+                          border: isFavorite ? '1.5px solid #FFD700' : '1px solid rgba(255,255,255,0.4)',
+                          color: isFavorite ? '#FFD700' : '#FFFFFF',
+                          width: '34px',
+                          height: '34px',
+                          borderRadius: '50%',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <Icon name={isFavorite ? 'heartFilled' : 'heart'} size={16} color={isFavorite ? '#FFD700' : '#FFFFFF'} />
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => {
+                        setSelectedPoint(null);
+                        setShowFullProfileModal(false);
+                      }}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        backdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(255,255,255,0.4)',
+                        color: '#FFFFFF',
                         width: '34px',
                         height: '34px',
                         borderRadius: '50%',
@@ -3453,45 +3534,18 @@ export default function MapaTuristico() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        transition: 'all 0.2s ease',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
+                        transition: 'all 0.2s ease'
                       }}
                     >
-                      <Icon name={isFavorite ? 'heartFilled' : 'heart'} size={16} color={isFavorite ? '#B8960E' : '#475569'} />
+                      <Icon name="x" size={16} color="#FFFFFF" />
                     </button>
-                  )}
-
-                  <button
-                    onClick={() => {
-                      setSelectedPoint(null);
-                      setShowFullProfileModal(false);
-                    }}
-                    style={{
-                      background: '#F1F5F9',
-                      border: '1px solid #E2E8F0',
-                      color: '#1E293B',
-                      width: '34px',
-                      height: '34px',
-                      borderRadius: '50%',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'all 0.2s ease',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
-                    }}
-                  >
-                    <Icon name="x" size={16} color="#1E293B" />
-                  </button>
+                  </div>
                 </div>
 
-                {/* DATOS Y ESTRUCTURA PRINCIPAL DEL NEGOCIO */}
-                <div style={{ padding: '0 18px 14px', position: 'relative' }}>
-                  {/* NOMBRE DEL NEGOCIO Y CATEGORÍA (ARRIBA) */}
+                {/* DATOS Y ESTRUCTURA PRINCIPAL ABAJO DE LA CABECERA */}
+                <div style={{ padding: '12px 18px 14px', position: 'relative' }}>
+                  {/* CATEGORÍA Y RANGO DE PRECIOS */}
                   <div style={{ marginBottom: '10px' }}>
-                    <h2 style={{ margin: '0 0 3px', fontSize: '21px', fontWeight: '850', color: '#0F172A', lineHeight: '1.25', wordBreak: 'break-word' }}>
-                      {selectedPoint.nombre}
-                    </h2>
                     <p style={{ margin: 0, fontSize: '12.5px', color: '#64748B', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Icon name="mapPin" size={13} color="#64748B" />
                       <span>{t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}</span>
