@@ -1418,8 +1418,6 @@ export default function MapaTuristico() {
     const mod = (modifier || '').toLowerCase();
     const typ = (type || '').toLowerCase();
     const text = (instruction || '').toLowerCase();
-
-<<<<<<< HEAD
     // 1. Llegada
     if (typ.includes('arrive') || typ.includes('destination') || text.includes('llegad') || text.includes('destino') || text.includes('arrived')) {
       return 'arrive';
@@ -1561,47 +1559,6 @@ export default function MapaTuristico() {
           </svg>
         );
     }
-=======
-    if (typ.includes('arrive') || typ.includes('destination')) return { emoji: '🏁', rotation: 0, isEmoji: true };
-    if (typ.includes('roundabout') || typ.includes('rotary')) return { emoji: '🔄', rotation: 0, isEmoji: true };
-    if (mod.includes('uturn')) return { rotation: 180, isEmoji: false };
-    if (mod.includes('sharp right')) return { rotation: 135, isEmoji: false };
-    if (mod.includes('sharp left')) return { rotation: -135, isEmoji: false };
-    if (mod.includes('slight right')) return { rotation: 45, isEmoji: false };
-    if (mod.includes('slight left')) return { rotation: -45, isEmoji: false };
-    if (mod.includes('right')) return { rotation: 90, isEmoji: false };
-    if (mod.includes('left')) return { rotation: -90, isEmoji: false };
-    if (typ.includes('straight') || typ.includes('depart') || mod.includes('straight')) return { rotation: 0, isEmoji: false };
-    return { rotation: 0, isEmoji: false };
-  };
-
-  // Renderizar ícono de maniobra como SVG rotado o emoji
-  const renderManeuverIcon = (iconData, size = 22) => {
-    if (!iconData) return <span style={{ fontSize: `${size}px` }}>⬆</span>;
-    if (iconData.isEmoji) return <span style={{ fontSize: `${size}px` }}>{iconData.emoji}</span>;
-    return (
-      <svg
-        width={size}
-        height={size}
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        style={{
-          transform: `rotate(${iconData.rotation}deg)`,
-          transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-          flexShrink: 0,
-        }}
-      >
-        <path
-          d="M12 3L12 21M12 3L6 9M12 3L18 9"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    );
->>>>>>> fix/flecha-navegacion-duplicada
   };
 
   const buildManeuverList = (steps) => {
