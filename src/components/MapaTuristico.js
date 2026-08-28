@@ -389,15 +389,29 @@ export default function MapaTuristico() {
       return;
     }
 
+    // 1. Iniciar vuelo suave de cámara hacia la ubicación exacta del punto
+    if (mapRef.current && !isNavigatingRef.current) {
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+      mapRef.current.flyTo({
+        center: [puntoNorm.lng, puntoNorm.lat],
+        zoom: 15.5,
+        pitch: 40,
+        padding: isMobile ? { top: 0, bottom: 280, left: 0, right: 0 } : { top: 0, bottom: 0, left: 0, right: 380 },
+        speed: 0.9,
+        curve: 1.2,
+        essential: true
+      });
+    }
+
+    // 2. Trazar la trayectoria en la carretera en segundo plano
     const fetchPreviewRoute = () => {
       const [oLng, oLat] = currentPosRef.current;
-      actualizarPrevisualizacionRuta(oLng, oLat, puntoNorm.lng, puntoNorm.lat, true);
+      actualizarPrevisualizacionRuta(oLng, oLat, puntoNorm.lng, puntoNorm.lat, false);
     };
 
-    // Dar un breve delay para asegurar que el mapa y los estilos estén listos
     const timer = setTimeout(() => {
       fetchPreviewRoute();
-    }, 300);
+    }, 150);
 
     return () => clearTimeout(timer);
   }, [selectedPoint]);

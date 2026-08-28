@@ -383,52 +383,67 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
       {/* Mobile Drawer Dropdown Overlay */}
       {menuOpen && (
         <div
-          style={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            right: 0,
-            width: "100%",
-            padding: "20px 24px 28px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
-            background: "#0A192F",
-            borderTop: "1.5px solid rgba(255, 215, 0, 0.3)",
-            borderBottom: "1.5px solid rgba(255, 215, 0, 0.3)",
-            boxShadow: "0 20px 50px rgba(0, 0, 0, 0.95)",
-            maxHeight: "calc(100vh - 70px)",
-            overflowY: "auto",
-            zIndex: 99999
-          }}
-          className="animate-fade-in-down hide-desktop"
+          className="mobile-menu-drawer animate-fade-in-down hide-desktop"
         >
-          <Link href="/" className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="home" size={16} /> {lang === "en" ? "Home" : "Inicio"}</Link>
-          <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="map" size={16} /> {t("nav.map")}</Link>
-          <Link href="/departamentos" className={`nav-pill-link ${activePage === "departamentos" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="star" size={16} /> {lang === "en" ? "Ranking" : "Ranking"}</Link>
-          <Link href="/mas-de-nicaragua" className={`nav-pill-link ${activePage === "mas-de-nicaragua" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="book" size={16} /> {t("nav.moreNicaragua") || (lang === "en" ? "More of Nicaragua" : "Más de Nicaragua")}</Link>
-          <Link href="/comunidad" className={`nav-pill-link ${activePage === "comunidad" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="users" size={16} /> {t("social.community")}</Link>
-          {session && <Link href="/chat" className={`nav-pill-link ${activePage === "chat" ? "active" : ""}`} onClick={() => setMenuOpen(false)}><Icon name="messageCircle" size={16} /> {t("chat.title")}</Link>}
+          <Link href="/" className={`mobile-menu-item ${activePage === "inicio" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
+            <Icon name="home" size={18} /> {lang === "en" ? "Home" : "Inicio"}
+          </Link>
+          <Link href="/mapa" className={`mobile-menu-item ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
+            <Icon name="map" size={18} /> {t("nav.map")}
+          </Link>
+          <Link href="/departamentos" className={`mobile-menu-item ${activePage === "departamentos" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
+            <Icon name="star" size={18} /> {lang === "en" ? "Ranking" : "Ranking"}
+          </Link>
+          <Link href="/mas-de-nicaragua" className={`mobile-menu-item ${activePage === "mas-de-nicaragua" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
+            <Icon name="book" size={18} /> {t("nav.moreNicaragua") || (lang === "en" ? "More of Nicaragua" : "Más de Nicaragua")}
+          </Link>
+          <Link href="/comunidad" className={`mobile-menu-item ${activePage === "comunidad" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
+            <Icon name="users" size={18} /> {t("social.community")}
+          </Link>
+          {session && (
+            <Link href="/chat" className={`mobile-menu-item ${activePage === "chat" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
+              <Icon name="messageCircle" size={18} /> {t("chat.title")}
+            </Link>
+          )}
           {perfil?.rol === "admin" && (
-            <Link href="/admin" className={`nav-pill-link ${activePage === "admin" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-              <Icon name="shield" size={16} /> {lang === "en" ? "Management" : "Gestión"}
+            <Link href="/admin" className={`mobile-menu-item ${activePage === "admin" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
+              <Icon name="shield" size={18} /> {lang === "en" ? "Management" : "Gestión"}
             </Link>
           )}
           {session ? (
             <>
-              <Link href={communityProfileLink} className="nav-pill-link" onClick={() => setMenuOpen(false)}><Icon name="user" size={16} /> {lang === "en" ? "My Profile" : "Mi Perfil"}</Link>
-              <Link href="/perfil" className="nav-pill-link" onClick={() => setMenuOpen(false)}><Icon name="compass" size={16} /> {lang === "en" ? "My Tours & Saved" : "Mis Giras"}</Link>
+              <Link href={communityProfileLink} className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                <Icon name="user" size={18} /> {lang === "en" ? "My Profile" : "Mi Perfil"}
+              </Link>
+              <Link href="/perfil" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                <Icon name="compass" size={18} /> {lang === "en" ? "My Tours & Saved" : "Mis Giras"}
+              </Link>
               {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
-                <Link href="/dashboard" className="nav-pill-link" onClick={() => setMenuOpen(false)}><Icon name="briefcase" size={16} /> {lang === "en" ? "My Business" : "Mi Negocio"}</Link>
+                <Link href="/dashboard" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                  <Icon name="briefcase" size={18} /> {lang === "en" ? "My Business" : "Mi Negocio"}
+                </Link>
               )}
-              <button onClick={() => { setMenuOpen(false); handleLogout(); }} style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", padding: "10px", borderRadius: "10px", fontSize: "14px", fontWeight: "700", cursor: "pointer", width: "100%", textAlign: "left" }}>
-                <Icon name="logOut" size={16} /> {t("nav.logout") || "Cerrar Sesión"}
+              <button
+                onClick={() => { setMenuOpen(false); handleLogout(); }}
+                className="mobile-menu-item"
+                style={{ background: "rgba(239,68,68,0.15)", borderColor: "rgba(239,68,68,0.3)", color: "#ef4444", width: "100%", textAlign: "left", cursor: "pointer" }}
+              >
+                <Icon name="logOut" size={18} /> {t("nav.logout") || "Cerrar Sesión"}
               </button>
             </>
           ) : (
             <>
-              <Link href="/login" className="nav-pill-link" onClick={() => setMenuOpen(false)}>{t("nav.login")}</Link>
-              <Link href="/registro" className="btn-primary" style={{ width: "100%", textAlign: "center", padding: "10px" }} onClick={() => setMenuOpen(false)}>{t("nav.register")}</Link>
+              <Link href="/login" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                <Icon name="user" size={18} /> {t("nav.login")}
+              </Link>
+              <Link
+                href="/registro"
+                className="mobile-menu-item"
+                style={{ background: "linear-gradient(135deg, #146D9E 0%, #0D496B 100%)", borderColor: "#FFD700", color: "#FFFFFF", justifyContent: "center" }}
+                onClick={() => setMenuOpen(false)}
+              >
+                {t("nav.register")}
+              </Link>
             </>
           )}
         </div>
