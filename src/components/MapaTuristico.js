@@ -2235,8 +2235,11 @@ export default function MapaTuristico() {
     });
 
     const clearCinematicTimeouts = () => {
+      // NO cancelar si la pantalla de carga todavía está activa — el usuario no debería poder interrumpir el vuelo inicial
+      if (!hasFlownInitialDescentRef.current) return;
+
       if (cinematicTimeoutsRef.current.length > 0) {
-        console.log('[Atlan] Cancelando animación cinematográfica inicial por interacción del usuario');
+        console.log('[Atlan] Cancelando animación cinematográfica por interacción del usuario (post-descenso)');
         cinematicTimeoutsRef.current.forEach(t => clearTimeout(t));
         cinematicTimeoutsRef.current = [];
       }
