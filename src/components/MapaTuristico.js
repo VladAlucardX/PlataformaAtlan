@@ -1693,18 +1693,25 @@ export default function MapaTuristico() {
     speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${destino}.`, true);
     lastAnnouncementTimeRef.current = Date.now();
 
-    let index = 0;
+    // Simulación a velocidad constante estándar de ciudad: 40 km/h (11.11 m/s)
+    const SPEED_KMH = 40;
+    const METERS_PER_TICK = (SPEED_KMH * 1000) / 3600; // ~11.11 m/s (1 segundo por tick)
+
+    let currentPtIndex = 0;
+    let currentPos = coords[0];
+
     setTimeout(() => {
       if (!isDemoRunningRef.current) return;
 
       demoIntervalRef.current = setInterval(() => {
         const pts = rutaCoordenadasRef.current;
+        if (!pts || pts.length < 2) return;
 
         if ('speechSynthesis' in window && window.speechSynthesis.paused) {
           window.speechSynthesis.resume();
         }
 
-        if (index >= pts.length - 1) {
+        if (currentPtIndex >= pts.length - 1) {
           clearInterval(demoIntervalRef.current);
           demoIntervalRef.current = null;
           isDemoRunningRef.current = false;
@@ -1715,7 +1722,6 @@ export default function MapaTuristico() {
           if (panel) panel.style.display = '';
           speakInstruction(t('map.arrived'), true);
 
-          // Disparar modal de confirmación de visita (tanto en Demo como en GPS real)
           const destinoNombre = lugarDestinoRef.current || selectedPointRef.current?.nombre || 'su destino';
           const puntoId = selectedPointRef.current?.id || null;
 
@@ -1728,37 +1734,45 @@ export default function MapaTuristico() {
           return;
         }
 
-        let target = index + 1;
-        while (target < pts.length - 1) {
-          const gap = calcDistanceMeters(pts[index], pts[target]);
-          if (gap >= 50) break;
-          target++;
+        // Avanzar el vehículo ~11.1m (40 km/h) a lo largo de los nodos de la ruta
+        let remainingToMove = METERS_PER_TICK;
+        let nextPt = pts[currentPtIndex + 1];
+
+        while (currentPtIndex < pts.length - 1 && remainingToMove > 0) {
+          nextPt = pts[currentPtIndex + 1];
+          const distToNextNode = calcDistanceMeters(currentPos, nextPt);
+
+          if (distToNextNode <= remainingToMove) {
+            remainingToMove -= distToNextNode;
+            currentPos = nextPt;
+            currentPtIndex++;
+          } else {
+            const ratio = remainingToMove / distToNextNode;
+            const interpolatedLng = currentPos[0] + (nextPt[0] - currentPos[0]) * ratio;
+            const interpolatedLat = currentPos[1] + (nextPt[1] - currentPos[1]) * ratio;
+            currentPos = [interpolatedLng, interpolatedLat];
+            remainingToMove = 0;
+          }
         }
 
-        const current = pts[index];
-        const next = pts[target];
-        const bearing = calcBearing(current, next);
+        const bearing = calcBearing(currentPos, nextPt || pts[pts.length - 1]);
 
-        handlePositionUpdate(next[0], next[1], bearing);
-        checkDistanceAnnouncements(next[0], next[1]);
+        handlePositionUpdate(currentPos[0], currentPos[1], bearing);
+        checkDistanceAnnouncements(currentPos[0], currentPos[1]);
 
-        // Calcular distancia y tiempo restante
-        const remainingDist = calcRemainingRouteDistance(pts, target);
-        const totalDist = routeInfo?.distance || remainingDist || 1;
-        const totalDuration = routeInfo?.duration || (totalDist / 11) || 1;
-        const speed = totalDist / totalDuration;
-        const remainingDuration = speed > 0 ? remainingDist / speed : 0;
+        // Calcular la distancia y duración restante a velocidad constante de 40 km/h
+        const remainingDist = calcRemainingRouteDistance(pts, currentPtIndex);
+        const remainingDurationSec = (remainingDist / 1000) / SPEED_KMH * 3600;
 
         setRouteInfo({
           distance: remainingDist,
-          duration: remainingDuration,
-          eta: calculateETA(remainingDuration),
+          duration: remainingDurationSec,
+          eta: calculateETA(remainingDurationSec),
           destinationName: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : 'Destino')
         });
 
-        index = target;
-      }, 2000);
-    }, 4000);
+      }, 1000);
+    }, 2000);
   };
 
   // Activar modo agregar punto
