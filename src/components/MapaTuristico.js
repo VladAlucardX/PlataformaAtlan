@@ -2381,16 +2381,26 @@ export default function MapaTuristico() {
       const descentTimer = setTimeout(() => {
         if (!mapRef.current) return;
 
+        // Prevenir caídas de WebGL en Android WebView
+        const canvas = mapRef.current.getCanvas();
+        if (canvas && !canvas._atlanWebglGuard) {
+          canvas._atlanWebglGuard = true;
+          canvas.addEventListener('webglcontextlost', (e) => {
+            console.warn('[Atlan WebGL] Previniendo caída de contexto GPU en móvil:', e);
+            e.preventDefault();
+          });
+        }
+
         mapRef.current.resize();
 
-        // Vuelo parabólico descendente majestuoso, fluido y pausado (7.0 segundos) desde el espacio a la vista cercana (zoom 17.2, pitch 60)
+        // Vuelo parabólico descendente fluido, majestuoso y estable (5.5 segundos) desde el espacio a la vista cercana (zoom 16.5, pitch 55)
         mapRef.current.flyTo({
           center: targetPos,
-          zoom: 17.2, // Vista cercana de calle alrededor de la posición del usuario
-          pitch: 60,  // Inclinación 3D de 60°
+          zoom: 16.5, // Vista cercana de calle estable sin saturación de VRAM GPU
+          pitch: 55,  // Inclinación 3D cinematográfica de 55°
           bearing: 0,
-          duration: 7000, // 7.0 segundos de vuelo lento, suave y épico
-          curve: 1.8,     // Curva parabólica alta desde el espacio
+          duration: 5500, // 5.5 segundos de descenso lento, majestuoso y ultra-suave
+          curve: 1.3,     // Altura parabólica fluida
           essential: true,
         });
       }, 150);
