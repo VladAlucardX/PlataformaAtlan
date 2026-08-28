@@ -2304,11 +2304,17 @@ export default function MapaTuristico() {
             // Detectar si el usuario está dentro de Centroamérica
             const isInCentralAmerica = longitude >= -93.0 && longitude <= -77.0 && latitude >= 7.0 && latitude <= 19.0;
 
-            // Esperar 2.5 segundos para que los tiles iniciales carguen por completo en segundo plano
-            setTimeout(() => {
+            // Esperar 5 segundos para que los tiles iniciales carguen por completo en segundo plano
+            const cinematicTimer = setTimeout(() => {
               setIsMapLoading(false);
 
               if (!mapRef.current) return;
+
+              // Si el usuario ya seleccionó un punto, no interrumpir con la animación de geolocalización
+              if (selectedPointRef.current) {
+                console.log('[Atlan] Animación cinematográfica cancelada: punto seleccionado por el usuario');
+                return;
+              }
 
               // Si viene de un punto específico por URL, no hacemos la animación inicial de geolocalización
               const params = new URLSearchParams(window.location.search);
@@ -2328,7 +2334,6 @@ export default function MapaTuristico() {
                   curve: 1.8,
                   essential: true,
                 });
-                cinematicTimeoutsRef.current = [];
               } else {
                 // Vuelo parabólico plano (top-down) para evitar cargar el horizonte 3D en movimiento y evitar distorsión
                 mapRef.current.flyTo({
@@ -2343,7 +2348,8 @@ export default function MapaTuristico() {
 
                 // Una vez que aterrice suavemente, inclinamos la cámara para revelar el 3D
                 mapRef.current.once('moveend', () => {
-                  if (mapRef.current) {
+                  // Si el usuario seleccionó un punto mientras volábamos, no inclinar
+                  if (mapRef.current && !selectedPointRef.current) {
                     mapRef.current.easeTo({
                       pitch: 60, // Inclinación final épica para ver los edificios y el horizonte
                       duration: 2500, // 2.5 segundos inclinando la cámara lentamente
@@ -2351,10 +2357,11 @@ export default function MapaTuristico() {
                     });
                   }
                 });
-
-                cinematicTimeoutsRef.current = [];
               }
             }, 5000); // 5 segundos de retraso para carga de texturas y estilos
+
+            // Registrar el timeout para que pueda cancelarse si el usuario selecciona un punto
+            cinematicTimeoutsRef.current.push(cinematicTimer);
           }
         },
         (err) => {
