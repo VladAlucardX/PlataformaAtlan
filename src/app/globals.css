@@ -2449,6 +2449,61 @@ html body .mapboxgl-ctrl-directions tr {
     0 30px 60px rgba(0, 0, 0, 0.6) !important;
 }
 
+/* ── BOTONES ADAPTADOS DEL HERO PARA EL PANEL DE PUNTOS (SIN LUZ DORADA) ── */
+.neon-btn-dark-hero {
+  position: relative;
+  width: 100% !important;
+  background: rgba(10, 20, 38, 0.95) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 2.5px solid #FFFFFF !important;
+  border-radius: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25) !important;
+  transition: all 0.25s ease !important;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.neon-btn-dark-hero:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  border-color: #FFFFFF !important;
+  box-shadow: 
+    0 6px 18px rgba(0, 0, 0, 0.45),
+    inset 0 1px 3px rgba(255, 255, 255, 0.35) !important;
+}
+
+.neon-btn-green-hero, .neon-btn-yellow-hero {
+  position: relative;
+  width: 100% !important;
+  background: linear-gradient(145deg, #1FCC5C 0%, #17AA4A 70%, #128A3C 100%) !important;
+  border: 2.5px solid #FFFFFF !important;
+  border-radius: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    inset 0 1px 3px rgba(255, 255, 255, 0.8) !important;
+  transition: all 0.25s ease !important;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.neon-btn-green-hero:hover, .neon-btn-yellow-hero:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  border-color: #FFFFFF !important;
+  box-shadow: 
+    0 6px 18px rgba(0, 0, 0, 0.35),
+    inset 0 1px 4px rgba(255, 255, 255, 0.95) !important;
+}
+
 .neon-house-svg-white {
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
 }

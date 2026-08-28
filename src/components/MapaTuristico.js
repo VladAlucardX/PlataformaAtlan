@@ -3528,78 +3528,98 @@ export default function MapaTuristico() {
               ? (pointReviews.reduce((acc, r) => acc + Number(r.estrellas || 5), 0) / pointReviews.length).toFixed(1)
               : null;
 
+            const getCategoryIconName = (category) => {
+              const cat = (category || '').toLowerCase();
+              if (cat.includes('restaurante') || cat.includes('comida') || cat.includes('gastronom') || cat.includes('café') || cat.includes('bar') || cat.includes('comideria') || cat.includes('comidería')) {
+                return 'utensils';
+              }
+              if (cat.includes('hotel') || cat.includes('hospedaje') || cat.includes('hostal') || cat.includes('alojamiento')) {
+                return 'hotel';
+              }
+              if (cat.includes('naturaleza') || cat.includes('tour') || cat.includes('aventura') || cat.includes('parque') || cat.includes('playa')) {
+                return 'mountain';
+              }
+              if (cat.includes('cultura') || cat.includes('arte') || cat.includes('museo') || cat.includes('teatro')) {
+                return 'palette';
+              }
+              if (cat.includes('tienda') || cat.includes('comercio') || cat.includes('super') || cat.includes('compras') || cat.includes('mercado')) {
+                return 'store';
+              }
+              return 'store';
+            };
+
             return (
               <>
-                {/* PORTADA / HERO COVER DEL NEGOCIO */}
+                {/* CABECERA SUPERIOR EN AZUL NAVBAR (#146D9E) CON EL NOMBRE DEL NEGOCIO Y SU ICONO DE CATEGORÍA */}
                 <div
                   style={{
-                    height: heroImg ? '150px' : '120px',
-                    background: heroImg ? `url(${heroImg}) center/cover no-repeat` : coverGradient,
-                    position: 'relative',
-                    flexShrink: 0
+                    background: 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)',
+                    padding: '14px 18px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                    boxShadow: '0 4px 14px rgba(20, 109, 158, 0.25)'
                   }}
                 >
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: heroImg
-                        ? 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(10,15,28,0.7) 100%)'
-                        : 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 100%)'
-                    }}
-                  />
-
-                  {!heroImg && (
-                    <div style={{
-                      position: 'absolute',
-                      inset: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      zIndex: 1
-                    }}>
-                      <span style={{
-                        fontSize: '11px',
-                        fontWeight: '800',
-                        color: '#FFD700',
-                        letterSpacing: '0.5px',
-                        textTransform: 'uppercase',
-                        background: 'rgba(255, 215, 0, 0.15)',
-                        padding: '4px 12px',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(255, 215, 0, 0.35)',
-                        display: 'inline-flex',
+                  {/* IZQUIERDA: ICONO DE CATEGORÍA + NOMBRE DEL NEGOCIO DESTACADO EN LETRAS BLANCAS MÁS GRANDES */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
+                    <div
+                      style={{
+                        width: '42px',
+                        height: '42px',
+                        borderRadius: '12px',
+                        background: 'rgba(255, 255, 255, 0.22)',
+                        backdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(255, 255, 255, 0.35)',
+                        display: 'flex',
                         alignItems: 'center',
-                        gap: '6px'
-                      }}>
-                        {lang === 'en' ? 'Photos Coming Soon' : 'PRÓXIMAMENTE'}
-                      </span>
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.12)'
+                      }}
+                    >
+                      <Icon name={getCategoryIconName(selectedPoint.category)} size={24} color="#FFFFFF" />
                     </div>
-                  )}
 
-                  {/* ACCIONES SUPERIORES FLOTANTES */}
-                  <div style={{ position: 'absolute', top: '14px', right: '14px', display: 'flex', gap: '8px', zIndex: 2 }}>
+                    <h2
+                      style={{
+                        margin: 0,
+                        fontSize: '27px',
+                        fontWeight: '900',
+                        color: '#FFFFFF',
+                        lineHeight: '1.18',
+                        letterSpacing: '0.4px',
+                        wordBreak: 'break-word',
+                        textShadow: '0 2px 6px rgba(0, 0, 0, 0.25)'
+                      }}
+                    >
+                      {selectedPoint.nombre}
+                    </h2>
+                  </div>
+
+                  {/* DERECHA: BOTONES DE ACCIÓN FLOTANTES (FAVORITO Y CERRAR X) */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                     {userSession && (
                       <button
                         onClick={handleToggleFavorite}
                         title={isFavorite ? (lang === 'en' ? 'Remove Favorite' : 'Quitar de Favoritos') : (lang === 'en' ? 'Save Favorite' : 'Guardar Favorito')}
                         style={{
-                          background: 'rgba(255, 255, 255, 0.9)',
+                          background: 'rgba(255, 255, 255, 0.2)',
                           backdropFilter: 'blur(8px)',
-                          border: isFavorite ? '1.5px solid #FFD700' : '1px solid rgba(255,255,255,0.5)',
-                          color: isFavorite ? '#B8960E' : '#475569',
-                          width: '36px',
-                          height: '36px',
+                          border: isFavorite ? '1.5px solid #FFD700' : '1px solid rgba(255,255,255,0.4)',
+                          color: isFavorite ? '#FFD700' : '#FFFFFF',
+                          width: '34px',
+                          height: '34px',
                           borderRadius: '50%',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
-                          transition: 'transform 0.2s'
+                          transition: 'all 0.2s ease'
                         }}
                       >
-                        <Icon name={isFavorite ? 'heartFilled' : 'heart'} size={17} color={isFavorite ? '#B8960E' : '#475569'} />
+                        <Icon name={isFavorite ? 'heartFilled' : 'heart'} size={16} color={isFavorite ? '#FFD700' : '#FFFFFF'} />
                       </button>
                     )}
 
@@ -3609,136 +3629,235 @@ export default function MapaTuristico() {
                         setShowFullProfileModal(false);
                       }}
                       style={{
-                        background: 'rgba(255, 255, 255, 0.9)',
+                        background: 'rgba(255, 255, 255, 0.2)',
                         backdropFilter: 'blur(8px)',
-                        border: '1px solid rgba(255,255,255,0.5)',
-                        color: '#1E293B',
-                        width: '36px',
-                        height: '36px',
+                        border: '1px solid rgba(255,255,255,0.4)',
+                        color: '#FFFFFF',
+                        width: '34px',
+                        height: '34px',
                         borderRadius: '50%',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
-                        transition: 'transform 0.2s'
+                        transition: 'all 0.2s ease'
                       }}
                     >
-                      <Icon name="x" size={17} color="#1E293B" />
+                      <Icon name="x" size={16} color="#FFFFFF" />
                     </button>
                   </div>
                 </div>
 
-                {/* DATOS PRINCIPALES NEGOCIO */}
-                <div style={{ padding: '0 20px 14px', position: 'relative', marginTop: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '8px' }}>
-                    {selectedPointDetails?.logo_url ? (
-                      <img
-                        src={selectedPointDetails.logo_url}
-                        alt={selectedPoint.nombre}
-                        style={{
-                          width: '76px',
-                          height: '76px',
-                          borderRadius: '20px',
-                          objectFit: 'cover',
-                          border: '3.5px solid #FFFFFF',
-                          boxShadow: '0 8px 20px rgba(0,0,0,0.16)',
-                          background: '#FFFFFF',
-                          flexShrink: 0
-                        }}
-                      />
-                    ) : (
+                {/* DATOS Y ESTRUCTURA PRINCIPAL ABAJO DE LA CABECERA */}
+                <div style={{ padding: '12px 18px 14px', position: 'relative' }}>
+                  {/* CATEGORÍA Y RANGO DE PRECIOS */}
+                  <div style={{ marginBottom: '10px' }}>
+                    <p style={{ margin: 0, fontSize: '12.5px', color: '#64748B', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Icon name="mapPin" size={13} color="#64748B" />
+                      <span>{t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}</span>
+                      {selectedPointDetails?.rango_precios && (
+                        <span style={{ color: '#0F172A', fontWeight: '800', marginLeft: '3px' }}>• {selectedPointDetails.rango_precios}</span>
+                      )}
+                    </p>
+                  </div>
+
+                  {/* 2 COLUMNAS ABAJO: IZQUIERDA (CUADRO DE IMAGEN MUCHO MÁS GRANDE CON INFO SUPERPUESTA) / DERECHA (LOS 2 BOTONES) */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1.25fr 1fr', gap: '12px', alignItems: 'stretch' }}>
+                    {/* COLUMNA 1: CUADRO CON LA IMAGEN DEL NEGOCIO Y SUS BADGES/INFO */}
+                    <div
+                      style={{
+                        height: '150px',
+                        borderRadius: '18px',
+                        overflow: 'hidden',
+                        position: 'relative',
+                        border: '2px solid rgba(226, 232, 240, 0.9)',
+                        boxShadow: '0 8px 22px rgba(0,0,0,0.12)',
+                        background: coverGradient
+                      }}
+                    >
+                      {selectedPointDetails?.logo_url ? (
+                        <img
+                          src={selectedPointDetails.logo_url}
+                          alt={selectedPoint.nombre}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      ) : (
+                        <div
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#FFFFFF',
+                            fontSize: '44px',
+                            fontWeight: '800'
+                          }}
+                        >
+                          {selectedPoint.nombre?.charAt(0)?.toUpperCase() || <Icon name="building" size={44} color="#FFFFFF" />}
+                        </div>
+                      )}
+
+                      {/* DEGRADADO OSCURO INFERIOR PARA LEER LA INFORMACIÓN SUPERPUESTA */}
                       <div
                         style={{
-                          width: '76px',
-                          height: '76px',
-                          borderRadius: '20px',
-                          background: coverGradient,
-                          color: '#FFFFFF',
+                          position: 'absolute',
+                          inset: 0,
+                          background: 'linear-gradient(180deg, rgba(0,0,0,0.05) 40%, rgba(15,23,42,0.85) 100%)',
+                          pointerEvents: 'none'
+                        }}
+                      />
+
+                      {/* INFORMACIÓN SUPERPUESTA DENTRO DEL CUADRO DE LA IMAGEN */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: '8px',
+                          left: '8px',
+                          right: '8px',
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '30px',
-                          fontWeight: '800',
-                          border: '3.5px solid #FFFFFF',
-                          boxShadow: '0 8px 20px rgba(0,0,0,0.16)',
-                          flexShrink: 0
+                          justifyContent: 'space-between',
+                          gap: '6px',
+                          zIndex: 2
                         }}
                       >
-                        {selectedPoint.nombre?.charAt(0)?.toUpperCase() || <Icon name="building" size={32} color="#FFFFFF" />}
-                      </div>
-                    )}
-
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                        {/* Badge de Verificado / Estado */}
                         {(() => {
                           let statusText = '';
                           let statusColor = '';
-                          let statusBg = '';
 
                           if (selectedPoint.estado === 'en_verificacion') {
-                            statusText = lang === 'en' ? 'Awaiting Verification' : 'En Verificación';
-                            statusColor = '#f97316';
-                            statusBg = 'rgba(249, 115, 22, 0.12)';
+                            statusText = lang === 'en' ? 'Verifying' : 'En Verificación';
+                            statusColor = '#FF9D42';
                           } else if (selectedPoint.estado === 'aprobado') {
                             statusText = lang === 'en' ? 'Verified' : 'Verificado';
-                            statusColor = '#10b981';
-                            statusBg = 'rgba(16, 185, 129, 0.12)';
+                            statusColor = '#34D399';
                           } else {
                             const isClaimed = !!selectedPoint.negocio_id;
                             statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
-                            statusColor = isClaimed ? '#10b981' : '#f59e0b';
-                            statusBg = isClaimed ? 'rgba(16, 185, 129, 0.12)' : 'rgba(245, 158, 11, 0.12)';
+                            statusColor = isClaimed ? '#34D399' : '#FBBF24';
                           }
 
                           return (
-                            <span style={{
-                              fontSize: '10.5px',
-                              fontWeight: '800',
-                              textTransform: 'uppercase',
-                              color: statusColor,
-                              background: statusBg,
-                              padding: '2.5px 7.5px',
-                              borderRadius: '6px',
-                              border: `1px solid ${statusColor}35`,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '4px'
-                            }}>
-                              <Icon name={selectedPoint.estado === 'aprobado' ? 'checkCircle' : 'shield'} size={11} color={statusColor} />
+                            <span
+                              style={{
+                                fontSize: '9.5px',
+                                fontWeight: '800',
+                                textTransform: 'uppercase',
+                                color: statusColor,
+                                background: 'rgba(15, 23, 42, 0.78)',
+                                backdropFilter: 'blur(6px)',
+                                padding: '3px 6.5px',
+                                borderRadius: '7px',
+                                border: `1px solid ${statusColor}45`,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '3px'
+                              }}
+                            >
+                              <Icon name={selectedPoint.estado === 'aprobado' ? 'checkCircle' : 'shield'} size={9.5} color={statusColor} />
                               {statusText}
                             </span>
                           );
                         })()}
 
+                        {/* Rating Overlay */}
                         {avgRating && (
-                          <span style={{
-                            fontSize: '11px',
-                            fontWeight: '800',
-                            color: '#B8960E',
-                            background: 'rgba(255, 215, 0, 0.18)',
-                            padding: '2.5px 6.5px',
-                            borderRadius: '6px',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '3px'
-                          }}>
-                            <Icon name="starFilled" size={12} color="#B8960E" />
+                          <span
+                            style={{
+                              fontSize: '9.5px',
+                              fontWeight: '800',
+                              color: '#FFD700',
+                              background: 'rgba(15, 23, 42, 0.78)',
+                              backdropFilter: 'blur(6px)',
+                              padding: '3px 6px',
+                              borderRadius: '7px',
+                              border: '1px solid rgba(255, 215, 0, 0.4)',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '3px'
+                            }}
+                          >
+                            <Icon name="starFilled" size={9.5} color="#FFD700" />
                             {avgRating} ({pointReviews.length})
                           </span>
                         )}
                       </div>
+                    </div>
 
-                      <h2 style={{ margin: 0, fontSize: '21px', fontWeight: '850', color: '#0F172A', lineHeight: '1.25' }}>
-                        {selectedPoint.nombre}
-                      </h2>
-                      <p style={{ margin: '4px 0 0', fontSize: '12.5px', color: '#64748B', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <Icon name="mapPin" size={13} color="#64748B" />
-                        <span>{t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}</span>
-                        {selectedPointDetails?.rango_precios && (
-                          <span style={{ color: '#0F172A', fontWeight: '800', marginLeft: '4px' }}>• {selectedPointDetails.rango_precios}</span>
-                        )}
-                      </p>
+                    {/* COLUMNA 2: A LA PAR, LOS DOS BOTONES NEÓN ADAPTADOS CON TEXTO E ICONOS MÁS GRANDES */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', height: '150px' }}>
+                      {/* BOTÓN 1: INICIAR VIAJE */}
+                      <button
+                        onClick={() => handleIniciarViaje(selectedPoint)}
+                        className="neon-btn-dark-hero"
+                        style={{
+                          flex: 1,
+                          padding: '6px 8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        <svg
+                          width="22"
+                          height="22"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#FFFFFF"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          style={{ flexShrink: 0 }}
+                        >
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
+                        <span
+                          style={{
+                            fontSize: '15.5px',
+                            fontWeight: '900',
+                            letterSpacing: '1px',
+                            color: '#FFFFFF',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
+                        </span>
+                      </button>
+
+                      {/* BOTÓN 2: MOSTRAR MÁS (VERDE ESMERALDA #17AA4A) */}
+                      <button
+                        onClick={() => setShowFullProfileModal(true)}
+                        className="neon-btn-green-hero"
+                        style={{
+                          flex: 1,
+                          padding: '6px 8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        <span
+                          className="neon-sign-text-white-bg"
+                          style={{
+                            fontSize: '15.5px',
+                            fontWeight: '900',
+                            letterSpacing: '1px',
+                            color: '#FFFFFF',
+                            textTransform: 'uppercase',
+                            WebkitTextStroke: '1px #000000',
+                            paintOrder: 'stroke fill',
+                            textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)'
+                          }}
+                        >
+                          {lang === 'en' ? 'Show More' : 'Mostrar más'}
+                        </span>
+                        <img src="/images/more.svg" alt="Mostrar más" style={{ width: '22px', height: '22px', filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))' }} />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -3747,92 +3866,33 @@ export default function MapaTuristico() {
                 <div style={{
                   flex: 1,
                   overflowY: 'auto',
-                  padding: '0 20px 20px',
+                  padding: '0 18px 18px',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '14px',
+                  gap: '12px',
                   scrollbarWidth: 'thin',
                   scrollbarColor: 'rgba(20,109,158,0.1) transparent'
                 }}>
-                  {/* BOTONES DE ACCIÓN: CARTEL NEÓN OSCURO (INICIAR VIAJE) Y CARTEL NEÓN AMARILLO (MOSTRAR MÁS) */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <button
-                      onClick={() => handleIniciarViaje(selectedPoint)}
-                      style={{
-                        width: '100%',
-                        padding: '10px 14px',
-                        background: 'rgba(20, 109, 158, 0.12)',
-                        color: '#146D9E',
-                        border: '1.5px solid rgba(20, 109, 158, 0.25)',
-                        borderRadius: '12px',
-                        fontWeight: '800',
-                        fontSize: '13px',
-                        cursor: 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px',
-                        backdropFilter: 'blur(10px)',
-                        transition: 'all 0.2s ease',
-                        boxShadow: '0 4px 12px rgba(20, 109, 158, 0.08)'
-                      }}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#146D9E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-                      <span style={{ fontWeight: '800', fontSize: '13px', color: '#146D9E' }}>
-                        {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
-                      </span>
-                    </button>
-
-                    <button
-                      onClick={() => setShowFullProfileModal(true)}
-                      className="neon-map-btn-yellow"
-                      style={{
-                        width: '100%',
-                        padding: '8px 6px',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '5px'
-                      }}
-                    >
-                      <span
-                        className="neon-sign-text-white-bg"
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: '900',
-                          letterSpacing: '0.4px',
-                          color: '#FFFFFF',
-                          textTransform: 'uppercase',
-                          WebkitTextStroke: '1.2px #000000',
-                          paintOrder: 'stroke fill'
-                        }}
-                      >
-                        {lang === 'en' ? 'Show More' : 'Mostrar más'}
-                      </span>
-                      <img src="/images/more.svg" alt="Mostrar más" style={{ width: '24px', height: '24px' }} />
-                    </button>
-                  </div>
-
                   {/* CHIPS DE AMENIDADES RÁPIDAS */}
                   {activeServiceList.length > 0 && (
-                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '12px' }}>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                       {activeServiceList.map((s) => (
                         <span
                           key={s.key}
                           style={{
-                            fontSize: '11.5px',
+                            fontSize: '11px',
                             fontWeight: '700',
                             color: '#334155',
                             background: '#F8FAFC',
                             border: '1px solid #E2E8F0',
-                            padding: '4px 9px',
-                            borderRadius: '14px',
+                            padding: '3.5px 8px',
+                            borderRadius: '12px',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: '5px'
+                            gap: '4px'
                           }}
                         >
-                          <Icon name={s.icon} size={12} color={accentColor} />
+                          <Icon name={s.icon} size={11} color={accentColor} />
                           <span>{s.label}</span>
                         </span>
                       ))}
@@ -3891,7 +3951,7 @@ export default function MapaTuristico() {
                       </p>
                     </div>
 
-                    {/* GALERÍA DE 6 ESPACIOS (3 COLUMNAS X 2 FILAS) CON PLACEHOLDER PRÓXIMAMENTE */}
+                    {/* GALERÍA DE 6 ESPACIOS (3 COLUMNAS X 2 FILAS) CON MAYOR TAMAÑO */}
                     <div>
                       <h4 style={{ margin: '0 0 8px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <Icon name="image" size={13} color="#64748B" />
@@ -3908,11 +3968,11 @@ export default function MapaTuristico() {
                                 key={index}
                                 onClick={() => setPreviewPhotoModal(photoUrl)}
                                 style={{
-                                  height: '70px',
-                                  borderRadius: '10px',
+                                  height: '105px',
+                                  borderRadius: '12px',
                                   overflow: 'hidden',
                                   border: '1px solid rgba(20, 109, 158, 0.12)',
-                                  boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+                                  boxShadow: '0 3px 8px rgba(0,0,0,0.08)',
                                   cursor: 'pointer',
                                   transition: 'transform 0.2s ease'
                                 }}
@@ -3932,21 +3992,21 @@ export default function MapaTuristico() {
                             <div
                               key={index}
                               style={{
-                                height: '70px',
-                                borderRadius: '10px',
+                                height: '105px',
+                                borderRadius: '12px',
                                 border: '1.5px dashed rgba(20, 109, 158, 0.22)',
                                 background: 'rgba(20, 109, 158, 0.03)',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                gap: '3px',
-                                padding: '4px',
+                                gap: '4px',
+                                padding: '6px',
                                 textAlign: 'center'
                               }}
                             >
-                              <Icon name="image" size={17} color="#94A3B8" />
-                              <span style={{ fontSize: '9.5px', fontWeight: '750', color: '#94A3B8', lineHeight: '1.1' }}>
+                              <Icon name="image" size={20} color="#94A3B8" />
+                              <span style={{ fontSize: '10px', fontWeight: '750', color: '#94A3B8', lineHeight: '1.1' }}>
                                 {lang === 'en' ? 'Coming Soon' : 'Próximamente'}
                               </span>
                             </div>
