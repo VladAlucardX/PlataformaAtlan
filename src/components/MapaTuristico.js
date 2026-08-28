@@ -3628,7 +3628,7 @@ export default function MapaTuristico() {
 
                     {/* COLUMNA 2: A LA PAR, LOS DOS BOTONES NEÓN ADAPTADOS CON EFECTOS Y ANIMACIONES DEL HERO */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', height: '150px' }}>
-                      {/* BOTÓN 1: INICIAR VIAJE (ESTILO "EXPLORAR MAPA" DEL HERO CON SVG DE UBICACIÓN NEÓN) */}
+                      {/* BOTÓN 1: INICIAR VIAJE (ESTILO NEÓN OSCURO CON BORDES BLANCOS NÍTIOS SIN LUZ DORADA) */}
                       <button
                         onClick={() => handleIniciarViaje(selectedPoint)}
                         className="neon-btn-dark-hero"
@@ -3646,26 +3646,22 @@ export default function MapaTuristico() {
                           height="18"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="#FFD700"
+                          stroke="#FFFFFF"
                           strokeWidth="2.5"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          style={{ filter: 'drop-shadow(0 0 6px #FFD700)', flexShrink: 0 }}
+                          style={{ flexShrink: 0 }}
                         >
                           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                           <circle cx="12" cy="10" r="3" />
                         </svg>
                         <span
-                          className="neon-sign-text"
                           style={{
-                            fontSize: '12.5px',
+                            fontSize: '13px',
                             fontWeight: '900',
                             letterSpacing: '0.8px',
                             color: '#FFFFFF',
-                            textTransform: 'uppercase',
-                            WebkitTextStroke: '1px #FFD700',
-                            paintOrder: 'stroke fill',
-                            textShadow: '0 0 8px rgba(255, 215, 0, 0.85)'
+                            textTransform: 'uppercase'
                           }}
                         >
                           {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
