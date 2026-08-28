@@ -64,6 +64,7 @@ export default function MapaTuristico() {
   const selectedPointRef = useRef(null);
   const prevSelectedPointRef = useRef(null);
   const lastRecalculateTimeRef = useRef(0);
+  const hasFlownInitialDescentRef = useRef(false);
 
 
   // --- ESTADO DE REACT ---
@@ -255,12 +256,12 @@ export default function MapaTuristico() {
     }
   }, []);
 
-  // Animación suave del progreso de la pantalla de carga (0% -> 100% en 3.5 segundos)
+  // Animación suave del progreso de la pantalla de carga (0% -> 100% en 8 segundos exactos)
   useEffect(() => {
     let progress = 0;
     setLoadingProgress(0);
     const interval = setInterval(() => {
-      progress += 2;
+      progress += 1;
       if (progress >= 100) {
         progress = 100;
         setLoadingProgress(100);
@@ -268,7 +269,7 @@ export default function MapaTuristico() {
       } else {
         setLoadingProgress(progress);
       }
-    }, 70);
+    }, 80);
 
     return () => clearInterval(interval);
   }, []);
@@ -2354,91 +2355,68 @@ export default function MapaTuristico() {
       setCurrentManeuver(null);
     });
 
-    // Geolocalización y animaciones de inicio cinematográficas
-    let isFirstPosition = true;
+    // Geolocalización nativa + web y vuelo descendente cinematográfico a los 8.0 segundos
     let watchId = null;
-
-    const triggerCinematicDescent = (lng, lat) => {
-      if (!isFirstPosition || !mapRef.current) return;
-      isFirstPosition = false;
-
-      // Cargar marcadores iniciales en base a la ubicación detectada
-      cargarPuntosCercanos(lng, lat, filtroCategoria);
-
-      // Esperar 3.5s a que la pantalla de carga con el croquis de Nicaragua llegue al 100% y cargue las texturas 3D
-      const cinematicTimer = setTimeout(() => {
-        setIsMapLoading(false);
-
-        if (!mapRef.current || selectedPointRef.current) return;
-
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('id')) return;
-
-        // Vuelo parabólico descendente lento y épico (speed: 0.35, curve: 1.8) desde el espacio hasta la ubicación
-        mapRef.current.flyTo({
-          center: [lng, lat],
-          zoom: 15.8,
-          pitch: 0,
-          bearing: 0,
-          speed: 0.35,
-          curve: 1.8,
-          essential: true,
-        });
-
-        // Una vez que aterriza suavemente, inclinamos la cámara a 60° para revelar los edificios y marcadores 3D
-        mapRef.current.once('moveend', () => {
-          if (mapRef.current && !selectedPointRef.current) {
-            mapRef.current.easeTo({
-              pitch: 60,
-              duration: 2000,
-              essential: true,
-            });
-          }
-        });
-      }, 3500);
-
-      cinematicTimeoutsRef.current.push(cinematicTimer);
-    };
 
     // Registrar puente para recibir coordenadas GPS nativas desde la App Móvil Flutter (Hardware real del teléfono)
     window.updateNativeGPSPosition = (lng, lat, heading = 0) => {
       console.log('[Atlan Native GPS Bridge] Coordenadas hardware recibidas:', lng, lat, heading);
       if (lng === undefined || lat === undefined || isNaN(lng) || isNaN(lat)) return;
-
       handlePositionUpdate(lng, lat, heading);
-      triggerCinematicDescent(lng, lat);
     };
-
-    // Timer de seguridad: Si el GPS tarda más de 3.5s, volar de inmediato a la posición por defecto
-    const fallbackTimer = setTimeout(() => {
-      if (isFirstPosition && mapRef.current) {
-        const [defLng, defLat] = currentPosRef.current;
-        triggerCinematicDescent(defLng, defLat);
-      }
-    }, 3500);
-    cinematicTimeoutsRef.current.push(fallbackTimer);
 
     if ('geolocation' in navigator) {
       watchId = navigator.geolocation.watchPosition(
         (pos) => {
-          clearTimeout(fallbackTimer);
           if (isDemoRunningRef.current) return;
-
           const { longitude, latitude } = pos.coords;
           handlePositionUpdate(longitude, latitude);
-          triggerCinematicDescent(longitude, latitude);
         },
         (err) => {
-          console.error('[Atlan] GPS error:', err);
-          const [defLng, defLat] = currentPosRef.current;
-          triggerCinematicDescent(defLng, defLat);
+          console.warn('[Atlan Web GPS Error]:', err);
         },
         { enableHighAccuracy: true, maximumAge: 0 }
       );
-    } else {
-      const [defLng, defLat] = currentPosRef.current;
-      triggerCinematicDescent(defLng, defLat);
     }
+
+    // A LOS 8.0 SEGUNDOS EXACTOS (cuando el contador de la pantalla de carga llega al 100%):
+    const cinematicTimer = setTimeout(() => {
+      setIsMapLoading(false);
+
+      if (hasFlownInitialDescentRef.current || !mapRef.current) return;
+      hasFlownInitialDescentRef.current = true;
+
+      if (selectedPointRef.current) return;
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('id')) return;
+
+      const targetPos = currentPosRef.current || [-86.2504, 12.1364];
+      cargarPuntosCercanos(targetPos[0], targetPos[1], filtroCategoria);
+
+      // Vuelo parabólico descendente lento y cinematográfico (speed: 0.4, curve: 1.6) desde el espacio hasta la ubicación
+      mapRef.current.flyTo({
+        center: targetPos,
+        zoom: 15.8,
+        pitch: 0,
+        bearing: 0,
+        speed: 0.4,
+        curve: 1.6,
+        essential: true,
+      });
+
+      // Una vez que aterriza suavemente, inclinamos la cámara a 60° para revelar los edificios y marcadores 3D
+      mapRef.current.once('moveend', () => {
+        if (mapRef.current && !selectedPointRef.current) {
+          mapRef.current.easeTo({
+            pitch: 60,
+            duration: 1800,
+            essential: true,
+          });
+        }
+      });
+    }, 8000); // 8.0 segundos exactos
+
+    cinematicTimeoutsRef.current.push(cinematicTimer);
 
     return () => {
       if (demoIntervalRef.current) clearInterval(demoIntervalRef.current);
