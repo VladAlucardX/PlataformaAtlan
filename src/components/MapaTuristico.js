@@ -1556,6 +1556,24 @@ export default function MapaTuristico() {
     const now = Date.now();
     const silenceSec = (now - lastAnnouncementTimeRef.current) / 1000;
 
+    // Detectar si el vehículo alcanzó o sobrepasó el punto de giro actual o si está más cerca de la siguiente maniobra
+    const isCloseToTurn = dist < 65;
+    const isMovingAwayAfterApproach = next.lastDist !== undefined && dist > next.lastDist + 20 && next.lastDist < 150;
+    const isCloserToNextStep = maneuvers.length > 1 && calcDistanceMeters([currentLng, currentLat], [maneuvers[1].lng, maneuvers[1].lat]) < dist;
+
+    if ((isCloseToTurn || isMovingAwayAfterApproach || isCloserToNextStep) && maneuvers.length > 1) {
+      if (!next.announcedArrive) {
+        next.announcedArrive = true;
+        speakInstruction(next.instruction, true);
+        lastAnnouncementTimeRef.current = now;
+      }
+      maneuvers.shift();
+      next = maneuvers[0];
+      dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
+    } else {
+      next.lastDist = dist;
+    }
+
     const nextNext = maneuvers.length > 1 ? maneuvers[1] : null;
     const iconKey = next.iconKey || getManeuverIconKey(next.type, next.modifier, next.instruction);
     const nextNextIconKey = nextNext ? (nextNext.iconKey || getManeuverIconKey(nextNext.type, nextNext.modifier, nextNext.instruction)) : null;
@@ -1572,14 +1590,6 @@ export default function MapaTuristico() {
         iconKey: nextNextIconKey,
       } : null
     });
-
-    if (dist < 50 && !next.announcedArrive) {
-      next.announcedArrive = true;
-      speakInstruction(next.instruction, true);
-      lastAnnouncementTimeRef.current = now;
-      maneuvers.shift();
-      return;
-    }
 
     if (dist < 300 && !next.announcedClose) {
       next.announcedClose = true;
@@ -3225,8 +3235,8 @@ export default function MapaTuristico() {
         </div>
       )}
 
-      {/* BOTÓN ÚNICO FLOTANTE / BURBUJA CIRCULAR DE GIRO (ESTILO WAZE / GOOGLE MAPS) */}
-      {!selectedPoint && (
+      {/* Botón Flotante Trazar Ruta (solo cuando no hay una ruta activa) */}
+      {!selectedPoint && !routeInfo && (
         <div
           onClick={() => setShowDirectionsPopup((prev) => !prev)}
           style={{
@@ -3236,67 +3246,22 @@ export default function MapaTuristico() {
             zIndex: 40,
             cursor: 'pointer',
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            gap: '8px',
+            background: showDirectionsPopup ? '#EF4444' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+            color: showDirectionsPopup ? '#FFFFFF' : '#0A192F',
+            border: showDirectionsPopup ? '2px solid #EF4444' : '2px solid #FFFFFF',
+            borderRadius: '25px',
+            padding: '10px 18px',
+            fontWeight: '900',
+            fontSize: '13.5px',
+            boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
+            transition: 'all 0.25s ease'
           }}
           title={showDirectionsPopup ? (lang === 'en' ? 'Close route panel' : 'Cerrar panel de ruta') : (lang === 'en' ? 'Open route planner' : 'Trazar o ver ruta')}
         >
-          {routeInfo && !showDirectionsPopup ? (
-            /* MODO NAVEGACIÓN ACTIVA: Círculo de giro + Insignia de distancia */
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-              <div style={{
-                width: '54px',
-                height: '54px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                color: '#0A192F',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '28px',
-                fontWeight: '900',
-                boxShadow: '0 8px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.4)',
-                border: '2.5px solid #FFFFFF',
-                transition: 'transform 0.2s ease',
-              }}>
-                {currentManeuver?.icon || '⬆'}
-              </div>
-              <span style={{
-                background: '#0A192F',
-                color: '#FFD700',
-                border: '1.5px solid #FFD700',
-                padding: '2px 8px',
-                borderRadius: '12px',
-                fontSize: '11px',
-                fontWeight: '900',
-                boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
-                whiteSpace: 'nowrap'
-              }}>
-                {currentManeuver?.distanceFormatted || formatDistanceDisplay(routeInfo.distance)}
-              </span>
-            </div>
-          ) : (
-            /* MODO INICIAL: Botón flotante "Trazar Ruta" */
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: showDirectionsPopup ? '#EF4444' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-              color: showDirectionsPopup ? '#FFFFFF' : '#0A192F',
-              border: showDirectionsPopup ? '2px solid #EF4444' : '2px solid #FFFFFF',
-              borderRadius: '25px',
-              padding: '10px 18px',
-              fontWeight: '900',
-              fontSize: '13.5px',
-              boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
-              transition: 'all 0.25s ease'
-            }}>
-              <span>🧭</span>
-              <span>{showDirectionsPopup ? (lang === 'en' ? 'Close Route' : 'Cerrar Ruta') : (lang === 'en' ? 'Route A-B' : 'Trazar Ruta')}</span>
-            </div>
-          )}
+          <span>🧭</span>
+          <span>{showDirectionsPopup ? (lang === 'en' ? 'Close Route' : 'Cerrar Ruta') : (lang === 'en' ? 'Route A-B' : 'Trazar Ruta')}</span>
         </div>
       )}
 
