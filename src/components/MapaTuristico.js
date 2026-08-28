@@ -2393,14 +2393,14 @@ export default function MapaTuristico() {
 
         mapRef.current.resize();
 
-        // Vuelo parabólico descendente fluido, majestuoso y estable (5.5 segundos) desde el espacio a la vista cercana (zoom 16.5, pitch 55)
-        mapRef.current.flyTo({
+        // Vuelo descendente continuo, majestuoso y ultrasuave (7.5 segundos exactos) desde el espacio a la vista cercana (zoom 16.8, pitch 60)
+        mapRef.current.easeTo({
           center: targetPos,
-          zoom: 16.5, // Vista cercana de calle estable sin saturación de VRAM GPU
-          pitch: 55,  // Inclinación 3D cinematográfica de 55°
+          zoom: 16.8, // Vista cercana de calle cristalina alrededor de la posición del usuario
+          pitch: 60,  // Inclinación 3D cinematográfica de 60°
           bearing: 0,
-          duration: 5500, // 5.5 segundos de descenso lento, majestuoso y ultra-suave
-          curve: 1.3,     // Altura parabólica fluida
+          duration: 7500, // 7.5 segundos de descenso lento, pausado, fluido y natural
+          easing: (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t, // Easing in-out suave que nunca se congela a mitad de camino en móvil
           essential: true,
         });
       }, 150);
