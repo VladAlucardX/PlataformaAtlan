@@ -17,7 +17,7 @@ class AppConstants {
     if (envUrl != null && envUrl.trim().isNotEmpty) {
       return envUrl.trim();
     }
-    return 'http://10.253.43.252:3000';
+    return 'https://plataforma-atlan.vercel.app';
   }
 
   // --- Mapa de Nicaragua (centro y zoom por defecto) ---
