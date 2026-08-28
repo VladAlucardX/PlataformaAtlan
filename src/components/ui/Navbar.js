@@ -382,59 +382,84 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
 
       {/* Mobile Drawer Dropdown Overlay */}
       {menuOpen && (
-        <div
-          className="mobile-menu-drawer animate-fade-in-down hide-desktop"
-        >
+        <div className="mobile-menu-drawer animate-fade-in-down hide-desktop">
+          {/* Header interno del Menú Móvil */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingBottom: "16px", marginBottom: "8px", borderBottom: "1.5px solid rgba(255, 215, 0, 0.3)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <img src="/mapaicono.png" alt="Logo" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
+              <span style={{ fontSize: "26px", fontWeight: "900", color: "#FFD700", fontFamily: "var(--font-outfit)" }}>atlan</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMenuOpen(false)}
+              style={{
+                background: "rgba(255, 255, 255, 0.1)",
+                border: "1.5px solid rgba(255, 215, 0, 0.4)",
+                color: "#FFD700",
+                borderRadius: "50%",
+                width: "38px",
+                height: "38px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer"
+              }}
+            >
+              <Icon name="x" size={20} />
+            </button>
+          </div>
+
           <Link href="/" className={`mobile-menu-item ${activePage === "inicio" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <Icon name="home" size={18} /> {lang === "en" ? "Home" : "Inicio"}
+            <Icon name="home" size={18} /> <span>{lang === "en" ? "Home" : "Inicio"}</span>
           </Link>
           <Link href="/mapa" className={`mobile-menu-item ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <Icon name="map" size={18} /> {t("nav.map")}
+            <Icon name="map" size={18} /> <span>{t("nav.map")}</span>
           </Link>
           <Link href="/departamentos" className={`mobile-menu-item ${activePage === "departamentos" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <Icon name="star" size={18} /> {lang === "en" ? "Ranking" : "Ranking"}
+            <Icon name="star" size={18} /> <span>{lang === "en" ? "Ranking" : "Ranking"}</span>
           </Link>
           <Link href="/mas-de-nicaragua" className={`mobile-menu-item ${activePage === "mas-de-nicaragua" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <Icon name="book" size={18} /> {t("nav.moreNicaragua") || (lang === "en" ? "More of Nicaragua" : "Más de Nicaragua")}
+            <Icon name="book" size={18} /> <span>{t("nav.moreNicaragua") || (lang === "en" ? "More of Nicaragua" : "Más de Nicaragua")}</span>
           </Link>
           <Link href="/comunidad" className={`mobile-menu-item ${activePage === "comunidad" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <Icon name="users" size={18} /> {t("social.community")}
+            <Icon name="users" size={18} /> <span>{t("social.community")}</span>
           </Link>
           {session && (
             <Link href="/chat" className={`mobile-menu-item ${activePage === "chat" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-              <Icon name="messageCircle" size={18} /> {t("chat.title")}
+              <Icon name="messageCircle" size={18} /> <span>{t("chat.title")}</span>
             </Link>
           )}
           {perfil?.rol === "admin" && (
             <Link href="/admin" className={`mobile-menu-item ${activePage === "admin" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-              <Icon name="shield" size={18} /> {lang === "en" ? "Management" : "Gestión"}
+              <Icon name="shield" size={18} /> <span>{lang === "en" ? "Management" : "Gestión"}</span>
             </Link>
           )}
           {session ? (
             <>
               <Link href={communityProfileLink} className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                <Icon name="user" size={18} /> {lang === "en" ? "My Profile" : "Mi Perfil"}
+                <Icon name="user" size={18} /> <span>{lang === "en" ? "My Profile" : "Mi Perfil"}</span>
               </Link>
               <Link href="/perfil" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                <Icon name="compass" size={18} /> {lang === "en" ? "My Tours & Saved" : "Mis Giras"}
+                <Icon name="compass" size={18} /> <span>{lang === "en" ? "My Tours & Saved" : "Mis Giras"}</span>
               </Link>
               {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
                 <Link href="/dashboard" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                  <Icon name="briefcase" size={18} /> {lang === "en" ? "My Business" : "Mi Negocio"}
+                  <Icon name="briefcase" size={18} /> <span>{lang === "en" ? "My Business" : "Mi Negocio"}</span>
                 </Link>
               )}
               <button
+                type="button"
                 onClick={() => { setMenuOpen(false); handleLogout(); }}
                 className="mobile-menu-item"
                 style={{ background: "rgba(239,68,68,0.15)", borderColor: "rgba(239,68,68,0.3)", color: "#ef4444", width: "100%", textAlign: "left", cursor: "pointer" }}
               >
-                <Icon name="logOut" size={18} /> {t("nav.logout") || "Cerrar Sesión"}
+                <Icon name="logOut" size={18} /> <span>{t("nav.logout") || "Cerrar Sesión"}</span>
               </button>
             </>
           ) : (
             <>
               <Link href="/login" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                <Icon name="user" size={18} /> {t("nav.login")}
+                <Icon name="user" size={18} /> <span>{t("nav.login")}</span>
               </Link>
               <Link
                 href="/registro"
@@ -442,7 +467,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                 style={{ background: "linear-gradient(135deg, #146D9E 0%, #0D496B 100%)", borderColor: "#FFD700", color: "#FFFFFF", justifyContent: "center" }}
                 onClick={() => setMenuOpen(false)}
               >
-                {t("nav.register")}
+                <span>{t("nav.register")}</span>
               </Link>
             </>
           )}
