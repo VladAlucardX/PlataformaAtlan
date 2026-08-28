@@ -2128,8 +2128,10 @@ html body .mapboxgl-ctrl-directions tr {
     left: 0 !important;
     right: 0 !important;
     bottom: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
+    width: 100% !important;
+    min-width: 100vw !important;
+    height: 100% !important;
+    min-height: 100vh !important;
     padding: 20px 20px 40px !important;
     display: flex !important;
     flex-direction: column !important;
@@ -2137,7 +2139,8 @@ html body .mapboxgl-ctrl-directions tr {
     background: #06101E !important;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.98) !important;
     overflow-y: auto !important;
-    z-index: 99999999 !important;
+    z-index: 2147483647 !important;
+    transform: none !important;
     box-sizing: border-box !important;
   }
 
