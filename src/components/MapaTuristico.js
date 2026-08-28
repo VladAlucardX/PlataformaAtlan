@@ -255,12 +255,12 @@ export default function MapaTuristico() {
     }
   }, []);
 
-  // Animación suave del progreso de la pantalla de carga (0% -> 100%)
+  // Animación suave del progreso de la pantalla de carga (0% -> 100% en 3.5 segundos)
   useEffect(() => {
     let progress = 0;
     setLoadingProgress(0);
     const interval = setInterval(() => {
-      progress += 4;
+      progress += 2;
       if (progress >= 100) {
         progress = 100;
         setLoadingProgress(100);
@@ -268,7 +268,7 @@ export default function MapaTuristico() {
       } else {
         setLoadingProgress(progress);
       }
-    }, 80);
+    }, 70);
 
     return () => clearInterval(interval);
   }, []);
@@ -2365,7 +2365,7 @@ export default function MapaTuristico() {
       // Cargar marcadores iniciales en base a la ubicación detectada
       cargarPuntosCercanos(lng, lat, filtroCategoria);
 
-      // Esperar 2.2s a que la pantalla de carga con el croquis de Nicaragua llegue al 100%
+      // Esperar 3.5s a que la pantalla de carga con el croquis de Nicaragua llegue al 100% y cargue las texturas 3D
       const cinematicTimer = setTimeout(() => {
         setIsMapLoading(false);
 
@@ -2395,7 +2395,7 @@ export default function MapaTuristico() {
             });
           }
         });
-      }, 2200);
+      }, 3500);
 
       cinematicTimeoutsRef.current.push(cinematicTimer);
     };
@@ -2409,13 +2409,13 @@ export default function MapaTuristico() {
       triggerCinematicDescent(lng, lat);
     };
 
-    // Timer de seguridad: Si el GPS tarda más de 2.2s, volar de inmediato a la posición por defecto
+    // Timer de seguridad: Si el GPS tarda más de 3.5s, volar de inmediato a la posición por defecto
     const fallbackTimer = setTimeout(() => {
       if (isFirstPosition && mapRef.current) {
         const [defLng, defLat] = currentPosRef.current;
         triggerCinematicDescent(defLng, defLat);
       }
-    }, 2200);
+    }, 3500);
     cinematicTimeoutsRef.current.push(fallbackTimer);
 
     if ('geolocation' in navigator) {
