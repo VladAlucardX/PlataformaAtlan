@@ -3460,32 +3460,36 @@ export default function MapaTuristico() {
                     boxShadow: '0 4px 14px rgba(20, 109, 158, 0.25)'
                   }}
                 >
-                  {/* IZQUIERDA: ICONO DE CATEGORÍA + NOMBRE DEL NEGOCIO EN LEVITACIÓN Y LETRAS BLANCAS */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
+                  {/* IZQUIERDA: ICONO DE CATEGORÍA + NOMBRE DEL NEGOCIO DESTACADO EN LETRAS BLANCAS MÁS GRANDES */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
                     <div
                       style={{
-                        width: '36px',
-                        height: '36px',
-                        borderRadius: '10px',
-                        background: 'rgba(255, 255, 255, 0.2)',
+                        width: '42px',
+                        height: '42px',
+                        borderRadius: '12px',
+                        background: 'rgba(255, 255, 255, 0.22)',
                         backdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(255, 255, 255, 0.35)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        flexShrink: 0
+                        flexShrink: 0,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.12)'
                       }}
                     >
-                      <Icon name={getCategoryIconName(selectedPoint.category)} size={20} color="#FFFFFF" />
+                      <Icon name={getCategoryIconName(selectedPoint.category)} size={24} color="#FFFFFF" />
                     </div>
 
                     <h2
                       style={{
                         margin: 0,
-                        fontSize: '20px',
-                        fontWeight: '850',
+                        fontSize: '24px',
+                        fontWeight: '900',
                         color: '#FFFFFF',
-                        lineHeight: '1.25',
-                        wordBreak: 'break-word'
+                        lineHeight: '1.2',
+                        letterSpacing: '0.4px',
+                        wordBreak: 'break-word',
+                        textShadow: '0 2px 6px rgba(0, 0, 0, 0.25)'
                       }}
                     >
                       {selectedPoint.nombre}
