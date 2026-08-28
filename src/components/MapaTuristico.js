@@ -3483,10 +3483,10 @@ export default function MapaTuristico() {
                     <h2
                       style={{
                         margin: 0,
-                        fontSize: '24px',
+                        fontSize: '27px',
                         fontWeight: '900',
                         color: '#FFFFFF',
-                        lineHeight: '1.2',
+                        lineHeight: '1.18',
                         letterSpacing: '0.4px',
                         wordBreak: 'break-word',
                         textShadow: '0 2px 6px rgba(0, 0, 0, 0.25)'
