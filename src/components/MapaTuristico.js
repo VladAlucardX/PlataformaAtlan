@@ -256,25 +256,22 @@ export default function MapaTuristico() {
     }
   }, []);
 
-  // Animación ultra-fluida del progreso de la pantalla de carga (0% -> 100% en 10 segundos)
+  // Animación del progreso de la pantalla de carga (0% -> 100% en 10 segundos exactos, números enteros del 0 al 100 sin decimales)
   useEffect(() => {
-    const DURATION_MS = 10000; // 10 segundos exactos
-    let startTime = null;
-    let rafId = null;
-
-    const animate = (timestamp) => {
-      if (!startTime) startTime = timestamp;
-      const elapsed = timestamp - startTime;
-      const pct = Math.min((elapsed / DURATION_MS) * 100, 100);
-      setLoadingProgress(pct);
-
-      if (pct < 100) {
-        rafId = requestAnimationFrame(animate);
+    let progress = 0;
+    setLoadingProgress(0);
+    const interval = setInterval(() => {
+      progress += 1;
+      if (progress >= 100) {
+        progress = 100;
+        setLoadingProgress(100);
+        clearInterval(interval);
+      } else {
+        setLoadingProgress(progress);
       }
-    };
+    }, 100); // 100ms * 100 = 10,000ms (10 segundos exactos)
 
-    rafId = requestAnimationFrame(animate);
-    return () => { if (rafId) cancelAnimationFrame(rafId); };
+    return () => clearInterval(interval);
   }, []);
 
   // Redimensionar el mapa cuando se abra o cierre el panel de detalles (Split-Screen)
@@ -2404,19 +2401,24 @@ export default function MapaTuristico() {
       console.log('[Atlan Cinematic] Iniciando vuelo parabólico hacia:', targetPos);
       cargarPuntosCercanos(targetPos[0], targetPos[1], filtroCategoria);
 
-      // Vuelo parabólico descendente lento y cinematográfico (speed: 0.4, curve: 1.6) desde el espacio hasta la ubicación
+      // Redimensionar canvas del mapa para asegurar renderizado en WebView Android
+      if (mapRef.current) {
+        mapRef.current.resize();
+      }
+
+      // Vuelo parabólico descendente fluido con duración fija de 3.5s
       mapRef.current.flyTo({
         center: targetPos,
         zoom: 15.8,
         pitch: 0,
         bearing: 0,
-        speed: 0.4,
-        curve: 1.6,
+        duration: 3500, // 3.5 segundos exactos de vuelo suave
+        curve: 1.4,
         essential: true,
       });
 
-      // Una vez que aterriza suavemente, inclinamos la cámara a 60° para revelar los edificios y marcadores 3D
-      mapRef.current.once('moveend', () => {
+      // Una vez que aterriza suavemente a los 3.5s, inclinamos la cámara a 60° para revelar los edificios 3D
+      const tiltTimer = setTimeout(() => {
         if (mapRef.current && !selectedPointRef.current) {
           mapRef.current.easeTo({
             pitch: 60,
@@ -2424,8 +2426,9 @@ export default function MapaTuristico() {
             essential: true,
           });
         }
-      });
-    }, 10000); // 10.0 segundos exactos — coincide con la duración de la pantalla de carga
+      }, 3600);
+      cinematicTimeoutsRef.current.push(tiltTimer);
+    }, 10000); // 10.0 segundos exactos — coincide con la pantalla de carga
 
     cinematicTimeoutsRef.current.push(cinematicTimer);
 
@@ -2662,7 +2665,7 @@ export default function MapaTuristico() {
             marginTop: '8px',
             textShadow: '0 0 10px rgba(212, 175, 55, 0.4)'
           }}>
-            {loadingProgress}%
+            {Math.round(loadingProgress)}%
           </div>
         </div>
 
