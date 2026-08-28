@@ -1908,25 +1908,109 @@ html body .mapboxgl-ctrl-directions tr {
   z-index: 10;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   pointer-events: none;
   transition: all 0.3s ease;
 }
 
+.web-category-trigger-btn {
+  display: none !important;
+  pointer-events: auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(10, 25, 47, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(255, 215, 0, 0.4);
+  border-radius: 14px;
+  color: #FFD700;
+  font-weight: 800;
+  font-size: 12.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 215, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  user-select: none;
+  font-family: var(--font-outfit), sans-serif;
+}
+
+.web-category-trigger-btn:hover {
+  background: rgba(15, 35, 65, 0.96);
+  border-color: #FFD700;
+  box-shadow: 0 6px 18px rgba(255, 215, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+.web-category-btn-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.web-category-arrow-anim {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: arrowPulseRight 1.4s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+@keyframes arrowPulseRight {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateX(5px);
+    opacity: 1;
+  }
+}
+
+@keyframes glowPulseGold {
+  0%, 100% {
+    border-color: rgba(255, 215, 0, 0.4);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 215, 0, 0.15);
+  }
+  50% {
+    border-color: rgba(255, 215, 0, 0.85);
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+  }
+}
+
 .filter-bar {
-  position: relative;
-  width: 100%;
+  pointer-events: auto;
   display: flex;
   gap: 8px;
   overflow-x: auto;
+  overflow-y: hidden;
   padding: 8px 4px;
   z-index: 5;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  pointer-events: auto;
+  scroll-behavior: smooth;
+  flex: 1;
+  min-width: 0;
+  cursor: grab;
+  user-select: none;
+}
+.filter-bar:active {
+  cursor: grabbing;
 }
 .filter-bar::-webkit-scrollbar {
   display: none;
+}
+
+/* Mostrar botón de Categorías únicamente cuando la pantalla web es más pequeña (Tablet / ventana reducida de 769px a 1200px) */
+@media (min-width: 769px) and (max-width: 1200px) {
+  .web-category-trigger-btn {
+    display: flex !important;
+    animation: glowPulseGold 2.5s infinite ease-in-out;
+  }
+
+  .filter-bar {
+    mask-image: linear-gradient(to right, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 100%);
+    -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 100%);
+  }
 }
 
 /* Cuando la ventana web es reducida y la cabecera ocupa 2 filas (<= 950px), mover la barra más abajo con espacio holgado (148px) */
@@ -2018,6 +2102,11 @@ html body .mapboxgl-ctrl-directions tr {
     border-radius: 16px !important;
   }
 
+  /* En móvil, ocultar botón de categorías web */
+  .web-category-trigger-btn {
+    display: none !important;
+  }
+
   /* Barra de filtros en móvil (Píldoras horizontales deslizables a 148px con espacio perfecto) */
   .filter-bar-wrapper {
     position: absolute !important;
@@ -2056,6 +2145,8 @@ html body .mapboxgl-ctrl-directions tr {
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
     pointer-events: auto !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
   }
 
   .filter-bar::-webkit-scrollbar {

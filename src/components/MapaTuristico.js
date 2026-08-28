@@ -115,6 +115,9 @@ export default function MapaTuristico() {
 
   const filterScrollRef = useRef(null);
   const searchContainerRef = useRef(null);
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
 
   // Favoritos
   const [isFavorite, setIsFavorite] = useState(false);
@@ -146,6 +149,30 @@ export default function MapaTuristico() {
       document.removeEventListener('touchstart', handleClickOutsideSearch);
     };
   }, []);
+
+  // --- Drag-to-scroll handlers para la barra de categorías ---
+  const handleMouseDownFilterBar = (e) => {
+    if (!filterScrollRef.current) return;
+    isDraggingRef.current = true;
+    startXRef.current = e.pageX - filterScrollRef.current.offsetLeft;
+    scrollLeftRef.current = filterScrollRef.current.scrollLeft;
+  };
+
+  const handleMouseLeaveFilterBar = () => {
+    isDraggingRef.current = false;
+  };
+
+  const handleMouseUpFilterBar = () => {
+    isDraggingRef.current = false;
+  };
+
+  const handleMouseMoveFilterBar = (e) => {
+    if (!isDraggingRef.current || !filterScrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - filterScrollRef.current.offsetLeft;
+    const walk = (x - startXRef.current) * 1.5;
+    filterScrollRef.current.scrollLeft = scrollLeftRef.current - walk;
+  };
 
   // Registro de Visitas GPS > 1 km
   const [showVisitPrompt, setShowVisitPrompt] = useState(false);
@@ -2974,7 +3001,39 @@ export default function MapaTuristico() {
       {/* Panel de filtros (se oculta si hay punto seleccionado, ruta en curso, demo activa, o si se enfoca/usa el buscador) */}
       {!selectedPoint && !routeInfo && !isDemoRunning && !isSearchFocused && !searchQuery.trim() && !showResults && (
         <div className="filter-bar-wrapper">
-          <div className="filter-bar" ref={filterScrollRef}>
+          <button
+            type="button"
+            className="web-category-trigger-btn"
+            onClick={() => {
+              if (filterScrollRef.current) {
+                const { scrollLeft, scrollWidth, clientWidth } = filterScrollRef.current;
+                const maxScroll = scrollWidth - clientWidth;
+                if (scrollLeft >= maxScroll - 10) {
+                  filterScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                  filterScrollRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+                }
+              }
+            }}
+            title={lang === 'en' ? 'Explore categories' : 'Ver categorías'}
+          >
+            <span className="web-category-btn-content">
+              <Icon name="grid" size={15} color="#FFD700" />
+              <span className="web-category-btn-text">{lang === 'en' ? 'Categories' : 'Categorías'}</span>
+              <span className="web-category-arrow-anim">
+                <Icon name="arrowRight" size={15} color="#FFD700" />
+              </span>
+            </span>
+          </button>
+
+          <div
+            className="filter-bar"
+            ref={filterScrollRef}
+            onMouseDown={handleMouseDownFilterBar}
+            onMouseLeave={handleMouseLeaveFilterBar}
+            onMouseUp={handleMouseUpFilterBar}
+            onMouseMove={handleMouseMoveFilterBar}
+          >
             {/* Píldora "Todas" */}
             <button
               onClick={() => aplicarFiltro(null)}
