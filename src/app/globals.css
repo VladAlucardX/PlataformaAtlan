@@ -1900,11 +1900,22 @@ html body .mapboxgl-ctrl-directions tr {
   transition: flex 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.filter-bar {
+.filter-bar-wrapper {
   position: absolute;
   top: 100px;
   left: 20px;
   right: 20px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.filter-bar {
+  position: relative;
+  width: 100%;
   display: flex;
   gap: 8px;
   overflow-x: auto;
@@ -1912,9 +1923,19 @@ html body .mapboxgl-ctrl-directions tr {
   z-index: 5;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  pointer-events: auto;
 }
 .filter-bar::-webkit-scrollbar {
   display: none;
+}
+
+/* Cuando la ventana web es reducida y la cabecera ocupa 2 filas (<= 950px), mover la barra más abajo con espacio holgado (148px) */
+@media (max-width: 950px) {
+  .filter-bar-wrapper {
+    top: 148px !important;
+    left: 10px !important;
+    right: 10px !important;
+  }
 }
 
 .add-point-modal {
@@ -1983,7 +2004,7 @@ html body .mapboxgl-ctrl-directions tr {
 
   /* Reposicionar y estilizar panel de direcciones Mapbox (Punto A y B) */
   .mapboxgl-ctrl-top-left {
-    top: 125px !important;
+    top: 148px !important;
     left: 10px !important;
     right: 10px !important;
     width: calc(100vw - 20px) !important;
@@ -1997,14 +2018,27 @@ html body .mapboxgl-ctrl-directions tr {
     border-radius: 16px !important;
   }
 
-  /* Barra de filtros en móvil (Píldoras horizontales deslizables) */
-  .filter-bar {
-    top: 125px !important;
+  /* Barra de filtros en móvil (Píldoras horizontales deslizables a 148px con espacio perfecto) */
+  .filter-bar-wrapper {
+    position: absolute !important;
+    top: 148px !important;
     bottom: auto !important;
     left: 10px !important;
     right: 10px !important;
+    z-index: 10 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    pointer-events: none !important;
+  }
+
+  .filter-bar {
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
     height: auto !important;
-    max-height: 48px !important;
+    max-height: 46px !important;
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
@@ -2012,7 +2046,7 @@ html body .mapboxgl-ctrl-directions tr {
     overflow-x: auto !important;
     overflow-y: hidden !important;
     padding: 5px 8px !important;
-    background: rgba(10, 25, 47, 0.9) !important;
+    background: rgba(10, 25, 47, 0.92) !important;
     backdrop-filter: blur(14px) !important;
     -webkit-backdrop-filter: blur(14px) !important;
     border-radius: 16px !important;
@@ -2021,6 +2055,7 @@ html body .mapboxgl-ctrl-directions tr {
     z-index: 10 !important;
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
+    pointer-events: auto !important;
   }
 
   .filter-bar::-webkit-scrollbar {

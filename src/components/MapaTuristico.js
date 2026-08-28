@@ -113,6 +113,9 @@ export default function MapaTuristico() {
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewErrorMsg, setReviewErrorMsg] = useState('');
 
+  const filterScrollRef = useRef(null);
+  const searchContainerRef = useRef(null);
+
   // Favoritos
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteId, setFavoriteId] = useState(null);
@@ -121,8 +124,28 @@ export default function MapaTuristico() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [routeInfo, setRouteInfo] = useState(null);
   const [previewRouteInfo, setPreviewRouteInfo] = useState(null);
+
+  // Escuchar clics fuera del buscador para ocultar resultados y restaurar categorías al hacer clic en el mapa
+  useEffect(() => {
+    const handleClickOutsideSearch = (event) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        setShowResults(false);
+        setIsSearchFocused(false);
+        setSearchQuery('');
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutsideSearch);
+    document.addEventListener('touchstart', handleClickOutsideSearch);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideSearch);
+      document.removeEventListener('touchstart', handleClickOutsideSearch);
+    };
+  }, []);
 
   // Registro de Visitas GPS > 1 km
   const [showVisitPrompt, setShowVisitPrompt] = useState(false);
@@ -2671,7 +2694,7 @@ export default function MapaTuristico() {
           </Link>
 
           {/* BUSCADOR GLOBAL GRANDE, AMPLIO Y DESTACADO */}
-          <div style={{ flex: 1, margin: '0 24px', position: 'relative' }}>
+          <div ref={searchContainerRef} style={{ flex: 1, margin: '0 24px', position: 'relative' }}>
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -2691,7 +2714,10 @@ export default function MapaTuristico() {
                 placeholder={lang === 'en' ? 'Search destinations, places, categories...' : 'Buscar destinos, lugares, categorías...'}
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
-                onFocus={() => setShowResults(true)}
+                onFocus={() => {
+                  setIsSearchFocused(true);
+                  if (searchQuery.trim()) setShowResults(true);
+                }}
                 style={{
                   width: '100%',
                   background: 'transparent',
@@ -2704,7 +2730,11 @@ export default function MapaTuristico() {
               />
               {searchQuery && (
                 <button
-                  onClick={() => handleSearch('')}
+                  onClick={() => {
+                    handleSearch('');
+                    setShowResults(false);
+                    setIsSearchFocused(false);
+                  }}
                   style={{
                     background: 'rgba(255,255,255,0.12)',
                     border: 'none',
@@ -2941,60 +2971,62 @@ export default function MapaTuristico() {
         </div>
       )}
 
-      {/* Panel de filtros */}
-      {!selectedPoint && !routeInfo && !isDemoRunning && (
-        <div className="filter-bar">
-        {/* Píldora "Todas" */}
-        <button
-          onClick={() => aplicarFiltro(null)}
-          style={{
-            flexShrink: 0,
-            padding: '8px 16px',
-            background: filtroCategoria === null ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : '#0A192F',
-            color: filtroCategoria === null ? '#0A192F' : '#FFFFFF',
-            border: filtroCategoria === null ? '1px solid #FFD700' : '1px solid rgba(255, 255, 255, 0.15)',
-            borderRadius: '14px',
-            fontWeight: '800',
-            fontSize: '12.5px',
-            cursor: 'pointer',
-            backdropFilter: 'blur(12px)',
-            boxShadow: filtroCategoria === null ? '0 4px 12px rgba(255,215,0,0.3)' : '0 4px 10px rgba(0,0,0,0.25)',
-            transition: 'all 0.2s'
-          }}
-        >
-          🌍 {t('map.allCategories')}
-        </button>
-
-        {Object.entries(CATEGORIAS_CONFIG).map(([key, config]) => {
-          const isSelected = filtroCategoria === key;
-          return (
+      {/* Panel de filtros (se oculta si hay punto seleccionado, ruta en curso, demo activa, o si se enfoca/usa el buscador) */}
+      {!selectedPoint && !routeInfo && !isDemoRunning && !isSearchFocused && !searchQuery.trim() && !showResults && (
+        <div className="filter-bar-wrapper">
+          <div className="filter-bar" ref={filterScrollRef}>
+            {/* Píldora "Todas" */}
             <button
-              key={key}
-              onClick={() => aplicarFiltro(key)}
+              onClick={() => aplicarFiltro(null)}
               style={{
                 flexShrink: 0,
                 padding: '8px 16px',
-                background: isSelected ? config.color : '#0A192F',
-                color: isSelected ? '#FFFFFF' : '#E2E8F0',
-                border: isSelected ? `1.5px solid ${config.color}` : '1px solid rgba(255, 255, 255, 0.15)',
+                background: filtroCategoria === null ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : '#0A192F',
+                color: filtroCategoria === null ? '#0A192F' : '#FFFFFF',
+                border: filtroCategoria === null ? '1px solid #FFD700' : '1px solid rgba(255, 255, 255, 0.15)',
                 borderRadius: '14px',
-                fontWeight: '750',
+                fontWeight: '800',
                 fontSize: '12.5px',
                 cursor: 'pointer',
                 backdropFilter: 'blur(12px)',
-                boxShadow: isSelected ? `0 4px 14px ${config.color}55` : '0 4px 10px rgba(0,0,0,0.25)',
-                transition: 'all 0.2s',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
+                boxShadow: filtroCategoria === null ? '0 4px 12px rgba(255,215,0,0.3)' : '0 4px 10px rgba(0,0,0,0.25)',
+                transition: 'all 0.2s'
               }}
             >
-              <span><Icon name={config.icon} size={16} /></span>
-              <span>{t(`addPoint.categories.${key}`)}</span>
+              🌍 {t('map.allCategories')}
             </button>
-          );
-        })}
-      </div>
+
+            {Object.entries(CATEGORIAS_CONFIG).map(([key, config]) => {
+              const isSelected = filtroCategoria === key;
+              return (
+                <button
+                  key={key}
+                  onClick={() => aplicarFiltro(key)}
+                  style={{
+                    flexShrink: 0,
+                    padding: '8px 16px',
+                    background: isSelected ? config.color : '#0A192F',
+                    color: isSelected ? '#FFFFFF' : '#E2E8F0',
+                    border: isSelected ? `1.5px solid ${config.color}` : '1px solid rgba(255, 255, 255, 0.15)',
+                    borderRadius: '14px',
+                    fontWeight: '750',
+                    fontSize: '12.5px',
+                    cursor: 'pointer',
+                    backdropFilter: 'blur(12px)',
+                    boxShadow: isSelected ? `0 4px 14px ${config.color}55` : '0 4px 10px rgba(0,0,0,0.25)',
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <span><Icon name={config.icon} size={16} /></span>
+                  <span>{t(`addPoint.categories.${key}`)}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       )}
 
       {/* Modal agregar punto */}
