@@ -2340,7 +2340,31 @@ export default function MapaTuristico() {
     let isFirstPosition = true;
     let watchId = null;
 
-    // Timer de seguridad: Si el GPS de WebView tarda más de 1s, volar de inmediato a Managua para no quedarse atascado en Nicaragua
+    // Registrar puente para recibir coordenadas GPS nativas desde la App Móvil Flutter (Hardware real del teléfono)
+    window.updateNativeGPSPosition = (lng, lat, heading = 0) => {
+      console.log('[Atlan Native GPS Bridge] Coordenadas hardware recibidas:', lng, lat, heading);
+      if (lng === undefined || lat === undefined || isNaN(lng) || isNaN(lat)) return;
+
+      handlePositionUpdate(lng, lat, heading);
+
+      if (isFirstPosition && mapRef.current) {
+        isFirstPosition = false;
+        setIsMapLoading(false);
+        cargarPuntosCercanos(lng, lat, filtroCategoria);
+
+        if (!selectedPointRef.current) {
+          mapRef.current.flyTo({
+            center: [lng, lat],
+            zoom: 15.8,
+            pitch: 45,
+            speed: 1.0,
+            essential: true,
+          });
+        }
+      }
+    };
+
+    // Timer de seguridad: Si el GPS tarda más de 1.2s, volar de inmediato a la posición por defecto para no congelar la pantalla
     const fallbackTimer = setTimeout(() => {
       if (isFirstPosition && mapRef.current) {
         isFirstPosition = false;
@@ -2358,7 +2382,7 @@ export default function MapaTuristico() {
           });
         }
       }
-    }, 1000);
+    }, 1200);
     cinematicTimeoutsRef.current.push(fallbackTimer);
 
     if ('geolocation' in navigator) {
