@@ -996,7 +996,28 @@ export default function MapaTuristico() {
       }
 
       if (pointsToRender.length === 0) {
-        console.log('[Atlan] No se encontraron puntos en el área.');
+        console.log('[Atlan] RPC sin resultados, cargando puntos directamente de la tabla...');
+        try {
+          const { data: tableData, error: tableError } = await supabase
+            .from('puntos_turisticos')
+            .select('*');
+          if (!tableError && tableData && tableData.length > 0) {
+            const rawPoints = tableData.map(normalizarPunto);
+            pointsToRender = rawPoints.filter(p =>
+              (p.estado === 'aprobado' || p.estado === 'sin_reclamar' || p.estado === 'en_verificacion') &&
+              p.lng !== undefined && p.lat !== undefined && !isNaN(p.lng) && !isNaN(p.lat)
+            );
+            if (categoria) {
+              pointsToRender = pointsToRender.filter(p => p.categoria === categoria);
+            }
+          }
+        } catch (fbErr) {
+          console.error('[Atlan] Error en fallback de tabla puntos:', fbErr);
+        }
+      }
+
+      if (pointsToRender.length === 0) {
+        console.log('[Atlan] No se encontraron puntos.');
         return;
       }
 
@@ -2145,6 +2166,15 @@ export default function MapaTuristico() {
           }
         });
       }
+
+      // Cargar puntos inmediatamente al estar listo el mapa
+      const center = currentPosRef.current || [-86.2504, 12.1364];
+      cargarPuntosCercanos(center[0], center[1], filtroCategoria);
+
+      // Timer de seguridad: Garantizar que la pantalla de carga se retire en máximo 3.5 segundos en móvil
+      setTimeout(() => {
+        setIsMapLoading(false);
+      }, 3500);
     });
 
     // Click en el mapa (agregar punto)

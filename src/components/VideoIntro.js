@@ -14,20 +14,27 @@ export default function VideoIntro({ onComplete }) {
     setPhase((prev) => (prev === "playing" ? "fading" : prev));
   }, []);
 
-  // Forzar reproducción en Chrome
+  // Forzar reproducción y fallback rápido para conexiones móviles
   useEffect(() => {
     if (videoRef.current) {
-      // Forzar mute por si React no lo aplica correctamente en el DOM
       videoRef.current.muted = true;
       videoRef.current.defaultMuted = true;
       videoRef.current.play().catch((err) => {
         console.warn("Autoplay bloqueado por el navegador:", err);
+        setVideoReady(true);
       });
 
-      if (videoRef.current.readyState >= 3) {
+      if (videoRef.current.readyState >= 2) {
         setVideoReady(true);
       }
     }
+
+    // Fallback rápido: Si el video tarda más de 2s en cargar por red móvil, mostrar la interfaz de Atlan de inmediato
+    const fallbackTimer = setTimeout(() => {
+      setVideoReady(true);
+    }, 2000);
+
+    return () => clearTimeout(fallbackTimer);
   }, []);
 
   // Notificar al terminar fade-out
@@ -36,16 +43,16 @@ export default function VideoIntro({ onComplete }) {
       const timer = setTimeout(() => {
         setPhase("done");
         onComplete?.();
-      }, 800); // duración acelerada del fade-out CSS
+      }, 600); // duración acelerada del fade-out CSS
       return () => clearTimeout(timer);
     }
   }, [phase, onComplete]);
 
-  // Timeout de seguridad (Máximo 8 segundos para no trabar al usuario en móvil)
+  // Timeout de seguridad (Máximo 6 segundos para no hacer esperar al usuario en móvil)
   useEffect(() => {
     const safety = setTimeout(() => {
       startFadeOut();
-    }, 8000);
+    }, 6000);
     return () => clearTimeout(safety);
   }, [startFadeOut]);
 
