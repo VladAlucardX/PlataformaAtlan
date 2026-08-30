@@ -415,9 +415,8 @@ export default function PerfilPage() {
         }
       `}</style>
 
-      {/* SVGs de fondo nativos de Atlan */}
-      <img src="/images/tortuga.svg" alt="" style={{ position: "fixed", bottom: "-10px", left: "-10px", width: "360px", maxHeight: "360px", objectFit: "contain", opacity: 0.14, pointerEvents: "none", zIndex: 0 }} />
-      <img src="/images/tortuga.svg" alt="" style={{ position: "fixed", top: "70px", right: "20px", width: "480px", height: "calc(100vh - 80px)", objectFit: "contain", opacity: 0.16, pointerEvents: "none", zIndex: 0 }} />
+      {/* SVG de fondo gigante nativo de Atlan (Tortuga) */}
+      <img src="/images/tortuga.svg" alt="" style={{ position: "fixed", top: "50px", right: "-60px", width: "720px", height: "calc(100vh - 60px)", objectFit: "contain", opacity: 0.14, pointerEvents: "none", zIndex: 0 }} />
 
       <Navbar activePage="perfil" session={session} perfil={perfil} onLogout={handleCerrarSesion} />
 
