@@ -10,6 +10,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import FollowersModal from "@/components/ui/FollowersModal";
 import ImageViewerModal from "@/components/ui/ImageViewerModal";
+import ShareDropdown from "@/components/ui/ShareDropdown";
 import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
 import { getProfileSlug } from "@/lib/profileUtils";
@@ -37,44 +38,290 @@ function avatarStyle(url, size) {
   };
 }
 
+const cardStyles = {
+  card: {
+    background: "#FFFFFF",
+    border: "2px solid rgba(255, 255, 255, 0.95)",
+    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 18px 40px -6px rgba(20, 109, 158, 0.12)",
+    borderRadius: "28px", padding: "24px", marginBottom: "20px"
+  },
+  publicidadCard: {
+    background: "radial-gradient(circle at top right, rgba(23, 170, 74, 0.08) 0%, #FFFFFF 70%)",
+    border: "2px solid #17AA4A",
+    boxShadow: "0 10px 30px -4px rgba(23, 170, 74, 0.25)",
+    borderRadius: "20px", padding: "24px", marginBottom: "20px",
+  },
+  promoBadge: {
+    display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "12px",
+    padding: "4px 12px", borderRadius: "20px", fontSize: "11px", fontWeight: "800",
+    background: "linear-gradient(135deg, rgba(255,215,0,0.10) 0%, rgba(230,194,0,0.10) 100%)",
+    border: "1px solid rgba(255,215,0,0.25)", color: "#E6C200", textTransform: "uppercase",
+  },
+  publicidadBadge: {
+    display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "12px",
+    padding: "5px 14px", borderRadius: "20px", fontSize: "11px", fontWeight: "900",
+    background: "linear-gradient(135deg, #FFD700 0%, #E6A800 100%)",
+    color: "#1A1A2E", textTransform: "uppercase", boxShadow: "0 2px 8px rgba(255, 215, 0, 0.3)",
+  },
+  header: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" },
+  roleBadge: {
+    display: "inline-flex", alignItems: "center", justifyContent: "center",
+    width: "20px", height: "20px", borderRadius: "6px", fontSize: "10px",
+    background: "rgba(255,215,0,0.10)", color: "#FFD700",
+  },
+  content: { margin: "0 0 16px", fontSize: "15.5px", lineHeight: "1.65", color: "var(--atlan-text-primary)", whiteSpace: "pre-wrap", wordBreak: "break-word" },
+  imageContainer: { borderRadius: "18px", overflow: "hidden", marginBottom: "16px", border: "1px solid rgba(20,109,158,0.08)" },
+  image: { width: "100%", maxHeight: "540px", objectFit: "cover", display: "block" },
+  statsBar: { display: "flex", justifyContent: "space-between", padding: "8px 4px", borderBottom: "1px solid rgba(20,109,158,0.06)", marginBottom: "4px" },
+  statText: { fontSize: "12px", color: "var(--atlan-text-muted)", fontWeight: "600" },
+  actionBar: { display: "flex", gap: "4px", padding: "4px 0" },
+  actionBtn: {
+    flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
+    padding: "8px 0", background: "none", border: "none", color: "var(--atlan-text-secondary)",
+    fontSize: "13px", fontWeight: "700", cursor: "pointer", borderRadius: "10px", transition: "all 0.2s"
+  },
+  menuBtn: { background: "none", border: "none", color: "var(--atlan-text-muted)", fontSize: "20px", cursor: "pointer", padding: "4px 8px" },
+  menuDropdown: { position: "absolute", top: "100%", right: 0, zIndex: 50, background: "#FFFFFF", border: "1px solid rgba(20, 109, 158, 0.12)", borderRadius: "12px", padding: "4px", minWidth: "140px", boxShadow: "0 8px 24px rgba(0, 0, 0, 0.10)" },
+  menuItem: { display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "10px 12px", background: "none", border: "none", color: "#ef4444", fontSize: "13px", fontWeight: "700", cursor: "pointer" },
+  commentsSection: { borderTop: "1px solid rgba(20,109,158,0.06)", paddingTop: "14px", marginTop: "4px" },
+  commentItem: { display: "flex", gap: "10px", marginBottom: "12px", alignItems: "flex-start" },
+  commentBubble: { background: "#F4F6F9", padding: "8px 14px", borderRadius: "0 14px 14px 14px", border: "1px solid rgba(255, 255, 255, 0.9)" },
+  commentInput: { display: "flex", alignItems: "center", gap: "10px", marginTop: "12px" },
+  commentTextField: { flex: 1, padding: "10px 16px", background: "#F4F6F9", border: "1.5px solid rgba(20,109,158,0.12)", borderRadius: "20px", color: "#1A1A2E", fontSize: "13px", outline: "none" },
+  sendBtn: { background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none", width: "36px", height: "36px", borderRadius: "50%", color: "white", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" },
+};
+
+function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onImageClick }) {
+  const [liked, setLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.likes_count || 0);
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commentsCount, setCommentsCount] = useState(post.comentarios_count || 0);
+  const [newComment, setNewComment] = useState("");
+  const [loadingComments, setLoadingComments] = useState(false);
+  const [submittingComment, setSubmittingComment] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+
+  const autor = post.perfiles || {};
+  const isOwner = session?.user?.id === post.autor_id;
+  const isAdmin = perfil?.rol === "admin";
+
+  useEffect(() => {
+    if (!session) return;
+    supabase.from("likes_social").select("id").eq("publicacion_id", post.id).eq("usuario_id", session.user.id).maybeSingle()
+      .then(({ data }) => { if (data) setLiked(true); });
+  }, [session, post.id]);
+
+  const handleLike = async () => {
+    if (!session) { onRequireLogin(); return; }
+    try {
+      if (liked) {
+        await supabase.from("likes_social").delete().eq("publicacion_id", post.id).eq("usuario_id", session.user.id);
+        setLiked(false);
+        setLikesCount((c) => Math.max(c - 1, 0));
+      } else {
+        await supabase.from("likes_social").insert({ publicacion_id: post.id, usuario_id: session.user.id });
+        setLiked(true);
+        setLikesCount((c) => c + 1);
+      }
+    } catch (err) { console.error(err); }
+  };
+
+  const handleToggleComments = async () => {
+    if (!showComments && comments.length === 0) {
+      setLoadingComments(true);
+      const { data } = await supabase.from("comentarios_social").select("*, perfiles(id, nombre_completo, avatar_url, rol)").eq("publicacion_id", post.id).order("created_at", { ascending: true });
+      setComments(data || []);
+      setLoadingComments(false);
+    }
+    setShowComments(!showComments);
+  };
+
+  const handleSubmitComment = async () => {
+    if (!session) { onRequireLogin(); return; }
+    if (!newComment.trim()) return;
+    setSubmittingComment(true);
+    try {
+      const { data, error } = await supabase.from("comentarios_social").insert({ publicacion_id: post.id, autor_id: session.user.id, contenido: newComment.trim() }).select("*, perfiles(id, nombre_completo, avatar_url, rol)").single();
+      if (error) throw error;
+      setComments((c) => [...c, data]);
+      setCommentsCount((c) => c + 1);
+      setNewComment("");
+    } catch (err) { console.error(err); }
+    finally { setSubmittingComment(false); }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!confirm(lang === "en" ? "Delete this comment?" : "¿Eliminar este comentario?")) return;
+    try {
+      await supabase.from("comentarios_social").delete().eq("id", commentId);
+      setComments((c) => c.filter((cm) => cm.id !== commentId));
+      setCommentsCount((c) => Math.max(c - 1, 0));
+    } catch (err) { console.error(err); }
+  };
+
+  const handleDeletePost = () => {
+    if (!confirm(lang === "en" ? "Delete this post?" : "¿Eliminar esta publicación?")) return;
+    onDelete(post.id);
+    setShowMenu(false);
+  };
+
+  return (
+    <div style={post.es_publicidad ? cardStyles.publicidadCard : cardStyles.card}>
+      {post.es_publicidad && (
+        <div style={cardStyles.publicidadBadge}>
+          <Icon name="sparkles" size={12} /> {lang === "en" ? "Sponsored Ad" : "Publicidad"}
+        </div>
+      )}
+      {post.es_promocion && !post.es_publicidad && (
+        <div style={cardStyles.promoBadge}>
+          <Icon name="megaphone" size={12} /> {lang === "en" ? "Promo" : "Promoción"}
+        </div>
+      )}
+
+      <div style={cardStyles.header}>
+        <Link href={`/comunidad/perfil/${post.autor_id}`} style={{ display: "flex", alignItems: "center", gap: "12px", textDecoration: "none" }}>
+          <div style={avatarStyle(autor.avatar_url, 44)}>
+            {!autor.avatar_url && (autor.nombre_completo?.[0]?.toUpperCase() || "U")}
+          </div>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span style={{ fontWeight: "800", fontSize: "14px", color: "var(--atlan-text-primary)" }}>{autor.nombre_completo || "Usuario"}</span>
+              {autor.rol === "dueno" && <span style={cardStyles.roleBadge}><Icon name="building" size={12} /></span>}
+              {autor.rol === "admin" && <span style={{ ...cardStyles.roleBadge, background: "rgba(239,68,68,0.15)", color: "#ef4444" }}><Icon name="zap" size={12} /></span>}
+            </div>
+            <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)" }}>{timeAgo(post.created_at, lang)}</span>
+          </div>
+        </Link>
+
+        {(isOwner || isAdmin) && (
+          <div style={{ position: "relative" }}>
+            <button onClick={() => setShowMenu(!showMenu)} style={cardStyles.menuBtn}>⋯</button>
+            {showMenu && (
+              <div style={cardStyles.menuDropdown}>
+                <button onClick={handleDeletePost} style={cardStyles.menuItem}>
+                  <Icon name="trash" size={12} /> {lang === "en" ? "Delete" : "Eliminar"}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <p style={cardStyles.content}>{post.contenido}</p>
+
+      {/* Imagen */}
+      {post.imagen_url && (
+        <div style={{ ...cardStyles.imageContainer, cursor: "pointer" }} onClick={() => onImageClick && onImageClick(post)}>
+          <img src={post.imagen_url} alt="Post" style={cardStyles.image} loading="lazy" />
+        </div>
+      )}
+
+      {/* Video */}
+      {post.video_url && (
+        <div style={{ ...cardStyles.imageContainer, background: "#000", position: "relative", cursor: "pointer" }} onClick={() => onImageClick && onImageClick(post)}>
+          <video
+            src={post.video_url}
+            controls
+            playsInline
+            preload="metadata"
+            style={{ width: "100%", maxHeight: "480px", display: "block" }}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <div style={{ position: "absolute", top: "10px", right: "10px", background: "rgba(0,0,0,0.6)", padding: "3px 8px", borderRadius: "6px", fontSize: "10px", fontWeight: "800", color: "#17AA4A" }}>
+            🎬 Video
+          </div>
+        </div>
+      )}
+
+      {/* Stats bar */}
+      <div style={cardStyles.statsBar}>
+        {likesCount > 0 && <span style={cardStyles.statText}><Icon name="heartFilled" size={12} color="#ef4444" /> {likesCount}</span>}
+        {commentsCount > 0 && (
+          <button onClick={handleToggleComments} style={{ ...cardStyles.statText, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+            <Icon name="messageCircle" size={12} /> {commentsCount} {commentsCount === 1 ? "comentario" : "comentarios"}
+          </button>
+        )}
+      </div>
+
+      {/* Action bar */}
+      <div style={cardStyles.actionBar}>
+        <button onClick={handleLike} style={{ ...cardStyles.actionBtn, color: liked ? "#ef4444" : "var(--atlan-text-secondary)" }}>
+          <span style={{ fontSize: "16px" }}>{liked ? <Icon name="heartFilled" size={16} color="#ef4444" /> : <Icon name="heart" size={16} />}</span>
+          {liked ? "Te gusta" : "Me gusta"}
+        </button>
+        <button onClick={handleToggleComments} style={cardStyles.actionBtn}>
+          <Icon name="messageCircle" size={14} /> Comentar
+        </button>
+        <ShareDropdown post={post} session={session} perfil={perfil} lang={lang} onRequireLogin={onRequireLogin} />
+      </div>
+
+      {/* Comments section */}
+      {showComments && (
+        <div style={cardStyles.commentsSection}>
+          {loadingComments ? (
+            <p style={{ textAlign: "center", color: "var(--atlan-text-muted)", fontSize: "13px", padding: "12px" }}>...</p>
+          ) : (
+            <>
+              {comments.map((comment) => {
+                const cAutor = comment.perfiles || {};
+                const canDeleteComment = session?.user?.id === comment.autor_id || isOwner || isAdmin;
+                return (
+                  <div key={comment.id} style={cardStyles.commentItem}>
+                    <Link href={`/comunidad/perfil/${comment.autor_id}`} style={{ textDecoration: "none" }}>
+                      <div style={avatarStyle(cAutor.avatar_url, 32)}>
+                        {!cAutor.avatar_url && (cAutor.nombre_completo?.[0]?.toUpperCase() || "U")}
+                      </div>
+                    </Link>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={cardStyles.commentBubble}>
+                        <span style={{ fontWeight: "700", fontSize: "12px", color: "var(--atlan-text-primary)" }}>{cAutor.nombre_completo || "Usuario"}</span>
+                        <p style={{ margin: "2px 0 0", fontSize: "13px", color: "var(--atlan-text-secondary)", lineHeight: "1.4", wordBreak: "break-word" }}>{comment.contenido}</p>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "4px" }}>
+                        <span style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{timeAgo(comment.created_at, lang)}</span>
+                        {canDeleteComment && (
+                          <button onClick={() => handleDeleteComment(comment.id)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: "11px", cursor: "pointer", fontWeight: "700", padding: 0 }}>Eliminar</button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {session && (
+                <div style={cardStyles.commentInput}>
+                  <div style={avatarStyle(perfil?.avatar_url, 32)}>
+                    {!perfil?.avatar_url && (perfil?.nombre_completo?.[0]?.toUpperCase() || "U")}
+                  </div>
+                  <input
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value.slice(0, 500))}
+                    onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmitComment(); } }}
+                    placeholder="Escribe un comentario..."
+                    style={cardStyles.commentTextField}
+                    disabled={submittingComment}
+                  />
+                  <button onClick={handleSubmitComment} disabled={!newComment.trim() || submittingComment} style={{ ...cardStyles.sendBtn, opacity: !newComment.trim() ? 0.4 : 1 }}>➤</button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 const sidebarStyles = {
-  profileCard: {
-    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
-    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
-    borderRadius: "24px", overflow: "hidden",
-  },
-  profileBanner: {
-    height: "60px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
-  },
-  loginCard: {
-    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
-    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
-    borderRadius: "24px", padding: "24px", textAlign: "center",
-  },
-  sectionCard: {
-    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
-    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
-    borderRadius: "24px", padding: "20px",
-  },
-  sectionTitle: {
-    margin: "0 0 14px", fontSize: "15px", fontWeight: "800",
-    color: "var(--atlan-text-primary)", display: "flex", alignItems: "center", gap: "6px"
-  },
-  userCard: {
-    display: "flex", alignItems: "center", gap: "10px", padding: "8px 0",
-    borderBottom: "1px solid rgba(20,109,158,0.06)",
-  },
-  followBtn: {
-    padding: "6px 14px", border: "none", borderRadius: "20px",
-    fontSize: "12px", fontWeight: "800", cursor: "pointer", whiteSpace: "nowrap",
-    transition: "all 0.2s",
-  },
-  exploreLink: {
-    display: "flex", alignItems: "center", gap: "8px", padding: "10px 12px",
-    color: "var(--atlan-text-secondary)", textDecoration: "none", fontSize: "13px",
-    fontWeight: "600", borderRadius: "10px", transition: "all 0.2s",
-    marginBottom: "4px",
-  },
+  profileCard: { background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)", borderRadius: "24px", overflow: "hidden" },
+  profileBanner: { height: "60px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)" },
+  loginCard: { background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)", borderRadius: "24px", padding: "24px", textAlign: "center" },
+  sectionCard: { background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)", borderRadius: "24px", padding: "20px" },
+  sectionTitle: { margin: "0 0 14px", fontSize: "15px", fontWeight: "800", color: "var(--atlan-text-primary)", display: "flex", alignItems: "center", gap: "6px" },
+  userCard: { display: "flex", alignItems: "center", gap: "10px", padding: "8px 0", borderBottom: "1px solid rgba(20,109,158,0.06)" },
+  followBtn: { padding: "6px 14px", border: "none", borderRadius: "20px", fontSize: "12px", fontWeight: "800", cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s" },
+  exploreLink: { display: "flex", alignItems: "center", gap: "8px", padding: "10px 12px", color: "var(--atlan-text-secondary)", textDecoration: "none", fontSize: "13px", fontWeight: "600", borderRadius: "10px", transition: "all 0.2s", marginBottom: "4px" },
 };
 
 function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChange }) {
@@ -83,11 +330,7 @@ function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChang
 
   useEffect(() => {
     if (!session) return;
-    supabase.from("seguimientos")
-      .select("id")
-      .eq("seguidor_id", session.user.id)
-      .eq("seguido_id", user.id)
-      .maybeSingle()
+    supabase.from("seguimientos").select("id").eq("seguidor_id", session.user.id).eq("seguido_id", user.id).maybeSingle()
       .then(({ data }) => { if (data) setIsFollowing(true); });
   }, [session, user.id]);
 
@@ -120,24 +363,12 @@ function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChang
             {user.nombre_completo || "Usuario"}
           </div>
           <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>
-            {user.rol === "dueno"
-              ? <><Icon name="building" size={11} /> Propietario</>
-              : (user.es_premium || user.suscripcion_activa || user.rol === "turista_deacachimba")
-              ? <><Icon name="star" size={11} /> Turista Deacachimba</>
-              : <><Icon name="luggage" size={11} /> Turista Tuani</>}
+            {user.rol === "dueno" ? <><Icon name="building" size={11} /> Propietario</> : <><Icon name="luggage" size={11} /> Turista Tuani</>}
           </div>
         </div>
       </Link>
-      <button
-        onClick={handleFollow}
-        disabled={loading}
-        style={{
-          ...sidebarStyles.followBtn,
-          background: isFollowing ? "rgba(20,109,158,0.06)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
-          color: isFollowing ? "var(--atlan-text-secondary)" : "white",
-        }}
-      >
-        {isFollowing ? (lang === "en" ? "Following" : "Siguiendo") : (lang === "en" ? "Follow" : "Seguir")}
+      <button onClick={handleFollow} disabled={loading} style={{ ...sidebarStyles.followBtn, background: isFollowing ? "rgba(20,109,158,0.06)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: isFollowing ? "var(--atlan-text-secondary)" : "white" }}>
+        {isFollowing ? "Siguiendo" : "Seguir"}
       </button>
     </div>
   );
@@ -148,7 +379,7 @@ export default function PerfilPublico() {
   const params = useParams();
   const rawUserId = params.id;
 
-  const { session, perfil: myPerfil, updatePerfil } = useAuth();
+  const { session, perfil: myPerfil } = useAuth();
 
   const [targetPerfil, setTargetPerfil] = useState(null);
   const userId = targetPerfil?.id || rawUserId;
@@ -156,22 +387,7 @@ export default function PerfilPublico() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [isMutualFollow, setIsMutualFollow] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
-  const [likedPosts, setLikedPosts] = useState(new Set());
-
-  // Edit bio & profile modal
-  const [editingBio, setEditingBio] = useState(false);
-  const [bioText, setBioText] = useState("");
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [editNombre, setEditNombre] = useState("");
-  const [editBio, setEditBio] = useState("");
-  const [savingProfile, setSavingProfile] = useState(false);
-
-  // Avatar upload
-  const avatarInputRef = useRef(null);
-  const [avatarUploading, setAvatarUploading] = useState(false);
-  const [avatarHover, setAvatarHover] = useState(false);
 
   // Modals & Search
   const [viewerPost, setViewerPost] = useState(null);
@@ -180,8 +396,6 @@ export default function PerfilPublico() {
   const [followersModalTab, setFollowersModalTab] = useState("followers");
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [searching, setSearching] = useState(false);
 
   const fetchSuggestedUsers = useCallback(async () => {
     try {
@@ -229,7 +443,7 @@ export default function PerfilPublico() {
 
         if (isMounted) setTargetPerfil(pData);
 
-        // Fetch posts
+        // Fetch posts for target user
         const { data: postsData } = await supabase
           .from("publicaciones")
           .select("*, perfiles(id, nombre_completo, avatar_url, rol)")
@@ -238,7 +452,6 @@ export default function PerfilPublico() {
 
         if (isMounted) setPosts(postsData || []);
 
-        // Follow status
         if (session && session.user.id !== pData.id) {
           const { data: followData } = await supabase
             .from("seguimientos")
@@ -248,15 +461,6 @@ export default function PerfilPublico() {
             .maybeSingle();
 
           if (isMounted) setIsFollowing(!!followData);
-
-          const { data: reverseFollow } = await supabase
-            .from("seguimientos")
-            .select("id")
-            .eq("seguidor_id", pData.id)
-            .eq("seguido_id", session.user.id)
-            .maybeSingle();
-
-          if (isMounted) setIsMutualFollow(!!followData && !!reverseFollow);
         }
       } catch (err) {
         console.error("Error loading profile:", err);
@@ -268,24 +472,6 @@ export default function PerfilPublico() {
     return () => { isMounted = false; };
   }, [rawUserId, session]);
 
-  const handleAvatarChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file || !session || !targetPerfil) return;
-    setAvatarUploading(true);
-    try {
-      const url = await uploadMedia(file, "avatars");
-      const { error } = await supabase.from("perfiles").update({ avatar_url: url }).eq("id", targetPerfil.id);
-      if (error) throw error;
-      setTargetPerfil(prev => ({ ...prev, avatar_url: url }));
-      if (updatePerfil) updatePerfil({ avatar_url: url });
-    } catch (err) {
-      console.error(err);
-      alert(lang === "en" ? "Failed to upload avatar" : "Error al subir la imagen");
-    } finally {
-      setAvatarUploading(false);
-    }
-  };
-
   const handleFollow = async () => {
     if (!session) { setShowLoginModal(true); return; }
     setFollowLoading(true);
@@ -293,7 +479,6 @@ export default function PerfilPublico() {
       if (isFollowing) {
         await supabase.from("seguimientos").delete().eq("seguidor_id", session.user.id).eq("seguido_id", targetPerfil.id);
         setIsFollowing(false);
-        setIsMutualFollow(false);
         setTargetPerfil(prev => ({ ...prev, seguidores_count: Math.max((prev.seguidores_count || 1) - 1, 0) }));
       } else {
         await supabase.from("seguimientos").insert({ seguidor_id: session.user.id, seguido_id: targetPerfil.id });
@@ -304,49 +489,14 @@ export default function PerfilPublico() {
     finally { setFollowLoading(false); }
   };
 
-  const handleLikePost = async (postId) => {
-    if (!session) { setShowLoginModal(true); return; }
-    try {
-      const newLiked = new Set(likedPosts);
-      if (newLiked.has(postId)) {
-        await supabase.from("likes_social").delete().eq("publicacion_id", postId).eq("usuario_id", session.user.id);
-        newLiked.delete(postId);
-        setPosts(prev => prev.map(p => p.id === postId ? { ...p, likes_count: Math.max((p.likes_count || 1) - 1, 0) } : p));
-      } else {
-        await supabase.from("likes_social").insert({ publicacion_id: postId, usuario_id: session.user.id });
-        newLiked.add(postId);
-        setPosts(prev => prev.map(p => p.id === postId ? { ...p, likes_count: (p.likes_count || 0) + 1 } : p));
-      }
-      setLikedPosts(newLiked);
-    } catch (err) { console.error(err); }
-  };
-
   const handleDeletePost = async (postId) => {
-    if (!confirm(lang === "en" ? "Delete this post?" : "¿Eliminar esta publicación?")) return;
     try {
       await supabase.from("publicaciones").delete().eq("id", postId);
       setPosts(prev => prev.filter(p => p.id !== postId));
     } catch (err) { console.error(err); }
   };
 
-  const handleSaveProfileModal = async (e) => {
-    e.preventDefault();
-    if (!session || !userId) return;
-    setSavingProfile(true);
-    try {
-      const { error } = await supabase.from("perfiles").update({ nombre_completo: editNombre.trim(), bio: editBio.trim() }).eq("id", userId);
-      if (error) throw error;
-      setTargetPerfil(prev => ({ ...prev, nombre_completo: editNombre.trim(), bio: editBio.trim() }));
-      if (updatePerfil) updatePerfil({ nombre_completo: editNombre.trim(), bio: editBio.trim() });
-      setIsEditingProfile(false);
-    } catch (err) {
-      console.error(err);
-      alert(lang === "en" ? "Failed to update profile" : "Error al actualizar perfil");
-    } finally { setSavingProfile(false); }
-  };
-
   const isOwnProfile = session?.user?.id === userId;
-  const isAdmin = myPerfil?.rol === "admin";
 
   if (loading) {
     return (
@@ -361,8 +511,8 @@ export default function PerfilPublico() {
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "var(--atlan-bg-primary)" }}>
         <div style={{ textAlign: "center" }}>
           <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}><Icon name="search" size={48} /></span>
-          <h3 style={{ margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>{lang === "en" ? "User not found" : "Usuario no encontrado"}</h3>
-          <Link href="/comunidad" style={{ color: "var(--atlan-gold)", fontWeight: "700" }}>← {lang === "en" ? "Back to Community" : "Volver a Comunidad"}</Link>
+          <h3 style={{ margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>Usuario no encontrado</h3>
+          <Link href="/comunidad" style={{ color: "var(--atlan-gold)", fontWeight: "700" }}>← Volver a Comunidad</Link>
         </div>
       </div>
     );
@@ -426,7 +576,7 @@ export default function PerfilPublico() {
 
         {/* ── CENTER COLUMN ── */}
         <main style={{ minWidth: 0, width: "100%" }}>
-          {/* Target Profile Card (Solo se muestra si estás visitando el perfil de OTRA persona) */}
+          {/* Target Profile Card (Solo si ves el perfil de OTRA persona) */}
           {!isOwnProfile && (
             <div style={{ background: "#FFFFFF", borderRadius: "24px", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "0 14px 35px rgba(0, 0, 0, 0.08)", overflow: "hidden", marginBottom: "24px" }}>
               <div style={{ height: "100px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)" }} />
@@ -457,19 +607,23 @@ export default function PerfilPublico() {
             </div>
           )}
 
-          {/* Posts */}
+          {/* Posts Feed (Con soporte completo para Videos, Fotos, Likes y Comentarios) */}
           {posts.length === 0 ? (
             <div style={{ textAlign: "center", padding: "40px", background: "#FFFFFF", borderRadius: "24px", border: "1px solid rgba(20,109,158,0.08)" }}>
               <p style={{ margin: 0, color: "#64748B" }}>No hay publicaciones todavía.</p>
             </div>
           ) : (
             posts.map(post => (
-              <div key={post.id} style={{ background: "#FFFFFF", borderRadius: "24px", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.06)", padding: "24px", marginBottom: "20px" }}>
-                <p style={{ margin: "0 0 12px", fontSize: "15px", color: "#1A1A2E", whiteSpace: "pre-wrap" }}>{post.contenido}</p>
-                {post.imagen_url && (
-                  <img src={post.imagen_url} alt="Post" style={{ width: "100%", maxHeight: "400px", objectFit: "cover", borderRadius: "16px", marginBottom: "12px" }} />
-                )}
-              </div>
+              <PostCard
+                key={post.id}
+                post={post}
+                session={session}
+                perfil={myPerfil}
+                lang={lang}
+                onDelete={handleDeletePost}
+                onRequireLogin={() => setShowLoginModal(true)}
+                onImageClick={(p) => setViewerPost(p)}
+              />
             ))
           )}
         </main>
@@ -500,6 +654,17 @@ export default function PerfilPublico() {
         </aside>
 
       </div>
+
+      {/* ImageViewer Modal */}
+      {viewerPost && (
+        <ImageViewerModal
+          post={viewerPost}
+          session={session}
+          perfil={myPerfil}
+          lang={lang}
+          onClose={() => setViewerPost(null)}
+        />
+      )}
 
       {/* Followers Modal */}
       {showFollowersModal && session && (
