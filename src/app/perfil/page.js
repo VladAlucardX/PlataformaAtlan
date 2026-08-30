@@ -529,13 +529,13 @@ export default function PerfilPage() {
             {/* Cuadro 4: Reclamar o Registrar Negocio / Gestionar */}
             <Link
               href="/dashboard"
-              className="clay-btn-green no-sheen"
+              className="clay-btn-blue no-sheen"
               style={{
                 width: "100%",
                 padding: "11px 18px",
                 marginBottom: "16px",
                 borderRadius: "14px",
-                background: "linear-gradient(145deg, #1FCC5C 0%, #17AA4A 70%, #128A3C 100%)",
+                background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
                 color: "#FFFFFF",
                 fontWeight: "800",
                 fontSize: "13.5px",
@@ -544,7 +544,7 @@ export default function PerfilPage() {
                 alignItems: "center",
                 justifyContent: "center",
                 gap: "10px",
-                boxShadow: "0 10px 24px -4px rgba(23, 170, 74, 0.45)"
+                boxShadow: "0 8px 18px -3px rgba(10, 25, 47, 0.40)"
               }}
             >
               <img
