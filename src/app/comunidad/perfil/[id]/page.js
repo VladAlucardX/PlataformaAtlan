@@ -399,11 +399,19 @@ export default function PerfilPublico() {
 
   const fetchSuggestedUsers = useCallback(async () => {
     try {
-      let query = supabase.from("perfiles").select("id, nombre_completo, avatar_url, rol, seguidores_count").limit(6);
+      let query = supabase.from("perfiles").select("id, nombre_completo, avatar_url, rol, seguidores_count");
       if (session?.user) {
         query = query.neq("id", session.user.id);
+        const { data: following } = await supabase
+          .from("seguimientos")
+          .select("seguido_id")
+          .eq("seguidor_id", session.user.id);
+        const followingIds = (following || []).map((f) => f.seguido_id);
+        if (followingIds.length > 0) {
+          query = query.not("id", "in", `(${followingIds.join(",")})`);
+        }
       }
-      const { data } = await query;
+      const { data } = await query.limit(6);
       setSuggestedUsers(data || []);
     } catch (err) { console.error("Error fetching suggested users:", err); }
   }, [session]);
