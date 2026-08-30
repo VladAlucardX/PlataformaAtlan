@@ -105,7 +105,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
     return lang === "en" ? "Profile" : "Perfil";
   };
 
-  const communityProfileLink = "/perfil";
+  const communityProfileUrl = perfil ? `/comunidad/perfil/${getProfileSlug(perfil)}` : (session?.user?.id ? `/comunidad/perfil/${session.user.id}` : "/comunidad");
 
   return (
     <nav className="atlan-navbar-header">
@@ -166,7 +166,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
               <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                 {/* Nombre de usuario -> Redirige al Perfil de la Comunidad */}
                 <Link
-                  href={communityProfileLink}
+                  href={communityProfileUrl}
                   className={`nav-pill-link ${activePage === "perfil-comunidad" ? "active" : ""}`}
                   style={{
                     display: "inline-flex",
@@ -234,7 +234,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                 >
                   {/* Opción 1: Mi Perfil Comunidad */}
                   <Link
-                    href={communityProfileLink}
+                    href={communityProfileUrl}
                     onClick={() => setUserDropdownOpen(false)}
                     style={{
                       display: "flex",
