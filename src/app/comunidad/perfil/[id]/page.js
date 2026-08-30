@@ -429,7 +429,7 @@ export default function PerfilPublico() {
           {/* Target Profile Card (Solo se muestra si estás visitando el perfil de OTRA persona) */}
           {!isOwnProfile && (
             <div style={{ background: "#FFFFFF", borderRadius: "24px", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "0 14px 35px rgba(0, 0, 0, 0.08)", overflow: "hidden", marginBottom: "24px" }}>
-              <div style={{ height: "100px", background: "linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(23, 170, 74, 0.10) 100%)" }} />
+              <div style={{ height: "100px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)" }} />
               <div style={{ padding: "0 24px 24px", marginTop: "-44px" }}>
                 <div style={{ display: "flex", alignItems: "flex-end", gap: "16px", flexWrap: "wrap", marginBottom: "16px" }}>
                   <div style={avatarStyle(targetPerfil.avatar_url, 80)}>
