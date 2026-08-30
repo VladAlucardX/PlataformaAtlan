@@ -242,8 +242,8 @@ export default function PerfilPage() {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        background: "#050508",
-        color: "white"
+        background: "var(--atlan-bg-primary)",
+        color: "var(--atlan-text-primary)"
       }}>
         <div style={{ textAlign: "center" }}>
           <div className="spinner" style={{
@@ -255,7 +255,7 @@ export default function PerfilPage() {
             animation: "spin 1s linear infinite",
             margin: "0 auto 16px"
           }} />
-          <p style={{ fontSize: "14px", color: "#4A5568" }}>
+          <p style={{ fontSize: "14px", color: "var(--atlan-text-muted)" }}>
             {lang === "en" ? "Loading profile..." : "Cargando perfil..."}
           </p>
         </div>
@@ -281,17 +281,9 @@ export default function PerfilPage() {
       position: "relative",
       overflow: "hidden"
     }}>
-      {/* Background Orbs */}
-      <div style={{
-        position: "absolute", top: "-5%", right: "-5%", width: "700px", height: "700px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(255,215,0,0.30) 0%, rgba(255,215,0,0.08) 50%, transparent 70%)",
-        filter: "blur(50px)", pointerEvents: "none", zIndex: 0
-      }} />
-      <div style={{
-        position: "absolute", bottom: "-5%", left: "-5%", width: "600px", height: "600px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(20,109,158,0.25) 0%, rgba(20,109,158,0.05) 50%, transparent 70%)",
-        filter: "blur(50px)", pointerEvents: "none", zIndex: 0
-      }} />
+      {/* SVGs de fondo nativos de Atlan */}
+      <img src="/images/tortuga.svg" alt="" style={{ position: "fixed", bottom: "-10px", left: "-10px", width: "360px", maxHeight: "360px", objectFit: "contain", opacity: 0.14, pointerEvents: "none", zIndex: 0 }} />
+      <img src="/images/machoraton.svg" alt="" style={{ position: "fixed", top: "80px", right: "10px", width: "340px", height: "calc(100vh - 90px)", objectFit: "contain", opacity: 0.12, pointerEvents: "none", zIndex: 0 }} />
 
       <Navbar activePage="perfil" session={session} perfil={perfil} onLogout={handleCerrarSesion} />
 
@@ -304,14 +296,14 @@ export default function PerfilPage() {
         zIndex: 1
       }}>
         
-        {/* BANNER DASHBOARD SUPERIOR (ESTADÍSTICAS DEL USUARIO) */}
+        {/* BANNER DASHBOARD SUPERIOR CON SVGs NATIVOS */}
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
           gap: "16px",
           marginBottom: "28px"
         }}>
-          {/* Card 1: Reservas */}
+          {/* Card 1: Reservas (edificio.svg) */}
           <div style={{
             background: "#FFFFFF",
             border: "2px solid rgba(255, 255, 255, 0.95)",
@@ -325,9 +317,9 @@ export default function PerfilPage() {
             <div style={{
               width: "48px", height: "48px", borderRadius: "14px",
               background: "linear-gradient(135deg, rgba(20,109,158,0.12) 0%, rgba(20,109,158,0.04) 100%)",
-              display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px"
+              display: "flex", alignItems: "center", justifyContent: "center"
             }}>
-              🏨
+              <img src="/images/edificio.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain" }} />
             </div>
             <div>
               <div style={{ fontSize: "22px", fontWeight: "900", color: "#0A192F" }}>{reservas.length}</div>
@@ -335,7 +327,7 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          {/* Card 2: Destinos Guardados */}
+          {/* Card 2: Destinos Guardados (tortuga.svg) */}
           <div style={{
             background: "#FFFFFF",
             border: "2px solid rgba(255, 255, 255, 0.95)",
@@ -349,9 +341,9 @@ export default function PerfilPage() {
             <div style={{
               width: "48px", height: "48px", borderRadius: "14px",
               background: "linear-gradient(135deg, rgba(23,170,74,0.12) 0%, rgba(23,170,74,0.04) 100%)",
-              display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px"
+              display: "flex", alignItems: "center", justifyContent: "center"
             }}>
-              📌
+              <img src="/images/tortuga.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain" }} />
             </div>
             <div>
               <div style={{ fontSize: "22px", fontWeight: "900", color: "#17AA4A" }}>{favoritos.length}</div>
@@ -359,7 +351,7 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          {/* Card 3: Reseñas Publicadas */}
+          {/* Card 3: Reseñas Publicadas (flor.svg) */}
           <div style={{
             background: "#FFFFFF",
             border: "2px solid rgba(255, 255, 255, 0.95)",
@@ -373,9 +365,9 @@ export default function PerfilPage() {
             <div style={{
               width: "48px", height: "48px", borderRadius: "14px",
               background: "linear-gradient(135deg, rgba(255,215,0,0.20) 0%, rgba(255,215,0,0.05) 100%)",
-              display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px"
+              display: "flex", alignItems: "center", justifyContent: "center"
             }}>
-              ⭐
+              <img src="/images/flor.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain", filter: "brightness(0)" }} />
             </div>
             <div>
               <div style={{ fontSize: "22px", fontWeight: "900", color: "#E6C200" }}>{resenas.length}</div>
@@ -383,7 +375,7 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          {/* Card 4: Nivel de Turista */}
+          {/* Card 4: Nivel de Turista (perfil.svg) */}
           <div style={{
             background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
             borderRadius: "20px",
@@ -397,9 +389,9 @@ export default function PerfilPage() {
             <div style={{
               width: "48px", height: "48px", borderRadius: "14px",
               background: "rgba(255, 255, 255, 0.12)",
-              display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px"
+              display: "flex", alignItems: "center", justifyContent: "center"
             }}>
-              🏆
+              <img src="/images/perfil.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
             </div>
             <div>
               <div style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700" }}>{rolText}</div>
@@ -491,7 +483,7 @@ export default function PerfilPage() {
                 {user?.email}
               </p>
 
-              {/* Botón 1: Rol */}
+              {/* Botón 1: Rol con perfil.svg */}
               <div
                 style={{
                   width: "100%",
@@ -517,7 +509,7 @@ export default function PerfilPage() {
                 <span>{rolText}</span>
               </div>
 
-              {/* Botón 2: Editar Perfil */}
+              {/* Botón 2: Editar Perfil con flor.svg */}
               <button
                 type="button"
                 onClick={() => {
@@ -547,7 +539,7 @@ export default function PerfilPage() {
                 <span>{lang === "en" ? "Edit Profile" : "Editar Perfil"}</span>
               </button>
 
-              {/* Botón 3: Cambiar Contraseña */}
+              {/* Botón 3: Cambiar Contraseña con machoraton.svg */}
               <button
                 type="button"
                 onClick={() => {
@@ -577,7 +569,7 @@ export default function PerfilPage() {
                 <span>{lang === "en" ? "Change Password" : "Cambiar Contraseña"}</span>
               </button>
 
-              {/* Botón 4: Reclamar o Registrar Negocio (Azul Menú #0A192F) */}
+              {/* Botón 4: Reclamar o Registrar Negocio con edificio.svg (Azul Menú #0A192F) */}
               <Link
                 href="/dashboard"
                 style={{
@@ -609,11 +601,11 @@ export default function PerfilPage() {
           {/* COLUMNA DERECHA CONTENIDO */}
           <div style={{ display: "flex", flexDirection: "column", gap: "36px" }}>
             
-            {/* SECCIÓN 1: RESERVAS DIRECTAS */}
+            {/* SECCIÓN 1: RESERVAS DIRECTAS con edificio.svg */}
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
                 <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "900", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
-                  <span style={{ fontSize: "22px" }}>🏨</span>
+                  <img src="/images/edificio.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain" }} />
                   <span>{lang === "en" ? "My Reservations" : "Mis Reservas Directas"}</span>
                 </h2>
                 <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(20, 109, 158, 0.10)", padding: "4px 12px", borderRadius: "12px", color: "#146D9E" }}>
@@ -623,7 +615,7 @@ export default function PerfilPage() {
 
               {reservas.length === 0 ? (
                 <div style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "40px 24px", textAlign: "center" }}>
-                  <span style={{ fontSize: "40px", display: "block", marginBottom: "12px" }}>🏨</span>
+                  <img src="/images/edificio.svg" alt="" style={{ width: "48px", height: "48px", objectFit: "contain", margin: "0 auto 12px", display: "block", opacity: 0.7 }} />
                   <p style={{ margin: "0 0 16px", fontSize: "14px", color: "var(--atlan-text-muted)" }}>
                     {lang === "en" ? "You haven't made any lodging or table reservations yet." : "Aún no has realizado reservas de hospedaje o mesas."}
                   </p>
@@ -670,11 +662,11 @@ export default function PerfilPage() {
               )}
             </div>
 
-            {/* SECCIÓN 2: DESTINOS GUARDADOS (Grid 2 columnas) */}
+            {/* SECCIÓN 2: DESTINOS GUARDADOS con tortuga.svg */}
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
                 <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "900", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
-                  <span style={{ fontSize: "22px" }}>📌</span>
+                  <img src="/images/tortuga.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain" }} />
                   <span>{lang === "en" ? "My Saved Places" : "Mis Destinos Guardados"}</span>
                 </h2>
                 <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(23, 170, 74, 0.10)", padding: "4px 12px", borderRadius: "12px", color: "#17AA4A" }}>
@@ -684,7 +676,7 @@ export default function PerfilPage() {
 
               {favoritos.length === 0 ? (
                 <div style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "40px 24px", textAlign: "center" }}>
-                  <span style={{ fontSize: "40px", display: "block", marginBottom: "12px" }}>🐢</span>
+                  <img src="/images/tortuga.svg" alt="" style={{ width: "48px", height: "48px", objectFit: "contain", margin: "0 auto 12px", display: "block", opacity: 0.7 }} />
                   <p style={{ margin: "0 0 16px", fontSize: "14px", color: "var(--atlan-text-muted)" }}>
                     {lang === "en" ? "You haven't saved any places yet." : "Aún no tienes destinos o negocios guardados."}
                   </p>
@@ -719,11 +711,11 @@ export default function PerfilPage() {
               )}
             </div>
 
-            {/* SECCIÓN 3: RESEÑAS PUBLICADAS */}
+            {/* SECCIÓN 3: RESEÑAS PUBLICADAS con flor.svg & comentarios.svg */}
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
                 <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "900", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
-                  <span style={{ fontSize: "22px" }}>⭐</span>
+                  <img src="/images/flor.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain", filter: "brightness(0)" }} />
                   <span>{lang === "en" ? "My Reviews" : "Reseñas Publicadas"}</span>
                 </h2>
                 <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(230, 194, 0, 0.15)", padding: "4px 12px", borderRadius: "12px", color: "#E6C200" }}>
@@ -733,7 +725,7 @@ export default function PerfilPage() {
 
               {resenas.length === 0 ? (
                 <div style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "40px 24px", textAlign: "center" }}>
-                  <span style={{ fontSize: "40px", display: "block", marginBottom: "12px" }}>💬</span>
+                  <img src="/images/comentarios.svg" alt="" style={{ width: "48px", height: "48px", objectFit: "contain", margin: "0 auto 12px", display: "block", opacity: 0.8, filter: "brightness(0)" }} />
                   <p style={{ margin: "0 0 16px", fontSize: "14px", color: "var(--atlan-text-muted)" }}>
                     {lang === "en" ? "You haven't posted any reviews yet." : "Aún no has publicado reseñas en los destinos."}
                   </p>
