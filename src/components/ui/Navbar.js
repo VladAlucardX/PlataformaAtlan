@@ -137,7 +137,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
             <img src="/images/ubic.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {t("nav.map")}
           </Link>
           <Link href="/departamentos" className={`nav-pill-link ${activePage === "departamentos" ? "active" : ""}`}>
-            <img src="/images/flor.svg" alt="Ranking" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Ranking" : "Ranking"}
+            <img src="/images/flor.svg" alt="Ranking" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} /> {lang === "en" ? "Ranking" : "Ranking"}
           </Link>
           <Link href="/mas-de-nicaragua" className={`nav-pill-link ${activePage === "mas-de-nicaragua" ? "active" : ""}`}>
             <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {t("nav.moreNicaragua") || (lang === "en" ? "More of Nicaragua" : "Más de Nicaragua")}
