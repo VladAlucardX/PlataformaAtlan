@@ -51,6 +51,16 @@ export default function PerfilPage() {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [savingPass, setSavingPass] = useState(false);
 
+  // Custom Modal de Confirmación Atlan (Reemplaza el confirm() nativo del navegador)
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    confirmText: "",
+    onConfirm: null,
+    loading: false
+  });
+
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     if (!user) return;
@@ -192,51 +202,61 @@ export default function PerfilPage() {
     fetchProfileData();
   }, [authSession, authPerfil, authLoading, router]);
 
-  const handleCancelarReserva = async (reservaId) => {
-    const confirmDel = confirm(
-      lang === "en"
-        ? "Are you sure you want to cancel this reservation?"
-        : "¿Estás seguro de que deseas cancelar esta reserva?"
-    );
-    if (!confirmDel) return;
+  // Cancelar Reserva con Modal Personalizado
+  const handleCancelarReserva = (reservaId) => {
+    setConfirmModal({
+      isOpen: true,
+      title: lang === "en" ? "Cancel Reservation" : "Cancelar Reserva",
+      message: lang === "en" ? "Are you sure you want to cancel this reservation?" : "¿Estás seguro de que deseas cancelar esta reserva?",
+      confirmText: lang === "en" ? "Yes, Cancel" : "Sí, Cancelar",
+      loading: false,
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, loading: true }));
+        try {
+          const { error } = await supabase
+            .from("reservas")
+            .update({ estado_reserva: "cancelada" })
+            .eq("id", reservaId);
 
-    try {
-      const { error } = await supabase
-        .from("reservas")
-        .update({ estado_reserva: "cancelada" })
-        .eq("id", reservaId);
+          if (error) throw error;
 
-      if (error) throw error;
-
-      setReservas((prev) =>
-        prev.map((r) => (r.id === reservaId ? { ...r, estado_reserva: "cancelada" } : r))
-      );
-    } catch (err) {
-      alert(lang === "en" ? "Failed to cancel reservation" : "No se pudo cancelar la reserva");
-      console.error(err);
-    }
+          setReservas((prev) =>
+            prev.map((r) => (r.id === reservaId ? { ...r, estado_reserva: "cancelada" } : r))
+          );
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setConfirmModal({ isOpen: false, title: "", message: "", confirmText: "", onConfirm: null, loading: false });
+        }
+      }
+    });
   };
 
-  const handleRemoveFavorite = async (favoritoId) => {
-    const confirmDel = confirm(
-      lang === "en"
-        ? "Are you sure you want to remove this place from your favorites?"
-        : "¿Estás seguro de que deseas quitar este lugar de tus favoritos?"
-    );
-    if (!confirmDel) return;
+  // Quitar Favorito con Modal Personalizado
+  const handleRemoveFavorite = (favoritoId) => {
+    setConfirmModal({
+      isOpen: true,
+      title: lang === "en" ? "Remove Favorite" : "Quitar de Favoritos",
+      message: lang === "en" ? "Are you sure you want to remove this place from your favorites?" : "¿Estás seguro de que deseas quitar este lugar de tus favoritos?",
+      confirmText: lang === "en" ? "Yes, Remove" : "Sí, Quitar",
+      loading: false,
+      onConfirm: async () => {
+        setConfirmModal((prev) => ({ ...prev, loading: true }));
+        try {
+          const { error } = await supabase
+            .from("favoritos")
+            .delete()
+            .eq("id", favoritoId);
 
-    try {
-      const { error } = await supabase
-        .from("favoritos")
-        .delete()
-        .eq("id", favoritoId);
-
-      if (error) throw error;
-      setFavoritos((prev) => prev.filter((f) => f.id !== favoritoId));
-    } catch (err) {
-      alert(lang === "en" ? "Failed to remove favorite" : "No se pudo quitar el favorito");
-      console.error(err);
-    }
+          if (error) throw error;
+          setFavoritos((prev) => prev.filter((f) => f.id !== favoritoId));
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setConfirmModal({ isOpen: false, title: "", message: "", confirmText: "", onConfirm: null, loading: false });
+        }
+      }
+    });
   };
 
   const handleCerrarSesion = async () => {
@@ -1111,6 +1131,100 @@ export default function PerfilPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 3: CONFIRMACIÓN PERSONALIZADA DE ELIMINACIÓN/CANCELACIÓN ATLAN */}
+      {confirmModal.isOpen && (
+        <div 
+          style={{ 
+            position: "fixed", 
+            inset: 0, 
+            zIndex: 2000, 
+            background: "rgba(0, 0, 0, 0.65)", 
+            backdropFilter: "blur(4px)",
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: "center", 
+            padding: "20px" 
+          }} 
+          onClick={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        >
+          <div 
+            style={{ 
+              background: "#FFFFFF", 
+              width: "100%", 
+              maxWidth: "420px", 
+              borderRadius: "24px", 
+              padding: "28px 24px", 
+              border: "2px solid rgba(255,255,255,0.95)", 
+              boxShadow: "0 25px 60px rgba(0,0,0,0.25)",
+              textAlign: "center"
+            }} 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{
+              width: "56px",
+              height: "56px",
+              borderRadius: "50%",
+              background: "rgba(239, 68, 68, 0.10)",
+              color: "#EF4444",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "26px",
+              margin: "0 auto 16px"
+            }}>
+              🗑️
+            </div>
+            
+            <h3 style={{ margin: "0 0 8px", fontSize: "19px", fontWeight: "900", color: "#1A1A2E" }}>
+              {confirmModal.title}
+            </h3>
+
+            <p style={{ margin: "0 0 24px", fontSize: "13.5px", color: "var(--atlan-text-muted)", lineHeight: "1.5" }}>
+              {confirmModal.message}
+            </p>
+
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+              <button 
+                type="button" 
+                onClick={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))} 
+                style={{ 
+                  flex: 1,
+                  padding: "11px 18px", 
+                  borderRadius: "12px", 
+                  border: "none", 
+                  background: "rgba(0,0,0,0.06)", 
+                  color: "#64748B", 
+                  fontWeight: "800", 
+                  fontSize: "13px", 
+                  cursor: "pointer" 
+                }}
+              >
+                {lang === "en" ? "Cancel" : "Cancelar"}
+              </button>
+              <button 
+                type="button" 
+                onClick={confirmModal.onConfirm} 
+                disabled={confirmModal.loading}
+                style={{ 
+                  flex: 1,
+                  padding: "11px 18px", 
+                  borderRadius: "12px", 
+                  border: "none", 
+                  background: "linear-gradient(135deg, #EF4444 0%, #DC2626 100%)", 
+                  color: "#FFFFFF", 
+                  fontWeight: "800", 
+                  fontSize: "13px", 
+                  cursor: "pointer",
+                  boxShadow: "0 4px 14px rgba(239, 68, 68, 0.35)"
+                }}
+              >
+                {confirmModal.loading ? "..." : confirmModal.confirmText}
+              </button>
+            </div>
           </div>
         </div>
       )}
