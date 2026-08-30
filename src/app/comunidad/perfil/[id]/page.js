@@ -583,6 +583,9 @@ export default function PerfilPublico() {
               <Icon name="map" size={16} /> Explorar
             </div>
             <div style={{ padding: "0 16px" }}>
+              <Link href="/comunidad" style={sidebarStyles.exploreLink}>
+                <Icon name="users" size={14} /> Muro General
+              </Link>
               <Link href="/mapa" style={sidebarStyles.exploreLink}>
                 <img src="/images/mapa.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> Mapa Turístico
               </Link>
