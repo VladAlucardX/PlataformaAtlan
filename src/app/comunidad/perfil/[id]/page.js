@@ -289,10 +289,10 @@ export default function PerfilPublico() {
       {/* Nav */}
       <Navbar activePage="comunidad" session={session} perfil={myPerfil} />
 
-      {/* Profile Header */}
-      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "90px 24px 40px 24px" }}>
-        {/* Banner */}
-        <div style={{ height: "140px", background: "#0A192F", borderRadius: "0 0 24px 24px", position: "relative" }} />
+      {/* Profile Header Container */}
+      <div style={{ maxWidth: "680px", margin: "0 auto", padding: "90px 16px 40px 16px" }}>
+        {/* Banner suave redondeado */}
+        <div style={{ height: "100px", background: "linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(23, 170, 74, 0.10) 100%)", borderRadius: "24px", border: "1px solid rgba(20, 109, 158, 0.12)", position: "relative" }} />
 
         {/* Profile Info */}
         <div style={{ display: "flex", alignItems: "flex-end", gap: "20px", marginTop: "-44px", padding: "0 16px", flexWrap: "wrap" }}>

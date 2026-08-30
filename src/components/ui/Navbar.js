@@ -105,7 +105,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
     return lang === "en" ? "Profile" : "Perfil";
   };
 
-  const communityProfileLink = perfil ? `/comunidad/perfil/${getProfileSlug(perfil)}` : (session?.user?.id ? `/comunidad/perfil/${session.user.id}` : "/comunidad");
+  const communityProfileLink = "/perfil";
 
   return (
     <nav className="atlan-navbar-header">
