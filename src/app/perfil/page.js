@@ -290,30 +290,49 @@ export default function PerfilPage() {
     return Math.max(Math.ceil(items.length / ITEMS_PER_PAGE), 1);
   };
 
-  // Render para los slots "Por descubrir"
-  const renderPorDescubrirSlot = (index) => (
-    <div key={`por-descubrir-${index}`} style={{
-      background: "#FFFFFF",
-      borderRadius: "20px",
-      border: "2px dashed rgba(20, 109, 158, 0.20)",
-      boxShadow: "0 4px 16px rgba(0,0,0,0.02)",
-      padding: "24px 20px",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      textAlign: "center",
-      minHeight: "150px"
-    }}>
-      <span style={{ fontSize: "28px", display: "block", marginBottom: "6px", opacity: 0.7 }}>✨</span>
-      <h4 style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "800", color: "#146D9E" }}>Por descubrir</h4>
-      <p style={{ margin: "0 0 10px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>Explora el mapa para añadir nuevos destinos</p>
-      <Link href="/mapa" style={{ fontSize: "12px", color: "#17AA4A", fontWeight: "800", textDecoration: "none", display: "flex", alignItems: "center", gap: "6px" }}>
-        <img src="/images/ubic.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain" }} />
-        <span>Explorar Mapa →</span>
-      </Link>
-    </div>
-  );
+  // Render para los slots "Por descubrir" con SVG nativo dinámico según la sección
+  const renderPorDescubrirSlot = (index) => {
+    const iconSrc = activeTab === "reservas"
+      ? "/images/edificio.svg"
+      : activeTab === "resenas"
+      ? "/images/comentarios.svg"
+      : "/images/tortuga.svg";
+
+    return (
+      <div key={`por-descubrir-${index}`} style={{
+        background: "#FFFFFF",
+        borderRadius: "20px",
+        border: "2px dashed rgba(20, 109, 158, 0.20)",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.02)",
+        padding: "24px 20px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        minHeight: "150px"
+      }}>
+        <img
+          src={iconSrc}
+          alt=""
+          style={{
+            width: "36px",
+            height: "36px",
+            objectFit: "contain",
+            marginBottom: "10px",
+            opacity: 0.8,
+            filter: activeTab === "resenas" ? "brightness(0)" : "none"
+          }}
+        />
+        <h4 style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "800", color: "#146D9E" }}>Por descubrir</h4>
+        <p style={{ margin: "0 0 10px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>Explora el mapa para añadir nuevos destinos</p>
+        <Link href="/mapa" style={{ fontSize: "12px", color: "#17AA4A", fontWeight: "800", textDecoration: "none", display: "flex", alignItems: "center", gap: "6px" }}>
+          <img src="/images/ubic.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain" }} />
+          <span>Explorar Mapa →</span>
+        </Link>
+      </div>
+    );
+  };
 
   // Componente de controles de paginación numerada indexada (1 2 3 4 5...)
   const renderPaginationControls = (totalPages, currentPage, setPage) => {
