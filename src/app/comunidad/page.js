@@ -945,44 +945,84 @@ export default function ComunidadPage() {
             <h4 style={{ margin: "0 0 12px", fontSize: "14px", fontWeight: "800", color: "var(--atlan-text-primary)", display: "flex", alignItems: "center", gap: "6px" }}>
               <Icon name="search" size={14} /> {lang === "en" ? "Find Friends" : "Buscar Personas"}
             </h4>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("social.searchPlaceholder")}
-              style={{
-                width: "100%",
-                padding: "10px 14px",
-                background: "rgba(20, 109, 158, 0.04)",
-                border: "1px solid rgba(20, 109, 158, 0.10)",
-                borderRadius: "12px",
-                color: "var(--atlan-text-primary)",
-                fontSize: "13px",
-                outline: "none",
-                boxSizing: "border-box"
-              }}
-            />
-            {searchQuery.trim() && (
-              <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid rgba(20, 109, 158, 0.05)" }}>
-                {searching ? (
-                  <div style={{ padding: "8px", textAlign: "center" }}>
-                    <div style={{ width: "20px", height: "20px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
-                  </div>
-                ) : searchResults.length === 0 ? (
-                  <p style={{ margin: 0, fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
-                    {t("social.noResults")}
-                  </p>
-                ) : (
-                  searchResults.map((u) => (
-                    <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
-                  ))
-                )}
-              </div>
-            )}
+            <div style={{ position: "relative" }}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t("social.searchPlaceholder")}
+                style={{
+                  width: "100%",
+                  padding: "10px 36px 10px 14px",
+                  background: "rgba(20, 109, 158, 0.04)",
+                  border: "1px solid rgba(20, 109, 158, 0.10)",
+                  borderRadius: "12px",
+                  color: "var(--atlan-text-primary)",
+                  fontSize: "13px",
+                  outline: "none",
+                  boxSizing: "border-box"
+                }}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    color: "var(--atlan-text-muted)",
+                    cursor: "pointer",
+                    fontSize: "14px"
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* Create Post Bar */}
-          {session && (
+          {/* Banner indicador de búsqueda activa en el Feed */}
+          {searchQuery.trim() && (
+            <div style={{
+              background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
+              borderRadius: "16px",
+              padding: "14px 20px",
+              marginBottom: "16px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              color: "#FFFFFF",
+              boxShadow: "0 6px 18px rgba(10, 25, 47, 0.20)"
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <Icon name="search" size={18} />
+                <span style={{ fontSize: "14px", fontWeight: "800" }}>
+                  {lang === "en" ? `Search results for "${searchQuery}"` : `Resultados para "${searchQuery}"`}
+                </span>
+              </div>
+              <button
+                onClick={() => setSearchQuery("")}
+                style={{
+                  background: "rgba(255, 255, 255, 0.15)",
+                  border: "none",
+                  color: "#FFD700",
+                  padding: "4px 12px",
+                  borderRadius: "10px",
+                  fontWeight: "800",
+                  fontSize: "12px",
+                  cursor: "pointer"
+                }}
+              >
+                {lang === "en" ? "Clear Search" : "Limpiar Búsqueda"}
+              </button>
+            </div>
+          )}
+
+          {/* Create Post Bar (Solo si no hay búsqueda activa) */}
+          {session && !searchQuery.trim() && (
             <div style={pageStyles.createPostBar} onClick={() => setShowCreateModal(true)}>
               <div style={avatarStyle(perfil?.avatar_url, 40)}>
                 {!perfil?.avatar_url && (perfil?.nombre_completo?.[0]?.toUpperCase() || "U")}
@@ -996,44 +1036,61 @@ export default function ComunidadPage() {
             </div>
           )}
 
-          {/* Posts */}
+          {/* Posts y Resultados de búsqueda */}
           {loadingPosts ? (
             <div style={{ textAlign: "center", padding: "60px 20px" }}>
               <div style={{ width: "40px", height: "40px", border: "3px solid rgba(20, 109, 158, 0.12)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
               <p style={{ fontSize: "14px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Loading posts..." : "Cargando publicaciones..."}</p>
             </div>
-          ) : posts.length === 0 ? (
-            <div style={pageStyles.emptyState}>
-              <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}><Icon name="edit" size={48} /></span>
-              <h3 style={{ margin: "0 0 8px", fontSize: "20px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
-                {lang === "en" ? "No posts yet" : "No hay publicaciones todavía"}
-              </h3>
-              <p style={{ margin: 0, fontSize: "14px", color: "var(--atlan-text-secondary)" }}>
-                {lang === "en" ? "Be the first to share something with the community!" : "¡Sé el primero en compartir algo con la comunidad!"}
-              </p>
-            </div>
-          ) : (
-            <>
-              {posts.map((post) => (
-                <PostCard
-                  key={post.id}
-                  post={post}
-                  session={session}
-                  perfil={perfil}
-                  lang={lang}
-                  onDelete={handleDeletePost}
-                  onRequireLogin={() => setShowLoginModal(true)}
-                  onImageClick={(p) => setViewerPost(p)}
-                  onRepost={handleRepost}
-                />
-              ))}
-              <div ref={loaderRef} style={{ padding: "20px", textAlign: "center" }}>
-                {loadingMore && (
-                  <div style={{ width: "28px", height: "28px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+          ) : (() => {
+            const displayPosts = searchQuery.trim()
+              ? posts.filter((p) =>
+                  p.contenido?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  p.perfiles?.nombre_completo?.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+              : posts;
+
+            if (displayPosts.length === 0 && searchResults.length === 0) {
+              return (
+                <div style={pageStyles.emptyState}>
+                  <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}><Icon name="search" size={48} /></span>
+                  <h3 style={{ margin: "0 0 8px", fontSize: "20px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
+                    {searchQuery.trim() ? (lang === "en" ? "No matches found" : "No se encontraron resultados") : (lang === "en" ? "No posts yet" : "No hay publicaciones todavía")}
+                  </h3>
+                  <p style={{ margin: 0, fontSize: "14px", color: "var(--atlan-text-secondary)" }}>
+                    {searchQuery.trim()
+                      ? (lang === "en" ? `No users or posts matching "${searchQuery}"` : `No hay personas ni publicaciones que coincidan con "${searchQuery}"`)
+                      : (lang === "en" ? "Be the first to share something with the community!" : "¡Sé el primero en compartir algo con la comunidad!")}
+                  </p>
+                </div>
+              );
+            }
+
+            return (
+              <>
+                {displayPosts.map((post) => (
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    session={session}
+                    perfil={perfil}
+                    lang={lang}
+                    onDelete={handleDeletePost}
+                    onRequireLogin={() => setShowLoginModal(true)}
+                    onImageClick={(p) => setViewerPost(p)}
+                    onRepost={handleRepost}
+                  />
+                ))}
+                {!searchQuery.trim() && (
+                  <div ref={loaderRef} style={{ padding: "20px", textAlign: "center" }}>
+                    {loadingMore && (
+                      <div style={{ width: "28px", height: "28px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                    )}
+                  </div>
                 )}
-              </div>
-            </>
-          )}
+              </>
+            );
+          })()}
         </main>
 
         {/* ── SIDEBAR RIGHT (Desktop) ── */}
@@ -1041,9 +1098,9 @@ export default function ComunidadPage() {
           {/* Buscador */}
           <div style={sidebarStyles.sectionCard}>
             <div style={sidebarStyles.cardHeaderBanner}>
-              <Icon name="search" size={16} /> {lang === "en" ? "Search" : "Buscar"}
+              <Icon name="search" size={16} /> {lang === "en" ? "Search People" : "Buscar Personas"}
             </div>
-            <div style={{ padding: "0 16px" }}>
+            <div style={{ padding: "0 16px", position: "relative" }}>
               <input
                 type="text"
                 value={searchQuery}
@@ -1051,7 +1108,7 @@ export default function ComunidadPage() {
                 placeholder={t("social.searchPlaceholder")}
                 style={{
                   width: "100%",
-                  padding: "10px 14px",
+                  padding: "10px 36px 10px 14px",
                   background: "rgba(20, 109, 158, 0.04)",
                   border: "1px solid rgba(20, 109, 158, 0.10)",
                   borderRadius: "12px",
@@ -1061,45 +1118,70 @@ export default function ComunidadPage() {
                   boxSizing: "border-box"
                 }}
               />
-            </div>
-          </div>
-
-          <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
-            <div style={sidebarStyles.cardHeaderBanner}>
-              <Icon name="sparkles" size={16} /> {lang === "en" ? "Suggested People" : "Personas sugeridas"}
-            </div>
-            <div style={{ padding: "0 16px" }}>
-              {searchQuery.trim() ? (
-                <>
-                  {searching ? (
-                    <div style={{ padding: "12px", textAlign: "center" }}>
-                      <div style={{ width: "20px", height: "20px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
-                    </div>
-                  ) : searchResults.length === 0 ? (
-                    <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
-                      {t("social.noResults")}
-                    </p>
-                  ) : (
-                    searchResults.map((u) => (
-                      <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
-                    ))
-                  )}
-                </>
-              ) : (
-                <>
-                  {suggestedUsers.length === 0 ? (
-                    <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
-                      {lang === "en" ? "No suggestions" : "Sin sugerencias"}
-                    </p>
-                  ) : (
-                    suggestedUsers.map((u) => (
-                      <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
-                    ))
-                  )}
-                </>
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  style={{
+                    position: "absolute",
+                    right: "26px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    color: "var(--atlan-text-muted)",
+                    cursor: "pointer",
+                    fontSize: "14px"
+                  }}
+                >
+                  ✕
+                </button>
               )}
             </div>
           </div>
+
+          {/* Si NO hay búsqueda activa, se muestran las "Personas sugeridas" */}
+          {!searchQuery.trim() && (
+            <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
+              <div style={sidebarStyles.cardHeaderBanner}>
+                <Icon name="sparkles" size={16} /> {lang === "en" ? "Suggested People" : "Personas sugeridas"}
+              </div>
+              <div style={{ padding: "0 16px" }}>
+                {suggestedUsers.length === 0 ? (
+                  <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
+                    {lang === "en" ? "No suggestions" : "Sin sugerencias"}
+                  </p>
+                ) : (
+                  suggestedUsers.map((u) => (
+                    <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Si SÍ hay búsqueda activa, SE OCULTA "Personas sugeridas" y se muestran únicamente los "Resultados de Búsqueda" */}
+          {searchQuery.trim() && (
+            <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
+              <div style={sidebarStyles.cardHeaderBanner}>
+                <Icon name="search" size={16} /> {lang === "en" ? "Search Results" : "Resultados de la Búsqueda"}
+              </div>
+              <div style={{ padding: "0 16px" }}>
+                {searching ? (
+                  <div style={{ padding: "12px", textAlign: "center" }}>
+                    <div style={{ width: "20px", height: "20px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                  </div>
+                ) : searchResults.length === 0 ? (
+                  <p style={{ margin: 0, padding: "12px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
+                    {t("social.noResults")}
+                  </p>
+                ) : (
+                  searchResults.map((u) => (
+                    <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
+                  ))
+                )}
+              </div>
+            </div>
+          )}
         </aside>
       </div>
 
