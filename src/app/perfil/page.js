@@ -277,27 +277,6 @@ export default function PerfilPage() {
     ? (lang === "en" ? "Deacachimba Tourist" : "Turista Deacachimba")
     : (lang === "en" ? "Tuani Tourist" : "Turista Tuani");
 
-  // Estilo uniforme verde para los 4 botones del sidebar
-  const greenButtonStyle = {
-    width: "100%",
-    padding: "11px 16px",
-    marginBottom: "10px",
-    borderRadius: "14px",
-    background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
-    color: "#FFFFFF",
-    fontWeight: "800",
-    fontSize: "13px",
-    border: "1.5px solid rgba(255, 255, 255, 0.3)",
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
-    boxShadow: "0 6px 16px rgba(23, 170, 74, 0.30)",
-    textDecoration: "none",
-    transition: "all 0.2s"
-  };
-
   // Paginación helpers
   const getPaginatedItems = (items, currentPage) => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -502,207 +481,232 @@ export default function PerfilPage() {
           alignItems: "start"
         }} className="profile-grid">
           
-          {/* SIDEBAR IZQUIERDO CON LOS 4 BOTONES UNIFORMES EN VERDE (#17AA4A) */}
+          {/* SIDEBAR IZQUIERDO CON CABECERA AZUL MENÚ (#0A192F) */}
           <div style={{ position: "sticky", top: "100px" }}>
             <div style={{
               background: "#FFFFFF",
               border: "2px solid rgba(255, 255, 255, 0.95)",
               boxShadow: "0 12px 30px rgba(0,0,0,0.06)",
               borderRadius: "24px",
-              padding: "24px",
-              textAlign: "center"
+              overflow: "hidden"
             }}>
-              <input 
-                type="file" 
-                ref={avatarInputRef} 
-                accept="image/*" 
-                onChange={handleAvatarChange} 
-                style={{ display: "none" }} 
-              />
-              <div 
-                onClick={() => !avatarUploading && avatarInputRef.current?.click()}
-                onMouseEnter={() => setAvatarHover(true)}
-                onMouseLeave={() => setAvatarHover(false)}
-                style={{
-                  width: "88px",
-                  height: "88px",
-                  background: perfil?.avatar_url 
-                    ? `url(${perfil.avatar_url}) center/cover` 
-                    : "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)",
-                  borderRadius: "50%",
-                  margin: "0 auto 16px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  fontSize: "36px",
-                  color: "#FFFFFF",
-                  fontWeight: "bold",
-                  boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
-                  position: "relative",
-                  cursor: "pointer",
-                  overflow: "hidden"
-                }}
-                title={lang === "en" ? "Change profile picture" : "Cambiar foto de perfil"}
-              >
-                {avatarUploading ? (
-                  <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", color: "#FFFFFF", fontSize: "11px", fontWeight: "bold" }}>
-                    ⏳
-                  </div>
-                ) : (
-                  <>
-                    {!perfil?.avatar_url && (perfil?.nombre_completo ? perfil.nombre_completo.charAt(0).toUpperCase() : "U")}
-                    <div style={{
-                      position: "absolute",
-                      inset: 0,
-                      background: "rgba(0, 0, 0, 0.25)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      opacity: avatarHover ? 1 : 0,
-                      transition: "opacity 0.2s",
-                      color: "#FFFFFF",
-                      fontSize: "20px"
-                    }}>
-                      📷
-                    </div>
-                  </>
-                )}
+              {/* Cabecera Azul Menú (#0A192F) */}
+              <div style={{
+                background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
+                padding: "20px 20px 48px",
+                textAlign: "center",
+                color: "#FFFFFF"
+              }}>
+                <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "900", color: "#FFD700" }}>
+                  {lang === "en" ? "My Atlan Profile" : "Mi Perfil Atlan"}
+                </h3>
               </div>
 
-              <h3 style={{ margin: "0 0 4px", fontSize: "19px", fontWeight: "900", color: "#1A1A2E" }}>
-                {perfil?.nombre_completo || "Usuario Atlan"}
-              </h3>
-
-              <p style={{ margin: "0 0 16px", fontSize: "12.5px", color: "var(--atlan-text-muted)", fontWeight: "600" }}>
-                {user?.email}
-              </p>
-
-              {/* Botón 1: Rol (Verde Esmeralda) */}
-              <div
-                style={{
-                  width: "100%",
-                  padding: "11px 16px",
-                  marginBottom: "10px",
-                  borderRadius: "14px",
-                  background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
-                  color: "#FFFFFF",
-                  fontWeight: "800",
-                  fontSize: "13px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  boxShadow: "0 4px 12px rgba(16, 185, 129, 0.25)"
-                }}
-              >
-                <img
-                  src="/images/perfil.svg"
-                  alt="Perfil"
-                  style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }}
+              {/* Contenido con avatar traslapado (-44px marginTop) */}
+              <div style={{ padding: "0 24px 24px", textAlign: "center", marginTop: "-44px" }}>
+                <input 
+                  type="file" 
+                  ref={avatarInputRef} 
+                  accept="image/*" 
+                  onChange={handleAvatarChange} 
+                  style={{ display: "none" }} 
                 />
-                <span>{rolText}</span>
+                <div 
+                  onClick={() => !avatarUploading && avatarInputRef.current?.click()}
+                  onMouseEnter={() => setAvatarHover(true)}
+                  onMouseLeave={() => setAvatarHover(false)}
+                  style={{
+                    width: "88px",
+                    height: "88px",
+                    background: perfil?.avatar_url 
+                      ? `url(${perfil.avatar_url}) center/cover` 
+                      : "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)",
+                    borderRadius: "50%",
+                    margin: "0 auto 14px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    fontSize: "36px",
+                    color: "#FFFFFF",
+                    fontWeight: "bold",
+                    boxShadow: "0 6px 18px rgba(0,0,0,0.16)",
+                    border: "3.5px solid #FFFFFF",
+                    position: "relative",
+                    cursor: "pointer",
+                    overflow: "hidden"
+                  }}
+                  title={lang === "en" ? "Change profile picture" : "Cambiar foto de perfil"}
+                >
+                  {avatarUploading ? (
+                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", color: "#FFFFFF", fontSize: "11px", fontWeight: "bold" }}>
+                      ⏳
+                    </div>
+                  ) : (
+                    <>
+                      {!perfil?.avatar_url && (perfil?.nombre_completo ? perfil.nombre_completo.charAt(0).toUpperCase() : "U")}
+                      <div style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: "rgba(0, 0, 0, 0.25)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        opacity: avatarHover ? 1 : 0,
+                        transition: "opacity 0.2s",
+                        color: "#FFFFFF",
+                        fontSize: "20px"
+                      }}>
+                        📷
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <h3 style={{ margin: "0 0 4px", fontSize: "19px", fontWeight: "900", color: "#1A1A2E" }}>
+                  {perfil?.nombre_completo || "Usuario Atlan"}
+                </h3>
+
+                <p style={{ margin: "0 0 16px", fontSize: "12.5px", color: "var(--atlan-text-muted)", fontWeight: "600" }}>
+                  {user?.email}
+                </p>
+
+                {/* Botón 1: Rol (Verde Esmeralda) */}
+                <div
+                  style={{
+                    width: "100%",
+                    padding: "11px 16px",
+                    marginBottom: "10px",
+                    borderRadius: "14px",
+                    background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
+                    color: "#FFFFFF",
+                    fontWeight: "800",
+                    fontSize: "13px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                    boxShadow: "0 4px 12px rgba(16, 185, 129, 0.25)"
+                  }}
+                >
+                  <img
+                    src="/images/perfil.svg"
+                    alt="Perfil"
+                    style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }}
+                  />
+                  <span>{rolText}</span>
+                </div>
+
+                {/* Botón 2: Editar Perfil (Azul) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditNombre(perfil?.nombre_completo || "");
+                    setEditBio(perfil?.bio || "");
+                    setIsEditing(true);
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "11px 16px",
+                    marginBottom: "10px",
+                    borderRadius: "14px",
+                    background: "linear-gradient(135deg, #0284C7 0%, #0369A1 100%)",
+                    color: "#FFFFFF",
+                    fontWeight: "800",
+                    fontSize: "13px",
+                    border: "none",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                    boxShadow: "0 4px 12px rgba(2, 132, 199, 0.25)"
+                  }}
+                >
+                  <img src="/images/flor.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                  <span>{lang === "en" ? "Edit Profile" : "Editar Perfil"}</span>
+                </button>
+
+                {/* Botón 3: Cambiar Contraseña (Amarillo / Dorado) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNewPassword("");
+                    setConfirmNewPassword("");
+                    setIsChangingPass(true);
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "11px 16px",
+                    marginBottom: "10px",
+                    borderRadius: "14px",
+                    background: "linear-gradient(135deg, #FFF085 0%, #EAB308 100%)",
+                    color: "#1E1B4B",
+                    fontWeight: "800",
+                    fontSize: "13px",
+                    border: "none",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                    boxShadow: "0 4px 12px rgba(234, 179, 8, 0.25)"
+                  }}
+                >
+                  <img src="/images/machoraton.svg" alt="" style={{ width: "16px", height: "20px", objectFit: "contain", filter: "brightness(0)" }} />
+                  <span>{lang === "en" ? "Change Password" : "Cambiar Contraseña"}</span>
+                </button>
+
+                {/* Botón 4: Reclamar o Registrar Negocio (Azul Menú #0A192F) */}
+                <Link
+                  href="/dashboard"
+                  style={{
+                    width: "100%",
+                    padding: "11px 16px",
+                    borderRadius: "14px",
+                    background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
+                    color: "#FFFFFF",
+                    fontWeight: "800",
+                    fontSize: "13px",
+                    textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                    boxShadow: "0 6px 16px rgba(10, 25, 47, 0.35)"
+                  }}
+                >
+                  <img src="/images/edificio.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                  <span>
+                    {(perfil?.rol === "dueno" || perfil?.rol === "admin")
+                      ? (lang === "en" ? "Manage Business" : "Gestionar mi Negocio")
+                      : (lang === "en" ? "Register Business" : "Reclamar o Registrar Negocio")}
+                  </span>
+                </Link>
               </div>
-
-              {/* Botón 2: Editar Perfil (Azul) */}
-              <button
-                type="button"
-                onClick={() => {
-                  setEditNombre(perfil?.nombre_completo || "");
-                  setEditBio(perfil?.bio || "");
-                  setIsEditing(true);
-                }}
-                style={{
-                  width: "100%",
-                  padding: "11px 16px",
-                  marginBottom: "10px",
-                  borderRadius: "14px",
-                  background: "linear-gradient(135deg, #0284C7 0%, #0369A1 100%)",
-                  color: "#FFFFFF",
-                  fontWeight: "800",
-                  fontSize: "13px",
-                  border: "none",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  boxShadow: "0 4px 12px rgba(2, 132, 199, 0.25)"
-                }}
-              >
-                <img src="/images/flor.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                <span>{lang === "en" ? "Edit Profile" : "Editar Perfil"}</span>
-              </button>
-
-              {/* Botón 3: Cambiar Contraseña (Amarillo / Dorado) */}
-              <button
-                type="button"
-                onClick={() => {
-                  setNewPassword("");
-                  setConfirmNewPassword("");
-                  setIsChangingPass(true);
-                }}
-                style={{
-                  width: "100%",
-                  padding: "11px 16px",
-                  marginBottom: "10px",
-                  borderRadius: "14px",
-                  background: "linear-gradient(135deg, #FFF085 0%, #EAB308 100%)",
-                  color: "#1E1B4B",
-                  fontWeight: "800",
-                  fontSize: "13px",
-                  border: "none",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  boxShadow: "0 4px 12px rgba(234, 179, 8, 0.25)"
-                }}
-              >
-                <img src="/images/machoraton.svg" alt="" style={{ width: "16px", height: "20px", objectFit: "contain", filter: "brightness(0)" }} />
-                <span>{lang === "en" ? "Change Password" : "Cambiar Contraseña"}</span>
-              </button>
-
-              {/* Botón 4: Reclamar o Registrar Negocio (Azul Menú #0A192F) */}
-              <Link
-                href="/dashboard"
-                style={{
-                  width: "100%",
-                  padding: "11px 16px",
-                  borderRadius: "14px",
-                  background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
-                  color: "#FFFFFF",
-                  fontWeight: "800",
-                  fontSize: "13px",
-                  textDecoration: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  boxShadow: "0 6px 16px rgba(10, 25, 47, 0.35)"
-                }}
-              >
-                <img src="/images/edificio.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                <span>
-                  {(perfil?.rol === "dueno" || perfil?.rol === "admin")
-                    ? (lang === "en" ? "Manage Business" : "Gestionar mi Negocio")
-                    : (lang === "en" ? "Register Business" : "Reclamar o Registrar Negocio")}
-                </span>
-              </Link>
             </div>
           </div>
 
           {/* COLUMNA DERECHA CONTENIDO */}
           <div style={{ display: "flex", flexDirection: "column", gap: "36px" }}>
             
-            {/* SECCIÓN 1: RESERVAS DIRECTAS con paginación de 4 y slot "Por descubrir" */}
+            {/* SECCIÓN 1: RESERVAS DIRECTAS CON CABECERA AZUL MENÚ (#0A192F) */}
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
-                <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "900", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
-                  <img src="/images/edificio.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain" }} />
+              <div style={{
+                background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
+                borderRadius: "18px",
+                padding: "16px 22px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "18px",
+                boxShadow: "0 6px 18px rgba(10, 25, 47, 0.20)",
+                color: "#FFFFFF"
+              }}>
+                <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "900", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <img src="/images/edificio.svg" alt="" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                   <span>{lang === "en" ? "My Reservations" : "Mis Reservas Directas"}</span>
                 </h2>
-                <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(23, 170, 74, 0.10)", padding: "4px 12px", borderRadius: "12px", color: "#17AA4A" }}>
+                <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(255, 215, 0, 0.2)", padding: "4px 12px", borderRadius: "12px", color: "#FFD700" }}>
                   {reservas.length} {reservas.length === 1 ? "reserva" : "reservas"}
                 </span>
               </div>
@@ -753,14 +757,24 @@ export default function PerfilPage() {
               {renderPaginationControls(getTotalPages(reservas), pageReservas, setPageReservas)}
             </div>
 
-            {/* SECCIÓN 2: DESTINOS GUARDADOS con paginación de 4 y slot "Por descubrir" */}
+            {/* SECCIÓN 2: DESTINOS GUARDADOS CON CABECERA AZUL MENÚ (#0A192F) */}
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
-                <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "900", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
-                  <img src="/images/tortuga.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain" }} />
+              <div style={{
+                background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
+                borderRadius: "18px",
+                padding: "16px 22px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "18px",
+                boxShadow: "0 6px 18px rgba(10, 25, 47, 0.20)",
+                color: "#FFFFFF"
+              }}>
+                <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "900", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <img src="/images/tortuga.svg" alt="" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                   <span>{lang === "en" ? "My Saved Places" : "Mis Destinos Guardados"}</span>
                 </h2>
-                <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(23, 170, 74, 0.10)", padding: "4px 12px", borderRadius: "12px", color: "#17AA4A" }}>
+                <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(255, 215, 0, 0.2)", padding: "4px 12px", borderRadius: "12px", color: "#FFD700" }}>
                   {favoritos.length} {favoritos.length === 1 ? "destino" : "destinos"}
                 </span>
               </div>
@@ -799,14 +813,24 @@ export default function PerfilPage() {
               {renderPaginationControls(getTotalPages(favoritos), pageFavoritos, setPageFavoritos)}
             </div>
 
-            {/* SECCIÓN 3: RESEÑAS PUBLICADAS con paginación de 4 y slot "Por descubrir" */}
+            {/* SECCIÓN 3: RESEÑAS PUBLICADAS CON CABECERA AZUL MENÚ (#0A192F) */}
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
-                <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "900", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
-                  <img src="/images/flor.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain", filter: "brightness(0)" }} />
+              <div style={{
+                background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
+                borderRadius: "18px",
+                padding: "16px 22px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "18px",
+                boxShadow: "0 6px 18px rgba(10, 25, 47, 0.20)",
+                color: "#FFFFFF"
+              }}>
+                <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "900", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <img src="/images/flor.svg" alt="" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                   <span>{lang === "en" ? "My Reviews" : "Reseñas Publicadas"}</span>
                 </h2>
-                <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(230, 194, 0, 0.15)", padding: "4px 12px", borderRadius: "12px", color: "#E6C200" }}>
+                <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(255, 215, 0, 0.2)", padding: "4px 12px", borderRadius: "12px", color: "#FFD700" }}>
                   {resenas.length} {resenas.length === 1 ? "reseña" : "reseñas"}
                 </span>
               </div>
