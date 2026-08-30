@@ -80,9 +80,23 @@ export function AuthProvider({ children }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, currentSession) => {
-      setSession(currentSession);
+      setSession((prevSession) => {
+        if (
+          prevSession?.access_token === currentSession?.access_token &&
+          prevSession?.user?.id === currentSession?.user?.id
+        ) {
+          return prevSession; // Conservar la misma referencia de objeto
+        }
+        return currentSession;
+      });
+
       if (currentSession?.user) {
-        fetchUserProfile(currentSession.user.id);
+        setPerfil((prevPerfil) => {
+          if (!prevPerfil || prevPerfil.id !== currentSession.user.id) {
+            fetchUserProfile(currentSession.user.id);
+          }
+          return prevPerfil;
+        });
       } else {
         setPerfil(null);
       }

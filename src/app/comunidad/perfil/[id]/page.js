@@ -420,7 +420,7 @@ export default function PerfilPublico() {
         setSuggestedUsers([]);
       }
     } catch (err) { console.error("Error fetching suggested users:", err); }
-  }, [session]);
+  }, [session?.user?.id]);
 
   useEffect(() => {
     fetchSuggestedUsers();

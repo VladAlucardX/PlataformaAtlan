@@ -721,7 +721,7 @@ export default function ComunidadPage() {
       setHasMore((data || []).length === PAGE_SIZE);
     } catch (err) { console.error("Fetch posts error:", err); }
     finally { setLoadingPosts(false); setLoadingMore(false); }
-  }, [session]);
+  }, [session?.user?.id]);
 
   useEffect(() => { fetchPosts(0); }, [fetchPosts]);
 
@@ -757,7 +757,7 @@ export default function ComunidadPage() {
     } catch (err) {
       console.error("Error fetching suggested users:", err);
     }
-  }, [session]);
+  }, [session?.user?.id]);
 
   useEffect(() => {
     fetchSuggestedUsers();
