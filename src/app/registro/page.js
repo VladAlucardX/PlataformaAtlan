@@ -98,114 +98,280 @@ export default function RegisterPage() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setErrorMsg("");
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
+      });
+
+      if (error) {
+        setErrorMsg(error.message);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error("Google signup error:", err);
+      setErrorMsg(lang === "en" ? "Error connecting with Google" : "Error al conectar con Google");
+      setLoading(false);
+    }
+  };
+
   return (
     <div style={styles.container}>
+      {/* Fondo volteado horizontalmente cubriendo el 100% sin franjas ni costuras */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage: "url('/images/registrobg.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "right center",
+          backgroundRepeat: "no-repeat",
+          transform: "scaleX(-1)",
+          zIndex: 0,
+        }}
+      />
+
       <div style={styles.orb1} />
       <div style={styles.orb2} />
 
+      {/* Tortuga SVG bastante más grande en la esquina inferior izquierda */}
+      <img
+        src="/images/tortuga.svg"
+        alt="Tortuga"
+        style={{
+          position: "absolute",
+          bottom: "-40px",
+          left: "-30px",
+          width: "450px",
+          height: "450px",
+          objectFit: "contain",
+          zIndex: 3,
+          pointerEvents: "none",
+          filter: "brightness(0) saturate(100%) invert(18%) sepia(45%) saturate(1200%) hue-rotate(95deg) opacity(0.88)",
+        }}
+      />
+
       <header style={styles.header}>
         <Link href="/" style={styles.logo}>
-          <span style={styles.logoIcon}><Icon name="map" size={24} /></span>
-          <span style={styles.logoText}>Atlan</span>
+          <img
+            src="/mapaicono.png"
+            alt="Logo Atlan"
+            style={{ width: "30px", height: "30px", objectFit: "contain" }}
+          />
+          <span className="logoText" style={styles.logoText}>atlan</span>
         </Link>
         <LanguageToggle variant="pill" />
       </header>
 
-      <div style={styles.card} className="clay-card animate-fade-in-up">
+      <div style={styles.card} className="clay-card-static no-sheen register-card animate-fade-in-up">
         <h2 style={styles.title}>{t("auth.registerTitle")}</h2>
         <p style={styles.subtitle}>{t("auth.registerSubtitle")}</p>
 
-        {errorMsg && <div style={styles.errorBanner}><Icon name="alertTriangle" size={16} /> {errorMsg}</div>}
-        {successMsg && <div style={styles.successBanner}><Icon name="checkCircle" size={16} /> {successMsg}</div>}
+        {errorMsg && <div style={styles.errorBanner}><Icon name="alertTriangle" size={15} /> {errorMsg}</div>}
+        {successMsg && <div style={styles.successBanner}><Icon name="checkCircle" size={15} /> {successMsg}</div>}
 
-        <form onSubmit={handleRegister} style={styles.form}>
-          {/* Selector de Rol Premium */}
+        <form onSubmit={handleRegister} style={styles.form} autoComplete="off">
+          {/* Selector de Rol Premium Compacto */}
           <div style={styles.inputGroup}>
             <label style={styles.label}>{t("addPoint.category")}</label>
             <div style={styles.roleSelector}>
               <button
                 type="button"
                 onClick={() => setRol("turista")}
-                className={`clay-role-btn ${rol === "turista" ? "active-turista" : ""}`}
+                className={`clay-role-btn no-sheen ${rol === "turista" ? "active-turista" : ""}`}
+                style={{
+                  ...styles.roleBtnCompact,
+                  border: rol === "turista" ? "1.5px solid #17AA4A" : "1px solid rgba(20, 109, 158, 0.12)",
+                  background: rol === "turista" ? "rgba(23, 170, 74, 0.10)" : "rgba(255, 255, 255, 0.6)",
+                  color: rol === "turista" ? "#17AA4A" : "#4A5568",
+                }}
               >
-                <span style={{ fontSize: "22px" }}><Icon name="luggage" size={22} /></span>
-                <span style={{ fontWeight: "750" }}>
+                <img
+                  src="/images/perfil.svg"
+                  alt="Turista"
+                  style={{
+                    width: "22px",
+                    height: "22px",
+                    objectFit: "contain",
+                    filter: rol === "turista"
+                      ? "brightness(0) saturate(100%) invert(48%) sepia(85%) saturate(1400%) hue-rotate(100deg)"
+                      : "brightness(0) opacity(0.55)"
+                  }}
+                />
+                <span style={{ fontWeight: "750", fontSize: "14px" }}>
                   {lang === "en" ? "Tourist" : "Turista"}
                 </span>
               </button>
               <button
                 type="button"
                 onClick={() => setRol("dueno")}
-                className={`clay-role-btn ${rol === "dueno" ? "active-dueno" : ""}`}
+                className={`clay-role-btn no-sheen ${rol === "dueno" ? "active-dueno" : ""}`}
+                style={{
+                  ...styles.roleBtnCompact,
+                  border: rol === "dueno" ? "1.5px solid #FFD700" : "1px solid rgba(20, 109, 158, 0.12)",
+                  background: rol === "dueno" ? "rgba(255, 215, 0, 0.12)" : "rgba(255, 255, 255, 0.6)",
+                  color: rol === "dueno" ? "#D9B200" : "#4A5568",
+                }}
               >
-                <span style={{ fontSize: "22px" }}><Icon name="building" size={22} /></span>
-                <span style={{ fontWeight: "750" }}>
+                <img
+                  src="/images/edificio.svg"
+                  alt="Propietario"
+                  style={{
+                    width: "22px",
+                    height: "22px",
+                    objectFit: "contain",
+                    filter: rol === "dueno"
+                      ? "brightness(0) saturate(100%) invert(75%) sepia(90%) saturate(1200%) hue-rotate(350deg)"
+                      : "brightness(0) opacity(0.55)"
+                  }}
+                />
+                <span style={{ fontWeight: "750", fontSize: "14px" }}>
                   {lang === "en" ? "Business Owner" : "Propietario"}
                 </span>
               </button>
             </div>
           </div>
 
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>{t("auth.fullName")}</label>
-            <input
-              type="text"
-              required
-              placeholder={lang === "en" ? "John Doe" : "Juan Pérez"}
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="clay-input"
-              style={styles.input}
-              disabled={loading}
-            />
+          {/* Cuadrícula de 2 columnas para campos de texto */}
+          <div style={styles.grid2Col} className="register-grid-2col">
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>{t("auth.fullName")}</label>
+              <input
+                type="text"
+                required
+                placeholder={lang === "en" ? "John Doe" : "Juan Pérez"}
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="clay-input"
+                style={styles.inputCompact}
+                disabled={loading}
+                autoComplete="off"
+              />
+            </div>
+
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>{t("auth.email")}</label>
+              <input
+                type="email"
+                required
+                placeholder="correo@ejemplo.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="clay-input"
+                style={styles.inputCompact}
+                disabled={loading}
+                autoComplete="off"
+              />
+            </div>
+
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>{t("auth.password")}</label>
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="clay-input"
+                style={styles.inputCompact}
+                disabled={loading}
+                autoComplete="new-password"
+              />
+            </div>
+
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>{t("auth.confirmPassword")}</label>
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="clay-input"
+                style={styles.inputCompact}
+                disabled={loading}
+                autoComplete="new-password"
+              />
+            </div>
           </div>
 
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>{t("auth.email")}</label>
-            <input
-              type="email"
-              required
-              placeholder="correo@ejemplo.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="clay-input"
-              style={styles.input}
-              disabled={loading}
+          <button
+            type="submit"
+            className="clay-btn-green no-sheen no-hover-transform"
+            style={{
+              ...styles.submitBtn,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px",
+            }}
+            disabled={loading}
+          >
+            <img
+              src="/images/gueguense.svg"
+              alt="Güegüense"
+              style={{
+                width: "22px",
+                height: "22px",
+                objectFit: "contain",
+                filter: "brightness(0) invert(1)"
+              }}
             />
-          </div>
-
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>{t("auth.password")}</label>
-            <input
-              type="password"
-              required
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="clay-input"
-              style={styles.input}
-              disabled={loading}
-            />
-          </div>
-
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>{t("auth.confirmPassword")}</label>
-            <input
-              type="password"
-              required
-              placeholder="••••••••"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="clay-input"
-              style={styles.input}
-              disabled={loading}
-            />
-          </div>
-
-          <button type="submit" className="clay-btn-green" style={{ width: '100%', marginTop: '10px' }} disabled={loading}>
-            {loading ? t("common.loading") : t("auth.registerButton")}
+            <span>{loading ? t("common.loading") : t("auth.registerButton")}</span>
           </button>
         </form>
+
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          margin: "10px 0",
+          gap: "10px",
+          color: "#94A3B8",
+          fontSize: "12px",
+          fontWeight: "600"
+        }}>
+          <div style={{ flex: 1, height: "1px", background: "rgba(148, 163, 184, 0.25)" }} />
+          <span>{t("auth.orContinueWith")}</span>
+          <div style={{ flex: 1, height: "1px", background: "rgba(148, 163, 184, 0.25)" }} />
+        </div>
+
+        <button
+          onClick={handleGoogleLogin}
+          type="button"
+          className="clay-tab no-sheen"
+          style={{
+            width: '100%',
+            padding: '9px 16px',
+            fontSize: '13.5px',
+            fontWeight: '700',
+            color: '#1E293B',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '10px',
+            borderRadius: '12px',
+            border: '1px solid rgba(20, 109, 158, 0.15)',
+            background: 'rgba(255, 255, 255, 0.9)',
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+            transition: 'all 0.2s',
+          }}
+          disabled={loading}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/>
+            <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+            <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 10.8 0 12.5s.7 2.8 1.9 5.2l3.7-2.9z"/>
+            <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/>
+          </svg>
+          <span>{lang === "en" ? "Continue with Google" : "Continuar con Google"}</span>
+        </button>
 
         <div style={styles.footerText}>
           {t("auth.hasAccount")}{" "}
@@ -214,6 +380,46 @@ export default function RegisterPage() {
           </Link>
         </div>
       </div>
+
+      {/* Botón de Inicio en la esquina inferior derecha */}
+      <Link
+        href="/"
+        style={{
+          position: "fixed",
+          bottom: "24px",
+          right: "24px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          backgroundColor: "rgba(255, 255, 255, 0.92)",
+          backdropFilter: "blur(12px)",
+          color: "#1E293B",
+          padding: "10px 18px",
+          borderRadius: "999px",
+          fontWeight: "700",
+          fontSize: "14.5px",
+          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6)",
+          textDecoration: "none",
+          zIndex: 10,
+          transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+          border: "1px solid rgba(255, 255, 255, 0.6)",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-3px)";
+          e.currentTarget.style.boxShadow = "0 12px 30px rgba(0, 0, 0, 0.25)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6)";
+        }}
+      >
+        <img
+          src="/images/home.svg"
+          alt=""
+          style={{ width: "20px", height: "20px", objectFit: "contain" }}
+        />
+        <span>{lang === "en" ? "Home" : "Inicio"}</span>
+      </Link>
     </div>
   );
 }
@@ -222,14 +428,14 @@ const styles = {
   container: {
     minHeight: "100vh",
     width: "100%",
-    background: "#FFFFFF",
+    background: "#1CAE4D",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
     overflow: "hidden",
-    padding: "40px 24px 24px 24px",
+    padding: "20px 20px",
     fontFamily: "var(--font-outfit), sans-serif",
   },
   orb1: {
@@ -259,7 +465,7 @@ const styles = {
     top: "0",
     left: "0",
     width: "100%",
-    padding: "24px 40px",
+    padding: "18px 36px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -275,136 +481,133 @@ const styles = {
     fontSize: "24px",
   },
   logoText: {
-    fontSize: "24px",
+    fontSize: "26px",
     fontWeight: "900",
     color: "#FFD700",
-    letterSpacing: "-0.02em",
+    letterSpacing: "-0.5px",
+    fontFamily: "'LC Mogi', 'LC Mogi A', var(--font-outfit), sans-serif",
   },
   card: {
     width: "100%",
-    maxWidth: "480px",
-    padding: "40px",
+    maxWidth: "520px",
+    padding: "26px 30px",
     borderRadius: "24px",
     background: "#FFFFFF",
     border: "1px solid rgba(20, 109, 158, 0.12)",
     backdropFilter: "blur(16px)",
     WebkitBackdropFilter: "blur(16px)",
-    boxShadow: "0 20px 40px rgba(0, 0, 0, 0.08)",
+    boxShadow: "0 16px 36px rgba(0, 0, 0, 0.08)",
     zIndex: 5,
     display: "flex",
     flexDirection: "column",
-    gap: "6px",
   },
   title: {
-    fontSize: "28px",
+    fontSize: "24px",
     fontWeight: "800",
     textAlign: "center",
-    margin: "0 0 6px 0",
-    background: "linear-gradient(135deg, #1A1A2E 0%, #4A5568 100%)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
+    margin: "0 0 2px 0",
+    color: "#1A1A2E",
     letterSpacing: "-0.01em",
   },
   subtitle: {
-    fontSize: "14px",
+    fontSize: "13px",
     color: "#4A5568",
     textAlign: "center",
-    margin: "0 0 24px 0",
-    lineHeight: "1.4",
+    margin: "0 0 14px 0",
+    lineHeight: "1.3",
   },
   errorBanner: {
-    background: "rgba(239, 68, 68, 0.15)",
+    background: "rgba(239, 68, 68, 0.12)",
     border: "1px solid rgba(239, 68, 68, 0.25)",
-    borderRadius: "12px",
-    padding: "12px 16px",
-    color: "#f87171",
-    fontSize: "13px",
+    borderRadius: "10px",
+    padding: "8px 12px",
+    color: "#ef4444",
+    fontSize: "12.5px",
     fontWeight: "600",
-    marginBottom: "20px",
+    marginBottom: "12px",
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
   },
   successBanner: {
     background: "rgba(23, 170, 74, 0.10)",
     border: "1px solid rgba(23, 170, 74, 0.20)",
-    borderRadius: "12px",
-    padding: "12px 16px",
+    borderRadius: "10px",
+    padding: "8px 12px",
     color: "#17AA4A",
-    fontSize: "13px",
+    fontSize: "12.5px",
     fontWeight: "600",
-    marginBottom: "20px",
+    marginBottom: "12px",
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
   },
   form: {
     display: "flex",
     flexDirection: "column",
-    gap: "16px",
+    gap: "10px",
   },
   inputGroup: {
     display: "flex",
     flexDirection: "column",
-    gap: "6px",
+    gap: "4px",
   },
   label: {
-    fontSize: "13px",
-    fontWeight: "700",
+    fontSize: "12px",
+    fontWeight: "750",
     color: "#1A1A2E",
   },
   roleSelector: {
     display: "flex",
     gap: "10px",
-    marginTop: "4px",
+    marginTop: "2px",
   },
-  roleBtn: {
+  roleBtnCompact: {
     flex: 1,
-    padding: "12px",
-    background: "rgba(20, 109, 158, 0.03)",
-    border: "1px solid rgba(20, 109, 158, 0.10)",
-    borderRadius: "12px",
-    color: "#4A5568",
+    padding: "11px 16px",
+    borderRadius: "14px",
     cursor: "pointer",
     display: "flex",
-    flexDirection: "column",
     alignItems: "center",
-    gap: "6px",
-    transition: "all 0.2s",
+    justifyContent: "center",
+    gap: "9px",
+    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
   },
-  roleBtnActiveTurista: {
-    background: "rgba(23, 170, 74, 0.10)",
-    border: "1.5px solid #17AA4A",
-    color: "#17AA4A",
-    boxShadow: "0 0 12px rgba(23, 170, 74, 0.15)",
+  grid2Col: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "10px",
   },
-  roleBtnActiveDueno: {
-    background: "rgba(255, 215, 0, 0.10)",
-    border: "1.5px solid #FFD700",
-    color: "#E6C200",
-    boxShadow: "0 0 12px rgba(255, 215, 0, 0.15)",
-  },
-  input: {
+  inputCompact: {
     width: "100%",
     boxSizing: "border-box",
+    padding: "9px 12px",
+    fontSize: "13.5px",
+    borderRadius: "10px",
   },
   submitBtn: {
-    marginTop: "10px",
+    marginTop: "6px",
     width: "100%",
-    padding: "14px",
-    background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
+    padding: "11px",
+    background: "linear-gradient(145deg, #1FCC5C 0%, #17AA4A 70%, #128A3C 100%)",
     color: "white",
     border: "none",
     borderRadius: "12px",
     fontWeight: "800",
-    fontSize: "14px",
+    fontSize: "15px",
     cursor: "pointer",
     boxShadow: "0 4px 14px rgba(23, 170, 74, 0.3)",
     transition: "all 0.25s",
   },
   footerText: {
-    marginTop: "20px",
-    fontSize: "13.5px",
+    marginTop: "12px",
+    fontSize: "13px",
     color: "#4A5568",
     textAlign: "center",
   },
   link: {
     color: "#146D9E",
     textDecoration: "none",
-    fontWeight: "700",
+    fontWeight: "750",
   },
 };

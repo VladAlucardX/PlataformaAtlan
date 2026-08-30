@@ -16,7 +16,7 @@ export default function PerfilPage() {
   const router = useRouter();
 
   // Autenticación centralizada desde AuthContext
-  const { session: authSession, perfil: authPerfil, loading: authLoading, logout } = useAuth();
+  const { session: authSession, perfil: authPerfil, loading: authLoading, logout, updatePerfil } = useAuth();
 
   const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
@@ -32,6 +32,80 @@ export default function PerfilPage() {
   const [avatarHover, setAvatarHover] = useState(false);
   const avatarInputRef = useRef(null);
 
+  // Editar Perfil Modal State
+  const [isEditing, setIsEditing] = useState(false);
+  const [editNombre, setEditNombre] = useState("");
+  const [editBio, setEditBio] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
+
+  // Cambiar Contraseña Modal State (Independiente)
+  const [isChangingPass, setIsChangingPass] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [savingPass, setSavingPass] = useState(false);
+
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    if (!user) return;
+    setSavingProfile(true);
+    try {
+      // 1. Actualizar Nombre y Bio en perfiles
+      const { error } = await supabase
+        .from("perfiles")
+        .update({
+          nombre_completo: editNombre.trim(),
+          bio: editBio.trim(),
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      setPerfil((prev) => ({
+        ...prev,
+        nombre_completo: editNombre.trim(),
+        bio: editBio.trim(),
+      }));
+      if (updatePerfil) {
+        updatePerfil({
+          nombre_completo: editNombre.trim(),
+          bio: editBio.trim(),
+        });
+      }
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      alert(lang === "en" ? "Failed to update profile" : "Error al actualizar el perfil: " + (err.message || ""));
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (newPassword.length < 6) {
+      alert(lang === "en" ? "Password must be at least 6 characters" : "La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      alert(lang === "en" ? "Passwords do not match" : "Las contraseñas no coinciden");
+      return;
+    }
+    setSavingPass(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      alert(lang === "en" ? "Password updated successfully!" : "¡Contraseña actualizada con éxito!");
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setIsChangingPass(false);
+    } catch (err) {
+      console.error("Error changing password:", err);
+      alert(lang === "en" ? "Failed to update password" : "Error al actualizar la contraseña: " + (err.message || ""));
+    } finally {
+      setSavingPass(false);
+    }
+  };
+
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -45,6 +119,7 @@ export default function PerfilPage() {
       if (error) throw error;
 
       setPerfil((p) => ({ ...p, avatar_url: publicUrl }));
+      if (updatePerfil) updatePerfil({ avatar_url: publicUrl });
     } catch (err) {
       console.error("Error updating avatar:", err);
       alert(lang === "en" ? "Failed to upload profile picture" : "Error al subir la foto de perfil");
@@ -340,29 +415,125 @@ export default function PerfilPage() {
               {user?.email}
             </p>
 
-            <span className="clay-badge clay-badge-gold" style={{ marginBottom: '24px' }}>
-              ✨ {perfil?.rol === "dueno" ? (lang === "en" ? "Business Owner" : "Dueño de Negocio") : (lang === "en" ? "Registered Tourist" : "Turista Registrado")}
-            </span>
+            {/* Cuadro 1: Rol (Turista Tuani) */}
+            <div className="clay-btn-pill-green">
+              <img
+                src="/images/perfil.svg"
+                alt="Perfil"
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  objectFit: "contain",
+                  filter: "brightness(0) invert(1)"
+                }}
+              />
+              <span>
+                {perfil?.rol === "dueno"
+                  ? (lang === "en" ? "Business Owner" : "Propietario")
+                  : perfil?.rol === "admin"
+                  ? (lang === "en" ? "Admin" : "Administrador")
+                  : (perfil?.es_premium || perfil?.suscripcion_activa || perfil?.rol === "turista_deacachimba")
+                  ? (lang === "en" ? "Deacachimba Tourist" : "Turista Deacachimba")
+                  : (lang === "en" ? "Tuani Tourist" : "Turista Tuani")}
+              </span>
+            </div>
 
+            {/* Cuadro 2: Editar Perfil */}
+            <button
+              type="button"
+              onClick={() => {
+                setEditNombre(perfil?.nombre_completo || "");
+                setEditBio(perfil?.bio || "");
+                setIsEditing(true);
+              }}
+              className="clay-btn-pill-blue"
+            >
+              <img
+                src="/images/flor.svg"
+                alt="Editar Perfil"
+                style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }}
+              />
+              <span>{lang === "en" ? "Edit Profile" : "Editar Perfil"}</span>
+            </button>
+
+            {/* Cuadro 3: Cambiar Contraseña */}
+            <button
+              type="button"
+              onClick={() => {
+                setNewPassword("");
+                setConfirmNewPassword("");
+                setIsChangingPass(true);
+              }}
+              className="clay-btn-pill-slate"
+            >
+              <img
+                src="/images/machoraton.svg"
+                alt="Cambiar Contraseña"
+                style={{ width: "18px", height: "22px", objectFit: "contain", filter: "brightness(0)" }}
+              />
+              <span>{lang === "en" ? "Change Password" : "Cambiar Contraseña"}</span>
+            </button>
+
+            {/* Cuadro 4: Reclamar o Registrar Negocio / Gestionar */}
             {(perfil?.rol === "dueno" || perfil?.rol === "admin") ? (
-              <Link href="/dashboard" className="clay-btn-gold" style={{
-                width: '100%',
-                justifyContent: 'center',
-                marginBottom: '16px',
-                textDecoration: 'none',
-                fontSize: '13.5px'
-              }}>
-                🛠️ {lang === "en" ? "Manage Business" : "Gestionar mi Negocio"}
+              <Link
+                href="/dashboard"
+                className="clay-btn-gold no-sheen"
+                style={{
+                  width: "100%",
+                  padding: "11px 18px",
+                  marginBottom: "16px",
+                  borderRadius: "14px",
+                  fontWeight: "800",
+                  fontSize: "13.5px",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px"
+                }}
+              >
+                <img
+                  src="/images/edificio.svg"
+                  alt="Negocio"
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    objectFit: "contain",
+                    filter: "brightness(0) saturate(100%) invert(75%) sepia(90%) saturate(1200%) hue-rotate(350deg)"
+                  }}
+                />
+                <span>{lang === "en" ? "Manage Business" : "Gestionar mi Negocio"}</span>
               </Link>
             ) : (
-              <Link href="/dashboard" className="clay-btn-blue" style={{
-                width: '100%',
-                justifyContent: 'center',
-                marginBottom: '16px',
-                textDecoration: 'none',
-                fontSize: '13px'
-              }}>
-                🏢 {lang === "en" ? "Claim or Register Business" : "Reclamar o Registrar Negocio"}
+              <Link
+                href="/dashboard"
+                className="clay-btn-blue no-sheen"
+                style={{
+                  width: "100%",
+                  padding: "11px 18px",
+                  marginBottom: "16px",
+                  borderRadius: "14px",
+                  fontWeight: "750",
+                  fontSize: "13px",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px"
+                }}
+              >
+                <img
+                  src="/images/edificio.svg"
+                  alt="Negocio"
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    objectFit: "contain",
+                    filter: "brightness(0) invert(1)"
+                  }}
+                />
+                <span>{lang === "en" ? "Claim or Register Business" : "Reclamar o Registrar Negocio"}</span>
               </Link>
             )}
           </div>
@@ -374,7 +545,8 @@ export default function PerfilPage() {
           {/* SECCIÓN RESERVAS */}
           <div>
             <h2 style={{ margin: "0 0 20px", fontSize: "20px", fontWeight: "800", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
-              <span>📅</span> {lang === "en" ? "My Reservations" : "Mis Reservas Directas"}
+              <img src="/images/edificio.svg" alt="Reservas" style={{ width: "22px", height: "22px", objectFit: "contain" }} />
+              <span>{lang === "en" ? "My Reservations" : "Mis Reservas Directas"}</span>
               <span style={{ fontSize: "12px", background: "rgba(20, 109, 158, 0.10)", padding: "2px 8px", borderRadius: "8px", color: "#4A5568" }}>
                 {reservas.length}
               </span>
@@ -386,7 +558,7 @@ export default function PerfilPage() {
                 textAlign: "center",
                 color: "#9CA3AF"
               }}>
-                <span style={{ fontSize: "32px", display: "block", marginBottom: "12px" }}>🏨</span>
+                <img src="/images/edificio.svg" alt="" style={{ width: "40px", height: "40px", objectFit: "contain", margin: "0 auto 12px", display: "block", opacity: 0.6 }} />
                 <p style={{ margin: 0, fontSize: "14px" }}>
                   {lang === "en" ? "You haven't made any lodging/table reservations yet." : "Aún no has realizado reservas de hospedaje o mesas."}
                 </p>
@@ -424,6 +596,7 @@ export default function PerfilPage() {
                     }}>
                       <div>
                         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+                          <img src="/images/edificio.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
                           <h4 style={{ margin: 0, fontSize: "15px", fontWeight: "800" }}>{lugarNombre}</h4>
                           <span style={{
                             fontSize: "10.5px",
@@ -488,7 +661,8 @@ export default function PerfilPage() {
           {/* SECCIÓN FAVORITOS / DESTINOS GUARDADOS */}
           <div>
             <h2 style={{ margin: "0 0 20px", fontSize: "20px", fontWeight: "800", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
-              <span>❤️</span> {lang === "en" ? "My Saved Places" : "Mis Destinos Guardados"}
+              <img src="/images/tortuga.svg" alt="Destinos" style={{ width: "22px", height: "22px", objectFit: "contain" }} />
+              <span>{lang === "en" ? "My Saved Places" : "Mis Destinos Guardados"}</span>
               <span style={{ fontSize: "12px", background: "rgba(20, 109, 158, 0.10)", padding: "2px 8px", borderRadius: "8px", color: "#4A5568" }}>
                 {favoritos.length}
               </span>
@@ -500,7 +674,7 @@ export default function PerfilPage() {
                 textAlign: "center",
                 color: "#9CA3AF"
               }}>
-                <span style={{ fontSize: "32px", display: "block", marginBottom: "12px" }}>⭐</span>
+                <img src="/images/tortuga.svg" alt="" style={{ width: "40px", height: "40px", objectFit: "contain", margin: "0 auto 12px", display: "block", opacity: 0.7 }} />
                 <p style={{ margin: 0, fontSize: "14px" }}>
                   {lang === "en" ? "You haven't saved any places yet." : "Aún no tienes destinos o negocios guardados."}
                 </p>
@@ -522,21 +696,24 @@ export default function PerfilPage() {
                       alignItems: "center",
                       gap: "16px"
                     }}>
-                      <div>
-                        <h4 style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "800", color: "#1A1A2E" }}>
-                          {punto.nombre}
-                        </h4>
-                        <span style={{
-                          fontSize: "10.5px",
-                          fontWeight: "800",
-                          textTransform: "uppercase",
-                          color: "#4A5568",
-                          background: "rgba(20, 109, 158, 0.08)",
-                          padding: "2px 6px",
-                          borderRadius: "4px"
-                        }}>
-                          {t(`addPoint.categories.${punto.categoria || 'otro'}`)}
-                        </span>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <img src="/images/tortuga.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
+                        <div>
+                          <h4 style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "800", color: "#1A1A2E" }}>
+                            {punto.nombre}
+                          </h4>
+                          <span style={{
+                            fontSize: "10.5px",
+                            fontWeight: "800",
+                            textTransform: "uppercase",
+                            color: "#4A5568",
+                            background: "rgba(20, 109, 158, 0.08)",
+                            padding: "2px 6px",
+                            borderRadius: "4px"
+                          }}>
+                            {t(`addPoint.categories.${punto.categoria || 'otro'}`)}
+                          </span>
+                        </div>
                       </div>
 
                       <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
@@ -583,7 +760,8 @@ export default function PerfilPage() {
           {/* SECCIÓN RESEÑAS ESCRITAS */}
           <div>
             <h2 style={{ margin: "0 0 20px", fontSize: "20px", fontWeight: "800", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
-              <span>⭐</span> {lang === "en" ? "My Reviews" : "Reseñas Publicadas"}
+              <img src="/images/flor.svg" alt="Reseñas" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0)" }} />
+              <span>{lang === "en" ? "My Reviews" : "Reseñas Publicadas"}</span>
               <span style={{ fontSize: "12px", background: "rgba(20, 109, 158, 0.10)", padding: "2px 8px", borderRadius: "8px", color: "#4A5568" }}>
                 {resenas.length}
               </span>
@@ -595,7 +773,7 @@ export default function PerfilPage() {
                 textAlign: "center",
                 color: "#4A5568"
               }}>
-                <span style={{ fontSize: "32px", display: "block", marginBottom: "12px" }}>💬</span>
+                <img src="/images/comentarios.svg" alt="" style={{ width: "40px", height: "40px", objectFit: "contain", margin: "0 auto 12px", display: "block", opacity: 0.8, filter: "brightness(0)" }} />
                 <p style={{ margin: 0, fontSize: "14px", fontWeight: "600" }}>
                   {lang === "en" ? "You haven't posted any reviews yet." : "Aún no has publicado reseñas en los destinos."}
                 </p>
@@ -617,7 +795,10 @@ export default function PerfilPage() {
                     }}>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                          <h4 style={{ margin: 0, fontSize: "15px", fontWeight: "800", color: "#1A1A2E" }}>{destinoNombre}</h4>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <img src="/images/comentarios.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} />
+                            <h4 style={{ margin: 0, fontSize: "15px", fontWeight: "800", color: "#1A1A2E" }}>{destinoNombre}</h4>
+                          </div>
                           <span style={{ fontSize: "13px", color: "#E6C200" }}>
                             {"★".repeat(rev.estrellas)}{"☆".repeat(5 - rev.estrellas)}
                           </span>
@@ -654,6 +835,218 @@ export default function PerfilPage() {
         </div>
 
       </div>
+
+      {/* Modal Editar Perfil */}
+      {isEditing && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0, 0, 0, 0.65)",
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999,
+          padding: "20px"
+        }}>
+          <div style={{
+            background: "#FFFFFF",
+            width: "100%",
+            maxWidth: "460px",
+            borderRadius: "24px",
+            padding: "28px",
+            boxShadow: "0 24px 48px rgba(0, 0, 0, 0.2)",
+            border: "1px solid rgba(20, 109, 158, 0.15)"
+          }} className="animate-fade-in-up">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: "#1A1A2E" }}>
+                ✏️ {lang === "en" ? "Edit Profile" : "Editar Perfil"}
+              </h3>
+              <button
+                onClick={() => setIsEditing(false)}
+                style={{ background: "none", border: "none", fontSize: "20px", cursor: "pointer", color: "#64748B" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveProfile} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>
+                  {lang === "en" ? "Full Name" : "Nombre Completo"}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editNombre}
+                  onChange={(e) => setEditNombre(e.target.value)}
+                  className="clay-input"
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", fontSize: "14px" }}
+                />
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>
+                  {lang === "en" ? "Biography / Description" : "Biografía / Descripción"}
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder={lang === "en" ? "Tell the community about yourself..." : "Cuéntale a la comunidad sobre ti..."}
+                  value={editBio}
+                  onChange={(e) => setEditBio(e.target.value)}
+                  className="clay-input"
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", fontSize: "14px", fontFamily: "inherit" }}
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  style={{
+                    flex: 1,
+                    padding: "12px",
+                    borderRadius: "12px",
+                    border: "1px solid #CBD5E1",
+                    background: "#F8FAFC",
+                    color: "#475569",
+                    fontWeight: "700",
+                    cursor: "pointer"
+                  }}
+                >
+                  {lang === "en" ? "Cancel" : "Cancelar"}
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingProfile}
+                  className="clay-btn-green no-sheen"
+                  style={{
+                    flex: 1,
+                    padding: "12px",
+                    borderRadius: "12px",
+                    border: "none",
+                    background: "linear-gradient(145deg, #1FCC5C 0%, #17AA4A 70%, #128A3C 100%)",
+                    color: "white",
+                    fontWeight: "800",
+                    cursor: "pointer"
+                  }}
+                >
+                  {savingProfile ? (lang === "en" ? "Saving..." : "Guardando...") : (lang === "en" ? "Save Changes" : "Guardar Cambios")}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Cambiar Contraseña (Independiente) */}
+      {isChangingPass && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0, 0, 0, 0.65)",
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999,
+          padding: "20px"
+        }}>
+          <div style={{
+            background: "#FFFFFF",
+            width: "100%",
+            maxWidth: "440px",
+            borderRadius: "24px",
+            padding: "28px",
+            boxShadow: "0 24px 48px rgba(0, 0, 0, 0.2)",
+            border: "1px solid rgba(20, 109, 158, 0.15)"
+          }} className="animate-fade-in-up">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "800", color: "#1A1A2E" }}>
+                🔑 {lang === "en" ? "Change Password" : "Cambiar Contraseña"}
+              </h3>
+              <button
+                onClick={() => setIsChangingPass(false)}
+                style={{ background: "none", border: "none", fontSize: "20px", cursor: "pointer", color: "#64748B" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleChangePassword} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>
+                  {lang === "en" ? "New Password" : "Nueva Contraseña"}
+                </label>
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="clay-input"
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", fontSize: "14px" }}
+                  autoComplete="new-password"
+                />
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>
+                  {lang === "en" ? "Confirm New Password" : "Confirmar Nueva Contraseña"}
+                </label>
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••"
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  className="clay-input"
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", fontSize: "14px" }}
+                  autoComplete="new-password"
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                <button
+                  type="button"
+                  onClick={() => setIsChangingPass(false)}
+                  style={{
+                    flex: 1,
+                    padding: "12px",
+                    borderRadius: "12px",
+                    border: "1px solid #CBD5E1",
+                    background: "#F8FAFC",
+                    color: "#475569",
+                    fontWeight: "700",
+                    cursor: "pointer"
+                  }}
+                >
+                  {lang === "en" ? "Cancel" : "Cancelar"}
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingPass}
+                  className="clay-btn-green no-sheen"
+                  style={{
+                    flex: 1,
+                    padding: "12px",
+                    borderRadius: "12px",
+                    border: "none",
+                    background: "linear-gradient(145deg, #1FCC5C 0%, #17AA4A 70%, #128A3C 100%)",
+                    color: "white",
+                    fontWeight: "800",
+                    cursor: "pointer"
+                  }}
+                >
+                  {savingPass ? (lang === "en" ? "Saving..." : "Guardando...") : (lang === "en" ? "Update Password" : "Actualizar Contraseña")}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

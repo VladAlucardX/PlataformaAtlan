@@ -193,7 +193,13 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
           <div>
             <span style={{ fontWeight: "700", fontSize: "14px", color: "var(--atlan-text-primary)" }}>{perfil?.nombre_completo || "Usuario"}</span>
             <span style={{ display: "block", fontSize: "11px", color: "var(--atlan-text-muted)" }}>
-              {perfil?.rol === "dueno" ? <><Icon name="building" size={12} /> Propietario</> : perfil?.rol === "admin" ? <><Icon name="zap" size={12} /> Administrador</> : <><Icon name="luggage" size={12} /> Turista</>}
+              {perfil?.rol === "dueno"
+                ? <><Icon name="building" size={12} /> Propietario</>
+                : perfil?.rol === "admin"
+                ? <><Icon name="zap" size={12} /> Administrador</>
+                : (perfil?.es_premium || perfil?.suscripcion_activa || perfil?.rol === "turista_deacachimba")
+                ? <><Icon name="star" size={12} /> Turista Deacachimba</>
+                : <><Icon name="luggage" size={12} /> Turista Tuani</>}
             </span>
           </div>
         </div>
@@ -631,7 +637,11 @@ function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChang
             {user.nombre_completo || "Usuario"}
           </div>
           <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>
-            {user.rol === "dueno" ? <><Icon name="building" size={11} /> Propietario</> : <><Icon name="luggage" size={11} /> Turista</>}
+            {user.rol === "dueno"
+              ? <><Icon name="building" size={11} /> Propietario</>
+              : (user.es_premium || user.suscripcion_activa || user.rol === "turista_deacachimba")
+              ? <><Icon name="star" size={11} /> Turista Deacachimba</>
+              : <><Icon name="luggage" size={11} /> Turista Tuani</>}
           </div>
         </div>
       </Link>
@@ -807,30 +817,45 @@ export default function ComunidadPage() {
       position: "relative",
       overflow: "hidden"
     }}>
-      {/* Orbes de luz ambientales de fondo */}
-      <div style={{
-        position: "absolute", top: "-5%", right: "-5%", width: "650px", height: "650px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(255,215,0,0.40) 0%, rgba(255,215,0,0.12) 50%, transparent 70%)",
-        filter: "blur(40px)", pointerEvents: "none", zIndex: 0
-      }} />
-      <div style={{
-        position: "absolute", bottom: "-5%", left: "-5%", width: "550px", height: "550px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(20,109,158,0.32) 0%, rgba(20,109,158,0.08) 50%, transparent 70%)",
-        filter: "blur(40px)", pointerEvents: "none", zIndex: 0
-      }} />
-      <div style={{
-        position: "absolute", top: "35%", left: "50%", transform: "translateX(-50%)", width: "450px", height: "450px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(23,170,74,0.28) 0%, transparent 70%)",
-        filter: "blur(45px)", pointerEvents: "none", zIndex: 0
-      }} />
+      {/* Fondos decorativos SVG */}
+      <img
+        src="/images/tortuga.svg"
+        alt=""
+        style={{
+          position: "fixed",
+          bottom: "-10px",
+          left: "-10px",
+          width: "360px",
+          maxHeight: "360px",
+          objectFit: "contain",
+          opacity: 0.18,
+          pointerEvents: "none",
+          zIndex: 0
+        }}
+      />
+      <img
+        src="/images/machoraton.svg"
+        alt=""
+        style={{
+          position: "fixed",
+          top: "80px",
+          right: "10px",
+          width: "340px",
+          height: "calc(100vh - 90px)",
+          objectFit: "contain",
+          opacity: 0.16,
+          pointerEvents: "none",
+          zIndex: 0
+        }}
+      />
 
       <Navbar activePage="comunidad" session={session} perfil={perfil} onLogout={handleLogout} />
 
       {/* Main Content */}
-      <div style={{ ...pageStyles.container, position: "relative", zIndex: 1 }}>
+      <div className="community-main-layout" style={{ ...pageStyles.container, position: "relative", zIndex: 1 }}>
 
         {/* ── SIDEBAR LEFT (Desktop) ── */}
-        <aside style={pageStyles.sidebarLeft} className="hide-mobile">
+        <aside style={pageStyles.sidebarLeft} className="hide-mobile community-sidebar">
           {session && perfil ? (
             <div style={sidebarStyles.profileCard}>
               <div style={sidebarStyles.profileBanner} />
@@ -842,7 +867,11 @@ export default function ComunidadPage() {
                 </Link>
                 <h4 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{perfil.nombre_completo}</h4>
                 <p style={{ margin: "0 0 12px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>
-                  {perfil.rol === "dueno" ? <><Icon name="building" size={11} /> Propietario</> : <><Icon name="luggage" size={11} /> Turista</>}
+                  {perfil.rol === "dueno"
+                    ? <><Icon name="building" size={11} /> Propietario</>
+                    : (perfil.es_premium || perfil.suscripcion_activa || perfil.rol === "turista_deacachimba")
+                    ? <><Icon name="star" size={11} /> Turista Deacachimba</>
+                    : <><Icon name="luggage" size={11} /> Turista Tuani</>}
                 </p>
                 <div style={{ display: "flex", justifyContent: "center", gap: "24px" }}>
                   <button onClick={() => { setFollowersModalTab("followers"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px", borderRadius: "8px", transition: "background 0.15s" }}>
@@ -870,6 +899,21 @@ export default function ComunidadPage() {
               </Link>
             </div>
           )}
+
+          {/* Sección Explorar debajo del Perfil */}
+          <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
+            <h4 style={sidebarStyles.sectionTitle}>
+              <Icon name="map" size={14} /> {lang === "en" ? "Explore" : "Explorar"}
+            </h4>
+            <Link href="/mapa" style={sidebarStyles.exploreLink}>
+              <img src="/images/mapa.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Tourist Map" : "Mapa Turístico"}
+            </Link>
+            {session && (perfil?.rol === "dueno" || perfil?.rol === "admin") && (
+              <Link href="/dashboard" style={sidebarStyles.exploreLink}>
+                <Icon name="briefcase" size={14} /> {lang === "en" ? "My Business" : "Mi Negocio"}
+              </Link>
+            )}
+          </div>
         </aside>
 
         {/* ── FEED CENTRAL ── */}
@@ -971,7 +1015,7 @@ export default function ComunidadPage() {
         </main>
 
         {/* ── SIDEBAR RIGHT (Desktop) ── */}
-        <aside style={pageStyles.sidebarRight} className="hide-mobile">
+        <aside style={pageStyles.sidebarRight} className="hide-mobile community-sidebar">
           {/* Buscador */}
           <div style={sidebarStyles.sectionCard}>
             <h4 style={sidebarStyles.sectionTitle}>
@@ -1031,20 +1075,6 @@ export default function ComunidadPage() {
                   ))
                 )}
               </>
-            )}
-          </div>
-
-          <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
-            <h4 style={sidebarStyles.sectionTitle}>
-              <Icon name="map" size={14} /> {lang === "en" ? "Explore" : "Explorar"}
-            </h4>
-            <Link href="/mapa" style={sidebarStyles.exploreLink}>
-              <Icon name="mapPin" size={14} /> {lang === "en" ? "Tourist Map" : "Mapa Turístico"}
-            </Link>
-            {session && (perfil?.rol === "dueno" || perfil?.rol === "admin") && (
-              <Link href="/dashboard" style={sidebarStyles.exploreLink}>
-                <Icon name="briefcase" size={14} /> {lang === "en" ? "My Business" : "Mi Negocio"}
-              </Link>
             )}
           </div>
         </aside>
@@ -1156,37 +1186,40 @@ const navStyles = {
 const pageStyles = {
   container: {
     width: "100%",
-    maxWidth: "1440px",
+    maxWidth: "1320px",
     margin: "0 auto",
-    padding: "90px 24px 40px 24px",
-    display: "block",
+    padding: "95px 24px 40px 24px",
     position: "relative"
   },
   sidebarLeft: {
-    position: "fixed",
-    top: "90px",
-    left: "max(24px, calc(50vw - 720px + 24px))",
-    width: "260px",
-    maxHeight: "calc(100vh - 110px)",
+    position: "sticky",
+    top: "95px",
+    width: "100%",
+    maxHeight: "calc(100vh - 115px)",
     overflowY: "auto",
     scrollbarWidth: "none",
-    zIndex: 10
+    zIndex: 10,
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px"
   },
   feed: {
     minWidth: 0,
-    maxWidth: "760px",
+    maxWidth: "700px",
     width: "100%",
     margin: "0 auto"
   },
   sidebarRight: {
-    position: "fixed",
-    top: "90px",
-    right: "max(24px, calc(50vw - 720px + 24px))",
-    width: "280px",
-    maxHeight: "calc(100vh - 110px)",
+    position: "sticky",
+    top: "95px",
+    width: "100%",
+    maxHeight: "calc(100vh - 115px)",
     overflowY: "auto",
     scrollbarWidth: "none",
-    zIndex: 10
+    zIndex: 10,
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px"
   },
   createPostBar: {
     display: "flex",

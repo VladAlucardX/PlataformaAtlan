@@ -76,29 +76,7 @@ function HeroSection({ session, perfil, introDone }) {
         zIndex: 1
       }} />
       <div style={{ ...styles.heroContent, position: 'relative', zIndex: 2 }} className="animate-fade-in-up">
-        {perfil?.nombre_completo && (
-          <div style={{
-            fontSize: "15px",
-            fontWeight: "800",
-            color: "#FFD700",
-            marginBottom: "12px",
-            textTransform: "uppercase",
-            letterSpacing: "1px",
-            background: "rgba(255, 255, 255, 0.15)",
-            padding: "8px 18px",
-            borderRadius: "30px",
-            display: "inline-block",
-            border: "1px solid rgba(255, 255, 255, 0.25)"
-          }}>
-            <Icon name="hand" size={16} /> {lang === "en" ? "Welcome back" : "Bienvenido de nuevo"}, {perfil.nombre_completo.split(" ")[0]}
-          </div>
-        )}
-
-        <div className="badge badge-gold" style={{ marginBottom: "16px", marginLeft: perfil?.nombre_completo ? "12px" : "0" }}>
-          <Icon name="flag" size={14} /> Nicaragua
-        </div>
-
-        <h1 style={{ ...styles.heroTitle, color: "#FFFFFF" }}>
+        <h1 style={{ ...styles.heroTitle, color: "#FFFFFF", marginTop: "32px" }}>
           {t("landing.hero.title")}
         </h1>
 
@@ -114,11 +92,24 @@ function HeroSection({ session, perfil, introDone }) {
 
 // Características
 function FeaturesSection() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
+  const [scrolled, setScrolled] = React.useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 40) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const features = [
     {
-      icon: <Icon name="map" size={28} />,
+      icon: <img src="/images/ubic.svg" alt="GPS" style={{ width: "38px", height: "38px", objectFit: "contain" }} />,
       title: t("landing.features.gps.title"),
       description: t("landing.features.gps.description"),
       bg: "linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)",
@@ -126,7 +117,7 @@ function FeaturesSection() {
       textColor: "#0369A1",
     },
     {
-      icon: <Icon name="mapPin" size={28} />,
+      icon: <img src="/images/ubicacion.svg" alt="Destinos Verificados" style={{ width: "38px", height: "38px", objectFit: "contain" }} />,
       title: t("landing.features.community.title"),
       description: t("landing.features.community.description"),
       bg: "linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)",
@@ -134,7 +125,7 @@ function FeaturesSection() {
       textColor: "#047857",
     },
     {
-      icon: <Icon name="calendar" size={28} />,
+      icon: <img src="/images/machoraton.svg" alt="Reservas Directas" style={{ width: "38px", height: "38px", objectFit: "contain" }} />,
       title: t("landing.features.reservations.title"),
       description: t("landing.features.reservations.description"),
       bg: "linear-gradient(135deg, #FFFDF0 0%, #FEF9C3 100%)",
@@ -144,7 +135,48 @@ function FeaturesSection() {
   ];
 
   return (
-    <section style={{ ...styles.section, background: "url('/images/Frame 6.png') center / 100% 100% no-repeat", paddingTop: "110px", position: "relative" }}>
+    <section style={{ ...styles.section, background: "url('/images/Frame 6.png') center / 100% 100% no-repeat", paddingTop: "140px", position: "relative" }}>
+      {/* Indicador Animado "Desplaza hacia abajo para ver más" en la cabecera superior */}
+      <div style={{
+        position: "absolute",
+        top: "22px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "4px",
+        zIndex: 10,
+        opacity: scrolled ? 0 : 1,
+        pointerEvents: scrolled ? "none" : "auto",
+        transition: "opacity 0.4s ease, transform 0.4s ease",
+        color: "#FFFFFF"
+      }}>
+        <span style={{
+          fontSize: "13.5px",
+          fontWeight: "800",
+          letterSpacing: "0.5px",
+          textShadow: "0 2px 8px rgba(0, 0, 0, 0.6)",
+          fontFamily: "var(--font-outfit), system-ui, sans-serif"
+        }}>
+          {lang === "en" ? "Scroll down to see more" : "Desplaza hacia abajo para ver más"}
+        </span>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#FFFFFF"
+          strokeWidth="2.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="animate-scroll-bounce"
+          style={{ filter: "drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6))" }}
+        >
+          <path d="M12 5v14M19 12l-7 7-7-7" />
+        </svg>
+      </div>
+
       {/* Transición leve superior con Hero */}
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "70px", background: "linear-gradient(to bottom, rgba(20, 109, 158, 0.35) 0%, transparent 100%)", pointerEvents: "none", zIndex: 1 }} />
       
@@ -213,52 +245,52 @@ function CategoriesSection() {
 
   const categories = [
     {
-      icon: <Icon name="utensils" size={28} />, key: "comideria",
+      icon: <img src="/images/comideria.svg" alt="Comidería" style={{ width: "30px", height: "30px", objectFit: "contain" }} />, key: "comideria",
       bg: "#FFFFFF", border: "1.5px solid rgba(217, 119, 6, 0.25)",
       iconBg: "rgba(245, 158, 11, 0.15)", textColor: "#92400E"
     },
     {
-      icon: <Icon name="soup" size={28} />, key: "restaurante",
+      icon: <img src="/images/restaurante.svg" alt="Restaurante" style={{ width: "30px", height: "30px", objectFit: "contain" }} />, key: "restaurante",
       bg: "#FFFFFF", border: "1.5px solid rgba(220, 38, 38, 0.25)",
       iconBg: "rgba(239, 68, 68, 0.15)", textColor: "#991B1B"
     },
     {
-      icon: <Icon name="palette" size={28} />, key: "artesanal",
+      icon: <img src="/images/arte.svg" alt="Artesanal" style={{ width: "30px", height: "30px", objectFit: "contain" }} />, key: "artesanal",
       bg: "#FFFFFF", border: "1.5px solid rgba(124, 58, 237, 0.25)",
       iconBg: "rgba(139, 92, 246, 0.15)", textColor: "#5B21B6"
     },
     {
-      icon: <Icon name="umbrella" size={28} />, key: "playa",
+      icon: <img src="/images/playa.svg" alt="Playa" style={{ width: "30px", height: "30px", objectFit: "contain" }} />, key: "playa",
       bg: "#FFFFFF", border: "1.5px solid rgba(8, 145, 178, 0.25)",
       iconBg: "rgba(6, 182, 212, 0.15)", textColor: "#155E75"
     },
     {
-      icon: <Icon name="family" size={28} />, key: "familiar",
+      icon: <img src="/images/comunidad.svg" alt="Familiar" style={{ width: "30px", height: "30px", objectFit: "contain" }} />, key: "familiar",
       bg: "#FFFFFF", border: "1.5px solid rgba(219, 39, 119, 0.25)",
       iconBg: "rgba(236, 72, 153, 0.15)", textColor: "#9D174D"
     },
     {
-      icon: <Icon name="hotel" size={28} />, key: "hotel",
+      icon: <img src="/images/hotel.svg" alt="Hotel" style={{ width: "30px", height: "30px", objectFit: "contain" }} />, key: "hotel",
       bg: "#FFFFFF", border: "1.5px solid rgba(79, 70, 229, 0.25)",
       iconBg: "rgba(99, 102, 241, 0.15)", textColor: "#3730A3"
     },
     {
-      icon: <Icon name="homeAlt" size={28} />, key: "hostal",
+      icon: <img src="/images/hostal.svg" alt="Hostal" style={{ width: "30px", height: "30px", objectFit: "contain" }} />, key: "hostal",
       bg: "#FFFFFF", border: "1.5px solid rgba(13, 148, 136, 0.25)",
       iconBg: "rgba(20, 184, 166, 0.15)", textColor: "#115E59"
     },
     {
-      icon: <Icon name="car" size={28} />, key: "transporte",
+      icon: <img src="/images/transporte.svg" alt="Transporte" style={{ width: "30px", height: "30px", objectFit: "contain" }} />, key: "transporte",
       bg: "#FFFFFF", border: "1.5px solid rgba(234, 88, 12, 0.25)",
       iconBg: "rgba(249, 115, 22, 0.15)", textColor: "#9A3412"
     },
     {
-      icon: <Icon name="mountain" size={28} />, key: "tour",
+      icon: <img src="/images/tour.svg" alt="Tour" style={{ width: "30px", height: "30px", objectFit: "contain" }} />, key: "tour",
       bg: "#FFFFFF", border: "1.5px solid rgba(23, 170, 74, 0.25)",
       iconBg: "rgba(34, 197, 94, 0.15)", textColor: "#166534"
     },
     {
-      icon: <Icon name="shoppingBag" size={28} />, key: "tienda",
+      icon: <img src="/images/tienda.svg" alt="Tienda" style={{ width: "30px", height: "30px", objectFit: "contain" }} />, key: "tienda",
       bg: "#FFFFFF", border: "1.5px solid rgba(147, 51, 234, 0.25)",
       iconBg: "rgba(168, 85, 247, 0.15)", textColor: "#6B21A8"
     },
@@ -279,7 +311,7 @@ function CategoriesSection() {
           {categories.map((cat, i) => (
             <Link
               key={cat.key}
-              href="/mapa"
+              href={`/mapa?categoria=${cat.key}`}
               className="animate-fade-in-up clay-card"
               style={{
                 ...styles.categoryCard,
@@ -561,12 +593,12 @@ const styles = {
   // ── Hero
   hero: {
     position: "relative",
-    minHeight: "calc(100vh - 140px)",
+    minHeight: "calc(100vh - 120px)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
-    padding: "100px 24px 70px",
+    padding: "110px 24px 80px",
   },
   heroOrb1: {
     position: "absolute",

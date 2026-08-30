@@ -374,6 +374,24 @@ a:hover {
   left: 140%;
 }
 
+/* Desactivar destello/brillo al pasar el cursor */
+.no-sheen::after,
+.no-sheen:hover::after,
+.no-sheen::before,
+.no-sheen:hover::before,
+.clay-card-static::after,
+.clay-card-static:hover::after {
+  display: none !important;
+  opacity: 0 !important;
+  content: none !important;
+  visibility: hidden !important;
+}
+
+.no-hover-transform:hover,
+.no-hover-transform:active {
+  transform: none !important;
+}
+
 .glass-card:hover,
 .clay-card:hover {
   background: #FFFFFF;
@@ -468,15 +486,15 @@ a:hover {
 .nav-pill-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 5px;
+  padding: 6px 12px;
   white-space: nowrap !important;
   flex-shrink: 0;
   background: #FFFFFF;
   border: 1.5px solid rgba(20, 109, 158, 0.12);
   border-radius: var(--atlan-radius-full);
   color: var(--atlan-text-secondary) !important;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   text-decoration: none !important;
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -660,6 +678,119 @@ a:hover {
 
 .clay-btn-green:active {
   transform: translateY(2px) scale(0.97);
+}
+
+/* ── BOTONES DE PERFIL (CURVATURA ELEGANTE 14PX Y PALETA MEJORADA) ──────────────── */
+.clay-btn-pill-blue {
+  width: 100%;
+  padding: 11px 18px;
+  margin-bottom: 11px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 60%, #075985 100%);
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 
+    inset 2px 2px 5px rgba(255, 255, 255, 0.5),
+    inset -3px -3px 6px rgba(3, 105, 161, 0.4),
+    0 8px 18px -3px rgba(2, 132, 199, 0.35),
+    0 3px 6px rgba(0, 0, 0, 0.08);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.clay-btn-pill-blue:hover {
+  transform: translateY(-3px) scale(1.015);
+  background: linear-gradient(135deg, #38BDF8 0%, #0284C7 60%, #0369A1 100%);
+  box-shadow: 
+    inset 3px 3px 6px rgba(255, 255, 255, 0.7),
+    inset -4px -4px 8px rgba(3, 105, 161, 0.5),
+    0 12px 24px -4px rgba(2, 132, 199, 0.45),
+    0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.clay-btn-pill-blue:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 
+    inset 3px 3px 5px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 3px rgba(255, 255, 255, 0.3),
+    0 3px 8px rgba(2, 132, 199, 0.2);
+}
+
+.clay-btn-pill-slate {
+  width: 100%;
+  padding: 11px 18px;
+  margin-bottom: 11px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  background: linear-gradient(135deg, #FFF085 0%, #FACC15 60%, #EAB308 100%);
+  color: #1E1B4B !important;
+  font-weight: 800 !important;
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 
+    inset 2px 2px 5px rgba(255, 255, 255, 0.85),
+    inset -3px -3px 6px rgba(161, 98, 7, 0.35),
+    0 8px 18px -3px rgba(234, 179, 8, 0.35),
+    0 3px 6px rgba(0, 0, 0, 0.08);
+}
+
+.clay-btn-pill-slate:hover {
+  transform: translateY(-3px) scale(1.015);
+  background: linear-gradient(135deg, #FEF9C3 0%, #FEF08A 60%, #FACC15 100%);
+  box-shadow: 
+    inset 3px 3px 6px rgba(255, 255, 255, 0.95),
+    inset -4px -4px 8px rgba(161, 98, 7, 0.45),
+    0 12px 24px -4px rgba(234, 179, 8, 0.45),
+    0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.clay-btn-pill-slate:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 
+    inset 3px 3px 5px rgba(161, 98, 7, 0.35),
+    inset -2px -2px 3px rgba(255, 255, 255, 0.4),
+    0 3px 8px rgba(234, 179, 8, 0.2);
+}
+
+.clay-btn-pill-green {
+  width: 100%;
+  padding: 11px 18px;
+  margin-bottom: 11px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  background: linear-gradient(135deg, #10B981 0%, #059669 60%, #047857 100%);
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 
+    inset 2px 2px 5px rgba(255, 255, 255, 0.5),
+    inset -3px -3px 6px rgba(5, 150, 105, 0.4),
+    0 8px 18px -3px rgba(16, 185, 129, 0.35),
+    0 3px 6px rgba(0, 0, 0, 0.08);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 .btn-ghost {
@@ -2642,23 +2773,25 @@ html body .mapboxgl-ctrl-directions tr {
   }
 }
 
-/* ── CARTEL CON PANEL TOTALMENTE AMARILLO (#FFD700) (Botón Negocio) ── */
-.neon-yellow-bg-panel {
-  background: linear-gradient(145deg, #FFE033 0%, #FFD700 70%, #E6C200 100%) !important;
+/* ── CARTEL CON PANEL TOTALMENTE VERDE (#17AA4A) (Botón Negocio del Hero) ── */
+.neon-yellow-bg-panel,
+.neon-green-bg-panel {
+  background: linear-gradient(145deg, #1FCC5C 0%, #17AA4A 70%, #128A3C 100%) !important;
   border: 2.5px solid #FFFFFF !important;
   box-shadow: 
-    0 0 20px rgba(255, 215, 0, 0.85),
-    0 0 45px rgba(255, 215, 0, 0.5),
+    0 0 20px rgba(23, 170, 74, 0.85),
+    0 0 45px rgba(23, 170, 74, 0.5),
     inset 0 2px 4px rgba(255, 255, 255, 0.9),
     0 20px 40px rgba(0, 0, 0, 0.5) !important;
 }
 
-.neon-yellow-bg-panel:hover {
+.neon-yellow-bg-panel:hover,
+.neon-green-bg-panel:hover {
   transform: translateY(-6px) scale(1.04) !important;
   border-color: #FFFFFF !important;
   box-shadow: 
-    0 0 32px rgba(255, 215, 0, 1),
-    0 0 65px rgba(255, 224, 51, 0.85),
+    0 0 32px rgba(23, 170, 74, 1),
+    0 0 65px rgba(31, 204, 92, 0.85),
     inset 0 2px 6px rgba(255, 255, 255, 1),
     0 30px 60px rgba(0, 0, 0, 0.6) !important;
 }
@@ -2897,6 +3030,65 @@ html body .mapboxgl-ctrl-directions tr {
 .mapboxgl-popup-close-button:hover {
   background: rgba(255, 255, 255, 0.2) !important;
   color: #FFFFFF !important;
+}
+
+/* Animación rebote para indicador de scroll */
+@keyframes scrollBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+.animate-scroll-bounce {
+  animation: scrollBounce 1.5s infinite ease-in-out;
+}
+
+/* Community 3-Column Layout */
+.community-main-layout {
+  display: grid !important;
+  grid-template-columns: 260px minmax(0, 1fr) 300px !important;
+  gap: 28px !important;
+  align-items: start !important;
+}
+
+@media (max-width: 1200px) {
+  .community-main-layout {
+    grid-template-columns: 240px minmax(0, 1fr) 280px !important;
+    gap: 20px !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .community-main-layout {
+    display: block !important;
+    padding: 85px 16px 40px 16px !important;
+  }
+}
+
+.community-sidebar {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  width: 100% !important;
+  position: sticky !important;
+  top: 90px !important;
+  max-height: calc(100vh - 110px) !important;
+  overflow-y: auto !important;
+  scrollbar-width: none !important;
+}
+
+/* ── RESPONSIVE FORMULARIO DE REGISTRO ────────────────────────────────────────── */
+@media (max-width: 580px) {
+  .register-grid-2col {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .register-card {
+    padding: 20px 18px !important;
+    max-width: 100% !important;
+  }
 }
 
 

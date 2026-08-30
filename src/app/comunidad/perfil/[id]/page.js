@@ -46,7 +46,7 @@ export default function PerfilPublico() {
   const rawUserId = params.id;
 
   // Sesión centralizada desde AuthContext
-  const { session, perfil: myPerfil } = useAuth();
+  const { session, perfil: myPerfil, updatePerfil } = useAuth();
 
   const [targetPerfil, setTargetPerfil] = useState(null);
 
@@ -59,9 +59,48 @@ export default function PerfilPublico() {
   const [followLoading, setFollowLoading] = useState(false);
   const [negocio, setNegocio] = useState(null);
 
-  // Edit bio
+  // Edit bio & profile modal
   const [editingBio, setEditingBio] = useState(false);
   const [bioText, setBioText] = useState("");
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editNombre, setEditNombre] = useState("");
+  const [editBio, setEditBio] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
+
+  const handleSaveProfileModal = async (e) => {
+    e.preventDefault();
+    if (!session || !userId) return;
+    setSavingProfile(true);
+    try {
+      const { error } = await supabase
+        .from("perfiles")
+        .update({
+          nombre_completo: editNombre.trim(),
+          bio: editBio.trim(),
+        })
+        .eq("id", userId);
+
+      if (error) throw error;
+
+      setTargetPerfil((prev) => ({
+        ...prev,
+        nombre_completo: editNombre.trim(),
+        bio: editBio.trim(),
+      }));
+      if (updatePerfil) {
+        updatePerfil({
+          nombre_completo: editNombre.trim(),
+          bio: editBio.trim(),
+        });
+      }
+      setIsEditingProfile(false);
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      alert(lang === "en" ? "Failed to update profile" : "Error al actualizar el perfil");
+    } finally {
+      setSavingProfile(false);
+    }
+  };
 
   // Post interactions
   const [likedPosts, setLikedPosts] = useState(new Set());
@@ -92,7 +131,7 @@ export default function PerfilPublico() {
       if (error) throw error;
 
       setTargetPerfil((p) => ({ ...p, avatar_url: publicUrl }));
-      setMyPerfil((p) => ({ ...p, avatar_url: publicUrl }));
+      if (updatePerfil) updatePerfil({ avatar_url: publicUrl });
     } catch (err) {
       console.error("Error updating avatar:", err);
       alert(lang === "en" ? "Failed to upload profile picture" : "Error al subir la foto de perfil");
@@ -317,13 +356,45 @@ export default function PerfilPublico() {
                 border: `1px solid ${targetPerfil.rol === "dueno" ? "rgba(255, 215, 0,0.25)" : "rgba(23, 170, 74,0.25)"}`,
                 textTransform: "uppercase",
               }}>
-                {targetPerfil.rol === "dueno" ? <><Icon name="building" size={12} /> Propietario</> : targetPerfil.rol === "admin" ? <><Icon name="zap" size={12} /> Admin</> : <><Icon name="luggage" size={12} /> Turista</>}
+                {targetPerfil.rol === "dueno" ? (
+                  <><Icon name="building" size={12} /> Propietario</>
+                ) : targetPerfil.rol === "admin" ? (
+                  <><Icon name="zap" size={12} /> Admin</>
+                ) : (targetPerfil.es_premium || targetPerfil.suscripcion_activa || targetPerfil.rol === "turista_deacachimba") ? (
+                  <><Icon name="star" size={12} /> Turista Deacachimba</>
+                ) : (
+                  <><Icon name="luggage" size={12} /> Turista Tuani</>
+                )}
               </span>
             </div>
           </div>
 
-          {/* Follow / Chat buttons */}
-          {!isOwnProfile ? (
+          {/* Follow / Chat / Edit buttons */}
+          {isOwnProfile ? (
+            <button
+              onClick={() => {
+                setEditNombre(targetPerfil.nombre_completo || "");
+                setEditBio(targetPerfil.bio || "");
+                setIsEditingProfile(true);
+              }}
+              style={{
+                padding: "10px 20px",
+                borderRadius: "12px",
+                fontSize: "13.5px",
+                fontWeight: "800",
+                cursor: "pointer",
+                border: "1px solid rgba(20, 109, 158, 0.2)",
+                background: "rgba(20, 109, 158, 0.08)",
+                color: "#146D9E",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                transition: "all 0.2s",
+              }}
+            >
+              ✏️ {lang === "en" ? "Edit Profile" : "Editar Perfil"}
+            </button>
+          ) : (
             <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
               <button onClick={handleFollow} disabled={followLoading} style={{
                 padding: "10px 24px", borderRadius: "12px", fontSize: "14px", fontWeight: "800",
@@ -353,7 +424,7 @@ export default function PerfilPublico() {
                 </span>
               ) : null}
             </div>
-          ) : null}
+          )}
         </div>
 
         {/* Stats */}
@@ -538,6 +609,110 @@ export default function PerfilPublico() {
           lang={lang}
           onClose={() => setViewerPost(null)}
         />
+      )}
+
+      {/* Modal Editar Perfil */}
+      {isEditingProfile && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0, 0, 0, 0.65)",
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999,
+          padding: "20px"
+        }}>
+          <div style={{
+            background: "#FFFFFF",
+            width: "100%",
+            maxWidth: "460px",
+            borderRadius: "24px",
+            padding: "28px",
+            boxShadow: "0 24px 48px rgba(0, 0, 0, 0.2)",
+            border: "1px solid rgba(20, 109, 158, 0.15)"
+          }} className="animate-fade-in-up">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: "#1A1A2E" }}>
+                ✏️ {lang === "en" ? "Edit Profile" : "Editar Perfil"}
+              </h3>
+              <button
+                onClick={() => setIsEditingProfile(false)}
+                style={{ background: "none", border: "none", fontSize: "20px", cursor: "pointer", color: "#64748B" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveProfileModal} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>
+                  {lang === "en" ? "Full Name" : "Nombre Completo"}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editNombre}
+                  onChange={(e) => setEditNombre(e.target.value)}
+                  className="clay-input"
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", fontSize: "14px" }}
+                />
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>
+                  {lang === "en" ? "Biography / Description" : "Biografía / Descripción"}
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder={lang === "en" ? "Tell the community about yourself..." : "Cuéntale a la comunidad sobre ti..."}
+                  value={editBio}
+                  onChange={(e) => setEditBio(e.target.value)}
+                  className="clay-input"
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", fontSize: "14px", fontFamily: "inherit" }}
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingProfile(false)}
+                  style={{
+                    flex: 1,
+                    padding: "12px",
+                    borderRadius: "12px",
+                    border: "1px solid #CBD5E1",
+                    background: "#F8FAFC",
+                    color: "#475569",
+                    fontWeight: "700",
+                    cursor: "pointer"
+                  }}
+                >
+                  {lang === "en" ? "Cancel" : "Cancelar"}
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingProfile}
+                  className="clay-btn-green no-sheen"
+                  style={{
+                    flex: 1,
+                    padding: "12px",
+                    borderRadius: "12px",
+                    border: "none",
+                    background: "linear-gradient(145deg, #1FCC5C 0%, #17AA4A 70%, #128A3C 100%)",
+                    color: "white",
+                    fontWeight: "800",
+                    cursor: "pointer"
+                  }}
+                >
+                  {savingProfile ? (lang === "en" ? "Saving..." : "Guardando...") : (lang === "en" ? "Save Changes" : "Guardar Cambios")}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

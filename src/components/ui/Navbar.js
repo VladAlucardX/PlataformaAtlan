@@ -111,15 +111,15 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
     <nav className="atlan-navbar-header">
       <div className="atlan-navbar-inner" style={{
         width: "100%",
-        padding: "0 32px",
+        padding: "0 24px",
         height: "64px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        position: "relative"
+        gap: "12px"
       }}>
         {/* Logo Far Left */}
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", flexShrink: 0 }}>
           <img
             src="/mapaicono.png"
             alt="Logo"
@@ -129,25 +129,25 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
         </Link>
 
         {/* Center Nav Pills */}
-        <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", gap: "8px", whiteSpace: "nowrap" }} className="hide-mobile">
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "nowrap", justifyContent: "center" }} className="hide-mobile">
           <Link href="/" className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`}>
-            <Icon name="home" size={16} /> {lang === "en" ? "Home" : "Inicio"}
+            <img src="/images/home.svg" alt="Inicio" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Home" : "Inicio"}
           </Link>
           <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`}>
-            <Icon name="map" size={16} /> {t("nav.map")}
+            <img src="/images/ubic.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {t("nav.map")}
           </Link>
           <Link href="/departamentos" className={`nav-pill-link ${activePage === "departamentos" ? "active" : ""}`}>
-            <Icon name="star" size={16} /> {lang === "en" ? "Ranking" : "Ranking"}
+            <img src="/images/flor.svg" alt="Ranking" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Ranking" : "Ranking"}
           </Link>
           <Link href="/mas-de-nicaragua" className={`nav-pill-link ${activePage === "mas-de-nicaragua" ? "active" : ""}`}>
-            <Icon name="book" size={16} /> {t("nav.moreNicaragua") || (lang === "en" ? "More of Nicaragua" : "Más de Nicaragua")}
+            <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {t("nav.moreNicaragua") || (lang === "en" ? "More of Nicaragua" : "Más de Nicaragua")}
           </Link>
           <Link href="/comunidad" className={`nav-pill-link ${activePage === "comunidad" ? "active" : ""}`}>
-            <Icon name="users" size={16} /> {t("social.community")}
+            <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {t("social.community")}
           </Link>
           {session && (
             <Link href="/chat" className={`nav-pill-link ${activePage === "chat" ? "active" : ""}`}>
-              <Icon name="messageCircle" size={16} /> {t("chat.title")}
+              <img src="/images/comentarios.svg" alt="Mensajes" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {t("chat.title")}
             </Link>
           )}
           {perfil?.rol === "admin" && (
@@ -155,12 +155,12 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
               <Icon name="shield" size={16} /> {lang === "en" ? "Management" : "Gestión"}
             </Link>
           )}
-          <LanguageToggle variant="pill" />
-          {session && <NotificationDropdown session={session} />}
         </div>
 
         {/* Far Right Actions */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }} className="hide-mobile">
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }} className="hide-mobile">
+          <LanguageToggle variant="pill" />
+          {session && <NotificationDropdown session={session} />}
           {session ? (
             <div style={{ position: "relative" }} ref={dropdownRef}>
               <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -232,7 +232,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                   }}
                   className="animate-fade-in-down"
                 >
-                  {/* Opción 1: Mi Perfil (Comunidad) */}
+                  {/* Opción 1: Mi Perfil Comunidad */}
                   <Link
                     href={communityProfileLink}
                     onClick={() => setUserDropdownOpen(false)}
@@ -251,10 +251,32 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                     onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
                     onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                   >
-                    <Icon name="user" size={16} /> {lang === "en" ? "My Profile" : "Mi Perfil"}
+                    <Icon name="users" size={16} /> {lang === "en" ? "My Community Profile" : "Mi Perfil Comunidad"}
                   </Link>
 
-                  {/* Opción 2: Mis Negocios (Solo si posee 1 o más negocios) */}
+                  {/* Opción 2: Mi Perfil Personal */}
+                  <Link
+                    href="/perfil"
+                    onClick={() => setUserDropdownOpen(false)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "10px 14px",
+                      borderRadius: "12px",
+                      color: "#1A1A2E",
+                      fontSize: "13px",
+                      fontWeight: "750",
+                      textDecoration: "none",
+                      transition: "background 0.15s"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
+                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                  >
+                    <Icon name="user" size={16} /> {lang === "en" ? "My Personal Profile" : "Mi Perfil Personal"}
+                  </Link>
+
+                  {/* Opción 3: Mis Negocios (Solo si posee 1 o más negocios) */}
                   {hasBusinesses && (
                     <Link
                       href="/dashboard"
@@ -277,28 +299,6 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                       <Icon name="briefcase" size={16} /> {lang === "en" ? "My Businesses" : "Mis Negocios"}
                     </Link>
                   )}
-
-                  {/* Opción 3: Mis Giras (Favoritos, Giras y Reservas guardadas) */}
-                  <Link
-                    href="/perfil"
-                    onClick={() => setUserDropdownOpen(false)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                      padding: "10px 14px",
-                      borderRadius: "12px",
-                      color: "#1A1A2E",
-                      fontSize: "13px",
-                      fontWeight: "750",
-                      textDecoration: "none",
-                      transition: "background 0.15s"
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
-                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
-                  >
-                    <Icon name="compass" size={16} /> {lang === "en" ? "My Tours & Saved" : "Mis Giras"}
-                  </Link>
 
                   <div style={{ height: "1px", background: "rgba(20, 109, 158, 0.08)", margin: "4px 0" }} />
 
@@ -334,8 +334,14 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
             </div>
           ) : (
             <>
-              <Link href="/login" className="nav-pill-link">{t("nav.login")}</Link>
-              <Link href="/registro" className="btn-primary" style={{ padding: "8px 20px", fontSize: "13px" }}>{t("nav.register")}</Link>
+              <Link href="/login" className="nav-pill-link" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                <img src="/images/gueguense.svg" alt="Iniciar Sesión" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                <span>{t("nav.login")}</span>
+              </Link>
+              <Link href="/registro" className="btn-primary" style={{ padding: "8px 20px", fontSize: "13px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                <img src="/images/tortuga.svg" alt="Registrarse" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                <span>{t("nav.register")}</span>
+              </Link>
             </>
           )}
         </div>
@@ -410,23 +416,23 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           </div>
 
           <Link href="/" className={`mobile-menu-item ${activePage === "inicio" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <Icon name="home" size={18} /> <span>{lang === "en" ? "Home" : "Inicio"}</span>
+            <img src="/images/home.svg" alt="Inicio" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{lang === "en" ? "Home" : "Inicio"}</span>
           </Link>
           <Link href="/mapa" className={`mobile-menu-item ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <Icon name="map" size={18} /> <span>{t("nav.map")}</span>
+            <img src="/images/ubic.svg" alt="Mapa" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{t("nav.map")}</span>
           </Link>
           <Link href="/departamentos" className={`mobile-menu-item ${activePage === "departamentos" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <Icon name="star" size={18} /> <span>{lang === "en" ? "Ranking" : "Ranking"}</span>
+            <img src="/images/flor.svg" alt="Ranking" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{lang === "en" ? "Ranking" : "Ranking"}</span>
           </Link>
           <Link href="/mas-de-nicaragua" className={`mobile-menu-item ${activePage === "mas-de-nicaragua" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <Icon name="book" size={18} /> <span>{t("nav.moreNicaragua") || (lang === "en" ? "More of Nicaragua" : "Más de Nicaragua")}</span>
+            <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{t("nav.moreNicaragua") || (lang === "en" ? "More of Nicaragua" : "Más de Nicaragua")}</span>
           </Link>
           <Link href="/comunidad" className={`mobile-menu-item ${activePage === "comunidad" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <Icon name="users" size={18} /> <span>{t("social.community")}</span>
+            <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{t("social.community")}</span>
           </Link>
           {session && (
             <Link href="/chat" className={`mobile-menu-item ${activePage === "chat" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-              <Icon name="messageCircle" size={18} /> <span>{t("chat.title")}</span>
+              <img src="/images/comentarios.svg" alt="Mensajes" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{t("chat.title")}</span>
             </Link>
           )}
           {perfil?.rol === "admin" && (
@@ -437,10 +443,10 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           {session ? (
             <>
               <Link href={communityProfileLink} className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                <Icon name="user" size={18} /> <span>{lang === "en" ? "My Profile" : "Mi Perfil"}</span>
+                <Icon name="users" size={18} /> <span>{lang === "en" ? "My Community Profile" : "Mi Perfil Comunidad"}</span>
               </Link>
               <Link href="/perfil" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                <Icon name="compass" size={18} /> <span>{lang === "en" ? "My Tours & Saved" : "Mis Giras"}</span>
+                <Icon name="user" size={18} /> <span>{lang === "en" ? "My Personal Profile" : "Mi Perfil Personal"}</span>
               </Link>
               {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
                 <Link href="/dashboard" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
@@ -459,15 +465,15 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           ) : (
             <>
               <Link href="/login" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                <Icon name="user" size={18} /> <span>{t("nav.login")}</span>
+                <img src="/images/gueguense.svg" alt="Iniciar Sesión" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{t("nav.login")}</span>
               </Link>
               <Link
                 href="/registro"
                 className="mobile-menu-item"
-                style={{ background: "linear-gradient(135deg, #146D9E 0%, #0D496B 100%)", borderColor: "#FFD700", color: "#FFFFFF", justifyContent: "center" }}
+                style={{ background: "linear-gradient(135deg, #146D9E 0%, #0D496B 100%)", borderColor: "#FFD700", color: "#FFFFFF", justifyContent: "center", gap: "8px" }}
                 onClick={() => setMenuOpen(false)}
               >
-                <span>{t("nav.register")}</span>
+                <img src="/images/tortuga.svg" alt="Registrarse" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{t("nav.register")}</span>
               </Link>
             </>
           )}

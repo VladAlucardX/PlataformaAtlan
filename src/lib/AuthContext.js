@@ -1,7 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
+import { useInactivityLogout } from "@/hooks/useInactivityLogout";
 
 const AuthContext = createContext({
   session: null,
@@ -30,7 +31,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await supabase.auth.signOut();
     } catch (err) {
@@ -38,7 +39,15 @@ export function AuthProvider({ children }) {
     }
     setSession(null);
     setPerfil(null);
-  };
+  }, []);
+
+  // Cierre de sesión automático por inactividad (15 minutos)
+  const handleInactivityLogout = useCallback(() => {
+    setSession(null);
+    setPerfil(null);
+  }, []);
+
+  useInactivityLogout(!!session, handleInactivityLogout);
 
   useEffect(() => {
     // 1. Obtener sesión actual al montar
@@ -84,8 +93,18 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
+  const updatePerfil = useCallback((newFields) => {
+    setPerfil((prev) => (prev ? { ...prev, ...newFields } : prev));
+  }, []);
+
+  const refreshProfile = useCallback(async () => {
+    if (session?.user) {
+      await fetchUserProfile(session.user.id);
+    }
+  }, [session]);
+
   return (
-    <AuthContext.Provider value={{ session, perfil, loading, logout }}>
+    <AuthContext.Provider value={{ session, perfil, loading, logout, updatePerfil, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

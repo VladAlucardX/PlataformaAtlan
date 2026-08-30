@@ -22,17 +22,17 @@ const svgIcon = (path, size = 18) => `<svg width="${size}" height="${size}" view
 
 // Configuración de categorías (colores e íconos)
 const CATEGORIAS_CONFIG = {
-  comideria: { color: '#ff6b6b', icon: 'utensils', svg: svgIcon('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>') },
-  restaurante: { color: '#ff9233', icon: 'soup', svg: svgIcon('<path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9z"/><path d="M7 21h10"/>') },
-  artesanal: { color: '#8a2be2', icon: 'palette', svg: svgIcon('<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"/>') },
-  playa: { color: '#00bfff', icon: 'umbrella', svg: svgIcon('<path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7"/>') },
-  familiar: { color: '#4caf50', icon: 'family', svg: svgIcon('<circle cx="8" cy="5" r="3"/><circle cx="16" cy="5" r="3"/><path d="M3 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"/><path d="M13 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"/>') },
-  hotel: { color: '#e040fb', icon: 'hotel', svg: svgIcon('<path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path d="M9 22v-4h6v4"/><rect x="8" y="6" width="3" height="3" rx=".5"/><rect x="13" y="6" width="3" height="3" rx=".5"/>') },
-  hostal: { color: '#9c27b0', icon: 'homeAlt', svg: svgIcon('<path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V10.5z"/><path d="M10 21v-6h4v6"/>') },
-  transporte: { color: '#607d8b', icon: 'car', svg: svgIcon('<path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a1 1 0 0 0-.8.4L1.74 11l-1.58.86a1 1 0 0 0-.16.99V16h3"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/>') },
-  tour: { color: '#009688', icon: 'mountain', svg: svgIcon('<path d="M8 3l4 8 5-5 5 15H2L8 3z"/>') },
-  tienda: { color: '#795548', icon: 'shoppingBag', svg: svgIcon('<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>') },
-  otro: { color: '#ffc107', icon: 'mapPin', svg: svgIcon('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>') }
+  comideria: { color: '#ff6b6b', icon: 'utensils', svgFile: '/images/comideria.svg', svg: svgIcon('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>') },
+  restaurante: { color: '#ff9233', icon: 'soup', svgFile: '/images/restaurante.svg', svg: svgIcon('<path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9z"/><path d="M7 21h10"/>') },
+  artesanal: { color: '#8a2be2', icon: 'palette', svgFile: '/images/arte.svg', svg: svgIcon('<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"/>') },
+  playa: { color: '#00bfff', icon: 'umbrella', svgFile: '/images/playa.svg', svg: svgIcon('<path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7"/>') },
+  familiar: { color: '#4caf50', icon: 'family', svgFile: '/images/comunidad.svg', svg: svgIcon('<circle cx="8" cy="5" r="3"/><circle cx="16" cy="5" r="3"/><path d="M3 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"/><path d="M13 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"/>') },
+  hotel: { color: '#e040fb', icon: 'hotel', svgFile: '/images/hotel.svg', svg: svgIcon('<path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path d="M9 22v-4h6v4"/><rect x="8" y="6" width="3" height="3" rx=".5"/><rect x="13" y="6" width="3" height="3" rx=".5"/>') },
+  hostal: { color: '#9c27b0', icon: 'homeAlt', svgFile: '/images/hostal.svg', svg: svgIcon('<path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V10.5z"/><path d="M10 21v-6h4v6"/>') },
+  transporte: { color: '#607d8b', icon: 'car', svgFile: '/images/transporte.svg', svg: svgIcon('<path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a1 1 0 0 0-.8.4L1.74 11l-1.58.86a1 1 0 0 0-.16.99V16h3"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/>') },
+  tour: { color: '#009688', icon: 'mountain', svgFile: '/images/tour.svg', svg: svgIcon('<path d="M8 3l4 8 5-5 5 15H2L8 3z"/>') },
+  tienda: { color: '#795548', icon: 'shoppingBag', svgFile: '/images/tienda.svg', svg: svgIcon('<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>') },
+  otro: { color: '#ffc107', icon: 'mapPin', svgFile: '/images/ubicacion.svg', svg: svgIcon('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>') }
 };
 
 export default function MapaTuristico() {
@@ -1041,8 +1041,9 @@ export default function MapaTuristico() {
         inner.style.fontSize = '18px';
         inner.style.cursor = 'pointer';
         inner.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
-        inner.style.position = 'relative'; // Asegura contexto de posicionamiento para la insignia
-        inner.innerHTML = config.svg;
+        inner.innerHTML = config.svgFile
+          ? `<img src="${config.svgFile}" alt="${punto.categoria || 'categoria'}" style="width:20px;height:20px;object-fit:contain;filter:brightness(0) invert(1);" />`
+          : config.svg;
 
         // Crear insignia de estado circular en la esquina
         const badge = document.createElement('div');
@@ -2789,7 +2790,7 @@ export default function MapaTuristico() {
               transition: 'all 0.2s ease'
             }}>
               <span style={{ color: '#FFD700', display: 'flex', alignItems: 'center' }}>
-                <Icon name="search" size={20} />
+                <img src="/images/lupa.svg" alt="Buscar" style={{ width: '18px', height: '18px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
               </span>
               <input
                 type="text"
@@ -2894,7 +2895,11 @@ export default function MapaTuristico() {
                           color: catConf.color,
                           flexShrink: 0
                         }}>
-                          <Icon name={catConf.icon} size={18} />
+                          {catConf.svgFile ? (
+                            <img src={catConf.svgFile} alt={catKey} style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                          ) : (
+                            <Icon name={catConf.icon} size={18} />
+                          )}
                         </div>
                         <div>
                           <div style={{ fontSize: '15px', fontWeight: '800', color: '#FFFFFF', lineHeight: '1.2' }}>{p.nombre}</div>
@@ -2935,7 +2940,7 @@ export default function MapaTuristico() {
                 transition: 'all 0.25s ease'
               }}
             >
-              <Icon name="home" size={15} /> <span className="mobile-hide-text">{lang === 'en' ? 'Home' : 'Inicio'}</span>
+              <img src="/images/home.svg" alt="Inicio" style={{ width: '16px', height: '16px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} /> <span className="mobile-hide-text">{lang === 'en' ? 'Home' : 'Inicio'}</span>
             </Link>
 
             <Link
@@ -2955,7 +2960,7 @@ export default function MapaTuristico() {
                 transition: 'all 0.25s ease'
               }}
             >
-              <Icon name="users" size={15} /> <span className="mobile-hide-text">{lang === 'en' ? 'Community' : 'Comunidad'}</span>
+              <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: '16px', height: '16px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} /> <span className="mobile-hide-text">{lang === 'en' ? 'Community' : 'Comunidad'}</span>
             </Link>
 
             <button
@@ -2976,7 +2981,11 @@ export default function MapaTuristico() {
                 transition: 'all 0.25s ease'
               }}
             >
-              <Icon name={isAddingPoint ? "x" : "plus"} size={16} /> {isAddingPoint ? t('common.cancel') : t('map.addPoint')}
+              {isAddingPoint ? (
+                <Icon name="x" size={16} />
+              ) : (
+                <img src="/images/ubicacion.svg" alt="Levantar Punto" style={{ width: '16px', height: '16px', objectFit: 'contain', filter: 'brightness(0)' }} />
+              )} {isAddingPoint ? t('common.cancel') : t('map.addPoint')}
             </button>
             <LanguageToggle variant="pill" />
           </div>
@@ -3134,7 +3143,13 @@ export default function MapaTuristico() {
                     gap: '6px'
                   }}
                 >
-                  <span><Icon name={config.icon} size={16} /></span>
+                  <span>
+                    {config.svgFile ? (
+                      <img src={config.svgFile} alt={key} style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                    ) : (
+                      <Icon name={config.icon} size={16} />
+                    )}
+                  </span>
                   <span>{t(`addPoint.categories.${key}`)}</span>
                 </button>
               );

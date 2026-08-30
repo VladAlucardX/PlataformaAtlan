@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
 
 /**
- * LanguageToggle — Premium animated ES/EN toggle button.
+ * LanguageToggle — Premium animated ES/EN toggle button with remolino.svg.
  *
  * Props:
  *   - variant: 'pill' (default) | 'minimal' | 'icon'
@@ -38,7 +38,7 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
           backdropFilter: 'blur(8px)',
         }}
       >
-        🌐
+        <img src="/images/remolino.svg" alt="Language" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
       </button>
     );
   }
@@ -49,9 +49,10 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
         onClick={toggle}
         className={`btn-ghost ${className}`}
         aria-label="Toggle language"
-        style={{ fontSize: '13px', gap: '4px' }}
+        style={{ fontSize: '13px', gap: '6px', display: 'inline-flex', alignItems: 'center' }}
       >
-        🌐 {lang === 'es' ? 'EN' : 'ES'}
+        <img src="/images/remolino.svg" alt="Language" style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
+        <span>{lang === 'es' ? 'EN' : 'ES'}</span>
       </button>
     );
   }
@@ -67,7 +68,7 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
         display: 'inline-flex',
         alignItems: 'center',
         gap: '8px',
-        padding: '6px 8px 6px 14px',
+        padding: '6px 8px 6px 12px',
         background: '#FFFFFF',
         border: '2px solid rgba(255, 255, 255, 0.9)',
         borderRadius: 'var(--atlan-radius-full)',
@@ -87,7 +88,7 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
       onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)'}
       onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0) scale(1)'}
     >
-      <span style={{ fontSize: '15px' }}>🌐</span>
+      <img src="/images/remolino.svg" alt="Language" style={{ width: '18px', height: '18px', objectFit: 'contain', flexShrink: 0 }} />
       <span
         style={{
           display: 'inline-flex',

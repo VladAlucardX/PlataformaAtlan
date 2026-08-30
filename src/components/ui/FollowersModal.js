@@ -151,7 +151,13 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
                     {user.nombre_completo || "Usuario"}
                   </div>
                   <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>
-                    {user.rol === "dueno" ? <><Icon name="building" size={11} /> Propietario</> : user.rol === "admin" ? <><Icon name="zap" size={11} /> Admin</> : <><Icon name="luggage" size={11} /> Turista</>}
+                    {user.rol === "dueno"
+                      ? <><Icon name="building" size={11} /> Propietario</>
+                      : user.rol === "admin"
+                      ? <><Icon name="zap" size={11} /> Admin</>
+                      : (user.es_premium || user.suscripcion_activa || user.rol === "turista_deacachimba")
+                      ? <><Icon name="star" size={11} /> Turista Deacachimba</>
+                      : <><Icon name="luggage" size={11} /> Turista Tuani</>}
                   </div>
                 </div>
               </Link>
