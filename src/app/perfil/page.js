@@ -566,13 +566,9 @@ export default function PerfilPage() {
               {/* Cabecera Azul Menú (#0A192F) */}
               <div style={{
                 background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
-                padding: "20px 20px 48px",
-                textAlign: "center",
-                color: "#FFFFFF"
+                padding: "36px 20px 44px",
+                textAlign: "center"
               }}>
-                <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "900", color: "#FFD700" }}>
-                  {lang === "en" ? "My Atlan Profile" : "Mi Perfil Atlan"}
-                </h3>
               </div>
 
               {/* Contenido con avatar traslapado */}
