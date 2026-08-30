@@ -280,7 +280,7 @@ export default function PerfilPage() {
     ? (lang === "en" ? "Deacachimba Tourist" : "Turista Deacachimba")
     : (lang === "en" ? "Tuani Tourist" : "Turista Tuani");
 
-  // Paginación helpers
+  // Paginación helpers (4 por página)
   const getPaginatedItems = (items, currentPage) => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -308,32 +308,40 @@ export default function PerfilPage() {
       <span style={{ fontSize: "28px", display: "block", marginBottom: "6px", opacity: 0.7 }}>✨</span>
       <h4 style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "800", color: "#146D9E" }}>Por descubrir</h4>
       <p style={{ margin: "0 0 10px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>Explora el mapa para añadir nuevos destinos</p>
-      <Link href="/mapa" style={{ fontSize: "12px", color: "#17AA4A", fontWeight: "800", textDecoration: "none" }}>
-        Explorar Mapa →
+      <Link href="/mapa" style={{ fontSize: "12px", color: "#17AA4A", fontWeight: "800", textDecoration: "none", display: "flex", alignItems: "center", gap: "6px" }}>
+        <img src="/images/ubic.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain" }} />
+        <span>Explorar Mapa →</span>
       </Link>
     </div>
   );
 
-  // Componente de controles de paginación (1, 2, 3...)
+  // Componente de controles de paginación numerada indexada (1 2 3 4 5...)
   const renderPaginationControls = (totalPages, currentPage, setPage) => {
     if (totalPages <= 1) return null;
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", marginTop: "20px" }}>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", marginTop: "22px" }}>
+        <span style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)", marginRight: "4px" }}>
+          {lang === "en" ? "Page:" : "Página:"}
+        </span>
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
           <button
             key={num}
             onClick={() => setPage(num)}
             style={{
-              padding: "6px 14px",
+              width: "34px",
+              height: "34px",
               borderRadius: "10px",
               border: "none",
-              background: currentPage === num ? "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)" : "rgba(20, 109, 158, 0.08)",
-              color: currentPage === num ? "#FFFFFF" : "#1A1A2E",
-              fontWeight: "800",
-              fontSize: "12.5px",
+              background: currentPage === num ? "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)" : "#FFFFFF",
+              color: currentPage === num ? "#FFFFFF" : "#0A192F",
+              fontWeight: "850",
+              fontSize: "13px",
               cursor: "pointer",
               transition: "all 0.2s",
-              boxShadow: currentPage === num ? "0 4px 10px rgba(23, 170, 74, 0.3)" : "none"
+              boxShadow: currentPage === num ? "0 4px 12px rgba(23, 170, 74, 0.35)" : "0 2px 6px rgba(0,0,0,0.06)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
             }}
           >
             {num}
@@ -466,7 +474,7 @@ export default function PerfilPage() {
               background: "linear-gradient(135deg, rgba(255,215,0,0.20) 0%, rgba(255,215,0,0.05) 100%)",
               display: "flex", alignItems: "center", justifyContent: "center"
             }}>
-              <img src="/images/flor.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain", filter: "brightness(0)" }} />
+              <img src="/images/comentarios.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain", filter: "brightness(0)" }} />
             </div>
             <div>
               <div style={{ fontSize: "22px", fontWeight: "900", color: "#E6C200" }}>{resenas.length}</div>
@@ -808,7 +816,7 @@ export default function PerfilPage() {
                     )}
                   </button>
 
-                  {/* SVG 3: Reseñas (flor.svg) */}
+                  {/* SVG 3: Reseñas (comentarios.svg) */}
                   <button
                     type="button"
                     onClick={() => setActiveTab("resenas")}
@@ -826,7 +834,7 @@ export default function PerfilPage() {
                     title="Reseñas Publicadas"
                   >
                     <img
-                      src="/images/flor.svg"
+                      src="/images/comentarios.svg"
                       alt=""
                       style={{
                         width: "20px",
@@ -880,7 +888,10 @@ export default function PerfilPage() {
                       <div key={res.id} style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "20px", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "150px" }}>
                         <div>
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
-                            <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#1A1A2E" }}>{lugarNombre}</h4>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                              <img src="/images/edificio.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
+                              <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#1A1A2E" }}>{lugarNombre}</h4>
+                            </div>
                             <span style={{ fontSize: "10px", fontWeight: "900", padding: "3px 8px", borderRadius: "6px", background: estadoStyles.bg, color: estadoStyles.text, border: `1px solid ${estadoStyles.border}`, textTransform: "uppercase" }}>
                               {t(`reservations.status.${res.estado_reserva}`) || res.estado_reserva}
                             </span>
@@ -907,7 +918,7 @@ export default function PerfilPage() {
               </div>
             )}
 
-            {/* VISTA 2: MIS DESTINOS GUARDADOS */}
+            {/* VISTA 2: MIS DESTINOS GUARDADOS (con ubic.svg en el botón Ver en mapa) */}
             {activeTab === "destinos" && (
               <div className="tab-content-anim">
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
@@ -926,8 +937,25 @@ export default function PerfilPage() {
                             {t(`addPoint.categories.${punto.categoria || 'otro'}`)}
                           </span>
                         </div>
-                        <Link href={`/mapa?id=${punto.id}`} style={{ marginTop: "16px", display: "block", textAlign: "center", padding: "9px", background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: "white", borderRadius: "10px", fontWeight: "800", fontSize: "12px", textDecoration: "none" }}>
-                          🗺️ {lang === "en" ? "View on Map" : "Ver en Mapa"}
+                        <Link 
+                          href={`/mapa?id=${punto.id}`} 
+                          style={{ 
+                            marginTop: "16px", 
+                            display: "flex", 
+                            alignItems: "center", 
+                            justifyContent: "center", 
+                            gap: "8px", 
+                            padding: "9px", 
+                            background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", 
+                            color: "white", 
+                            borderRadius: "10px", 
+                            fontWeight: "800", 
+                            fontSize: "12px", 
+                            textDecoration: "none" 
+                          }}
+                        >
+                          <img src="/images/ubic.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                          <span>{lang === "en" ? "View on Map" : "Ver en Mapa"}</span>
                         </Link>
                       </div>
                     );
@@ -943,7 +971,7 @@ export default function PerfilPage() {
               </div>
             )}
 
-            {/* VISTA 3: RESEÑAS PUBLICADAS */}
+            {/* VISTA 3: RESEÑAS PUBLICADAS (con comentarios.svg en la tarjeta) */}
             {activeTab === "resenas" && (
               <div className="tab-content-anim">
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
@@ -951,8 +979,13 @@ export default function PerfilPage() {
                     const destinoNombre = rev.negocios?.nombre || rev.puntos?.nombre || (lang === "en" ? "Local Destination" : "Destino");
                     return (
                       <div key={rev.id} style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "20px", minHeight: "150px" }}>
-                        <h4 style={{ margin: "0 0 6px", fontSize: "15px", fontWeight: "800", color: "#1A1A2E" }}>{destinoNombre}</h4>
-                        <div style={{ color: "#FFD700", fontSize: "14px", marginBottom: "8px" }}>{"★".repeat(rev.calificacion || 5)}</div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <img src="/images/comentarios.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0)" }} />
+                            <h4 style={{ margin: 0, fontSize: "15px", fontWeight: "800", color: "#1A1A2E" }}>{destinoNombre}</h4>
+                          </div>
+                          <div style={{ color: "#FFD700", fontSize: "13px", fontWeight: "800" }}>{"★".repeat(rev.calificacion || 5)}</div>
+                        </div>
                         <p style={{ margin: 0, fontSize: "13px", color: "#4A5568", lineHeight: "1.5" }}>"{rev.comentario}"</p>
                       </div>
                     );
