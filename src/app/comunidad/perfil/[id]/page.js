@@ -317,7 +317,8 @@ const sidebarStyles = {
   profileCard: { background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)", borderRadius: "24px", overflow: "hidden" },
   profileBanner: { height: "60px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)" },
   loginCard: { background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)", borderRadius: "24px", padding: "24px", textAlign: "center" },
-  sectionCard: { background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)", borderRadius: "24px", padding: "20px" },
+  sectionCard: { background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)", borderRadius: "24px", overflow: "hidden", padding: "0 0 16px 0" },
+  cardHeaderBanner: { padding: "12px 18px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)", color: "#FFFFFF", fontSize: "14px", fontWeight: "800", display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" },
   sectionTitle: { margin: "0 0 14px", fontSize: "15px", fontWeight: "800", color: "var(--atlan-text-primary)", display: "flex", alignItems: "center", gap: "6px" },
   userCard: { display: "flex", alignItems: "center", gap: "10px", padding: "8px 0", borderBottom: "1px solid rgba(20,109,158,0.06)" },
   followBtn: { padding: "6px 14px", border: "none", borderRadius: "20px", fontSize: "12px", fontWeight: "800", cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s" },
@@ -578,12 +579,14 @@ export default function PerfilPublico() {
           )}
 
           <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
-            <h4 style={sidebarStyles.sectionTitle}>
-              <Icon name="map" size={14} /> Explorar
-            </h4>
-            <Link href="/mapa" style={sidebarStyles.exploreLink}>
-              <img src="/images/mapa.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> Mapa Turístico
-            </Link>
+            <div style={sidebarStyles.cardHeaderBanner}>
+              <Icon name="map" size={16} /> Explorar
+            </div>
+            <div style={{ padding: "0 16px" }}>
+              <Link href="/mapa" style={sidebarStyles.exploreLink}>
+                <img src="/images/mapa.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> Mapa Turístico
+              </Link>
+            </div>
           </div>
         </aside>
 
@@ -644,25 +647,29 @@ export default function PerfilPublico() {
         {/* ── SIDEBAR RIGHT ── */}
         <aside className="hide-mobile community-sidebar">
           <div style={sidebarStyles.sectionCard}>
-            <h4 style={sidebarStyles.sectionTitle}>
-              <Icon name="search" size={14} /> Buscar
-            </h4>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar personas..."
-              style={{ width: "100%", padding: "10px 14px", background: "rgba(20, 109, 158, 0.04)", border: "1px solid rgba(20, 109, 158, 0.10)", borderRadius: "12px", fontSize: "13px", outline: "none" }}
-            />
+            <div style={sidebarStyles.cardHeaderBanner}>
+              <Icon name="search" size={16} /> Buscar
+            </div>
+            <div style={{ padding: "0 16px" }}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar personas..."
+                style={{ width: "100%", padding: "10px 14px", background: "rgba(20, 109, 158, 0.04)", border: "1px solid rgba(20, 109, 158, 0.10)", borderRadius: "12px", fontSize: "13px", outline: "none" }}
+              />
+            </div>
           </div>
 
           <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
-            <h4 style={sidebarStyles.sectionTitle}>
-              <Icon name="sparkles" size={14} /> Personas sugeridas
-            </h4>
-            {suggestedUsers.map((u) => (
-              <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
-            ))}
+            <div style={sidebarStyles.cardHeaderBanner}>
+              <Icon name="sparkles" size={16} /> Personas sugeridas
+            </div>
+            <div style={{ padding: "0 16px" }}>
+              {suggestedUsers.map((u) => (
+                <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
+              ))}
+            </div>
           </div>
         </aside>
 

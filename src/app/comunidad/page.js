@@ -906,17 +906,19 @@ export default function ComunidadPage() {
 
           {/* Sección Explorar debajo del Perfil */}
           <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
-            <h4 style={sidebarStyles.sectionTitle}>
-              <Icon name="map" size={14} /> {lang === "en" ? "Explore" : "Explorar"}
-            </h4>
-            <Link href="/mapa" style={sidebarStyles.exploreLink}>
-              <img src="/images/mapa.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Tourist Map" : "Mapa Turístico"}
-            </Link>
-            {session && (perfil?.rol === "dueno" || perfil?.rol === "admin") && (
-              <Link href="/dashboard" style={sidebarStyles.exploreLink}>
-                <Icon name="briefcase" size={14} /> {lang === "en" ? "My Business" : "Mi Negocio"}
+            <div style={sidebarStyles.cardHeaderBanner}>
+              <Icon name="map" size={16} /> {lang === "en" ? "Explore" : "Explorar"}
+            </div>
+            <div style={{ padding: "0 16px" }}>
+              <Link href="/mapa" style={sidebarStyles.exploreLink}>
+                <img src="/images/mapa.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Tourist Map" : "Mapa Turístico"}
               </Link>
-            )}
+              {session && (perfil?.rol === "dueno" || perfil?.rol === "admin") && (
+                <Link href="/dashboard" style={sidebarStyles.exploreLink}>
+                  <Icon name="briefcase" size={14} /> {lang === "en" ? "My Business" : "Mi Negocio"}
+                </Link>
+              )}
+            </div>
           </div>
         </aside>
 
@@ -1022,64 +1024,65 @@ export default function ComunidadPage() {
         <aside style={pageStyles.sidebarRight} className="hide-mobile community-sidebar">
           {/* Buscador */}
           <div style={sidebarStyles.sectionCard}>
-            <h4 style={sidebarStyles.sectionTitle}>
-              <Icon name="search" size={14} /> {lang === "en" ? "Search" : "Buscar"}
-            </h4>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("social.searchPlaceholder")}
-              style={{
-                width: "100%",
-                padding: "10px 14px",
-                background: "rgba(20, 109, 158, 0.04)",
-                border: "1px solid rgba(20, 109, 158, 0.10)",
-                borderRadius: "12px",
-                color: "var(--atlan-text-primary)",
-                fontSize: "13px",
-                outline: "none",
-                boxSizing: "border-box"
-              }}
-            />
+            <div style={sidebarStyles.cardHeaderBanner}>
+              <Icon name="search" size={16} /> {lang === "en" ? "Search" : "Buscar"}
+            </div>
+            <div style={{ padding: "0 16px" }}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t("social.searchPlaceholder")}
+                style={{
+                  width: "100%",
+                  padding: "10px 14px",
+                  background: "rgba(20, 109, 158, 0.04)",
+                  border: "1px solid rgba(20, 109, 158, 0.10)",
+                  borderRadius: "12px",
+                  color: "var(--atlan-text-primary)",
+                  fontSize: "13px",
+                  outline: "none",
+                  boxSizing: "border-box"
+                }}
+              />
+            </div>
           </div>
 
           <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
-            {searchQuery.trim() ? (
-              <>
-                <h4 style={sidebarStyles.sectionTitle}>
-                  <Icon name="users" size={14} /> {lang === "en" ? "Search Results" : "Resultados"}
-                </h4>
-                {searching ? (
-                  <div style={{ padding: "12px", textAlign: "center" }}>
-                    <div style={{ width: "20px", height: "20px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
-                  </div>
-                ) : searchResults.length === 0 ? (
-                  <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
-                    {t("social.noResults")}
-                  </p>
-                ) : (
-                  searchResults.map((u) => (
-                    <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
-                  ))
-                )}
-              </>
-            ) : (
-              <>
-                <h4 style={sidebarStyles.sectionTitle}>
-                  <Icon name="sparkles" size={14} /> {lang === "en" ? "Suggested People" : "Personas sugeridas"}
-                </h4>
-                {suggestedUsers.length === 0 ? (
-                  <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
-                    {lang === "en" ? "No suggestions" : "Sin sugerencias"}
-                  </p>
-                ) : (
-                  suggestedUsers.map((u) => (
-                    <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
-                  ))
-                )}
-              </>
-            )}
+            <div style={sidebarStyles.cardHeaderBanner}>
+              <Icon name="sparkles" size={16} /> {lang === "en" ? "Suggested People" : "Personas sugeridas"}
+            </div>
+            <div style={{ padding: "0 16px" }}>
+              {searchQuery.trim() ? (
+                <>
+                  {searching ? (
+                    <div style={{ padding: "12px", textAlign: "center" }}>
+                      <div style={{ width: "20px", height: "20px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                    </div>
+                  ) : searchResults.length === 0 ? (
+                    <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
+                      {t("social.noResults")}
+                    </p>
+                  ) : (
+                    searchResults.map((u) => (
+                      <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
+                    ))
+                  )}
+                </>
+              ) : (
+                <>
+                  {suggestedUsers.length === 0 ? (
+                    <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
+                      {lang === "en" ? "No suggestions" : "Sin sugerencias"}
+                    </p>
+                  ) : (
+                    suggestedUsers.map((u) => (
+                      <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
+                    ))
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </aside>
       </div>
@@ -1393,7 +1396,12 @@ const sidebarStyles = {
   sectionCard: {
     background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
     boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
-    borderRadius: "24px", padding: "20px",
+    borderRadius: "24px", overflow: "hidden", padding: "0 0 16px 0",
+  },
+  cardHeaderBanner: {
+    padding: "12px 18px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
+    color: "#FFFFFF", fontSize: "14px", fontWeight: "800", display: "flex",
+    alignItems: "center", gap: "8px", marginBottom: "14px",
   },
   sectionTitle: {
     margin: "0 0 14px", fontSize: "15px", fontWeight: "800",
