@@ -44,7 +44,7 @@ const sidebarStyles = {
     borderRadius: "24px", overflow: "hidden",
   },
   profileBanner: {
-    height: "60px", background: "linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(23, 170, 74, 0.12) 100%)",
+    height: "60px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
   },
   loginCard: {
     background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
