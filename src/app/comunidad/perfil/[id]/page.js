@@ -12,8 +12,7 @@ import FollowersModal from "@/components/ui/FollowersModal";
 import ImageViewerModal from "@/components/ui/ImageViewerModal";
 import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
-
-// Perfil público de comunidad
+import { getProfileSlug } from "@/lib/profileUtils";
 
 function timeAgo(dateStr, lang) {
   const now = new Date();
@@ -34,22 +33,124 @@ function avatarStyle(url, size) {
     display: "flex", alignItems: "center", justifyContent: "center",
     fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#FFFFFF",
     background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #FFD700 0%, #FFDF33 100%)",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
   };
 }
 
-import { getProfileSlug } from "@/lib/profileUtils";
+const sidebarStyles = {
+  profileCard: {
+    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
+    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
+    borderRadius: "24px", overflow: "hidden",
+  },
+  profileBanner: {
+    height: "60px", background: "linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(23, 170, 74, 0.12) 100%)",
+  },
+  loginCard: {
+    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
+    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
+    borderRadius: "24px", padding: "24px", textAlign: "center",
+  },
+  sectionCard: {
+    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
+    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
+    borderRadius: "24px", padding: "20px",
+  },
+  sectionTitle: {
+    margin: "0 0 14px", fontSize: "15px", fontWeight: "800",
+    color: "var(--atlan-text-primary)", display: "flex", alignItems: "center", gap: "6px"
+  },
+  userCard: {
+    display: "flex", alignItems: "center", gap: "10px", padding: "8px 0",
+    borderBottom: "1px solid rgba(20,109,158,0.06)",
+  },
+  followBtn: {
+    padding: "6px 14px", border: "none", borderRadius: "20px",
+    fontSize: "12px", fontWeight: "800", cursor: "pointer", whiteSpace: "nowrap",
+    transition: "all 0.2s",
+  },
+  exploreLink: {
+    display: "flex", alignItems: "center", gap: "8px", padding: "10px 12px",
+    color: "var(--atlan-text-secondary)", textDecoration: "none", fontSize: "13px",
+    fontWeight: "600", borderRadius: "10px", transition: "all 0.2s",
+    marginBottom: "4px",
+  },
+};
+
+function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChange }) {
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!session) return;
+    supabase.from("seguimientos")
+      .select("id")
+      .eq("seguidor_id", session.user.id)
+      .eq("seguido_id", user.id)
+      .maybeSingle()
+      .then(({ data }) => { if (data) setIsFollowing(true); });
+  }, [session, user.id]);
+
+  const handleFollow = async () => {
+    if (!session) { onRequireLogin(); return; }
+    setLoading(true);
+    try {
+      if (isFollowing) {
+        await supabase.from("seguimientos").delete().eq("seguidor_id", session.user.id).eq("seguido_id", user.id);
+        setIsFollowing(false);
+      } else {
+        await supabase.from("seguimientos").insert({ seguidor_id: session.user.id, seguido_id: user.id });
+        setIsFollowing(true);
+      }
+      if (onFollowChange) onFollowChange();
+    } catch (err) { console.error("Follow error:", err); }
+    finally { setLoading(false); }
+  };
+
+  if (session?.user?.id === user.id) return null;
+
+  return (
+    <div style={sidebarStyles.userCard}>
+      <Link href={`/comunidad/perfil/${user.id}`} style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", flex: 1, minWidth: 0 }}>
+        <div style={avatarStyle(user.avatar_url, 38)}>
+          {!user.avatar_url && (user.nombre_completo?.[0]?.toUpperCase() || "U")}
+        </div>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontWeight: "700", fontSize: "13px", color: "var(--atlan-text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {user.nombre_completo || "Usuario"}
+          </div>
+          <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>
+            {user.rol === "dueno"
+              ? <><Icon name="building" size={11} /> Propietario</>
+              : (user.es_premium || user.suscripcion_activa || user.rol === "turista_deacachimba")
+              ? <><Icon name="star" size={11} /> Turista Deacachimba</>
+              : <><Icon name="luggage" size={11} /> Turista Tuani</>}
+          </div>
+        </div>
+      </Link>
+      <button
+        onClick={handleFollow}
+        disabled={loading}
+        style={{
+          ...sidebarStyles.followBtn,
+          background: isFollowing ? "rgba(20,109,158,0.06)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
+          color: isFollowing ? "var(--atlan-text-secondary)" : "white",
+        }}
+      >
+        {isFollowing ? (lang === "en" ? "Following" : "Siguiendo") : (lang === "en" ? "Follow" : "Seguir")}
+      </button>
+    </div>
+  );
+}
 
 export default function PerfilPublico() {
   const { t, lang } = useTranslation();
   const params = useParams();
   const rawUserId = params.id;
 
-  // Sesión centralizada desde AuthContext
   const { session, perfil: myPerfil, updatePerfil } = useAuth();
 
   const [targetPerfil, setTargetPerfil] = useState(null);
-
   const userId = targetPerfil?.id || rawUserId;
 
   const [posts, setPosts] = useState([]);
@@ -57,7 +158,7 @@ export default function PerfilPublico() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isMutualFollow, setIsMutualFollow] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
-  const [negocio, setNegocio] = useState(null);
+  const [likedPosts, setLikedPosts] = useState(new Set());
 
   // Edit bio & profile modal
   const [editingBio, setEditingBio] = useState(false);
@@ -67,170 +168,140 @@ export default function PerfilPublico() {
   const [editBio, setEditBio] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
 
-  const handleSaveProfileModal = async (e) => {
-    e.preventDefault();
-    if (!session || !userId) return;
-    setSavingProfile(true);
-    try {
-      const { error } = await supabase
-        .from("perfiles")
-        .update({
-          nombre_completo: editNombre.trim(),
-          bio: editBio.trim(),
-        })
-        .eq("id", userId);
-
-      if (error) throw error;
-
-      setTargetPerfil((prev) => ({
-        ...prev,
-        nombre_completo: editNombre.trim(),
-        bio: editBio.trim(),
-      }));
-      if (updatePerfil) {
-        updatePerfil({
-          nombre_completo: editNombre.trim(),
-          bio: editBio.trim(),
-        });
-      }
-      setIsEditingProfile(false);
-    } catch (err) {
-      console.error("Error updating profile:", err);
-      alert(lang === "en" ? "Failed to update profile" : "Error al actualizar el perfil");
-    } finally {
-      setSavingProfile(false);
-    }
-  };
-
-  // Post interactions
-  const [likedPosts, setLikedPosts] = useState(new Set());
-  const [showLoginModal, setShowLoginModal] = useState(false);
-
   // Avatar upload
+  const avatarInputRef = useRef(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarHover, setAvatarHover] = useState(false);
-  const avatarInputRef = useRef(null);
 
-  // Followers/Following modal
+  // Modals & Search
+  const [viewerPost, setViewerPost] = useState(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [showFollowersModal, setShowFollowersModal] = useState(false);
   const [followersModalTab, setFollowersModalTab] = useState("followers");
+  const [suggestedUsers, setSuggestedUsers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState(false);
 
-  // Image viewer modal
-  const [viewerPost, setViewerPost] = useState(null);
+  const fetchSuggestedUsers = useCallback(async () => {
+    try {
+      let query = supabase.from("perfiles").select("id, nombre_completo, avatar_url, rol, seguidores_count").limit(6);
+      if (session?.user) {
+        query = query.neq("id", session.user.id);
+      }
+      const { data } = await query;
+      setSuggestedUsers(data || []);
+    } catch (err) { console.error("Error fetching suggested users:", err); }
+  }, [session]);
+
+  useEffect(() => {
+    fetchSuggestedUsers();
+  }, [fetchSuggestedUsers]);
+
+  // Load target profile & posts
+  useEffect(() => {
+    let isMounted = true;
+    async function loadData() {
+      setLoading(true);
+      try {
+        let pData = null;
+        let isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawUserId);
+
+        if (isUuid) {
+          const { data } = await supabase.from("perfiles").select("*").eq("id", rawUserId).maybeSingle();
+          pData = data;
+        } else {
+          const slugLower = rawUserId.toLowerCase().replace(/[^a-z0-9]/g, "");
+          const { data: allP } = await supabase.from("perfiles").select("*");
+          if (allP) {
+            pData = allP.find(p => {
+              const nameSlug = (p.nombre_completo || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+              const emailSlug = (p.email || "").split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "");
+              return nameSlug === slugLower || emailSlug === slugLower;
+            }) || null;
+          }
+        }
+
+        if (!pData) {
+          if (isMounted) setLoading(false);
+          return;
+        }
+
+        if (isMounted) setTargetPerfil(pData);
+
+        // Fetch posts
+        const { data: postsData } = await supabase
+          .from("publicaciones")
+          .select("*, perfiles(id, nombre_completo, avatar_url, rol)")
+          .eq("autor_id", pData.id)
+          .order("created_at", { ascending: false });
+
+        if (isMounted) setPosts(postsData || []);
+
+        // Follow status
+        if (session && session.user.id !== pData.id) {
+          const { data: followData } = await supabase
+            .from("seguimientos")
+            .select("id")
+            .eq("seguidor_id", session.user.id)
+            .eq("seguido_id", pData.id)
+            .maybeSingle();
+
+          if (isMounted) setIsFollowing(!!followData);
+
+          const { data: reverseFollow } = await supabase
+            .from("seguimientos")
+            .select("id")
+            .eq("seguidor_id", pData.id)
+            .eq("seguido_id", session.user.id)
+            .maybeSingle();
+
+          if (isMounted) setIsMutualFollow(!!followData && !!reverseFollow);
+        }
+      } catch (err) {
+        console.error("Error loading profile:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    loadData();
+    return () => { isMounted = false; };
+  }, [rawUserId, session]);
 
   const handleAvatarChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const file = e.target.files?.[0];
+    if (!file || !session || !targetPerfil) return;
     setAvatarUploading(true);
     try {
-      const publicUrl = await uploadMedia(file, "avatars");
-      const { error } = await supabase
-        .from("perfiles")
-        .update({ avatar_url: publicUrl })
-        .eq("id", session.user.id);
+      const url = await uploadMedia(file, "avatars");
+      const { error } = await supabase.from("perfiles").update({ avatar_url: url }).eq("id", targetPerfil.id);
       if (error) throw error;
-
-      setTargetPerfil((p) => ({ ...p, avatar_url: publicUrl }));
-      if (updatePerfil) updatePerfil({ avatar_url: publicUrl });
+      setTargetPerfil(prev => ({ ...prev, avatar_url: url }));
+      if (updatePerfil) updatePerfil({ avatar_url: url });
     } catch (err) {
-      console.error("Error updating avatar:", err);
-      alert(lang === "en" ? "Failed to upload profile picture" : "Error al subir la foto de perfil");
+      console.error(err);
+      alert(lang === "en" ? "Failed to upload avatar" : "Error al subir la imagen");
     } finally {
       setAvatarUploading(false);
     }
   };
-
-
-
-  // Fetch target profile
-  useEffect(() => {
-    if (!rawUserId) return;
-    const fetchProfile = async () => {
-      setLoading(true);
-      try {
-        let profile = null;
-
-        // 1. Intentar por UUID directo
-        if (rawUserId.length === 36 && rawUserId.includes("-")) {
-          const { data } = await supabase.from("perfiles").select("*").eq("id", rawUserId).maybeSingle();
-          profile = data;
-        }
-
-        // 2. Si no se halló por UUID o se pasó un slug de nombre de usuario
-        if (!profile) {
-          const { data: allProfiles } = await supabase.from("perfiles").select("*");
-          if (allProfiles) {
-            profile = allProfiles.find(p => getProfileSlug(p) === rawUserId.toLowerCase()) || allProfiles.find(p => p.id === rawUserId);
-          }
-        }
-
-        setTargetPerfil(profile);
-        setBioText(profile?.bio || "");
-
-        const targetId = profile ? profile.id : rawUserId;
-
-        // Posts
-        const { data: userPosts } = await supabase.from("publicaciones")
-          .select("*, perfiles(id, nombre_completo, avatar_url, rol)")
-          .eq("autor_id", targetId)
-          .order("created_at", { ascending: false });
-        setPosts(userPosts || []);
-
-        // Business (if owner)
-        if (profile?.rol === "dueno") {
-          const { data: biz } = await supabase.from("negocios").select("id, nombre").eq("propietario_id", targetId).eq("activo", true).maybeSingle();
-          setNegocio(biz);
-        }
-
-        // Check follow status
-        if (session?.user) {
-          const { data: follow } = await supabase.from("seguimientos")
-            .select("id").eq("seguidor_id", session.user.id).eq("seguido_id", targetId).maybeSingle();
-          if (follow) setIsFollowing(true);
-
-          // Check mutual follow for chat
-          const { data: isMutual } = await supabase.rpc("verificar_seguimiento_mutuo", { uid_a: session.user.id, uid_b: targetId });
-          setIsMutualFollow(!!isMutual);
-        }
-
-        // Check liked posts
-        if (session?.user && userPosts?.length) {
-          const { data: likes } = await supabase.from("likes_social")
-            .select("publicacion_id")
-            .eq("usuario_id", session.user.id)
-            .in("publicacion_id", userPosts.map(p => p.id));
-          if (likes) setLikedPosts(new Set(likes.map(l => l.publicacion_id)));
-        }
-      } catch (err) { console.error(err); }
-      finally { setLoading(false); }
-    };
-    fetchProfile();
-  }, [rawUserId, session]);
 
   const handleFollow = async () => {
     if (!session) { setShowLoginModal(true); return; }
     setFollowLoading(true);
     try {
       if (isFollowing) {
-        await supabase.from("seguimientos").delete().eq("seguidor_id", session.user.id).eq("seguido_id", userId);
+        await supabase.from("seguimientos").delete().eq("seguidor_id", session.user.id).eq("seguido_id", targetPerfil.id);
         setIsFollowing(false);
-        setTargetPerfil(p => ({ ...p, seguidores_count: Math.max((p.seguidores_count || 1) - 1, 0) }));
+        setIsMutualFollow(false);
+        setTargetPerfil(prev => ({ ...prev, seguidores_count: Math.max((prev.seguidores_count || 1) - 1, 0) }));
       } else {
-        await supabase.from("seguimientos").insert({ seguidor_id: session.user.id, seguido_id: userId });
+        await supabase.from("seguimientos").insert({ seguidor_id: session.user.id, seguido_id: targetPerfil.id });
         setIsFollowing(true);
-        setTargetPerfil(p => ({ ...p, seguidores_count: (p.seguidores_count || 0) + 1 }));
+        setTargetPerfil(prev => ({ ...prev, seguidores_count: (prev.seguidores_count || 0) + 1 }));
       }
     } catch (err) { console.error(err); }
     finally { setFollowLoading(false); }
-  };
-
-  const handleSaveBio = async () => {
-    if (!session || session.user.id !== userId) return;
-    try {
-      await supabase.from("perfiles").update({ bio: bioText.trim() }).eq("id", userId);
-      setTargetPerfil(p => ({ ...p, bio: bioText.trim() }));
-      setEditingBio(false);
-    } catch (err) { console.error(err); }
   };
 
   const handleLikePost = async (postId) => {
@@ -258,23 +329,36 @@ export default function PerfilPublico() {
     } catch (err) { console.error(err); }
   };
 
+  const handleSaveProfileModal = async (e) => {
+    e.preventDefault();
+    if (!session || !userId) return;
+    setSavingProfile(true);
+    try {
+      const { error } = await supabase.from("perfiles").update({ nombre_completo: editNombre.trim(), bio: editBio.trim() }).eq("id", userId);
+      if (error) throw error;
+      setTargetPerfil(prev => ({ ...prev, nombre_completo: editNombre.trim(), bio: editBio.trim() }));
+      if (updatePerfil) updatePerfil({ nombre_completo: editNombre.trim(), bio: editBio.trim() });
+      setIsEditingProfile(false);
+    } catch (err) {
+      console.error(err);
+      alert(lang === "en" ? "Failed to update profile" : "Error al actualizar perfil");
+    } finally { setSavingProfile(false); }
+  };
+
   const isOwnProfile = session?.user?.id === userId;
   const isAdmin = myPerfil?.rol === "admin";
 
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "var(--atlan-bg-primary)", color: "#1A1A2E" }}>
-        <div style={{ textAlign: "center" }}>
-          <div style={{ width: "40px", height: "40px", border: "3px solid rgba(20, 109, 158, 0.12)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
-          <p style={{ fontSize: "14px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Loading profile..." : "Cargando perfil..."}</p>
-        </div>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "var(--atlan-bg-primary)" }}>
+        <div style={{ width: "40px", height: "40px", border: "3px solid rgba(20, 109, 158, 0.12)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
       </div>
     );
   }
 
   if (!targetPerfil) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "var(--atlan-bg-primary)", color: "#1A1A2E" }}>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "var(--atlan-bg-primary)" }}>
         <div style={{ textAlign: "center" }}>
           <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}><Icon name="search" size={48} /></span>
           <h3 style={{ margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>{lang === "en" ? "User not found" : "Usuario no encontrado"}</h3>
@@ -285,434 +369,151 @@ export default function PerfilPublico() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
-      {/* Nav */}
+    <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif", position: "relative", overflow: "hidden" }}>
+      {/* SVGs */}
+      <img src="/images/tortuga.svg" alt="" style={{ position: "fixed", bottom: "-10px", left: "-10px", width: "360px", maxHeight: "360px", objectFit: "contain", opacity: 0.18, pointerEvents: "none", zIndex: 0 }} />
+      <img src="/images/machoraton.svg" alt="" style={{ position: "fixed", top: "80px", right: "10px", width: "340px", height: "calc(100vh - 90px)", objectFit: "contain", opacity: 0.16, pointerEvents: "none", zIndex: 0 }} />
+
       <Navbar activePage="comunidad" session={session} perfil={myPerfil} />
 
-      {/* Profile Header Container */}
-      <div style={{ maxWidth: "680px", margin: "0 auto", padding: "90px 16px 40px 16px" }}>
-        {/* Banner suave redondeado */}
-        <div style={{ height: "100px", background: "linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(23, 170, 74, 0.10) 100%)", borderRadius: "24px", border: "1px solid rgba(20, 109, 158, 0.12)", position: "relative" }} />
+      {/* Main 3-Column Layout */}
+      <div className="community-main-layout" style={{ maxWidth: "1320px", margin: "0 auto", padding: "95px 24px 40px 24px", position: "relative", zIndex: 1 }}>
 
-        {/* Profile Info */}
-        <div style={{ display: "flex", alignItems: "flex-end", gap: "20px", marginTop: "-44px", padding: "0 16px", flexWrap: "wrap" }}>
-          {isOwnProfile && (
-            <input 
-              type="file" 
-              ref={avatarInputRef} 
-              accept="image/*" 
-              onChange={handleAvatarChange} 
-              style={{ display: "none" }} 
-            />
-          )}
-          <div 
-            onClick={() => isOwnProfile && !avatarUploading && avatarInputRef.current?.click()}
-            onMouseEnter={() => isOwnProfile && setAvatarHover(true)}
-            onMouseLeave={() => isOwnProfile && setAvatarHover(false)}
-            style={{ 
-              ...avatarStyle(targetPerfil.avatar_url, 88), 
-              border: "4px solid var(--atlan-bg-primary)",
-              position: "relative",
-              cursor: isOwnProfile ? "pointer" : "default",
-              overflow: "hidden"
-            }}
-            title={isOwnProfile ? (lang === "en" ? "Change profile picture" : "Cambiar foto de perfil") : undefined}
-          >
-            {avatarUploading ? (
-              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", color: "#1A1A2E", fontSize: "11px", fontWeight: "bold" }}>
-                ⏳
-              </div>
-            ) : (
-              <>
-                {!targetPerfil.avatar_url && (targetPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
-                {isOwnProfile && (
-                  <div style={{
-                    position: "absolute",
-                    inset: 0,
-                    background: "rgba(0,0,0,0.4)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    opacity: avatarHover ? 1 : 0,
-                    transition: "opacity 0.2s",
-                    color: "#1A1A2E",
-                    fontSize: "20px"
-                  }}>
-                    📷
+        {/* ── SIDEBAR LEFT ── */}
+        <aside className="hide-mobile community-sidebar">
+          {session && myPerfil ? (
+            <div style={sidebarStyles.profileCard}>
+              <div style={sidebarStyles.profileBanner} />
+              <div style={{ padding: "0 20px 20px", marginTop: "-32px", textAlign: "center" }}>
+                <Link href={`/comunidad/perfil/${getProfileSlug(myPerfil) || session.user.id}`} style={{ textDecoration: "none" }}>
+                  <div style={{ ...avatarStyle(myPerfil.avatar_url, 64), margin: "0 auto 8px", border: "3px solid var(--atlan-bg-primary)" }}>
+                    {!myPerfil.avatar_url && (myPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
                   </div>
-                )}
-              </>
-            )}
-          </div>
-          <div style={{ flex: 1, minWidth: "200px", paddingBottom: "4px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-              <h1 style={{ margin: 0, fontSize: "24px", fontWeight: "900", color: "var(--atlan-text-primary)" }}>
-                {targetPerfil.nombre_completo || "Usuario"}
-              </h1>
-              <span style={{
-                fontSize: "11px", fontWeight: "800", padding: "3px 10px", borderRadius: "20px",
-                background: targetPerfil.rol === "dueno" ? "rgba(255, 215, 0,0.12)" : "rgba(23, 170, 74,0.12)",
-                color: targetPerfil.rol === "dueno" ? "#FFD700" : "#17AA4A",
-                border: `1px solid ${targetPerfil.rol === "dueno" ? "rgba(255, 215, 0,0.25)" : "rgba(23, 170, 74,0.25)"}`,
-                textTransform: "uppercase",
-              }}>
-                {targetPerfil.rol === "dueno" ? (
-                  <><Icon name="building" size={12} /> Propietario</>
-                ) : targetPerfil.rol === "admin" ? (
-                  <><Icon name="zap" size={12} /> Admin</>
-                ) : (targetPerfil.es_premium || targetPerfil.suscripcion_activa || targetPerfil.rol === "turista_deacachimba") ? (
-                  <><Icon name="star" size={12} /> Turista Deacachimba</>
-                ) : (
-                  <><Icon name="luggage" size={12} /> Turista Tuani</>
-                )}
-              </span>
-            </div>
-          </div>
-
-          {/* Follow / Chat / Edit buttons */}
-          {isOwnProfile ? (
-            <button
-              onClick={() => {
-                setEditNombre(targetPerfil.nombre_completo || "");
-                setEditBio(targetPerfil.bio || "");
-                setIsEditingProfile(true);
-              }}
-              style={{
-                padding: "10px 20px",
-                borderRadius: "12px",
-                fontSize: "13.5px",
-                fontWeight: "800",
-                cursor: "pointer",
-                border: "1px solid rgba(20, 109, 158, 0.2)",
-                background: "rgba(20, 109, 158, 0.08)",
-                color: "#146D9E",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                transition: "all 0.2s",
-              }}
-            >
-              ✏️ {lang === "en" ? "Edit Profile" : "Editar Perfil"}
-            </button>
-          ) : (
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              <button onClick={handleFollow} disabled={followLoading} style={{
-                padding: "10px 24px", borderRadius: "12px", fontSize: "14px", fontWeight: "800",
-                cursor: "pointer", transition: "all 0.2s", border: "none",
-                background: isFollowing ? "rgba(20, 109, 158, 0.08)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
-                color: isFollowing ? "var(--atlan-text-secondary)" : "white",
-                boxShadow: isFollowing ? "none" : "0 4px 12px rgba(23, 170, 74,0.25)",
-              }}>
-                {isFollowing ? (lang === "en" ? "✓ Following" : "✓ Siguiendo") : (lang === "en" ? "Follow" : "Seguir")}
-              </button>
-              {isMutualFollow ? (
-                <Link href={`/chat?user=${userId}`} style={{
-                  padding: "10px 20px", borderRadius: "12px", fontSize: "14px", fontWeight: "800",
-                  textDecoration: "none", border: "none", display: "inline-flex", alignItems: "center", gap: "6px",
-                  background: "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)",
-                  color: "#1A1A2E", boxShadow: "0 4px 12px rgba(255, 215, 0, 0.3)",
-                }}>
-                  <Icon name="messageCircle" size={14} /> {lang === "en" ? "Message" : "Mensaje"}
                 </Link>
-              ) : isFollowing ? (
-                <span style={{
-                  padding: "10px 16px", borderRadius: "12px", fontSize: "12px", fontWeight: "700",
-                  background: "rgba(20, 109, 158, 0.04)", color: "var(--atlan-text-muted)",
-                  border: "1px solid rgba(20, 109, 158, 0.08)",
-                }} title={lang === "en" ? "Both users must follow each other to chat" : "Ambos deben seguirse para chatear"}>
-                  <Icon name="lock" size={14} /> {lang === "en" ? "Follow back to chat" : "Deben seguirse mutuamente"}
-                </span>
-              ) : null}
-            </div>
-          )}
-        </div>
-
-        {/* Stats */}
-        <div style={{ display: "flex", gap: "32px", padding: "20px 16px 0", borderBottom: "1px solid rgba(20, 109, 158, 0.08)", paddingBottom: "20px" }}>
-          <div>
-            <span style={{ fontWeight: "800", fontSize: "18px", color: "var(--atlan-text-primary)" }}>{posts.length}</span>
-            <span style={{ fontSize: "13px", color: "var(--atlan-text-muted)", marginLeft: "6px" }}>{lang === "en" ? "Posts" : "Posts"}</span>
-          </div>
-          <button onClick={() => { setFollowersModalTab("followers"); setShowFollowersModal(true); }} style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 6px", borderRadius: "8px", transition: "background 0.15s" }}>
-            <span style={{ fontWeight: "800", fontSize: "18px", color: "var(--atlan-text-primary)" }}>{targetPerfil.seguidores_count || 0}</span>
-            <span style={{ fontSize: "13px", color: "var(--atlan-text-muted)", marginLeft: "6px" }}>{lang === "en" ? "Followers" : "Seguidores"}</span>
-          </button>
-          <button onClick={() => { setFollowersModalTab("following"); setShowFollowersModal(true); }} style={{ background: "none", border: "none", cursor: "pointer", padding: "2px 6px", borderRadius: "8px", transition: "background 0.15s" }}>
-            <span style={{ fontWeight: "800", fontSize: "18px", color: "var(--atlan-text-primary)" }}>{targetPerfil.siguiendo_count || 0}</span>
-            <span style={{ fontSize: "13px", color: "var(--atlan-text-muted)", marginLeft: "6px" }}>{lang === "en" ? "Following" : "Siguiendo"}</span>
-          </button>
-        </div>
-
-        {/* Bio */}
-        <div style={{ padding: "16px 16px 0" }}>
-          {editingBio && isOwnProfile ? (
-            <div style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
-              <textarea value={bioText} onChange={(e) => setBioText(e.target.value.slice(0, 200))} style={{
-                flex: 1, padding: "10px 14px", background: "rgba(20, 109, 158, 0.04)", border: "1px solid rgba(20, 109, 158, 0.12)",
-                borderRadius: "12px", color: "var(--atlan-text-primary)", fontSize: "14px", outline: "none", resize: "none", minHeight: "60px",
-                fontFamily: "var(--font-outfit), system-ui, sans-serif",
-              }} />
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <button onClick={handleSaveBio} style={{ padding: "8px 14px", background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none", borderRadius: "8px", color: "white", fontSize: "12px", fontWeight: "800", cursor: "pointer" }}>✓</button>
-                <button onClick={() => { setEditingBio(false); setBioText(targetPerfil.bio || ""); }} style={{ padding: "8px 14px", background: "rgba(20, 109, 158, 0.08)", border: "none", borderRadius: "8px", color: "var(--atlan-text-muted)", fontSize: "12px", fontWeight: "800", cursor: "pointer" }}>✕</button>
+                <h4 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{myPerfil.nombre_completo}</h4>
+                <p style={{ margin: "0 0 12px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>
+                  {myPerfil.rol === "dueno" ? <><Icon name="building" size={11} /> Propietario</> : <><Icon name="luggage" size={11} /> Turista Tuani</>}
+                </p>
+                <div style={{ display: "flex", justifyContent: "center", gap: "24px" }}>
+                  <button onClick={() => { setFollowersModalTab("followers"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px" }}>
+                    <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{myPerfil.seguidores_count || 0}</div>
+                    <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>Seguidores</div>
+                  </button>
+                  <button onClick={() => { setFollowersModalTab("following"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px" }}>
+                    <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{myPerfil.siguiendo_count || 0}</div>
+                    <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>Siguiendo</div>
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
-            <div>
-              {targetPerfil.bio ? (
-                <p style={{ margin: 0, fontSize: "14px", color: "var(--atlan-text-secondary)", lineHeight: "1.6" }}>{targetPerfil.bio}</p>
-              ) : isOwnProfile ? (
-                <p style={{ margin: 0, fontSize: "13px", color: "var(--atlan-text-muted)", fontStyle: "italic" }}>
-                  {lang === "en" ? "No bio yet. Click to add one." : "Sin biografía. Haz clic para agregar una."}
-                </p>
-              ) : null}
-              {isOwnProfile && (
-                <button onClick={() => setEditingBio(true)} style={{ marginTop: "8px", background: "none", border: "none", color: "var(--atlan-gold)", fontSize: "12px", fontWeight: "700", cursor: "pointer", padding: 0 }}>
-                  <Icon name="edit" size={14} /> {lang === "en" ? "Edit bio" : "Editar bio"}
-                </button>
-              )}
+            <div style={sidebarStyles.loginCard}>
+              <span style={{ fontSize: "36px", display: "block", marginBottom: "12px" }}><Icon name="users" size={36} /></span>
+              <h4 style={{ margin: "0 0 8px", fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>Únete a la Comunidad</h4>
+              <Link href="/registro" className="btn-primary" style={{ display: "block", textAlign: "center", padding: "10px", fontSize: "13px" }}>Crear Cuenta</Link>
             </div>
           )}
 
-          {/* Business link */}
-          {negocio && (
-            <Link href="/mapa" style={{
-              display: "inline-flex", alignItems: "center", gap: "6px", marginTop: "12px",
-              padding: "8px 16px", background: "rgba(255, 215, 0,0.08)", border: "1px solid rgba(255, 215, 0,0.15)",
-              borderRadius: "10px", color: "var(--atlan-gold)", fontSize: "13px", fontWeight: "700", textDecoration: "none",
-            }}>
-              <Icon name="mapPin" size={14} /> {negocio.nombre}
+          <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
+            <h4 style={sidebarStyles.sectionTitle}>
+              <Icon name="map" size={14} /> Explorar
+            </h4>
+            <Link href="/mapa" style={sidebarStyles.exploreLink}>
+              <img src="/images/mapa.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> Mapa Turístico
             </Link>
-          )}
-        </div>
+          </div>
+        </aside>
 
-        {/* Posts */}
-        <div style={{ padding: "24px 0" }}>
-          <h3 style={{ margin: "0 0 16px 16px", fontSize: "18px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
-            <Icon name="clipboard" size={14} /> {lang === "en" ? "Posts" : "Publicaciones"}
-          </h3>
+        {/* ── CENTER COLUMN ── */}
+        <main style={{ minWidth: 0, width: "100%" }}>
+          {/* Target Profile Card */}
+          <div style={{ background: "#FFFFFF", borderRadius: "24px", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "0 14px 35px rgba(0, 0, 0, 0.08)", overflow: "hidden", marginBottom: "24px" }}>
+            <div style={{ height: "100px", background: "linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(23, 170, 74, 0.10) 100%)" }} />
+            <div style={{ padding: "0 24px 24px", marginTop: "-44px" }}>
+              <div style={{ display: "flex", alignItems: "flex-end", gap: "16px", flexWrap: "wrap", marginBottom: "16px" }}>
+                <div style={avatarStyle(targetPerfil.avatar_url, 80)}>
+                  {!targetPerfil.avatar_url && (targetPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
+                </div>
+                <div style={{ flex: 1, minWidth: "180px" }}>
+                  <h2 style={{ margin: "0 0 4px", fontSize: "22px", fontWeight: "900", color: "#1A1A2E" }}>
+                    {targetPerfil.nombre_completo || "Usuario"}
+                  </h2>
+                  <span style={{ fontSize: "12px", fontWeight: "700", color: "#17AA4A" }}>
+                    {targetPerfil.rol === "dueno" ? "Propietario" : "Turista Tuani"}
+                  </span>
+                </div>
+                {isOwnProfile ? (
+                  <button onClick={() => { setEditNombre(targetPerfil.nombre_completo || ""); setEditBio(targetPerfil.bio || ""); setIsEditingProfile(true); }} style={{ padding: "8px 16px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", background: "rgba(20,109,158,0.06)", color: "#146D9E", fontWeight: "800", fontSize: "13px", cursor: "pointer" }}>
+                    ✏️ Editar Perfil
+                  </button>
+                ) : (
+                  <button onClick={handleFollow} disabled={followLoading} style={{ padding: "8px 20px", borderRadius: "10px", border: "none", background: isFollowing ? "rgba(20,109,158,0.08)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: isFollowing ? "#1A1A2E" : "white", fontWeight: "800", fontSize: "13px", cursor: "pointer" }}>
+                    {isFollowing ? "✓ Siguiendo" : "Seguir"}
+                  </button>
+                )}
+              </div>
 
+              <div style={{ display: "flex", gap: "24px", paddingTop: "12px", borderTop: "1px solid rgba(20,109,158,0.08)" }}>
+                <div><strong>{posts.length}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>Posts</span></div>
+                <div><strong>{targetPerfil.seguidores_count || 0}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>Seguidores</span></div>
+                <div><strong>{targetPerfil.siguiendo_count || 0}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>Siguiendo</span></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Posts */}
           {posts.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "60px 24px", background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(20, 109, 158, 0.10)", borderRadius: "16px", margin: "0 16px" }}>
-              <span style={{ fontSize: "40px", display: "block", marginBottom: "12px" }}>📭</span>
-              <p style={{ margin: 0, fontSize: "14px", color: "var(--atlan-text-muted)" }}>
-                {lang === "en" ? "No posts yet" : "Sin publicaciones aún"}
-              </p>
+            <div style={{ textAlign: "center", padding: "40px", background: "#FFFFFF", borderRadius: "24px", border: "1px solid rgba(20,109,158,0.08)" }}>
+              <p style={{ margin: 0, color: "#64748B" }}>No hay publicaciones todavía.</p>
             </div>
           ) : (
-            posts.map((post) => {
-              const isLiked = likedPosts.has(post.id);
-              const canDelete = isOwnProfile || isAdmin;
-              const hasPublicidad = post.es_publicidad;
-              const hasPromocion = post.es_promocion;
-
-              const cardStyle = hasPublicidad ? {
-                background: "radial-gradient(circle at top right, rgba(23, 170, 74, 0.08) 0%, #FFFFFF 70%)",
-                border: "2px solid #17AA4A",
-                boxShadow: "0 10px 30px -4px rgba(23, 170, 74, 0.25), 0 2px 6px rgba(0, 0, 0, 0.04)",
-                borderRadius: "16px", padding: "20px", margin: "0 16px 14px"
-              } : {
-                background: "rgba(20, 109, 158, 0.03)",
-                border: "1px solid rgba(20, 109, 158, 0.08)",
-                borderRadius: "16px", padding: "20px", margin: "0 16px 14px"
-              };
-
-              return (
-                <div key={post.id} style={cardStyle}>
-                  {hasPublicidad && (
-                    <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "10px", padding: "5px 14px", borderRadius: "20px", fontSize: "11px", fontWeight: "900", background: "linear-gradient(135deg, #FFD700 0%, #E6A800 100%)", border: "1px solid rgba(255,255,255,0.25)", color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.8px", boxShadow: "0 2px 8px rgba(255, 215, 0, 0.3)" }}>
-                      <Icon name="sparkles" size={12} /> {lang === "en" ? "Sponsored Ad" : "Publicidad"}
-                    </div>
-                  )}
-                  {hasPromocion && !hasPublicidad && (
-                    <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "10px", padding: "3px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "800", background: "linear-gradient(135deg, rgba(255, 215, 0,0.15), rgba(245,158,11,0.15))", border: "1px solid rgba(255, 215, 0,0.25)", color: "#FFD700", textTransform: "uppercase" }}>
-                      <Icon name="megaphone" size={12} /> {lang === "en" ? "Promo" : "Promoción"}
-                    </div>
-                  )}
-
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                    <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)" }}>{timeAgo(post.created_at, lang)}</span>
-                    {canDelete && (
-                      <button onClick={() => handleDeletePost(post.id)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: "12px", fontWeight: "700", cursor: "pointer" }}>
-                        <Icon name="trash" size={12} /> {lang === "en" ? "Delete" : "Eliminar"}
-                      </button>
-                    )}
-                  </div>
-
-                  <p style={{ margin: "0 0 12px", fontSize: "14.5px", lineHeight: "1.6", color: "var(--atlan-text-primary)", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-                    {post.contenido}
-                  </p>
-
-                  {post.imagen_url && (
-                    <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "12px", border: "1px solid rgba(20, 109, 158, 0.08)", cursor: "pointer" }} onClick={() => setViewerPost(post)}>
-                      <img src={post.imagen_url} alt="Post" style={{ width: "100%", maxHeight: "400px", objectFit: "cover", display: "block" }} loading="lazy" />
-                    </div>
-                  )}
-
-                  {post.video_url && (
-                    <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "12px", border: "1px solid rgba(20, 109, 158, 0.08)", background: "#000", position: "relative", cursor: "pointer" }} onClick={() => setViewerPost(post)}>
-                      <video src={post.video_url} controls playsInline preload="metadata" style={{ width: "100%", maxHeight: "400px", display: "block" }} onClick={e => e.stopPropagation()} />
-                      <div style={{ position: "absolute", top: "10px", right: "10px", background: "rgba(0,0,0,0.6)", padding: "3px 8px", borderRadius: "6px", fontSize: "10px", fontWeight: "800", color: "#17AA4A" }}>🎬 Video</div>
-                    </div>
-                  )}
-
-                  <div style={{ display: "flex", gap: "16px", paddingTop: "8px", borderTop: "1px solid rgba(20, 109, 158, 0.05)" }}>
-                    <button onClick={() => handleLikePost(post.id)} style={{ background: "none", border: "none", color: isLiked ? "#ef4444" : "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}>
-                      {isLiked ? <Icon name="heartFilled" size={14} color="#ef4444" /> : <Icon name="heart" size={14} />} {post.likes_count || 0}
-                    </button>
-                    <Link href={`/comunidad`} style={{ color: "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "700", textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}>
-                      <Icon name="messageCircle" size={14} /> {post.comentarios_count || 0}
-                    </Link>
-                  </div>
-                </div>
-              );
-            })
+            posts.map(post => (
+              <div key={post.id} style={{ background: "#FFFFFF", borderRadius: "24px", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.06)", padding: "24px", marginBottom: "20px" }}>
+                <p style={{ margin: "0 0 12px", fontSize: "15px", color: "#1A1A2E", whiteSpace: "pre-wrap" }}>{post.contenido}</p>
+                {post.imagen_url && (
+                  <img src={post.imagen_url} alt="Post" style={{ width: "100%", maxHeight: "400px", objectFit: "cover", borderRadius: "16px", marginBottom: "12px" }} />
+                )}
+              </div>
+            ))
           )}
-        </div>
+        </main>
+
+        {/* ── SIDEBAR RIGHT ── */}
+        <aside className="hide-mobile community-sidebar">
+          <div style={sidebarStyles.sectionCard}>
+            <h4 style={sidebarStyles.sectionTitle}>
+              <Icon name="search" size={14} /> Buscar
+            </h4>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar personas..."
+              style={{ width: "100%", padding: "10px 14px", background: "rgba(20, 109, 158, 0.04)", border: "1px solid rgba(20, 109, 158, 0.10)", borderRadius: "12px", fontSize: "13px", outline: "none" }}
+            />
+          </div>
+
+          <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
+            <h4 style={sidebarStyles.sectionTitle}>
+              <Icon name="sparkles" size={14} /> Personas sugeridas
+            </h4>
+            {suggestedUsers.map((u) => (
+              <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
+            ))}
+          </div>
+        </aside>
+
       </div>
 
-      {/* Login modal */}
-      {showLoginModal && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }} onClick={() => setShowLoginModal(false)}>
-          <div style={{ maxWidth: "420px", width: "100%", background: "var(--atlan-bg-card)", border: "1px solid rgba(20, 109, 158, 0.12)", borderRadius: "20px", padding: "32px", textAlign: "center" }} onClick={(e) => e.stopPropagation()} className="animate-fade-in-up">
-            <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}><Icon name="lock" size={48} /></span>
-            <h3 style={{ fontSize: "20px", fontWeight: "800", margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>
-              {lang === "en" ? "Sign in to interact" : "Inicia sesión para interactuar"}
-            </h3>
-            <p style={{ fontSize: "14px", color: "var(--atlan-text-secondary)", margin: "0 0 24px" }}>
-              {lang === "en" ? "Sign up or log in to like, comment, and follow." : "Regístrate o inicia sesión para dar likes, comentar y seguir."}
-            </p>
-            <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
-              <Link href="/login" className="btn-primary" style={{ padding: "12px 28px", fontSize: "14px" }}>{lang === "en" ? "Sign In" : "Iniciar Sesión"}</Link>
-              <Link href="/registro" className="btn-secondary" style={{ padding: "12px 28px", fontSize: "14px" }}>{lang === "en" ? "Sign Up" : "Registrarse"}</Link>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Followers/Following Modal */}
-      {showFollowersModal && (
+      {/* Followers Modal */}
+      {showFollowersModal && session && (
         <FollowersModal
-          userId={userId}
+          userId={session.user.id}
           session={session}
           lang={lang}
           initialTab={followersModalTab}
           onClose={() => setShowFollowersModal(false)}
         />
-      )}
-
-      {/* Image Viewer Modal */}
-      {viewerPost && (
-        <ImageViewerModal
-          post={viewerPost}
-          session={session}
-          perfil={myPerfil}
-          lang={lang}
-          onClose={() => setViewerPost(null)}
-        />
-      )}
-
-      {/* Modal Editar Perfil */}
-      {isEditingProfile && (
-        <div style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0, 0, 0, 0.65)",
-          backdropFilter: "blur(6px)",
-          WebkitBackdropFilter: "blur(6px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 9999,
-          padding: "20px"
-        }}>
-          <div style={{
-            background: "#FFFFFF",
-            width: "100%",
-            maxWidth: "460px",
-            borderRadius: "24px",
-            padding: "28px",
-            boxShadow: "0 24px 48px rgba(0, 0, 0, 0.2)",
-            border: "1px solid rgba(20, 109, 158, 0.15)"
-          }} className="animate-fade-in-up">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: "#1A1A2E" }}>
-                ✏️ {lang === "en" ? "Edit Profile" : "Editar Perfil"}
-              </h3>
-              <button
-                onClick={() => setIsEditingProfile(false)}
-                style={{ background: "none", border: "none", fontSize: "20px", cursor: "pointer", color: "#64748B" }}
-              >
-                ✕
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveProfileModal} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>
-                  {lang === "en" ? "Full Name" : "Nombre Completo"}
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={editNombre}
-                  onChange={(e) => setEditNombre(e.target.value)}
-                  className="clay-input"
-                  style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", fontSize: "14px" }}
-                />
-              </div>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>
-                  {lang === "en" ? "Biography / Description" : "Biografía / Descripción"}
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder={lang === "en" ? "Tell the community about yourself..." : "Cuéntale a la comunidad sobre ti..."}
-                  value={editBio}
-                  onChange={(e) => setEditBio(e.target.value)}
-                  className="clay-input"
-                  style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", fontSize: "14px", fontFamily: "inherit" }}
-                />
-              </div>
-
-              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-                <button
-                  type="button"
-                  onClick={() => setIsEditingProfile(false)}
-                  style={{
-                    flex: 1,
-                    padding: "12px",
-                    borderRadius: "12px",
-                    border: "1px solid #CBD5E1",
-                    background: "#F8FAFC",
-                    color: "#475569",
-                    fontWeight: "700",
-                    cursor: "pointer"
-                  }}
-                >
-                  {lang === "en" ? "Cancel" : "Cancelar"}
-                </button>
-                <button
-                  type="submit"
-                  disabled={savingProfile}
-                  className="clay-btn-green no-sheen"
-                  style={{
-                    flex: 1,
-                    padding: "12px",
-                    borderRadius: "12px",
-                    border: "none",
-                    background: "linear-gradient(145deg, #1FCC5C 0%, #17AA4A 70%, #128A3C 100%)",
-                    color: "white",
-                    fontWeight: "800",
-                    cursor: "pointer"
-                  }}
-                >
-                  {savingProfile ? (lang === "en" ? "Saving..." : "Guardando...") : (lang === "en" ? "Save Changes" : "Guardar Cambios")}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
       )}
     </div>
   );
