@@ -469,27 +469,27 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          {/* Card 4: Nivel de Turista */}
+          {/* Card 4: Nivel de Turista (Azul Navbar #0A192F) */}
           <div style={{
-            background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
+            background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
             borderRadius: "20px",
             padding: "18px 22px",
             display: "flex",
             alignItems: "center",
             gap: "16px",
             color: "#FFFFFF",
-            boxShadow: "0 10px 25px rgba(23, 170, 74, 0.35)"
+            boxShadow: "0 10px 25px rgba(10, 25, 47, 0.25)"
           }}>
             <div style={{
               width: "48px", height: "48px", borderRadius: "14px",
-              background: "rgba(255, 255, 255, 0.2)",
+              background: "rgba(255, 255, 255, 0.12)",
               display: "flex", alignItems: "center", justifyContent: "center"
             }}>
               <img src="/images/perfil.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
             </div>
             <div>
-              <div style={{ fontSize: "14px", fontWeight: "900", color: "#FFFFFF" }}>{rolText}</div>
-              <div style={{ fontSize: "11px", opacity: 0.9 }}>{lang === "en" ? "Active Status" : "Estado Turístico en Atlan"}</div>
+              <div style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700" }}>{rolText}</div>
+              <div style={{ fontSize: "11px", opacity: 0.85, color: "#FFFFFF" }}>{lang === "en" ? "Active Status" : "Estado Turístico en Atlan"}</div>
             </div>
           </div>
         </div>
