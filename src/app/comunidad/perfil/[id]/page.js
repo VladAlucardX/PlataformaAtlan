@@ -410,6 +410,7 @@ export default function PerfilPublico() {
         if (followingIds.length > 0) {
           query = query.not("id", "in", `(${followingIds.join(",")})`);
         }
+      }
       const { data } = await query.limit(20);
       if (data && data.length > 0) {
         const shuffled = [...data].sort(() => 0.5 - Math.random());
