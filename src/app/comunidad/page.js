@@ -693,11 +693,27 @@ export default function ComunidadPage() {
     try {
       const from = pageNum * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
-      const { data, error } = await supabase
+
+      let query = supabase
         .from("publicaciones")
         .select("*, perfiles(id, nombre_completo, avatar_url, rol)")
-        .order("created_at", { ascending: false })
-        .range(from, to);
+        .order("created_at", { ascending: false });
+
+      if (session?.user) {
+        const { data: following } = await supabase
+          .from("seguimientos")
+          .select("seguido_id")
+          .eq("seguidor_id", session.user.id);
+
+        const followingIds = (following || []).map((f) => f.seguido_id);
+        const allowedAuthors = [session.user.id, ...followingIds];
+
+        if (followingIds.length > 0) {
+          query = query.or(`autor_id.in.(${allowedAuthors.join(",")}),es_publicidad.eq.true,es_promocion.eq.true`);
+        }
+      }
+
+      const { data, error } = await query.range(from, to);
 
       if (error) throw error;
       if (append) { setPosts((prev) => [...prev, ...(data || [])]); }
@@ -705,7 +721,7 @@ export default function ComunidadPage() {
       setHasMore((data || []).length === PAGE_SIZE);
     } catch (err) { console.error("Fetch posts error:", err); }
     finally { setLoadingPosts(false); setLoadingMore(false); }
-  }, []);
+  }, [session]);
 
   useEffect(() => { fetchPosts(0); }, [fetchPosts]);
 
