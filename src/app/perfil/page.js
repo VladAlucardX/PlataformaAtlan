@@ -417,7 +417,7 @@ export default function PerfilPage() {
 
       {/* SVGs de fondo nativos de Atlan */}
       <img src="/images/tortuga.svg" alt="" style={{ position: "fixed", bottom: "-10px", left: "-10px", width: "360px", maxHeight: "360px", objectFit: "contain", opacity: 0.14, pointerEvents: "none", zIndex: 0 }} />
-      <img src="/images/machoraton.svg" alt="" style={{ position: "fixed", top: "80px", right: "10px", width: "340px", height: "calc(100vh - 90px)", objectFit: "contain", opacity: 0.12, pointerEvents: "none", zIndex: 0 }} />
+      <img src="/images/tortuga.svg" alt="" style={{ position: "fixed", top: "70px", right: "20px", width: "480px", height: "calc(100vh - 80px)", objectFit: "contain", opacity: 0.16, pointerEvents: "none", zIndex: 0 }} />
 
       <Navbar activePage="perfil" session={session} perfil={perfil} onLogout={handleCerrarSesion} />
 
@@ -721,7 +721,7 @@ export default function PerfilPage() {
                     boxShadow: "0 4px 12px rgba(234, 179, 8, 0.25)"
                   }}
                 >
-                  <img src="/images/machoraton.svg" alt="" style={{ width: "16px", height: "20px", objectFit: "contain", filter: "brightness(0)" }} />
+                  <img src="/images/tortuga.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0)" }} />
                   <span>{lang === "en" ? "Change Password" : "Cambiar Contraseña"}</span>
                 </button>
 
