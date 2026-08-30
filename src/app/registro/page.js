@@ -137,8 +137,7 @@ export default function RegisterPage() {
         }}
       />
 
-      <div style={styles.orb1} />
-      <div style={styles.orb2} />
+
 
       {/* Tortuga SVG bastante más grande en la esquina inferior izquierda */}
       <img

@@ -415,8 +415,26 @@ export default function PerfilPage() {
               {user?.email}
             </p>
 
-            {/* Cuadro 1: Rol (Turista Tuani) */}
-            <div className="clay-btn-pill-green">
+            {/* Cuadro 1: Rol (Turista Tuani / Turista Deacachimba) */}
+            <div
+              className="clay-btn-pill-green"
+              style={{
+                width: "100%",
+                padding: "11px 18px",
+                marginBottom: "11px",
+                borderRadius: "14px",
+                border: "1.5px solid rgba(255, 255, 255, 0.4)",
+                background: "linear-gradient(135deg, #10B981 0%, #059669 60%, #047857 100%)",
+                color: "#FFFFFF",
+                fontWeight: "800",
+                fontSize: "13.5px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "10px",
+                boxShadow: "0 8px 18px -3px rgba(16, 185, 129, 0.35), 0 3px 6px rgba(0, 0, 0, 0.08)"
+              }}
+            >
               <img
                 src="/images/perfil.svg"
                 alt="Perfil"
@@ -447,6 +465,23 @@ export default function PerfilPage() {
                 setIsEditing(true);
               }}
               className="clay-btn-pill-blue"
+              style={{
+                width: "100%",
+                padding: "11px 18px",
+                marginBottom: "11px",
+                borderRadius: "14px",
+                border: "1.5px solid rgba(255, 255, 255, 0.4)",
+                background: "linear-gradient(135deg, #0284C7 0%, #0369A1 60%, #075985 100%)",
+                color: "#FFFFFF",
+                fontWeight: "800",
+                fontSize: "13.5px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "10px",
+                boxShadow: "0 8px 18px -3px rgba(2, 132, 199, 0.35), 0 3px 6px rgba(0, 0, 0, 0.08)"
+              }}
             >
               <img
                 src="/images/flor.svg"
@@ -465,6 +500,23 @@ export default function PerfilPage() {
                 setIsChangingPass(true);
               }}
               className="clay-btn-pill-slate"
+              style={{
+                width: "100%",
+                padding: "11px 18px",
+                marginBottom: "11px",
+                borderRadius: "14px",
+                border: "1.5px solid rgba(255, 255, 255, 0.7)",
+                background: "linear-gradient(135deg, #FFF085 0%, #FACC15 60%, #EAB308 100%)",
+                color: "#1E1B4B",
+                fontWeight: "800",
+                fontSize: "13.5px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "10px",
+                boxShadow: "0 8px 18px -3px rgba(234, 179, 8, 0.35), 0 3px 6px rgba(0, 0, 0, 0.08)"
+              }}
             >
               <img
                 src="/images/machoraton.svg"
@@ -475,67 +527,42 @@ export default function PerfilPage() {
             </button>
 
             {/* Cuadro 4: Reclamar o Registrar Negocio / Gestionar */}
-            {(perfil?.rol === "dueno" || perfil?.rol === "admin") ? (
-              <Link
-                href="/dashboard"
-                className="clay-btn-gold no-sheen"
+            <Link
+              href="/dashboard"
+              className="clay-btn-green no-sheen"
+              style={{
+                width: "100%",
+                padding: "11px 18px",
+                marginBottom: "16px",
+                borderRadius: "14px",
+                background: "linear-gradient(145deg, #1FCC5C 0%, #17AA4A 70%, #128A3C 100%)",
+                color: "#FFFFFF",
+                fontWeight: "800",
+                fontSize: "13.5px",
+                textDecoration: "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "10px",
+                boxShadow: "0 10px 24px -4px rgba(23, 170, 74, 0.45)"
+              }}
+            >
+              <img
+                src="/images/edificio.svg"
+                alt="Negocio"
                 style={{
-                  width: "100%",
-                  padding: "11px 18px",
-                  marginBottom: "16px",
-                  borderRadius: "14px",
-                  fontWeight: "800",
-                  fontSize: "13.5px",
-                  textDecoration: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "10px"
+                  width: "20px",
+                  height: "20px",
+                  objectFit: "contain",
+                  filter: "brightness(0) invert(1)"
                 }}
-              >
-                <img
-                  src="/images/edificio.svg"
-                  alt="Negocio"
-                  style={{
-                    width: "20px",
-                    height: "20px",
-                    objectFit: "contain",
-                    filter: "brightness(0) saturate(100%) invert(75%) sepia(90%) saturate(1200%) hue-rotate(350deg)"
-                  }}
-                />
-                <span>{lang === "en" ? "Manage Business" : "Gestionar mi Negocio"}</span>
-              </Link>
-            ) : (
-              <Link
-                href="/dashboard"
-                className="clay-btn-blue no-sheen"
-                style={{
-                  width: "100%",
-                  padding: "11px 18px",
-                  marginBottom: "16px",
-                  borderRadius: "14px",
-                  fontWeight: "750",
-                  fontSize: "13px",
-                  textDecoration: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "10px"
-                }}
-              >
-                <img
-                  src="/images/edificio.svg"
-                  alt="Negocio"
-                  style={{
-                    width: "20px",
-                    height: "20px",
-                    objectFit: "contain",
-                    filter: "brightness(0) invert(1)"
-                  }}
-                />
-                <span>{lang === "en" ? "Claim or Register Business" : "Reclamar o Registrar Negocio"}</span>
-              </Link>
-            )}
+              />
+              <span>
+                {(perfil?.rol === "dueno" || perfil?.rol === "admin")
+                  ? (lang === "en" ? "Manage Business" : "Gestionar mi Negocio")
+                  : (lang === "en" ? "Register Business" : "Reclamar o Registrar Negocio")}
+              </span>
+            </Link>
           </div>
         </div>
 
