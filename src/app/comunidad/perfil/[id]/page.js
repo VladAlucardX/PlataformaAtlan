@@ -410,9 +410,13 @@ export default function PerfilPublico() {
         if (followingIds.length > 0) {
           query = query.not("id", "in", `(${followingIds.join(",")})`);
         }
+      const { data } = await query.limit(20);
+      if (data && data.length > 0) {
+        const shuffled = [...data].sort(() => 0.5 - Math.random());
+        setSuggestedUsers(shuffled.slice(0, 6));
+      } else {
+        setSuggestedUsers([]);
       }
-      const { data } = await query.limit(6);
-      setSuggestedUsers(data || []);
     } catch (err) { console.error("Error fetching suggested users:", err); }
   }, [session]);
 

@@ -729,11 +729,15 @@ export default function ComunidadPage() {
         }
       }
       
-      const { data } = await query
-        .order("seguidores_count", { ascending: false })
-        .limit(5);
-        
-      setSuggestedUsers(data || []);
+      const { data } = await query.limit(20);
+      
+      if (data && data.length > 0) {
+        // Algoritmo aleatorio dinámico (Random shuffle de 6 usuarios)
+        const shuffled = [...data].sort(() => 0.5 - Math.random());
+        setSuggestedUsers(shuffled.slice(0, 6));
+      } else {
+        setSuggestedUsers([]);
+      }
     } catch (err) {
       console.error("Error fetching suggested users:", err);
     }
