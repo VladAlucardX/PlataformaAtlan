@@ -3049,20 +3049,22 @@ html body .mapboxgl-ctrl-directions tr {
 .community-main-layout {
   display: grid !important;
   grid-template-columns: 260px minmax(0, 1fr) 300px !important;
-  gap: 28px !important;
+  gap: 24px !important;
   align-items: start !important;
 }
 
 @media (max-width: 1200px) {
   .community-main-layout {
-    grid-template-columns: 240px minmax(0, 1fr) 280px !important;
-    gap: 20px !important;
+    grid-template-columns: 220px minmax(0, 1fr) 260px !important;
+    gap: 16px !important;
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 850px) {
   .community-main-layout {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
     padding: 85px 16px 40px 16px !important;
   }
 }
@@ -3077,6 +3079,12 @@ html body .mapboxgl-ctrl-directions tr {
   max-height: calc(100vh - 110px) !important;
   overflow-y: auto !important;
   scrollbar-width: none !important;
+}
+
+@media (max-width: 850px) {
+  .community-sidebar.hide-mobile {
+    display: none !important;
+  }
 }
 
 /* ── RESPONSIVE FORMULARIO DE REGISTRO ────────────────────────────────────────── */
