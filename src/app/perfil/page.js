@@ -589,7 +589,23 @@ export default function PerfilPage() {
                 <p style={{ margin: 0, fontSize: "14px" }}>
                   {lang === "en" ? "You haven't made any lodging/table reservations yet." : "Aún no has realizado reservas de hospedaje o mesas."}
                 </p>
-                <Link href="/mapa" style={{ display: "inline-block", marginTop: "16px", fontSize: "13px", color: "#FFD700", fontWeight: "700" }}>
+                <Link
+                  href="/mapa"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    marginTop: "16px",
+                    padding: "10px 22px",
+                    borderRadius: "12px",
+                    background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
+                    color: "#FFFFFF",
+                    fontSize: "13px",
+                    fontWeight: "800",
+                    textDecoration: "none",
+                    boxShadow: "0 4px 14px rgba(23, 170, 74, 0.35)"
+                  }}
+                >
                   {lang === "en" ? "Book a place now →" : "Reservar un lugar ahora →"}
                 </Link>
               </div>
@@ -705,7 +721,23 @@ export default function PerfilPage() {
                 <p style={{ margin: 0, fontSize: "14px" }}>
                   {lang === "en" ? "You haven't saved any places yet." : "Aún no tienes destinos o negocios guardados."}
                 </p>
-                <Link href="/mapa" style={{ display: "inline-block", marginTop: "16px", fontSize: "13px", color: "#FFD700", fontWeight: "700" }}>
+                <Link
+                  href="/mapa"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    marginTop: "16px",
+                    padding: "10px 22px",
+                    borderRadius: "12px",
+                    background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
+                    color: "#FFFFFF",
+                    fontSize: "13px",
+                    fontWeight: "800",
+                    textDecoration: "none",
+                    boxShadow: "0 4px 14px rgba(23, 170, 74, 0.35)"
+                  }}
+                >
                   {lang === "en" ? "Explore the map →" : "Explorar el mapa →"}
                 </Link>
               </div>
@@ -804,7 +836,23 @@ export default function PerfilPage() {
                 <p style={{ margin: 0, fontSize: "14px", fontWeight: "600" }}>
                   {lang === "en" ? "You haven't posted any reviews yet." : "Aún no has publicado reseñas en los destinos."}
                 </p>
-                <Link href="/mapa" style={{ display: "inline-block", marginTop: "16px", fontSize: "13px", color: "#FFD700", fontWeight: "700" }}>
+                <Link
+                  href="/mapa"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    marginTop: "16px",
+                    padding: "10px 22px",
+                    borderRadius: "12px",
+                    background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
+                    color: "#FFFFFF",
+                    fontSize: "13px",
+                    fontWeight: "800",
+                    textDecoration: "none",
+                    boxShadow: "0 4px 14px rgba(23, 170, 74, 0.35)"
+                  }}
+                >
                   {lang === "en" ? "Explore destinations and leave a review →" : "Explorar el mapa para calificar →"}
                 </Link>
               </div>
