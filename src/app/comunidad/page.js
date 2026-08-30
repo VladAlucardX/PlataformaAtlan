@@ -684,7 +684,7 @@ export default function ComunidadPage() {
   const [followersModalTab, setFollowersModalTab] = useState("followers");
   const loaderRef = useRef(null);
 
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 50;
 
   // Fetch posts
   const fetchPosts = useCallback(async (pageNum = 0, append = false) => {
