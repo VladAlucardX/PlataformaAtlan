@@ -25,6 +25,12 @@ export default function PerfilPage() {
   const [resenas, setResenas] = useState([]);
   const [favoritos, setFavoritos] = useState([]);
 
+  // Paginación por sección (4 por página)
+  const ITEMS_PER_PAGE = 4;
+  const [pageReservas, setPageReservas] = useState(1);
+  const [pageFavoritos, setPageFavoritos] = useState(1);
+  const [pageResenas, setPageResenas] = useState(1);
+
   // Avatar upload
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarHover, setAvatarHover] = useState(false);
@@ -271,6 +277,94 @@ export default function PerfilPage() {
     ? (lang === "en" ? "Deacachimba Tourist" : "Turista Deacachimba")
     : (lang === "en" ? "Tuani Tourist" : "Turista Tuani");
 
+  // Estilo uniforme verde para los 4 botones del sidebar
+  const greenButtonStyle = {
+    width: "100%",
+    padding: "11px 16px",
+    marginBottom: "10px",
+    borderRadius: "14px",
+    background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
+    color: "#FFFFFF",
+    fontWeight: "800",
+    fontSize: "13px",
+    border: "1.5px solid rgba(255, 255, 255, 0.3)",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
+    boxShadow: "0 6px 16px rgba(23, 170, 74, 0.30)",
+    textDecoration: "none",
+    transition: "all 0.2s"
+  };
+
+  // Paginación helpers
+  const getPaginatedItems = (items, currentPage) => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  };
+
+  const getTotalPages = (items) => {
+    return Math.max(Math.ceil(items.length / ITEMS_PER_PAGE), 1);
+  };
+
+  // Render para los slots "Por descubrir"
+  const renderPorDescubrirSlot = (index) => (
+    <div key={`por-descubrir-${index}`} style={{
+      background: "#FFFFFF",
+      borderRadius: "20px",
+      border: "2px dashed rgba(20, 109, 158, 0.20)",
+      boxShadow: "0 4px 16px rgba(0,0,0,0.02)",
+      padding: "24px 20px",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      textAlign: "center",
+      minHeight: "150px"
+    }}>
+      <span style={{ fontSize: "28px", display: "block", marginBottom: "6px", opacity: 0.7 }}>✨</span>
+      <h4 style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "800", color: "#146D9E" }}>Por descubrir</h4>
+      <p style={{ margin: "0 0 10px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>Explora el mapa para añadir nuevos destinos</p>
+      <Link href="/mapa" style={{ fontSize: "12px", color: "#17AA4A", fontWeight: "800", textDecoration: "none" }}>
+        Explorar Mapa →
+      </Link>
+    </div>
+  );
+
+  // Componente de controles de paginación (1, 2, 3...)
+  const renderPaginationControls = (totalPages, currentPage, setPage) => {
+    if (totalPages <= 1) return null;
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", marginTop: "20px" }}>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+          <button
+            key={num}
+            onClick={() => setPage(num)}
+            style={{
+              padding: "6px 14px",
+              borderRadius: "10px",
+              border: "none",
+              background: currentPage === num ? "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)" : "rgba(20, 109, 158, 0.08)",
+              color: currentPage === num ? "#FFFFFF" : "#1A1A2E",
+              fontWeight: "800",
+              fontSize: "12.5px",
+              cursor: "pointer",
+              transition: "all 0.2s",
+              boxShadow: currentPage === num ? "0 4px 10px rgba(23, 170, 74, 0.3)" : "none"
+            }}
+          >
+            {num}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  const paginatedReservas = getPaginatedItems(reservas, pageReservas);
+  const paginatedFavoritos = getPaginatedItems(favoritos, pageFavoritos);
+  const paginatedResenas = getPaginatedItems(resenas, pageResenas);
+
   return (
     <div style={{
       minHeight: "100vh",
@@ -303,7 +397,7 @@ export default function PerfilPage() {
           gap: "16px",
           marginBottom: "28px"
         }}>
-          {/* Card 1: Reservas (edificio.svg) */}
+          {/* Card 1: Reservas */}
           <div style={{
             background: "#FFFFFF",
             border: "2px solid rgba(255, 255, 255, 0.95)",
@@ -327,7 +421,7 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          {/* Card 2: Destinos Guardados (tortuga.svg) */}
+          {/* Card 2: Destinos Guardados */}
           <div style={{
             background: "#FFFFFF",
             border: "2px solid rgba(255, 255, 255, 0.95)",
@@ -351,7 +445,7 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          {/* Card 3: Reseñas Publicadas (flor.svg) */}
+          {/* Card 3: Reseñas Publicadas */}
           <div style={{
             background: "#FFFFFF",
             border: "2px solid rgba(255, 255, 255, 0.95)",
@@ -375,27 +469,27 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          {/* Card 4: Nivel de Turista (perfil.svg) */}
+          {/* Card 4: Nivel de Turista */}
           <div style={{
-            background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
+            background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
             borderRadius: "20px",
             padding: "18px 22px",
             display: "flex",
             alignItems: "center",
             gap: "16px",
             color: "#FFFFFF",
-            boxShadow: "0 10px 25px rgba(10, 25, 47, 0.25)"
+            boxShadow: "0 10px 25px rgba(23, 170, 74, 0.35)"
           }}>
             <div style={{
               width: "48px", height: "48px", borderRadius: "14px",
-              background: "rgba(255, 255, 255, 0.12)",
+              background: "rgba(255, 255, 255, 0.2)",
               display: "flex", alignItems: "center", justifyContent: "center"
             }}>
               <img src="/images/perfil.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
             </div>
             <div>
-              <div style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700" }}>{rolText}</div>
-              <div style={{ fontSize: "11px", opacity: 0.8 }}>{lang === "en" ? "Active Status" : "Estado Turístico en Atlan"}</div>
+              <div style={{ fontSize: "14px", fontWeight: "900", color: "#FFFFFF" }}>{rolText}</div>
+              <div style={{ fontSize: "11px", opacity: 0.9 }}>{lang === "en" ? "Active Status" : "Estado Turístico en Atlan"}</div>
             </div>
           </div>
         </div>
@@ -408,7 +502,7 @@ export default function PerfilPage() {
           alignItems: "start"
         }} className="profile-grid">
           
-          {/* SIDEBAR IZQUIERDO */}
+          {/* SIDEBAR IZQUIERDO CON LOS 4 BOTONES UNIFORMES EN VERDE (#17AA4A) */}
           <div style={{ position: "sticky", top: "100px" }}>
             <div style={{
               background: "#FFFFFF",
@@ -483,24 +577,8 @@ export default function PerfilPage() {
                 {user?.email}
               </p>
 
-              {/* Botón 1: Rol con perfil.svg */}
-              <div
-                style={{
-                  width: "100%",
-                  padding: "11px 16px",
-                  marginBottom: "10px",
-                  borderRadius: "14px",
-                  background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
-                  color: "#FFFFFF",
-                  fontWeight: "800",
-                  fontSize: "13px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  boxShadow: "0 4px 12px rgba(16, 185, 129, 0.25)"
-                }}
-              >
+              {/* Botón 1: Rol (Verde #17AA4A) */}
+              <div style={greenButtonStyle}>
                 <img
                   src="/images/perfil.svg"
                   alt="Perfil"
@@ -509,7 +587,7 @@ export default function PerfilPage() {
                 <span>{rolText}</span>
               </div>
 
-              {/* Botón 2: Editar Perfil con flor.svg */}
+              {/* Botón 2: Editar Perfil (Verde #17AA4A) */}
               <button
                 type="button"
                 onClick={() => {
@@ -517,29 +595,13 @@ export default function PerfilPage() {
                   setEditBio(perfil?.bio || "");
                   setIsEditing(true);
                 }}
-                style={{
-                  width: "100%",
-                  padding: "11px 16px",
-                  marginBottom: "10px",
-                  borderRadius: "14px",
-                  background: "linear-gradient(135deg, #0284C7 0%, #0369A1 100%)",
-                  color: "#FFFFFF",
-                  fontWeight: "800",
-                  fontSize: "13px",
-                  border: "none",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  boxShadow: "0 4px 12px rgba(2, 132, 199, 0.25)"
-                }}
+                style={greenButtonStyle}
               >
                 <img src="/images/flor.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                 <span>{lang === "en" ? "Edit Profile" : "Editar Perfil"}</span>
               </button>
 
-              {/* Botón 3: Cambiar Contraseña con machoraton.svg */}
+              {/* Botón 3: Cambiar Contraseña (Verde #17AA4A) */}
               <button
                 type="button"
                 onClick={() => {
@@ -547,46 +609,16 @@ export default function PerfilPage() {
                   setConfirmNewPassword("");
                   setIsChangingPass(true);
                 }}
-                style={{
-                  width: "100%",
-                  padding: "11px 16px",
-                  marginBottom: "10px",
-                  borderRadius: "14px",
-                  background: "linear-gradient(135deg, #FFF085 0%, #EAB308 100%)",
-                  color: "#1E1B4B",
-                  fontWeight: "800",
-                  fontSize: "13px",
-                  border: "none",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  boxShadow: "0 4px 12px rgba(234, 179, 8, 0.25)"
-                }}
+                style={greenButtonStyle}
               >
-                <img src="/images/machoraton.svg" alt="" style={{ width: "16px", height: "20px", objectFit: "contain", filter: "brightness(0)" }} />
+                <img src="/images/machoraton.svg" alt="" style={{ width: "16px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                 <span>{lang === "en" ? "Change Password" : "Cambiar Contraseña"}</span>
               </button>
 
-              {/* Botón 4: Reclamar o Registrar Negocio con edificio.svg (Azul Menú #0A192F) */}
+              {/* Botón 4: Reclamar o Registrar Negocio (Verde #17AA4A) */}
               <Link
                 href="/dashboard"
-                style={{
-                  width: "100%",
-                  padding: "11px 16px",
-                  borderRadius: "14px",
-                  background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
-                  color: "#FFFFFF",
-                  fontWeight: "800",
-                  fontSize: "13px",
-                  textDecoration: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  boxShadow: "0 6px 16px rgba(10, 25, 47, 0.35)"
-                }}
+                style={{ ...greenButtonStyle, marginBottom: 0 }}
               >
                 <img src="/images/edificio.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                 <span>
@@ -601,68 +633,65 @@ export default function PerfilPage() {
           {/* COLUMNA DERECHA CONTENIDO */}
           <div style={{ display: "flex", flexDirection: "column", gap: "36px" }}>
             
-            {/* SECCIÓN 1: RESERVAS DIRECTAS con edificio.svg */}
+            {/* SECCIÓN 1: RESERVAS DIRECTAS con paginación de 4 y slot "Por descubrir" */}
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
                 <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "900", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
                   <img src="/images/edificio.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain" }} />
                   <span>{lang === "en" ? "My Reservations" : "Mis Reservas Directas"}</span>
                 </h2>
-                <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(20, 109, 158, 0.10)", padding: "4px 12px", borderRadius: "12px", color: "#146D9E" }}>
+                <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(23, 170, 74, 0.10)", padding: "4px 12px", borderRadius: "12px", color: "#17AA4A" }}>
                   {reservas.length} {reservas.length === 1 ? "reserva" : "reservas"}
                 </span>
               </div>
 
-              {reservas.length === 0 ? (
-                <div style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "40px 24px", textAlign: "center" }}>
-                  <img src="/images/edificio.svg" alt="" style={{ width: "48px", height: "48px", objectFit: "contain", margin: "0 auto 12px", display: "block", opacity: 0.7 }} />
-                  <p style={{ margin: "0 0 16px", fontSize: "14px", color: "var(--atlan-text-muted)" }}>
-                    {lang === "en" ? "You haven't made any lodging or table reservations yet." : "Aún no has realizado reservas de hospedaje o mesas."}
-                  </p>
-                  <Link href="/mapa" style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "10px 24px", borderRadius: "12px", background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: "#FFFFFF", fontSize: "13px", fontWeight: "800", textDecoration: "none", boxShadow: "0 4px 14px rgba(23, 170, 74, 0.35)" }}>
-                    {lang === "en" ? "Book a place now →" : "Reservar un lugar ahora →"}
-                  </Link>
-                </div>
-              ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
-                  {reservas.map((res) => {
-                    const lugarNombre = res.negocios?.nombre || res.lugares?.nombre || (lang === "en" ? "Local Place" : "Lugar Turístico");
-                    const fechaFormatted = new Date(res.fecha_hora).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", {
-                      weekday: "short", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
-                    });
+              {/* Grid 2x2 de 4 espacios (tarjetas reales + slots por descubrir) */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+                {paginatedReservas.map((res) => {
+                  const lugarNombre = res.negocios?.nombre || res.lugares?.nombre || (lang === "en" ? "Local Place" : "Lugar Turístico");
+                  const fechaFormatted = new Date(res.fecha_hora).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", {
+                    weekday: "short", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+                  });
 
-                    const estadoStyles = {
-                      pendiente: { bg: "rgba(230, 194, 0, 0.15)", text: "#E6C200", border: "rgba(230, 194, 0, 0.3)" },
-                      confirmada: { bg: "rgba(23, 170, 74, 0.15)", text: "#1FCC5C", border: "rgba(23, 170, 74, 0.3)" },
-                      cancelada: { bg: "rgba(239, 68, 68, 0.15)", text: "#f87171", border: "rgba(239, 68, 68, 0.3)" },
-                      completada: { bg: "rgba(59, 130, 246, 0.15)", text: "#60a5fa", border: "rgba(59, 130, 246, 0.3)" }
-                    }[res.estado_reserva] || { bg: "rgba(20, 109, 158, 0.05)", text: "white", border: "rgba(20, 109, 158, 0.12)" };
+                  const estadoStyles = {
+                    pendiente: { bg: "rgba(230, 194, 0, 0.15)", text: "#E6C200", border: "rgba(230, 194, 0, 0.3)" },
+                    confirmada: { bg: "rgba(23, 170, 74, 0.15)", text: "#1FCC5C", border: "rgba(23, 170, 74, 0.3)" },
+                    cancelada: { bg: "rgba(239, 68, 68, 0.15)", text: "#f87171", border: "rgba(239, 68, 68, 0.3)" },
+                    completada: { bg: "rgba(59, 130, 246, 0.15)", text: "#60a5fa", border: "rgba(59, 130, 246, 0.3)" }
+                  }[res.estado_reserva] || { bg: "rgba(20, 109, 158, 0.05)", text: "white", border: "rgba(20, 109, 158, 0.12)" };
 
-                    return (
-                      <div key={res.id} style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "20px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                        <div>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
-                            <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#1A1A2E" }}>{lugarNombre}</h4>
-                            <span style={{ fontSize: "10px", fontWeight: "900", padding: "3px 8px", borderRadius: "6px", background: estadoStyles.bg, color: estadoStyles.text, border: `1px solid ${estadoStyles.border}`, textTransform: "uppercase" }}>
-                              {t(`reservations.status.${res.estado_reserva}`) || res.estado_reserva}
-                            </span>
-                          </div>
-                          <p style={{ margin: "0 0 8px", fontSize: "12.5px", color: "var(--atlan-text-muted)" }}>📅 {fechaFormatted}</p>
-                          <div style={{ fontSize: "12px", color: "#64748B" }}>👥 {res.num_personas} {lang === "en" ? "people" : "personas"}</div>
+                  return (
+                    <div key={res.id} style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "20px", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "150px" }}>
+                      <div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
+                          <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#1A1A2E" }}>{lugarNombre}</h4>
+                          <span style={{ fontSize: "10px", fontWeight: "900", padding: "3px 8px", borderRadius: "6px", background: estadoStyles.bg, color: estadoStyles.text, border: `1px solid ${estadoStyles.border}`, textTransform: "uppercase" }}>
+                            {t(`reservations.status.${res.estado_reserva}`) || res.estado_reserva}
+                          </span>
                         </div>
-                        {res.estado_reserva !== "cancelada" && res.estado_reserva !== "completada" && (
-                          <button onClick={() => handleCancelarReserva(res.id)} style={{ marginTop: "14px", width: "100%", padding: "8px", background: "rgba(239, 68, 68, 0.06)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", borderRadius: "10px", fontWeight: "800", fontSize: "12px", cursor: "pointer" }}>
-                            {lang === "en" ? "Cancel Reservation" : "Cancelar Reserva"}
-                          </button>
-                        )}
+                        <p style={{ margin: "0 0 8px", fontSize: "12.5px", color: "var(--atlan-text-muted)" }}>📅 {fechaFormatted}</p>
+                        <div style={{ fontSize: "12px", color: "#64748B" }}>👥 {res.num_personas} {lang === "en" ? "people" : "personas"}</div>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
+                      {res.estado_reserva !== "cancelada" && res.estado_reserva !== "completada" && (
+                        <button onClick={() => handleCancelarReserva(res.id)} style={{ marginTop: "14px", width: "100%", padding: "8px", background: "rgba(239, 68, 68, 0.06)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", borderRadius: "10px", fontWeight: "800", fontSize: "12px", cursor: "pointer" }}>
+                          {lang === "en" ? "Cancel Reservation" : "Cancelar Reserva"}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Rellenar slots faltantes hasta 4 con "Por descubrir" */}
+                {Array.from({ length: ITEMS_PER_PAGE - paginatedReservas.length }).map((_, i) =>
+                  renderPorDescubrirSlot(i)
+                )}
+              </div>
+
+              {/* Botones de Paginación (1, 2, 3...) */}
+              {renderPaginationControls(getTotalPages(reservas), pageReservas, setPageReservas)}
             </div>
 
-            {/* SECCIÓN 2: DESTINOS GUARDADOS con tortuga.svg */}
+            {/* SECCIÓN 2: DESTINOS GUARDADOS con paginación de 4 y slot "Por descubrir" */}
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
                 <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "900", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
@@ -674,44 +703,41 @@ export default function PerfilPage() {
                 </span>
               </div>
 
-              {favoritos.length === 0 ? (
-                <div style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "40px 24px", textAlign: "center" }}>
-                  <img src="/images/tortuga.svg" alt="" style={{ width: "48px", height: "48px", objectFit: "contain", margin: "0 auto 12px", display: "block", opacity: 0.7 }} />
-                  <p style={{ margin: "0 0 16px", fontSize: "14px", color: "var(--atlan-text-muted)" }}>
-                    {lang === "en" ? "You haven't saved any places yet." : "Aún no tienes destinos o negocios guardados."}
-                  </p>
-                  <Link href="/mapa" style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "10px 24px", borderRadius: "12px", background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: "#FFFFFF", fontSize: "13px", fontWeight: "800", textDecoration: "none", boxShadow: "0 4px 14px rgba(23, 170, 74, 0.35)" }}>
-                    {lang === "en" ? "Explore the map →" : "Explorar el mapa →"}
-                  </Link>
-                </div>
-              ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
-                  {favoritos.map((fav) => {
-                    const punto = fav.puntos;
-                    if (!punto) return null;
+              {/* Grid 2x2 de 4 espacios */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+                {paginatedFavoritos.map((fav) => {
+                  const punto = fav.puntos;
+                  if (!punto) return null;
 
-                    return (
-                      <div key={fav.id} style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "20px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                        <div>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
-                            <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#1A1A2E" }}>{punto.nombre}</h4>
-                            <button onClick={() => handleRemoveFavorite(fav.id)} style={{ background: "none", border: "none", color: "#f87171", cursor: "pointer", fontSize: "14px" }} title="Quitar de favoritos">🗑️</button>
-                          </div>
-                          <span style={{ fontSize: "11px", fontWeight: "800", textTransform: "uppercase", color: "#146D9E", background: "rgba(20, 109, 158, 0.08)", padding: "3px 8px", borderRadius: "6px" }}>
-                            {t(`addPoint.categories.${punto.categoria || 'otro'}`)}
-                          </span>
+                  return (
+                    <div key={fav.id} style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "20px", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "150px" }}>
+                      <div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                          <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#1A1A2E" }}>{punto.nombre}</h4>
+                          <button onClick={() => handleRemoveFavorite(fav.id)} style={{ background: "none", border: "none", color: "#f87171", cursor: "pointer", fontSize: "14px" }} title="Quitar de favoritos">🗑️</button>
                         </div>
-                        <Link href={`/mapa?id=${punto.id}`} style={{ marginTop: "16px", display: "block", textAlign: "center", padding: "9px", background: "linear-gradient(135deg, #146D9E 0%, #17AA4A 100%)", color: "white", borderRadius: "10px", fontWeight: "800", fontSize: "12px", textDecoration: "none" }}>
-                          🗺️ {lang === "en" ? "View on Map" : "Ver en Mapa"}
-                        </Link>
+                        <span style={{ fontSize: "11px", fontWeight: "800", textTransform: "uppercase", color: "#146D9E", background: "rgba(20, 109, 158, 0.08)", padding: "3px 8px", borderRadius: "6px" }}>
+                          {t(`addPoint.categories.${punto.categoria || 'otro'}`)}
+                        </span>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
+                      <Link href={`/mapa?id=${punto.id}`} style={{ marginTop: "16px", display: "block", textAlign: "center", padding: "9px", background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: "white", borderRadius: "10px", fontWeight: "800", fontSize: "12px", textDecoration: "none" }}>
+                        🗺️ {lang === "en" ? "View on Map" : "Ver en Mapa"}
+                      </Link>
+                    </div>
+                  );
+                })}
+
+                {/* Rellenar slots faltantes hasta 4 con "Por descubrir" */}
+                {Array.from({ length: ITEMS_PER_PAGE - paginatedFavoritos.length }).map((_, i) =>
+                  renderPorDescubrirSlot(i)
+                )}
+              </div>
+
+              {/* Botones de Paginación (1, 2, 3...) */}
+              {renderPaginationControls(getTotalPages(favoritos), pageFavoritos, setPageFavoritos)}
             </div>
 
-            {/* SECCIÓN 3: RESEÑAS PUBLICADAS con flor.svg & comentarios.svg */}
+            {/* SECCIÓN 3: RESEÑAS PUBLICADAS con paginación de 4 y slot "Por descubrir" */}
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
                 <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "900", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "10px" }}>
@@ -723,30 +749,27 @@ export default function PerfilPage() {
                 </span>
               </div>
 
-              {resenas.length === 0 ? (
-                <div style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "40px 24px", textAlign: "center" }}>
-                  <img src="/images/comentarios.svg" alt="" style={{ width: "48px", height: "48px", objectFit: "contain", margin: "0 auto 12px", display: "block", opacity: 0.8, filter: "brightness(0)" }} />
-                  <p style={{ margin: "0 0 16px", fontSize: "14px", color: "var(--atlan-text-muted)" }}>
-                    {lang === "en" ? "You haven't posted any reviews yet." : "Aún no has publicado reseñas en los destinos."}
-                  </p>
-                  <Link href="/mapa" style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "10px 24px", borderRadius: "12px", background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: "#FFFFFF", fontSize: "13px", fontWeight: "800", textDecoration: "none", boxShadow: "0 4px 14px rgba(23, 170, 74, 0.35)" }}>
-                    {lang === "en" ? "Explore destinations and leave a review →" : "Explorar el mapa para calificar →"}
-                  </Link>
-                </div>
-              ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
-                  {resenas.map((rev) => {
-                    const destinoNombre = rev.negocios?.nombre || rev.puntos?.nombre || (lang === "en" ? "Local Destination" : "Destino");
-                    return (
-                      <div key={rev.id} style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "20px" }}>
-                        <h4 style={{ margin: "0 0 6px", fontSize: "15px", fontWeight: "800", color: "#1A1A2E" }}>{destinoNombre}</h4>
-                        <div style={{ color: "#FFD700", fontSize: "14px", marginBottom: "8px" }}>{"★".repeat(rev.calificacion || 5)}</div>
-                        <p style={{ margin: 0, fontSize: "13px", color: "#4A5568", lineHeight: "1.5" }}>"{rev.comentario}"</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              {/* Grid 2x2 de 4 espacios */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+                {paginatedResenas.map((rev) => {
+                  const destinoNombre = rev.negocios?.nombre || rev.puntos?.nombre || (lang === "en" ? "Local Destination" : "Destino");
+                  return (
+                    <div key={rev.id} style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "20px", minHeight: "150px" }}>
+                      <h4 style={{ margin: "0 0 6px", fontSize: "15px", fontWeight: "800", color: "#1A1A2E" }}>{destinoNombre}</h4>
+                      <div style={{ color: "#FFD700", fontSize: "14px", marginBottom: "8px" }}>{"★".repeat(rev.calificacion || 5)}</div>
+                      <p style={{ margin: 0, fontSize: "13px", color: "#4A5568", lineHeight: "1.5" }}>"{rev.comentario}"</p>
+                    </div>
+                  );
+                })}
+
+                {/* Rellenar slots faltantes hasta 4 con "Por descubrir" */}
+                {Array.from({ length: ITEMS_PER_PAGE - paginatedResenas.length }).map((_, i) =>
+                  renderPorDescubrirSlot(i)
+                )}
+              </div>
+
+              {/* Botones de Paginación (1, 2, 3...) */}
+              {renderPaginationControls(getTotalPages(resenas), pageResenas, setPageResenas)}
             </div>
 
           </div>
