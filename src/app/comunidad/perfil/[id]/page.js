@@ -426,40 +426,36 @@ export default function PerfilPublico() {
 
         {/* ── CENTER COLUMN ── */}
         <main style={{ minWidth: 0, width: "100%" }}>
-          {/* Target Profile Card */}
-          <div style={{ background: "#FFFFFF", borderRadius: "24px", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "0 14px 35px rgba(0, 0, 0, 0.08)", overflow: "hidden", marginBottom: "24px" }}>
-            <div style={{ height: "100px", background: "linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(23, 170, 74, 0.10) 100%)" }} />
-            <div style={{ padding: "0 24px 24px", marginTop: "-44px" }}>
-              <div style={{ display: "flex", alignItems: "flex-end", gap: "16px", flexWrap: "wrap", marginBottom: "16px" }}>
-                <div style={avatarStyle(targetPerfil.avatar_url, 80)}>
-                  {!targetPerfil.avatar_url && (targetPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
-                </div>
-                <div style={{ flex: 1, minWidth: "180px" }}>
-                  <h2 style={{ margin: "0 0 4px", fontSize: "22px", fontWeight: "900", color: "#1A1A2E" }}>
-                    {targetPerfil.nombre_completo || "Usuario"}
-                  </h2>
-                  <span style={{ fontSize: "12px", fontWeight: "700", color: "#17AA4A" }}>
-                    {targetPerfil.rol === "dueno" ? "Propietario" : "Turista Tuani"}
-                  </span>
-                </div>
-                {isOwnProfile ? (
-                  <button onClick={() => { setEditNombre(targetPerfil.nombre_completo || ""); setEditBio(targetPerfil.bio || ""); setIsEditingProfile(true); }} style={{ padding: "8px 16px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", background: "rgba(20,109,158,0.06)", color: "#146D9E", fontWeight: "800", fontSize: "13px", cursor: "pointer" }}>
-                    ✏️ Editar Perfil
-                  </button>
-                ) : (
+          {/* Target Profile Card (Solo se muestra si estás visitando el perfil de OTRA persona) */}
+          {!isOwnProfile && (
+            <div style={{ background: "#FFFFFF", borderRadius: "24px", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "0 14px 35px rgba(0, 0, 0, 0.08)", overflow: "hidden", marginBottom: "24px" }}>
+              <div style={{ height: "100px", background: "linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(23, 170, 74, 0.10) 100%)" }} />
+              <div style={{ padding: "0 24px 24px", marginTop: "-44px" }}>
+                <div style={{ display: "flex", alignItems: "flex-end", gap: "16px", flexWrap: "wrap", marginBottom: "16px" }}>
+                  <div style={avatarStyle(targetPerfil.avatar_url, 80)}>
+                    {!targetPerfil.avatar_url && (targetPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
+                  </div>
+                  <div style={{ flex: 1, minWidth: "180px" }}>
+                    <h2 style={{ margin: "0 0 4px", fontSize: "22px", fontWeight: "900", color: "#1A1A2E" }}>
+                      {targetPerfil.nombre_completo || "Usuario"}
+                    </h2>
+                    <span style={{ fontSize: "12px", fontWeight: "700", color: "#17AA4A" }}>
+                      {targetPerfil.rol === "dueno" ? "Propietario" : "Turista Tuani"}
+                    </span>
+                  </div>
                   <button onClick={handleFollow} disabled={followLoading} style={{ padding: "8px 20px", borderRadius: "10px", border: "none", background: isFollowing ? "rgba(20,109,158,0.08)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: isFollowing ? "#1A1A2E" : "white", fontWeight: "800", fontSize: "13px", cursor: "pointer" }}>
                     {isFollowing ? "✓ Siguiendo" : "Seguir"}
                   </button>
-                )}
-              </div>
+                </div>
 
-              <div style={{ display: "flex", gap: "24px", paddingTop: "12px", borderTop: "1px solid rgba(20,109,158,0.08)" }}>
-                <div><strong>{posts.length}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>Posts</span></div>
-                <div><strong>{targetPerfil.seguidores_count || 0}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>Seguidores</span></div>
-                <div><strong>{targetPerfil.siguiendo_count || 0}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>Siguiendo</span></div>
+                <div style={{ display: "flex", gap: "24px", paddingTop: "12px", borderTop: "1px solid rgba(20,109,158,0.08)" }}>
+                  <div><strong>{posts.length}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>Posts</span></div>
+                  <div><strong>{targetPerfil.seguidores_count || 0}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>Seguidores</span></div>
+                  <div><strong>{targetPerfil.siguiendo_count || 0}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>Siguiendo</span></div>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Posts */}
           {posts.length === 0 ? (
