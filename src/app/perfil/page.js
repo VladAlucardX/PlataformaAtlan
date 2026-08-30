@@ -577,8 +577,24 @@ export default function PerfilPage() {
                 {user?.email}
               </p>
 
-              {/* Botón 1: Rol (Verde #17AA4A) */}
-              <div style={greenButtonStyle}>
+              {/* Botón 1: Rol (Verde Esmeralda) */}
+              <div
+                style={{
+                  width: "100%",
+                  padding: "11px 16px",
+                  marginBottom: "10px",
+                  borderRadius: "14px",
+                  background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
+                  color: "#FFFFFF",
+                  fontWeight: "800",
+                  fontSize: "13px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  boxShadow: "0 4px 12px rgba(16, 185, 129, 0.25)"
+                }}
+              >
                 <img
                   src="/images/perfil.svg"
                   alt="Perfil"
@@ -587,7 +603,7 @@ export default function PerfilPage() {
                 <span>{rolText}</span>
               </div>
 
-              {/* Botón 2: Editar Perfil (Verde #17AA4A) */}
+              {/* Botón 2: Editar Perfil (Azul) */}
               <button
                 type="button"
                 onClick={() => {
@@ -595,13 +611,29 @@ export default function PerfilPage() {
                   setEditBio(perfil?.bio || "");
                   setIsEditing(true);
                 }}
-                style={greenButtonStyle}
+                style={{
+                  width: "100%",
+                  padding: "11px 16px",
+                  marginBottom: "10px",
+                  borderRadius: "14px",
+                  background: "linear-gradient(135deg, #0284C7 0%, #0369A1 100%)",
+                  color: "#FFFFFF",
+                  fontWeight: "800",
+                  fontSize: "13px",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  boxShadow: "0 4px 12px rgba(2, 132, 199, 0.25)"
+                }}
               >
                 <img src="/images/flor.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                 <span>{lang === "en" ? "Edit Profile" : "Editar Perfil"}</span>
               </button>
 
-              {/* Botón 3: Cambiar Contraseña (Verde #17AA4A) */}
+              {/* Botón 3: Cambiar Contraseña (Amarillo / Dorado) */}
               <button
                 type="button"
                 onClick={() => {
@@ -609,16 +641,46 @@ export default function PerfilPage() {
                   setConfirmNewPassword("");
                   setIsChangingPass(true);
                 }}
-                style={greenButtonStyle}
+                style={{
+                  width: "100%",
+                  padding: "11px 16px",
+                  marginBottom: "10px",
+                  borderRadius: "14px",
+                  background: "linear-gradient(135deg, #FFF085 0%, #EAB308 100%)",
+                  color: "#1E1B4B",
+                  fontWeight: "800",
+                  fontSize: "13px",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  boxShadow: "0 4px 12px rgba(234, 179, 8, 0.25)"
+                }}
               >
-                <img src="/images/machoraton.svg" alt="" style={{ width: "16px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                <img src="/images/machoraton.svg" alt="" style={{ width: "16px", height: "20px", objectFit: "contain", filter: "brightness(0)" }} />
                 <span>{lang === "en" ? "Change Password" : "Cambiar Contraseña"}</span>
               </button>
 
-              {/* Botón 4: Reclamar o Registrar Negocio (Verde #17AA4A) */}
+              {/* Botón 4: Reclamar o Registrar Negocio (Azul Menú #0A192F) */}
               <Link
                 href="/dashboard"
-                style={{ ...greenButtonStyle, marginBottom: 0 }}
+                style={{
+                  width: "100%",
+                  padding: "11px 16px",
+                  borderRadius: "14px",
+                  background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
+                  color: "#FFFFFF",
+                  fontWeight: "800",
+                  fontSize: "13px",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  boxShadow: "0 6px 16px rgba(10, 25, 47, 0.35)"
+                }}
               >
                 <img src="/images/edificio.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                 <span>
