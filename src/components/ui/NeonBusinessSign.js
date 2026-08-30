@@ -8,7 +8,15 @@ export default function NeonBusinessSign({ session }) {
 
   return (
     <Link href={targetLink} style={{ textDecoration: "none", display: "inline-block" }}>
-      <div className="neon-sign-box neon-green-bg-panel">
+      <div
+        className="neon-sign-box neon-green-bg-panel"
+        style={{
+          background: "linear-gradient(145deg, #1FCC5C 0%, #17AA4A 70%, #128A3C 100%)",
+          border: "2.5px solid #FFFFFF",
+          boxShadow: "0 0 24px rgba(23, 170, 74, 0.85), 0 0 45px rgba(23, 170, 74, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.9), 0 20px 40px rgba(0, 0, 0, 0.5)",
+          borderRadius: "24px"
+        }}
+      >
         {/* SVG de emprendimiento.svg (public/images/emprendimiento.svg) */}
         <div className="neon-map-wrapper">
           <svg
