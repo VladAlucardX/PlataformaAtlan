@@ -36,8 +36,11 @@ const DEPARTAMENTOS_LISTA = [
 export default function DepartamentosPage() {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const hoveredSpanRef = useRef(null);
+  const currentHoveredDeptRef = useRef(null);
+  const selectedDeptRef = useRef("Todos");
+
   const [selectedDept, setSelectedDept] = useState("Todos");
-  const [hoveredDept, setHoveredDept] = useState(null);
   const [rankingData, setRankingData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userVisitsCount, setUserVisitsCount] = useState(0);
@@ -48,6 +51,24 @@ export default function DepartamentosPage() {
   // Modo de Ranking: 'global' | 'propio' y Límite de Paginación Top 5
   const [rankingMode, setRankingMode] = useState('global');
   const [visibleCount, setVisibleCount] = useState(5);
+
+  // Sincronizar ref del departamento seleccionado
+  useEffect(() => {
+    selectedDeptRef.current = selectedDept;
+    if (mapRef.current && mapRef.current.isStyleLoaded()) {
+      actualizarCapasSeleccion(mapRef.current, selectedDept);
+    }
+  }, [selectedDept]);
+
+  const actualizarCapasSeleccion = (map, dept) => {
+    try {
+      const targetName = dept && dept !== "Todos" ? dept : "___NONE___";
+      const matchFilter = ['==', ['coalesce', ['get', 'nombre'], ['get', 'name_es'], ['get', 'name'], ''], targetName];
+      map.setFilter('dept-selected-fill', matchFilter);
+      map.setFilter('dept-selected-borders', matchFilter);
+      map.setFilter('dept-selected-glow', matchFilter);
+    } catch (_) {}
+  };
 
   // Cargar visitas del usuario cuando la sesión cambia
   useEffect(() => {
@@ -72,13 +93,20 @@ export default function DepartamentosPage() {
     }
   };
 
+  // Obtener nombre del rango de turista
+  const getTouristBadgeLabel = () => {
+    if (!userSession) return "Turista";
+    if (perfil?.es_premium || perfil?.suscripcion_activa || perfil?.rol === "turista_deacachimba" || perfil?.es_pago) {
+      return "Turista Deacachimba";
+    }
+    return "Turista Tuani";
+  };
+
   // Corregir departamento de cada lugar usando detección por coordenadas (GeoJSON polygons)
-  // y filtrar por departamento seleccionado. También auto-corrige datos incorrectos en la BD.
   const corregirYFiltrarDepartamentos = async (data, dept) => {
     if (!data || data.length === 0) return [];
 
     const corrected = await Promise.all(data.map(async (lugar) => {
-      // Solo corregir si tiene coordenadas válidas
       if (lugar.lat != null && lugar.lng != null) {
         const lng = typeof lugar.lng === 'string' ? parseFloat(lugar.lng) : lugar.lng;
         const lat = typeof lugar.lat === 'string' ? parseFloat(lugar.lat) : lugar.lat;
@@ -86,7 +114,6 @@ export default function DepartamentosPage() {
           try {
             const deptReal = await obtenerDepartamentoPorCoordenadas(lng, lat);
             if (deptReal && deptReal !== lugar.departamento) {
-              // Auto-corregir el departamento en la BD (fire-and-forget)
               supabase
                 .from('puntos')
                 .update({ departamento: deptReal })
@@ -96,13 +123,12 @@ export default function DepartamentosPage() {
                 });
               return { ...lugar, departamento: deptReal };
             }
-          } catch (_) { /* mantener departamento original si falla */ }
+          } catch (_) {}
         }
       }
       return lugar;
     }));
 
-    // Filtrar por departamento si no es "Todos"
     if (dept && dept !== "Todos") {
       return corrected.filter(lugar => lugar.departamento === dept);
     }
@@ -113,8 +139,6 @@ export default function DepartamentosPage() {
   const cargarRanking = async (dept, mode = rankingMode) => {
     setLoading(true);
     try {
-      // Siempre traer TODOS los lugares del RPC (sin filtro de departamento)
-      // para poder corregir departamentos client-side con geo-detección
       if (mode === 'propio') {
         if (!userSession?.user) {
           setRankingData([]);
@@ -139,7 +163,6 @@ export default function DepartamentosPage() {
     } catch (err) {
       console.warn("[Atlan] Fallo en RPC ranking, buscando en tabla puntos:", err);
       try {
-        // Fallback: traer todos y corregir/filtrar client-side
         let query = supabase
           .from('puntos')
           .select('*')
@@ -163,8 +186,8 @@ export default function DepartamentosPage() {
 
     if (selectedDept === "Todos" && mapRef.current) {
       mapRef.current.flyTo({
-        center: [-85.1, 12.9],
-        zoom: 6.0,
+        center: [-85.10, 12.75],
+        zoom: 6.25,
         pitch: 0,
         bearing: 0,
         duration: 1000
@@ -172,33 +195,64 @@ export default function DepartamentosPage() {
     }
   }, [selectedDept, rankingMode, userSession]);
 
-  // Inicializar Mapbox GL Map con GeoJSON de Departamentos
+  // Mapbox GL Map con Relleno Ultra Sutil (0.05) y Bordes Delgados (#0A192F 1.0px)
   useEffect(() => {
     if (mapRef.current) return;
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/outdoors-v12?optimize=true',
-      center: [-85.15, 12.80], // Centro exacto para encuadrar Nicaragua fija
-      zoom: 6.20,
-      minZoom: 6.20,
-      maxZoom: 6.20,
+      center: [-85.10, 12.75],
+      zoom: 6.25,
+      minZoom: 5.8,
+      maxZoom: 7.8,
       pitch: 0,
       projection: 'mercator',
       maxBounds: [[-88.5, 9.8], [-81.5, 15.5]],
-      scrollZoom: false,       // Desactivar zoom manual
-      doubleClickZoom: false,  // Desactivar zoom por doble clic
+      scrollZoom: false,
+      doubleClickZoom: false,
       boxZoom: false,
       dragRotate: false,
-      dragPan: false,          // Mapa 100% fijo sin desplazamientos
+      dragPan: false,
       touchZoomRotate: false,
       keyboard: false
     });
 
     mapRef.current = map;
 
+    const resizeObserver = new ResizeObserver(() => {
+      if (mapRef.current) {
+        mapRef.current.resize();
+      }
+    });
+    if (mapContainerRef.current) {
+      resizeObserver.observe(mapContainerRef.current);
+    }
+
+    const EMPTY_FILTER = ['==', ['coalesce', ['get', 'nombre'], ['get', 'name_es'], ['get', 'name'], ''], '___NONE___'];
+
+    // Limpieza instantánea: solo se invoca al salir del contenedor HTML del mapa
+    const forceClearHoverNow = () => {
+      currentHoveredDeptRef.current = null;
+      if (mapRef.current && mapRef.current.isStyleLoaded()) {
+        try {
+          mapRef.current.setFilter('dept-hover-fill', EMPTY_FILTER);
+          mapRef.current.setFilter('dept-hover-borders', EMPTY_FILTER);
+        } catch (_) {}
+      }
+      if (hoveredSpanRef.current) {
+        hoveredSpanRef.current.style.display = "none";
+      }
+      if (mapRef.current) {
+        mapRef.current.getCanvas().style.cursor = '';
+      }
+    };
+
+    // ÚNICO punto de limpieza: salida del contenedor HTML (no del canvas de Mapbox)
+    const containerElement = mapContainerRef.current;
+    containerElement?.addEventListener('mouseleave', forceClearHoverNow);
+
     map.on('load', () => {
-      // Ocultar carreteras y líneas para mapa pulcro
       try {
         const styleLayers = map.getStyle().layers || [];
         styleLayers.forEach((layer) => {
@@ -215,19 +269,16 @@ export default function DepartamentosPage() {
         });
       } catch (_) {}
 
-      // Cargar GeoJSON de Departamentos
       map.addSource('nicaragua-departments', {
         type: 'geojson',
         data: '/nicaragua-departments.json'
       });
 
-      // Cargar GeoJSON de Centroides para Etiquetas Únicas
       map.addSource('nicaragua-dept-centroids', {
         type: 'geojson',
         data: '/nicaragua-department-centroids.json'
       });
 
-      // Paleta de Colores Única por Departamento (idéntica a Más de Nicaragua)
       const COLOR_MATCH_EXPR = [
         'match',
         ['coalesce', ['get', 'nombre'], ['get', 'name_es'], ['get', 'name'], ''],
@@ -251,80 +302,97 @@ export default function DepartamentosPage() {
         'Atlántico Norte', '#E11D48',
         'RACCS (Caribe Sur)', '#EC4899',
         'Atlántico Sur', '#EC4899',
-        '#FFD700' // fallback
+        '#38BDF8'
       ];
 
-      // Capa de Aura/Resplandor Neón para el Departamento Seleccionado
+      // 1. Capa Relleno Base (Polígonos Estáticos Ultra Sutiles)
       map.addLayer({
-        id: 'dept-glow',
+        id: 'dept-fill-base',
+        type: 'fill',
+        source: 'nicaragua-departments',
+        paint: {
+          'fill-color': '#146D9E',
+          'fill-opacity': 0.05
+        }
+      });
+
+      // 2. Capa Bordes Base (Líneas Blancas Muy Sutiles - 1.0px)
+      map.addLayer({
+        id: 'dept-borders-base',
+        type: 'line',
+        source: 'nicaragua-departments',
+        paint: {
+          'line-color': '#FFFFFF',
+          'line-width': 1.0,
+          'line-opacity': 0.92
+        }
+      });
+
+      // 3. Capa Hover Relleno
+      map.addLayer({
+        id: 'dept-hover-fill',
+        type: 'fill',
+        source: 'nicaragua-departments',
+        paint: {
+          'fill-color': COLOR_MATCH_EXPR,
+          'fill-opacity': 0.65
+        },
+        filter: EMPTY_FILTER
+      });
+
+      // 4. Capa Hover Borde Blanco
+      map.addLayer({
+        id: 'dept-hover-borders',
+        type: 'line',
+        source: 'nicaragua-departments',
+        paint: {
+          'line-color': '#FFFFFF',
+          'line-width': 2.4,
+          'line-opacity': 0.95
+        },
+        filter: EMPTY_FILTER
+      });
+
+      // 5. Capa Selección Resplandor (Glow)
+      map.addLayer({
+        id: 'dept-selected-glow',
         type: 'line',
         source: 'nicaragua-departments',
         paint: {
           'line-color': COLOR_MATCH_EXPR,
-          'line-width': [
-            'case',
-            ['to-boolean', ['feature-state', 'selected']], 14,
-            0
-          ],
+          'line-width': 14,
           'line-blur': 8,
-          'line-opacity': [
-            'case',
-            ['to-boolean', ['feature-state', 'selected']], 0.85,
-            0
-          ],
-          'line-width-transition': { duration: 350, delay: 0 },
-          'line-opacity-transition': { duration: 350, delay: 0 }
-        }
+          'line-opacity': 0.85
+        },
+        filter: EMPTY_FILTER
       });
 
-      // Capa Relleno Interactivo Multicolor con Transición Suave
+      // 6. Capa Selección Relleno
       map.addLayer({
-        id: 'dept-fill',
+        id: 'dept-selected-fill',
         type: 'fill',
         source: 'nicaragua-departments',
         paint: {
-          'fill-color': [
-            'case',
-            ['to-boolean', ['feature-state', 'selected']], COLOR_MATCH_EXPR,
-            ['to-boolean', ['feature-state', 'hover']], COLOR_MATCH_EXPR,
-            '#146D9E'
-          ],
-          'fill-color-transition': { duration: 300, delay: 0 },
-          'fill-opacity': [
-            'case',
-            ['to-boolean', ['feature-state', 'selected']], 0.88,
-            ['to-boolean', ['feature-state', 'hover']], 0.68,
-            0.28
-          ],
-          'fill-opacity-transition': { duration: 300, delay: 0 }
-        }
+          'fill-color': COLOR_MATCH_EXPR,
+          'fill-opacity': 0.88
+        },
+        filter: EMPTY_FILTER
       });
 
-      // Capa de Borde Adaptativo con Halo Blanco en Selección
+      // 7. Capa Selección Borde Blanco Grueso
       map.addLayer({
-        id: 'dept-borders',
+        id: 'dept-selected-borders',
         type: 'line',
         source: 'nicaragua-departments',
         paint: {
-          'line-color': [
-            'case',
-            ['to-boolean', ['feature-state', 'selected']], '#FFFFFF',
-            ['to-boolean', ['feature-state', 'hover']], '#FFFFFF',
-            '#FFD700'
-          ],
-          'line-color-transition': { duration: 300, delay: 0 },
-          'line-width': [
-            'case',
-            ['to-boolean', ['feature-state', 'selected']], 4.0,
-            ['to-boolean', ['feature-state', 'hover']], 2.8,
-            1.5
-          ],
-          'line-width-transition': { duration: 300, delay: 0 },
-          'line-opacity': 0.95
-        }
+          'line-color': '#FFFFFF',
+          'line-width': 3.8,
+          'line-opacity': 1.0
+        },
+        filter: EMPTY_FILTER
       });
 
-      // Capa de Nombres Únicos de Departamentos
+      // 8. Etiquetas de Texto
       map.addLayer({
         id: 'dept-labels',
         type: 'symbol',
@@ -336,9 +404,9 @@ export default function DepartamentosPage() {
             'interpolate',
             ['linear'],
             ['zoom'],
-            5, 10.5,
-            8, 14,
-            12, 17
+            5, 11,
+            8, 14.5,
+            12, 17.5
           ],
           'text-allow-overlap': true,
           'text-anchor': 'center'
@@ -350,62 +418,77 @@ export default function DepartamentosPage() {
         }
       });
 
-      let hoveredId = null;
-      let selectedId = null;
+      actualizarCapasSeleccion(map, selectedDeptRef.current);
 
-      // Eventos Hover
-      map.on('mousemove', 'dept-fill', (e) => {
+      // ESTRATEGIA ANTI-PARPADEO DEFINITIVA:
+      // - mouseenter en dept-fill-base: cambiar highlight al nuevo departamento
+      // - El océano/agua NO dispara NINGÚN evento ni cambio de filtro
+      // - SOLO se limpia al salir del contenedor HTML del mapa (mouseleave DOM)
+      // Esto elimina el parpadeo al 100% porque jamás se ejecuta setFilter en la zona del océano.
+
+      map.on('mouseenter', 'dept-fill-base', (e) => {
         if (e.features && e.features.length > 0) {
-          if (hoveredId !== null && hoveredId !== undefined) {
-            try {
-              map.setFeatureState({ source: 'nicaragua-departments', id: hoveredId }, { hover: false });
-            } catch (_) {}
-          }
           const feat = e.features[0];
-          hoveredId = feat.id !== undefined ? feat.id : (feat.properties && feat.properties.id);
-          const deptName = feat.properties ? (feat.properties.nombre || feat.properties.name) : null;
-          setHoveredDept(deptName);
+          const deptName = feat.properties ? (feat.properties.nombre || feat.properties.name || feat.properties.name_es) : null;
+
+          if (deptName && deptName !== currentHoveredDeptRef.current) {
+            currentHoveredDeptRef.current = deptName;
+
+            const hoverFilter = ['==', ['coalesce', ['get', 'nombre'], ['get', 'name_es'], ['get', 'name'], ''], deptName];
+            try {
+              map.setFilter('dept-hover-fill', hoverFilter);
+              map.setFilter('dept-hover-borders', hoverFilter);
+            } catch (_) {}
+
+            if (hoveredSpanRef.current) {
+              if (deptName !== selectedDeptRef.current) {
+                hoveredSpanRef.current.textContent = deptName;
+                hoveredSpanRef.current.style.display = "inline-block";
+              } else {
+                hoveredSpanRef.current.style.display = "none";
+              }
+            }
+          }
           map.getCanvas().style.cursor = 'pointer';
-
-          if (hoveredId !== null && hoveredId !== undefined) {
-            try {
-              map.setFeatureState({ source: 'nicaragua-departments', id: hoveredId }, { hover: true });
-            } catch (_) {}
-          }
         }
       });
 
-      map.on('mouseleave', 'dept-fill', () => {
-        if (hoveredId !== null && hoveredId !== undefined) {
-          try {
-            map.setFeatureState({ source: 'nicaragua-departments', id: hoveredId }, { hover: false });
-          } catch (_) {}
-        }
-        hoveredId = null;
-        setHoveredDept(null);
-        map.getCanvas().style.cursor = '';
-      });
-
-      // Evento Clic en Departamento (Fijo sin zoom al hacer clic)
-      map.on('click', 'dept-fill', (e) => {
-        if (e.features.length > 0) {
+      // mousemove SOLO dentro de dept-fill-base para detectar cambio entre departamentos
+      map.on('mousemove', 'dept-fill-base', (e) => {
+        if (e.features && e.features.length > 0) {
           const feat = e.features[0];
-          const name = feat.properties ? (feat.properties.nombre || feat.properties.name) : null;
-          const newId = feat.id !== undefined ? feat.id : (feat.properties && feat.properties.id);
+          const deptName = feat.properties ? (feat.properties.nombre || feat.properties.name || feat.properties.name_es) : null;
 
-          if (selectedId !== null && selectedId !== undefined) {
+          if (deptName && deptName !== currentHoveredDeptRef.current) {
+            currentHoveredDeptRef.current = deptName;
+
+            const hoverFilter = ['==', ['coalesce', ['get', 'nombre'], ['get', 'name_es'], ['get', 'name'], ''], deptName];
             try {
-              map.setFeatureState({ source: 'nicaragua-departments', id: selectedId }, { selected: false });
+              map.setFilter('dept-hover-fill', hoverFilter);
+              map.setFilter('dept-hover-borders', hoverFilter);
             } catch (_) {}
-          }
 
-          selectedId = newId;
-
-          if (selectedId !== null && selectedId !== undefined) {
-            try {
-              map.setFeatureState({ source: 'nicaragua-departments', id: selectedId }, { selected: true });
-            } catch (_) {}
+            if (hoveredSpanRef.current) {
+              if (deptName !== selectedDeptRef.current) {
+                hoveredSpanRef.current.textContent = deptName;
+                hoveredSpanRef.current.style.display = "inline-block";
+              } else {
+                hoveredSpanRef.current.style.display = "none";
+              }
+            }
           }
+          map.getCanvas().style.cursor = 'pointer';
+        }
+      });
+
+      // NO hay mouseleave en dept-fill-base
+      // NO hay mousemove global
+      // El hover se limpia ÚNICAMENTE al salir del contenedor HTML (línea 286)
+
+      map.on('click', 'dept-fill-base', (e) => {
+        if (e.features && e.features.length > 0) {
+          const feat = e.features[0];
+          const name = feat.properties ? (feat.properties.nombre || feat.properties.name || feat.properties.name_es) : null;
 
           if (name) {
             setSelectedDept(name);
@@ -415,6 +498,7 @@ export default function DepartamentosPage() {
     });
 
     return () => {
+      containerElement?.removeEventListener('mouseleave', forceClearHoverNow);
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
@@ -423,107 +507,181 @@ export default function DepartamentosPage() {
   }, []);
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#0A192F", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif" }}>
+    <div style={{ height: "100vh", maxHeight: "100vh", overflow: "hidden", background: "radial-gradient(ellipse at 50% 35%, #102A45 0%, #0A192F 60%, #061120 100%)", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif", position: "relative" }}>
       <Navbar activePage="departamentos" session={userSession} perfil={perfil} />
 
-      <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "85px 20px 40px 20px" }}>
+      {/* Contenedor Principal Ajustado al 100vh Sin Scroll Vertical de Página */}
+      <main style={{ maxWidth: "1400px", margin: "0 auto", padding: "75px 20px 14px 20px", height: "100vh", maxHeight: "100vh", display: "flex", flexDirection: "column", boxSizing: "border-box", position: "relative", zIndex: 1, overflow: "hidden" }}>
         
-        {/* Encabezado Principal en Una Sola Línea */}
-        <div style={{ textAlign: "center", marginBottom: "16px" }}>
-          <h1 style={{ fontSize: "clamp(18px, 3.2vw, 32px)", fontWeight: "900", letterSpacing: "-0.01em", color: "#FFFFFF", margin: 0, whiteSpace: "nowrap" }}>
-            Ranking de Lugares más visitados en <span style={{ color: "#FFD700" }}>Nicaragua</span>
-          </h1>
+        {/* Encabezado Compacto con la palabra Nicaragua pintada con la Bandera (Azul - Blanco - Azul) */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", gap: "16px", flexWrap: "wrap", flexShrink: 0 }}>
+          <div>
+            <h1 style={{ fontSize: "clamp(18px, 2.2vw, 26px)", fontWeight: "900", letterSpacing: "-0.01em", color: "#FFFFFF", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+              <span>Ranking de Lugares más visitados en</span>
+              <span style={{
+                background: "linear-gradient(180deg, #0072CE 0%, #0072CE 33%, #FFFFFF 34%, #FFFFFF 66%, #0072CE 67%, #0072CE 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontWeight: "900",
+                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.9)) drop-shadow(0 0 2px rgba(0,0,0,0.8))",
+                padding: "0 2px",
+                display: "inline-block"
+              }}>
+                Nicaragua
+              </span>
+            </h1>
+          </div>
+
+          {/* Banner Compacto de Logros del Usuario con gueguense.svg y Nivel (Turista Tuani / Turista Deacachimba / Turista) */}
+          {userSession && (
+            <div style={{ background: "rgba(255, 255, 255, 0.07)", backdropFilter: "blur(12px)", border: "1px solid rgba(255, 255, 255, 0.15)", borderRadius: "12px", padding: "6px 14px", display: "flex", alignItems: "center", gap: "12px", boxShadow: "0 4px 16px rgba(0,0,0,0.3)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <img src="/images/gueguense.svg" alt="Güegüense" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                <span style={{ fontSize: "12.5px", fontWeight: "800", color: "#FFFFFF" }}>
+                  <span>{perfil?.nombre_completo || perfil?.nombre || userSession?.user?.user_metadata?.nombre_completo || 'Turista'}</span>: <span style={{ color: "#38BDF8" }}>{userVisitsCount}</span> {userVisitsCount === 1 ? 'visita' : 'visitas'}
+                </span>
+              </div>
+
+              <span style={{ fontSize: "11px", fontWeight: "800", background: "rgba(255, 255, 255, 0.12)", color: "#FFFFFF", padding: "2px 8px", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.25)", display: "flex", alignItems: "center", gap: "4px" }}>
+                <img src="/images/perfil.svg" alt="Turista" style={{ width: "12px", height: "12px", filter: "brightness(0) invert(0.9)" }} />
+                <span>{getTouristBadgeLabel()}</span>
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Banner Compacto de Logros del Usuario */}
-        {userSession && (
-          <div style={{ background: "linear-gradient(135deg, rgba(20, 109, 158, 0.25) 0%, rgba(10, 25, 47, 0.6) 100%)", border: "1.5px solid rgba(20, 109, 158, 0.4)", borderRadius: "14px", padding: "10px 18px", marginBottom: "18px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px", boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <Icon name="shield" size={18} color="#FFD700" />
-              <span style={{ fontSize: "13.5px", fontWeight: "800", color: "#FFFFFF" }}>
-                Registro de <span style={{ color: "#FFD700" }}>{perfil?.nombre_completo || perfil?.nombre || userSession?.user?.user_metadata?.nombre_completo || 'Turista'}</span>: <span style={{ color: "#FFD700" }}>{userVisitsCount}</span> {userVisitsCount === 1 ? 'visita verificada' : 'visitas verificadas'}
-              </span>
-            </div>
+        {/* Layout Principal Flexible en 2 Columnas Estrictas (Paneles Traslúcidos de Cristal) */}
+        <div style={{ flex: 1, minHeight: 0, maxHeight: "100%", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "18px", alignItems: "stretch", overflow: "hidden" }}>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(56, 189, 248, 0.18)", color: "#38BDF8", padding: "3px 10px", borderRadius: "10px", border: "1px solid rgba(56, 189, 248, 0.3)" }}>
-                {userVisitsCount >= 10 ? '👑 Leyenda' : userVisitsCount >= 5 ? '🧭 Mochilero' : '🧳 Turista'}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* Layout Principal: Mapa Interactivo Neón + Lista de Ranking */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "28px", alignItems: "start" }}>
-
-          {/* Columna Izquierda: Mapa de Departamentos Estilo Neón */}
-          <div style={{ background: "rgba(15, 23, 42, 0.85)", border: "2px solid rgba(255, 215, 0, 0.25)", borderRadius: "24px", padding: "16px", boxShadow: "0 20px 50px rgba(0,0,0,0.5)", position: "sticky", top: "90px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", padding: "0 4px" }}>
-              <span style={{ fontSize: "14px", fontWeight: "800", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "6px" }}>
-                <Icon name="mapPin" size={16} color="#FFD700" /> Mapa de Departamentos
-              </span>
-              {hoveredDept && (
-                <span style={{ fontSize: "12px", fontWeight: "700", background: "#FFD700", color: "#1A1A2E", padding: "2px 8px", borderRadius: "8px" }}>
-                  {hoveredDept}
+          {/* Columna Izquierda: Mapa de Departamentos Traslúcido (Azul Navbar) */}
+          <div style={{ background: "rgba(10, 25, 47, 0.72)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255, 255, 255, 0.14)", borderRadius: "20px", padding: "14px", boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)", display: "flex", flexDirection: "column", height: "100%", maxHeight: "100%", minHeight: 0, boxSizing: "border-box", overflow: "hidden" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", padding: "0 2px", flexShrink: 0 }}>
+              
+              {/* Título de la Columna */}
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                <span style={{ fontSize: "13.5px", fontWeight: "800", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <img src="/images/Ubicacion.svg" alt="Mapa" style={{ width: "16px", height: "16px", filter: "brightness(0) invert(1)" }} />
+                  <span>Mapa de Departamentos</span>
                 </span>
-              )}
+              </div>
+
+              {/* Señalizador de Departamento Seleccionado o Sobrevolado */}
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                {selectedDept && selectedDept !== "Todos" && (
+                  <span style={{ fontSize: "11.5px", fontWeight: "800", background: "rgba(56, 189, 248, 0.2)", color: "#38BDF8", padding: "3px 9px", borderRadius: "8px", border: "1px solid rgba(56, 189, 248, 0.4)", display: "flex", alignItems: "center", gap: "4px", boxShadow: "0 2px 8px rgba(56, 189, 248, 0.2)" }}>
+                    <img src="/images/Ubicacion.svg" alt="Señalizador" style={{ width: "13px", height: "13px", filter: "brightness(0) saturate(100%) invert(67%) sepia(85%) saturate(1800%) hue-rotate(170deg)" }} />
+                    <span>{selectedDept}</span>
+                  </span>
+                )}
+
+                {/* Badge DOM Directo para Hover sin Re-render de React */}
+                <span 
+                  ref={hoveredSpanRef} 
+                  style={{ 
+                    display: "none", 
+                    fontSize: "11px", 
+                    fontWeight: "800", 
+                    background: "rgba(255, 255, 255, 0.15)", 
+                    color: "#E2E8F0", 
+                    padding: "2px 8px", 
+                    borderRadius: "6px", 
+                    border: "1px solid rgba(255,255,255,0.25)" 
+                  }} 
+                />
+              </div>
             </div>
 
-            {/* Selector de Departamento en Dropdown */}
-            <div style={{ marginBottom: "14px" }}>
+            {/* Selector de Departamento en Dropdown Traslúcido */}
+            <div style={{ marginBottom: "10px", flexShrink: 0 }}>
               <select 
                 value={selectedDept}
                 onChange={(e) => setSelectedDept(e.target.value)}
-                style={{ width: "100%", padding: "11px 14px", background: "#0A192F", border: "1.5px solid rgba(20, 109, 158, 0.5)", borderRadius: "12px", color: "#FFFFFF", fontWeight: "700", fontSize: "13.5px", cursor: "pointer", outline: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}
+                style={{ width: "100%", padding: "9px 12px", background: "rgba(10, 25, 47, 0.85)", border: "1px solid rgba(255, 255, 255, 0.18)", borderRadius: "10px", color: "#FFFFFF", fontWeight: "700", fontSize: "13px", cursor: "pointer", outline: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.3)" }}
               >
                 {DEPARTAMENTOS_LISTA.map(d => (
-                  <option key={d} value={d}>{d === "Todos" ? "Todos los Departamentos" : d}</option>
+                  <option key={d} value={d} style={{ background: "#0A192F", color: "#FFFFFF" }}>{d === "Todos" ? "Todos los Departamentos" : d}</option>
                 ))}
               </select>
             </div>
 
-            {/* Contenedor del Mapa Mapbox */}
-            <div ref={mapContainerRef} style={{ width: "100%", height: "420px", borderRadius: "18px", overflow: "hidden", position: "relative" }} />
+            {/* Contenedor del Mapa Mapbox Flexible Fijo */}
+            <div ref={mapContainerRef} style={{ flex: 1, minHeight: 0, maxHeight: "100%", width: "100%", borderRadius: "14px", overflow: "hidden", position: "relative", border: "1px solid rgba(255, 255, 255, 0.1)" }} />
           </div>
 
-          {/* Columna Derecha: Ranking Top Lugares (Alineada con el mapa) */}
-          <div style={{ display: "flex", flexDirection: "column", height: "510px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
-              <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "#FFFFFF" }}>
+          {/* Columna Derecha: Ranking Top Lugares (Panel Traslúcido Azul Navbar con Tortuga de Fondo) */}
+          <div style={{ background: "rgba(10, 25, 47, 0.72)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255, 255, 255, 0.14)", borderRadius: "20px", padding: "14px", boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)", display: "flex", flexDirection: "column", height: "100%", maxHeight: "100%", minHeight: 0, boxSizing: "border-box", overflow: "hidden", position: "relative" }}>
+            
+            {/* Elemento Decorativo: Tortuga SVG Agrandada al Fondo del Panel Derecho */}
+            <div
+              style={{
+                position: "absolute",
+                top: "52%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "min(580px, 115%)",
+                height: "min(580px, 115%)",
+                pointerEvents: "none",
+                zIndex: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: 0.36
+              }}
+            >
+              <img
+                src="/images/tortuga.svg"
+                alt="Tortuga Atlan"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  filter: "brightness(0) invert(0.95) drop-shadow(0 0 30px rgba(255, 255, 255, 0.35))"
+                }}
+              />
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", flexWrap: "wrap", gap: "8px", flexShrink: 0, position: "relative", zIndex: 1 }}>
+              <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#FFFFFF" }}>
                 {selectedDept === "Todos" 
                   ? (rankingMode === 'global' ? 'Lugares Más Visitados' : 'Mis Lugares Más Visitados')
                   : (rankingMode === 'global' ? `Más Visitados en ${selectedDept}` : `Mis Visitas en ${selectedDept}`)}
               </h2>
-              <span style={{ fontSize: "12px", fontWeight: "700", color: "rgba(255,255,255,0.6)", background: "rgba(255,255,255,0.08)", padding: "3px 8px", borderRadius: "10px" }}>
+              <span style={{ fontSize: "11.5px", fontWeight: "700", color: "#CBD5E1", background: "rgba(255,255,255,0.08)", padding: "2px 8px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.15)" }}>
                 {rankingData.length} Destinos
               </span>
             </div>
 
-            {/* Selector de Modo con Iconos SVG: Ranking Global vs Ranking Propio */}
-            <div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
+            {/* Selector de Modo con SVGs Personalizados: Clic en Ranking Global resetea departamento a Todos */}
+            <div style={{ display: "flex", gap: "8px", marginBottom: "10px", flexShrink: 0, position: "relative", zIndex: 1 }}>
               <button
-                onClick={() => setRankingMode('global')}
+                onClick={() => {
+                  setRankingMode('global');
+                  setSelectedDept("Todos");
+                  setVisibleCount(5);
+                }}
                 style={{
                   flex: 1,
-                  padding: "10px 14px",
-                  borderRadius: "14px",
-                  border: rankingMode === 'global' ? "1.5px solid #FFD700" : "1px solid rgba(255,255,255,0.15)",
-                  background: rankingMode === 'global'
-                    ? "linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(10, 25, 47, 0.8) 100%)"
-                    : "rgba(255, 255, 255, 0.05)",
-                  color: rankingMode === 'global' ? "#FFD700" : "rgba(255,255,255,0.7)",
+                  padding: "8px 12px",
+                  borderRadius: "12px",
+                  border: rankingMode === 'global' ? "1px solid rgba(255, 255, 255, 0.35)" : "1px solid rgba(255, 255, 255, 0.1)",
+                  background: rankingMode === 'global' ? "rgba(255, 255, 255, 0.16)" : "rgba(255, 255, 255, 0.04)",
+                  color: rankingMode === 'global' ? "#FFFFFF" : "#94A3B8",
                   fontWeight: "800",
-                  fontSize: "13px",
+                  fontSize: "12.5px",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "7px",
-                  boxShadow: rankingMode === 'global' ? "0 4px 14px rgba(255,215,0,0.2)" : "none",
+                  boxShadow: rankingMode === 'global' ? "0 4px 14px rgba(255,255,255,0.1)" : "none",
                   transition: "all 0.2s ease"
                 }}
               >
-                <Icon name="globe" size={15} color={rankingMode === 'global' ? "#FFD700" : "rgba(255,255,255,0.7)"} />
+                <img 
+                  src="/images/croquisnicaragua.svg" 
+                  alt="Ranking Global" 
+                  style={{ width: "18px", height: "18px", objectFit: "contain", filter: rankingMode === 'global' ? "brightness(0) invert(1)" : "brightness(0) invert(0.65)" }} 
+                />
                 <span>Ranking Global</span>
               </button>
 
@@ -531,64 +689,66 @@ export default function DepartamentosPage() {
                 onClick={() => setRankingMode('propio')}
                 style={{
                   flex: 1,
-                  padding: "10px 14px",
-                  borderRadius: "14px",
-                  border: rankingMode === 'propio' ? "1.5px solid #38BDF8" : "1px solid rgba(255,255,255,0.15)",
-                  background: rankingMode === 'propio'
-                    ? "linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(10, 25, 47, 0.8) 100%)"
-                    : "rgba(255, 255, 255, 0.05)",
-                  color: rankingMode === 'propio' ? "#38BDF8" : "rgba(255,255,255,0.7)",
+                  padding: "8px 12px",
+                  borderRadius: "12px",
+                  border: rankingMode === 'propio' ? "1px solid rgba(56, 189, 248, 0.4)" : "1px solid rgba(255, 255, 255, 0.1)",
+                  background: rankingMode === 'propio' ? "rgba(56, 189, 248, 0.18)" : "rgba(255, 255, 255, 0.04)",
+                  color: rankingMode === 'propio' ? "#38BDF8" : "#94A3B8",
                   fontWeight: "800",
-                  fontSize: "13px",
+                  fontSize: "12.5px",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "7px",
-                  boxShadow: rankingMode === 'propio' ? "0 4px 14px rgba(56,189,248,0.2)" : "none",
+                  boxShadow: rankingMode === 'propio' ? "0 4px 14px rgba(56,189,248,0.15)" : "none",
                   transition: "all 0.2s ease"
                 }}
               >
-                <Icon name="user" size={15} color={rankingMode === 'propio' ? "#38BDF8" : "rgba(255,255,255,0.7)"} />
+                <img 
+                  src="/images/perfil.svg" 
+                  alt="Ranking Propio" 
+                  style={{ width: "16px", height: "16px", objectFit: "contain", filter: rankingMode === 'propio' ? "brightness(0) saturate(100%) invert(67%) sepia(85%) saturate(1800%) hue-rotate(170deg)" : "brightness(0) invert(0.65)" }} 
+                />
                 <span>Ranking Propio</span>
               </button>
             </div>
 
-            {/* Contenedor desplazable con Scroll Interno + Paginación Top 5 */}
-            <div className="dept-tabs-scroll" style={{ flex: 1, overflowY: "auto", paddingRight: "4px", display: "flex", flexDirection: "column", gap: "12px" }}>
+            {/* Contenedor desplazable con Scroll Interno Exclusivo y Tarjetas Traslúcidas */}
+            <div className="dept-tabs-scroll" style={{ flex: 1, minHeight: 0, maxHeight: "100%", overflowY: "auto", paddingRight: "4px", display: "flex", flexDirection: "column", gap: "8px", position: "relative", zIndex: 1 }}>
               {loading ? (
-                <div style={{ textAlign: "center", padding: "60px 0" }}>
-                  <div style={{ width: "40px", height: "40px", border: "4px solid rgba(255,215,0,0.2)", borderTopColor: "#FFD700", borderRadius: "50%", margin: "0 auto 16px auto", animation: "spin 1s linear infinite" }} />
-                  <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px" }}>Cargando ranking de destinos...</p>
+                <div style={{ textAlign: "center", padding: "40px 0" }}>
+                  <div style={{ width: "36px", height: "36px", border: "3px solid rgba(255,255,255,0.2)", borderTopColor: "#FFFFFF", borderRadius: "50%", margin: "0 auto 12px auto", animation: "spin 1s linear infinite" }} />
+                  <p style={{ color: "#CBD5E1", fontSize: "13px" }}>Cargando ranking de destinos...</p>
                 </div>
               ) : rankingMode === 'propio' && !userSession ? (
-                <div style={{ background: "rgba(15, 23, 42, 0.75)", border: "1.5px dashed rgba(56, 189, 248, 0.4)", borderRadius: "20px", padding: "32px 20px", textAlign: "center" }}>
-                  <div style={{ marginBottom: "12px", display: "flex", justifyContent: "center" }}>
-                    <Icon name="lock" size={32} color="#38BDF8" />
+                <div style={{ background: "rgba(10, 15, 26, 0.6)", border: "1px dashed rgba(56, 189, 248, 0.4)", borderRadius: "16px", padding: "24px 16px", textAlign: "center" }}>
+                  <div style={{ marginBottom: "10px", display: "flex", justifyContent: "center" }}>
+                    <img src="/images/perfil.svg" alt="Perfil" style={{ width: "32px", height: "32px", filter: "brightness(0) saturate(100%) invert(67%) sepia(85%) saturate(1800%) hue-rotate(170deg)" }} />
                   </div>
-                  <h3 style={{ margin: "0 0 8px 0", fontSize: "16px", color: "#FFFFFF" }}>Inicia sesión como turista</h3>
-                  <p style={{ margin: "0 0 16px 0", fontSize: "13px", color: "rgba(255,255,255,0.7)", lineHeight: "1.5" }}>
+                  <h3 style={{ margin: "0 0 6px 0", fontSize: "15px", color: "#FFFFFF" }}>Inicia sesión como turista</h3>
+                  <p style={{ margin: "0 0 14px 0", fontSize: "12.5px", color: "#CBD5E1", lineHeight: "1.4" }}>
                     Inicia sesión para ver tu historial personalizado de los lugares que has visitado en Nicaragua.
                   </p>
                   <Link
                     href="/login"
                     style={{
-                      display: "inline-block", padding: "10px 20px", background: "linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)",
-                      borderRadius: "12px", color: "#FFFFFF", fontWeight: "800", textDecoration: "none", fontSize: "13.5px"
+                      display: "inline-block", padding: "8px 16px", background: "linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)",
+                      borderRadius: "10px", color: "#FFFFFF", fontWeight: "800", textDecoration: "none", fontSize: "12.5px"
                     }}
                   >
                     Iniciar Sesión
                   </Link>
                 </div>
               ) : rankingData.length === 0 ? (
-                <div style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.2)", borderRadius: "20px", padding: "40px 20px", textAlign: "center" }}>
-                  <div style={{ marginBottom: "12px", display: "flex", justifyContent: "center" }}>
-                    <Icon name="compass" size={32} color="#FFD700" />
+                <div style={{ background: "rgba(10, 15, 26, 0.5)", border: "1px dashed rgba(255, 255, 255, 0.18)", borderRadius: "16px", padding: "30px 16px", textAlign: "center" }}>
+                  <div style={{ marginBottom: "10px", display: "flex", justifyContent: "center" }}>
+                    <img src="/images/Ubicacion.svg" alt="Brújula" style={{ width: "30px", height: "30px", filter: "brightness(0) invert(0.8)" }} />
                   </div>
-                  <h3 style={{ margin: "0 0 6px 0", fontSize: "16px", color: "#FFFFFF" }}>
+                  <h3 style={{ margin: "0 0 6px 0", fontSize: "15px", color: "#FFFFFF" }}>
                     {rankingMode === 'propio' ? 'Aún no has registrado visitas' : 'Aún no hay visitas registradas'}
                   </h3>
-                  <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.6)" }}>
+                  <p style={{ margin: 0, fontSize: "12.5px", color: "#94A3B8" }}>
                     {rankingMode === 'propio' 
                       ? `Visita un destino en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept} y márcalo en el mapa para sumarlo a tu ranking propio.`
                       : `Sé el primer turista en explorar y marcar visitas en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept}.`}
@@ -596,82 +756,139 @@ export default function DepartamentosPage() {
                 </div>
               ) : (
                 <>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                     {rankingData.slice(0, visibleCount).map((lugar, idx) => {
                       const pos = idx + 1;
-                      const medalColor = pos === 1 ? '#FFD700' : pos === 2 ? '#C0C0C0' : pos === 3 ? '#CD7F32' : 'rgba(255,255,255,0.6)';
                       const countVisits = rankingMode === 'propio' ? (lugar.mis_visitas || 1) : (lugar.total_visitas || 0);
+
+                      // Formato estándar a 1 decimal para todas las calificaciones (ej. 5.0)
+                      const formattedRating = (lugar.negocio_rating != null && !isNaN(parseFloat(lugar.negocio_rating)))
+                        ? parseFloat(lugar.negocio_rating).toFixed(1)
+                        : '5.0';
 
                       return (
                         <div 
                           key={lugar.id}
                           style={{ 
                             background: pos === 1 
-                              ? "linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(15, 23, 42, 0.85) 100%)"
-                              : "rgba(15, 23, 42, 0.7)", 
-                            border: pos === 1 ? "1.5px solid rgba(255, 215, 0, 0.4)" : "1px solid rgba(255, 255, 255, 0.1)",
-                            borderRadius: "16px",
-                            padding: "12px 16px",
+                              ? "linear-gradient(135deg, rgba(255, 255, 255, 0.20) 0%, rgba(10, 25, 47, 0.65) 100%)"
+                              : "rgba(10, 25, 47, 0.52)", 
+                            backdropFilter: "blur(6px)",
+                            WebkitBackdropFilter: "blur(6px)",
+                            border: pos === 1 ? "1px solid rgba(255, 255, 255, 0.38)" : "1px solid rgba(255, 255, 255, 0.12)",
+                            borderRadius: "14px",
+                            padding: "10px 14px",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "space-between",
-                            gap: "12px",
-                            boxShadow: pos === 1 ? "0 8px 24px rgba(255,215,0,0.15)" : "0 4px 12px rgba(0,0,0,0.2)",
+                            gap: "10px",
+                            boxShadow: pos === 1 ? "0 6px 20px rgba(255,255,255,0.08)" : "0 2px 6px rgba(0,0,0,0.2)",
                             transition: "all 0.2s ease"
                           }}
                         >
-                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                            {/* Medalla SVG o Número de Posición */}
-                            <div style={{ minWidth: "34px", height: "34px", borderRadius: "10px", background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: "900", color: medalColor }}>
-                              {pos <= 3 ? <Icon name="sparkles" size={pos === 1 ? 18 : 16} color={medalColor} /> : `#${pos}`}
+                          <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
+                            {/* Píldora de Posición: Lugar 1 (Oro), Lugar 2 (Plata), Lugar 3 (Cobre) */}
+                            <div style={{ 
+                              minWidth: "58px", 
+                              padding: "4px 8px", 
+                              borderRadius: "8px", 
+                              background: pos === 1 
+                                ? "linear-gradient(135deg, rgba(255, 215, 0, 0.26) 0%, rgba(255, 180, 0, 0.14) 100%)" 
+                                : pos === 2 
+                                ? "rgba(226, 232, 240, 0.18)" 
+                                : pos === 3 
+                                ? "linear-gradient(135deg, rgba(205, 127, 50, 0.30) 0%, rgba(180, 83, 9, 0.20) 100%)" 
+                                : "rgba(255, 255, 255, 0.06)", 
+                              display: "flex", 
+                              alignItems: "center", 
+                              justifyContent: "center", 
+                              fontSize: "11px", 
+                              fontWeight: "900", 
+                              color: pos === 1 ? "#FFD700" : pos === 2 ? "#E2E8F0" : pos === 3 ? "#E58E36" : "#94A3B8", 
+                              border: pos === 1 
+                                ? "1px solid rgba(255, 215, 0, 0.55)" 
+                                : pos === 2 
+                                ? "1px solid rgba(226, 232, 240, 0.35)" 
+                                : pos === 3 
+                                ? "1px solid rgba(217, 119, 6, 0.55)" 
+                                : "1px solid rgba(255, 255, 255, 0.15)",
+                              flexShrink: 0,
+                              boxShadow: pos === 1 
+                                ? "0 0 10px rgba(255, 215, 0, 0.2)" 
+                                : pos === 3 
+                                ? "0 0 10px rgba(217, 119, 6, 0.2)" 
+                                : "none"
+                            }}>
+                              Lugar {pos}
                             </div>
 
                             {/* Info del Lugar */}
-                            <div>
-                              <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "2px" }}>
-                                <h3 style={{ margin: 0, fontSize: "14.5px", fontWeight: "800", color: "#FFFFFF" }}>
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "nowrap", overflow: "hidden" }}>
+                                <h3 style={{ margin: 0, fontSize: "13.5px", fontWeight: "800", color: "#FFFFFF", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                                   {lugar.nombre}
                                 </h3>
-                                <span style={{ fontSize: "9.5px", fontWeight: "800", textTransform: "uppercase", background: "rgba(56, 189, 248, 0.15)", color: "#38BDF8", padding: "2px 5px", borderRadius: "5px" }}>
+                                <span style={{ fontSize: "9px", fontWeight: "800", textTransform: "uppercase", background: "rgba(56, 189, 248, 0.15)", color: "#38BDF8", padding: "1px 5px", borderRadius: "4px", flexShrink: 0 }}>
                                   {lugar.categoria}
                                 </span>
                               </div>
-                              <p style={{ margin: 0, fontSize: "11.5px", color: "rgba(255,255,255,0.7)", display: "flex", alignItems: "center", gap: "10px" }}>
-                                <span style={{ display: "inline-flex", alignItems: "center", gap: "3px" }}><Icon name="mapPin" size={12} color="#FFD700" /> {lugar.departamento || 'Nicaragua'}</span>
-                                <span style={{ display: "inline-flex", alignItems: "center", gap: "3px" }}><Icon name="starFilled" size={12} color="#FFD700" /> {lugar.negocio_rating || '5.0'}</span>
+
+                              {/* Departamento con Ubicacion.svg y Rating estandarizado a 1 decimal (ej. 5.0) */}
+                              <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#CBD5E1", display: "flex", alignItems: "center", gap: "10px" }}>
+                                <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                                  <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "12px", height: "12px", filter: "brightness(0) invert(0.85)", flexShrink: 0 }} />
+                                  <span>{lugar.departamento || 'Nicaragua'}</span>
+                                </span>
+
+                                <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                                  <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                                    <img 
+                                      src="/images/flor.svg" 
+                                      alt="Rating Flor" 
+                                      style={{ 
+                                        width: "15px", 
+                                        height: "15px", 
+                                        objectFit: "contain",
+                                        filter: "drop-shadow(0 0 2.5px rgba(255, 215, 0, 0.95)) drop-shadow(0 0 1px #000)" 
+                                      }} 
+                                    />
+                                  </span>
+                                  <span style={{ fontWeight: "800", color: "#FFD700" }}>{formattedRating}</span>
+                                </span>
                               </p>
                             </div>
                           </div>
 
-                          {/* Contador de Visitas y Acción */}
-                          <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" }}>
+                          {/* Contador de Visitas con perfil.svg y Acción */}
+                          <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "3px", flexShrink: 0 }}>
                             <div style={{
-                              background: rankingMode === 'propio' ? "rgba(56, 189, 248, 0.15)" : "rgba(255, 215, 0, 0.12)",
-                              border: rankingMode === 'propio' ? "1px solid rgba(56, 189, 248, 0.3)" : "1px solid rgba(255, 215, 0, 0.3)",
+                              background: rankingMode === 'propio' ? "rgba(56, 189, 248, 0.18)" : "rgba(255, 255, 255, 0.12)",
+                              border: rankingMode === 'propio' ? "1px solid rgba(56, 189, 248, 0.35)" : "1px solid rgba(255, 255, 255, 0.2)",
                               padding: "3px 8px",
-                              borderRadius: "8px",
-                              color: rankingMode === 'propio' ? "#38BDF8" : "#FFD700",
+                              borderRadius: "6px",
+                              color: rankingMode === 'propio' ? "#38BDF8" : "#FFFFFF",
                               fontWeight: "800",
-                              fontSize: "11.5px",
+                              fontSize: "11px",
                               display: "inline-flex",
                               alignItems: "center",
                               gap: "4px"
                             }}>
-                              {rankingMode === 'propio' ? (
-                                <>
-                                  <Icon name="checkCircle" size={12} color="#38BDF8" />
-                                  <span>{countVisits} {countVisits === 1 ? 'visita' : 'visitas'}</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Icon name="users" size={12} color="#FFD700" />
-                                  <span>{countVisits} visitas</span>
-                                </>
-                              )}
+                              <img 
+                                src="/images/perfil.svg" 
+                                alt="Visitas" 
+                                style={{ 
+                                  width: "12px", 
+                                  height: "12px", 
+                                  filter: rankingMode === 'propio' 
+                                    ? "brightness(0) saturate(100%) invert(67%) sepia(85%) saturate(1800%) hue-rotate(170deg)" 
+                                    : "brightness(0) invert(1)" 
+                                }} 
+                              />
+                              <span>{countVisits} {countVisits === 1 ? 'visita' : 'visitas'}</span>
                             </div>
                             <Link 
                               href={`/?lat=${lugar.lat}&lng=${lugar.lng}&punto=${lugar.id}`}
-                              style={{ fontSize: "11px", fontWeight: "800", color: "#38BDF8", textDecoration: "none" }}
+                              style={{ fontSize: "10.5px", fontWeight: "800", color: "#38BDF8", textDecoration: "none" }}
                             >
                               Ir al Mapa ➔
                             </Link>
@@ -681,26 +898,32 @@ export default function DepartamentosPage() {
                     })}
                   </div>
 
+                  {/* Botón de Cargar Más Destinos con el SVG `more.svg` */}
                   {rankingData.length > visibleCount && (
                     <button
                       onClick={() => setVisibleCount(prev => prev + 5)}
                       style={{
                         width: "100%",
-                        padding: "11px 16px",
-                        borderRadius: "14px",
-                        background: "rgba(255, 215, 0, 0.12)",
-                        border: "1.5px dashed rgba(255, 215, 0, 0.4)",
-                        color: "#FFD700",
+                        padding: "9px 14px",
+                        borderRadius: "12px",
+                        background: "rgba(255, 255, 255, 0.08)",
+                        border: "1px dashed rgba(255, 255, 255, 0.25)",
+                        color: "#FFFFFF",
                         fontWeight: "800",
-                        fontSize: "13px",
+                        fontSize: "12.5px",
                         cursor: "pointer",
                         textAlign: "center",
-                        marginTop: "4px",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                        marginTop: "2px",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "8px",
                         transition: "all 0.2s ease"
                       }}
                     >
-                      ✨ Cargar Más Destinos (+{Math.min(5, rankingData.length - visibleCount)})
+                      <img src="/images/more.svg" alt="Más destinos" style={{ width: "16px", height: "16px", filter: "brightness(0) invert(1)" }} />
+                      <span>Cargar Más Destinos (+{Math.min(5, rankingData.length - visibleCount)})</span>
                     </button>
                   )}
                 </>

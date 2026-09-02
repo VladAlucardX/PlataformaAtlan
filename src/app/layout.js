@@ -61,7 +61,7 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Atlan" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <ClientProviders>
           <PWARegister />
           {children}
