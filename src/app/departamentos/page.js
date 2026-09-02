@@ -523,6 +523,7 @@ export default function DepartamentosPage() {
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 fontWeight: "900",
+                fontSize: "1.3em",
                 filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.9)) drop-shadow(0 0 2px rgba(0,0,0,0.8))",
                 padding: "0 2px",
                 display: "inline-block"
