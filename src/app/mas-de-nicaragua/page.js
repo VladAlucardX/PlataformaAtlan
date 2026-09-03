@@ -254,8 +254,8 @@ export default function MasDeNicaraguaPage() {
       container: mapContainerRef.current,
       style: currentStyleUri,
       center: [-85.10, 12.65],
-      zoom: 5.45,
-      minZoom: 4.8,
+      zoom: 5.15,
+      minZoom: 4.5,
       maxZoom: 9.0,
       pitch: 0,
       projection: "mercator",
@@ -438,10 +438,10 @@ export default function MasDeNicaraguaPage() {
               {/* Filtros Rápidos de Regiones con Estilo Neón */}
               <div style={{ display: "flex", gap: "6px" }}>
                 {[
-                  { name: "Todos", center: [-85.10, 12.65], zoom: 5.45 },
-                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.00], zoom: 6.0 },
-                  { name: "Central", icon: "mountain", center: [-85.5, 12.70], zoom: 6.0 },
-                  { name: "Caribe", icon: "island", center: [-84.0, 13.30], zoom: 5.8 }
+                  { name: "Todos", center: [-85.10, 12.65], zoom: 5.15 },
+                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.00], zoom: 5.70 },
+                  { name: "Central", icon: "mountain", center: [-85.5, 12.70], zoom: 5.70 },
+                  { name: "Caribe", icon: "island", center: [-84.0, 13.30], zoom: 5.50 }
                 ].map((reg) => {
                   const isActive = selectedRegion === reg.name;
                   return (
