@@ -408,23 +408,32 @@ export default function MasDeNicaraguaPage() {
           }}>
             {/* Header Elegante y Compacto de 1 Sola Fila */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <div style={{
-                  background: "linear-gradient(135deg, rgba(255, 215, 0, 0.22) 0%, rgba(20, 109, 158, 0.35) 100%)",
-                  border: "1px solid rgba(255, 215, 0, 0.4)",
-                  borderRadius: "12px",
-                  padding: "4px 12px",
+                  background: "rgba(10, 25, 47, 0.95)",
+                  border: "1.5px solid #FFD700",
+                  borderRadius: "10px",
+                  padding: "5px 14px",
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "8px",
-                  boxShadow: "0 4px 14px rgba(0,0,0,0.3)"
+                  boxShadow: "0 0 16px rgba(255, 215, 0, 0.25)"
                 }}>
-                  <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "20px", height: "20px", objectFit: "contain" }} />
-                  <span style={{ fontSize: "13.5px", fontWeight: "900", color: "#FFD700", letterSpacing: "0.5px" }}>
+                  <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                  <span style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700", letterSpacing: "0.6px", textShadow: "0 0 8px rgba(255, 215, 0, 0.4)" }}>
                     Enciclopedia Viva
                   </span>
                 </div>
-                <span style={{ fontSize: "13px", fontWeight: "800", color: "rgba(255,255,255,0.85)" }}>
+                <span style={{
+                  fontSize: "14px",
+                  fontWeight: "900",
+                  background: "linear-gradient(180deg, #0055D4 0%, #0066FF 33%, #FFFFFF 33%, #FFFFFF 66%, #0066FF 66%, #0055D4 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  display: "inline-block",
+                  letterSpacing: "0.6px",
+                  filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.9))"
+                }}>
                   17 Departamentos de Nicaragua
                 </span>
               </div>
@@ -496,7 +505,7 @@ export default function MasDeNicaraguaPage() {
                   gap: "6px",
                   backdropFilter: "blur(8px)"
                 }}>
-                  <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                  <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                   <span>{hoveredDept}</span>
                 </div>
               )}
@@ -565,7 +574,7 @@ export default function MasDeNicaraguaPage() {
                       <span>Región {selectedDeptForPreview.region}</span>
                     </span>
                     <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontSize: "12px", color: "rgba(255,255,255,0.85)", fontWeight: "600" }}>
-                      <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "14px", height: "14px", objectFit: "contain" }} />
+                      <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                       <span>{selectedDeptForPreview.cabecera}</span>
                     </span>
                   </div>
@@ -708,7 +717,7 @@ export default function MasDeNicaraguaPage() {
                     <span>Región {selectedDeptForDetails.region}</span>
                   </span>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontSize: "12.5px", color: "rgba(255,255,255,0.85)", fontWeight: "600" }}>
-                    <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "15px", height: "15px", objectFit: "contain" }} />
+                    <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "15px", height: "15px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                     <span>Cabecera: <strong>{selectedDeptForDetails.cabecera}</strong></span>
                   </span>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12.5px", color: "#FFD700", fontWeight: "700" }}>
