@@ -4,7 +4,7 @@ import React from "react";
 import Icon from "@/components/ui/Icon";
 import { useTranslation } from "@/hooks/useTranslation";
 
-export default function DepartmentTabs({ activeTab, onSelectTab }) {
+export default function DepartmentTabs({ activeTab, onSelectTab, isModal = false }) {
   const { t, lang } = useTranslation();
 
   const TABS = [
@@ -19,22 +19,22 @@ export default function DepartmentTabs({ activeTab, onSelectTab }) {
 
   return (
     <div style={{
-      position: "sticky",
-      top: "64px",
+      position: isModal ? "relative" : "sticky",
+      top: isModal ? "0" : "64px",
       zIndex: 90,
-      background: "rgba(10, 25, 47, 0.92)",
+      background: isModal ? "rgba(15, 23, 42, 0.98)" : "rgba(10, 25, 47, 0.92)",
       backdropFilter: "blur(12px)",
       borderBottom: "1px solid rgba(255, 255, 255, 0.12)",
-      padding: "10px 0",
-      boxShadow: "0 8px 20px rgba(0,0,0,0.3)"
+      padding: isModal ? "8px 0" : "10px 0",
+      boxShadow: isModal ? "none" : "0 8px 20px rgba(0,0,0,0.3)"
     }}>
       <div style={{
         maxWidth: "1280px",
         margin: "0 auto",
-        padding: "0 20px",
+        padding: isModal ? "0 16px" : "0 20px",
         display: "flex",
         alignItems: "center",
-        gap: "10px",
+        gap: isModal ? "6px" : "10px",
         overflowX: "auto",
         scrollbarWidth: "none",
         msOverflowStyle: "none",
@@ -49,25 +49,25 @@ export default function DepartmentTabs({ activeTab, onSelectTab }) {
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "8px",
-                padding: "10px 18px",
-                borderRadius: "14px",
+                gap: isModal ? "6px" : "8px",
+                padding: isModal ? "7px 14px" : "10px 18px",
+                borderRadius: isModal ? "10px" : "14px",
                 border: isActive ? "1.5px solid #FFD700" : "1px solid rgba(255,255,255,0.12)",
                 background: isActive
                   ? "linear-gradient(135deg, rgba(255, 215, 0, 0.22) 0%, rgba(20, 109, 158, 0.4) 100%)"
                   : "rgba(255, 255, 255, 0.05)",
                 color: isActive ? "#FFD700" : "rgba(255, 255, 255, 0.75)",
                 fontWeight: isActive ? "800" : "600",
-                fontSize: "14px",
+                fontSize: isModal ? "12.5px" : "14px",
                 whiteSpace: "nowrap",
                 cursor: "pointer",
                 transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
-                boxShadow: isActive ? "0 4px 16px rgba(255, 215, 0, 0.25)" : "none",
+                boxShadow: isActive ? "0 4px 14px rgba(255, 215, 0, 0.25)" : "none",
                 outline: "none"
               }}
               className="dept-tab-btn"
             >
-              <Icon name={tab.icon} size={17} color={isActive ? "#FFD700" : "rgba(255, 255, 255, 0.75)"} />
+              <Icon name={tab.icon} size={isModal ? 15 : 17} color={isActive ? "#FFD700" : "rgba(255, 255, 255, 0.75)"} />
               <span>{tab.label}</span>
             </button>
           );
