@@ -258,9 +258,9 @@ export default function MasDeNicaraguaPage() {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: currentStyleUri,
-      center: [-85.2, 12.8],
-      zoom: 6.20,
-      minZoom: 5.8,
+      center: [-85.0, 12.85],
+      zoom: 6.10,
+      minZoom: 5.5,
       maxZoom: 9.0,
       pitch: 0,
       projection: "mercator",
@@ -281,6 +281,7 @@ export default function MasDeNicaraguaPage() {
     });
 
     map.on("load", () => {
+      map.resize();
       let hoveredId = null;
 
       // Eventos Hover
@@ -416,7 +417,8 @@ export default function MasDeNicaraguaPage() {
             borderRadius: "24px",
             padding: "16px 20px",
             boxShadow: "0 20px 50px rgba(0,0,0,0.5)",
-            position: "relative"
+            position: "relative",
+            overflow: "hidden"
           }}>
             {/* Header de Controles del Mapa con Título Integrado */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "12px" }}>
@@ -462,10 +464,10 @@ export default function MasDeNicaraguaPage() {
                 {/* Filtros Rápidos de Regiones para Enfoque en el Mapa */}
                 <div style={{ display: "flex", gap: "6px" }}>
                   {[
-                    { name: "Todos", center: [-85.2, 12.8], zoom: 6.20 },
-                    { name: "Pacífico", icon: "waves", center: [-86.3, 12.1], zoom: 6.5 },
-                    { name: "Central", icon: "mountain", center: [-85.5, 12.9], zoom: 6.5 },
-                    { name: "Caribe", icon: "island", center: [-84.0, 13.5], zoom: 6.4 }
+                    { name: "Todos", center: [-85.0, 12.85], zoom: 6.10 },
+                    { name: "Pacífico", icon: "waves", center: [-86.3, 12.1], zoom: 6.4 },
+                    { name: "Central", icon: "mountain", center: [-85.5, 12.9], zoom: 6.4 },
+                    { name: "Caribe", icon: "island", center: [-84.0, 13.5], zoom: 6.3 }
                   ].map((reg) => {
                     const isActive = selectedRegion === reg.name;
                     return (
@@ -502,8 +504,8 @@ export default function MasDeNicaraguaPage() {
             </div>
 
             {/* Contenedor del Mapa Protagonista */}
-            <div style={{ position: "relative", width: "100%", height: "clamp(480px, 68vh, 600px)", borderRadius: "20px", overflow: "hidden" }}>
-              <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
+            <div style={{ position: "relative", width: "100%", height: "clamp(500px, 70vh, 630px)", borderRadius: "20px", overflow: "hidden" }}>
+              <div ref={mapContainerRef} style={{ width: "100%", height: "100%", borderRadius: "20px", overflow: "hidden" }} />
 
               {/* Insignia Flotante Estática del Departamento Bajo el Cursor (sin mover la cabecera) */}
               {hoveredDept && (
