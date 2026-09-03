@@ -254,12 +254,12 @@ export default function MasDeNicaraguaPage() {
       container: mapContainerRef.current,
       style: currentStyleUri,
       center: [-85.10, 12.65],
-      zoom: 4.20,
-      minZoom: 3.5,
+      zoom: 3.20,
+      minZoom: 2.0,
       maxZoom: 9.0,
       pitch: 0,
       projection: "mercator",
-      maxBounds: [[-88.5, 9.8], [-81.5, 15.5]],
+      maxBounds: [[-94.0, 5.0], [-76.0, 20.0]],
       scrollZoom: false,
       doubleClickZoom: false,
       boxZoom: false,
@@ -278,7 +278,7 @@ export default function MasDeNicaraguaPage() {
     map.on("load", () => {
       map.resize();
       try {
-        map.fitBounds([[-87.8, 10.5], [-82.8, 15.2]], { padding: 35, animate: false });
+        map.flyTo({ center: [-85.10, 12.65], zoom: 3.20, duration: 0 });
       } catch (_) {}
       let hoveredId = null;
 
@@ -441,10 +441,10 @@ export default function MasDeNicaraguaPage() {
               {/* Filtros Rápidos de Regiones con Estilo Neón */}
               <div style={{ display: "flex", gap: "6px" }}>
                 {[
-                  { name: "Todos", bounds: [[-87.8, 10.5], [-82.8, 15.2]], center: [-85.10, 12.65], zoom: 4.20 },
-                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.00], zoom: 5.20 },
-                  { name: "Central", icon: "mountain", center: [-85.5, 12.70], zoom: 5.20 },
-                  { name: "Caribe", icon: "island", center: [-84.0, 13.30], zoom: 5.00 }
+                  { name: "Todos", center: [-85.10, 12.65], zoom: 3.20 },
+                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.00], zoom: 4.50 },
+                  { name: "Central", icon: "mountain", center: [-85.5, 12.70], zoom: 4.50 },
+                  { name: "Caribe", icon: "island", center: [-84.0, 13.30], zoom: 4.20 }
                 ].map((reg) => {
                   const isActive = selectedRegion === reg.name;
                   return (
@@ -453,11 +453,7 @@ export default function MasDeNicaraguaPage() {
                       onClick={() => {
                         setSelectedRegion(reg.name);
                         if (mapRef.current) {
-                          if (reg.bounds) {
-                            mapRef.current.fitBounds(reg.bounds, { padding: 35, duration: 800 });
-                          } else {
-                            mapRef.current.flyTo({ center: reg.center, zoom: reg.zoom, duration: 800 });
-                          }
+                          mapRef.current.flyTo({ center: reg.center, zoom: reg.zoom, duration: 800 });
                         }
                       }}
                       style={{
