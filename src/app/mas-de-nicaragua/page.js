@@ -254,8 +254,8 @@ export default function MasDeNicaraguaPage() {
       container: mapContainerRef.current,
       style: currentStyleUri,
       center: [-85.10, 12.65],
-      zoom: 4.85,
-      minZoom: 4.0,
+      zoom: 4.20,
+      minZoom: 3.5,
       maxZoom: 9.0,
       pitch: 0,
       projection: "mercator",
@@ -277,6 +277,9 @@ export default function MasDeNicaraguaPage() {
 
     map.on("load", () => {
       map.resize();
+      try {
+        map.fitBounds([[-87.8, 10.5], [-82.8, 15.2]], { padding: 35, animate: false });
+      } catch (_) {}
       let hoveredId = null;
 
       // Eventos Hover
@@ -438,10 +441,10 @@ export default function MasDeNicaraguaPage() {
               {/* Filtros Rápidos de Regiones con Estilo Neón */}
               <div style={{ display: "flex", gap: "6px" }}>
                 {[
-                  { name: "Todos", center: [-85.10, 12.65], zoom: 4.85 },
-                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.00], zoom: 5.40 },
-                  { name: "Central", icon: "mountain", center: [-85.5, 12.70], zoom: 5.40 },
-                  { name: "Caribe", icon: "island", center: [-84.0, 13.30], zoom: 5.20 }
+                  { name: "Todos", bounds: [[-87.8, 10.5], [-82.8, 15.2]], center: [-85.10, 12.65], zoom: 4.20 },
+                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.00], zoom: 5.20 },
+                  { name: "Central", icon: "mountain", center: [-85.5, 12.70], zoom: 5.20 },
+                  { name: "Caribe", icon: "island", center: [-84.0, 13.30], zoom: 5.00 }
                 ].map((reg) => {
                   const isActive = selectedRegion === reg.name;
                   return (
@@ -450,7 +453,11 @@ export default function MasDeNicaraguaPage() {
                       onClick={() => {
                         setSelectedRegion(reg.name);
                         if (mapRef.current) {
-                          mapRef.current.flyTo({ center: reg.center, zoom: reg.zoom, duration: 800 });
+                          if (reg.bounds) {
+                            mapRef.current.fitBounds(reg.bounds, { padding: 35, duration: 800 });
+                          } else {
+                            mapRef.current.flyTo({ center: reg.center, zoom: reg.zoom, duration: 800 });
+                          }
                         }
                       }}
                       style={{
