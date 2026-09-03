@@ -64,57 +64,7 @@ export default function MapaTuristico() {
   const selectedPointRef = useRef(null);
   const prevSelectedPointRef = useRef(null);
   const lastRecalculateTimeRef = useRef(0);
-<<<<<<< HEAD
   const hasFlownInitialDescentRef = useRef(false);
-=======
-  const filterScrollRef = useRef(null);
-  const searchContainerRef = useRef(null);
-  const isDraggingRef = useRef(false);
-  const startXRef = useRef(0);
-  const scrollLeftRef = useRef(0);
-
-  const handleMouseDownFilterBar = (e) => {
-    if (!filterScrollRef.current) return;
-    isDraggingRef.current = true;
-    startXRef.current = e.pageX - filterScrollRef.current.offsetLeft;
-    scrollLeftRef.current = filterScrollRef.current.scrollLeft;
-  };
-
-  const handleMouseLeaveFilterBar = () => {
-    isDraggingRef.current = false;
-  };
-
-  const handleMouseUpFilterBar = () => {
-    isDraggingRef.current = false;
-  };
-
-  const handleMouseMoveFilterBar = (e) => {
-    if (!isDraggingRef.current || !filterScrollRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - filterScrollRef.current.offsetLeft;
-    const walk = (x - startXRef.current) * 1.5;
-    filterScrollRef.current.scrollLeft = scrollLeftRef.current - walk;
-  };
-
-  // Escuchar clics fuera del buscador para ocultar resultados y restaurar categorías al hacer clic en el mapa
-  useEffect(() => {
-    const handleClickOutsideSearch = (event) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
-        setShowResults(false);
-        setIsSearchFocused(false);
-        setSearchQuery('');
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutsideSearch);
-    document.addEventListener('touchstart', handleClickOutsideSearch);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutsideSearch);
-      document.removeEventListener('touchstart', handleClickOutsideSearch);
-    };
-  }, []);
->>>>>>> origin/feature/categorias-responsive-web
 
 
   // --- ESTADO DE REACT ---
@@ -1562,153 +1512,6 @@ export default function MapaTuristico() {
     return t;
   };
 
-<<<<<<< HEAD
-  const getManeuverIconKey = (type = '', modifier = '', instruction = '') => {
-    const mod = (modifier || '').toLowerCase();
-    const typ = (type || '').toLowerCase();
-    const text = (instruction || '').toLowerCase();
-    // 1. Llegada
-    if (typ.includes('arrive') || typ.includes('destination') || text.includes('llegad') || text.includes('destino') || text.includes('arrived')) {
-      return 'arrive';
-    }
-
-    // 2. Rotonda / Glorieta
-    if (typ.includes('roundabout') || typ.includes('rotary') || text.includes('rotonda') || text.includes('roundabout') || text.includes('glorieta')) {
-      return 'roundabout';
-    }
-
-    // 3. Retorno / Giro en U
-    if (mod.includes('uturn') || text.includes('vuelta en u') || text.includes('giro en u') || text.includes('retorno') || text.includes('u-turn')) {
-      return 'uturn';
-    }
-
-    // 4. Giros pronunciados
-    if (mod.includes('sharp right') || text.includes('pronunciado a la derecha') || text.includes('doble bruscamente a la derecha')) {
-      return 'sharp-right';
-    }
-    if (mod.includes('sharp left') || text.includes('pronunciado a la izquierda') || text.includes('doble bruscamente a la izquierda')) {
-      return 'sharp-left';
-    }
-
-    // 5. Giros leves / desviaciones
-    if (mod.includes('slight right') || text.includes('leve a la derecha') || text.includes('desvíese a la derecha') || text.includes('manténgase a la derecha') || text.includes('keep right')) {
-      return 'slight-right';
-    }
-    if (mod.includes('slight left') || text.includes('leve a la izquierda') || text.includes('desvíese a la izquierda') || text.includes('manténgase a la izquierda') || text.includes('keep left')) {
-      return 'slight-left';
-    }
-
-    // 6. Giros normales a la derecha
-    if (
-      mod.includes('right') ||
-      text.includes('derecha') ||
-      text.includes('turn right')
-    ) {
-      return 'turn-right';
-    }
-
-    // 7. Giros normales a la izquierda
-    if (
-      mod.includes('left') ||
-      text.includes('izquierda') ||
-      text.includes('turn left')
-    ) {
-      return 'turn-left';
-    }
-
-    return 'straight';
-  };
-
-  const getManeuverIcon = (type, modifier, instruction = '') => {
-    const key = getManeuverIconKey(type, modifier, instruction);
-    switch (key) {
-      case 'arrive': return '🏁';
-      case 'roundabout': return '🔄';
-      case 'uturn': return '↩';
-      case 'sharp-right': return '↳';
-      case 'sharp-left': return '↲';
-      case 'slight-right': return '↗';
-      case 'slight-left': return '↖';
-      case 'turn-right': return '↱';
-      case 'turn-left': return '↰';
-      case 'straight':
-      default: return '⬆';
-    }
-  };
-
-  const renderManeuverIcon = (iconKey, size = 26, color = '#FFFFFF') => {
-    switch (iconKey) {
-      case 'turn-right':
-        return (
-          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M7 19V11a4 4 0 0 1 4-4h8" />
-            <polyline points="15 3 19 7 15 11" />
-          </svg>
-        );
-      case 'turn-left':
-        return (
-          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M17 19V11a4 4 0 0 0-4-4H5" />
-            <polyline points="9 3 5 7 9 11" />
-          </svg>
-        );
-      case 'slight-right':
-        return (
-          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M8 19l4-8 6-3" />
-            <polyline points="14 4 19 7 17 12" />
-          </svg>
-        );
-      case 'slight-left':
-        return (
-          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M16 19l-4-8-6-3" />
-            <polyline points="10 4 5 7 7 12" />
-          </svg>
-        );
-      case 'sharp-right':
-        return (
-          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 19v-6a3 3 0 0 1 3-3h7a3 3 0 0 1 3 3v2" />
-            <polyline points="16 13 19 16 22 13" />
-          </svg>
-        );
-      case 'sharp-left':
-        return (
-          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 19v-6a3 3 0 0 0-3-3H8a3 3 0 0 0-3 3v2" />
-            <polyline points="8 13 5 16 2 13" />
-          </svg>
-        );
-      case 'uturn':
-        return (
-          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 19v-9a6 6 0 0 0-12 0v9" />
-            <polyline points="10 15 6 19 2 15" />
-          </svg>
-        );
-      case 'roundabout':
-        return (
-          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="7" strokeDasharray="3 2" />
-            <path d="M12 19v-4" />
-            <polyline points="9 16 12 13 15 16" />
-          </svg>
-        );
-      case 'arrive':
-        return (
-          <span style={{ fontSize: `${size}px`, lineHeight: 1 }}>🏁</span>
-        );
-      case 'straight':
-      default:
-        return (
-          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="19" x2="12" y2="5" />
-            <polyline points="5 12 12 5 19 12" />
-          </svg>
-        );
-    }
-=======
   const getManeuverIcon = (type = '', modifier = '', instruction = '') => {
     const mod = (modifier || '').toLowerCase();
     const typ = (type || '').toLowerCase();
@@ -1761,44 +1564,46 @@ export default function MapaTuristico() {
 
     // 7. Seguir recto por defecto
     return '⬆';
->>>>>>> origin/feature/categorias-responsive-web
+  };
+
+  const getManeuverIconKey = (type = '', modifier = '', instruction = '') => {
+    const mod = (modifier || '').toLowerCase();
+    const typ = (type || '').toLowerCase();
+    const text = (instruction || '').toLowerCase();
+    
+    if (typ.includes('arrive') || typ.includes('destination') || text.includes('llegad') || text.includes('destino') || text.includes('arrived')) return 'arrive';
+    if (typ.includes('roundabout') || typ.includes('rotary') || text.includes('rotonda') || text.includes('roundabout') || text.includes('glorieta')) return 'roundabout';
+    if (mod.includes('uturn') || text.includes('vuelta en u') || text.includes('giro en u') || text.includes('retorno') || text.includes('u-turn')) return 'uturn';
+    if (mod.includes('sharp right') || text.includes('pronunciado a la derecha')) return 'sharp-right';
+    if (mod.includes('sharp left') || text.includes('pronunciado a la izquierda')) return 'sharp-left';
+    if (mod.includes('slight right') || text.includes('leve a la derecha')) return 'slight-right';
+    if (mod.includes('slight left') || text.includes('leve a la izquierda')) return 'slight-left';
+    if (mod.includes('right') || text.includes('derecha')) return 'turn-right';
+    if (mod.includes('left') || text.includes('izquierda')) return 'turn-left';
+    return 'straight';
   };
 
   const buildManeuverList = (steps) => {
     const list = [];
     steps.forEach((step, idx) => {
       if (!step.maneuver?.instruction) return;
-<<<<<<< HEAD
-      const mType = step.maneuver.type || '';
-      const mModifier = step.maneuver.modifier || '';
-      if (idx === 0 && (mType.includes('depart') || mType.includes('head'))) return;
-
-      const [mLng, mLat] = step.maneuver.location;
-      const cleanInstr = limpiarInstruccion(step.maneuver.instruction);
-      const iconKey = getManeuverIconKey(mType, mModifier, cleanInstr || step.maneuver.instruction);
-
-=======
       const mType = (step.maneuver.type || '').toLowerCase();
-      // Omitir la maniobra de salida (depart) en el punto de origen (idx === 0) para enfocarse en los giros reales de la ruta
       if (idx === 0 && (mType.includes('depart') || mType.includes('head'))) return;
 
       const [mLng, mLat] = step.maneuver.location;
       const mModifier = step.maneuver.modifier || '';
       const rawInstr = step.maneuver.instruction || '';
       const cleanInstr = limpiarInstruccion(rawInstr);
->>>>>>> origin/feature/categorias-responsive-web
+      const iconKey = getManeuverIconKey(mType, mModifier, cleanInstr || rawInstr);
+
       list.push({
         lng: mLng,
         lat: mLat,
         instruction: cleanInstr,
         type: mType,
         modifier: mModifier,
-<<<<<<< HEAD
         iconKey: iconKey,
-        icon: getManeuverIcon(mType, mModifier, cleanInstr),
-=======
         icon: getManeuverIcon(mType, mModifier, cleanInstr || rawInstr),
->>>>>>> origin/feature/categorias-responsive-web
         segmentDist: step.distance || 0,
         announcedFar: false,
         announcedMid: false,
@@ -1819,7 +1624,6 @@ export default function MapaTuristico() {
   };
 
   const checkDistanceAnnouncements = (currentLng, currentLat) => {
-<<<<<<< HEAD
     const maneuvers = maneuversRef.current;
     if (!maneuvers || !maneuvers.length) return;
 
@@ -1828,9 +1632,7 @@ export default function MapaTuristico() {
 
     let dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
     const now = Date.now();
-    const silenceSec = (now - lastAnnouncementTimeRef.current) / 1000;
 
-    // Detectar si el vehículo alcanzó o sobrepasó el punto de giro actual o si está más cerca de la siguiente maniobra
     const isCloseToTurn = dist < 65;
     const isMovingAwayAfterApproach = next.lastDist !== undefined && dist > next.lastDist + 20 && next.lastDist < 150;
     const isCloserToNextStep = maneuvers.length > 1 && calcDistanceMeters([currentLng, currentLat], [maneuvers[1].lng, maneuvers[1].lat]) < dist;
@@ -1840,23 +1642,6 @@ export default function MapaTuristico() {
         next.announcedArrive = true;
         speakInstruction(next.instruction, true);
         lastAnnouncementTimeRef.current = now;
-=======
-    let maneuvers = maneuversRef.current;
-    if (!maneuvers || !maneuvers.length) return;
-
-    let next = maneuvers[0];
-    let dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
-
-    // Detectar si el vehículo alcanzó o sobrepasó la maniobra actual
-    const isCloseToTurn = dist < 50;
-    const isPassingTurn = next.lastDist !== undefined && dist > next.lastDist && next.lastDist < 100;
-
-    if ((isCloseToTurn || isPassingTurn) && maneuvers.length > 1) {
-      if (!next.announcedArrive) {
-        next.announcedArrive = true;
-        speakInstruction(next.instruction, true);
-        lastAnnouncementTimeRef.current = Date.now();
->>>>>>> origin/feature/categorias-responsive-web
       }
       maneuvers.shift();
       next = maneuvers[0];
@@ -1865,38 +1650,14 @@ export default function MapaTuristico() {
       next.lastDist = dist;
     }
 
-<<<<<<< HEAD
     const nextNext = maneuvers.length > 1 ? maneuvers[1] : null;
     const iconKey = next.iconKey || getManeuverIconKey(next.type, next.modifier, next.instruction);
     const nextNextIconKey = nextNext ? (nextNext.iconKey || getManeuverIconKey(nextNext.type, nextNext.modifier, nextNext.instruction)) : null;
 
-    // Actualizar maniobra y distancia actual para el indicador de giro estilo Waze
-=======
-    const nextIcon = next.icon || getManeuverIcon(next.type, next.modifier, next.instruction);
-    const isArrive = next.type?.includes('arrive') || next.type?.includes('destination') || nextIcon === '🏁';
-
-    // Si la próxima maniobra de giro está a más de 300m (y no es la llegada), mostramos "Siga recto" / "Continúe en [Carretera]"
-    let currentIcon = nextIcon;
-    let currentInstr = next.instruction;
-
-    if (dist > 300 && !isArrive) {
-      currentIcon = '⬆';
-      const matchContinue = next.instruction.match(/(continúe|siga|conduzca)\s+(en|por)?\s*([^.]+)/i);
-      if (matchContinue && matchContinue[3]) {
-        const roadName = matchContinue[3].trim();
-        currentInstr = lang === 'en' ? `Continue on ${roadName}` : `Continúe en ${roadName}`;
-      } else {
-        currentInstr = lang === 'en' ? 'Continue straight' : 'Siga recto';
-      }
-    }
-
-    // Actualizar la maniobra en tiempo real para reflejar el icono y la distancia exacta en la UI
->>>>>>> origin/feature/categorias-responsive-web
     setCurrentManeuver({
-      instruction: currentInstr,
+      instruction: next.instruction,
       distance: dist,
       distanceFormatted: formatDistanceDisplay(dist),
-<<<<<<< HEAD
       iconKey: iconKey,
       icon: next.icon || getManeuverIcon(next.type, next.modifier, next.instruction),
       nextNext: nextNext ? {
@@ -1904,15 +1665,6 @@ export default function MapaTuristico() {
         iconKey: nextNextIconKey,
       } : null
     });
-
-=======
-      icon: currentIcon
-    });
-
-    const now = Date.now();
-    const silenceSec = (now - lastAnnouncementTimeRef.current) / 1000;
-
->>>>>>> origin/feature/categorias-responsive-web
     if (dist < 300 && !next.announcedClose) {
       next.announcedClose = true;
       const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
@@ -1937,13 +1689,8 @@ export default function MapaTuristico() {
       return;
     }
 
-<<<<<<< HEAD
     if (silenceSec >= 15 && dist > 500 && dist < 5000) {
       const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
-=======
-    if (silenceSec >= 12 && dist > 300 && dist < 5000) {
-      const msg = lang === 'en' ? `Continue straight.` : `Continúe recto.`;
->>>>>>> origin/feature/categorias-responsive-web
       speakInstruction(msg);
       lastAnnouncementTimeRef.current = now;
     }
@@ -2015,13 +1762,7 @@ export default function MapaTuristico() {
     speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${destino}.`, true);
     lastAnnouncementTimeRef.current = Date.now();
 
-    // Simulación a velocidad constante estándar de ciudad: 40 km/h (11.11 m/s)
-    const SPEED_KMH = 40;
-    const METERS_PER_TICK = (SPEED_KMH * 1000) / 3600; // ~11.11 m/s (1 segundo por tick)
-
-    let currentPtIndex = 0;
-    let currentPos = coords[0];
-
+    let index = 0;
     setTimeout(() => {
       if (!isDemoRunningRef.current) return;
 
@@ -2033,7 +1774,7 @@ export default function MapaTuristico() {
           window.speechSynthesis.resume();
         }
 
-        if (currentPtIndex >= pts.length - 1) {
+        if (index >= pts.length - 1) {
           clearInterval(demoIntervalRef.current);
           demoIntervalRef.current = null;
           isDemoRunningRef.current = false;
@@ -2056,59 +1797,20 @@ export default function MapaTuristico() {
           return;
         }
 
-<<<<<<< HEAD
-        // Avanzar el vehículo ~11.1m (40 km/h) a lo largo de los nodos de la ruta
-        let remainingToMove = METERS_PER_TICK;
-        let nextPt = pts[currentPtIndex + 1];
-
-        while (currentPtIndex < pts.length - 1 && remainingToMove > 0) {
-          nextPt = pts[currentPtIndex + 1];
-          const distToNextNode = calcDistanceMeters(currentPos, nextPt);
-
-          if (distToNextNode <= remainingToMove) {
-            remainingToMove -= distToNextNode;
-            currentPos = nextPt;
-            currentPtIndex++;
-          } else {
-            const ratio = remainingToMove / distToNextNode;
-            const interpolatedLng = currentPos[0] + (nextPt[0] - currentPos[0]) * ratio;
-            const interpolatedLat = currentPos[1] + (nextPt[1] - currentPos[1]) * ratio;
-            currentPos = [interpolatedLng, interpolatedLat];
-            remainingToMove = 0;
-          }
-=======
         let target = index + 1;
         while (target < pts.length - 1) {
           const gap = calcDistanceMeters(pts[index], pts[target]);
           if (gap >= 25) break;
           target++;
->>>>>>> origin/feature/categorias-responsive-web
         }
 
-        const bearing = calcBearing(currentPos, nextPt || pts[pts.length - 1]);
+        const bearing = calcBearing(pts[index], pts[target]);
+        handlePositionUpdate(pts[target][0], pts[target][1], bearing);
+        checkDistanceAnnouncements(pts[target][0], pts[target][1]);
 
-        handlePositionUpdate(currentPos[0], currentPos[1], bearing);
-        checkDistanceAnnouncements(currentPos[0], currentPos[1]);
-
-        // Calcular la distancia y duración restante a velocidad constante de 40 km/h
-        const remainingDist = calcRemainingRouteDistance(pts, currentPtIndex);
-        const remainingDurationSec = (remainingDist / 1000) / SPEED_KMH * 3600;
-
-        setRouteInfo({
-          distance: remainingDist,
-          duration: remainingDurationSec,
-          eta: calculateETA(remainingDurationSec),
-          destinationName: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : 'Destino')
-        });
-
-<<<<<<< HEAD
-      }, 1000);
-    }, 2000);
-=======
         index = target;
       }, 1200);
     }, 4000);
->>>>>>> origin/feature/categorias-responsive-web
   };
 
   // Activar modo agregar punto
@@ -2499,16 +2201,12 @@ export default function MapaTuristico() {
             instruction: instr,
             distance: dist,
             distanceFormatted: formatDistanceDisplay(dist),
-<<<<<<< HEAD
             iconKey: iconKey,
             icon: getManeuverIcon(type, modifier, instr || rawInstr),
             nextNext: nextNextStep ? {
               instruction: nextNextStep.instruction,
               iconKey: nextNextStep.iconKey
             } : null
-=======
-            icon: getManeuverIcon(type, modifier, instr || firstStep.maneuver?.instruction)
->>>>>>> origin/feature/categorias-responsive-web
           });
 
           if (instr && instr !== lastSpokenRef.current) {
@@ -3252,11 +2950,7 @@ export default function MapaTuristico() {
         </div>
       )}
 
-<<<<<<< HEAD
       {/* Panel de filtros (se oculta si hay punto seleccionado, ruta en curso, demo activa, o si se enfoca/usa el buscador) */}
-=======
-      {/* Panel de filtros (se oculta si hay punto seleccionado, ruta en curso, demo activa, o si se usa el buscador) */}
->>>>>>> origin/feature/categorias-responsive-web
       {!selectedPoint && !routeInfo && !isDemoRunning && !isSearchFocused && !searchQuery.trim() && !showResults && (
         <div className="filter-bar-wrapper">
           <button
@@ -3265,18 +2959,11 @@ export default function MapaTuristico() {
             onClick={() => {
               if (filterScrollRef.current) {
                 const { scrollLeft, scrollWidth, clientWidth } = filterScrollRef.current;
-<<<<<<< HEAD
                 const maxScroll = scrollWidth - clientWidth;
                 if (scrollLeft >= maxScroll - 10) {
                   filterScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
                 } else {
                   filterScrollRef.current.scrollBy({ left: 200, behavior: 'smooth' });
-=======
-                if (scrollLeft + clientWidth >= scrollWidth - 10) {
-                  filterScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-                } else {
-                  filterScrollRef.current.scrollBy({ left: 240, behavior: 'smooth' });
->>>>>>> origin/feature/categorias-responsive-web
                 }
               }
             }}
@@ -3344,7 +3031,6 @@ export default function MapaTuristico() {
                     gap: '6px'
                   }}
                 >
-<<<<<<< HEAD
                   <span>
                     {config.svgFile ? (
                       <img src={config.svgFile} alt={key} style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
@@ -3352,9 +3038,6 @@ export default function MapaTuristico() {
                       <Icon name={config.icon} size={16} />
                     )}
                   </span>
-=======
-                  <span><Icon name={config.icon} size={16} /></span>
->>>>>>> origin/feature/categorias-responsive-web
                   <span>{t(`addPoint.categories.${key}`)}</span>
                 </button>
               );
@@ -3674,11 +3357,7 @@ export default function MapaTuristico() {
         </div>
       )}
 
-<<<<<<< HEAD
       {/* Botón Flotante Trazar Ruta (solo cuando no hay una ruta activa) */}
-=======
-      {/* BOTÓN FLOTANTE TRAZAR RUTA (Solo visible cuando no hay ruta ni punto seleccionado) */}
->>>>>>> origin/feature/categorias-responsive-web
       {!selectedPoint && !routeInfo && (
         <div
           onClick={() => setShowDirectionsPopup((prev) => !prev)}
@@ -3703,28 +3382,8 @@ export default function MapaTuristico() {
           }}
           title={showDirectionsPopup ? (lang === 'en' ? 'Close route panel' : 'Cerrar panel de ruta') : (lang === 'en' ? 'Open route planner' : 'Trazar o ver ruta')}
         >
-<<<<<<< HEAD
           <span>🧭</span>
           <span>{showDirectionsPopup ? (lang === 'en' ? 'Close Route' : 'Cerrar Ruta') : (lang === 'en' ? 'Route A-B' : 'Trazar Ruta')}</span>
-=======
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: showDirectionsPopup ? '#EF4444' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-            color: showDirectionsPopup ? '#FFFFFF' : '#0A192F',
-            border: showDirectionsPopup ? '2px solid #EF4444' : '2px solid #FFFFFF',
-            borderRadius: '25px',
-            padding: '10px 18px',
-            fontWeight: '900',
-            fontSize: '13.5px',
-            boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
-            transition: 'all 0.25s ease'
-          }}>
-            <span>🧭</span>
-            <span>{showDirectionsPopup ? (lang === 'en' ? 'Close Route' : 'Cerrar Ruta') : (lang === 'en' ? 'Route A-B' : 'Trazar Ruta')}</span>
-          </div>
->>>>>>> origin/feature/categorias-responsive-web
         </div>
       )}
 
