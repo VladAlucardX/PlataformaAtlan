@@ -365,49 +365,25 @@ export default function MasDeNicaraguaPage() {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#0A192F", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif", position: "relative", overflow: "hidden" }}>
-      {/* Fondo de 3 columnas compuestas: art4.png, art5.png, art3.jpeg */}
+      {/* Fondo Panorámico de la Página (Frame 9.png) */}
       <div style={{
         position: "fixed",
         top: 0,
         left: 0,
         width: "100%",
         height: "100%",
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr 1fr",
+        backgroundImage: "url('/images/Frame 9.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         zIndex: 0,
-        pointerEvents: "none",
-        overflow: "hidden"
-      }}>
-        {/* Columna 1: art4.png */}
-        <div style={{
-          backgroundImage: "url('/images/art4.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "100%",
-          width: "100%"
-        }} />
-        {/* Columna 2: art5.png */}
-        <div style={{
-          backgroundImage: "url('/images/art5.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "100%",
-          width: "100%"
-        }} />
-        {/* Columna 3: art3.jpeg */}
-        <div style={{
-          backgroundImage: "url('/images/art3.jpeg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "100%",
-          width: "100%"
-        }} />
-      </div>
+        pointerEvents: "none"
+      }} />
 
       <div style={{ position: "relative", zIndex: 1 }}>
         <Navbar activePage="mas-de-nicaragua" />
 
-      <main style={{ maxWidth: "1400px", margin: "0 auto", padding: "68px 10px 10px" }}>
+      <main style={{ maxWidth: "1310px", margin: "0 auto", padding: "68px 12px 10px" }}>
 
         {/* Mapa Protagonista Principal */}
         <section>
