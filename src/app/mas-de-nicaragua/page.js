@@ -661,7 +661,7 @@ export default function MasDeNicaraguaPage() {
           zIndex: 9999,
           backgroundColor: "rgba(10, 25, 47, 0.92)",
           backdropFilter: "blur(14px)",
-          padding: "16px",
+          padding: "85px 20px 20px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center"
@@ -669,7 +669,8 @@ export default function MasDeNicaraguaPage() {
           <div style={{
             maxWidth: "1160px",
             width: "100%",
-            maxHeight: "88vh",
+            height: "560px",
+            maxHeight: "82vh",
             display: "flex",
             flexDirection: "column",
             background: "rgba(15, 23, 42, 0.97)",
