@@ -2332,7 +2332,7 @@ html body .mapboxgl-ctrl-directions tr {
     background: rgba(10, 25, 47, 0.92) !important;
     backdrop-filter: blur(14px) !important;
     -webkit-backdrop-filter: blur(14px) !important;
-    border-radius: 16px !important;
+    border-radius: 14px !important;
     border: 1.5px solid rgba(255, 215, 0, 0.3) !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
     z-index: 10 !important;
