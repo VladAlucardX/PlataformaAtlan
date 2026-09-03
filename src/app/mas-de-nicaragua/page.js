@@ -422,16 +422,17 @@ export default function MasDeNicaraguaPage() {
                     Enciclopedia Viva
                   </span>
                 </div>
-                <span style={{ fontSize: "14px", fontWeight: "800", color: "#FFFFFF" }}>
+                <span style={{ fontSize: "17.5px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "0.4px" }}>
                   17 Departamentos de{" "}
                   <span style={{
+                    fontSize: "18.5px",
                     fontWeight: "900",
                     background: "linear-gradient(180deg, #0055D4 0%, #0066FF 33%, #FFFFFF 33%, #FFFFFF 66%, #0066FF 66%, #0055D4 100%)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     display: "inline-block",
-                    letterSpacing: "0.6px",
-                    filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.9))"
+                    letterSpacing: "0.8px",
+                    filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.9))"
                   }}>
                     Nicaragua
                   </span>
