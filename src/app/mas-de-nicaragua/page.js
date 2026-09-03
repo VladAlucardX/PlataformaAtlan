@@ -253,7 +253,7 @@ export default function MasDeNicaraguaPage() {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: currentStyleUri,
-      center: [-85.10, 12.65],
+      center: [-85.10, 12.90],
       zoom: 4.40,
       minZoom: 3.2,
       maxZoom: 9.0,
@@ -278,7 +278,7 @@ export default function MasDeNicaraguaPage() {
     map.on("load", () => {
       map.resize();
       try {
-        map.flyTo({ center: [-85.10, 12.65], zoom: 4.40, duration: 0 });
+        map.flyTo({ center: [-85.10, 12.90], zoom: 4.40, duration: 0 });
       } catch (_) {}
       let hoveredId = null;
 
@@ -441,10 +441,10 @@ export default function MasDeNicaraguaPage() {
               {/* Filtros Rápidos de Regiones con Estilo Neón */}
               <div style={{ display: "flex", gap: "6px" }}>
                 {[
-                  { name: "Todos", center: [-85.10, 12.65], zoom: 4.40 },
-                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.00], zoom: 5.20 },
-                  { name: "Central", icon: "mountain", center: [-85.5, 12.70], zoom: 5.20 },
-                  { name: "Caribe", icon: "island", center: [-84.0, 13.30], zoom: 4.90 }
+                  { name: "Todos", center: [-85.10, 12.90], zoom: 4.40 },
+                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.25], zoom: 5.20 },
+                  { name: "Central", icon: "mountain", center: [-85.5, 12.95], zoom: 5.20 },
+                  { name: "Caribe", icon: "island", center: [-84.0, 13.55], zoom: 4.90 }
                 ].map((reg) => {
                   const isActive = selectedRegion === reg.name;
                   return (
