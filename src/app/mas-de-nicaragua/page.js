@@ -204,12 +204,7 @@ export default function MasDeNicaraguaPage() {
         type: "line",
         source: "nicaragua-departments",
         paint: {
-          "line-color": [
-            "case",
-            ["to-boolean", ["feature-state", "selected"]], "#FFFFFF",
-            ["to-boolean", ["feature-state", "hover"]], "#FFFFFF",
-            "#FFD700"
-          ],
+          "line-color": "#FFFFFF",
           "line-color-transition": { duration: 300, delay: 0 },
           "line-width": [
             "case",
@@ -259,8 +254,8 @@ export default function MasDeNicaraguaPage() {
       container: mapContainerRef.current,
       style: currentStyleUri,
       center: [-85.10, 12.65],
-      zoom: 5.70,
-      minZoom: 5.0,
+      zoom: 5.45,
+      minZoom: 4.8,
       maxZoom: 9.0,
       pitch: 0,
       projection: "mercator",
@@ -392,7 +387,7 @@ export default function MasDeNicaraguaPage() {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        padding: "68px 12px 12px"
+        padding: "95px 12px 20px"
       }}>
 
         {/* Mapa Protagonista Principal */}
@@ -424,27 +419,29 @@ export default function MasDeNicaraguaPage() {
                     Enciclopedia Viva
                   </span>
                 </div>
-                <span style={{
-                  fontSize: "14px",
-                  fontWeight: "900",
-                  background: "linear-gradient(180deg, #0055D4 0%, #0066FF 33%, #FFFFFF 33%, #FFFFFF 66%, #0066FF 66%, #0055D4 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  display: "inline-block",
-                  letterSpacing: "0.6px",
-                  filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.9))"
-                }}>
-                  17 Departamentos de Nicaragua
+                <span style={{ fontSize: "14px", fontWeight: "800", color: "#FFFFFF" }}>
+                  17 Departamentos de{" "}
+                  <span style={{
+                    fontWeight: "900",
+                    background: "linear-gradient(180deg, #0055D4 0%, #0066FF 33%, #FFFFFF 33%, #FFFFFF 66%, #0066FF 66%, #0055D4 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    display: "inline-block",
+                    letterSpacing: "0.6px",
+                    filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.9))"
+                  }}>
+                    Nicaragua
+                  </span>
                 </span>
               </div>
 
               {/* Filtros Rápidos de Regiones con Estilo Neón */}
               <div style={{ display: "flex", gap: "6px" }}>
                 {[
-                  { name: "Todos", center: [-85.10, 12.65], zoom: 5.70 },
-                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.00], zoom: 6.2 },
-                  { name: "Central", icon: "mountain", center: [-85.5, 12.70], zoom: 6.2 },
-                  { name: "Caribe", icon: "island", center: [-84.0, 13.30], zoom: 6.0 }
+                  { name: "Todos", center: [-85.10, 12.65], zoom: 5.45 },
+                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.00], zoom: 6.0 },
+                  { name: "Central", icon: "mountain", center: [-85.5, 12.70], zoom: 6.0 },
+                  { name: "Caribe", icon: "island", center: [-84.0, 13.30], zoom: 5.8 }
                 ].map((reg) => {
                   const isActive = selectedRegion === reg.name;
                   return (
