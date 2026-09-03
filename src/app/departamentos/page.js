@@ -516,8 +516,20 @@ export default function DepartamentosPage() {
         {/* Encabezado Compacto con la palabra Nicaragua pintada con la Bandera (Azul - Blanco - Azul) */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", gap: "16px", flexWrap: "wrap", flexShrink: 0 }}>
           <div>
-            <h1 style={{ fontSize: "clamp(18px, 2.2vw, 26px)", fontWeight: "900", letterSpacing: "-0.01em", color: "#FFFFFF", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-              <span>Ranking de Lugares más visitados en</span>
+            <h1 style={{ 
+              fontSize: "clamp(18px, 2.2vw, 26px)", 
+              fontWeight: "900", 
+              letterSpacing: "0.2px", 
+              color: "#FFFFFF", 
+              margin: 0, 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "8px",
+              flexWrap: "wrap"
+            }}>
+              <span style={{ textShadow: "0 2px 10px rgba(0,0,0,0.95), 0 0 20px rgba(0,0,0,0.8)" }}>
+                Ranking de Lugares más visitados en
+              </span>
               <span style={{
                 background: "linear-gradient(180deg, #0072CE 0%, #0072CE 33%, #FFFFFF 34%, #FFFFFF 66%, #0072CE 67%, #0072CE 100%)",
                 WebkitBackgroundClip: "text",
@@ -626,7 +638,7 @@ export default function DepartamentosPage() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                opacity: 0.36
+                opacity: 0.42
               }}
             >
               <img
@@ -636,24 +648,39 @@ export default function DepartamentosPage() {
                   width: "100%",
                   height: "100%",
                   objectFit: "contain",
-                  filter: "brightness(0) invert(0.95) drop-shadow(0 0 30px rgba(255, 255, 255, 0.35))"
+                  filter: "brightness(0) invert(0.95) drop-shadow(0 0 25px rgba(56, 189, 248, 0.5)) drop-shadow(0 0 50px rgba(2, 132, 199, 0.35))"
                 }}
               />
             </div>
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", flexWrap: "wrap", gap: "8px", flexShrink: 0, position: "relative", zIndex: 1 }}>
-              <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#FFFFFF" }}>
+              <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#FFFFFF", textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}>
                 {selectedDept === "Todos" 
                   ? (rankingMode === 'global' ? 'Lugares Más Visitados' : 'Mis Lugares Más Visitados')
                   : (rankingMode === 'global' ? `Más Visitados en ${selectedDept}` : `Mis Visitas en ${selectedDept}`)}
               </h2>
-              <span style={{ fontSize: "11.5px", fontWeight: "700", color: "#CBD5E1", background: "rgba(255,255,255,0.08)", padding: "2px 8px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.15)" }}>
+              <span style={{ fontSize: "11.5px", fontWeight: "700", color: "#CBD5E1", background: "rgba(255,255,255,0.08)", padding: "2px 8px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.15)", backdropFilter: "blur(6px)" }}>
                 {rankingData.length} Destinos
               </span>
             </div>
 
             {/* Selector de Modo con SVGs Personalizados: Clic en Ranking Global resetea departamento a Todos */}
-            <div style={{ display: "flex", gap: "8px", marginBottom: "10px", flexShrink: 0, position: "relative", zIndex: 1 }}>
+            <div style={{ 
+              display: "flex", 
+              gap: "6px", 
+              marginBottom: "12px", 
+              flexShrink: 0, 
+              position: "relative", 
+              zIndex: 1,
+              background: "rgba(3, 14, 33, 0.75)",
+              padding: "4px",
+              borderRadius: "14px",
+              border: "1px solid rgba(255, 255, 255, 0.16)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              boxShadow: "inset 0 2px 4px rgba(0,0,0,0.3)"
+            }}>
+              {/* Botón Ranking Global */}
               <button
                 onClick={() => {
                   setRankingMode('global');
@@ -662,54 +689,73 @@ export default function DepartamentosPage() {
                 }}
                 style={{
                   flex: 1,
-                  padding: "8px 12px",
-                  borderRadius: "12px",
-                  border: rankingMode === 'global' ? "1px solid rgba(255, 255, 255, 0.35)" : "1px solid rgba(255, 255, 255, 0.1)",
-                  background: rankingMode === 'global' ? "rgba(255, 255, 255, 0.16)" : "rgba(255, 255, 255, 0.04)",
-                  color: rankingMode === 'global' ? "#FFFFFF" : "#94A3B8",
+                  padding: "9px 14px",
+                  borderRadius: "10px",
+                  border: rankingMode === 'global' ? "1px solid rgba(255, 255, 255, 0.45)" : "1px solid rgba(255, 255, 255, 0.08)",
+                  background: rankingMode === 'global' 
+                    ? "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)" 
+                    : "rgba(255, 255, 255, 0.05)",
+                  color: rankingMode === 'global' ? "#FFFFFF" : "#CBD5E1",
                   fontWeight: "800",
-                  fontSize: "12.5px",
+                  fontSize: "13.5px",
+                  letterSpacing: "0.3px",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "7px",
-                  boxShadow: rankingMode === 'global' ? "0 4px 14px rgba(255,255,255,0.1)" : "none",
-                  transition: "all 0.2s ease"
+                  textShadow: rankingMode === 'global' ? "0 1px 3px rgba(0, 0, 0, 0.5)" : "0 1px 2px rgba(0, 0, 0, 0.4)",
+                  boxShadow: rankingMode === 'global' ? "0 4px 14px rgba(14, 165, 233, 0.45)" : "none",
+                  transition: "all 0.25s ease"
                 }}
               >
                 <img 
                   src="/images/croquisnicaragua.svg" 
                   alt="Ranking Global" 
-                  style={{ width: "18px", height: "18px", objectFit: "contain", filter: rankingMode === 'global' ? "brightness(0) invert(1)" : "brightness(0) invert(0.65)" }} 
+                  style={{ 
+                    width: "19px", 
+                    height: "19px", 
+                    objectFit: "contain", 
+                    filter: rankingMode === 'global' ? "brightness(0) invert(1)" : "brightness(0) invert(0.75)" 
+                  }} 
                 />
                 <span>Ranking Global</span>
               </button>
 
+              {/* Botón Ranking Propio */}
               <button
                 onClick={() => setRankingMode('propio')}
                 style={{
                   flex: 1,
-                  padding: "8px 12px",
-                  borderRadius: "12px",
-                  border: rankingMode === 'propio' ? "1px solid rgba(56, 189, 248, 0.4)" : "1px solid rgba(255, 255, 255, 0.1)",
-                  background: rankingMode === 'propio' ? "rgba(56, 189, 248, 0.18)" : "rgba(255, 255, 255, 0.04)",
-                  color: rankingMode === 'propio' ? "#38BDF8" : "#94A3B8",
+                  padding: "9px 14px",
+                  borderRadius: "10px",
+                  border: rankingMode === 'propio' ? "1px solid rgba(255, 255, 255, 0.45)" : "1px solid rgba(255, 255, 255, 0.08)",
+                  background: rankingMode === 'propio' 
+                    ? "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)" 
+                    : "rgba(255, 255, 255, 0.05)",
+                  color: rankingMode === 'propio' ? "#FFFFFF" : "#CBD5E1",
                   fontWeight: "800",
-                  fontSize: "12.5px",
+                  fontSize: "13.5px",
+                  letterSpacing: "0.3px",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "7px",
-                  boxShadow: rankingMode === 'propio' ? "0 4px 14px rgba(56,189,248,0.15)" : "none",
-                  transition: "all 0.2s ease"
+                  textShadow: rankingMode === 'propio' ? "0 1px 3px rgba(0, 0, 0, 0.5)" : "0 1px 2px rgba(0, 0, 0, 0.4)",
+                  boxShadow: rankingMode === 'propio' ? "0 4px 14px rgba(14, 165, 233, 0.45)" : "none",
+                  transition: "all 0.25s ease"
                 }}
               >
                 <img 
                   src="/images/perfil.svg" 
                   alt="Ranking Propio" 
-                  style={{ width: "16px", height: "16px", objectFit: "contain", filter: rankingMode === 'propio' ? "brightness(0) saturate(100%) invert(67%) sepia(85%) saturate(1800%) hue-rotate(170deg)" : "brightness(0) invert(0.65)" }} 
+                  style={{ 
+                    width: "17px", 
+                    height: "17px", 
+                    objectFit: "contain", 
+                    filter: rankingMode === 'propio' ? "brightness(0) invert(1)" : "brightness(0) invert(0.75)" 
+                  }} 
                 />
                 <span>Ranking Propio</span>
               </button>
@@ -723,33 +769,34 @@ export default function DepartamentosPage() {
                   <p style={{ color: "#CBD5E1", fontSize: "13px" }}>Cargando ranking de destinos...</p>
                 </div>
               ) : rankingMode === 'propio' && !userSession ? (
-                <div style={{ background: "rgba(10, 15, 26, 0.6)", border: "1px dashed rgba(56, 189, 248, 0.4)", borderRadius: "16px", padding: "24px 16px", textAlign: "center" }}>
+                <div style={{ background: "rgba(10, 20, 38, 0.75)", backdropFilter: "blur(10px)", border: "1px dashed rgba(56, 189, 248, 0.5)", borderRadius: "16px", padding: "24px 16px", textAlign: "center" }}>
                   <div style={{ marginBottom: "10px", display: "flex", justifyContent: "center" }}>
                     <img src="/images/perfil.svg" alt="Perfil" style={{ width: "32px", height: "32px", filter: "brightness(0) saturate(100%) invert(67%) sepia(85%) saturate(1800%) hue-rotate(170deg)" }} />
                   </div>
-                  <h3 style={{ margin: "0 0 6px 0", fontSize: "15px", color: "#FFFFFF" }}>Inicia sesión como turista</h3>
-                  <p style={{ margin: "0 0 14px 0", fontSize: "12.5px", color: "#CBD5E1", lineHeight: "1.4" }}>
+                  <h3 style={{ margin: "0 0 6px 0", fontSize: "15.5px", fontWeight: "800", color: "#FFFFFF" }}>Inicia sesión como turista</h3>
+                  <p style={{ margin: "0 0 14px 0", fontSize: "13px", color: "#E2E8F0", lineHeight: "1.4" }}>
                     Inicia sesión para ver tu historial personalizado de los lugares que has visitado en Nicaragua.
                   </p>
                   <Link
                     href="/login"
                     style={{
-                      display: "inline-block", padding: "8px 16px", background: "linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)",
-                      borderRadius: "10px", color: "#FFFFFF", fontWeight: "800", textDecoration: "none", fontSize: "12.5px"
+                      display: "inline-block", padding: "9px 18px", background: "linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)",
+                      borderRadius: "10px", color: "#FFFFFF", fontWeight: "800", textDecoration: "none", fontSize: "13px",
+                      boxShadow: "0 4px 12px rgba(56, 189, 248, 0.3)"
                     }}
                   >
                     Iniciar Sesión
                   </Link>
                 </div>
               ) : rankingData.length === 0 ? (
-                <div style={{ background: "rgba(10, 15, 26, 0.5)", border: "1px dashed rgba(255, 255, 255, 0.18)", borderRadius: "16px", padding: "30px 16px", textAlign: "center" }}>
+                <div style={{ background: "rgba(10, 20, 38, 0.75)", backdropFilter: "blur(10px)", border: "1px dashed rgba(255, 255, 255, 0.25)", borderRadius: "16px", padding: "30px 16px", textAlign: "center" }}>
                   <div style={{ marginBottom: "10px", display: "flex", justifyContent: "center" }}>
-                    <img src="/images/Ubicacion.svg" alt="Brújula" style={{ width: "30px", height: "30px", filter: "brightness(0) invert(0.8)" }} />
+                    <img src="/images/Ubicacion.svg" alt="Brújula" style={{ width: "30px", height: "30px", filter: "brightness(0) invert(0.9)" }} />
                   </div>
-                  <h3 style={{ margin: "0 0 6px 0", fontSize: "15px", color: "#FFFFFF" }}>
+                  <h3 style={{ margin: "0 0 6px 0", fontSize: "15.5px", fontWeight: "800", color: "#FFFFFF" }}>
                     {rankingMode === 'propio' ? 'Aún no has registrado visitas' : 'Aún no hay visitas registradas'}
                   </h3>
-                  <p style={{ margin: 0, fontSize: "12.5px", color: "#94A3B8" }}>
+                  <p style={{ margin: 0, fontSize: "13px", color: "#CBD5E1", lineHeight: "1.4" }}>
                     {rankingMode === 'propio' 
                       ? `Visita un destino en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept} y márcalo en el mapa para sumarlo a tu ranking propio.`
                       : `Sé el primer turista en explorar y marcar visitas en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept}.`}
@@ -757,7 +804,7 @@ export default function DepartamentosPage() {
                 </div>
               ) : (
                 <>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
                     {rankingData.slice(0, visibleCount).map((lugar, idx) => {
                       const pos = idx + 1;
                       const countVisits = rankingMode === 'propio' ? (lugar.mis_visitas || 1) : (lugar.total_visitas || 0);
@@ -772,52 +819,51 @@ export default function DepartamentosPage() {
                           key={lugar.id}
                           style={{ 
                             background: pos === 1 
-                              ? "linear-gradient(135deg, rgba(255, 255, 255, 0.20) 0%, rgba(10, 25, 47, 0.65) 100%)"
-                              : "rgba(10, 25, 47, 0.52)", 
-                            backdropFilter: "blur(6px)",
-                            WebkitBackdropFilter: "blur(6px)",
-                            border: pos === 1 ? "1px solid rgba(255, 255, 255, 0.38)" : "1px solid rgba(255, 255, 255, 0.12)",
+                              ? "linear-gradient(135deg, rgba(22, 48, 82, 0.78) 0%, rgba(10, 26, 50, 0.82) 100%)"
+                              : "rgba(10, 25, 47, 0.65)", 
+                            backdropFilter: "blur(8px)",
+                            WebkitBackdropFilter: "blur(8px)",
+                            border: pos === 1 ? "1px solid rgba(255, 215, 0, 0.55)" : "1px solid rgba(255, 255, 255, 0.18)",
                             borderRadius: "14px",
-                            padding: "10px 14px",
+                            padding: "11px 14px",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "space-between",
                             gap: "10px",
-                            boxShadow: pos === 1 ? "0 6px 20px rgba(255,255,255,0.08)" : "0 2px 6px rgba(0,0,0,0.2)",
+                            boxShadow: pos === 1 ? "0 6px 20px rgba(255, 215, 0, 0.15)" : "0 3px 8px rgba(0,0,0,0.3)",
                             transition: "all 0.2s ease"
                           }}
                         >
                           <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
                             {/* Píldora de Posición: Lugar 1 (Oro), Lugar 2 (Plata), Lugar 3 (Cobre) */}
                             <div style={{ 
-                              minWidth: "58px", 
-                              padding: "4px 8px", 
+                              minWidth: "62px", 
+                              padding: "5px 8px", 
                               borderRadius: "8px", 
                               background: pos === 1 
-                                ? "linear-gradient(135deg, rgba(255, 215, 0, 0.26) 0%, rgba(255, 180, 0, 0.14) 100%)" 
+                                ? "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)" 
                                 : pos === 2 
-                                ? "rgba(226, 232, 240, 0.18)" 
+                                ? "linear-gradient(135deg, rgba(226, 232, 240, 0.3) 0%, rgba(148, 163, 184, 0.2) 100%)" 
                                 : pos === 3 
-                                ? "linear-gradient(135deg, rgba(205, 127, 50, 0.30) 0%, rgba(180, 83, 9, 0.20) 100%)" 
-                                : "rgba(255, 255, 255, 0.06)", 
+                                ? "linear-gradient(135deg, rgba(217, 119, 6, 0.45) 0%, rgba(180, 83, 9, 0.3) 100%)" 
+                                : "rgba(255, 255, 255, 0.08)", 
                               display: "flex", 
                               alignItems: "center", 
                               justifyContent: "center", 
-                              fontSize: "11px", 
+                              fontSize: "11.5px", 
                               fontWeight: "900", 
-                              color: pos === 1 ? "#FFD700" : pos === 2 ? "#E2E8F0" : pos === 3 ? "#E58E36" : "#94A3B8", 
+                              color: pos === 1 ? "#FFFFFF" : pos === 2 ? "#F8FAFC" : pos === 3 ? "#FDBA74" : "#CBD5E1", 
                               border: pos === 1 
-                                ? "1px solid rgba(255, 215, 0, 0.55)" 
+                                ? "1px solid rgba(255, 255, 255, 0.5)" 
                                 : pos === 2 
-                                ? "1px solid rgba(226, 232, 240, 0.35)" 
+                                ? "1px solid rgba(226, 232, 240, 0.45)" 
                                 : pos === 3 
-                                ? "1px solid rgba(217, 119, 6, 0.55)" 
-                                : "1px solid rgba(255, 255, 255, 0.15)",
+                                ? "1px solid rgba(249, 115, 22, 0.5)" 
+                                : "1px solid rgba(255, 255, 255, 0.18)",
                               flexShrink: 0,
+                              textShadow: "0 1px 2px rgba(0,0,0,0.6)",
                               boxShadow: pos === 1 
-                                ? "0 0 10px rgba(255, 215, 0, 0.2)" 
-                                : pos === 3 
-                                ? "0 0 10px rgba(217, 119, 6, 0.2)" 
+                                ? "0 2px 8px rgba(245, 158, 11, 0.35)" 
                                 : "none"
                             }}>
                               Lugar {pos}
@@ -826,19 +872,39 @@ export default function DepartamentosPage() {
                             {/* Info del Lugar */}
                             <div style={{ minWidth: 0 }}>
                               <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "nowrap", overflow: "hidden" }}>
-                                <h3 style={{ margin: 0, fontSize: "13.5px", fontWeight: "800", color: "#FFFFFF", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                <h3 style={{ 
+                                  margin: 0, 
+                                  fontSize: "14px", 
+                                  fontWeight: "800", 
+                                  color: "#FFFFFF", 
+                                  whiteSpace: "nowrap", 
+                                  overflow: "hidden", 
+                                  textOverflow: "ellipsis",
+                                  letterSpacing: "0.2px",
+                                  textShadow: "0 1px 3px rgba(0,0,0,0.8)"
+                                }}>
                                   {lugar.nombre}
                                 </h3>
-                                <span style={{ fontSize: "9px", fontWeight: "800", textTransform: "uppercase", background: "rgba(56, 189, 248, 0.15)", color: "#38BDF8", padding: "1px 5px", borderRadius: "4px", flexShrink: 0 }}>
+                                <span style={{ 
+                                  fontSize: "9.5px", 
+                                  fontWeight: "800", 
+                                  textTransform: "uppercase", 
+                                  background: "rgba(56, 189, 248, 0.22)", 
+                                  color: "#7DD3FC", 
+                                  border: "1px solid rgba(56, 189, 248, 0.35)",
+                                  padding: "2px 6px", 
+                                  borderRadius: "5px", 
+                                  flexShrink: 0 
+                                }}>
                                   {lugar.categoria}
                                 </span>
                               </div>
 
                               {/* Departamento con Ubicacion.svg y Rating estandarizado a 1 decimal (ej. 5.0) */}
-                              <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#CBD5E1", display: "flex", alignItems: "center", gap: "10px" }}>
+                              <p style={{ margin: "3px 0 0 0", fontSize: "11.5px", color: "#E2E8F0", fontWeight: "600", display: "flex", alignItems: "center", gap: "10px" }}>
                                 <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                                  <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "12px", height: "12px", filter: "brightness(0) invert(0.85)", flexShrink: 0 }} />
-                                  <span>{lugar.departamento || 'Nicaragua'}</span>
+                                  <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "13px", height: "13px", filter: "brightness(0) invert(0.95)", flexShrink: 0 }} />
+                                  <span style={{ textShadow: "0 1px 2px rgba(0,0,0,0.7)" }}>{lugar.departamento || 'Nicaragua'}</span>
                                 </span>
 
                                 <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
@@ -850,36 +916,37 @@ export default function DepartamentosPage() {
                                         width: "15px", 
                                         height: "15px", 
                                         objectFit: "contain",
-                                        filter: "drop-shadow(0 0 2.5px rgba(255, 215, 0, 0.95)) drop-shadow(0 0 1px #000)" 
+                                        filter: "drop-shadow(0 0 3px rgba(255, 215, 0, 0.95)) drop-shadow(0 0 1px #000)" 
                                       }} 
                                     />
                                   </span>
-                                  <span style={{ fontWeight: "800", color: "#FFD700" }}>{formattedRating}</span>
+                                  <span style={{ fontWeight: "800", color: "#FBBF24", textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{formattedRating}</span>
                                 </span>
                               </p>
                             </div>
                           </div>
 
                           {/* Contador de Visitas con perfil.svg y Acción */}
-                          <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "3px", flexShrink: 0 }}>
+                          <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px", flexShrink: 0 }}>
                             <div style={{
-                              background: rankingMode === 'propio' ? "rgba(56, 189, 248, 0.18)" : "rgba(255, 255, 255, 0.12)",
-                              border: rankingMode === 'propio' ? "1px solid rgba(56, 189, 248, 0.35)" : "1px solid rgba(255, 255, 255, 0.2)",
-                              padding: "3px 8px",
-                              borderRadius: "6px",
-                              color: rankingMode === 'propio' ? "#38BDF8" : "#FFFFFF",
+                              background: rankingMode === 'propio' ? "rgba(56, 189, 248, 0.25)" : "rgba(255, 255, 255, 0.16)",
+                              border: rankingMode === 'propio' ? "1px solid rgba(56, 189, 248, 0.45)" : "1px solid rgba(255, 255, 255, 0.25)",
+                              padding: "4px 9px",
+                              borderRadius: "7px",
+                              color: rankingMode === 'propio' ? "#7DD3FC" : "#FFFFFF",
                               fontWeight: "800",
-                              fontSize: "11px",
+                              fontSize: "11.5px",
                               display: "inline-flex",
                               alignItems: "center",
-                              gap: "4px"
+                              gap: "4px",
+                              textShadow: "0 1px 2px rgba(0,0,0,0.6)"
                             }}>
                               <img 
                                 src="/images/perfil.svg" 
                                 alt="Visitas" 
                                 style={{ 
-                                  width: "12px", 
-                                  height: "12px", 
+                                  width: "13px", 
+                                  height: "13px", 
                                   filter: rankingMode === 'propio' 
                                     ? "brightness(0) saturate(100%) invert(67%) sepia(85%) saturate(1800%) hue-rotate(170deg)" 
                                     : "brightness(0) invert(1)" 
@@ -889,7 +956,16 @@ export default function DepartamentosPage() {
                             </div>
                             <Link 
                               href={`/?lat=${lugar.lat}&lng=${lugar.lng}&punto=${lugar.id}`}
-                              style={{ fontSize: "10.5px", fontWeight: "800", color: "#38BDF8", textDecoration: "none" }}
+                              style={{ 
+                                fontSize: "11px", 
+                                fontWeight: "800", 
+                                color: "#38BDF8", 
+                                textDecoration: "none",
+                                textShadow: "0 1px 2px rgba(0,0,0,0.6)",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "2px"
+                              }}
                             >
                               Ir al Mapa ➔
                             </Link>

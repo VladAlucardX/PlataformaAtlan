@@ -86,6 +86,9 @@ export default function MasDeNicaraguaPage() {
   const [selectedDeptForDetails, setSelectedDeptForDetails] = useState(null);
   const [modalActiveTab, setModalActiveTab] = useState("historia");
 
+  // Estado del Lightbox de Galería de Imágenes
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+
   const deptsList = Object.values(DEPARTAMENTOS_DATA);
 
   // Función para cerrar preview y desmarcar departamento en el mapa
@@ -948,7 +951,213 @@ export default function MasDeNicaraguaPage() {
                 </div>
               )}
 
-              {/* 6. ACTIVIDADES */}
+              {/* 6. GALERÍA DE IMÁGENES */}
+              {modalActiveTab === "galeria" && (
+                <div>
+                  <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#FFFFFF", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
+                    <Icon name="image" size={22} color="#EC4899" />
+                    <span>Galería Fotográfica de {selectedDeptForDetails.nombre}</span>
+                  </h3>
+
+                  {/* Imagen de Referencia (1.1) */}
+                  {(selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard) && (
+                    <div style={{ marginBottom: "24px" }}>
+                      <h4 style={{ fontSize: "13px", fontWeight: "800", color: "#FFD700", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <span>📌 Imagen de Referencia</span>
+                      </h4>
+                      <div
+                        onClick={() => setLightboxIndex(-1)}
+                        style={{
+                          width: "100%",
+                          height: "300px",
+                          borderRadius: "20px",
+                          overflow: "hidden",
+                          position: "relative",
+                          cursor: "pointer",
+                          border: "2px solid rgba(236, 72, 153, 0.4)",
+                          boxShadow: "0 12px 36px rgba(0,0,0,0.5)",
+                          background: "#0F172A"
+                        }}
+                      >
+                        <img
+                          src={selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard}
+                          alt={`Imagen de Referencia de ${selectedDeptForDetails.nombre}`}
+                          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.4s" }}
+                          loading="lazy"
+                          onMouseOver={(e) => { e.currentTarget.style.transform = "scale(1.03)"; }}
+                          onMouseOut={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+                        />
+                        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(10,25,47,0.85) 100%)" }} />
+                        <div style={{
+                          position: "absolute",
+                          bottom: "16px",
+                          left: "20px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px"
+                        }}>
+                          <span style={{
+                            background: "linear-gradient(135deg, #EC4899 0%, #DB2777 100%)",
+                            color: "#FFFFFF",
+                            padding: "6px 16px",
+                            borderRadius: "12px",
+                            fontSize: "12px",
+                            fontWeight: "800",
+                            letterSpacing: "0.5px",
+                            boxShadow: "0 4px 14px rgba(236, 72, 153, 0.4)"
+                          }}>
+                            📸 Imagen de Referencia
+                          </span>
+                          <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.85)", fontWeight: "600" }}>
+                            {selectedDeptForDetails.nombre}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Grid de Galería Secundaria (fotos 2 a 6) */}
+                  {selectedDeptForDetails.galeria && selectedDeptForDetails.galeria.length > 0 && (
+                    <div>
+                      <h4 style={{ fontSize: "13px", fontWeight: "800", color: "rgba(255,255,255,0.8)", marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <span>🖼️ Fotografías de Galería</span>
+                      </h4>
+                      <div style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                        gap: "14px"
+                      }}>
+                        {selectedDeptForDetails.galeria.map((imgSrc, idx) => (
+                          <div
+                            key={idx}
+                            onClick={() => setLightboxIndex(idx)}
+                            style={{
+                              position: "relative",
+                              borderRadius: "16px",
+                              overflow: "hidden",
+                              cursor: "pointer",
+                              border: "1.5px solid rgba(255,255,255,0.1)",
+                              boxShadow: "0 6px 20px rgba(0,0,0,0.4)",
+                              aspectRatio: "4 / 3",
+                              background: "#0F172A",
+                              transition: "transform 0.3s, box-shadow 0.3s"
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.transform = "scale(1.03)";
+                              e.currentTarget.style.boxShadow = "0 12px 36px rgba(236, 72, 153, 0.35)";
+                              e.currentTarget.style.borderColor = "rgba(236, 72, 153, 0.6)";
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.transform = "scale(1)";
+                              e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.4)";
+                              e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                            }}
+                          >
+                            <img
+                              src={imgSrc}
+                              alt={`${selectedDeptForDetails.nombre} - Foto ${idx + 1}`}
+                              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                              loading="lazy"
+                            />
+                            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(10,25,47,0.6) 100%)" }} />
+                            {/* Indicador numérico de foto */}
+                            <span style={{
+                              position: "absolute",
+                              bottom: "10px",
+                              right: "10px",
+                              background: "rgba(10, 25, 47, 0.85)",
+                              backdropFilter: "blur(8px)",
+                              color: "#FFFFFF",
+                              padding: "3px 10px",
+                              borderRadius: "8px",
+                              fontSize: "11px",
+                              fontWeight: "800",
+                              border: "1px solid rgba(255,255,255,0.15)"
+                            }}>
+                              {idx + 1}/{selectedDeptForDetails.galeria.length}
+                            </span>
+                            {/* Ícono de expandir */}
+                            <span style={{
+                              position: "absolute",
+                              top: "10px",
+                              right: "10px",
+                              background: "rgba(236, 72, 153, 0.85)",
+                              color: "#FFFFFF",
+                              width: "28px",
+                              height: "28px",
+                              borderRadius: "50%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "14px",
+                              opacity: 0,
+                              transition: "opacity 0.25s",
+                              pointerEvents: "none"
+                            }}
+                              className="gallery-expand-icon"
+                            >
+                              ⛶
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Lugares Importantes con Imágenes (bonus visual) */}
+                  {selectedDeptForDetails.lugaresImportantes && selectedDeptForDetails.lugaresImportantes.length > 0 && (
+                    <div style={{ marginTop: "28px" }}>
+                      <h4 style={{ fontSize: "17px", fontWeight: "800", color: "#FFD700", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
+                        <Icon name="landmark" size={18} color="#FFD700" />
+                        <span>Sitios Emblemáticos en Fotos</span>
+                      </h4>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px" }}>
+                        {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => {
+                          const siteImg = getPointImage(lugar);
+                          return (
+                            <div key={idx} style={{
+                              background: "rgba(15, 23, 42, 0.85)",
+                              border: "1px solid rgba(255,215,0,0.2)",
+                              borderRadius: "16px",
+                              overflow: "hidden",
+                              transition: "transform 0.3s, border-color 0.3s"
+                            }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.transform = "translateY(-3px)";
+                                e.currentTarget.style.borderColor = "rgba(255,215,0,0.5)";
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.transform = "translateY(0)";
+                                e.currentTarget.style.borderColor = "rgba(255,215,0,0.2)";
+                              }}
+                            >
+                              <div style={{ height: "140px", overflow: "hidden", position: "relative" }}>
+                                <img
+                                  src={siteImg}
+                                  alt={lugar.nombre}
+                                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                                  loading="lazy"
+                                />
+                                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(15,23,42,0.7) 100%)" }} />
+                              </div>
+                              <div style={{ padding: "14px 16px" }}>
+                                <h5 style={{ fontSize: "14px", fontWeight: "800", color: "#FFD700", margin: "0 0 4px" }}>
+                                  {lugar.nombre}
+                                </h5>
+                                <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.7)", lineHeight: 1.4 }}>
+                                  {lugar.desc}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 7. ACTIVIDADES */}
               {modalActiveTab === "actividades" && (
                 <div>
                   <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#FFFFFF", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
@@ -1053,6 +1262,237 @@ export default function MasDeNicaraguaPage() {
           </div>
         </div>
       )}
+
+      {/* LIGHTBOX FULLSCREEN: Visor de Imágenes Expandido */}
+      {lightboxIndex !== null && selectedDeptForDetails && (() => {
+        // Construir el arreglo de todas las imágenes disponibles para navegar
+        const allImages = [];
+        const heroImg = selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard;
+        if (heroImg) {
+          allImages.push({ src: heroImg, label: "Imagen de Referencia" });
+        }
+        if (selectedDeptForDetails.galeria) {
+          selectedDeptForDetails.galeria.forEach((src, i) => {
+            allImages.push({ src, label: `Fotografía ${i + 1}` });
+          });
+        }
+
+        const hasHero = !!heroImg;
+        // Calcular el índice real (lightboxIndex === -1 -> foto de referencia -> index 0)
+        const currentIdx = lightboxIndex === -1 ? 0 : (hasHero ? lightboxIndex + 1 : lightboxIndex);
+        const currentImage = allImages[currentIdx];
+        if (!currentImage) return null;
+
+        const goPrev = () => {
+          const newIdx = currentIdx <= 0 ? allImages.length - 1 : currentIdx - 1;
+          setLightboxIndex(hasHero ? newIdx - 1 : newIdx);
+        };
+        const goNext = () => {
+          const newIdx = currentIdx >= allImages.length - 1 ? 0 : currentIdx + 1;
+          setLightboxIndex(hasHero ? newIdx - 1 : newIdx);
+        };
+
+        return (
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 99999,
+              backgroundColor: "rgba(0, 0, 0, 0.95)",
+              backdropFilter: "blur(20px)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              animation: "fadeInUp 0.25s ease-out"
+            }}
+            onClick={() => setLightboxIndex(null)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setLightboxIndex(null);
+              if (e.key === "ArrowLeft") { e.stopPropagation(); goPrev(); }
+              if (e.key === "ArrowRight") { e.stopPropagation(); goNext(); }
+            }}
+            tabIndex={0}
+            ref={(el) => el && el.focus()}
+          >
+            {/* Header del Lightbox */}
+            <div style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "16px 24px",
+              background: "linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%)",
+              zIndex: 10
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <Icon name="image" size={18} color="#EC4899" />
+                <span style={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "800" }}>
+                  {selectedDeptForDetails.nombre}
+                </span>
+                <span style={{
+                  background: "rgba(236, 72, 153, 0.8)",
+                  color: "#FFFFFF",
+                  padding: "3px 10px",
+                  borderRadius: "8px",
+                  fontSize: "11px",
+                  fontWeight: "800"
+                }}>
+                  {currentIdx + 1} / {allImages.length}
+                </span>
+              </div>
+
+              <button
+                onClick={(e) => { e.stopPropagation(); setLightboxIndex(null); }}
+                style={{
+                  background: "rgba(255,255,255,0.12)",
+                  border: "1px solid rgba(255,255,255,0.25)",
+                  color: "#FFFFFF",
+                  width: "38px",
+                  height: "38px",
+                  borderRadius: "50%",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: "900",
+                  fontSize: "18px",
+                  transition: "background 0.2s"
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Imagen Principal del Lightbox */}
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                maxWidth: "90vw",
+                maxHeight: "80vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative"
+              }}
+            >
+              <img
+                src={currentImage.src}
+                alt={`${selectedDeptForDetails.nombre} - ${currentImage.label}`}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "80vh",
+                  objectFit: "contain",
+                  borderRadius: "12px",
+                  boxShadow: "0 20px 60px rgba(0,0,0,0.8)"
+                }}
+              />
+            </div>
+
+            {/* Flechas de Navegación */}
+            {allImages.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                  style={{
+                    position: "absolute",
+                    left: "20px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                    background: "rgba(255,255,255,0.12)",
+                    backdropFilter: "blur(8px)",
+                    border: "1.5px solid rgba(255,255,255,0.25)",
+                    color: "#FFFFFF",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "22px",
+                    fontWeight: "900",
+                    transition: "background 0.2s, transform 0.2s",
+                    zIndex: 10
+                  }}
+                  onMouseOver={(e) => { e.currentTarget.style.background = "rgba(236, 72, 153, 0.6)"; }}
+                  onMouseOut={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
+                >
+                  <Icon name="chevronLeft" size={24} color="#FFFFFF" />
+                </button>
+
+                <button
+                  onClick={(e) => { e.stopPropagation(); goNext(); }}
+                  style={{
+                    position: "absolute",
+                    right: "20px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                    background: "rgba(255,255,255,0.12)",
+                    backdropFilter: "blur(8px)",
+                    border: "1.5px solid rgba(255,255,255,0.25)",
+                    color: "#FFFFFF",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "22px",
+                    fontWeight: "900",
+                    transition: "background 0.2s, transform 0.2s",
+                    zIndex: 10
+                  }}
+                  onMouseOver={(e) => { e.currentTarget.style.background = "rgba(236, 72, 153, 0.6)"; }}
+                  onMouseOut={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
+                >
+                  <Icon name="chevronRight" size={24} color="#FFFFFF" />
+                </button>
+              </>
+            )}
+
+            {/* Label de la Imagen Actual */}
+            <div style={{
+              position: "absolute",
+              bottom: "24px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              background: "rgba(10, 25, 47, 0.85)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              padding: "8px 20px",
+              borderRadius: "14px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px"
+            }}>
+              <Icon name="camera" size={14} color="#EC4899" />
+              <span style={{ color: "#FFFFFF", fontSize: "13px", fontWeight: "700" }}>
+                {currentImage.label}
+              </span>
+              <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "12px" }}>
+                — {selectedDeptForDetails.nombre}
+              </span>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Estilos CSS para hover de galería */}
+      <style jsx>{`
+        .gallery-expand-icon {
+          opacity: 0 !important;
+          transition: opacity 0.25s;
+        }
+        div:hover > .gallery-expand-icon {
+          opacity: 1 !important;
+        }
+      `}</style>
+
       </div>
     </div>
   );

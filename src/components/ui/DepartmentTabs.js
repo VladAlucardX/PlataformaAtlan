@@ -13,6 +13,7 @@ export default function DepartmentTabs({ activeTab, onSelectTab }) {
     { id: "turismo", label: t("nicaragua.tourism") || (lang === "en" ? "Tourism" : "Turismo"), icon: "compass", emoji: "🏖️" },
     { id: "pasatiempos", label: t("nicaragua.hobbies") || (lang === "en" ? "Hobbies & Culture" : "Pasatiempos"), icon: "music", emoji: "🎭" },
     { id: "lugares", label: t("nicaragua.landmarks") || (lang === "en" ? "Landmarks" : "Lugares Importantes"), icon: "landmark", emoji: "📍" },
+    { id: "galeria", label: t("nicaragua.gallery") || (lang === "en" ? "Gallery" : "Galería"), icon: "image", emoji: "📸" },
     { id: "actividades", label: t("nicaragua.activities") || (lang === "en" ? "Activities & Events" : "Actividades"), icon: "calendar", emoji: "🎉" },
   ];
 
