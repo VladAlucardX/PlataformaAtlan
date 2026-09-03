@@ -977,22 +977,18 @@ export default function MasDeNicaraguaPage() {
               {/* 6. GALERÍA DE IMÁGENES */}
               {modalActiveTab === "galeria" && (
                 <div>
-                  <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#FFFFFF", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <Icon name="image" size={18} color="#EC4899" />
-                    <span>Galería Fotográfica de {selectedDeptForDetails.nombre}</span>
-                  </h3>
-
                   <div style={{
                     display: "grid",
                     gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
                     gap: "18px",
                     alignItems: "start"
                   }}>
-                    {/* Columna Izquierda: Imagen de Referencia (1.1) */}
+                    {/* Columna Izquierda: Galería Fotográfica de [Departamento] */}
                     {(selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard) && (
                       <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(236, 72, 153, 0.3)", borderRadius: "18px", padding: "14px" }}>
-                        <h4 style={{ fontSize: "12px", fontWeight: "800", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                          <span>📌 Imagen de Referencia</span>
+                        <h4 style={{ fontSize: "13px", fontWeight: "800", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                          <Icon name="image" size={16} color="#EC4899" />
+                          <span>Galería Fotográfica de {selectedDeptForDetails.nombre}</span>
                         </h4>
                         <div
                           onClick={() => setLightboxIndex(-1)}
@@ -1010,7 +1006,7 @@ export default function MasDeNicaraguaPage() {
                         >
                           <img
                             src={selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard}
-                            alt={`Imagen de Referencia de ${selectedDeptForDetails.nombre}`}
+                            alt={`Galería Fotográfica de ${selectedDeptForDetails.nombre}`}
                             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.4s" }}
                             loading="lazy"
                             onMouseOver={(e) => { e.currentTarget.style.transform = "scale(1.03)"; }}
@@ -1034,14 +1030,14 @@ export default function MasDeNicaraguaPage() {
                               fontWeight: "800",
                               letterSpacing: "0.5px"
                             }}>
-                              📸 Imagen de Referencia
+                              📸 Foto Principal
                             </span>
                           </div>
                         </div>
                       </div>
                     )}
 
-                    {/* Columna Derecha: Grid de Galería (Fotos 2 a 6) */}
+                    {/* Columna Derecha: Grid de Galería (Fotos 2 a 7) */}
                     {selectedDeptForDetails.galeria && selectedDeptForDetails.galeria.length > 0 && (
                       <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "18px", padding: "14px" }}>
                         <h4 style={{ fontSize: "12px", fontWeight: "800", color: "rgba(255,255,255,0.8)", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
@@ -1159,7 +1155,8 @@ export default function MasDeNicaraguaPage() {
               borderTop: "1px solid rgba(255,255,255,0.1)",
               display: "flex",
               justifyContent: "space-between",
-              alignItems: "center"
+              alignItems: "center",
+              gap: "12px"
             }}>
               <button
                 onClick={() => {
@@ -1190,6 +1187,15 @@ export default function MasDeNicaraguaPage() {
                 <Icon name="map" size={15} color="#FFD700" />
                 <span>Volver al Mapa</span>
               </button>
+
+              <span style={{
+                fontSize: "11.5px",
+                color: "rgba(255, 255, 255, 0.65)",
+                fontWeight: "600",
+                textAlign: "center"
+              }}>
+                Fuente y créditos de las Imágenes: INTUR, Mapa Nacional de Turismo.
+              </span>
 
               <button
                 onClick={() => setSelectedDeptForDetails(null)}

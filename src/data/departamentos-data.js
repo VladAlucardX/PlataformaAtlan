@@ -14,7 +14,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/managua-hero.png",
     imagenCard: "/images/departamentos/managua-card.png",
     imagenReferencia: "/images/galeria-departamentos/managua/1.1.jpg",
-    galeria: ["/images/galeria-departamentos/managua/2.jpg", "/images/galeria-departamentos/managua/3.jpg", "/images/galeria-departamentos/managua/4.jpg", "/images/galeria-departamentos/managua/5.jpg", "/images/galeria-departamentos/managua/6.webp"],
+    galeria: ["/images/galeria-departamentos/managua/2.jpg","/images/galeria-departamentos/managua/3.jpg","/images/galeria-departamentos/managua/4.jpg","/images/galeria-departamentos/managua/5.jpg","/images/galeria-departamentos/managua/6.webp","/images/galeria-departamentos/managua/7.jpg"],
     historia: {
       resumen: "Asentada sobre un histórico poblado precolombino a orillas del lago Xolotlán, Managua fue elevada a villa en 1819 y declarada capital de la nación en 1852 para resolver la disputa histórica entre León y Granada. Su centro urbano resurgió tras el devastador terremoto de 1972, transformándose en una metrópoli verde y descentralizada.",
       hitos: [
@@ -72,7 +72,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/leon-hero.png",
     imagenCard: "/images/departamentos/leon-card.png",
     imagenReferencia: "/images/galeria-departamentos/leon/1.1.jpg",
-    galeria: ["/images/galeria-departamentos/leon/2.jpg", "/images/galeria-departamentos/leon/3.jpg", "/images/galeria-departamentos/leon/4.jpg", "/images/galeria-departamentos/leon/5.jpg", "/images/galeria-departamentos/leon/6.jpg"],
+    galeria: ["/images/galeria-departamentos/leon/2.jpg","/images/galeria-departamentos/leon/3.jpg","/images/galeria-departamentos/leon/4.jpg","/images/galeria-departamentos/leon/5.jpg","/images/galeria-departamentos/leon/6.jpg","/images/galeria-departamentos/leon/7.jpg"],
     historia: {
       resumen: "Fundada en 1524 por Francisco Hernández de Córdoba junto al lago Xolotlán. Tras una erupción del volcán Momotombo en 1610, la ciudad fue trasladada a su ubicación actual. Es la cuna intelectual de Nicaragua y hogar del insigne poeta Rubén Darío.",
       hitos: [
@@ -130,7 +130,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/chinandega-hero.png",
     imagenCard: "/images/departamentos/chinandega-card.png",
     imagenReferencia: "/images/galeria-departamentos/chinandega/1.1.jpg",
-    galeria: ["/images/galeria-departamentos/chinandega/2.jpg", "/images/galeria-departamentos/chinandega/3.jpg", "/images/galeria-departamentos/chinandega/4.jpg", "/images/galeria-departamentos/chinandega/5.jpg", "/images/galeria-departamentos/chinandega/6.jpg"],
+    galeria: ["/images/galeria-departamentos/chinandega/2.jpg","/images/galeria-departamentos/chinandega/3.jpg","/images/galeria-departamentos/chinandega/4.jpg","/images/galeria-departamentos/chinandega/5.jpg","/images/galeria-departamentos/chinandega/6.jpg","/images/galeria-departamentos/chinandega/7.jpg"],
     historia: {
       resumen: "Ubicada en fértiles planicies volcánicas del noroeste. Su nombre proviene del náhuatl 'Chinamitl-tacalt' (lugar cercado por cañas). Fue capital de la Confederación Centroamericana en 1842 y es guardiana de valiosas tradiciones chorotegas y nicaraos.",
       hitos: [
@@ -187,7 +187,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/granada-hero.png",
     imagenCard: "/images/departamentos/granada-card.png",
     imagenReferencia: "/images/galeria-departamentos/granada/1.1.jpg",
-    galeria: ["/images/galeria-departamentos/granada/2.jpg", "/images/galeria-departamentos/granada/3.jpg", "/images/galeria-departamentos/granada/4.jpg", "/images/galeria-departamentos/granada/5.png", "/images/galeria-departamentos/granada/6.jpg"],
+    galeria: ["/images/galeria-departamentos/granada/2.jpg","/images/galeria-departamentos/granada/3.jpg","/images/galeria-departamentos/granada/4.jpg","/images/galeria-departamentos/granada/5.png","/images/galeria-departamentos/granada/6.jpg","/images/galeria-departamentos/granada/7.jpg"],
     historia: {
       resumen: "Fundada el 8 de diciembre de 1524 por Francisco Hernández de Córdoba a orillas del Gran Lago Cocibolca. Es una de las ciudades coloniales continentales más antiguas que conserva su trazado original. Resistió ataques piratas y incendios históricos.",
       hitos: [
@@ -244,7 +244,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/masaya-hero.png",
     imagenCard: "/images/departamentos/masaya-card.png",
     imagenReferencia: "/images/galeria-departamentos/masaya/1.1.jpg",
-    galeria: ["/images/galeria-departamentos/masaya/2.jpg", "/images/galeria-departamentos/masaya/3.jpg", "/images/galeria-departamentos/masaya/4.jpeg", "/images/galeria-departamentos/masaya/5.jpg", "/images/galeria-departamentos/masaya/6.jpeg"],
+    galeria: ["/images/galeria-departamentos/masaya/2.jpg","/images/galeria-departamentos/masaya/3.jpg","/images/galeria-departamentos/masaya/4.jpeg","/images/galeria-departamentos/masaya/5.jpg","/images/galeria-departamentos/masaya/6.jpeg","/images/galeria-departamentos/masaya/7.jpg"],
     historia: {
       resumen: "Corazón espiritual y artesanal de Nicaragua. El barrio de Monimbó mantiene vivas las raíces indígenas dirianes y náhuatl. Masaya jugó un rol heroico en la historia nacional y el derrocamiento de las dictaduras.",
       hitos: [
@@ -301,7 +301,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/carazo-hero.png",
     imagenCard: "/images/departamentos/carazo-card.png",
     imagenReferencia: "/images/galeria-departamentos/carazo/1.1.jpg",
-    galeria: ["/images/galeria-departamentos/carazo/2.jpg", "/images/galeria-departamentos/carazo/3.jpg", "/images/galeria-departamentos/carazo/4.jpg", "/images/galeria-departamentos/carazo/5.jpg", "/images/galeria-departamentos/carazo/6.jpg"],
+    galeria: ["/images/galeria-departamentos/carazo/2.jpg","/images/galeria-departamentos/carazo/3.jpg","/images/galeria-departamentos/carazo/4.jpg","/images/galeria-departamentos/carazo/5.jpg","/images/galeria-departamentos/carazo/6.jpg","/images/galeria-departamentos/carazo/7.jpg"],
     historia: {
       resumen: "Creado como departamento en 1891 en honor al expresidente Evaristo Carazo. Habitado por los antiguos indígenas dirianes, es la cuna de 'El Güegüense o Macho Ratón', obra maestra del patrimonio oral e inmaterial de la humanidad por la UNESCO.",
       hitos: [
@@ -357,7 +357,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/rivas-hero.png",
     imagenCard: "/images/departamentos/rivas-card.png",
     imagenReferencia: "/images/galeria-departamentos/rivas/1.1.webp",
-    galeria: ["/images/galeria-departamentos/rivas/2.jpg", "/images/galeria-departamentos/rivas/3.jpg", "/images/galeria-departamentos/rivas/4.jpg", "/images/galeria-departamentos/rivas/5.jpg", "/images/galeria-departamentos/rivas/6.jpg"],
+    galeria: ["/images/galeria-departamentos/rivas/2.jpg","/images/galeria-departamentos/rivas/3.jpg","/images/galeria-departamentos/rivas/4.jpg","/images/galeria-departamentos/rivas/5.jpg","/images/galeria-departamentos/rivas/6.jpg","/images/galeria-departamentos/rivas/7.jpg"],
     historia: {
       resumen: "Escenario principal de la Guerra Nacional de 1856 donde el héroe Emmanuel Mongalo y Rubio y la batalla de Rivas inmortalizaron la defensa de la soberanía nacional contra los filibusteros de William Walker.",
       hitos: [
@@ -414,7 +414,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/matagalpa-hero.png",
     imagenCard: "/images/departamentos/matagalpa-card.png",
     imagenReferencia: "/images/galeria-departamentos/matagalpa/1.1.jpg",
-    galeria: ["/images/galeria-departamentos/matagalpa/2.jpg", "/images/galeria-departamentos/matagalpa/3.jpg", "/images/galeria-departamentos/matagalpa/4.jpg", "/images/galeria-departamentos/matagalpa/5.jpg", "/images/galeria-departamentos/matagalpa/6.jpg"],
+    galeria: ["/images/galeria-departamentos/matagalpa/2.jpg","/images/galeria-departamentos/matagalpa/3.jpg","/images/galeria-departamentos/matagalpa/4.jpg","/images/galeria-departamentos/matagalpa/5.jpg","/images/galeria-departamentos/matagalpa/6.jpg","/images/galeria-departamentos/matagalpa/7.jpg"],
     historia: {
       resumen: "Tierra de origen indígena matagalpa. En el siglo XIX la llegada de inmigrantes europeos revolucionó el cultivo del café en sus montañas nebliselvas, convirtiendo a la región en el motor cafetalero del país.",
       hitos: [
@@ -471,7 +471,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/jinotega-hero.png",
     imagenCard: "/images/departamentos/jinotega-card.png",
     imagenReferencia: "/images/galeria-departamentos/jinotega/1.1.webp",
-    galeria: ["/images/galeria-departamentos/jinotega/2.jpg", "/images/galeria-departamentos/jinotega/3.jpg", "/images/galeria-departamentos/jinotega/4.jpg", "/images/galeria-departamentos/jinotega/5.jpg", "/images/galeria-departamentos/jinotega/6.jpg"],
+    galeria: ["/images/galeria-departamentos/jinotega/2.jpg","/images/galeria-departamentos/jinotega/3.jpg","/images/galeria-departamentos/jinotega/4.jpg","/images/galeria-departamentos/jinotega/5.jpg","/images/galeria-departamentos/jinotega/6.jpg","/images/galeria-departamentos/jinotega/7.jpg"],
     historia: {
       resumen: "El departamento más extenso de la región central. Su nombre náhuatl significa 'Ciudad de los hombres que viven entre brumas'. Escenario histórico de las gestas del General Augusto C. Sandino en San Rafael del Norte.",
       hitos: [
@@ -528,7 +528,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/esteli-hero.png",
     imagenCard: "/images/departamentos/esteli-card.png",
     imagenReferencia: "/images/galeria-departamentos/esteli/1.1.jpg",
-    galeria: ["/images/galeria-departamentos/esteli/2.jpg", "/images/galeria-departamentos/esteli/3.jpg", "/images/galeria-departamentos/esteli/4.jpg", "/images/galeria-departamentos/esteli/5.jpg", "/images/galeria-departamentos/esteli/6.jpg"],
+    galeria: ["/images/galeria-departamentos/esteli/2.jpg","/images/galeria-departamentos/esteli/3.jpg","/images/galeria-departamentos/esteli/4.jpg","/images/galeria-departamentos/esteli/5.jpg","/images/galeria-departamentos/esteli/6.jpg","/images/galeria-departamentos/esteli/7.jpg"],
     historia: {
       resumen: "Conocida como la 'Ciudad del Muralismo' por las pinturas de arte público que narran su historia. Fundada en el valle del río Estelí, ha crecido hasta convertirse en la capital económica de la zona norte de Nicaragua.",
       hitos: [
@@ -585,7 +585,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/madriz-hero.png",
     imagenCard: "/images/departamentos/madriz-card.png",
     imagenReferencia: "/images/galeria-departamentos/madriz/1.1.jpg",
-    galeria: ["/images/galeria-departamentos/madriz/2.jpg", "/images/galeria-departamentos/madriz/3.jpg", "/images/galeria-departamentos/madriz/4.jpg", "/images/galeria-departamentos/madriz/5.jpg", "/images/galeria-departamentos/madriz/6.jpg"],
+    galeria: ["/images/galeria-departamentos/madriz/2.jpg","/images/galeria-departamentos/madriz/3.jpg","/images/galeria-departamentos/madriz/4.jpg","/images/galeria-departamentos/madriz/5.jpg","/images/galeria-departamentos/madriz/6.jpg","/images/galeria-departamentos/madriz/7.jpg"],
     historia: {
       resumen: "Creado en 1936 separándose de Nueva Segovia. Su cabecera, Somoto, proviene de 'Tecpecxomotli' (Valle de los Gansos). Es famosa por su hospitalidad, su acervo musical campesino y su riqueza geológica milenaria.",
       hitos: [
@@ -640,8 +640,9 @@ export const DEPARTAMENTOS_DATA = {
     fundacion: "1543 (Ciudad Vieja)",
     coordenadas: [-86.23, 13.72],
     imagenHero: "/images/departamentos/nueva-segovia-hero.png",
-    imagenCard: "/images/departamentos/nueva-segovia-card.png",
-    galeria: ["/images/galeria-departamentos/nueva-segovia/1.jpg", "/images/galeria-departamentos/nueva-segovia/2.jpg", "/images/galeria-departamentos/nueva-segovia/3.jpg", "/images/galeria-departamentos/nueva-segovia/4.jpg", "/images/galeria-departamentos/nueva-segovia/5.jpg", "/images/galeria-departamentos/nueva-segovia/6.jpeg"],
+    imagenCard: "/images/departamentos/nueva-segovia-card.png", 
+    imagenReferencia: "/images/galeria-departamentos/nueva-segovia/1.1.jpg",
+    galeria: ["/images/galeria-departamentos/nueva-segovia/2.jpg","/images/galeria-departamentos/nueva-segovia/3.jpg","/images/galeria-departamentos/nueva-segovia/4.jpg","/images/galeria-departamentos/nueva-segovia/5.jpg","/images/galeria-departamentos/nueva-segovia/6.jpeg","/images/galeria-departamentos/nueva-segovia/7.jpeg"],
     historia: {
       resumen: "Una de las zonas con mayor historia colonial e independentista. Asentada originalmente cerca de Jalapa, su cabecera Ocotal se consolidó rodeada de bosques de pino. Fue baluarte histórico del Ejército Defensor de la Soberanía Nacional.",
       hitos: [
@@ -698,7 +699,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/boaco-hero.png",
     imagenCard: "/images/departamentos/boaco-card.png",
     imagenReferencia: "/images/galeria-departamentos/boaco/1.1.jpg",
-    galeria: ["/images/galeria-departamentos/boaco/2.jpg", "/images/galeria-departamentos/boaco/3.jpg", "/images/galeria-departamentos/boaco/4.jpg", "/images/galeria-departamentos/boaco/5.jpg", "/images/galeria-departamentos/boaco/6.jpg"],
+    galeria: ["/images/galeria-departamentos/boaco/2.jpg","/images/galeria-departamentos/boaco/3.jpg","/images/galeria-departamentos/boaco/4.jpg","/images/galeria-departamentos/boaco/5.jpg","/images/galeria-departamentos/boaco/6.jpg","/images/galeria-departamentos/boaco/7.jpg"],
     historia: {
       resumen: "Boaco proviene del náhuatl 'Boaj-yarr' (Lugar de los encantados). Su cabecera es famosa mundialmente por su topografía accidentada y empinada que da la ilusión óptica de estar dividida en niveles o 'pisos'.",
       hitos: [
@@ -754,7 +755,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/chontales-hero.png",
     imagenCard: "/images/departamentos/chontales-card.png",
     imagenReferencia: "/images/galeria-departamentos/chontales/1.1.jpg",
-    galeria: ["/images/galeria-departamentos/chontales/2.jpg", "/images/galeria-departamentos/chontales/3.jpg", "/images/galeria-departamentos/chontales/4.jpg", "/images/galeria-departamentos/chontales/5.jpg", "/images/galeria-departamentos/chontales/6.jpg"],
+    galeria: ["/images/galeria-departamentos/chontales/2.jpg","/images/galeria-departamentos/chontales/3.jpg","/images/galeria-departamentos/chontales/4.jpg","/images/galeria-departamentos/chontales/5.jpg","/images/galeria-departamentos/chontales/6.jpg","/images/galeria-departamentos/chontales/7.jpg"],
     historia: {
       resumen: "Su nombre proviene del náhuatl 'Chondalli' (extranjero o montaraz). Región habitada por valientes tribus precolombinas que dejaron petroglifos y estatuas monolíticas únicas. Es el corazón de la cultura vaquera nicaragüense.",
       hitos: [
@@ -808,8 +809,9 @@ export const DEPARTAMENTOS_DATA = {
     fundacion: "1957",
     coordenadas: [-84.7, 11.2],
     imagenHero: "/images/departamentos/rio-san-juan-hero.png",
-    imagenCard: "/images/departamentos/rio-san-juan-card.png",
-    galeria: ["/images/galeria-departamentos/rio-san-juan/1.jpg", "/images/galeria-departamentos/rio-san-juan/2.jpg", "/images/galeria-departamentos/rio-san-juan/3.jpg", "/images/galeria-departamentos/rio-san-juan/4.jpg", "/images/galeria-departamentos/rio-san-juan/5.jpg", "/images/galeria-departamentos/rio-san-juan/6.jpg"],
+    imagenCard: "/images/departamentos/rio-san-juan-card.png", 
+    imagenReferencia: "/images/galeria-departamentos/rio-san-juan/1.1.jpg",
+    galeria: ["/images/galeria-departamentos/rio-san-juan/2.jpg","/images/galeria-departamentos/rio-san-juan/3.jpg","/images/galeria-departamentos/rio-san-juan/4.jpg","/images/galeria-departamentos/rio-san-juan/5.jpg","/images/galeria-departamentos/rio-san-juan/6.jpg","/images/galeria-departamentos/rio-san-juan/7.jpg"],
     historia: {
       resumen: "Corredor fluvial histórico que une el Gran Lago de Nicaragua con el Mar Caribe. En la época colonial fue la ruta elegida por exploradores y piratas. En 1762 la joven Rafaela Herrera defendió heroicamente la Fortaleza de El Castillo del ataque británico.",
       hitos: [
@@ -866,7 +868,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/raccn-hero.png",
     imagenCard: "/images/departamentos/raccn-card.png",
     imagenReferencia: "/images/galeria-departamentos/raccn/1.1.jpg",
-    galeria: ["/images/galeria-departamentos/raccn/2.jpg", "/images/galeria-departamentos/raccn/3.jpg", "/images/galeria-departamentos/raccn/4.jpg", "/images/galeria-departamentos/raccn/5.jpg", "/images/galeria-departamentos/raccn/6.jpeg"],
+    galeria: ["/images/galeria-departamentos/raccn/2.jpg","/images/galeria-departamentos/raccn/3.jpg","/images/galeria-departamentos/raccn/4.jpg","/images/galeria-departamentos/raccn/5.jpg","/images/galeria-departamentos/raccn/6.jpeg","/images/galeria-departamentos/raccn/7.jpg"],
     historia: {
       resumen: "La región autónoma más extensa de Nicaragua. Hogar ancestral del pueblo Miskito, Mayangna y Creoles. Mantuvo un protectorado británico histórico que moldeó su idioma (miskito y criollo inglés) y sus tradiciones únicas.",
       hitos: [
@@ -923,7 +925,7 @@ export const DEPARTAMENTOS_DATA = {
     imagenHero: "/images/departamentos/raccs-hero.png",
     imagenCard: "/images/departamentos/raccs-card.png",
     imagenReferencia: "/images/galeria-departamentos/raccs/1.1.jpg",
-    galeria: ["/images/galeria-departamentos/raccs/2.jpg", "/images/galeria-departamentos/raccs/3.jpg", "/images/galeria-departamentos/raccs/4.jpg", "/images/galeria-departamentos/raccs/5.webp", "/images/galeria-departamentos/raccs/6.jpg"],
+    galeria: ["/images/galeria-departamentos/raccs/2.jpg","/images/galeria-departamentos/raccs/3.jpg","/images/galeria-departamentos/raccs/4.jpg","/images/galeria-departamentos/raccs/5.webp","/images/galeria-departamentos/raccs/6.jpg","/images/galeria-departamentos/raccs/7.jpg"],
     historia: {
       resumen: "Mosaico cultural fascinante habitado por seis pueblos (Creole, Miskito, Mestizo, Garífuna, Rama y Ulwa). Su cabecera Bluefields debe su nombre al pirata holandés Abraham Blauvelt. En 1841 se decretó la emancipación de la esclavitud en Corn Island.",
       hitos: [
