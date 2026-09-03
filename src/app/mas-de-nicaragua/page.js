@@ -407,105 +407,72 @@ export default function MasDeNicaraguaPage() {
       <div style={{ position: "relative", zIndex: 1 }}>
         <Navbar activePage="mas-de-nicaragua" />
 
-      <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "72px 16px 16px" }}>
+      <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "70px 14px 14px" }}>
 
         {/* Mapa Protagonista Principal */}
         <section>
           <div style={{
             background: "rgba(15, 23, 42, 0.85)",
             border: "2px solid rgba(255, 215, 0, 0.25)",
-            borderRadius: "24px",
-            padding: "16px 20px",
+            borderRadius: "22px",
+            padding: "12px 14px",
             boxShadow: "0 20px 50px rgba(0,0,0,0.5)",
             position: "relative",
             overflow: "hidden"
           }}>
-            {/* Header de Controles del Mapa con Título Integrado */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "12px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Icon name="book" size={22} color="#FFD700" />
-                <h1 style={{ margin: 0, fontSize: "clamp(16px, 2.2vw, 22px)", fontWeight: "900", color: "#FFFFFF", letterSpacing: "0.5px" }}>
+            {/* Header Compacto de 1 Sola Fila */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Icon name="book" size={18} color="#FFD700" />
+                <h1 style={{ margin: 0, fontSize: "clamp(14px, 1.8vw, 17px)", fontWeight: "900", color: "#FFFFFF", letterSpacing: "0.4px" }}>
                   Enciclopedia Viva de sus <span style={{ color: "#FFD700" }}>17 departamentos</span>
                 </h1>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-                {/* Selector en Vivo de Estilo de Mapa */}
-                <div style={{ display: "flex", alignItems: "center", gap: "4px", background: "rgba(0,0,0,0.3)", padding: "3px 6px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                  {MAP_STYLES.map((st) => {
-                    const isSelected = currentStyleUri === st.uri;
-                    return (
-                      <button
-                        key={st.id}
-                        onClick={() => handleChangeMapStyle(st.uri)}
-                        title={`Cambiar a ${st.label}`}
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "5px",
-                          padding: "5px 10px",
-                          borderRadius: "10px",
-                          border: isSelected ? "1.5px solid #FFD700" : "1px solid transparent",
-                          background: isSelected ? "rgba(255, 215, 0, 0.22)" : "transparent",
-                          color: isSelected ? "#FFD700" : "rgba(255,255,255,0.7)",
-                          fontWeight: "800",
-                          fontSize: "11.5px",
-                          cursor: "pointer",
-                          transition: "all 0.2s"
-                        }}
-                      >
-                        <Icon name={st.icon} size={13} color={isSelected ? "#FFD700" : "rgba(255,255,255,0.7)"} />
-                        <span>{st.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Filtros Rápidos de Regiones para Enfoque en el Mapa */}
-                <div style={{ display: "flex", gap: "6px" }}>
-                  {[
-                    { name: "Todos", center: [-85.0, 12.85], zoom: 6.10 },
-                    { name: "Pacífico", icon: "waves", center: [-86.3, 12.1], zoom: 6.4 },
-                    { name: "Central", icon: "mountain", center: [-85.5, 12.9], zoom: 6.4 },
-                    { name: "Caribe", icon: "island", center: [-84.0, 13.5], zoom: 6.3 }
-                  ].map((reg) => {
-                    const isActive = selectedRegion === reg.name;
-                    return (
-                      <button
-                        key={reg.name}
-                        onClick={() => {
-                          setSelectedRegion(reg.name);
-                          if (mapRef.current) {
-                            mapRef.current.flyTo({ center: reg.center, zoom: reg.zoom, duration: 800 });
-                          }
-                        }}
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "6px",
-                          padding: "6px 14px",
-                          borderRadius: "12px",
-                          border: isActive ? "1.5px solid #FFD700" : "1px solid rgba(255,255,255,0.15)",
-                          background: isActive ? "rgba(255, 215, 0, 0.22)" : "rgba(255,255,255,0.05)",
-                          color: isActive ? "#FFD700" : "rgba(255,255,255,0.75)",
-                          fontWeight: "800",
-                          fontSize: "12.5px",
-                          cursor: "pointer",
-                          transition: "all 0.2s"
-                        }}
-                      >
-                        {reg.icon && <Icon name={reg.icon} size={14} color={isActive ? "#FFD700" : "rgba(255,255,255,0.75)"} />}
-                        <span>{reg.name}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+              {/* Filtros Rápidos de Regiones (1 Sola Fila Compacta) */}
+              <div style={{ display: "flex", gap: "5px" }}>
+                {[
+                  { name: "Todos", center: [-85.0, 12.85], zoom: 6.10 },
+                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.1], zoom: 6.4 },
+                  { name: "Central", icon: "mountain", center: [-85.5, 12.9], zoom: 6.4 },
+                  { name: "Caribe", icon: "island", center: [-84.0, 13.5], zoom: 6.3 }
+                ].map((reg) => {
+                  const isActive = selectedRegion === reg.name;
+                  return (
+                    <button
+                      key={reg.name}
+                      onClick={() => {
+                        setSelectedRegion(reg.name);
+                        if (mapRef.current) {
+                          mapRef.current.flyTo({ center: reg.center, zoom: reg.zoom, duration: 800 });
+                        }
+                      }}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "5px",
+                        padding: "4px 10px",
+                        borderRadius: "10px",
+                        border: isActive ? "1.5px solid #FFD700" : "1px solid rgba(255,255,255,0.15)",
+                        background: isActive ? "rgba(255, 215, 0, 0.22)" : "rgba(255,255,255,0.05)",
+                        color: isActive ? "#FFD700" : "rgba(255,255,255,0.75)",
+                        fontWeight: "800",
+                        fontSize: "11.5px",
+                        cursor: "pointer",
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      {reg.icon && <Icon name={reg.icon} size={12} color={isActive ? "#FFD700" : "rgba(255,255,255,0.75)"} />}
+                      <span>{reg.name}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Contenedor del Mapa Protagonista */}
-            <div style={{ position: "relative", width: "100%", height: "clamp(500px, 70vh, 630px)", borderRadius: "20px", overflow: "hidden" }}>
-              <div ref={mapContainerRef} style={{ width: "100%", height: "100%", borderRadius: "20px", overflow: "hidden" }} />
+            {/* Contenedor del Mapa Protagonista Taller */}
+            <div style={{ position: "relative", width: "100%", height: "clamp(520px, 73vh, 650px)", borderRadius: "18px", overflow: "hidden" }}>
+              <div ref={mapContainerRef} style={{ width: "100%", height: "100%", borderRadius: "18px", overflow: "hidden" }} />
 
               {/* Insignia Flotante Estática del Departamento Bajo el Cursor (sin mover la cabecera) */}
               {hoveredDept && (
