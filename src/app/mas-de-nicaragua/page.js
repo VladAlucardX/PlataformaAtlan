@@ -515,116 +515,151 @@ export default function MasDeNicaraguaPage() {
               {selectedDeptForPreview && (
                 <div style={{
                   position: "absolute",
-                  bottom: "24px",
-                  right: "24px",
-                  maxWidth: "360px",
-                  width: "calc(100% - 48px)",
+                  bottom: "20px",
+                  right: "20px",
+                  maxWidth: "380px",
+                  width: "calc(100% - 40px)",
                   background: "rgba(10, 25, 47, 0.95)",
-                  backdropFilter: "blur(18px)",
-                  border: "2px solid #FFD700",
+                  backdropFilter: "blur(20px)",
+                  border: selectedDeptForPreview.region === "Pacífico" ? "1.5px solid #00F2FE" : selectedDeptForPreview.region === "Central" ? "1.5px solid #10B981" : "1.5px solid #F59E0B",
                   borderRadius: "22px",
-                  padding: "20px",
-                  boxShadow: "0 20px 50px rgba(0,0,0,0.8)",
+                  boxShadow: selectedDeptForPreview.region === "Pacífico" ? "0 0 25px rgba(0, 242, 254, 0.35), 0 20px 50px rgba(0,0,0,0.85)" : selectedDeptForPreview.region === "Central" ? "0 0 25px rgba(16, 185, 129, 0.35), 0 20px 50px rgba(0,0,0,0.85)" : "0 0 25px rgba(245, 158, 11, 0.35), 0 20px 50px rgba(0,0,0,0.85)",
                   zIndex: 20,
+                  overflow: "hidden",
                   animation: "fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
                 }}>
-                  {/* Botón Cerrar */}
-                  <button
-                    onClick={handleClosePreview}
-                    style={{
-                      position: "absolute",
-                      top: "14px",
-                      right: "14px",
-                      background: "rgba(255,255,255,0.12)",
-                      border: "none",
-                      color: "#FFFFFF",
-                      width: "28px",
-                      height: "28px",
-                      borderRadius: "50%",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontWeight: "900",
-                      fontSize: "14px"
-                    }}
-                  >
-                    ✕
-                  </button>
+                  {/* Hero Thumbnail con Imagen Emblemática del Departamento */}
+                  <div style={{ position: "relative", width: "100%", height: "135px", overflow: "hidden" }}>
+                    <img
+                      src={selectedDeptForPreview.imagenReferencia || selectedDeptForPreview.imagen || "/images/Frame 9.png"}
+                      alt={selectedDeptForPreview.nombre}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                    {/* Sombra Degradada sobre la Imagen */}
+                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10, 25, 47, 1) 0%, rgba(10, 25, 47, 0.4) 55%, rgba(0,0,0,0.3) 100%)" }} />
 
-                  {/* Header de la Tarjeta Preview con SVG Icon de Región */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
-                    <span style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      background: selectedDeptForPreview.region === "Pacífico" ? "rgba(56, 189, 248, 0.2)" : selectedDeptForPreview.region === "Central" ? "rgba(16, 185, 129, 0.2)" : "rgba(245, 158, 11, 0.2)",
-                      border: `1px solid ${selectedDeptForPreview.region === "Pacífico" ? "#38BDF8" : selectedDeptForPreview.region === "Central" ? "#10B981" : "#F59E0B"}`,
-                      color: selectedDeptForPreview.region === "Pacífico" ? "#38BDF8" : selectedDeptForPreview.region === "Central" ? "#10B981" : "#F59E0B",
-                      padding: "3px 10px",
-                      borderRadius: "10px",
-                      fontSize: "11px",
-                      fontWeight: "800",
-                      textTransform: "uppercase"
-                    }}>
-                      <Icon
-                        name={selectedDeptForPreview.region === "Pacífico" ? "waves" : selectedDeptForPreview.region === "Central" ? "mountain" : "island"}
-                        size={13}
-                        color={selectedDeptForPreview.region === "Pacífico" ? "#38BDF8" : selectedDeptForPreview.region === "Central" ? "#10B981" : "#F59E0B"}
-                      />
-                      <span>Región {selectedDeptForPreview.region}</span>
-                    </span>
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontSize: "12px", color: "rgba(255,255,255,0.85)", fontWeight: "600" }}>
-                      <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                      <span>{selectedDeptForPreview.cabecera}</span>
-                    </span>
+                    {/* Badge de Región sobre la Foto */}
+                    <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 2 }}>
+                      <span style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        background: "rgba(10, 25, 47, 0.85)",
+                        backdropFilter: "blur(10px)",
+                        border: `1.5px solid ${selectedDeptForPreview.region === "Pacífico" ? "#00F2FE" : selectedDeptForPreview.region === "Central" ? "#10B981" : "#F59E0B"}`,
+                        color: selectedDeptForPreview.region === "Pacífico" ? "#00F2FE" : selectedDeptForPreview.region === "Central" ? "#10B981" : "#F59E0B",
+                        padding: "4px 10px",
+                        borderRadius: "10px",
+                        fontSize: "11px",
+                        fontWeight: "900",
+                        textTransform: "uppercase"
+                      }}>
+                        <Icon
+                          name={selectedDeptForPreview.region === "Pacífico" ? "waves" : selectedDeptForPreview.region === "Central" ? "mountain" : "island"}
+                          size={13}
+                          color={selectedDeptForPreview.region === "Pacífico" ? "#00F2FE" : selectedDeptForPreview.region === "Central" ? "#10B981" : "#F59E0B"}
+                        />
+                        <span>Región {selectedDeptForPreview.region}</span>
+                      </span>
+                    </div>
+
+                    {/* Botón Cerrar ✕ Flotante sobre la Foto */}
+                    <button
+                      onClick={handleClosePreview}
+                      style={{
+                        position: "absolute",
+                        top: "12px",
+                        right: "12px",
+                        background: "rgba(0, 0, 0, 0.6)",
+                        backdropFilter: "blur(8px)",
+                        border: "1px solid rgba(255,255,255,0.25)",
+                        color: "#FFFFFF",
+                        width: "28px",
+                        height: "28px",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontWeight: "900",
+                        fontSize: "13px",
+                        zIndex: 2,
+                        transition: "background 0.2s"
+                      }}
+                      onMouseOver={(e) => { e.currentTarget.style.background = "rgba(239, 68, 68, 0.8)"; }}
+                      onMouseOut={(e) => { e.currentTarget.style.background = "rgba(0, 0, 0, 0.6)"; }}
+                    >
+                      ✕
+                    </button>
                   </div>
 
-                  <h3 style={{ margin: "0 0 2px", fontSize: "22px", fontWeight: "900", color: "#FFFFFF" }}>
-                    {selectedDeptForPreview.nombre}
-                  </h3>
-                  <p style={{ margin: "0 0 14px", fontSize: "13px", fontWeight: "700", color: "#FFD700" }}>
-                    "{selectedDeptForPreview.apodo}"
-                  </p>
-
-                  {/* Metadatos Rápidos */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", background: "rgba(255,255,255,0.05)", padding: "10px", borderRadius: "12px", marginBottom: "16px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                    <div>
-                      <span style={{ display: "block", fontSize: "10px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "700" }}>Extensión</span>
-                      <span style={{ fontSize: "13px", fontWeight: "800", color: "#FFFFFF" }}>{selectedDeptForPreview.extension}</span>
+                  {/* Cuerpo de la Tarjeta Preview */}
+                  <div style={{ padding: "0 18px 18px", marginTop: "-12px", position: "relative", zIndex: 3 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                      <h3 style={{ margin: "0", fontSize: "23px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.3px" }}>
+                        {selectedDeptForPreview.nombre}
+                      </h3>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12px", color: "rgba(255,255,255,0.85)", fontWeight: "700" }}>
+                        <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                        <span>{selectedDeptForPreview.cabecera}</span>
+                      </span>
                     </div>
-                    <div>
-                      <span style={{ display: "block", fontSize: "10px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "700" }}>Población</span>
-                      <span style={{ fontSize: "13px", fontWeight: "800", color: "#FFFFFF" }}>{selectedDeptForPreview.poblacion}</span>
-                    </div>
-                  </div>
 
-                  {/* Botón para Abrir Modal Completo */}
-                  <button
-                    onClick={() => {
-                      setSelectedDeptForDetails(selectedDeptForPreview);
-                      setModalActiveTab("historia");
-                    }}
-                    style={{
-                      width: "100%",
-                      padding: "13px 18px",
-                      background: "linear-gradient(135deg, #FFE033 0%, #FFD700 100%)",
-                      color: "#1A1A2E",
-                      fontWeight: "900",
-                      fontSize: "14px",
+                    <p style={{ margin: "2px 0 14px", fontSize: "13px", fontWeight: "700", color: "#FFD700", opacity: 0.95 }}>
+                      "{selectedDeptForPreview.apodo}"
+                    </p>
+
+                    {/* Metadatos Rápidos en Cristal Esmerilado */}
+                    <div style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gap: "10px",
+                      background: "rgba(255,255,255,0.06)",
+                      backdropFilter: "blur(12px)",
+                      padding: "10px 12px",
                       borderRadius: "14px",
-                      border: "none",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "8px",
-                      boxShadow: "0 6px 20px rgba(255, 215, 0, 0.4)",
-                      transition: "transform 0.2s"
-                    }}
-                  >
-                    <span>Ver Historia y Pestañas ➔</span>
-                  </button>
+                      marginBottom: "16px",
+                      border: "1px solid rgba(255,255,255,0.12)"
+                    }}>
+                      <div>
+                        <span style={{ display: "block", fontSize: "10px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", fontWeight: "800", letterSpacing: "0.5px" }}>📏 Extensión</span>
+                        <span style={{ fontSize: "13.5px", fontWeight: "900", color: "#FFFFFF" }}>{selectedDeptForPreview.extension}</span>
+                      </div>
+                      <div>
+                        <span style={{ display: "block", fontSize: "10px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", fontWeight: "800", letterSpacing: "0.5px" }}>👥 Población</span>
+                        <span style={{ fontSize: "13.5px", fontWeight: "900", color: "#FFFFFF" }}>{selectedDeptForPreview.poblacion}</span>
+                      </div>
+                    </div>
+
+                    {/* Botón para Abrir Modal Completo */}
+                    <button
+                      onClick={() => {
+                        setSelectedDeptForDetails(selectedDeptForPreview);
+                        setModalActiveTab("historia");
+                      }}
+                      style={{
+                        width: "100%",
+                        padding: "13px 18px",
+                        background: "linear-gradient(135deg, #FFE033 0%, #FFD700 100%)",
+                        color: "#0F172A",
+                        fontWeight: "900",
+                        fontSize: "14.5px",
+                        borderRadius: "14px",
+                        border: "none",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "8px",
+                        boxShadow: "0 0 20px rgba(255, 215, 0, 0.45)",
+                        transition: "all 0.2s"
+                      }}
+                      onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; }}
+                      onMouseOut={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
+                    >
+                      <span>Ver Historia y Pestañas ➔</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
