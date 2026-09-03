@@ -86,6 +86,9 @@ export default function MasDeNicaraguaPage() {
   const [selectedDeptForDetails, setSelectedDeptForDetails] = useState(null);
   const [modalActiveTab, setModalActiveTab] = useState("historia");
 
+  // Estado del Lightbox de Galería de Imágenes
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+
   const deptsList = Object.values(DEPARTAMENTOS_DATA);
 
   // Función para cerrar preview y desmarcar departamento en el mapa
@@ -201,12 +204,7 @@ export default function MasDeNicaraguaPage() {
         type: "line",
         source: "nicaragua-departments",
         paint: {
-          "line-color": [
-            "case",
-            ["to-boolean", ["feature-state", "selected"]], "#FFFFFF",
-            ["to-boolean", ["feature-state", "hover"]], "#FFFFFF",
-            "#FFD700"
-          ],
+          "line-color": "#FFFFFF",
           "line-color-transition": { duration: 300, delay: 0 },
           "line-width": [
             "case",
@@ -255,13 +253,13 @@ export default function MasDeNicaraguaPage() {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: currentStyleUri,
-      center: [-85.15, 12.80],
-      zoom: 6.60,
-      minZoom: 6.60,
-      maxZoom: 6.60,
+      center: [-85.10, 12.90],
+      zoom: 4.40,
+      minZoom: 3.2,
+      maxZoom: 9.0,
       pitch: 0,
       projection: "mercator",
-      maxBounds: [[-88.5, 9.8], [-81.5, 15.5]],
+      maxBounds: [[-90.0, 7.0], [-80.0, 18.0]],
       scrollZoom: false,
       doubleClickZoom: false,
       boxZoom: false,
@@ -278,6 +276,10 @@ export default function MasDeNicaraguaPage() {
     });
 
     map.on("load", () => {
+      map.resize();
+      try {
+        map.flyTo({ center: [-85.10, 12.90], zoom: 4.40, duration: 0 });
+      } catch (_) {}
       let hoveredId = null;
 
       // Eventos Hover
@@ -361,146 +363,127 @@ export default function MasDeNicaraguaPage() {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#0A192F", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif", position: "relative", overflow: "hidden" }}>
-      {/* Fondo de 3 columnas compuestas: art4.png, art5.png, art3.jpeg */}
+      {/* Fondo Panorámico de la Página (Frame 9.png) */}
       <div style={{
         position: "fixed",
         top: 0,
         left: 0,
         width: "100%",
         height: "100%",
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr 1fr",
+        backgroundImage: "url('/images/Frame 9.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         zIndex: 0,
-        pointerEvents: "none",
-        overflow: "hidden"
-      }}>
-        {/* Columna 1: art4.png */}
-        <div style={{
-          backgroundImage: "url('/images/art4.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "100%",
-          width: "100%"
-        }} />
-        {/* Columna 2: art5.png */}
-        <div style={{
-          backgroundImage: "url('/images/art5.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "100%",
-          width: "100%"
-        }} />
-        {/* Columna 3: art3.jpeg */}
-        <div style={{
-          backgroundImage: "url('/images/art3.jpeg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "100%",
-          width: "100%"
-        }} />
-      </div>
+        pointerEvents: "none"
+      }} />
 
       <div style={{ position: "relative", zIndex: 1 }}>
         <Navbar activePage="mas-de-nicaragua" />
 
-      <main style={{ maxWidth: "1240px", margin: "0 auto", padding: "85px 20px 50px" }}>
+        <main style={{
+        maxWidth: "1310px",
+        width: "100%",
+        margin: "0 auto",
+        minHeight: "calc(100vh - 64px)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "95px 12px 20px"
+      }}>
 
         {/* Mapa Protagonista Principal */}
-        <section>
+        <section style={{ width: "100%" }}>
           <div style={{
             background: "rgba(15, 23, 42, 0.85)",
-            border: "2px solid rgba(255, 215, 0, 0.25)",
-            borderRadius: "24px",
-            padding: "16px 20px",
-            boxShadow: "0 20px 50px rgba(0,0,0,0.5)",
-            position: "relative"
+            border: "2px solid rgba(255, 215, 0, 0.3)",
+            borderRadius: "22px",
+            padding: "8px 10px",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.6)",
+            position: "relative",
+            overflow: "hidden"
           }}>
-            {/* Header de Controles del Mapa con Título Integrado */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "12px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Icon name="book" size={22} color="#FFD700" />
-                <h1 style={{ margin: 0, fontSize: "clamp(16px, 2.2vw, 22px)", fontWeight: "900", color: "#FFFFFF", letterSpacing: "0.5px" }}>
-                  Enciclopedia Viva de sus <span style={{ color: "#FFD700" }}>17 departamentos</span>
-                </h1>
+            {/* Header Elegante y Compacto de 1 Sola Fila */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div style={{
+                  background: "rgba(10, 25, 47, 0.95)",
+                  border: "1.5px solid #FFD700",
+                  borderRadius: "10px",
+                  padding: "5px 14px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  boxShadow: "0 0 16px rgba(255, 215, 0, 0.25)"
+                }}>
+                  <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                  <span style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700", letterSpacing: "0.6px", textShadow: "0 0 8px rgba(255, 215, 0, 0.4)" }}>
+                    Enciclopedia Viva
+                  </span>
+                </div>
+                <span style={{ fontSize: "17.5px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "0.4px" }}>
+                  17 Departamentos de{" "}
+                  <span style={{
+                    fontSize: "18.5px",
+                    fontWeight: "900",
+                    background: "linear-gradient(180deg, #0055D4 0%, #0066FF 33%, #FFFFFF 33%, #FFFFFF 66%, #0066FF 66%, #0055D4 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    display: "inline-block",
+                    letterSpacing: "0.8px",
+                    filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.9))"
+                  }}>
+                    Nicaragua
+                  </span>
+                </span>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-                {/* Selector en Vivo de Estilo de Mapa */}
-                <div style={{ display: "flex", alignItems: "center", gap: "4px", background: "rgba(0,0,0,0.3)", padding: "3px 6px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                  {MAP_STYLES.map((st) => {
-                    const isSelected = currentStyleUri === st.uri;
-                    return (
-                      <button
-                        key={st.id}
-                        onClick={() => handleChangeMapStyle(st.uri)}
-                        title={`Cambiar a ${st.label}`}
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "5px",
-                          padding: "5px 10px",
-                          borderRadius: "10px",
-                          border: isSelected ? "1.5px solid #FFD700" : "1px solid transparent",
-                          background: isSelected ? "rgba(255, 215, 0, 0.22)" : "transparent",
-                          color: isSelected ? "#FFD700" : "rgba(255,255,255,0.7)",
-                          fontWeight: "800",
-                          fontSize: "11.5px",
-                          cursor: "pointer",
-                          transition: "all 0.2s"
-                        }}
-                      >
-                        <Icon name={st.icon} size={13} color={isSelected ? "#FFD700" : "rgba(255,255,255,0.7)"} />
-                        <span>{st.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Filtros Rápidos de Regiones para Enfoque en el Mapa */}
-                <div style={{ display: "flex", gap: "6px" }}>
-                  {[
-                    { name: "Todos", center: [-85.15, 12.8], zoom: 6.25 },
-                    { name: "Pacífico", icon: "waves", center: [-86.3, 12.1], zoom: 6.25 },
-                    { name: "Central", icon: "mountain", center: [-85.5, 12.9], zoom: 6.25 },
-                    { name: "Caribe", icon: "island", center: [-84.0, 13.5], zoom: 6.25 }
-                  ].map((reg) => {
-                    const isActive = selectedRegion === reg.name;
-                    return (
-                      <button
-                        key={reg.name}
-                        onClick={() => {
-                          setSelectedRegion(reg.name);
-                          if (mapRef.current) {
-                            mapRef.current.flyTo({ center: reg.center, zoom: reg.zoom, duration: 800 });
-                          }
-                        }}
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "6px",
-                          padding: "6px 14px",
-                          borderRadius: "12px",
-                          border: isActive ? "1.5px solid #FFD700" : "1px solid rgba(255,255,255,0.15)",
-                          background: isActive ? "rgba(255, 215, 0, 0.22)" : "rgba(255,255,255,0.05)",
-                          color: isActive ? "#FFD700" : "rgba(255,255,255,0.75)",
-                          fontWeight: "800",
-                          fontSize: "12.5px",
-                          cursor: "pointer",
-                          transition: "all 0.2s"
-                        }}
-                      >
-                        {reg.icon && <Icon name={reg.icon} size={14} color={isActive ? "#FFD700" : "rgba(255,255,255,0.75)"} />}
-                        <span>{reg.name}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+              {/* Filtros Rápidos de Regiones con Estilo Neón */}
+              <div style={{ display: "flex", gap: "6px" }}>
+                {[
+                  { name: "Todos", center: [-85.10, 12.90], zoom: 4.40 },
+                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.25], zoom: 5.20 },
+                  { name: "Central", icon: "mountain", center: [-85.5, 12.95], zoom: 5.20 },
+                  { name: "Caribe", icon: "island", center: [-84.0, 13.55], zoom: 4.90 }
+                ].map((reg) => {
+                  const isActive = selectedRegion === reg.name;
+                  return (
+                    <button
+                      key={reg.name}
+                      onClick={() => {
+                        setSelectedRegion(reg.name);
+                        if (mapRef.current) {
+                          mapRef.current.flyTo({ center: reg.center, zoom: reg.zoom, duration: 800 });
+                        }
+                      }}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "5px",
+                        padding: "5px 12px",
+                        borderRadius: "10px",
+                        border: isActive ? "1.5px solid #FFD700" : "1px solid rgba(255,255,255,0.15)",
+                        background: isActive ? "linear-gradient(135deg, rgba(255, 215, 0, 0.3) 0%, rgba(245, 158, 11, 0.25) 100%)" : "rgba(255,255,255,0.06)",
+                        color: isActive ? "#FFD700" : "rgba(255,255,255,0.8)",
+                        fontWeight: "800",
+                        fontSize: "12px",
+                        cursor: "pointer",
+                        boxShadow: isActive ? "0 0 12px rgba(255, 215, 0, 0.35)" : "none",
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      {reg.icon && <Icon name={reg.icon} size={13} color={isActive ? "#FFD700" : "rgba(255,255,255,0.75)"} />}
+                      <span>{reg.name}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Contenedor del Mapa Protagonista */}
-            <div style={{ position: "relative", width: "100%", height: "clamp(560px, 72vh, 700px)", borderRadius: "20px", overflow: "hidden" }}>
-              <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
+            {/* Contenedor del Mapa Protagonista Maximizado */}
+            <div style={{ position: "relative", width: "100%", height: "clamp(530px, 75vh, 670px)", borderRadius: "18px", overflow: "hidden" }}>
+              <div ref={mapContainerRef} style={{ width: "100%", height: "100%", borderRadius: "18px", overflow: "hidden" }} />
 
               {/* Insignia Flotante Estática del Departamento Bajo el Cursor (sin mover la cabecera) */}
               {hoveredDept && (
@@ -523,7 +506,7 @@ export default function MasDeNicaraguaPage() {
                   gap: "6px",
                   backdropFilter: "blur(8px)"
                 }}>
-                  <Icon name="mapPin" size={14} color="#FFD700" />
+                  <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                   <span>{hoveredDept}</span>
                 </div>
               )}
@@ -532,116 +515,151 @@ export default function MasDeNicaraguaPage() {
               {selectedDeptForPreview && (
                 <div style={{
                   position: "absolute",
-                  bottom: "24px",
-                  right: "24px",
-                  maxWidth: "360px",
-                  width: "calc(100% - 48px)",
+                  bottom: "20px",
+                  right: "20px",
+                  maxWidth: "380px",
+                  width: "calc(100% - 40px)",
                   background: "rgba(10, 25, 47, 0.95)",
-                  backdropFilter: "blur(18px)",
-                  border: "2px solid #FFD700",
+                  backdropFilter: "blur(20px)",
+                  border: selectedDeptForPreview.region === "Pacífico" ? "1.5px solid #00F2FE" : selectedDeptForPreview.region === "Central" ? "1.5px solid #10B981" : "1.5px solid #F59E0B",
                   borderRadius: "22px",
-                  padding: "20px",
-                  boxShadow: "0 20px 50px rgba(0,0,0,0.8)",
+                  boxShadow: selectedDeptForPreview.region === "Pacífico" ? "0 0 25px rgba(0, 242, 254, 0.35), 0 20px 50px rgba(0,0,0,0.85)" : selectedDeptForPreview.region === "Central" ? "0 0 25px rgba(16, 185, 129, 0.35), 0 20px 50px rgba(0,0,0,0.85)" : "0 0 25px rgba(245, 158, 11, 0.35), 0 20px 50px rgba(0,0,0,0.85)",
                   zIndex: 20,
+                  overflow: "hidden",
                   animation: "fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
                 }}>
-                  {/* Botón Cerrar */}
-                  <button
-                    onClick={handleClosePreview}
-                    style={{
-                      position: "absolute",
-                      top: "14px",
-                      right: "14px",
-                      background: "rgba(255,255,255,0.12)",
-                      border: "none",
-                      color: "#FFFFFF",
-                      width: "28px",
-                      height: "28px",
-                      borderRadius: "50%",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontWeight: "900",
-                      fontSize: "14px"
-                    }}
-                  >
-                    ✕
-                  </button>
+                  {/* Hero Thumbnail con Imagen Emblemática del Departamento */}
+                  <div style={{ position: "relative", width: "100%", height: "135px", overflow: "hidden" }}>
+                    <img
+                      src={selectedDeptForPreview.imagenReferencia || selectedDeptForPreview.imagen || "/images/Frame 9.png"}
+                      alt={selectedDeptForPreview.nombre}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                    {/* Sombra Degradada sobre la Imagen */}
+                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10, 25, 47, 1) 0%, rgba(10, 25, 47, 0.4) 55%, rgba(0,0,0,0.3) 100%)" }} />
 
-                  {/* Header de la Tarjeta Preview con SVG Icon de Región */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
-                    <span style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      background: selectedDeptForPreview.region === "Pacífico" ? "rgba(56, 189, 248, 0.2)" : selectedDeptForPreview.region === "Central" ? "rgba(16, 185, 129, 0.2)" : "rgba(245, 158, 11, 0.2)",
-                      border: `1px solid ${selectedDeptForPreview.region === "Pacífico" ? "#38BDF8" : selectedDeptForPreview.region === "Central" ? "#10B981" : "#F59E0B"}`,
-                      color: selectedDeptForPreview.region === "Pacífico" ? "#38BDF8" : selectedDeptForPreview.region === "Central" ? "#10B981" : "#F59E0B",
-                      padding: "3px 10px",
-                      borderRadius: "10px",
-                      fontSize: "11px",
-                      fontWeight: "800",
-                      textTransform: "uppercase"
-                    }}>
-                      <Icon
-                        name={selectedDeptForPreview.region === "Pacífico" ? "waves" : selectedDeptForPreview.region === "Central" ? "mountain" : "island"}
-                        size={13}
-                        color={selectedDeptForPreview.region === "Pacífico" ? "#38BDF8" : selectedDeptForPreview.region === "Central" ? "#10B981" : "#F59E0B"}
-                      />
-                      <span>Región {selectedDeptForPreview.region}</span>
-                    </span>
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12px", color: "rgba(255,255,255,0.7)", fontWeight: "600" }}>
-                      <Icon name="mapPin" size={13} color="rgba(255,255,255,0.7)" />
-                      <span>{selectedDeptForPreview.cabecera}</span>
-                    </span>
+                    {/* Badge de Región sobre la Foto */}
+                    <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 2 }}>
+                      <span style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        background: "rgba(10, 25, 47, 0.85)",
+                        backdropFilter: "blur(10px)",
+                        border: `1.5px solid ${selectedDeptForPreview.region === "Pacífico" ? "#00F2FE" : selectedDeptForPreview.region === "Central" ? "#10B981" : "#F59E0B"}`,
+                        color: selectedDeptForPreview.region === "Pacífico" ? "#00F2FE" : selectedDeptForPreview.region === "Central" ? "#10B981" : "#F59E0B",
+                        padding: "4px 10px",
+                        borderRadius: "10px",
+                        fontSize: "11px",
+                        fontWeight: "900",
+                        textTransform: "uppercase"
+                      }}>
+                        <Icon
+                          name={selectedDeptForPreview.region === "Pacífico" ? "waves" : selectedDeptForPreview.region === "Central" ? "mountain" : "island"}
+                          size={13}
+                          color={selectedDeptForPreview.region === "Pacífico" ? "#00F2FE" : selectedDeptForPreview.region === "Central" ? "#10B981" : "#F59E0B"}
+                        />
+                        <span>Región {selectedDeptForPreview.region}</span>
+                      </span>
+                    </div>
+
+                    {/* Botón Cerrar ✕ Flotante sobre la Foto */}
+                    <button
+                      onClick={handleClosePreview}
+                      style={{
+                        position: "absolute",
+                        top: "12px",
+                        right: "12px",
+                        background: "rgba(0, 0, 0, 0.6)",
+                        backdropFilter: "blur(8px)",
+                        border: "1px solid rgba(255,255,255,0.25)",
+                        color: "#FFFFFF",
+                        width: "28px",
+                        height: "28px",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontWeight: "900",
+                        fontSize: "13px",
+                        zIndex: 2,
+                        transition: "background 0.2s"
+                      }}
+                      onMouseOver={(e) => { e.currentTarget.style.background = "rgba(239, 68, 68, 0.8)"; }}
+                      onMouseOut={(e) => { e.currentTarget.style.background = "rgba(0, 0, 0, 0.6)"; }}
+                    >
+                      ✕
+                    </button>
                   </div>
 
-                  <h3 style={{ margin: "0 0 2px", fontSize: "22px", fontWeight: "900", color: "#FFFFFF" }}>
-                    {selectedDeptForPreview.nombre}
-                  </h3>
-                  <p style={{ margin: "0 0 14px", fontSize: "13px", fontWeight: "700", color: "#FFD700" }}>
-                    "{selectedDeptForPreview.apodo}"
-                  </p>
-
-                  {/* Metadatos Rápidos */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", background: "rgba(255,255,255,0.05)", padding: "10px", borderRadius: "12px", marginBottom: "16px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                    <div>
-                      <span style={{ display: "block", fontSize: "10px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "700" }}>Extensión</span>
-                      <span style={{ fontSize: "13px", fontWeight: "800", color: "#FFFFFF" }}>{selectedDeptForPreview.extension}</span>
+                  {/* Cuerpo de la Tarjeta Preview */}
+                  <div style={{ padding: "0 18px 18px", marginTop: "-12px", position: "relative", zIndex: 3 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                      <h3 style={{ margin: "0", fontSize: "23px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.3px" }}>
+                        {selectedDeptForPreview.nombre}
+                      </h3>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12px", color: "rgba(255,255,255,0.85)", fontWeight: "700" }}>
+                        <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                        <span>{selectedDeptForPreview.cabecera}</span>
+                      </span>
                     </div>
-                    <div>
-                      <span style={{ display: "block", fontSize: "10px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "700" }}>Población</span>
-                      <span style={{ fontSize: "13px", fontWeight: "800", color: "#FFFFFF" }}>{selectedDeptForPreview.poblacion}</span>
-                    </div>
-                  </div>
 
-                  {/* Botón para Abrir Modal Completo */}
-                  <button
-                    onClick={() => {
-                      setSelectedDeptForDetails(selectedDeptForPreview);
-                      setModalActiveTab("historia");
-                    }}
-                    style={{
-                      width: "100%",
-                      padding: "13px 18px",
-                      background: "linear-gradient(135deg, #FFE033 0%, #FFD700 100%)",
-                      color: "#1A1A2E",
-                      fontWeight: "900",
-                      fontSize: "14px",
+                    <p style={{ margin: "2px 0 14px", fontSize: "13px", fontWeight: "700", color: "#FFD700", opacity: 0.95 }}>
+                      "{selectedDeptForPreview.apodo}"
+                    </p>
+
+                    {/* Metadatos Rápidos en Cristal Esmerilado */}
+                    <div style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gap: "10px",
+                      background: "rgba(255,255,255,0.06)",
+                      backdropFilter: "blur(12px)",
+                      padding: "10px 12px",
                       borderRadius: "14px",
-                      border: "none",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "8px",
-                      boxShadow: "0 6px 20px rgba(255, 215, 0, 0.4)",
-                      transition: "transform 0.2s"
-                    }}
-                  >
-                    <span>Ver Historia y Pestañas ➔</span>
-                  </button>
+                      marginBottom: "16px",
+                      border: "1px solid rgba(255,255,255,0.12)"
+                    }}>
+                      <div>
+                        <span style={{ display: "block", fontSize: "10px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", fontWeight: "800", letterSpacing: "0.5px" }}>📏 Extensión</span>
+                        <span style={{ fontSize: "13.5px", fontWeight: "900", color: "#FFFFFF" }}>{selectedDeptForPreview.extension}</span>
+                      </div>
+                      <div>
+                        <span style={{ display: "block", fontSize: "10px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", fontWeight: "800", letterSpacing: "0.5px" }}>👥 Población</span>
+                        <span style={{ fontSize: "13.5px", fontWeight: "900", color: "#FFFFFF" }}>{selectedDeptForPreview.poblacion}</span>
+                      </div>
+                    </div>
+
+                    {/* Botón para Abrir Modal Completo */}
+                    <button
+                      onClick={() => {
+                        setSelectedDeptForDetails(selectedDeptForPreview);
+                        setModalActiveTab("historia");
+                      }}
+                      style={{
+                        width: "100%",
+                        padding: "13px 18px",
+                        background: "linear-gradient(135deg, #FFE033 0%, #FFD700 100%)",
+                        color: "#0F172A",
+                        fontWeight: "900",
+                        fontSize: "14.5px",
+                        borderRadius: "14px",
+                        border: "none",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "8px",
+                        boxShadow: "0 0 20px rgba(255, 215, 0, 0.45)",
+                        transition: "all 0.2s"
+                      }}
+                      onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; }}
+                      onMouseOut={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
+                    >
+                      <span>Ver Historia y Pestañas ➔</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -658,132 +676,140 @@ export default function MasDeNicaraguaPage() {
           zIndex: 9999,
           backgroundColor: "rgba(10, 25, 47, 0.92)",
           backdropFilter: "blur(14px)",
-          overflowY: "auto",
-          padding: "30px 16px",
+          padding: "85px 20px 20px",
           display: "flex",
           justifyContent: "center",
-          alignItems: "flex-start"
+          alignItems: "center"
         }}>
           <div style={{
-            maxWidth: "1200px",
+            maxWidth: "1160px",
             width: "100%",
-            background: "rgba(15, 23, 42, 0.96)",
-            border: "2px solid rgba(255, 215, 0, 0.35)",
-            borderRadius: "28px",
-            boxShadow: "0 25px 60px rgba(0,0,0,0.8)",
-            overflow: "hidden",
-            margin: "20px auto"
+            height: "560px",
+            maxHeight: "82vh",
+            display: "flex",
+            flexDirection: "column",
+            background: "rgba(15, 23, 42, 0.97)",
+            border: "1.5px solid rgba(255, 215, 0, 0.35)",
+            borderRadius: "24px",
+            boxShadow: "0 25px 60px rgba(0,0,0,0.85)",
+            overflow: "hidden"
           }}>
             {/* Header del Modal Completo */}
             <div style={{
               background: "linear-gradient(180deg, rgba(20, 109, 158, 0.4) 0%, rgba(15, 23, 42, 1) 100%)",
-              padding: "30px 24px 20px",
+              padding: "14px 20px 10px",
               position: "relative",
-              borderBottom: "1px solid rgba(255,255,255,0.1)"
+              borderBottom: "1px solid rgba(255,255,255,0.1)",
+              flexShrink: 0
             }}>
               {/* Botón de Cierre */}
               <button
                 onClick={() => setSelectedDeptForDetails(null)}
                 style={{
                   position: "absolute",
-                  top: "20px",
-                  right: "20px",
+                  top: "14px",
+                  right: "16px",
                   background: "rgba(255,255,255,0.12)",
                   border: "1px solid rgba(255,255,255,0.2)",
                   color: "#FFFFFF",
-                  padding: "8px 16px",
-                  borderRadius: "14px",
+                  padding: "6px 14px",
+                  borderRadius: "12px",
                   fontWeight: "800",
-                  fontSize: "13px",
+                  fontSize: "12.5px",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  gap: "6px"
+                  gap: "6px",
+                  transition: "background 0.2s"
                 }}
+                onMouseOver={(e) => { e.currentTarget.style.background = "rgba(236, 72, 153, 0.6)"; }}
+                onMouseOut={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
               >
                 <span>Cerrar</span>
                 <span>✕</span>
               </button>
 
               {/* Titular e Info */}
-              <div style={{ maxWidth: "1000px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px", flexWrap: "wrap" }}>
+              <div style={{ maxWidth: "950px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px", flexWrap: "wrap" }}>
                   <span style={{
                     display: "inline-flex",
                     alignItems: "center",
-                    gap: "6px",
+                    gap: "5px",
                     background: selectedDeptForDetails.region === "Pacífico" ? "rgba(56, 189, 248, 0.25)" : selectedDeptForDetails.region === "Central" ? "rgba(16, 185, 129, 0.25)" : "rgba(245, 158, 11, 0.25)",
                     border: `1px solid ${selectedDeptForDetails.region === "Pacífico" ? "#38BDF8" : selectedDeptForDetails.region === "Central" ? "#10B981" : "#F59E0B"}`,
                     color: selectedDeptForDetails.region === "Pacífico" ? "#38BDF8" : selectedDeptForDetails.region === "Central" ? "#10B981" : "#F59E0B",
-                    padding: "4px 12px",
-                    borderRadius: "12px",
-                    fontSize: "12px",
+                    padding: "3px 10px",
+                    borderRadius: "10px",
+                    fontSize: "11.5px",
                     fontWeight: "800",
                     textTransform: "uppercase"
                   }}>
                     <Icon
                       name={selectedDeptForDetails.region === "Pacífico" ? "waves" : selectedDeptForDetails.region === "Central" ? "mountain" : "island"}
-                      size={14}
+                      size={13}
                       color={selectedDeptForDetails.region === "Pacífico" ? "#38BDF8" : selectedDeptForDetails.region === "Central" ? "#10B981" : "#F59E0B"}
                     />
                     <span>Región {selectedDeptForDetails.region}</span>
                   </span>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontSize: "13px", color: "rgba(255,255,255,0.85)", fontWeight: "600" }}>
-                    <Icon name="mapPin" size={14} color="rgba(255,255,255,0.8)" />
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontSize: "12.5px", color: "rgba(255,255,255,0.85)", fontWeight: "600" }}>
+                    <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "15px", height: "15px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                     <span>Cabecera: <strong>{selectedDeptForDetails.cabecera}</strong></span>
                   </span>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontSize: "13px", color: "#FFD700", fontWeight: "700" }}>
-                    <Icon name="clock" size={14} color="#FFD700" />
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12.5px", color: "#FFD700", fontWeight: "700" }}>
+                    <Icon name="clock" size={13} color="#FFD700" />
                     <span>Fundación / Hito: <strong>{selectedDeptForDetails.fundacion}</strong></span>
                   </span>
                 </div>
 
-                <h2 style={{ fontSize: "clamp(26px, 3.5vw, 40px)", fontWeight: "900", margin: "0 0 2px", color: "#FFFFFF" }}>
-                  {selectedDeptForDetails.nombre}
-                </h2>
-                <p style={{ fontSize: "15px", fontWeight: "700", color: "#FFD700", margin: 0 }}>
-                  "{selectedDeptForDetails.apodo}"
-                </p>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap" }}>
+                  <h2 style={{ fontSize: "clamp(22px, 3vw, 32px)", fontWeight: "900", margin: 0, color: "#FFFFFF" }}>
+                    {selectedDeptForDetails.nombre}
+                  </h2>
+                  <p style={{ fontSize: "14px", fontWeight: "700", color: "#FFD700", margin: 0 }}>
+                    "{selectedDeptForDetails.apodo}"
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Selector de Pestañas */}
-            <DepartmentTabs activeTab={modalActiveTab} onSelectTab={setModalActiveTab} />
+            {/* Selector de Pestañas Compacto */}
+            <DepartmentTabs activeTab={modalActiveTab} onSelectTab={setModalActiveTab} isModal={true} />
 
-            {/* Cuerpo del Modal con Contenido de la Pestaña Seleccionada */}
-            <div style={{ padding: "30px 24px" }}>
+            {/* Cuerpo del Modal Scrollable Interno */}
+            <div style={{ padding: "18px 20px", flex: 1, overflowY: "auto" }}>
 
               {/* 1. HISTORIA */}
               {modalActiveTab === "historia" && (
-                <div>
-                  <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "20px", padding: "24px", marginBottom: "24px" }}>
-                    <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#FFD700", margin: "0 0 12px", display: "flex", alignItems: "center", gap: "10px" }}>
-                      <Icon name="book" size={22} color="#FFD700" />
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "18px", alignItems: "start" }}>
+                  <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "18px", padding: "18px" }}>
+                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Icon name="book" size={18} color="#FFD700" />
                       <span>Resumen Histórico de {selectedDeptForDetails.nombre}</span>
                     </h3>
-                    <p style={{ fontSize: "15px", lineHeight: "1.7", color: "rgba(255,255,255,0.9)", margin: 0 }}>
+                    <p style={{ fontSize: "14px", lineHeight: "1.65", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                       {selectedDeptForDetails.historia.resumen}
                     </p>
                   </div>
 
                   {selectedDeptForDetails.historia.hitos && selectedDeptForDetails.historia.hitos.length > 0 && (
                     <div>
-                      <h4 style={{ fontSize: "18px", fontWeight: "800", color: "#FFFFFF", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
-                        <Icon name="clock" size={20} color="#FFD700" />
+                      <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
+                        <Icon name="clock" size={16} color="#FFD700" />
                         <span>Hitos Históricos Fundamentales</span>
                       </h4>
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "12px" }}>
                         {selectedDeptForDetails.historia.hitos.map((hito, idx) => (
                           <div key={idx} style={{
                             background: "linear-gradient(135deg, rgba(20, 109, 158, 0.25) 0%, rgba(15, 23, 42, 0.8) 100%)",
                             border: "1px solid rgba(20, 109, 158, 0.35)",
-                            borderRadius: "16px",
-                            padding: "16px"
+                            borderRadius: "14px",
+                            padding: "14px"
                           }}>
-                            <span style={{ fontSize: "20px", fontWeight: "900", color: "#FFD700", display: "block", marginBottom: "4px" }}>
+                            <span style={{ fontSize: "18px", fontWeight: "900", color: "#FFD700", display: "block", marginBottom: "2px" }}>
                               {hito.año}
                             </span>
-                            <p style={{ margin: 0, fontSize: "13.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                            <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.45 }}>
                               {hito.evento}
                             </p>
                           </div>
@@ -797,31 +823,31 @@ export default function MasDeNicaraguaPage() {
               {/* 2. ECONOMÍA */}
               {modalActiveTab === "economia" && (
                 <div>
-                  <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "20px", padding: "24px", marginBottom: "24px" }}>
-                    <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#38BDF8", margin: "0 0 12px", display: "flex", alignItems: "center", gap: "10px" }}>
-                      <Icon name="trendingUp" size={22} color="#38BDF8" />
+                  <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "18px", padding: "18px", marginBottom: "18px" }}>
+                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#38BDF8", margin: "0 0 8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Icon name="trendingUp" size={18} color="#38BDF8" />
                       <span>Dinámica Económica y Productiva</span>
                     </h3>
-                    <p style={{ fontSize: "15px", lineHeight: "1.7", color: "rgba(255,255,255,0.9)", margin: 0 }}>
+                    <p style={{ fontSize: "14px", lineHeight: "1.6", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                       {selectedDeptForDetails.economia.resumen}
                     </p>
                   </div>
 
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "16px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "14px" }}>
                     {selectedDeptForDetails.economia.sectores.map((sec, idx) => (
                       <div key={idx} style={{
                         background: "rgba(15, 23, 42, 0.8)",
                         border: "1px solid rgba(56, 189, 248, 0.25)",
-                        borderRadius: "18px",
-                        padding: "20px"
+                        borderRadius: "16px",
+                        padding: "16px"
                       }}>
-                        <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: "rgba(56, 189, 248, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#38BDF8", marginBottom: "12px" }}>
-                          <Icon name="trendingUp" size={20} color="#38BDF8" />
+                        <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(56, 189, 248, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#38BDF8", marginBottom: "10px" }}>
+                          <Icon name="trendingUp" size={16} color="#38BDF8" />
                         </div>
-                        <h4 style={{ fontSize: "16px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px" }}>
+                        <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 4px" }}>
                           {sec.titulo}
                         </h4>
-                        <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.75)", lineHeight: 1.5 }}>
+                        <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.75)", lineHeight: 1.45 }}>
                           {sec.desc}
                         </p>
                       </div>
@@ -833,29 +859,29 @@ export default function MasDeNicaraguaPage() {
               {/* 3. TURISMO */}
               {modalActiveTab === "turismo" && (
                 <div>
-                  <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "20px", padding: "24px", marginBottom: "24px" }}>
-                    <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#10B981", margin: "0 0 12px", display: "flex", alignItems: "center", gap: "10px" }}>
-                      <Icon name="compass" size={22} color="#10B981" />
+                  <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "18px", padding: "18px", marginBottom: "18px" }}>
+                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#10B981", margin: "0 0 8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Icon name="compass" size={18} color="#10B981" />
                       <span>Oferta Turística de {selectedDeptForDetails.nombre}</span>
                     </h3>
-                    <p style={{ fontSize: "15px", lineHeight: "1.7", color: "rgba(255,255,255,0.9)", margin: 0 }}>
+                    <p style={{ fontSize: "14px", lineHeight: "1.6", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                       {selectedDeptForDetails.turismo.resumen}
                     </p>
                   </div>
 
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "14px" }}>
                     {selectedDeptForDetails.turismo.atractivos.map((atr, idx) => (
                       <div key={idx} style={{
                         background: "rgba(15, 23, 42, 0.8)",
                         border: "1px solid rgba(16, 185, 129, 0.25)",
-                        borderRadius: "18px",
-                        padding: "20px"
+                        borderRadius: "16px",
+                        padding: "16px"
                       }}>
-                        <h4 style={{ fontSize: "17px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 8px", display: "flex", alignItems: "center", gap: "6px" }}>
-                          <Icon name="mapPin" size={16} color="#10B981" />
+                        <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px", display: "flex", alignItems: "center", gap: "6px" }}>
+                          <Icon name="mapPin" size={14} color="#10B981" />
                           <span>{atr.nombre}</span>
                         </h4>
-                        <p style={{ margin: 0, fontSize: "13.5px", color: "rgba(255,255,255,0.8)", lineHeight: 1.5 }}>
+                        <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.8)", lineHeight: 1.45 }}>
                           {atr.desc}
                         </p>
                       </div>
@@ -867,31 +893,31 @@ export default function MasDeNicaraguaPage() {
               {/* 4. PASATIEMPOS Y CULTURA */}
               {modalActiveTab === "pasatiempos" && (
                 <div>
-                  <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "20px", padding: "24px", marginBottom: "24px" }}>
-                    <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#F59E0B", margin: "0 0 12px", display: "flex", alignItems: "center", gap: "10px" }}>
-                      <Icon name="music" size={22} color="#F59E0B" />
+                  <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "18px", padding: "18px", marginBottom: "18px" }}>
+                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#F59E0B", margin: "0 0 8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Icon name="music" size={18} color="#F59E0B" />
                       <span>Pasatiempos, Tradiciones y Estilo de Vida</span>
                     </h3>
-                    <p style={{ fontSize: "15px", lineHeight: "1.7", color: "rgba(255,255,255,0.9)", margin: 0 }}>
+                    <p style={{ fontSize: "14px", lineHeight: "1.6", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                       {selectedDeptForDetails.pasatiempos.resumen}
                     </p>
                   </div>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
                     {selectedDeptForDetails.pasatiempos.items.map((item, idx) => (
                       <div key={idx} style={{
                         background: "rgba(255, 255, 255, 0.05)",
                         border: "1px solid rgba(245, 158, 11, 0.2)",
                         borderRadius: "14px",
-                        padding: "16px 20px",
+                        padding: "14px 16px",
                         display: "flex",
                         alignItems: "center",
-                        gap: "14px"
+                        gap: "12px"
                       }}>
-                        <div style={{ minWidth: "32px", height: "32px", borderRadius: "50%", background: "rgba(245, 158, 11, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "#F59E0B", fontWeight: "900", fontSize: "13px" }}>
+                        <div style={{ minWidth: "28px", height: "28px", borderRadius: "50%", background: "rgba(245, 158, 11, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "#F59E0B", fontWeight: "900", fontSize: "12px" }}>
                           {idx + 1}
                         </div>
-                        <p style={{ margin: 0, fontSize: "14.5px", fontWeight: "600", color: "#FFFFFF" }}>
+                        <p style={{ margin: 0, fontSize: "13.5px", fontWeight: "600", color: "#FFFFFF", lineHeight: 1.4 }}>
                           {item}
                         </p>
                       </div>
@@ -903,25 +929,25 @@ export default function MasDeNicaraguaPage() {
               {/* 5. LUGARES IMPORTANTES */}
               {modalActiveTab === "lugares" && (
                 <div>
-                  <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#FFFFFF", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
-                    <Icon name="landmark" size={22} color="#FFD700" />
+                  <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#FFFFFF", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Icon name="landmark" size={18} color="#FFD700" />
                     <span>Sitios Emblemáticos Imperdibles</span>
                   </h3>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "16px" }}>
                     {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => {
                       const siteImg = getPointImage(lugar);
                       return (
                         <div key={idx} style={{
                           background: "rgba(15, 23, 42, 0.8)",
                           border: "1px solid rgba(255,255,255,0.12)",
-                          borderRadius: "18px",
-                          padding: "20px"
+                          borderRadius: "16px",
+                          padding: "16px"
                         }}>
                           <div style={{
-                            height: "135px",
-                            borderRadius: "12px",
+                            height: "120px",
+                            borderRadius: "10px",
                             overflow: "hidden",
-                            marginBottom: "14px",
+                            marginBottom: "12px",
                             position: "relative",
                             border: "1px solid rgba(255,255,255,0.1)",
                             background: "#0F172A"
@@ -935,10 +961,10 @@ export default function MasDeNicaraguaPage() {
                             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(15,23,42,0.7) 100%)" }} />
                           </div>
 
-                          <h4 style={{ fontSize: "17px", fontWeight: "800", color: "#FFD700", margin: "0 0 6px" }}>
+                          <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFD700", margin: "0 0 4px" }}>
                             {lugar.nombre}
                           </h4>
-                          <p style={{ margin: 0, fontSize: "13.5px", color: "rgba(255,255,255,0.8)", lineHeight: 1.5 }}>
+                          <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.8)", lineHeight: 1.45 }}>
                             {lugar.desc}
                           </p>
                         </div>
@@ -948,7 +974,139 @@ export default function MasDeNicaraguaPage() {
                 </div>
               )}
 
-              {/* 6. ACTIVIDADES */}
+              {/* 6. GALERÍA DE IMÁGENES */}
+              {modalActiveTab === "galeria" && (
+                <div>
+                  <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#FFFFFF", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Icon name="image" size={18} color="#EC4899" />
+                    <span>Galería Fotográfica de {selectedDeptForDetails.nombre}</span>
+                  </h3>
+
+                  <div style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+                    gap: "18px",
+                    alignItems: "start"
+                  }}>
+                    {/* Columna Izquierda: Imagen de Referencia (1.1) */}
+                    {(selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard) && (
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(236, 72, 153, 0.3)", borderRadius: "18px", padding: "14px" }}>
+                        <h4 style={{ fontSize: "12px", fontWeight: "800", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                          <span>📌 Imagen de Referencia</span>
+                        </h4>
+                        <div
+                          onClick={() => setLightboxIndex(-1)}
+                          style={{
+                            width: "100%",
+                            height: "230px",
+                            borderRadius: "14px",
+                            overflow: "hidden",
+                            position: "relative",
+                            cursor: "pointer",
+                            border: "1.5px solid rgba(236, 72, 153, 0.4)",
+                            boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+                            background: "#0F172A"
+                          }}
+                        >
+                          <img
+                            src={selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard}
+                            alt={`Imagen de Referencia de ${selectedDeptForDetails.nombre}`}
+                            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.4s" }}
+                            loading="lazy"
+                            onMouseOver={(e) => { e.currentTarget.style.transform = "scale(1.03)"; }}
+                            onMouseOut={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+                          />
+                          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(10,25,47,0.85) 100%)" }} />
+                          <div style={{
+                            position: "absolute",
+                            bottom: "12px",
+                            left: "14px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px"
+                          }}>
+                            <span style={{
+                              background: "linear-gradient(135deg, #EC4899 0%, #DB2777 100%)",
+                              color: "#FFFFFF",
+                              padding: "4px 12px",
+                              borderRadius: "10px",
+                              fontSize: "11px",
+                              fontWeight: "800",
+                              letterSpacing: "0.5px"
+                            }}>
+                              📸 Imagen de Referencia
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Columna Derecha: Grid de Galería (Fotos 2 a 6) */}
+                    {selectedDeptForDetails.galeria && selectedDeptForDetails.galeria.length > 0 && (
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "18px", padding: "14px" }}>
+                        <h4 style={{ fontSize: "12px", fontWeight: "800", color: "rgba(255,255,255,0.8)", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                          <span>🖼️ Fotografías de Galería</span>
+                        </h4>
+                        <div style={{
+                          display: "grid",
+                          gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
+                          gap: "10px"
+                        }}>
+                          {selectedDeptForDetails.galeria.map((imgSrc, idx) => (
+                            <div
+                              key={idx}
+                              onClick={() => setLightboxIndex(idx)}
+                              style={{
+                                position: "relative",
+                                borderRadius: "12px",
+                                overflow: "hidden",
+                                cursor: "pointer",
+                                border: "1px solid rgba(255,255,255,0.1)",
+                                boxShadow: "0 4px 14px rgba(0,0,0,0.4)",
+                                aspectRatio: "4 / 3",
+                                background: "#0F172A",
+                                transition: "transform 0.25s, box-shadow 0.25s"
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.transform = "scale(1.04)";
+                                e.currentTarget.style.borderColor = "rgba(236, 72, 153, 0.6)";
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.transform = "scale(1)";
+                                e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                              }}
+                            >
+                              <img
+                                src={imgSrc}
+                                alt={`${selectedDeptForDetails.nombre} - Foto ${idx + 1}`}
+                                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                                loading="lazy"
+                              />
+                              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(10,25,47,0.6) 100%)" }} />
+                              <span style={{
+                                position: "absolute",
+                                bottom: "6px",
+                                right: "6px",
+                                background: "rgba(10, 25, 47, 0.85)",
+                                backdropFilter: "blur(4px)",
+                                color: "#FFFFFF",
+                                padding: "2px 6px",
+                                borderRadius: "6px",
+                                fontSize: "10px",
+                                fontWeight: "800"
+                              }}>
+                                {idx + 1}/{selectedDeptForDetails.galeria.length}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* 7. ACTIVIDADES */}
               {modalActiveTab === "actividades" && (
                 <div>
                   <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#FFFFFF", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
@@ -1053,6 +1211,237 @@ export default function MasDeNicaraguaPage() {
           </div>
         </div>
       )}
+
+      {/* LIGHTBOX FULLSCREEN: Visor de Imágenes Expandido */}
+      {lightboxIndex !== null && selectedDeptForDetails && (() => {
+        // Construir el arreglo de todas las imágenes disponibles para navegar
+        const allImages = [];
+        const heroImg = selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard;
+        if (heroImg) {
+          allImages.push({ src: heroImg, label: "Imagen de Referencia" });
+        }
+        if (selectedDeptForDetails.galeria) {
+          selectedDeptForDetails.galeria.forEach((src, i) => {
+            allImages.push({ src, label: `Fotografía ${i + 1}` });
+          });
+        }
+
+        const hasHero = !!heroImg;
+        // Calcular el índice real (lightboxIndex === -1 -> foto de referencia -> index 0)
+        const currentIdx = lightboxIndex === -1 ? 0 : (hasHero ? lightboxIndex + 1 : lightboxIndex);
+        const currentImage = allImages[currentIdx];
+        if (!currentImage) return null;
+
+        const goPrev = () => {
+          const newIdx = currentIdx <= 0 ? allImages.length - 1 : currentIdx - 1;
+          setLightboxIndex(hasHero ? newIdx - 1 : newIdx);
+        };
+        const goNext = () => {
+          const newIdx = currentIdx >= allImages.length - 1 ? 0 : currentIdx + 1;
+          setLightboxIndex(hasHero ? newIdx - 1 : newIdx);
+        };
+
+        return (
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 99999,
+              backgroundColor: "rgba(0, 0, 0, 0.95)",
+              backdropFilter: "blur(20px)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              animation: "fadeInUp 0.25s ease-out"
+            }}
+            onClick={() => setLightboxIndex(null)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setLightboxIndex(null);
+              if (e.key === "ArrowLeft") { e.stopPropagation(); goPrev(); }
+              if (e.key === "ArrowRight") { e.stopPropagation(); goNext(); }
+            }}
+            tabIndex={0}
+            ref={(el) => el && el.focus()}
+          >
+            {/* Header del Lightbox */}
+            <div style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "16px 24px",
+              background: "linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%)",
+              zIndex: 10
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <Icon name="image" size={18} color="#EC4899" />
+                <span style={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "800" }}>
+                  {selectedDeptForDetails.nombre}
+                </span>
+                <span style={{
+                  background: "rgba(236, 72, 153, 0.8)",
+                  color: "#FFFFFF",
+                  padding: "3px 10px",
+                  borderRadius: "8px",
+                  fontSize: "11px",
+                  fontWeight: "800"
+                }}>
+                  {currentIdx + 1} / {allImages.length}
+                </span>
+              </div>
+
+              <button
+                onClick={(e) => { e.stopPropagation(); setLightboxIndex(null); }}
+                style={{
+                  background: "rgba(255,255,255,0.12)",
+                  border: "1px solid rgba(255,255,255,0.25)",
+                  color: "#FFFFFF",
+                  width: "38px",
+                  height: "38px",
+                  borderRadius: "50%",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: "900",
+                  fontSize: "18px",
+                  transition: "background 0.2s"
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Imagen Principal del Lightbox */}
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                maxWidth: "90vw",
+                maxHeight: "80vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative"
+              }}
+            >
+              <img
+                src={currentImage.src}
+                alt={`${selectedDeptForDetails.nombre} - ${currentImage.label}`}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "80vh",
+                  objectFit: "contain",
+                  borderRadius: "12px",
+                  boxShadow: "0 20px 60px rgba(0,0,0,0.8)"
+                }}
+              />
+            </div>
+
+            {/* Flechas de Navegación */}
+            {allImages.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                  style={{
+                    position: "absolute",
+                    left: "20px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                    background: "rgba(255,255,255,0.12)",
+                    backdropFilter: "blur(8px)",
+                    border: "1.5px solid rgba(255,255,255,0.25)",
+                    color: "#FFFFFF",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "22px",
+                    fontWeight: "900",
+                    transition: "background 0.2s, transform 0.2s",
+                    zIndex: 10
+                  }}
+                  onMouseOver={(e) => { e.currentTarget.style.background = "rgba(236, 72, 153, 0.6)"; }}
+                  onMouseOut={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
+                >
+                  <Icon name="chevronLeft" size={24} color="#FFFFFF" />
+                </button>
+
+                <button
+                  onClick={(e) => { e.stopPropagation(); goNext(); }}
+                  style={{
+                    position: "absolute",
+                    right: "20px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                    background: "rgba(255,255,255,0.12)",
+                    backdropFilter: "blur(8px)",
+                    border: "1.5px solid rgba(255,255,255,0.25)",
+                    color: "#FFFFFF",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "22px",
+                    fontWeight: "900",
+                    transition: "background 0.2s, transform 0.2s",
+                    zIndex: 10
+                  }}
+                  onMouseOver={(e) => { e.currentTarget.style.background = "rgba(236, 72, 153, 0.6)"; }}
+                  onMouseOut={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
+                >
+                  <Icon name="chevronRight" size={24} color="#FFFFFF" />
+                </button>
+              </>
+            )}
+
+            {/* Label de la Imagen Actual */}
+            <div style={{
+              position: "absolute",
+              bottom: "24px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              background: "rgba(10, 25, 47, 0.85)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              padding: "8px 20px",
+              borderRadius: "14px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px"
+            }}>
+              <Icon name="camera" size={14} color="#EC4899" />
+              <span style={{ color: "#FFFFFF", fontSize: "13px", fontWeight: "700" }}>
+                {currentImage.label}
+              </span>
+              <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "12px" }}>
+                — {selectedDeptForDetails.nombre}
+              </span>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Estilos CSS para hover de galería */}
+      <style jsx>{`
+        .gallery-expand-icon {
+          opacity: 0 !important;
+          transition: opacity 0.25s;
+        }
+        div:hover > .gallery-expand-icon {
+          opacity: 1 !important;
+        }
+      `}</style>
+
       </div>
     </div>
   );

@@ -218,6 +218,151 @@ export default function DepartamentoDetailPage() {
         </div>
       </div>
 
+      {/* Galería Fotográfica del Departamento */}
+      {((dept.imagenReferencia || dept.imagenCard) || (dept.galeria && dept.galeria.length > 0)) && (
+        <div style={{
+          background: "linear-gradient(180deg, rgba(10, 25, 47, 1) 0%, rgba(15, 23, 42, 0.95) 100%)",
+          padding: "30px 20px 36px",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.08)"
+        }}>
+          <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "18px", flexWrap: "wrap", gap: "10px" }}>
+              <h2 style={{ 
+                margin: 0, 
+                fontSize: "18px", 
+                fontWeight: "900", 
+                color: "#FFFFFF", 
+                display: "flex", 
+                alignItems: "center", 
+                gap: "10px",
+                textShadow: "0 2px 8px rgba(0,0,0,0.8)"
+              }}>
+                📸 Galería Fotográfica de {dept.nombre}
+              </h2>
+              <span style={{
+                fontSize: "11.5px",
+                fontWeight: "700",
+                color: "#CBD5E1",
+                background: "rgba(255,255,255,0.08)",
+                padding: "3px 10px",
+                borderRadius: "8px",
+                border: "1px solid rgba(255,255,255,0.15)"
+              }}>
+                {(dept.galeria?.length || 0) + ((dept.imagenReferencia || dept.imagenCard) ? 1 : 0)} Fotos
+              </span>
+            </div>
+
+            {/* Imagen de Referencia (1.1) */}
+            {(dept.imagenReferencia || dept.imagenCard) && (
+              <div style={{ marginBottom: "20px" }}>
+                <h3 style={{ fontSize: "13px", fontWeight: "800", color: "#FFD700", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                  <span>📌 Imagen de Referencia</span>
+                </h3>
+                <div style={{
+                  position: "relative",
+                  borderRadius: "18px",
+                  overflow: "hidden",
+                  height: "320px",
+                  border: "2px solid rgba(236, 72, 153, 0.4)",
+                  boxShadow: "0 8px 30px rgba(0,0,0,0.5)",
+                  background: "#0F172A"
+                }}>
+                  <img
+                    src={dept.imagenReferencia || dept.imagenCard}
+                    alt={`Imagen de Referencia de ${dept.nombre}`}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                    loading="lazy"
+                  />
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(10,25,47,0.8) 100%)" }} />
+                  <span style={{
+                    position: "absolute",
+                    bottom: "16px",
+                    left: "20px",
+                    background: "linear-gradient(135deg, #EC4899 0%, #DB2777 100%)",
+                    color: "#FFFFFF",
+                    padding: "6px 16px",
+                    borderRadius: "12px",
+                    fontSize: "12px",
+                    fontWeight: "800",
+                    letterSpacing: "0.5px",
+                    boxShadow: "0 4px 14px rgba(236, 72, 153, 0.4)"
+                  }}>
+                    📸 Imagen de Referencia
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Cuadrícula de fotos secundarias (2 a 6) */}
+            {dept.galeria && dept.galeria.length > 0 && (
+              <div>
+                {(dept.imagenReferencia || dept.imagenCard) && (
+                  <h3 style={{ fontSize: "13px", fontWeight: "800", color: "rgba(255,255,255,0.7)", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                    <span>🖼️ Fotografías de Galería</span>
+                  </h3>
+                )}
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+                  gap: "12px"
+                }}>
+                  {dept.galeria.map((imgSrc, idx) => (
+                    <div 
+                      key={idx}
+                      style={{
+                        position: "relative",
+                        borderRadius: "14px",
+                        overflow: "hidden",
+                        aspectRatio: "16 / 10",
+                        border: "1px solid rgba(255, 255, 255, 0.12)",
+                        boxShadow: "0 6px 20px rgba(0, 0, 0, 0.4)",
+                        background: "#0F172A"
+                      }}
+                    >
+                      <img
+                        src={imgSrc}
+                        alt={`${dept.nombre} - Foto ${idx + 1}`}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          display: "block",
+                          transition: "transform 0.4s ease"
+                        }}
+                        loading="lazy"
+                        onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+                        onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
+                      />
+                      {/* Overlay degradado sutil inferior */}
+                      <div style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: "linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(10, 25, 47, 0.55) 100%)",
+                        pointerEvents: "none"
+                      }} />
+                      <span style={{
+                        position: "absolute",
+                        bottom: "8px",
+                        right: "10px",
+                        background: "rgba(10, 25, 47, 0.85)",
+                        backdropFilter: "blur(6px)",
+                        color: "#FFFFFF",
+                        padding: "2px 8px",
+                        borderRadius: "6px",
+                        fontSize: "11px",
+                        fontWeight: "700"
+                      }}>
+                        {idx + 1}/{dept.galeria.length}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Navegación por Pestañas */}
       <DepartmentTabs activeTab={activeTab} onSelectTab={setActiveTab} />
 
@@ -420,7 +565,128 @@ export default function DepartamentoDetailPage() {
           </div>
         )}
 
-        {/* 6. PESTAÑA ACTIVIDADES */}
+        {/* 6. PESTAÑA GALERÍA */}
+        {activeTab === "galeria" && (
+          <div className="animate-fade-in">
+            <h2 style={{ fontSize: "22px", fontWeight: "900", color: "#FFFFFF", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
+              <Icon name="image" size={22} color="#EC4899" />
+              <span>Galería Fotográfica de {dept.nombre}</span>
+            </h2>
+
+            {/* Grid de Galería Principal */}
+            {dept.galeria && dept.galeria.length > 0 && (
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                gap: "16px",
+                marginBottom: "32px"
+              }}>
+                {dept.galeria.map((imgSrc, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      position: "relative",
+                      borderRadius: "18px",
+                      overflow: "hidden",
+                      aspectRatio: "4 / 3",
+                      border: "1.5px solid rgba(255,255,255,0.1)",
+                      boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+                      background: "#0F172A",
+                      cursor: "pointer",
+                      transition: "transform 0.3s, box-shadow 0.3s"
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.transform = "scale(1.03)";
+                      e.currentTarget.style.boxShadow = "0 12px 36px rgba(236, 72, 153, 0.3)";
+                      e.currentTarget.style.borderColor = "rgba(236, 72, 153, 0.5)";
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.transform = "scale(1)";
+                      e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.4)";
+                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                    }}
+                  >
+                    <img
+                      src={imgSrc}
+                      alt={`${dept.nombre} - Foto ${idx + 1}`}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                      loading="lazy"
+                    />
+                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(10,25,47,0.6) 100%)" }} />
+                    <span style={{
+                      position: "absolute",
+                      bottom: "12px",
+                      right: "12px",
+                      background: "rgba(10, 25, 47, 0.85)",
+                      backdropFilter: "blur(8px)",
+                      color: "#FFFFFF",
+                      padding: "4px 12px",
+                      borderRadius: "10px",
+                      fontSize: "12px",
+                      fontWeight: "800",
+                      border: "1px solid rgba(255,255,255,0.15)"
+                    }}>
+                      {idx + 1}/{dept.galeria.length}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Lugares Importantes con Imágenes */}
+            {dept.lugaresImportantes && dept.lugaresImportantes.length > 0 && (
+              <div>
+                <h3 style={{ fontSize: "19px", fontWeight: "800", color: "#FFD700", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Icon name="landmark" size={20} color="#FFD700" />
+                  <span>Sitios Emblemáticos en Fotos</span>
+                </h3>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "18px" }}>
+                  {dept.lugaresImportantes.map((lugar, idx) => {
+                    const siteImg = getPointImage(lugar);
+                    return (
+                      <div key={idx} style={{
+                        background: "rgba(15, 23, 42, 0.85)",
+                        border: "1px solid rgba(255,215,0,0.2)",
+                        borderRadius: "18px",
+                        overflow: "hidden",
+                        transition: "transform 0.3s, border-color 0.3s"
+                      }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.transform = "translateY(-3px)";
+                          e.currentTarget.style.borderColor = "rgba(255,215,0,0.5)";
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.transform = "translateY(0)";
+                          e.currentTarget.style.borderColor = "rgba(255,215,0,0.2)";
+                        }}
+                      >
+                        <div style={{ height: "160px", overflow: "hidden", position: "relative" }}>
+                          <img
+                            src={siteImg}
+                            alt={lugar.nombre}
+                            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                            loading="lazy"
+                          />
+                          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(15,23,42,0.7) 100%)" }} />
+                        </div>
+                        <div style={{ padding: "16px 18px" }}>
+                          <h4 style={{ fontSize: "16px", fontWeight: "800", color: "#FFD700", margin: "0 0 6px" }}>
+                            {lugar.nombre}
+                          </h4>
+                          <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.7)", lineHeight: 1.5 }}>
+                            {lugar.desc}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 7. PESTAÑA ACTIVIDADES */}
         {activeTab === "actividades" && (
           <div className="animate-fade-in">
             <h2 style={{ fontSize: "22px", fontWeight: "900", color: "#FFFFFF", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
