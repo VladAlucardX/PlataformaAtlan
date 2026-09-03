@@ -258,8 +258,8 @@ export default function MasDeNicaraguaPage() {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: currentStyleUri,
-      center: [-85.10, 12.58],
-      zoom: 5.90,
+      center: [-85.10, 12.65],
+      zoom: 5.70,
       minZoom: 5.0,
       maxZoom: 9.0,
       pitch: 0,
@@ -383,10 +383,20 @@ export default function MasDeNicaraguaPage() {
       <div style={{ position: "relative", zIndex: 1 }}>
         <Navbar activePage="mas-de-nicaragua" />
 
-      <main style={{ maxWidth: "1310px", margin: "0 auto", padding: "68px 12px 10px" }}>
+        <main style={{
+        maxWidth: "1310px",
+        width: "100%",
+        margin: "0 auto",
+        minHeight: "calc(100vh - 64px)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "68px 12px 12px"
+      }}>
 
         {/* Mapa Protagonista Principal */}
-        <section>
+        <section style={{ width: "100%" }}>
           <div style={{
             background: "rgba(15, 23, 42, 0.85)",
             border: "2px solid rgba(255, 215, 0, 0.3)",
@@ -409,7 +419,7 @@ export default function MasDeNicaraguaPage() {
                   gap: "8px",
                   boxShadow: "0 4px 14px rgba(0,0,0,0.3)"
                 }}>
-                  <Icon name="book" size={16} color="#FFD700" />
+                  <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "20px", height: "20px", objectFit: "contain" }} />
                   <span style={{ fontSize: "13.5px", fontWeight: "900", color: "#FFD700", letterSpacing: "0.5px" }}>
                     Enciclopedia Viva
                   </span>
@@ -422,10 +432,10 @@ export default function MasDeNicaraguaPage() {
               {/* Filtros Rápidos de Regiones con Estilo Neón */}
               <div style={{ display: "flex", gap: "6px" }}>
                 {[
-                  { name: "Todos", center: [-85.10, 12.58], zoom: 5.90 },
-                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.00], zoom: 6.3 },
-                  { name: "Central", icon: "mountain", center: [-85.5, 12.70], zoom: 6.3 },
-                  { name: "Caribe", icon: "island", center: [-84.0, 13.30], zoom: 6.2 }
+                  { name: "Todos", center: [-85.10, 12.65], zoom: 5.70 },
+                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.00], zoom: 6.2 },
+                  { name: "Central", icon: "mountain", center: [-85.5, 12.70], zoom: 6.2 },
+                  { name: "Caribe", icon: "island", center: [-84.0, 13.30], zoom: 6.0 }
                 ].map((reg) => {
                   const isActive = selectedRegion === reg.name;
                   return (
@@ -486,7 +496,7 @@ export default function MasDeNicaraguaPage() {
                   gap: "6px",
                   backdropFilter: "blur(8px)"
                 }}>
-                  <Icon name="mapPin" size={14} color="#FFD700" />
+                  <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
                   <span>{hoveredDept}</span>
                 </div>
               )}
@@ -554,8 +564,8 @@ export default function MasDeNicaraguaPage() {
                       />
                       <span>Región {selectedDeptForPreview.region}</span>
                     </span>
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12px", color: "rgba(255,255,255,0.7)", fontWeight: "600" }}>
-                      <Icon name="mapPin" size={13} color="rgba(255,255,255,0.7)" />
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontSize: "12px", color: "rgba(255,255,255,0.85)", fontWeight: "600" }}>
+                      <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "14px", height: "14px", objectFit: "contain" }} />
                       <span>{selectedDeptForPreview.cabecera}</span>
                     </span>
                   </div>
@@ -697,8 +707,8 @@ export default function MasDeNicaraguaPage() {
                     />
                     <span>Región {selectedDeptForDetails.region}</span>
                   </span>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12.5px", color: "rgba(255,255,255,0.85)", fontWeight: "600" }}>
-                    <Icon name="mapPin" size={13} color="rgba(255,255,255,0.8)" />
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontSize: "12.5px", color: "rgba(255,255,255,0.85)", fontWeight: "600" }}>
+                    <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "15px", height: "15px", objectFit: "contain" }} />
                     <span>Cabecera: <strong>{selectedDeptForDetails.cabecera}</strong></span>
                   </span>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12.5px", color: "#FFD700", fontWeight: "700" }}>
