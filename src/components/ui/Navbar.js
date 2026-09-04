@@ -171,6 +171,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                 <Link
                   href={communityProfileUrl}
                   className={`nav-pill-link ${activePage === "perfil-comunidad" ? "active" : ""}`}
+                  title={getProfileLabel()}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -181,7 +182,10 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                     border: "1px solid rgba(0, 0, 0, 0.08)",
                     boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
                     padding: "7px 14px",
-                    borderRadius: "20px"
+                    borderRadius: "20px",
+                    maxWidth: "180px",
+                    flexShrink: 1,
+                    overflow: "hidden"
                   }}
                 >
                   {perfil?.avatar_url ? (
@@ -189,7 +193,16 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                   ) : (
                     <Icon name="user" size={18} />
                   )}
-                  <span>{getProfileLabel()}</span>
+                  <span style={{
+                    maxWidth: "120px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    display: "inline-block",
+                    verticalAlign: "middle"
+                  }}>
+                    {getProfileLabel()}
+                  </span>
                 </Link>
 
                 {/* Flecha desplegable del Menú */}
