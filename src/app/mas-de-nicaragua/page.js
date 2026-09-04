@@ -827,7 +827,7 @@ export default function MasDeNicaraguaPage() {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "18px", alignItems: "start" }}>
                   <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "18px", padding: "18px" }}>
                     <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px" }}>
-                      <Icon name="book" size={18} color="#FFD700" />
+                      <img src="/images/managua catedral.svg" alt="Historia" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
                       <span>Resumen Histórico de {selectedDeptForDetails.nombre}</span>
                     </h3>
                     <p style={{ fontSize: "14px", lineHeight: "1.65", color: "rgba(255,255,255,0.9)", margin: 0 }}>
@@ -868,7 +868,7 @@ export default function MasDeNicaraguaPage() {
                 <div>
                   <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "18px", padding: "18px", marginBottom: "18px" }}>
                     <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#38BDF8", margin: "0 0 8px", display: "flex", alignItems: "center", gap: "8px" }}>
-                      <Icon name="trendingUp" size={18} color="#38BDF8" />
+                      <img src="/images/cacao.svg" alt="Economía" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(73%) sepia(35%) saturate(1637%) hue-rotate(170deg) brightness(102%) contrast(97%)" }} />
                       <span>Dinámica Económica y Productiva</span>
                     </h3>
                     <p style={{ fontSize: "14px", lineHeight: "1.6", color: "rgba(255,255,255,0.9)", margin: 0 }}>
@@ -885,7 +885,7 @@ export default function MasDeNicaraguaPage() {
                         padding: "16px"
                       }}>
                         <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(56, 189, 248, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#38BDF8", marginBottom: "10px" }}>
-                          <Icon name="trendingUp" size={16} color="#38BDF8" />
+                          <img src="/images/cacao.svg" alt="Sector" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(73%) sepia(35%) saturate(1637%) hue-rotate(170deg) brightness(102%) contrast(97%)" }} />
                         </div>
                         <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 4px" }}>
                           {sec.titulo}
@@ -904,7 +904,7 @@ export default function MasDeNicaraguaPage() {
                 <div>
                   <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "18px", padding: "18px", marginBottom: "18px" }}>
                     <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#10B981", margin: "0 0 8px", display: "flex", alignItems: "center", gap: "8px" }}>
-                      <Icon name="compass" size={18} color="#10B981" />
+                      <img src="/images/playa.svg" alt="Turismo" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(67%) sepia(38%) saturate(972%) hue-rotate(113deg) brightness(97%) contrast(90%)" }} />
                       <span>Oferta Turística de {selectedDeptForDetails.nombre}</span>
                     </h3>
                     <p style={{ fontSize: "14px", lineHeight: "1.6", color: "rgba(255,255,255,0.9)", margin: 0 }}>
@@ -938,7 +938,7 @@ export default function MasDeNicaraguaPage() {
                 <div>
                   <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "18px", padding: "18px", marginBottom: "18px" }}>
                     <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#F59E0B", margin: "0 0 8px", display: "flex", alignItems: "center", gap: "8px" }}>
-                      <Icon name="music" size={18} color="#F59E0B" />
+                      <img src="/images/Volcan.svg" alt="Pasatiempos" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(70%) sepia(50%) saturate(1500%) hue-rotate(1deg) brightness(100%) contrast(100%)" }} />
                       <span>Pasatiempos, Tradiciones y Estilo de Vida</span>
                     </h3>
                     <p style={{ fontSize: "14px", lineHeight: "1.6", color: "rgba(255,255,255,0.9)", margin: 0 }}>
@@ -952,7 +952,7 @@ export default function MasDeNicaraguaPage() {
                         background: "rgba(255, 255, 255, 0.05)",
                         border: "1px solid rgba(245, 158, 11, 0.2)",
                         borderRadius: "14px",
-                        padding: "14px 16px",
+                        padding: "14px",
                         display: "flex",
                         alignItems: "center",
                         gap: "12px"
@@ -973,7 +973,7 @@ export default function MasDeNicaraguaPage() {
               {modalActiveTab === "lugares" && (
                 <div>
                   <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#FFFFFF", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <Icon name="landmark" size={18} color="#FFD700" />
+                    <img src="/images/San Juan del sur.svg" alt="Lugares Importantes" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
                     <span>Sitios Emblemáticos Imperdibles</span>
                   </h3>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "16px" }}>
@@ -1030,7 +1030,7 @@ export default function MasDeNicaraguaPage() {
                     {(selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard) && (
                       <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(236, 72, 153, 0.3)", borderRadius: "18px", padding: "14px" }}>
                         <h4 style={{ fontSize: "13px", fontWeight: "800", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                          <img src="/images/masaaya.svg" alt="Masaya" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                          <img src="/images/masaaya.svg" alt="Masaya" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
                           <span>Galería Fotográfica de {selectedDeptForDetails.nombre}</span>
                         </h4>
                         <div
@@ -1064,7 +1064,7 @@ export default function MasDeNicaraguaPage() {
                     {selectedDeptForDetails.galeria && selectedDeptForDetails.galeria.length > 0 && (
                       <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "18px", padding: "14px" }}>
                         <h4 style={{ fontSize: "12px", fontWeight: "800", color: "rgba(255,255,255,0.8)", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                          <img src="/images/castillorio san juan.svg" alt="Castillo San Juan" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                          <img src="/images/masaaya.svg" alt="Galería" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(0.85)" }} />
                           <span>Fotografías de Galería</span>
                         </h4>
                         <div style={{
@@ -1116,7 +1116,7 @@ export default function MasDeNicaraguaPage() {
               {modalActiveTab === "actividades" && (
                 <div>
                   <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#FFFFFF", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
-                    <Icon name="party" size={22} color="#FFD700" />
+                    <img src="/images/caña.svg" alt="Actividades" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
                     <span>Fiestas Patronales, Eventos y Tradiciones</span>
                   </h3>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "18px" }}>
@@ -1218,11 +1218,11 @@ export default function MasDeNicaraguaPage() {
         const allImages = [];
         const heroImg = selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard;
         if (heroImg) {
-          allImages.push({ src: heroImg, label: "Imagen de Referencia" });
+          allImages.push({ src: heroImg, label: "Fotografía 1" });
         }
         if (selectedDeptForDetails.galeria) {
           selectedDeptForDetails.galeria.forEach((src, i) => {
-            allImages.push({ src, label: `Fotografía ${i + 1}` });
+            allImages.push({ src, label: `Fotografía ${heroImg ? i + 2 : i + 1}` });
           });
         }
 

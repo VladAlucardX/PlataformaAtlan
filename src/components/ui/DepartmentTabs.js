@@ -8,13 +8,13 @@ export default function DepartmentTabs({ activeTab, onSelectTab, isModal = false
   const { t, lang } = useTranslation();
 
   const TABS = [
-    { id: "galeria", label: t("nicaragua.gallery") || (lang === "en" ? "Gallery" : "Galería"), icon: "image", emoji: "📸" },
-    { id: "historia", label: t("nicaragua.history") || (lang === "en" ? "History" : "Historia"), icon: "book", emoji: "📜" },
-    { id: "economia", label: t("nicaragua.economy") || (lang === "en" ? "Economy" : "Economía"), icon: "trendingUp", emoji: "💰" },
-    { id: "turismo", label: t("nicaragua.tourism") || (lang === "en" ? "Tourism" : "Turismo"), icon: "compass", emoji: "🏖️" },
-    { id: "pasatiempos", label: t("nicaragua.hobbies") || (lang === "en" ? "Hobbies & Culture" : "Pasatiempos"), icon: "music", emoji: "🎭" },
-    { id: "lugares", label: t("nicaragua.landmarks") || (lang === "en" ? "Landmarks" : "Lugares Importantes"), icon: "landmark", emoji: "📍" },
-    { id: "actividades", label: t("nicaragua.activities") || (lang === "en" ? "Activities & Events" : "Actividades"), icon: "calendar", emoji: "🎉" },
+    { id: "galeria", label: t("nicaragua.gallery") || (lang === "en" ? "Gallery" : "Galería"), svg: "/images/masaaya.svg" },
+    { id: "historia", label: t("nicaragua.history") || (lang === "en" ? "History" : "Historia"), svg: "/images/managua catedral.svg" },
+    { id: "economia", label: t("nicaragua.economy") || (lang === "en" ? "Economy" : "Economía"), svg: "/images/cacao.svg" },
+    { id: "turismo", label: t("nicaragua.tourism") || (lang === "en" ? "Tourism" : "Turismo"), svg: "/images/playa.svg" },
+    { id: "pasatiempos", label: t("nicaragua.hobbies") || (lang === "en" ? "Hobbies & Culture" : "Pasatiempos"), svg: "/images/Volcan.svg" },
+    { id: "lugares", label: t("nicaragua.landmarks") || (lang === "en" ? "Landmarks" : "Lugares Importantes"), svg: "/images/San Juan del sur.svg" },
+    { id: "actividades", label: t("nicaragua.activities") || (lang === "en" ? "Activities & Events" : "Actividades"), svg: "/images/caña.svg" },
   ];
 
   return (
@@ -67,7 +67,18 @@ export default function DepartmentTabs({ activeTab, onSelectTab, isModal = false
               }}
               className="dept-tab-btn"
             >
-              <Icon name={tab.icon} size={isModal ? 15 : 17} color={isActive ? "#FFD700" : "rgba(255, 255, 255, 0.75)"} />
+              <img
+                src={tab.svg}
+                alt={tab.label}
+                style={{
+                  width: isModal ? "16px" : "18px",
+                  height: isModal ? "16px" : "18px",
+                  objectFit: "contain",
+                  filter: isActive
+                    ? "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)"
+                    : "brightness(0) invert(0.85)"
+                }}
+              />
               <span>{tab.label}</span>
             </button>
           );
