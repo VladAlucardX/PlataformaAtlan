@@ -624,7 +624,7 @@ export default function DepartamentosPage() {
           {/* Columna Derecha: Ranking Top Lugares (Panel Traslúcido Azul Navbar con Tortuga de Fondo) */}
           <div style={{ background: "rgba(10, 25, 47, 0.72)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255, 255, 255, 0.14)", borderRadius: "20px", padding: "14px", boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)", display: "flex", flexDirection: "column", height: "100%", maxHeight: "100%", minHeight: 0, boxSizing: "border-box", overflow: "hidden", position: "relative" }}>
             
-            {/* Elemento Decorativo: Tortuga SVG Agrandada al Fondo del Panel Derecho */}
+            {/* Elemento Decorativo: Volcan SVG Agrandado al Fondo del Panel Derecho */}
             <div
               style={{
                 position: "absolute",
@@ -642,8 +642,8 @@ export default function DepartamentosPage() {
               }}
             >
               <img
-                src="/images/tortuga.svg"
-                alt="Tortuga Atlan"
+                src="/images/Volcan.svg"
+                alt="Volcán Atlan"
                 style={{
                   width: "100%",
                   height: "100%",
@@ -835,31 +835,30 @@ export default function DepartamentosPage() {
                           <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
                             {/* Píldora de Posición: Lugar 1 (Oro), Lugar 2 (Plata), Lugar 3 (Cobre) */}
                             <div style={{ 
-                              minWidth: "62px", 
-                              padding: "5px 8px", 
+                              minWidth: "66px", 
+                              padding: "6px 9px", 
                               borderRadius: "8px", 
                               background: pos === 1 
                                 ? "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)" 
                                 : pos === 2 
-                                ? "linear-gradient(135deg, rgba(226, 232, 240, 0.3) 0%, rgba(148, 163, 184, 0.2) 100%)" 
+                                ? "linear-gradient(135deg, rgba(226, 232, 240, 0.35) 0%, rgba(148, 163, 184, 0.25) 100%)" 
                                 : pos === 3 
-                                ? "linear-gradient(135deg, rgba(217, 119, 6, 0.45) 0%, rgba(180, 83, 9, 0.3) 100%)" 
-                                : "rgba(255, 255, 255, 0.08)", 
+                                ? "linear-gradient(135deg, rgba(217, 119, 6, 0.5) 0%, rgba(180, 83, 9, 0.35) 100%)" 
+                                : "rgba(255, 255, 255, 0.10)", 
                               display: "flex", 
                               alignItems: "center", 
                               justifyContent: "center", 
-                              fontSize: "11.5px", 
+                              fontSize: "12.5px", 
                               fontWeight: "900", 
-                              color: pos === 1 ? "#FFFFFF" : pos === 2 ? "#F8FAFC" : pos === 3 ? "#FDBA74" : "#CBD5E1", 
+                              color: pos === 1 ? "#FFFFFF" : pos === 2 ? "#F8FAFC" : pos === 3 ? "#FDBA74" : "#FFFFFF", 
                               border: pos === 1 
-                                ? "1px solid rgba(255, 255, 255, 0.5)" 
+                                ? "1px solid rgba(255, 255, 255, 0.6)" 
                                 : pos === 2 
-                                ? "1px solid rgba(226, 232, 240, 0.45)" 
+                                ? "1px solid rgba(226, 232, 240, 0.5)" 
                                 : pos === 3 
-                                ? "1px solid rgba(249, 115, 22, 0.5)" 
-                                : "1px solid rgba(255, 255, 255, 0.18)",
+                                ? "1px solid rgba(249, 115, 22, 0.55)" 
+                                : "1px solid rgba(255, 255, 255, 0.22)",
                               flexShrink: 0,
-                              textShadow: "0 1px 2px rgba(0,0,0,0.6)",
                               boxShadow: pos === 1 
                                 ? "0 2px 8px rgba(245, 158, 11, 0.35)" 
                                 : "none"
@@ -872,26 +871,25 @@ export default function DepartamentosPage() {
                               <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "nowrap", overflow: "hidden" }}>
                                 <h3 style={{ 
                                   margin: 0, 
-                                  fontSize: "14px", 
-                                  fontWeight: "800", 
+                                  fontSize: "15.5px", 
+                                  fontWeight: "900", 
                                   color: "#FFFFFF", 
                                   whiteSpace: "nowrap", 
                                   overflow: "hidden", 
                                   textOverflow: "ellipsis",
-                                  letterSpacing: "0.2px",
-                                  textShadow: "0 1px 3px rgba(0,0,0,0.8)"
+                                  letterSpacing: "0.2px"
                                 }}>
                                   {lugar.nombre}
                                 </h3>
                                 <span style={{ 
-                                  fontSize: "9.5px", 
+                                  fontSize: "10.5px", 
                                   fontWeight: "800", 
                                   textTransform: "uppercase", 
-                                  background: "rgba(56, 189, 248, 0.22)", 
+                                  background: "rgba(56, 189, 248, 0.25)", 
                                   color: "#7DD3FC", 
-                                  border: "1px solid rgba(56, 189, 248, 0.35)",
-                                  padding: "2px 6px", 
-                                  borderRadius: "5px", 
+                                  border: "1px solid rgba(56, 189, 248, 0.4)",
+                                  padding: "2px 7px", 
+                                  borderRadius: "6px", 
                                   flexShrink: 0 
                                 }}>
                                   {lugar.categoria}
@@ -899,10 +897,10 @@ export default function DepartamentosPage() {
                               </div>
 
                               {/* Departamento con Ubicacion.svg y Rating estandarizado a 1 decimal (ej. 5.0) */}
-                              <p style={{ margin: "3px 0 0 0", fontSize: "11.5px", color: "#E2E8F0", fontWeight: "600", display: "flex", alignItems: "center", gap: "10px" }}>
+                              <p style={{ margin: "3px 0 0 0", fontSize: "12.5px", color: "#F8FAFC", fontWeight: "700", display: "flex", alignItems: "center", gap: "10px" }}>
                                 <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                                  <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "13px", height: "13px", filter: "brightness(0) invert(0.95)", flexShrink: 0 }} />
-                                  <span style={{ textShadow: "0 1px 2px rgba(0,0,0,0.7)" }}>{lugar.departamento || 'Nicaragua'}</span>
+                                  <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "14px", height: "14px", filter: "brightness(0) invert(0.95)", flexShrink: 0 }} />
+                                  <span>{lugar.departamento || 'Nicaragua'}</span>
                                 </span>
 
                                 <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
@@ -911,14 +909,14 @@ export default function DepartamentosPage() {
                                       src="/images/flor.svg" 
                                       alt="Rating Flor" 
                                       style={{ 
-                                        width: "15px", 
-                                        height: "15px", 
+                                        width: "16px", 
+                                        height: "16px", 
                                         objectFit: "contain",
                                         filter: "drop-shadow(0 0 3px rgba(255, 215, 0, 0.95)) drop-shadow(0 0 1px #000)" 
                                       }} 
                                     />
                                   </span>
-                                  <span style={{ fontWeight: "800", color: "#FBBF24", textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{formattedRating}</span>
+                                  <span style={{ fontWeight: "900", color: "#FBBF24" }}>{formattedRating}</span>
                                 </span>
                               </p>
                             </div>
@@ -927,24 +925,23 @@ export default function DepartamentosPage() {
                           {/* Contador de Visitas con perfil.svg y Acción */}
                           <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px", flexShrink: 0 }}>
                             <div style={{
-                              background: rankingMode === 'propio' ? "rgba(56, 189, 248, 0.25)" : "rgba(255, 255, 255, 0.16)",
-                              border: rankingMode === 'propio' ? "1px solid rgba(56, 189, 248, 0.45)" : "1px solid rgba(255, 255, 255, 0.25)",
-                              padding: "4px 9px",
-                              borderRadius: "7px",
+                              background: rankingMode === 'propio' ? "rgba(56, 189, 248, 0.28)" : "rgba(255, 255, 255, 0.20)",
+                              border: rankingMode === 'propio' ? "1px solid rgba(56, 189, 248, 0.5)" : "1px solid rgba(255, 255, 255, 0.3)",
+                              padding: "5px 10px",
+                              borderRadius: "8px",
                               color: rankingMode === 'propio' ? "#7DD3FC" : "#FFFFFF",
-                              fontWeight: "800",
-                              fontSize: "11.5px",
+                              fontWeight: "900",
+                              fontSize: "12px",
                               display: "inline-flex",
                               alignItems: "center",
-                              gap: "4px",
-                              textShadow: "0 1px 2px rgba(0,0,0,0.6)"
+                              gap: "5px"
                             }}>
                               <img 
                                 src="/images/perfil.svg" 
                                 alt="Visitas" 
                                 style={{ 
-                                  width: "13px", 
-                                  height: "13px", 
+                                  width: "14px", 
+                                  height: "14px", 
                                   filter: rankingMode === 'propio' 
                                     ? "brightness(0) saturate(100%) invert(67%) sepia(85%) saturate(1800%) hue-rotate(170deg)" 
                                     : "brightness(0) invert(1)" 
