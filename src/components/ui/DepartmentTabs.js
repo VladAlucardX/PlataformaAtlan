@@ -8,13 +8,12 @@ export default function DepartmentTabs({ activeTab, onSelectTab, isModal = false
   const { t, lang } = useTranslation();
 
   const TABS = [
-    { id: "galeria", label: t("nicaragua.gallery") || (lang === "en" ? "Gallery" : "Galería"), svg: "/images/masaaya.svg" },
-    { id: "historia", label: t("nicaragua.history") || (lang === "en" ? "History" : "Historia"), svg: "/images/managua catedral.svg" },
-    { id: "economia", label: t("nicaragua.economy") || (lang === "en" ? "Economy" : "Economía"), svg: "/images/cacao.svg" },
-    { id: "turismo", label: t("nicaragua.tourism") || (lang === "en" ? "Tourism" : "Turismo"), svg: "/images/playa.svg" },
-    { id: "pasatiempos", label: t("nicaragua.hobbies") || (lang === "en" ? "Hobbies & Culture" : "Pasatiempos"), svg: "/images/Volcan.svg" },
-    { id: "lugares", label: t("nicaragua.landmarks") || (lang === "en" ? "Landmarks" : "Lugares Importantes"), svg: "/images/San Juan del sur.svg" },
-    { id: "actividades", label: t("nicaragua.activities") || (lang === "en" ? "Activities & Events" : "Actividades"), svg: "/images/caña.svg" },
+    { id: "galeria", label: t("nicaragua.gallery") || (lang === "en" ? "Gallery" : "Galería"), svgs: ["/images/masaaya.svg"] },
+    { id: "historia", label: t("nicaragua.history") || (lang === "en" ? "History" : "Historia"), svgs: ["/images/managua catedral.svg"] },
+    { id: "economia", label: t("nicaragua.economy") || (lang === "en" ? "Economy" : "Economía"), svgs: ["/images/cacao.svg"] },
+    { id: "turismo", label: t("nicaragua.tourism") || (lang === "en" ? "Tourism" : "Turismo"), svgs: ["/images/playa.svg"] },
+    { id: "pasatiempos", label: t("nicaragua.hobbies") || (lang === "en" ? "Hobbies & Culture" : "Pasatiempos"), svgs: ["/images/Volcan.svg"] },
+    { id: "lugares", label: t("nicaragua.landmarks_activities") || (lang === "en" ? "Landmarks & Activities" : "Lugares y Actividades"), svgs: ["/images/San Juan del sur.svg", "/images/caña.svg"] },
   ];
 
   return (
@@ -41,7 +40,7 @@ export default function DepartmentTabs({ activeTab, onSelectTab, isModal = false
         WebkitOverflowScrolling: "touch"
       }} className="dept-tabs-scroll">
         {TABS.map((tab) => {
-          const isActive = activeTab === tab.id;
+          const isActive = activeTab === tab.id || (tab.id === "lugares" && activeTab === "actividades");
           return (
             <button
               key={tab.id}
@@ -67,18 +66,23 @@ export default function DepartmentTabs({ activeTab, onSelectTab, isModal = false
               }}
               className="dept-tab-btn"
             >
-              <img
-                src={tab.svg}
-                alt={tab.label}
-                style={{
-                  width: isModal ? "16px" : "18px",
-                  height: isModal ? "16px" : "18px",
-                  objectFit: "contain",
-                  filter: isActive
-                    ? "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)"
-                    : "brightness(0) invert(0.85)"
-                }}
-              />
+              <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                {tab.svgs.map((svgPath, sIdx) => (
+                  <img
+                    key={sIdx}
+                    src={svgPath}
+                    alt={tab.label}
+                    style={{
+                      width: isModal ? "16px" : "18px",
+                      height: isModal ? "16px" : "18px",
+                      objectFit: "contain",
+                      filter: isActive
+                        ? "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)"
+                        : "brightness(0) invert(0.85)"
+                    }}
+                  />
+                ))}
+              </div>
               <span>{tab.label}</span>
             </button>
           );

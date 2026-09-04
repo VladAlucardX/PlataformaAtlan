@@ -969,74 +969,132 @@ export default function MasDeNicaraguaPage() {
                 </div>
               )}
 
-              {/* 5. LUGARES IMPORTANTES */}
-              {modalActiveTab === "lugares" && (
+              {/* 5. LUGARES IMPORTANTES Y ACTIVIDADES (COMBINADO) */}
+              {(modalActiveTab === "lugares" || modalActiveTab === "actividades") && (
                 <div>
-                  <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#FFFFFF", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <img src="/images/San Juan del sur.svg" alt="Lugares Importantes" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
-                    <span>Sitios Emblemáticos Imperdibles</span>
+                  {/* Encabezado General Integrado con Ambos SVGs */}
+                  <h3 style={{ fontSize: "18px", fontWeight: "900", color: "#FFFFFF", marginBottom: "22px", display: "flex", alignItems: "center", gap: "10px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                      <img src="/images/San Juan del sur.svg" alt="Lugares" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
+                      <img src="/images/caña.svg" alt="Actividades" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
+                    </div>
+                    <span>Lugares Emblemáticos y Actividades Tradicionales</span>
                   </h3>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" }}>
-                    {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => (
-                      <div key={idx} style={{
-                        background: "linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.9) 100%)",
-                        border: "1px solid rgba(255, 215, 0, 0.25)",
-                        borderRadius: "16px",
-                        padding: "18px 20px",
-                        position: "relative",
-                        transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
-                        boxShadow: "0 4px 14px rgba(0,0,0,0.35)"
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.6)";
-                        e.currentTarget.style.transform = "translateY(-2px)";
-                        e.currentTarget.style.boxShadow = "0 8px 22px rgba(255, 215, 0, 0.15)";
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.25)";
-                        e.currentTarget.style.transform = "translateY(0)";
-                        e.currentTarget.style.boxShadow = "0 4px 14px rgba(0,0,0,0.35)";
-                      }}
-                      >
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
-                          <span style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "6px",
-                            background: "rgba(255, 215, 0, 0.12)",
-                            border: "1px solid rgba(255, 215, 0, 0.3)",
-                            color: "#FFD700",
-                            padding: "3px 10px",
-                            borderRadius: "8px",
-                            fontSize: "11px",
-                            fontWeight: "800"
-                          }}>
-                            <Icon name="mapPin" size={12} color="#FFD700" />
-                            <span>Sitio #{idx + 1}</span>
-                          </span>
 
-                          <img
-                            src="/images/San Juan del sur.svg"
-                            alt="Emblema"
-                            style={{
-                              width: "16px",
-                              height: "16px",
-                              objectFit: "contain",
-                              opacity: 0.85,
-                              filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)"
-                            }}
-                          />
-                        </div>
+                  {/* Subsección 1: Sitios Emblemáticos Imperdibles */}
+                  {selectedDeptForDetails.lugaresImportantes && selectedDeptForDetails.lugaresImportantes.length > 0 && (
+                    <div style={{ marginBottom: "28px" }}>
+                      <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#FFD700", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <img src="/images/San Juan del sur.svg" alt="Lugares" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
+                        <span>Sitios Emblemáticos Imperdibles</span>
+                      </h4>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" }}>
+                        {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => (
+                          <div key={idx} style={{
+                            background: "linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.9) 100%)",
+                            border: "1px solid rgba(255, 215, 0, 0.25)",
+                            borderRadius: "16px",
+                            padding: "18px 20px",
+                            position: "relative",
+                            transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                            boxShadow: "0 4px 14px rgba(0,0,0,0.35)"
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.6)";
+                            e.currentTarget.style.transform = "translateY(-2px)";
+                            e.currentTarget.style.boxShadow = "0 8px 22px rgba(255, 215, 0, 0.15)";
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.25)";
+                            e.currentTarget.style.transform = "translateY(0)";
+                            e.currentTarget.style.boxShadow = "0 4px 14px rgba(0,0,0,0.35)";
+                          }}
+                          >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+                              <span style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                background: "rgba(255, 215, 0, 0.12)",
+                                border: "1px solid rgba(255, 215, 0, 0.3)",
+                                color: "#FFD700",
+                                padding: "3px 10px",
+                                borderRadius: "8px",
+                                fontSize: "11px",
+                                fontWeight: "800"
+                              }}>
+                                <Icon name="mapPin" size={12} color="#FFD700" />
+                                <span>Sitio #{idx + 1}</span>
+                              </span>
 
-                        <h4 style={{ fontSize: "16px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px", lineHeight: "1.3" }}>
-                          {lugar.nombre}
-                        </h4>
-                        <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
-                          {lugar.desc}
-                        </p>
+                              <img
+                                src="/images/San Juan del sur.svg"
+                                alt="Emblema"
+                                style={{
+                                  width: "16px",
+                                  height: "16px",
+                                  objectFit: "contain",
+                                  opacity: 0.85,
+                                  filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)"
+                                }}
+                              />
+                            </div>
+
+                            <h5 style={{ fontSize: "16px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px", lineHeight: "1.3" }}>
+                              {lugar.nombre}
+                            </h5>
+                            <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                              {lugar.desc}
+                            </p>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
+
+                  {/* Subsección 2: Fiestas Patronales, Eventos y Tradiciones */}
+                  {selectedDeptForDetails.actividades && selectedDeptForDetails.actividades.length > 0 && (
+                    <div>
+                      <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#FFD700", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <img src="/images/caña.svg" alt="Actividades" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
+                        <span>Fiestas Patronales, Eventos y Tradiciones</span>
+                      </h4>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "18px" }}>
+                        {selectedDeptForDetails.actividades.map((act, idx) => (
+                          <div key={idx} style={{
+                            background: "linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(15, 23, 42, 0.85) 100%)",
+                            border: "1.5px solid rgba(255, 215, 0, 0.3)",
+                            borderRadius: "18px",
+                            padding: "20px"
+                          }}>
+                            <span style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              background: "#FFD700",
+                              color: "#0A192F",
+                              padding: "3px 10px",
+                              borderRadius: "8px",
+                              fontWeight: "900",
+                              fontSize: "11px",
+                              marginBottom: "10px"
+                            }}>
+                              <Icon name="calendar" size={12} color="#0A192F" />
+                              <span>{act.fecha}</span>
+                            </span>
+
+                            <h5 style={{ fontSize: "17px", fontWeight: "900", color: "#FFFFFF", margin: "0 0 6px" }}>
+                              {act.nombre}
+                            </h5>
+
+                            <p style={{ margin: 0, fontSize: "13.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                              {act.desc}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -1131,50 +1189,6 @@ export default function MasDeNicaraguaPage() {
                         </div>
                       </div>
                     )}
-                  </div>
-                </div>
-              )}
-
-              {/* 7. ACTIVIDADES */}
-              {modalActiveTab === "actividades" && (
-                <div>
-                  <h3 style={{ fontSize: "20px", fontWeight: "900", color: "#FFFFFF", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
-                    <img src="/images/caña.svg" alt="Actividades" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
-                    <span>Fiestas Patronales, Eventos y Tradiciones</span>
-                  </h3>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "18px" }}>
-                    {selectedDeptForDetails.actividades.map((act, idx) => (
-                      <div key={idx} style={{
-                        background: "linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(15, 23, 42, 0.85) 100%)",
-                        border: "1.5px solid rgba(255, 215, 0, 0.3)",
-                        borderRadius: "18px",
-                        padding: "20px"
-                      }}>
-                        <span style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "6px",
-                          background: "#FFD700",
-                          color: "#0A192F",
-                          padding: "3px 10px",
-                          borderRadius: "8px",
-                          fontWeight: "900",
-                          fontSize: "11px",
-                          marginBottom: "10px"
-                        }}>
-                          <Icon name="calendar" size={12} color="#0A192F" />
-                          <span>{act.fecha}</span>
-                        </span>
-
-                        <h4 style={{ fontSize: "17px", fontWeight: "900", color: "#FFFFFF", margin: "0 0 6px" }}>
-                          {act.nombre}
-                        </h4>
-
-                        <p style={{ margin: 0, fontSize: "13.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
-                          {act.desc}
-                        </p>
-                      </div>
-                    ))}
                   </div>
                 </div>
               )}
