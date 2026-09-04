@@ -434,9 +434,9 @@ export default function GuiasPage() {
             const isCarlos = mockG.nombre_completo.toLowerCase().includes("carlos");
             const activeProfile = isCarlos && rawSaved ? rawSaved : null;
 
-            // Buscar coincidencia en la BD ordenada por actualización reciente
+            // Buscar coincidencia exacta en la BD ordenada por actualización reciente
             const dbMatch = formattedDbGuias.find(
-              (dbG) => dbG.id === mockG.id || (dbG.nombre_completo && dbG.nombre_completo.toLowerCase().trim().includes("carlos mendoza")) || (dbG.nombre_completo && dbG.nombre_completo.toLowerCase().trim() === mockG.nombre_completo.toLowerCase().trim())
+              (dbG) => dbG.id === mockG.id || (dbG.nombre_completo && dbG.nombre_completo.toLowerCase().trim() === mockG.nombre_completo.toLowerCase().trim())
             );
 
             const source = activeProfile || dbMatch;
