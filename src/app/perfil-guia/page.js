@@ -601,10 +601,10 @@ export default function PerfilGuiaPage() {
                 </div>
               </div>
 
-              {/* Grid 2x2 de Estadísticas */}
+              {/* Estadísticas del Guía: Tarifa debajo de Especialidad */}
               <div style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
+                display: "flex",
+                flexDirection: "column",
                 gap: "8px",
                 background: "rgba(241, 245, 249, 0.8)",
                 padding: "10px 12px",
@@ -614,19 +614,23 @@ export default function PerfilGuiaPage() {
               }}>
                 <div>
                   <span style={{ fontSize: "9.5px", color: "#64748B", fontWeight: "750", display: "block" }}>ESPECIALIDAD</span>
-                  <span style={{ fontSize: "11.5px", color: "#1A1A2E", fontWeight: "800", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{guiaEspecialidad}</span>
+                  <span style={{ fontSize: "12px", color: "#1A1A2E", fontWeight: "800", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{guiaEspecialidad}</span>
                 </div>
-                <div>
-                  <span style={{ fontSize: "9.5px", color: "#64748B", fontWeight: "750", display: "block" }}>TARIFA</span>
-                  <span style={{ fontSize: "11.5px", color: "#10B981", fontWeight: "800", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{guiaTarifa}</span>
+
+                <div style={{ paddingTop: "6px", borderTop: "1px dashed rgba(203, 213, 225, 0.8)" }}>
+                  <span style={{ fontSize: "9.5px", color: "#64748B", fontWeight: "750", display: "block" }}>TARIFA ESTIMADA</span>
+                  <span style={{ fontSize: "13px", color: "#059669", fontWeight: "900", display: "block" }}>{guiaTarifa}</span>
                 </div>
-                <div>
-                  <span style={{ fontSize: "9.5px", color: "#64748B", fontWeight: "750", display: "block" }}>TRAVESÍAS</span>
-                  <span style={{ fontSize: "11.5px", color: "#0EA5E9", fontWeight: "800", display: "block" }}>{guiaGaleria.length} fotos</span>
-                </div>
-                <div>
-                  <span style={{ fontSize: "9.5px", color: "#64748B", fontWeight: "750", display: "block" }}>DESTINOS</span>
-                  <span style={{ fontSize: "11.5px", color: "#0EA5E9", fontWeight: "800", display: "block" }}>{guiaDestinosMapa.length} lugares</span>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", paddingTop: "6px", borderTop: "1px dashed rgba(203, 213, 225, 0.8)" }}>
+                  <div>
+                    <span style={{ fontSize: "9.5px", color: "#64748B", fontWeight: "750", display: "block" }}>TRAVESÍAS</span>
+                    <span style={{ fontSize: "11.5px", color: "#0EA5E9", fontWeight: "800", display: "block" }}>{guiaGaleria.length} fotos</span>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: "9.5px", color: "#64748B", fontWeight: "750", display: "block" }}>DESTINOS</span>
+                    <span style={{ fontSize: "11.5px", color: "#0EA5E9", fontWeight: "800", display: "block" }}>{guiaDestinosMapa.length} lugares</span>
+                  </div>
                 </div>
               </div>
 
