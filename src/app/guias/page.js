@@ -8,12 +8,12 @@ import { useTranslation } from "@/hooks/useTranslation";
 import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
 
-// Guías turísticos de demostración con Galería de Fotos de Travesías
+// Guías turísticos de demostración con imágenes REALES del proyecto
 const MOCK_GUIAS = [
   {
     id: "guia-1",
     nombre_completo: "Carlos Mendoza Silva",
-    avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80",
+    avatar_url: "/images/art1.jpeg",
     departamento_principal: "León",
     departamentos_secundarios: ["Chinandega", "Managua"],
     especialidad: "Senderismo y Volcanes",
@@ -29,15 +29,16 @@ const MOCK_GUIAS = [
     total_resenas: 34,
     activo: true,
     galeria_fotos: [
-      "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=500&q=80", // Cerro negro / Montaña
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&q=80", // Cumbre volcánica
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500&q=80"  // Paisaje volcánico
+      "/images/galeria-departamentos/leon/1.1.jpg",
+      "/images/galeria-departamentos/leon/2.jpg",
+      "/images/galeria-departamentos/leon/3.jpg",
+      "/images/galeria-departamentos/leon/4.jpg"
     ],
     resenas: [
       {
         id: "r1",
         autor_nombre: "Sarah Jenkins",
-        autor_avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80",
+        autor_avatar: "/images/art2.jpeg",
         puntuacion: 5,
         comentario: "¡Carlos fue insuperable en Cerro Negro! Nos cuidó en todo momento y nos contó la historia geológica fascinante de Nicaragua.",
         created_at: "2026-08-15T10:30:00Z"
@@ -45,7 +46,7 @@ const MOCK_GUIAS = [
       {
         id: "r2",
         autor_nombre: "Mateo Rivas",
-        autor_avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80",
+        autor_avatar: "/images/art3.jpeg",
         puntuacion: 5,
         comentario: "Excelente tour nocturno en el volcán Telica viendo la lava arder. Conoce los mejores spots fotográficos.",
         created_at: "2026-07-28T14:15:00Z"
@@ -55,7 +56,7 @@ const MOCK_GUIAS = [
   {
     id: "guia-2",
     nombre_completo: "María José López",
-    avatar_url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&q=80",
+    avatar_url: "/images/art2.jpeg",
     departamento_principal: "Granada",
     departamentos_secundarios: ["Masaya", "Rivas"],
     especialidad: "Cultura e Historia",
@@ -71,15 +72,16 @@ const MOCK_GUIAS = [
     total_resenas: 42,
     activo: true,
     galeria_fotos: [
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80", // Colonial Granada
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500&q=80", // Isletas bote
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80"  // Lago Cocibolca
+      "/images/galeria-departamentos/granada/1.1.jpg",
+      "/images/galeria-departamentos/granada/2.jpg",
+      "/images/galeria-departamentos/granada/3.jpg",
+      "/images/galeria-departamentos/granada/4.jpeg"
     ],
     resenas: [
       {
         id: "r3",
         autor_nombre: "Lucía Fernández",
-        autor_avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80",
+        autor_avatar: "/images/art5.png",
         puntuacion: 5,
         comentario: "Un recorrido cultural inolvidable por los templos y el Convento San Francisco. María transmite un amor contagioso por la historia.",
         created_at: "2026-08-20T11:00:00Z"
@@ -89,7 +91,7 @@ const MOCK_GUIAS = [
   {
     id: "guia-3",
     nombre_completo: "Alejandro Jarquín",
-    avatar_url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&q=80",
+    avatar_url: "/images/art3.jpeg",
     departamento_principal: "Rivas",
     departamentos_secundarios: ["Isla de Ometepe", "San Juan del Sur"],
     especialidad: "Ecoturismo Integral",
@@ -105,15 +107,16 @@ const MOCK_GUIAS = [
     total_resenas: 27,
     activo: true,
     galeria_fotos: [
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80", // Ometepe isla
-      "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=500&q=80", // Playa San Juan
-      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500&q=80"  // Cascada San Ramón
+      "/images/galeria-departamentos/rivas/1.1.webp",
+      "/images/galeria-departamentos/rivas/2.jpg",
+      "/images/galeria-departamentos/rivas/3.jpg",
+      "/images/galeria-departamentos/rivas/4.jpg"
     ],
     resenas: [
       {
         id: "r4",
         autor_nombre: "David Miller",
-        autor_avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&q=80",
+        autor_avatar: "/images/art1.jpeg",
         puntuacion: 5,
         comentario: "The trek to Volcán Maderas lagoon was challenging but Alejandro kept our spirits high. Truly awesome experience!",
         created_at: "2026-08-02T16:45:00Z"
@@ -123,7 +126,7 @@ const MOCK_GUIAS = [
   {
     id: "guia-4",
     nombre_completo: "Brenda Castillo",
-    avatar_url: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&q=80",
+    avatar_url: "/images/art5.png",
     departamento_principal: "Matagalpa",
     departamentos_secundarios: ["Jinotega", "Estelí"],
     especialidad: "Avistamiento de Aves",
@@ -139,20 +142,47 @@ const MOCK_GUIAS = [
     total_resenas: 39,
     activo: true,
     galeria_fotos: [
-      "https://images.unsplash.com/photo-1448375240586-882707db888b?w=500&q=80", // Bosque nuboso
-      "https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=500&q=80", // Ave quetzal / ornitología
-      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=500&q=80"  // Finca café
+      "/images/galeria-departamentos/matagalpa/1.1.jpg",
+      "/images/galeria-departamentos/matagalpa/2.jpg",
+      "/images/galeria-departamentos/matagalpa/3.jpg",
+      "/images/galeria-departamentos/matagalpa/4.jpg"
     ],
     resenas: [
       {
         id: "r5",
         autor_nombre: "Hans Weber",
-        autor_avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&q=80",
+        autor_avatar: "/images/art4.png",
         puntuacion: 5,
         comentario: "Sehr gut! Brenda hat uns das bezaubernde Quetzal im Nebelwald gezeigt. Unglaubliche Erfahrung.",
         created_at: "2026-07-12T09:20:00Z"
       }
     ]
+  },
+  {
+    id: "guia-5",
+    nombre_completo: "Nestor Moncada",
+    avatar_url: "/images/art4.png",
+    departamento_principal: "Masaya",
+    departamentos_secundarios: ["Carazo", "Granada"],
+    especialidad: "Gastronomía Tradicional",
+    idiomas: "Español, Inglés",
+    experiencia_anios: 7,
+    tarifa_aprox: "$25 - $40 / día",
+    biografia: "Apasionado por el folclore y los sabores auténticos de Masaya y los Pueblos Blancos. Experto en recorridos artesanales por Monimbó, Catarina, San Juan de Oriente y avistamiento del lago de lava en el Volcán Masaya.",
+    telefono_contacto: "+505 8633 2211",
+    whatsapp: "50586332211",
+    instagram: "@nestor_masaya_tradicion",
+    licencia_intur: "INTUR-MS-2019-722",
+    rating_promedio: 4.7,
+    total_resenas: 19,
+    activo: true,
+    galeria_fotos: [
+      "/images/galeria-departamentos/masaya/1.1.jpg",
+      "/images/galeria-departamentos/masaya/2.jpg",
+      "/images/galeria-departamentos/masaya/3.jpg",
+      "/images/galeria-departamentos/masaya/4.jpeg"
+    ],
+    resenas: []
   }
 ];
 
@@ -188,7 +218,7 @@ export default function GuiasPage() {
 
   // Modal de Detalle de Guía
   const [selectedGuiaModal, setSelectedGuiaModal] = useState(null);
-  const [activeModalTab, setActiveModalTab] = useState("info"); // 'info' | 'galeria' | 'resenas'
+  const [activeModalTab, setActiveModalTab] = useState("info");
 
   // Formulario de Reseña
   const [newRating, setNewRating] = useState(5);
@@ -212,7 +242,10 @@ export default function GuiasPage() {
             nombre_completo: g.perfiles?.nombre_completo || g.nombre_completo || "Guía Turístico",
             avatar_url: g.perfiles?.avatar_url || g.avatar_url || "/images/perfil.svg",
             resenas: g.resenas || [],
-            galeria_fotos: g.galeria_fotos || []
+            galeria_fotos: g.galeria_fotos && g.galeria_fotos.length > 0 ? g.galeria_fotos : [
+              "/images/galeria-departamentos/leon/1.1.jpg",
+              "/images/galeria-departamentos/leon/2.jpg"
+            ]
           }));
           setGuias(formatted);
         } else {
@@ -320,7 +353,6 @@ export default function GuiasPage() {
 
       {/* CAPA DE FONDO DUPLICADA EN ESPEJO DE FONDOHRACIO.PNG */}
       <div style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden", pointerEvents: "none" }}>
-        {/* Mitad Izquierda (Normal) */}
         <div
           style={{
             position: "absolute",
@@ -335,7 +367,6 @@ export default function GuiasPage() {
           }}
         />
 
-        {/* Mitad Derecha (Invertida Espejo) */}
         <div
           style={{
             position: "absolute",
@@ -398,9 +429,9 @@ export default function GuiasPage() {
 
       {/* FILTROS Y CONTENEDOR ANCHO */}
       <main style={styles.mainContainerWide}>
-        {/* BARRA DE FILTROS DELGADA Y HORIZONTAL */}
-        <div style={styles.filterBarSlim} className="clay-card-static no-sheen">
-          {/* Fila 1: Buscador + Ordenar */}
+        {/* BARRA DE FILTROS ULTRA PROFESIONAL EN FILAS SEPARADAS */}
+        <div style={styles.filterPanelProfessional}>
+          {/* Fila 1: Buscador y Ordenamiento */}
           <div style={styles.filterRow1}>
             <div style={styles.searchBoxSlim}>
               <Icon name="search" size={16} color="#0EA5E9" />
@@ -431,60 +462,59 @@ export default function GuiasPage() {
             </div>
           </div>
 
-          {/* Fila 2: Pills de Departamentos y Especialidades */}
-          <div style={styles.filterRow2}>
-            {/* Departamentos */}
-            <div style={styles.pillsScrollWrapper}>
-              <span style={styles.pillsLabel}>
-                <Icon name="mapPin" size={13} color="#0EA5E9" />
-              </span>
-              <div style={styles.pillsScrollContainer}>
-                {DEPARTAMENTOS_LIST.map((dept) => {
-                  const isActive = selectedDept.toLowerCase() === dept.toLowerCase();
-                  return (
-                    <button
-                      key={dept}
-                      onClick={() => setSelectedDept(dept)}
-                      style={{
-                        ...styles.pillBtnSlim,
-                        border: isActive ? "1.5px solid #0EA5E9" : "1px solid rgba(255, 255, 255, 0.12)",
-                        background: isActive ? "rgba(14, 165, 233, 0.25)" : "rgba(15, 23, 42, 0.7)",
-                        color: isActive ? "#38BDF8" : "#94A3B8",
-                        fontWeight: isActive ? "800" : "600",
-                      }}
-                    >
-                      {dept}
-                    </button>
-                  );
-                })}
-              </div>
+          {/* Fila 2: SELECCIÓN INDEPENDIENTE DE DEPARTAMENTO */}
+          <div style={styles.filterGroupSection}>
+            <div style={styles.filterSectionTitle}>
+              <Icon name="mapPin" size={14} color="#0EA5E9" />
+              <span>{lang === "en" ? "Filter by Department:" : "Filtrar por Departamento:"}</span>
             </div>
+            <div style={styles.pillsScrollContainer}>
+              {DEPARTAMENTOS_LIST.map((dept) => {
+                const isActive = selectedDept.toLowerCase() === dept.toLowerCase();
+                return (
+                  <button
+                    key={dept}
+                    onClick={() => setSelectedDept(dept)}
+                    style={{
+                      ...styles.pillBtnSlim,
+                      border: isActive ? "1.5px solid #0EA5E9" : "1px solid rgba(255, 255, 255, 0.12)",
+                      background: isActive ? "rgba(14, 165, 233, 0.28)" : "rgba(15, 23, 42, 0.7)",
+                      color: isActive ? "#38BDF8" : "#94A3B8",
+                      fontWeight: isActive ? "800" : "600",
+                    }}
+                  >
+                    {dept}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-            {/* Especialidad */}
-            <div style={styles.pillsScrollWrapper}>
-              <span style={styles.pillsLabel}>
-                <Icon name="tag" size={13} color="#FFD700" />
-              </span>
-              <div style={styles.pillsScrollContainer}>
-                {ESPECIALIDADES_LIST.map((esp) => {
-                  const isActive = selectedEspecialidad.toLowerCase() === esp.toLowerCase();
-                  return (
-                    <button
-                      key={esp}
-                      onClick={() => setSelectedEspecialidad(esp)}
-                      style={{
-                        ...styles.pillBtnSlim,
-                        border: isActive ? "1.5px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.12)",
-                        background: isActive ? "rgba(255, 215, 0, 0.2)" : "rgba(15, 23, 42, 0.7)",
-                        color: isActive ? "#FFD700" : "#94A3B8",
-                        fontWeight: isActive ? "800" : "600",
-                      }}
-                    >
-                      {esp}
-                    </button>
-                  );
-                })}
-              </div>
+          {/* Fila 3: SELECCIÓN INDEPENDIENTE DE TIPO DE TOUR / ESPECIALIDAD */}
+          <div style={styles.filterGroupSection}>
+            <div style={styles.filterSectionTitle}>
+              <Icon name="tag" size={14} color="#FFD700" />
+              <span>{lang === "en" ? "Tour Specialty / Experience:" : "Tipo de Tour / Especialidad del Guía:"}</span>
+            </div>
+            <div style={styles.pillsScrollContainer}>
+              {ESPECIALIDADES_LIST.map((esp) => {
+                const isActive = selectedEspecialidad.toLowerCase() === esp.toLowerCase();
+                return (
+                  <button
+                    key={esp}
+                    onClick={() => setSelectedEspecialidad(esp)}
+                    style={{
+                      ...styles.pillBtnSlim,
+                      border: isActive ? "1.5px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.12)",
+                      background: isActive ? "rgba(255, 215, 0, 0.22)" : "rgba(15, 23, 42, 0.7)",
+                      color: isActive ? "#FFD700" : "#94A3B8",
+                      fontWeight: isActive ? "800" : "600",
+                    }}
+                  >
+                    {esp}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -510,7 +540,7 @@ export default function GuiasPage() {
           )}
         </div>
 
-        {/* REJILLA DE TARJETAS HORIZONTALES DE GUÍAS (DISEÑO A LO ANCHO) */}
+        {/* REJILLA DE TARJETAS HORIZONTALES DE GUÍAS (ACABADO GLASSMORPHI SINFÍN BORDES BLANCOS) */}
         {guiasFiltrados.length === 0 ? (
           <div style={styles.emptyStateSlim}>
             <Icon name="compass" size={42} color="#475569" />
@@ -528,8 +558,8 @@ export default function GuiasPage() {
             {guiasFiltrados.map((guia) => (
               <div
                 key={guia.id}
-                style={styles.guideCardWide}
-                className="clay-card-static no-sheen guide-card-hover"
+                style={styles.guideCardGlass}
+                className="guide-card-hover"
               >
                 {/* Columna Izquierda: Información de Guía */}
                 <div style={styles.guideCardMainInfo}>
@@ -622,7 +652,7 @@ export default function GuiasPage() {
                   </div>
                 </div>
 
-                {/* Columna Derecha: Tira de Galería de Travesías (Vista Previa de Fotos del Guía) */}
+                {/* Columna Derecha: Tira de Galería de Travesías (Con imágenes reales de Nicaragua) */}
                 {guia.galeria_fotos && guia.galeria_fotos.length > 0 && (
                   <div style={styles.travesiaStripRight}>
                     <div style={styles.travesiaStripHeader}>
@@ -657,7 +687,6 @@ export default function GuiasPage() {
         <div style={styles.modalOverlay} onClick={() => setSelectedGuiaModal(null)}>
           <div
             style={styles.modalCardWide}
-            className="clay-card-static no-sheen animate-fade-in-up"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Botón Cerrar Modal */}
@@ -703,7 +732,7 @@ export default function GuiasPage() {
               </div>
             </div>
 
-            {/* Pestañas del Modal: Información | Galería de Travesías | Reseñas */}
+            {/* Pestañas del Modal */}
             <div style={styles.modalTabsRow}>
               <button
                 onClick={() => setActiveModalTab("info")}
@@ -936,7 +965,6 @@ const styles = {
     position: "relative",
     overflowX: "hidden"
   },
-  // SVGs Emblemáticos de Nicaragua de fondo con marca de agua sutil
   bgSvgGuardabarranco: {
     position: "absolute",
     top: "40px",
@@ -1048,16 +1076,18 @@ const styles = {
     zIndex: 2
   },
 
-  filterBarSlim: {
-    background: "rgba(15, 23, 42, 0.85)",
-    border: "1px solid rgba(255, 255, 255, 0.12)",
-    borderRadius: "16px",
-    padding: "12px 16px",
+  // PANEL DE FILTROS ULTRA PROFESIONAL
+  filterPanelProfessional: {
+    background: "rgba(15, 23, 42, 0.88)",
+    border: "1px solid rgba(56, 189, 248, 0.18)",
+    borderRadius: "20px",
+    padding: "16px 20px",
     backdropFilter: "blur(16px)",
-    marginBottom: "20px",
+    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+    marginBottom: "22px",
     display: "flex",
     flexDirection: "column",
-    gap: "10px"
+    gap: "14px"
   },
   filterRow1: {
     display: "flex",
@@ -1071,7 +1101,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "8px",
-    background: "rgba(30, 41, 59, 0.8)",
+    background: "rgba(30, 41, 59, 0.85)",
     border: "1px solid rgba(255, 255, 255, 0.12)",
     borderRadius: "10px",
     padding: "8px 12px"
@@ -1111,21 +1141,20 @@ const styles = {
     outline: "none",
     cursor: "pointer"
   },
-  filterRow2: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "12px"
+
+  // FILTROS EN GRUPOS INDEPENDIENTES CON ENCABEZADO
+  filterGroupSection: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px"
   },
-  pillsScrollWrapper: {
+  filterSectionTitle: {
+    fontSize: "12.5px",
+    fontWeight: "750",
+    color: "#E2E8F0",
     display: "flex",
     alignItems: "center",
-    gap: "6px",
-    overflow: "hidden"
-  },
-  pillsLabel: {
-    display: "flex",
-    alignItems: "center",
-    flexShrink: 0
+    gap: "6px"
   },
   pillsScrollContainer: {
     display: "flex",
@@ -1136,7 +1165,7 @@ const styles = {
     scrollbarWidth: "none"
   },
   pillBtnSlim: {
-    padding: "4px 12px",
+    padding: "5px 13px",
     borderRadius: "999px",
     fontSize: "12px",
     cursor: "pointer",
@@ -1180,20 +1209,21 @@ const styles = {
     gap: "4px"
   },
 
-  // REJILLA HORIZONTAL A LO ANCHO
+  // TARJETAS GLASSMORPISM ELEGANTES SIN BORDES BLANCOS EN L
   guidesGridWide: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(430px, 1fr))",
     gap: "18px"
   },
-  guideCardWide: {
-    background: "rgba(15, 23, 42, 0.8)",
-    border: "1px solid rgba(255, 255, 255, 0.12)",
+  guideCardGlass: {
+    background: "rgba(15, 23, 42, 0.88)",
+    border: "1px solid rgba(56, 189, 248, 0.15)",
     borderRadius: "18px",
     padding: "16px",
     display: "flex",
     gap: "14px",
-    backdropFilter: "blur(12px)",
+    backdropFilter: "blur(16px)",
+    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.25)",
     transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
   },
   guideCardMainInfo: {
@@ -1209,8 +1239,8 @@ const styles = {
   },
   avatarWrapperWide: {
     position: "relative",
-    width: "54px",
-    height: "54px",
+    width: "56px",
+    height: "56px",
     flexShrink: 0
   },
   avatarImgWide: {
@@ -1347,9 +1377,9 @@ const styles = {
     gap: "4px"
   },
 
-  // TIRA DE VISTA PREVIA DE FOTOS DE TRAVESÍAS
+  // TIRA DE FOTOS DE TRAVESÍAS DEL GUÍA
   travesiaStripRight: {
-    width: "110px",
+    width: "115px",
     flexShrink: 0,
     display: "flex",
     flexDirection: "column",
@@ -1373,7 +1403,7 @@ const styles = {
   },
   travesiaThumbBox: {
     width: "100%",
-    height: "44px",
+    height: "46px",
     borderRadius: "8px",
     overflow: "hidden",
     cursor: "pointer",
@@ -1407,7 +1437,7 @@ const styles = {
   modalOverlay: {
     position: "fixed",
     inset: 0,
-    background: "rgba(0, 0, 0, 0.75)",
+    background: "rgba(0, 0, 0, 0.78)",
     backdropFilter: "blur(8px)",
     zIndex: 1000,
     display: "flex",
@@ -1421,7 +1451,7 @@ const styles = {
     maxHeight: "90vh",
     overflowY: "auto",
     background: "#0F172A",
-    border: "1px solid rgba(255, 255, 255, 0.15)",
+    border: "1px solid rgba(56, 189, 248, 0.25)",
     borderRadius: "24px",
     padding: "24px",
     position: "relative",
