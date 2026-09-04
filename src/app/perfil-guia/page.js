@@ -900,10 +900,6 @@ export default function PerfilGuiaPage() {
                       Información visible para los turistas en el directorio público y mapa interactivo.
                     </p>
                   </div>
-                  <div style={{ background: "rgba(16, 185, 129, 0.1)", color: "#10B981", fontSize: "11px", fontWeight: "800", padding: "4px 10px", borderRadius: "8px", display: "flex", alignItems: "center", gap: "5px" }}>
-                    <Icon name="checkCircle" size={14} color="#10B981" />
-                    <span>Perfil Verificado INTUR</span>
-                  </div>
                 </div>
 
                 {/* CONTENIDO PRINCIPAL EN BLOQUES TIPO TARJETAS DASHBOARD */}
