@@ -535,7 +535,7 @@ export default function PerfilPublico() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif", position: "relative", overflow: "hidden" }}>
       {/* SVGs */}
-      <img src="/images/tortuga.svg" alt="" style={{ position: "fixed", bottom: "-10px", left: "-10px", width: "360px", maxHeight: "360px", objectFit: "contain", opacity: 0.18, pointerEvents: "none", zIndex: 0 }} />
+      <img src="/images/masaaya.svg" alt="" style={{ position: "fixed", top: "80px", left: "10px", width: "340px", height: "calc(100vh - 90px)", objectFit: "contain", opacity: 0.16, pointerEvents: "none", zIndex: 0 }} />
       <img src="/images/machoraton.svg" alt="" style={{ position: "fixed", top: "80px", right: "10px", width: "340px", height: "calc(100vh - 90px)", objectFit: "contain", opacity: 0.16, pointerEvents: "none", zIndex: 0 }} />
 
       <Navbar activePage="comunidad" session={session} perfil={myPerfil} />

@@ -839,16 +839,16 @@ export default function ComunidadPage() {
     }}>
       {/* Fondos decorativos SVG */}
       <img
-        src="/images/tortuga.svg"
+        src="/images/masaaya.svg"
         alt=""
         style={{
           position: "fixed",
-          bottom: "-10px",
-          left: "-10px",
-          width: "360px",
-          maxHeight: "360px",
+          top: "80px",
+          left: "10px",
+          width: "340px",
+          height: "calc(100vh - 90px)",
           objectFit: "contain",
-          opacity: 0.18,
+          opacity: 0.16,
           pointerEvents: "none",
           zIndex: 0
         }}
