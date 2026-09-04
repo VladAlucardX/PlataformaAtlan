@@ -976,43 +976,66 @@ export default function MasDeNicaraguaPage() {
                     <img src="/images/San Juan del sur.svg" alt="Lugares Importantes" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
                     <span>Sitios Emblemáticos Imperdibles</span>
                   </h3>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "16px" }}>
-                    {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => {
-                      const siteImg = getPointImage(lugar);
-                      return (
-                        <div key={idx} style={{
-                          background: "rgba(15, 23, 42, 0.8)",
-                          border: "1px solid rgba(255,255,255,0.12)",
-                          borderRadius: "16px",
-                          padding: "16px"
-                        }}>
-                          <div style={{
-                            height: "120px",
-                            borderRadius: "10px",
-                            overflow: "hidden",
-                            marginBottom: "12px",
-                            position: "relative",
-                            border: "1px solid rgba(255,255,255,0.1)",
-                            background: "#0F172A"
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" }}>
+                    {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => (
+                      <div key={idx} style={{
+                        background: "linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.9) 100%)",
+                        border: "1px solid rgba(255, 215, 0, 0.25)",
+                        borderRadius: "16px",
+                        padding: "18px 20px",
+                        position: "relative",
+                        transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                        boxShadow: "0 4px 14px rgba(0,0,0,0.35)"
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.6)";
+                        e.currentTarget.style.transform = "translateY(-2px)";
+                        e.currentTarget.style.boxShadow = "0 8px 22px rgba(255, 215, 0, 0.15)";
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.25)";
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.boxShadow = "0 4px 14px rgba(0,0,0,0.35)";
+                      }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+                          <span style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            background: "rgba(255, 215, 0, 0.12)",
+                            border: "1px solid rgba(255, 215, 0, 0.3)",
+                            color: "#FFD700",
+                            padding: "3px 10px",
+                            borderRadius: "8px",
+                            fontSize: "11px",
+                            fontWeight: "800"
                           }}>
-                            <img
-                              src={siteImg}
-                              alt={lugar.nombre}
-                              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                              loading="lazy"
-                            />
-                            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(15,23,42,0.7) 100%)" }} />
-                          </div>
+                            <Icon name="mapPin" size={12} color="#FFD700" />
+                            <span>Sitio #{idx + 1}</span>
+                          </span>
 
-                          <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFD700", margin: "0 0 4px" }}>
-                            {lugar.nombre}
-                          </h4>
-                          <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.8)", lineHeight: 1.45 }}>
-                            {lugar.desc}
-                          </p>
+                          <img
+                            src="/images/San Juan del sur.svg"
+                            alt="Emblema"
+                            style={{
+                              width: "16px",
+                              height: "16px",
+                              objectFit: "contain",
+                              opacity: 0.85,
+                              filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)"
+                            }}
+                          />
                         </div>
-                      );
-                    })}
+
+                        <h4 style={{ fontSize: "16px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px", lineHeight: "1.3" }}>
+                          {lugar.nombre}
+                        </h4>
+                        <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                          {lugar.desc}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
