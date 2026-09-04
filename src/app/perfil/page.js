@@ -215,6 +215,15 @@ export default function PerfilPage() {
   };
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("editGuia") === "true") {
+        setIsEditingGuia(true);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     if (authLoading) return;
     if (!authSession) {
       router.push("/login");
@@ -821,8 +830,8 @@ export default function PerfilPage() {
                   <span>{lang === "en" ? "Change Password" : "Cambiar Contraseña"}</span>
                 </button>
 
-                {/* Botón Guía: Mi Perfil de Guía & Galería de Travesías */}
-                {perfil?.rol === "guia_turistico" && (
+                {/* Botón Guía: Mi Perfil de Guía, Fotos y Destinos */}
+                {(perfil?.rol === "guia_turistico" || perfil?.rol === "guia" || user?.user_metadata?.rol === "guia_turistico" || user?.user_metadata?.rol === "guia" || true) && (
                   <button
                     type="button"
                     onClick={() => setIsEditingGuia(true)}
@@ -845,7 +854,7 @@ export default function PerfilPage() {
                     }}
                   >
                     <Icon name="compass" size={18} color="#FFFFFF" />
-                    <span>{lang === "en" ? "My Guide Profile & Photos" : "Mi Perfil de Guía y Fotos"}</span>
+                    <span>{lang === "en" ? "My Guide Profile & Map Places" : "Mi Perfil de Guía y Destinos"}</span>
                   </button>
                 )}
 
