@@ -58,6 +58,7 @@ export default function PerfilPage() {
   const [newDestDesc, setNewDestDesc] = useState("");
   const [uploadingTravesiaFoto, setUploadingTravesiaFoto] = useState(false);
   const [savingGuia, setSavingGuia] = useState(false);
+  const avatarInputRef = useRef(null);
   const travesiaFotoInputRef = useRef(null);
 
   const handleAddDestinoMapa = (e) => {
