@@ -824,147 +824,217 @@ export default function MasDeNicaraguaPage() {
 
               {/* 1. HISTORIA */}
               {modalActiveTab === "historia" && (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "18px", alignItems: "start" }}>
-                  <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "18px", padding: "18px" }}>
-                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px" }}>
-                      <img src="/images/managua catedral.svg" alt="Historia" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
-                      <span>Resumen Histórico de {selectedDeptForDetails.nombre}</span>
-                    </h3>
-                    <p style={{ fontSize: "14px", lineHeight: "1.65", color: "rgba(255,255,255,0.9)", margin: 0 }}>
-                      {selectedDeptForDetails.historia.resumen}
-                    </p>
-                  </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "18px", alignItems: "start" }}>
+                    {/* Resumen Histórico Principal */}
+                    <div style={{ background: "linear-gradient(135deg, rgba(28, 25, 20, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%)", border: "1px solid rgba(255, 215, 0, 0.3)", borderRadius: "18px", padding: "20px", boxShadow: "0 6px 18px rgba(0,0,0,0.4)" }}>
+                      <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#FFD700", margin: "0 0 12px", display: "flex", alignItems: "center", gap: "8px" }}>
+                        <img src="/images/managua catedral.svg" alt="Historia" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
+                        <span>Resumen Histórico de {selectedDeptForDetails.nombre}</span>
+                      </h3>
+                      <p style={{ fontSize: "14px", lineHeight: "1.7", color: "rgba(255,255,255,0.9)", margin: 0 }}>
+                        {selectedDeptForDetails.historia.resumen}
+                      </p>
 
-                  {selectedDeptForDetails.historia.hitos && selectedDeptForDetails.historia.hitos.length > 0 && (
-                    <div>
-                      <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
-                        <Icon name="clock" size={16} color="#FFD700" />
-                        <span>Hitos Históricos Fundamentales</span>
-                      </h4>
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "12px" }}>
-                        {selectedDeptForDetails.historia.hitos.map((hito, idx) => (
-                          <div key={idx} style={{
-                            background: "linear-gradient(135deg, rgba(20, 109, 158, 0.25) 0%, rgba(15, 23, 42, 0.8) 100%)",
-                            border: "1px solid rgba(20, 109, 158, 0.35)",
-                            borderRadius: "14px",
-                            padding: "14px"
-                          }}>
-                            <span style={{ fontSize: "18px", fontWeight: "900", color: "#FFD700", display: "block", marginBottom: "2px" }}>
-                              {hito.año}
-                            </span>
-                            <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.45 }}>
-                              {hito.evento}
-                            </p>
-                          </div>
-                        ))}
+                      {/* Ficha de Datos Históricos e Identidad */}
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "10px", marginTop: "16px", paddingTop: "14px", borderTop: "1px solid rgba(255,215,0,0.15)" }}>
+                        <div>
+                          <span style={{ display: "block", fontSize: "10.5px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800" }}>Cabecera</span>
+                          <span style={{ fontSize: "13.5px", fontWeight: "800", color: "#FFD700" }}>{selectedDeptForDetails.cabecera}</span>
+                        </div>
+                        <div>
+                          <span style={{ display: "block", fontSize: "10.5px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800" }}>Fundación / Hito</span>
+                          <span style={{ fontSize: "13.5px", fontWeight: "800", color: "#FFFFFF" }}>{selectedDeptForDetails.fundacion}</span>
+                        </div>
+                        <div>
+                          <span style={{ display: "block", fontSize: "10.5px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800" }}>Región</span>
+                          <span style={{ fontSize: "13.5px", fontWeight: "800", color: "#38BDF8" }}>{selectedDeptForDetails.region}</span>
+                        </div>
                       </div>
                     </div>
-                  )}
+
+                    {/* Hitos Históricos Fundamentales */}
+                    {selectedDeptForDetails.historia.hitos && selectedDeptForDetails.historia.hitos.length > 0 && (
+                      <div>
+                        <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
+                          <Icon name="clock" size={16} color="#FFD700" />
+                          <span>Hitos Históricos Fundamentales</span>
+                        </h4>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "12px" }}>
+                          {selectedDeptForDetails.historia.hitos.map((hito, idx) => (
+                            <div key={idx} style={{
+                              background: "linear-gradient(135deg, rgba(20, 109, 158, 0.25) 0%, rgba(15, 23, 42, 0.85) 100%)",
+                              border: "1px solid rgba(20, 109, 158, 0.4)",
+                              borderRadius: "14px",
+                              padding: "14px"
+                            }}>
+                              <span style={{ fontSize: "18px", fontWeight: "900", color: "#FFD700", display: "block", marginBottom: "4px" }}>
+                                {hito.año}
+                              </span>
+                              <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                                {hito.evento}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
               {/* 2. ECONOMÍA */}
               {modalActiveTab === "economia" && (
-                <div>
-                  <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "18px", padding: "18px", marginBottom: "18px" }}>
-                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#38BDF8", margin: "0 0 8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                  <div style={{ background: "linear-gradient(135deg, rgba(15, 30, 50, 0.85) 0%, rgba(10, 20, 35, 0.95) 100%)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "18px", padding: "20px" }}>
+                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#38BDF8", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px" }}>
                       <img src="/images/cacao.svg" alt="Economía" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(73%) sepia(35%) saturate(1637%) hue-rotate(170deg) brightness(102%) contrast(97%)" }} />
-                      <span>Dinámica Económica y Productiva</span>
+                      <span>Dinámica Económica y Motores de Desarrollo</span>
                     </h3>
-                    <p style={{ fontSize: "14px", lineHeight: "1.6", color: "rgba(255,255,255,0.9)", margin: 0 }}>
+                    <p style={{ fontSize: "14px", lineHeight: "1.65", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                       {selectedDeptForDetails.economia.resumen}
                     </p>
                   </div>
 
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "14px" }}>
-                    {selectedDeptForDetails.economia.sectores.map((sec, idx) => (
-                      <div key={idx} style={{
-                        background: "rgba(15, 23, 42, 0.8)",
-                        border: "1px solid rgba(56, 189, 248, 0.25)",
-                        borderRadius: "16px",
-                        padding: "16px"
-                      }}>
-                        <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(56, 189, 248, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#38BDF8", marginBottom: "10px" }}>
-                          <img src="/images/cacao.svg" alt="Sector" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(73%) sepia(35%) saturate(1637%) hue-rotate(170deg) brightness(102%) contrast(97%)" }} />
+                  {/* Sectores Clave */}
+                  <div>
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#38BDF8", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      Sectores Productivos Clave
+                    </h4>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "14px" }}>
+                      {selectedDeptForDetails.economia.sectores.map((sec, idx) => (
+                        <div key={idx} style={{
+                          background: "linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(10, 30, 50, 0.9) 100%)",
+                          border: "1px solid rgba(56, 189, 248, 0.3)",
+                          borderRadius: "16px",
+                          padding: "16px"
+                        }}>
+                          <div style={{ width: "34px", height: "34px", borderRadius: "10px", background: "rgba(56, 189, 248, 0.18)", display: "flex", alignItems: "center", justifyContent: "center", color: "#38BDF8", marginBottom: "10px" }}>
+                            <img src="/images/cacao.svg" alt="Sector" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(73%) sepia(35%) saturate(1637%) hue-rotate(170deg) brightness(102%) contrast(97%)" }} />
+                          </div>
+                          <h5 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px" }}>
+                            {sec.titulo}
+                          </h5>
+                          <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.8)", lineHeight: 1.5 }}>
+                            {sec.desc}
+                          </p>
                         </div>
-                        <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 4px" }}>
-                          {sec.titulo}
-                        </h4>
-                        <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.75)", lineHeight: 1.45 }}>
-                          {sec.desc}
-                        </p>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Rubros y Producción Destacada */}
+                  <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "14px", padding: "14px", display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+                    <span style={{ fontSize: "12px", fontWeight: "800", color: "#FFD700", textTransform: "uppercase" }}>Rubros Principales:</span>
+                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                      {["Agroindustria", "Comercio Regional", "Ganadería y Lácteos", "Exportación y Servicios", "Turismo y Artesanía"].map((rubro, rIdx) => (
+                        <span key={rIdx} style={{ background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.3)", color: "#38BDF8", padding: "3px 10px", borderRadius: "8px", fontSize: "11.5px", fontWeight: "700" }}>
+                          {rubro}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
 
               {/* 3. TURISMO */}
               {modalActiveTab === "turismo" && (
-                <div>
-                  <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "18px", padding: "18px", marginBottom: "18px" }}>
-                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#10B981", margin: "0 0 8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                  <div style={{ background: "linear-gradient(135deg, rgba(8, 35, 28, 0.85) 0%, rgba(10, 25, 20, 0.95) 100%)", border: "1px solid rgba(16, 185, 129, 0.3)", borderRadius: "18px", padding: "20px" }}>
+                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#10B981", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px" }}>
                       <img src="/images/playa.svg" alt="Turismo" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(67%) sepia(38%) saturate(972%) hue-rotate(113deg) brightness(97%) contrast(90%)" }} />
-                      <span>Oferta Turística de {selectedDeptForDetails.nombre}</span>
+                      <span>Oferta Turística y Experiencias de {selectedDeptForDetails.nombre}</span>
                     </h3>
-                    <p style={{ fontSize: "14px", lineHeight: "1.6", color: "rgba(255,255,255,0.9)", margin: 0 }}>
+                    <p style={{ fontSize: "14px", lineHeight: "1.65", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                       {selectedDeptForDetails.turismo.resumen}
                     </p>
                   </div>
 
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "14px" }}>
-                    {selectedDeptForDetails.turismo.atractivos.map((atr, idx) => (
-                      <div key={idx} style={{
-                        background: "rgba(15, 23, 42, 0.8)",
-                        border: "1px solid rgba(16, 185, 129, 0.25)",
-                        borderRadius: "16px",
-                        padding: "16px"
-                      }}>
-                        <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px", display: "flex", alignItems: "center", gap: "6px" }}>
-                          <Icon name="mapPin" size={14} color="#10B981" />
-                          <span>{atr.nombre}</span>
-                        </h4>
-                        <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.8)", lineHeight: 1.45 }}>
-                          {atr.desc}
-                        </p>
-                      </div>
-                    ))}
+                  <div>
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#10B981", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      Principales Atractivos e Hitos Turísticos
+                    </h4>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "14px" }}>
+                      {selectedDeptForDetails.turismo.atractivos.map((atr, idx) => (
+                        <div key={idx} style={{
+                          background: "linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(10, 35, 25, 0.9) 100%)",
+                          border: "1px solid rgba(16, 185, 129, 0.3)",
+                          borderRadius: "16px",
+                          padding: "16px"
+                        }}>
+                          <h5 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px", display: "flex", alignItems: "center", gap: "6px" }}>
+                            <Icon name="mapPin" size={14} color="#10B981" />
+                            <span>{atr.nombre}</span>
+                          </h5>
+                          <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                            {atr.desc}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Experiencias Turísticas Sugeridas */}
+                  <div style={{ background: "rgba(16, 185, 129, 0.08)", border: "1px solid rgba(16, 185, 129, 0.25)", borderRadius: "14px", padding: "14px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                    <span style={{ fontSize: "12px", fontWeight: "800", color: "#10B981", textTransform: "uppercase" }}>Experiencias Recomendadas:</span>
+                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                      {["Ecoturismo & Senderismo", "Rutas Históricas", "Gastronomía Autóctona", "Sol & Naturaleza", "Fotografía de Paisajes"].map((exp, eIdx) => (
+                        <span key={eIdx} style={{ background: "rgba(16, 185, 129, 0.18)", border: "1px solid rgba(16, 185, 129, 0.35)", color: "#FFFFFF", padding: "3px 10px", borderRadius: "8px", fontSize: "11.5px", fontWeight: "700" }}>
+                          ✓ {exp}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
 
               {/* 4. PASATIEMPOS Y CULTURA */}
               {modalActiveTab === "pasatiempos" && (
-                <div>
-                  <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "18px", padding: "18px", marginBottom: "18px" }}>
-                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#F59E0B", margin: "0 0 8px", display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                  <div style={{ background: "linear-gradient(135deg, rgba(42, 28, 10, 0.85) 0%, rgba(20, 15, 10, 0.95) 100%)", border: "1px solid rgba(245, 158, 11, 0.35)", borderRadius: "18px", padding: "20px" }}>
+                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#F59E0B", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px" }}>
                       <img src="/images/Volcan.svg" alt="Pasatiempos" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(70%) sepia(50%) saturate(1500%) hue-rotate(1deg) brightness(100%) contrast(100%)" }} />
-                      <span>Pasatiempos, Tradiciones y Estilo de Vida</span>
+                      <span>Pasatiempos, Tradiciones y Estilo de Vida Local</span>
                     </h3>
-                    <p style={{ fontSize: "14px", lineHeight: "1.6", color: "rgba(255,255,255,0.9)", margin: 0 }}>
+                    <p style={{ fontSize: "14px", lineHeight: "1.65", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                       {selectedDeptForDetails.pasatiempos.resumen}
                     </p>
                   </div>
 
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
-                    {selectedDeptForDetails.pasatiempos.items.map((item, idx) => (
-                      <div key={idx} style={{
-                        background: "rgba(255, 255, 255, 0.05)",
-                        border: "1px solid rgba(245, 158, 11, 0.2)",
-                        borderRadius: "14px",
-                        padding: "14px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "12px"
-                      }}>
-                        <div style={{ minWidth: "28px", height: "28px", borderRadius: "50%", background: "rgba(245, 158, 11, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "#F59E0B", fontWeight: "900", fontSize: "12px" }}>
-                          {idx + 1}
+                  <div>
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#F59E0B", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      Costumbres y Actividades Populares
+                    </h4>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
+                      {selectedDeptForDetails.pasatiempos.items.map((item, idx) => (
+                        <div key={idx} style={{
+                          background: "linear-gradient(135deg, rgba(30, 20, 10, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)",
+                          border: "1px solid rgba(245, 158, 11, 0.25)",
+                          borderRadius: "14px",
+                          padding: "16px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "12px"
+                        }}>
+                          <div style={{ minWidth: "30px", height: "30px", borderRadius: "50%", background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0F172A", fontWeight: "900", fontSize: "13px" }}>
+                            {idx + 1}
+                          </div>
+                          <p style={{ margin: 0, fontSize: "13.5px", fontWeight: "600", color: "#FFFFFF", lineHeight: 1.5 }}>
+                            {item}
+                          </p>
                         </div>
-                        <p style={{ margin: 0, fontSize: "13.5px", fontWeight: "600", color: "#FFFFFF", lineHeight: 1.4 }}>
-                          {item}
-                        </p>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Gastronomía y Tradición Autóctona */}
+                  <div style={{ background: "rgba(245, 158, 11, 0.08)", border: "1px solid rgba(245, 158, 11, 0.25)", borderRadius: "14px", padding: "14px" }}>
+                    <h5 style={{ fontSize: "13px", fontWeight: "800", color: "#F59E0B", margin: "0 0 6px", textTransform: "uppercase" }}>
+                      💡 Sabor y Tradición Autóctona
+                    </h5>
+                    <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                      Cada rincón del departamento conserva recetas ancestrales en maíz, bebidas tradicionales (chicha, pinolillo) y expresiones folclóricas transmitidas por generaciones.
+                    </p>
                   </div>
                 </div>
               )}
