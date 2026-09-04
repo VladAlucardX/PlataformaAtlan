@@ -547,32 +547,44 @@ export default function PerfilGuiaPage() {
             borderRadius: "14px",
             border: "1.5px solid rgba(226, 232, 240, 0.8)",
             boxShadow: "0 4px 16px rgba(0,0,0,0.03)",
-            padding: "14px",
+            padding: "16px",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
             boxSizing: "border-box"
           }}>
             <div>
-              <div style={{ textAlign: "center", marginBottom: "10px" }}>
+              <div style={{ textAlign: "center", marginBottom: "12px" }}>
                 <div style={{
-                  width: "60px",
-                  height: "60px",
+                  width: "64px",
+                  height: "64px",
                   borderRadius: "50%",
                   background: perfil?.avatar_url
                     ? `url(${perfil.avatar_url}) center/cover`
                     : "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
                   margin: "0 auto 8px",
                   border: "3px solid #0EA5E9",
-                  boxShadow: "0 4px 12px rgba(14, 165, 233, 0.2)"
-                }} />
+                  boxShadow: "0 4px 14px rgba(14, 165, 233, 0.25)",
+                  position: "relative"
+                }}>
+                  <div style={{
+                    position: "absolute",
+                    bottom: "2px",
+                    right: "2px",
+                    width: "12px",
+                    height: "12px",
+                    borderRadius: "50%",
+                    background: "#10B981",
+                    border: "2px solid #FFFFFF"
+                  }} title="Guía en línea" />
+                </div>
 
-                <h3 style={{ margin: "0 0 2px", fontSize: "14.5px", fontWeight: "900", color: "#1A1A2E", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {perfil?.nombre_completo || "Guía Atlan"}
+                <h3 style={{ margin: "0 0 4px", fontSize: "15.5px", fontWeight: "900", color: "#1A1A2E", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {perfil?.nombre_completo || "Carlos Mendoza Silva"}
                 </h3>
 
-                <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", background: "rgba(14, 165, 233, 0.1)", color: "#0EA5E9", fontSize: "10.5px", fontWeight: "800", padding: "2px 8px", borderRadius: "8px", marginBottom: "4px" }}>
-                  <Icon name="mapPin" size={11} color="#0EA5E9" />
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "5px", background: "rgba(14, 165, 233, 0.1)", color: "#0EA5E9", fontSize: "11px", fontWeight: "800", padding: "3px 10px", borderRadius: "10px", marginBottom: "6px" }}>
+                  <Icon name="mapPin" size={12} color="#0EA5E9" />
                   <span>{guiaDeptPrincipal}</span>
                 </div>
               </div>
@@ -582,27 +594,27 @@ export default function PerfilGuiaPage() {
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",
                 gap: "8px",
-                background: "rgba(241, 245, 249, 0.7)",
-                padding: "10px",
+                background: "rgba(241, 245, 249, 0.8)",
+                padding: "10px 12px",
                 borderRadius: "12px",
-                border: "1px solid rgba(226, 232, 240, 0.8)",
-                marginBottom: "10px"
+                border: "1px solid rgba(226, 232, 240, 0.9)",
+                marginBottom: "12px"
               }}>
                 <div>
-                  <span style={{ fontSize: "9px", color: "#64748B", fontWeight: "750", display: "block" }}>ESPECIALIDAD</span>
-                  <span style={{ fontSize: "10.5px", color: "#1A1A2E", fontWeight: "800", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{guiaEspecialidad}</span>
+                  <span style={{ fontSize: "9.5px", color: "#64748B", fontWeight: "750", display: "block" }}>ESPECIALIDAD</span>
+                  <span style={{ fontSize: "11.5px", color: "#1A1A2E", fontWeight: "800", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{guiaEspecialidad}</span>
                 </div>
                 <div>
-                  <span style={{ fontSize: "9px", color: "#64748B", fontWeight: "750", display: "block" }}>TARIFA</span>
-                  <span style={{ fontSize: "10.5px", color: "#10B981", fontWeight: "800", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{guiaTarifa}</span>
+                  <span style={{ fontSize: "9.5px", color: "#64748B", fontWeight: "750", display: "block" }}>TARIFA</span>
+                  <span style={{ fontSize: "11.5px", color: "#10B981", fontWeight: "800", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{guiaTarifa}</span>
                 </div>
                 <div>
-                  <span style={{ fontSize: "9px", color: "#64748B", fontWeight: "750", display: "block" }}>TRAVESÍAS</span>
-                  <span style={{ fontSize: "10.5px", color: "#0EA5E9", fontWeight: "800", display: "block" }}>{guiaGaleria.length} fotos</span>
+                  <span style={{ fontSize: "9.5px", color: "#64748B", fontWeight: "750", display: "block" }}>TRAVESÍAS</span>
+                  <span style={{ fontSize: "11.5px", color: "#0EA5E9", fontWeight: "800", display: "block" }}>{guiaGaleria.length} fotos</span>
                 </div>
                 <div>
-                  <span style={{ fontSize: "9px", color: "#64748B", fontWeight: "750", display: "block" }}>DESTINOS</span>
-                  <span style={{ fontSize: "10.5px", color: "#0EA5E9", fontWeight: "800", display: "block" }}>{guiaDestinosMapa.length} lugares</span>
+                  <span style={{ fontSize: "9.5px", color: "#64748B", fontWeight: "750", display: "block" }}>DESTINOS</span>
+                  <span style={{ fontSize: "11.5px", color: "#0EA5E9", fontWeight: "800", display: "block" }}>{guiaDestinosMapa.length} lugares</span>
                 </div>
               </div>
 
@@ -612,16 +624,16 @@ export default function PerfilGuiaPage() {
                   background: "rgba(16, 185, 129, 0.08)",
                   border: "1px solid rgba(16, 185, 129, 0.25)",
                   borderRadius: "10px",
-                  padding: "8px 10px",
+                  padding: "8px 12px",
                   display: "flex",
                   alignItems: "center",
-                  gap: "6px",
-                  marginBottom: "10px"
+                  gap: "8px",
+                  marginBottom: "12px"
                 }}>
-                  <Icon name="checkCircle" size={14} color="#10B981" />
+                  <Icon name="checkCircle" size={16} color="#10B981" />
                   <div style={{ minWidth: 0 }}>
-                    <span style={{ fontSize: "9.5px", color: "#059669", fontWeight: "800", display: "block" }}>LICENCIA INTUR</span>
-                    <span style={{ fontSize: "11px", color: "#065F46", fontWeight: "700", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{guiaLicencia}</span>
+                    <span style={{ fontSize: "10px", color: "#059669", fontWeight: "800", display: "block" }}>LICENCIA INTUR</span>
+                    <span style={{ fontSize: "11.5px", color: "#065F46", fontWeight: "700", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{guiaLicencia}</span>
                   </div>
                 </div>
               )}
@@ -637,20 +649,20 @@ export default function PerfilGuiaPage() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  gap: "6px",
+                  gap: "7px",
                   width: "100%",
-                  padding: "8px 10px",
+                  padding: "9px 12px",
                   background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
                   color: "#FFFFFF",
                   fontWeight: "800",
-                  fontSize: "11.5px",
+                  fontSize: "12px",
                   borderRadius: "10px",
                   textDecoration: "none",
-                  boxShadow: "0 3px 10px rgba(37, 211, 102, 0.2)",
+                  boxShadow: "0 3px 12px rgba(37, 211, 102, 0.25)",
                   boxSizing: "border-box"
                 }}
               >
-                <Icon name="whatsapp" size={14} color="#FFFFFF" />
+                <Icon name="whatsapp" size={15} color="#FFFFFF" />
                 <span>WhatsApp: {guiaWhatsapp}</span>
               </a>
             )}
@@ -675,41 +687,41 @@ export default function PerfilGuiaPage() {
                 display: "flex",
                 flexDirection: "column",
                 height: "100%",
-                gap: "8px",
+                gap: "10px",
                 boxSizing: "border-box",
                 justifyContent: "space-between"
               }}>
                 {/* ENCABEZADO DE LA SECCIÓN DE CONFIGURACIÓN */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, paddingBottom: "4px", borderBottom: "1px solid rgba(226, 232, 240, 0.8)" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, paddingBottom: "6px", borderBottom: "1px solid rgba(226, 232, 240, 0.8)" }}>
                   <div>
-                    <h3 style={{ margin: 0, fontSize: "14.5px", fontWeight: "900", color: "#0A192F", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <span>⚙️</span>
+                    <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "900", color: "#0A192F", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Icon name="edit" size={18} color="#0EA5E9" />
                       <span>Configuración del Perfil de Guía Turístico</span>
                     </h3>
-                    <p style={{ margin: 0, fontSize: "10.5px", color: "#64748B" }}>
+                    <p style={{ margin: "2px 0 0", fontSize: "11.5px", color: "#64748B" }}>
                       Información visible para los turistas en el directorio público y mapa interactivo.
                     </p>
                   </div>
-                  <div style={{ background: "rgba(16, 185, 129, 0.1)", color: "#10B981", fontSize: "10px", fontWeight: "800", padding: "3px 8px", borderRadius: "6px", display: "flex", alignItems: "center", gap: "4px" }}>
-                    <Icon name="checkCircle" size={12} color="#10B981" />
+                  <div style={{ background: "rgba(16, 185, 129, 0.1)", color: "#10B981", fontSize: "11px", fontWeight: "800", padding: "4px 10px", borderRadius: "8px", display: "flex", alignItems: "center", gap: "5px" }}>
+                    <Icon name="checkCircle" size={14} color="#10B981" />
                     <span>Perfil Verificado INTUR</span>
                   </div>
                 </div>
 
                 {/* CONTENIDO PRINCIPAL EN BLOQUES TIPO TARJETAS DASHBOARD */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1, minHeight: 0 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", flex: 1, minHeight: 0 }}>
 
-                  {/* BLOQUE 1: DATOS CLAVE DE OPERACIÓN */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 90px 1.3fr", gap: "8px" }}>
-                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
-                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
-                        <span>📍</span>
+                  {/* BLOQUE 1: DATOS CLAVE DE OPERACIÓN (2 FILAS X 2 COLUMNAS - TARIFA ABAJO DE ESPECIALIDAD!) */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "10px", padding: "9px 12px" }}>
+                      <label style={{ fontSize: "12px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                        <Icon name="mapPin" size={14} color="#0EA5E9" />
                         <span>Departamento Principal</span>
                       </label>
                       <select
                         value={guiaDeptPrincipal}
                         onChange={(e) => setGuiaDeptPrincipal(e.target.value)}
-                        style={{ width: "100%", padding: "4px 7px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px", background: "#FFFFFF", fontWeight: "700" }}
+                        style={{ width: "100%", padding: "7px 10px", borderRadius: "7px", border: "1px solid #CBD5E1", fontSize: "12.5px", background: "#FFFFFF", fontWeight: "700", color: "#1E293B" }}
                       >
                         {DEPARTAMENTOS_LIST.map(dept => (
                           <option key={dept} value={dept}>{dept}</option>
@@ -717,15 +729,15 @@ export default function PerfilGuiaPage() {
                       </select>
                     </div>
 
-                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
-                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
-                        <span>🎯</span>
+                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "10px", padding: "9px 12px" }}>
+                      <label style={{ fontSize: "12px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                        <Icon name="compass" size={14} color="#0EA5E9" />
                         <span>Especialidad Principal</span>
                       </label>
                       <select
                         value={guiaEspecialidad}
                         onChange={(e) => setGuiaEspecialidad(e.target.value)}
-                        style={{ width: "100%", padding: "4px 7px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px", background: "#FFFFFF", fontWeight: "700" }}
+                        style={{ width: "100%", padding: "7px 10px", borderRadius: "7px", border: "1px solid #CBD5E1", fontSize: "12.5px", background: "#FFFFFF", fontWeight: "700", color: "#1E293B" }}
                       >
                         {ESPECIALIDADES_LIST.map(esp => (
                           <option key={esp} value={esp}>{esp}</option>
@@ -733,9 +745,10 @@ export default function PerfilGuiaPage() {
                       </select>
                     </div>
 
-                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
-                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "block", marginBottom: "2px" }}>
-                        Años Exp.
+                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "10px", padding: "9px 12px" }}>
+                      <label style={{ fontSize: "12px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                        <Icon name="calendar" size={14} color="#0EA5E9" />
+                        <span>Años de Experiencia</span>
                       </label>
                       <input
                         type="number"
@@ -743,13 +756,13 @@ export default function PerfilGuiaPage() {
                         max="40"
                         value={guiaExperiencia}
                         onChange={(e) => setGuiaExperiencia(e.target.value)}
-                        style={{ width: "100%", padding: "4px 7px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px", background: "#FFFFFF", fontWeight: "700" }}
+                        style={{ width: "100%", padding: "7px 10px", borderRadius: "7px", border: "1px solid #CBD5E1", fontSize: "12.5px", background: "#FFFFFF", fontWeight: "700", color: "#1E293B" }}
                       />
                     </div>
 
-                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
-                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
-                        <span>💵</span>
+                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "10px", padding: "9px 12px" }}>
+                      <label style={{ fontSize: "12px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                        <Icon name="tag" size={14} color="#10B981" />
                         <span>Rango de Tarifa (/día)</span>
                       </label>
                       <select
@@ -757,7 +770,7 @@ export default function PerfilGuiaPage() {
                           TARIFAS_LIST.find(t => guiaTarifa && guiaTarifa.includes(t.split(" ")[0])) || guiaTarifa || "$30 - $50 / día"
                         }
                         onChange={(e) => setGuiaTarifa(e.target.value)}
-                        style={{ width: "100%", padding: "4px 7px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px", background: "#FFFFFF", fontWeight: "800", color: "#059669" }}
+                        style={{ width: "100%", padding: "7px 10px", borderRadius: "7px", border: "1px solid #CBD5E1", fontSize: "12.5px", background: "#FFFFFF", fontWeight: "800", color: "#059669" }}
                       >
                         {TARIFAS_LIST.map(tOption => (
                           <option key={tOption} value={tOption}>{tOption}</option>
@@ -767,13 +780,13 @@ export default function PerfilGuiaPage() {
                   </div>
 
                   {/* BLOQUE 2: IDIOMAS Y CONTACTO */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr", gap: "8px" }}>
-                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
-                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "3px" }}>
-                        <span>🗣️</span>
+                  <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr", gap: "10px" }}>
+                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "10px", padding: "9px 12px" }}>
+                      <label style={{ fontSize: "12px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
+                        <Icon name="globe" size={14} color="#0EA5E9" />
                         <span>Idiomas que Dominas</span>
                       </label>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: "3px" }}>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
                         {IDIOMAS_OPCIONES.map(langOpt => {
                           const isSelected = guiaIdiomas
                             ? guiaIdiomas.split(",").map(s => s.trim()).includes(langOpt)
@@ -784,17 +797,17 @@ export default function PerfilGuiaPage() {
                               type="button"
                               onClick={() => toggleIdioma(langOpt)}
                               style={{
-                                padding: "2px 7px",
+                                padding: "4px 9px",
                                 borderRadius: "8px",
                                 border: isSelected ? "1.5px solid #0EA5E9" : "1px solid #CBD5E1",
                                 background: isSelected ? "rgba(14, 165, 233, 0.12)" : "#FFFFFF",
-                                color: isSelected ? "#0284C7" : "#64748B",
-                                fontSize: "10px",
+                                color: isSelected ? "#0284C7" : "#475569",
+                                fontSize: "11.5px",
                                 fontWeight: isSelected ? "800" : "600",
                                 cursor: "pointer",
                                 display: "inline-flex",
                                 alignItems: "center",
-                                gap: "3px"
+                                gap: "4px"
                               }}
                             >
                               <span>{isSelected ? "✓" : "+"}</span>
@@ -805,9 +818,9 @@ export default function PerfilGuiaPage() {
                       </div>
                     </div>
 
-                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
-                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
-                        <Icon name="whatsapp" size={12} color="#25D366" />
+                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "10px", padding: "9px 12px" }}>
+                      <label style={{ fontSize: "12px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                        <Icon name="whatsapp" size={14} color="#25D366" />
                         <span>WhatsApp Directo</span>
                       </label>
                       <input
@@ -815,13 +828,13 @@ export default function PerfilGuiaPage() {
                         value={guiaWhatsapp}
                         onChange={(e) => setGuiaWhatsapp(e.target.value)}
                         placeholder="+505 8888 8888"
-                        style={{ width: "100%", padding: "4px 7px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px", background: "#FFFFFF" }}
+                        style={{ width: "100%", padding: "7px 10px", borderRadius: "7px", border: "1px solid #CBD5E1", fontSize: "12.5px", background: "#FFFFFF", fontWeight: "700" }}
                       />
                     </div>
 
-                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
-                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
-                        <span>📜</span>
+                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "10px", padding: "9px 12px" }}>
+                      <label style={{ fontSize: "12px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                        <Icon name="shield" size={14} color="#10B981" />
                         <span>Licencia INTUR</span>
                       </label>
                       <input
@@ -829,18 +842,18 @@ export default function PerfilGuiaPage() {
                         value={guiaLicencia}
                         onChange={(e) => setGuiaLicencia(e.target.value)}
                         placeholder="Ej. INTUR-LE-2024-99"
-                        style={{ width: "100%", padding: "4px 7px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px", background: "#FFFFFF" }}
+                        style={{ width: "100%", padding: "7px 10px", borderRadius: "7px", border: "1px solid #CBD5E1", fontSize: "12.5px", background: "#FFFFFF", fontWeight: "700" }}
                       />
                     </div>
                   </div>
 
                   {/* BLOQUE 3: SERVICIOS Y VENTAJAS INCLUIDAS EN TUS TOURS */}
-                  <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
-                    <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "3px" }}>
-                      <span>✨</span>
-                      <span>Servicios Incluidos en tus Tours (Selecciona las ventajas para turistas):</span>
+                  <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "10px", padding: "9px 12px" }}>
+                    <label style={{ fontSize: "12px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "5px" }}>
+                      <Icon name="sparkles" size={14} color="#F59E0B" />
+                      <span>Servicios Incluidos en tus Tours (Ventajas para Turistas)</span>
                     </label>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
                       {SERVICIOS_LIST.map(servicioOpt => {
                         const isInc = guiaServicios.includes(servicioOpt);
                         return (
@@ -849,17 +862,17 @@ export default function PerfilGuiaPage() {
                             type="button"
                             onClick={() => toggleServicio(servicioOpt)}
                             style={{
-                              padding: "2px 7px",
-                              borderRadius: "7px",
+                              padding: "4px 10px",
+                              borderRadius: "8px",
                               border: isInc ? "1.5px solid #10B981" : "1px solid #CBD5E1",
-                              background: isInc ? "rgba(16, 185, 129, 0.1)" : "#FFFFFF",
+                              background: isInc ? "rgba(16, 185, 129, 0.12)" : "#FFFFFF",
                               color: isInc ? "#047857" : "#64748B",
-                              fontSize: "10px",
+                              fontSize: "11.5px",
                               fontWeight: isInc ? "800" : "600",
                               cursor: "pointer",
                               display: "inline-flex",
                               alignItems: "center",
-                              gap: "3px",
+                              gap: "4px",
                               transition: "all 0.15s"
                             }}
                           >
@@ -872,13 +885,13 @@ export default function PerfilGuiaPage() {
                   </div>
 
                   {/* BLOQUE 4: BIOGRAFÍA Y PRESENTACIÓN */}
-                  <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: "75px" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2px" }}>
-                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px" }}>
-                        <span>📝</span>
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: "80px" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
+                      <label style={{ fontSize: "12px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="fileText" size={14} color="#0EA5E9" />
                         <span>Biografía y Presentación Profesional</span>
                       </label>
-                      <span style={{ fontSize: "10px", color: "#94A3B8", fontWeight: "600" }}>
+                      <span style={{ fontSize: "10.5px", color: "#94A3B8", fontWeight: "700" }}>
                         {guiaBiografia.length} / 400 caracteres
                       </span>
                     </div>
@@ -889,24 +902,25 @@ export default function PerfilGuiaPage() {
                       style={{
                         width: "100%",
                         flex: 1,
-                        minHeight: "60px",
-                        padding: "7px 9px",
+                        minHeight: "65px",
+                        padding: "8px 11px",
                         borderRadius: "8px",
                         border: "1px solid #CBD5E1",
-                        fontSize: "11px",
-                        lineHeight: "1.4",
+                        fontSize: "12.5px",
+                        lineHeight: "1.45",
                         resize: "none",
                         fontFamily: "inherit",
                         boxSizing: "border-box",
-                        background: "#FFFFFF"
+                        background: "#FFFFFF",
+                        color: "#1E293B"
                       }}
                     />
                   </div>
                 </div>
 
                 {/* BARRA INFERIOR DE ACCIÓN */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "4px", borderTop: "1px solid rgba(226, 232, 240, 0.8)", flexShrink: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "10.5px", color: "#64748B", fontWeight: "700" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "6px", borderTop: "1px solid rgba(226, 232, 240, 0.8)", flexShrink: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", fontSize: "11.5px", color: "#64748B", fontWeight: "700" }}>
                     <span>Idiomas: <strong style={{ color: "#0EA5E9" }}>{guiaIdiomas || "Español"}</strong></span>
                     <span>•</span>
                     <span>Servicios: <strong style={{ color: "#10B981" }}>{guiaServicios.length} incluidos</strong></span>
@@ -916,21 +930,21 @@ export default function PerfilGuiaPage() {
                     type="submit"
                     disabled={savingGuia}
                     style={{
-                      padding: "6px 18px",
-                      borderRadius: "8px",
+                      padding: "8px 22px",
+                      borderRadius: "9px",
                       border: "none",
                       background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
                       color: "#FFFFFF",
                       fontWeight: "800",
-                      fontSize: "11.5px",
+                      fontSize: "12.5px",
                       cursor: "pointer",
                       boxShadow: "0 3px 12px rgba(14, 165, 233, 0.25)",
                       display: "flex",
                       alignItems: "center",
-                      gap: "5px"
+                      gap: "6px"
                     }}
                   >
-                    <Icon name="checkCircle" size={13} color="#FFFFFF" />
+                    <Icon name="checkCircle" size={14} color="#FFFFFF" />
                     <span>{savingGuia ? "Guardando..." : "Guardar Cambios del Perfil"}</span>
                   </button>
                 </div>
