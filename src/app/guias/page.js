@@ -203,6 +203,29 @@ const ESPECIALIDADES_LIST = [
   "Ecoturismo Integral"
 ];
 
+const IDIOMAS_LIST = [
+  "Todos",
+  "Español",
+  "Inglés",
+  "Francés",
+  "Alemán"
+];
+
+const RANGOS_PRECIO_LIST = [
+  "Todos",
+  "Económico (< $30)",
+  "Estándar ($30 - $50)",
+  "Premium (> $50)"
+];
+
+const DESTINOS_POPULARES = [
+  { label: "Cerro Negro", query: "Cerro Negro" },
+  { label: "Isla de Ometepe", query: "Ometepe" },
+  { label: "Granada Colonial", query: "Granada" },
+  { label: "Selva Negra", query: "Selva Negra" },
+  { label: "Volcán Masaya", query: "Masaya" }
+];
+
 export default function GuiasPage() {
   const { lang } = useTranslation();
   const { session, perfil } = useAuth();
@@ -213,6 +236,10 @@ export default function GuiasPage() {
   // Filtros
   const [selectedDept, setSelectedDept] = useState("Todos");
   const [selectedEspecialidad, setSelectedEspecialidad] = useState("Todas");
+  const [selectedIdioma, setSelectedIdioma] = useState("Todos");
+  const [selectedRangoPrecio, setSelectedRangoPrecio] = useState("Todos");
+  const [selectedTagPopular, setSelectedTagPopular] = useState("Todos");
+  const [solamenteVerificados, setSolamenteVerificados] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("rating");
 
@@ -261,8 +288,29 @@ export default function GuiasPage() {
     loadGuias();
   }, []);
 
-  // Filtrado y ordenamiento de guías
+  // Limpiar todos los filtros
+  const hasActiveFilters =
+    selectedDept !== "Todos" ||
+    selectedEspecialidad !== "Todas" ||
+    selectedIdioma !== "Todos" ||
+    selectedRangoPrecio !== "Todos" ||
+    selectedTagPopular !== "Todos" ||
+    solamenteVerificados ||
+    searchQuery.trim() !== "";
+
+  const clearAllFilters = () => {
+    setSelectedDept("Todos");
+    setSelectedEspecialidad("Todas");
+    setSelectedIdioma("Todos");
+    setSelectedRangoPrecio("Todos");
+    setSelectedTagPopular("Todos");
+    setSolamenteVerificados(false);
+    setSearchQuery("");
+  };
+
+  // Filtrado y ordenamiento avanzado de guías
   const guiasFiltrados = guias.filter((guia) => {
+    // 1. Departamento
     const matchDept =
       selectedDept === "Todos" ||
       guia.departamento_principal?.toLowerCase() === selectedDept.toLowerCase() ||
@@ -271,22 +319,79 @@ export default function GuiasPage() {
           (d) => d.toLowerCase() === selectedDept.toLowerCase()
         ));
 
+    // 2. Especialidad
     const matchEspec =
       selectedEspecialidad === "Todas" ||
       guia.especialidad?.toLowerCase().includes(selectedEspecialidad.toLowerCase());
 
+    // 3. Idioma
+    const matchIdioma =
+      selectedIdioma === "Todos" ||
+      guia.idiomas?.toLowerCase().includes(selectedIdioma.toLowerCase());
+
+    // 4. INTUR Verificados
+    const matchVerificados = !solamenteVerificados || Boolean(guia.licencia_intur);
+
+    // 5. Rango de precio
+    let matchPrecio = true;
+    if (selectedRangoPrecio !== "Todos") {
+      const tarifaNum = parseInt((guia.tarifa_aprox || "").replace(/[^0-9]/g, "")) || 30;
+      if (selectedRangoPrecio === "Económico (< $30)") {
+        matchPrecio = tarifaNum < 30;
+      } else if (selectedRangoPrecio === "Estándar ($30 - $50)") {
+        matchPrecio = tarifaNum >= 30 && tarifaNum <= 50;
+      } else if (selectedRangoPrecio === "Premium (> $50)") {
+        matchPrecio = tarifaNum > 50;
+      }
+    }
+
+    // 6. Destino / Tag Popular
+    let matchTag = true;
+    if (selectedTagPopular !== "Todos") {
+      const tagLower = selectedTagPopular.toLowerCase();
+      matchTag =
+        guia.biografia?.toLowerCase().includes(tagLower) ||
+        guia.especialidad?.toLowerCase().includes(tagLower) ||
+        guia.departamento_principal?.toLowerCase().includes(tagLower) ||
+        (guia.departamentos_secundarios &&
+          guia.departamentos_secundarios.some((d) => d.toLowerCase().includes(tagLower)));
+    }
+
+    // 7. Buscador multi-campo inteligente
     const q = searchQuery.trim().toLowerCase();
     const matchQuery =
       !q ||
       guia.nombre_completo?.toLowerCase().includes(q) ||
       guia.biografia?.toLowerCase().includes(q) ||
       guia.especialidad?.toLowerCase().includes(q) ||
-      guia.departamento_principal?.toLowerCase().includes(q);
+      guia.departamento_principal?.toLowerCase().includes(q) ||
+      guia.idiomas?.toLowerCase().includes(q) ||
+      guia.licencia_intur?.toLowerCase().includes(q) ||
+      (guia.departamentos_secundarios &&
+        guia.departamentos_secundarios.some((d) => d.toLowerCase().includes(q)));
 
-    return matchDept && matchEspec && matchQuery;
+    return (
+      matchDept &&
+      matchEspec &&
+      matchIdioma &&
+      matchVerificados &&
+      matchPrecio &&
+      matchTag &&
+      matchQuery
+    );
   }).sort((a, b) => {
     if (sortBy === "rating") return b.rating_promedio - a.rating_promedio;
     if (sortBy === "experiencia") return b.experiencia_anios - a.experiencia_anios;
+    if (sortBy === "precio_asc") {
+      const pA = parseInt((a.tarifa_aprox || "").replace(/[^0-9]/g, "")) || 0;
+      const pB = parseInt((b.tarifa_aprox || "").replace(/[^0-9]/g, "")) || 0;
+      return pA - pB;
+    }
+    if (sortBy === "precio_desc") {
+      const pA = parseInt((a.tarifa_aprox || "").replace(/[^0-9]/g, "")) || 0;
+      const pB = parseInt((b.tarifa_aprox || "").replace(/[^0-9]/g, "")) || 0;
+      return pB - pA;
+    }
     return 0;
   });
 
@@ -400,15 +505,21 @@ export default function GuiasPage() {
         style={styles.bgSvgGueguense}
       />
 
-      {/* HERO BANNER DE ALTO COMPACTO Y DISEÑO ANCHO */}
+      {/* HERO BANNER DE DISEÑO MODERNO Y ELEGANTE */}
       <section style={styles.heroSectionCompact}>
         <div style={styles.heroGlowLeft} />
 
         <div style={styles.heroContentWide}>
           <div style={styles.topMetaHeader}>
-            <div style={styles.badgeHeroCompact}>
-              <Icon name="compass" size={15} color="#38BDF8" />
-              <span>{lang === "en" ? "Official Guide Catalogue" : "Directorio Nacional de Guías Turísticos"}</span>
+            <div style={styles.heroBadgesGroup}>
+              <span style={styles.badgeHeroVerified}>
+                <Icon name="checkCircle" size={14} color="#10B981" />
+                <span>{lang === "en" ? "INTUR Certified Guides" : "Guías Verificados INTUR"}</span>
+              </span>
+              <span style={styles.badgeHeroExp}>
+                <Icon name="compass" size={14} color="#38BDF8" />
+                <span>{lang === "en" ? "Authentic Local Tours" : "Experiencias Locales Auténticas"}</span>
+              </span>
             </div>
 
             {/* Quick Stats Pill */}
@@ -417,27 +528,33 @@ export default function GuiasPage() {
               <span style={styles.statDividerDot}>•</span>
               <span style={{ ...styles.statPill, color: "#FFD700" }}><b>4.9 ★</b> {lang === "en" ? "Rating" : "Promedio"}</span>
               <span style={styles.statDividerDot}>•</span>
-              <span style={{ ...styles.statPill, color: "#10B981" }}><b>100%</b> {lang === "en" ? "Verified" : "Verificados INTUR"}</span>
+              <span style={{ ...styles.statPill, color: "#10B981" }}><b>100%</b> {lang === "en" ? "Verified" : "Certificados"}</span>
             </div>
           </div>
 
-          <h1 style={styles.heroTitleCompact}>
+          <h1 style={styles.heroTitleGradient}>
             {lang === "en" ? "Explore Nicaragua with Expert Local Guides" : "Explora Nicaragua con Guías Turísticos Locales"}
           </h1>
+
+          <p style={styles.heroSubtitleDescription}>
+            {lang === "en"
+              ? "Connect directly with experienced local experts for volcano hiking, cultural journeys, birdwatching, and tailored adventures across all 17 departments."
+              : "Conecta directamente con guías locales certificados para ascensos a volcanes, historia colonial, avistamiento de aves y experiencias a la medida en los 17 departamentos."}
+          </p>
         </div>
       </section>
 
       {/* FILTROS Y CONTENEDOR ANCHO */}
       <main style={styles.mainContainerWide}>
-        {/* BARRA DE FILTROS ULTRA PROFESIONAL EN FILAS SEPARADAS */}
+        {/* BARRA DE FILTROS ULTRA PROFESIONAL AVANZADA */}
         <div style={styles.filterPanelProfessional}>
-          {/* Fila 1: Buscador y Ordenamiento */}
+          {/* Fila 1: Buscador Multi-campo, Ordenamiento y Toggle INTUR */}
           <div style={styles.filterRow1}>
             <div style={styles.searchBoxSlim}>
               <Icon name="search" size={16} color="#0EA5E9" />
               <input
                 type="text"
-                placeholder={lang === "en" ? "Search guide by name, city or volcano..." : "Buscar guía por nombre, especialidad o ciudad..."}
+                placeholder={lang === "en" ? "Search guide by name, volcano, city or license..." : "Buscar guía por nombre, volcán, ciudad o licencia INTUR..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={styles.searchInputSlim}
@@ -458,11 +575,54 @@ export default function GuiasPage() {
               >
                 <option value="rating">{lang === "en" ? "Best Rating" : "Mejor Calificación"}</option>
                 <option value="experiencia">{lang === "en" ? "Experience" : "Más Experiencia"}</option>
+                <option value="precio_asc">{lang === "en" ? "Price: Low to High" : "Precio: Menor a Mayor"}</option>
+                <option value="precio_desc">{lang === "en" ? "Price: High to Low" : "Precio: Mayor a Menor"}</option>
               </select>
+            </div>
+
+            {/* Toggle de Solo INTUR Verificados */}
+            <button
+              onClick={() => setSolamenteVerificados(!solamenteVerificados)}
+              style={{
+                ...styles.verifiedToggleBtn,
+                background: solamenteVerificados ? "rgba(16, 185, 129, 0.25)" : "rgba(30, 41, 59, 0.7)",
+                border: solamenteVerificados ? "1.5px solid #10B981" : "1px solid rgba(255, 255, 255, 0.12)",
+                color: solamenteVerificados ? "#34D399" : "#94A3B8"
+              }}
+            >
+              <Icon name="checkCircle" size={14} color={solamenteVerificados ? "#10B981" : "#64748B"} />
+              <span>{lang === "en" ? "INTUR Verified Only" : "Solo Certificados INTUR"}</span>
+            </button>
+          </div>
+
+          {/* Fila 2: DESTELLOS Y CHIPS DE DESTINOS POPULARES */}
+          <div style={styles.trendingSpotsRow}>
+            <span style={styles.trendingLabel}>
+              <Icon name="compass" size={13} color="#FFD700" />
+              <span>{lang === "en" ? "Popular Spots:" : "Destinos Populares:"}</span>
+            </span>
+            <div style={styles.trendingChipsList}>
+              {DESTINOS_POPULARES.map((spot) => {
+                const isActive = selectedTagPopular === spot.query;
+                return (
+                  <button
+                    key={spot.query}
+                    onClick={() => setSelectedTagPopular(isActive ? "Todos" : spot.query)}
+                    style={{
+                      ...styles.trendingChipBtn,
+                      background: isActive ? "rgba(255, 215, 0, 0.25)" : "rgba(30, 41, 59, 0.6)",
+                      border: isActive ? "1px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.1)",
+                      color: isActive ? "#FFD700" : "#CBD5E1"
+                    }}
+                  >
+                    ★ {spot.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Fila 2: SELECCIÓN INDEPENDIENTE DE DEPARTAMENTO */}
+          {/* Fila 3: SELECCIÓN INDEPENDIENTE DE DEPARTAMENTO */}
           <div style={styles.filterGroupSection}>
             <div style={styles.filterSectionTitle}>
               <Icon name="mapPin" size={14} color="#0EA5E9" />
@@ -490,7 +650,7 @@ export default function GuiasPage() {
             </div>
           </div>
 
-          {/* Fila 3: SELECCIÓN INDEPENDIENTE DE TIPO DE TOUR / ESPECIALIDAD */}
+          {/* Fila 4: SELECCIÓN INDEPENDIENTE DE ESPECIALIDAD */}
           <div style={styles.filterGroupSection}>
             <div style={styles.filterSectionTitle}>
               <Icon name="tag" size={14} color="#FFD700" />
@@ -517,25 +677,153 @@ export default function GuiasPage() {
               })}
             </div>
           </div>
+
+          {/* Fila 5: FILTROS SECUNDARIOS (IDIOMAS & RANGO DE PRECIO) */}
+          <div style={styles.dualFiltersRow}>
+            {/* Idiomas */}
+            <div style={{ flex: 1, minWidth: "240px" }}>
+              <div style={styles.filterSectionTitle}>
+                <Icon name="globe" size={14} color="#10B981" />
+                <span>{lang === "en" ? "Filter by Language:" : "Idioma del Guía:"}</span>
+              </div>
+              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "4px" }}>
+                {IDIOMAS_LIST.map((langItem) => {
+                  const isActive = selectedIdioma === langItem;
+                  return (
+                    <button
+                      key={langItem}
+                      onClick={() => setSelectedIdioma(langItem)}
+                      style={{
+                        ...styles.pillBtnSlim,
+                        border: isActive ? "1.5px solid #10B981" : "1px solid rgba(255, 255, 255, 0.12)",
+                        background: isActive ? "rgba(16, 185, 129, 0.22)" : "rgba(15, 23, 42, 0.7)",
+                        color: isActive ? "#34D399" : "#94A3B8",
+                        fontWeight: isActive ? "800" : "600"
+                      }}
+                    >
+                      {langItem}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Rango de Precio */}
+            <div style={{ flex: 1, minWidth: "240px" }}>
+              <div style={styles.filterSectionTitle}>
+                <Icon name="dollarSign" size={14} color="#38BDF8" />
+                <span>{lang === "en" ? "Approx Rate Range:" : "Rango de Tarifa Estimada:"}</span>
+              </div>
+              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "4px" }}>
+                {RANGOS_PRECIO_LIST.map((rango) => {
+                  const isActive = selectedRangoPrecio === rango;
+                  return (
+                    <button
+                      key={rango}
+                      onClick={() => setSelectedRangoPrecio(rango)}
+                      style={{
+                        ...styles.pillBtnSlim,
+                        border: isActive ? "1.5px solid #38BDF8" : "1px solid rgba(255, 255, 255, 0.12)",
+                        background: isActive ? "rgba(14, 165, 233, 0.22)" : "rgba(15, 23, 42, 0.7)",
+                        color: isActive ? "#38BDF8" : "#94A3B8",
+                        fontWeight: isActive ? "800" : "600"
+                      }}
+                    >
+                      {rango}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* CHIPS DE FILTROS ACTIVOS CON BOTÓN PARA ELIMINAR INDIVIDUALMENTE */}
+          {hasActiveFilters && (
+            <div style={styles.activeFiltersRow}>
+              <span style={styles.activeFiltersLabel}>{lang === "en" ? "Active Filters:" : "Filtros Activos:"}</span>
+
+              {selectedDept !== "Todos" && (
+                <span style={styles.activeChip}>
+                  <span>Dept: <b>{selectedDept}</b></span>
+                  <button onClick={() => setSelectedDept("Todos")} style={styles.chipRemoveBtn}>
+                    <Icon name="x" size={12} />
+                  </button>
+                </span>
+              )}
+
+              {selectedEspecialidad !== "Todas" && (
+                <span style={styles.activeChip}>
+                  <span>Especialidad: <b>{selectedEspecialidad}</b></span>
+                  <button onClick={() => setSelectedEspecialidad("Todas")} style={styles.chipRemoveBtn}>
+                    <Icon name="x" size={12} />
+                  </button>
+                </span>
+              )}
+
+              {selectedIdioma !== "Todos" && (
+                <span style={styles.activeChip}>
+                  <span>Idioma: <b>{selectedIdioma}</b></span>
+                  <button onClick={() => setSelectedIdioma("Todos")} style={styles.chipRemoveBtn}>
+                    <Icon name="x" size={12} />
+                  </button>
+                </span>
+              )}
+
+              {selectedRangoPrecio !== "Todos" && (
+                <span style={styles.activeChip}>
+                  <span>Tarifa: <b>{selectedRangoPrecio}</b></span>
+                  <button onClick={() => setSelectedRangoPrecio("Todos")} style={styles.chipRemoveBtn}>
+                    <Icon name="x" size={12} />
+                  </button>
+                </span>
+              )}
+
+              {selectedTagPopular !== "Todos" && (
+                <span style={styles.activeChip}>
+                  <span>Destino: <b>{selectedTagPopular}</b></span>
+                  <button onClick={() => setSelectedTagPopular("Todos")} style={styles.chipRemoveBtn}>
+                    <Icon name="x" size={12} />
+                  </button>
+                </span>
+              )}
+
+              {solamenteVerificados && (
+                <span style={styles.activeChip}>
+                  <span>Verificados INTUR</span>
+                  <button onClick={() => setSolamenteVerificados(false)} style={styles.chipRemoveBtn}>
+                    <Icon name="x" size={12} />
+                  </button>
+                </span>
+              )}
+
+              {searchQuery.trim() !== "" && (
+                <span style={styles.activeChip}>
+                  <span>"{searchQuery}"</span>
+                  <button onClick={() => setSearchQuery("")} style={styles.chipRemoveBtn}>
+                    <Icon name="x" size={12} />
+                  </button>
+                </span>
+              )}
+
+              <button onClick={clearAllFilters} style={styles.clearAllFiltersBtn}>
+                <Icon name="x" size={12} />
+                <span>{lang === "en" ? "Reset All" : "Limpiar Todos"}</span>
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* CONTADOR DE RESULTADOS */}
+        {/* CONTADOR DE RESULTADOS Y LIMPIEZA */}
         <div style={styles.resultsHeaderSlim}>
           <h2 style={styles.resultsTitleSlim}>
-            {lang === "en" ? "Available Guides" : "Guías Turísticos Disponibles"}
+            <Icon name="user" size={18} color="#38BDF8" />
+            <span>{lang === "en" ? "Available Guides" : "Guías Turísticos Disponibles"}</span>
             <span style={styles.resultsBadgeSlim}>{guiasFiltrados.length}</span>
           </h2>
-          {(selectedDept !== "Todos" || selectedEspecialidad !== "Todas" || searchQuery) && (
-            <button
-              onClick={() => {
-                setSelectedDept("Todos");
-                setSelectedEspecialidad("Todas");
-                setSearchQuery("");
-              }}
-              style={styles.resetFiltersBtnSlim}
-            >
+          {hasActiveFilters && (
+            <button onClick={clearAllFilters} style={styles.resetFiltersBtnSlim}>
               <Icon name="x" size={13} />
-              {lang === "en" ? "Clear Filters" : "Limpiar Filtros"}
+              {lang === "en" ? "Reset All Filters" : "Limpiar Todos los Filtros"}
             </button>
           )}
         </div>
@@ -1029,14 +1317,32 @@ const styles = {
     gap: "12px",
     marginBottom: "8px"
   },
-  badgeHeroCompact: {
+  heroBadgesGroup: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    flexWrap: "wrap"
+  },
+  badgeHeroVerified: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "8px",
+    gap: "6px",
+    background: "rgba(16, 185, 129, 0.15)",
+    border: "1px solid rgba(16, 185, 129, 0.35)",
+    color: "#34D399",
+    padding: "5px 14px",
+    borderRadius: "999px",
+    fontSize: "12.5px",
+    fontWeight: "750"
+  },
+  badgeHeroExp: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
     background: "rgba(14, 165, 233, 0.15)",
-    border: "1px solid rgba(14, 165, 233, 0.3)",
+    border: "1px solid rgba(14, 165, 233, 0.35)",
     color: "#38BDF8",
-    padding: "4px 14px",
+    padding: "5px 14px",
     borderRadius: "999px",
     fontSize: "12.5px",
     fontWeight: "750"
@@ -1059,13 +1365,23 @@ const styles = {
     color: "#64748B",
     fontSize: "12px"
   },
-  heroTitleCompact: {
-    fontSize: "clamp(22px, 3vw, 32px)",
+  heroTitleGradient: {
+    fontSize: "clamp(24px, 3.5vw, 38px)",
     fontWeight: "900",
-    color: "#FFFFFF",
-    letterSpacing: "-0.5px",
+    background: "linear-gradient(135deg, #FFFFFF 0%, #38BDF8 50%, #FFD700 100%)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    letterSpacing: "-0.8px",
+    margin: "10px 0 8px 0",
+    lineHeight: "1.18"
+  },
+  heroSubtitleDescription: {
+    fontSize: "clamp(13px, 1.3vw, 15px)",
+    color: "#CBD5E1",
+    maxWidth: "850px",
+    lineHeight: "1.5",
     margin: "0",
-    lineHeight: "1.2"
+    fontWeight: "500"
   },
 
   mainContainerWide: {
@@ -1140,6 +1456,102 @@ const styles = {
     fontSize: "12.5px",
     outline: "none",
     cursor: "pointer"
+  },
+  verifiedToggleBtn: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    padding: "6px 12px",
+    borderRadius: "8px",
+    fontSize: "12px",
+    fontWeight: "750",
+    cursor: "pointer",
+    transition: "all 0.2s"
+  },
+  trendingSpotsRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    flexWrap: "wrap",
+    padding: "8px 0",
+    borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.08)"
+  },
+  trendingLabel: {
+    fontSize: "12px",
+    fontWeight: "800",
+    color: "#FFD700",
+    display: "flex",
+    alignItems: "center",
+    gap: "4px",
+    whiteSpace: "nowrap"
+  },
+  trendingChipsList: {
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+    flexWrap: "wrap"
+  },
+  trendingChipBtn: {
+    padding: "4px 10px",
+    borderRadius: "999px",
+    fontSize: "11.5px",
+    fontWeight: "700",
+    cursor: "pointer",
+    transition: "all 0.2s"
+  },
+  dualFiltersRow: {
+    display: "flex",
+    gap: "16px",
+    flexWrap: "wrap"
+  },
+  activeFiltersRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    flexWrap: "wrap",
+    paddingTop: "10px",
+    borderTop: "1px solid rgba(255, 255, 255, 0.08)"
+  },
+  activeFiltersLabel: {
+    fontSize: "12px",
+    fontWeight: "750",
+    color: "#94A3B8"
+  },
+  activeChip: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    background: "rgba(14, 165, 233, 0.18)",
+    border: "1px solid rgba(14, 165, 233, 0.35)",
+    color: "#38BDF8",
+    fontSize: "11.5px",
+    fontWeight: "600",
+    padding: "3px 9px",
+    borderRadius: "6px"
+  },
+  chipRemoveBtn: {
+    background: "none",
+    border: "none",
+    color: "#38BDF8",
+    cursor: "pointer",
+    padding: "0",
+    display: "flex",
+    alignItems: "center"
+  },
+  clearAllFiltersBtn: {
+    background: "rgba(239, 68, 68, 0.15)",
+    border: "1px solid rgba(239, 68, 68, 0.35)",
+    color: "#F87171",
+    fontSize: "11.5px",
+    fontWeight: "750",
+    padding: "3px 10px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "4px",
+    marginLeft: "auto"
   },
 
   // FILTROS EN GRUPOS INDEPENDIENTES CON ENCABEZADO
