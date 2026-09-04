@@ -721,12 +721,12 @@ export default function MasDeNicaraguaPage() {
             zIndex: 0
           }} />
 
-          {/* Tarjeta Modal General (Ancho 1240px, altura adaptativa hasta 88vh - Vista Unificada) */}
+          {/* Tarjeta Modal General (Ancho 1160px, altura centrada 600px / 84vh) */}
           <div style={{
-            maxWidth: "1240px",
-            width: "96%",
-            height: "min(680px, 88vh)",
-            maxHeight: "88vh",
+            maxWidth: "1160px",
+            width: "100%",
+            height: "600px",
+            maxHeight: "84vh",
             display: "flex",
             flexDirection: "column",
             position: "relative",
@@ -740,7 +740,7 @@ export default function MasDeNicaraguaPage() {
             {/* Header del Modal Completo Restaurado */}
             <div style={{
               background: "linear-gradient(180deg, rgba(20, 109, 158, 0.4) 0%, rgba(15, 23, 42, 1) 100%)",
-              padding: "12px 20px 8px",
+              padding: "14px 20px 10px",
               position: "relative",
               borderBottom: "1px solid rgba(255,255,255,0.1)",
               flexShrink: 0
@@ -750,15 +750,15 @@ export default function MasDeNicaraguaPage() {
                 onClick={() => setSelectedDeptForDetails(null)}
                 style={{
                   position: "absolute",
-                  top: "12px",
+                  top: "14px",
                   right: "16px",
                   background: "rgba(255,255,255,0.12)",
                   border: "1px solid rgba(255,255,255,0.2)",
                   color: "#FFFFFF",
-                  padding: "5px 12px",
-                  borderRadius: "10px",
+                  padding: "6px 14px",
+                  borderRadius: "12px",
                   fontWeight: "800",
-                  fontSize: "12px",
+                  fontSize: "12.5px",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
@@ -774,7 +774,7 @@ export default function MasDeNicaraguaPage() {
 
               {/* Titular e Info */}
               <div style={{ maxWidth: "950px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "3px", flexWrap: "wrap" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px", flexWrap: "wrap" }}>
                   <span style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -782,34 +782,34 @@ export default function MasDeNicaraguaPage() {
                     background: selectedDeptForDetails.region === "Pacífico" ? "rgba(56, 189, 248, 0.25)" : selectedDeptForDetails.region === "Central" ? "rgba(16, 185, 129, 0.25)" : "rgba(245, 158, 11, 0.25)",
                     border: `1px solid ${selectedDeptForDetails.region === "Pacífico" ? "#38BDF8" : selectedDeptForDetails.region === "Central" ? "#10B981" : "#F59E0B"}`,
                     color: selectedDeptForDetails.region === "Pacífico" ? "#38BDF8" : selectedDeptForDetails.region === "Central" ? "#10B981" : "#F59E0B",
-                    padding: "2px 8px",
-                    borderRadius: "8px",
-                    fontSize: "11px",
+                    padding: "3px 10px",
+                    borderRadius: "10px",
+                    fontSize: "11.5px",
                     fontWeight: "800",
                     textTransform: "uppercase"
                   }}>
                     <Icon
                       name={selectedDeptForDetails.region === "Pacífico" ? "waves" : selectedDeptForDetails.region === "Central" ? "mountain" : "island"}
-                      size={12}
+                      size={13}
                       color={selectedDeptForDetails.region === "Pacífico" ? "#38BDF8" : selectedDeptForDetails.region === "Central" ? "#10B981" : "#F59E0B"}
                     />
                     <span>Región {selectedDeptForDetails.region}</span>
                   </span>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12px", color: "rgba(255,255,255,0.85)", fontWeight: "600" }}>
-                    <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontSize: "12.5px", color: "rgba(255,255,255,0.85)", fontWeight: "600" }}>
+                    <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "15px", height: "15px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                     <span>Cabecera: <strong>{selectedDeptForDetails.cabecera}</strong></span>
                   </span>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12px", color: "#FFD700", fontWeight: "700" }}>
-                    <Icon name="clock" size={12} color="#FFD700" />
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12.5px", color: "#FFD700", fontWeight: "700" }}>
+                    <Icon name="clock" size={13} color="#FFD700" />
                     <span>Fundación / Hito: <strong>{selectedDeptForDetails.fundacion}</strong></span>
                   </span>
                 </div>
 
-                <div style={{ display: "flex", alignItems: "baseline", gap: "10px", flexWrap: "wrap" }}>
-                  <h2 style={{ fontSize: "clamp(20px, 2.5vw, 28px)", fontWeight: "900", margin: 0, color: "#FFFFFF" }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap" }}>
+                  <h2 style={{ fontSize: "clamp(22px, 3vw, 32px)", fontWeight: "900", margin: 0, color: "#FFFFFF" }}>
                     {selectedDeptForDetails.nombre}
                   </h2>
-                  <p style={{ fontSize: "13.5px", fontWeight: "700", color: "#FFD700", margin: 0 }}>
+                  <p style={{ fontSize: "14px", fontWeight: "700", color: "#FFD700", margin: 0 }}>
                     "{selectedDeptForDetails.apodo}"
                   </p>
                 </div>
@@ -819,48 +819,40 @@ export default function MasDeNicaraguaPage() {
             {/* Selector de Pestañas Compacto */}
             <DepartmentTabs activeTab={modalActiveTab} onSelectTab={setModalActiveTab} isModal={true} />
 
-            {/* Cuerpo del Modal (Optimizado para Vista Única Sin Scroll) */}
-            <div style={{ padding: "14px 18px", flex: 1, overflowY: "auto" }}>
+            {/* Cuerpo del Modal Scrollable Interno */}
+            <div style={{ padding: "18px 20px", flex: 1, overflowY: "auto" }}>
 
-              {/* 1. HISTORIA (Diseño Dashboard 2 Columnas - Vista Única) */}
+              {/* 1. HISTORIA */}
               {modalActiveTab === "historia" && (
-                <div style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(460px, 1fr))",
-                  gap: "16px",
-                  alignItems: "start"
-                }}>
-                  {/* Columna Izquierda: Narrativa, Origen Etimológico y Ficha Técnica */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "22px" }}>
+                  {/* Bloque Superior: Narrativa Histórica e Identidad */}
                   <div style={{
                     background: "linear-gradient(135deg, rgba(28, 25, 20, 0.92) 0%, rgba(15, 23, 42, 0.95) 100%)",
                     border: "1.5px solid rgba(255, 215, 0, 0.4)",
-                    borderRadius: "18px",
-                    padding: "16px 18px",
-                    boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px"
+                    borderRadius: "20px",
+                    padding: "22px",
+                    boxShadow: "0 8px 24px rgba(0,0,0,0.5)"
                   }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
-                      <h3 style={{ fontSize: "16px", fontWeight: "900", color: "#FFD700", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-                        <img src="/images/managua catedral.svg" alt="Historia" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
-                        <span>Resumen Histórico y Orígenes</span>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px", flexWrap: "wrap", gap: "10px" }}>
+                      <h3 style={{ fontSize: "18px", fontWeight: "900", color: "#FFD700", margin: 0, display: "flex", alignItems: "center", gap: "10px" }}>
+                        <img src="/images/managua catedral.svg" alt="Historia" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
+                        <span>Resumen Histórico y Orígenes de {selectedDeptForDetails.nombre}</span>
                       </h3>
 
                       <span style={{
                         background: "rgba(255, 215, 0, 0.15)",
                         border: "1px solid rgba(255, 215, 0, 0.4)",
                         color: "#FFD700",
-                        padding: "3px 10px",
-                        borderRadius: "8px",
-                        fontSize: "11px",
+                        padding: "4px 12px",
+                        borderRadius: "10px",
+                        fontSize: "12px",
                         fontWeight: "800"
                       }}>
-                        🏛️ Patrimonio Nacional
+                        🏛️ Patrimonio Histórico Nacional
                       </span>
                     </div>
 
-                    <p style={{ fontSize: "13px", lineHeight: "1.6", color: "rgba(255,255,255,0.92)", margin: 0 }}>
+                    <p style={{ fontSize: "14.5px", lineHeight: "1.75", color: "rgba(255,255,255,0.92)", margin: "0 0 16px" }}>
                       {selectedDeptForDetails.historia.resumen}
                     </p>
 
@@ -869,198 +861,210 @@ export default function MasDeNicaraguaPage() {
                       <div style={{
                         background: "rgba(255, 215, 0, 0.08)",
                         border: "1px solid rgba(255, 215, 0, 0.25)",
-                        borderRadius: "12px",
-                        padding: "10px 14px"
+                        borderRadius: "14px",
+                        padding: "12px 16px",
+                        marginBottom: "16px"
                       }}>
-                        <span style={{ fontSize: "11.5px", fontWeight: "900", color: "#FFD700", textTransform: "uppercase", display: "block", marginBottom: "3px", letterSpacing: "0.4px" }}>
+                        <span style={{ fontSize: "12px", fontWeight: "900", color: "#FFD700", textTransform: "uppercase", display: "block", marginBottom: "4px", letterSpacing: "0.5px" }}>
                           📜 Origen Etimológico y Raíces Indígenas
                         </span>
-                        <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.9)", lineHeight: "1.5" }}>
+                        <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.9)", lineHeight: "1.6" }}>
                           {selectedDeptForDetails.historia.origenEtimologico}
                         </p>
                       </div>
                     )}
 
-                    {/* Ficha Técnica de Datos Históricos en 2x2 Grid Compacto */}
+                    {/* Ficha Técnica de Datos Históricos de Interés */}
                     <div style={{
                       display: "grid",
-                      gridTemplateColumns: "1fr 1fr",
-                      gap: "10px",
-                      paddingTop: "10px",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                      gap: "12px",
+                      paddingTop: "16px",
                       borderTop: "1px dashed rgba(255, 215, 0, 0.25)"
                     }}>
-                      <div style={{ background: "rgba(255,255,255,0.03)", padding: "8px 12px", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                        <span style={{ display: "block", fontSize: "10.5px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "1px" }}>Cabecera Histórica</span>
-                        <span style={{ fontSize: "13px", fontWeight: "800", color: "#FFD700" }}>{selectedDeptForDetails.cabecera}</span>
+                      <div style={{ background: "rgba(255,255,255,0.03)", padding: "10px 14px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)" }}>
+                        <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "2px" }}>Cabecera Histórica</span>
+                        <span style={{ fontSize: "14px", fontWeight: "800", color: "#FFD700" }}>{selectedDeptForDetails.cabecera}</span>
                       </div>
 
-                      <div style={{ background: "rgba(255,255,255,0.03)", padding: "8px 12px", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                        <span style={{ display: "block", fontSize: "10.5px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "1px" }}>Fundación / Hito</span>
-                        <span style={{ fontSize: "13px", fontWeight: "800", color: "#FFFFFF" }}>{selectedDeptForDetails.fundacion}</span>
+                      <div style={{ background: "rgba(255,255,255,0.03)", padding: "10px 14px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)" }}>
+                        <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "2px" }}>Fecha de Hito / Fundación</span>
+                        <span style={{ fontSize: "14px", fontWeight: "800", color: "#FFFFFF" }}>{selectedDeptForDetails.fundacion}</span>
                       </div>
 
-                      <div style={{ background: "rgba(255,255,255,0.03)", padding: "8px 12px", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                        <span style={{ display: "block", fontSize: "10.5px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "1px" }}>Extensión Territorial</span>
-                        <span style={{ fontSize: "13px", fontWeight: "800", color: "#38BDF8" }}>{selectedDeptForDetails.extension}</span>
+                      <div style={{ background: "rgba(255,255,255,0.03)", padding: "10px 14px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)" }}>
+                        <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "2px" }}>Extensión Territorial</span>
+                        <span style={{ fontSize: "14px", fontWeight: "800", color: "#38BDF8" }}>{selectedDeptForDetails.extension}</span>
                       </div>
 
-                      <div style={{ background: "rgba(255,255,255,0.03)", padding: "8px 12px", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                        <span style={{ display: "block", fontSize: "10.5px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "1px" }}>Región Geográfica</span>
-                        <span style={{ fontSize: "13px", fontWeight: "800", color: "#10B981" }}>{selectedDeptForDetails.region}</span>
+                      <div style={{ background: "rgba(255,255,255,0.03)", padding: "10px 14px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)" }}>
+                        <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "2px" }}>Región Geográfica</span>
+                        <span style={{ fontSize: "14px", fontWeight: "800", color: "#10B981" }}>{selectedDeptForDetails.region}</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Columna Derecha: Hitos, Personajes e Identidad Patrimonial */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-                    {/* Línea de Tiempo e Hitos Fundamentales */}
-                    {selectedDeptForDetails.historia.hitos && selectedDeptForDetails.historia.hitos.length > 0 && (
-                      <div style={{ background: "rgba(15, 23, 42, 0.85)", border: "1px solid rgba(20, 109, 158, 0.35)", borderRadius: "16px", padding: "14px" }}>
-                        <h4 style={{ fontSize: "13.5px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-                          <Icon name="clock" size={15} color="#FFD700" />
-                          <span>Línea de Tiempo e Hitos</span>
-                        </h4>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "8px" }}>
-                          {selectedDeptForDetails.historia.hitos.map((hito, idx) => (
-                            <div key={idx} style={{
-                              background: "rgba(20, 109, 158, 0.12)",
-                              border: "1px solid rgba(20, 109, 158, 0.3)",
-                              borderRadius: "10px",
-                              padding: "8px 10px"
+                  {/* Hitos Históricos Fundamentales (Línea de Tiempo) */}
+                  {selectedDeptForDetails.historia.hitos && selectedDeptForDetails.historia.hitos.length > 0 && (
+                    <div>
+                      <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <Icon name="clock" size={18} color="#FFD700" />
+                        <span>Línea de Tiempo e Hitos Fundamentales</span>
+                      </h4>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "14px" }}>
+                        {selectedDeptForDetails.historia.hitos.map((hito, idx) => (
+                          <div key={idx} style={{
+                            background: "linear-gradient(135deg, rgba(20, 109, 158, 0.2) 0%, rgba(15, 23, 42, 0.9) 100%)",
+                            border: "1px solid rgba(20, 109, 158, 0.4)",
+                            borderRadius: "16px",
+                            padding: "16px",
+                            position: "relative",
+                            transition: "transform 0.25s, border-color 0.25s"
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.transform = "translateY(-2px)";
+                            e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.6)";
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.transform = "translateY(0)";
+                            e.currentTarget.style.borderColor = "rgba(20, 109, 158, 0.4)";
+                          }}
+                          >
+                            <span style={{
+                              display: "inline-block",
+                              fontSize: "16px",
+                              fontWeight: "900",
+                              color: "#FFD700",
+                              background: "rgba(255, 215, 0, 0.12)",
+                              border: "1px solid rgba(255, 215, 0, 0.3)",
+                              padding: "2px 10px",
+                              borderRadius: "8px",
+                              marginBottom: "8px"
                             }}>
-                              <span style={{
-                                display: "inline-block",
-                                fontSize: "12px",
-                                fontWeight: "900",
-                                color: "#FFD700",
-                                marginBottom: "2px"
-                              }}>
-                                {hito.año}
-                              </span>
-                              <p style={{ margin: 0, fontSize: "11.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.45, fontWeight: "500" }}>
-                                {hito.evento}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
+                              {hito.año}
+                            </span>
+                            <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.9)", lineHeight: 1.5, fontWeight: "500" }}>
+                              {hito.evento}
+                            </p>
+                          </div>
+                        ))}
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {/* Personajes Ilustres e Íconos Históricos */}
-                    {selectedDeptForDetails.historia.personajes && selectedDeptForDetails.historia.personajes.length > 0 && (
-                      <div style={{ background: "rgba(30, 25, 15, 0.85)", border: "1px solid rgba(255, 215, 0, 0.3)", borderRadius: "16px", padding: "14px" }}>
-                        <h4 style={{ fontSize: "13.5px", fontWeight: "800", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-                          <Icon name="award" size={15} color="#FFD700" />
-                          <span>Personajes Ilustres y Héroes</span>
-                        </h4>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "8px" }}>
-                          {selectedDeptForDetails.historia.personajes.map((per, idx) => (
-                            <div key={idx} style={{
-                              background: "rgba(255, 215, 0, 0.05)",
-                              border: "1px solid rgba(255, 215, 0, 0.2)",
-                              borderRadius: "10px",
-                              padding: "8px 10px"
-                            }}>
-                              <span style={{ fontSize: "12.5px", fontWeight: "900", color: "#FFD700", display: "block", marginBottom: "1px" }}>
-                                📜 {per.nombre}
-                              </span>
-                              <span style={{ fontSize: "10.5px", fontWeight: "700", color: "#38BDF8", display: "block", marginBottom: "4px" }}>
-                                {per.titulo}
-                              </span>
-                              <p style={{ margin: 0, fontSize: "11.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.4 }}>
-                                {per.aporte}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
+                  {/* Personajes Ilustres e Íconos Históricos */}
+                  {selectedDeptForDetails.historia.personajes && selectedDeptForDetails.historia.personajes.length > 0 && (
+                    <div>
+                      <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFD700", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <Icon name="award" size={18} color="#FFD700" />
+                        <span>Personajes Ilustres y Héroes de la Historia</span>
+                      </h4>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "14px" }}>
+                        {selectedDeptForDetails.historia.personajes.map((per, idx) => (
+                          <div key={idx} style={{
+                            background: "linear-gradient(135deg, rgba(30, 25, 15, 0.85) 0%, rgba(15, 23, 42, 0.9) 100%)",
+                            border: "1px solid rgba(255, 215, 0, 0.3)",
+                            borderRadius: "16px",
+                            padding: "16px"
+                          }}>
+                            <span style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700", display: "block", marginBottom: "2px" }}>
+                              📜 {per.nombre}
+                            </span>
+                            <span style={{ fontSize: "11.5px", fontWeight: "700", color: "#38BDF8", display: "block", marginBottom: "8px" }}>
+                              {per.titulo}
+                            </span>
+                            <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                              {per.aporte}
+                            </p>
+                          </div>
+                        ))}
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {/* Patrimonio Histórico Protegido */}
-                    {selectedDeptForDetails.historia.patrimonio && selectedDeptForDetails.historia.patrimonio.length > 0 && (
-                      <div style={{ background: "rgba(15, 30, 50, 0.85)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "16px", padding: "14px" }}>
-                        <h4 style={{ fontSize: "13.5px", fontWeight: "800", color: "#38BDF8", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-                          <Icon name="landmark" size={15} color="#38BDF8" />
-                          <span>Patrimonio Protegido y Templos</span>
-                        </h4>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "8px" }}>
-                          {selectedDeptForDetails.historia.patrimonio.map((pat, idx) => (
-                            <div key={idx} style={{
-                              background: "rgba(56, 189, 248, 0.05)",
-                              border: "1px solid rgba(56, 189, 248, 0.2)",
-                              borderRadius: "10px",
-                              padding: "8px 10px"
-                            }}>
-                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "3px" }}>
-                                <span style={{ fontSize: "12.5px", fontWeight: "900", color: "#FFFFFF" }}>
-                                  🏛️ {pat.sitio}
-                                </span>
-                                <span style={{ fontSize: "9.5px", fontWeight: "800", color: "#10B981", background: "rgba(16, 185, 129, 0.15)", padding: "1px 6px", borderRadius: "5px" }}>
-                                  {pat.epoca}
-                                </span>
-                              </div>
-                              <p style={{ margin: 0, fontSize: "11.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.4 }}>
-                                {pat.desc}
-                              </p>
+                  {/* Patrimonio Histórico Protegido y Templos */}
+                  {selectedDeptForDetails.historia.patrimonio && selectedDeptForDetails.historia.patrimonio.length > 0 && (
+                    <div>
+                      <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#38BDF8", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <Icon name="landmark" size={18} color="#38BDF8" />
+                        <span>Patrimonio Protegido, Templos y Sitios Arqueológicos</span>
+                      </h4>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "14px" }}>
+                        {selectedDeptForDetails.historia.patrimonio.map((pat, idx) => (
+                          <div key={idx} style={{
+                            background: "linear-gradient(135deg, rgba(15, 30, 50, 0.85) 0%, rgba(10, 20, 35, 0.9) 100%)",
+                            border: "1px solid rgba(56, 189, 248, 0.3)",
+                            borderRadius: "16px",
+                            padding: "16px"
+                          }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                              <span style={{ fontSize: "14px", fontWeight: "900", color: "#FFFFFF" }}>
+                                🏛️ {pat.sitio}
+                              </span>
+                              <span style={{ fontSize: "10.5px", fontWeight: "800", color: "#10B981", background: "rgba(16, 185, 129, 0.15)", padding: "2px 8px", borderRadius: "6px" }}>
+                                {pat.epoca}
+                              </span>
                             </div>
-                          ))}
-                        </div>
+                            <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                              {pat.desc}
+                            </p>
+                          </div>
+                        ))}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
+
                 </div>
               )}
 
               {/* 2. ECONOMÍA */}
               {modalActiveTab === "economia" && (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(460px, 1fr))", gap: "16px", alignItems: "start" }}>
-                  <div style={{ background: "linear-gradient(135deg, rgba(15, 30, 50, 0.85) 0%, rgba(10, 20, 35, 0.95) 100%)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "18px", padding: "18px", display: "flex", flexDirection: "column", gap: "12px" }}>
-                    <h3 style={{ fontSize: "16px", fontWeight: "900", color: "#38BDF8", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                  <div style={{ background: "linear-gradient(135deg, rgba(15, 30, 50, 0.85) 0%, rgba(10, 20, 35, 0.95) 100%)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "18px", padding: "20px" }}>
+                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#38BDF8", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px" }}>
                       <img src="/images/cacao.svg" alt="Economía" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(73%) sepia(35%) saturate(1637%) hue-rotate(170deg) brightness(102%) contrast(97%)" }} />
-                      <span>Dinámica Económica y Desarrollo</span>
+                      <span>Dinámica Económica y Motores de Desarrollo</span>
                     </h3>
-                    <p style={{ fontSize: "13px", lineHeight: "1.6", color: "rgba(255,255,255,0.9)", margin: 0 }}>
+                    <p style={{ fontSize: "14px", lineHeight: "1.65", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                       {selectedDeptForDetails.economia.resumen}
                     </p>
-                    <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "12px" }}>
-                      <span style={{ fontSize: "11.5px", fontWeight: "800", color: "#FFD700", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>Rubros Principales:</span>
-                      <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                        {["Agroindustria", "Comercio Regional", "Ganadería & Lácteos", "Exportación & Servicios", "Turismo & Artesanía"].map((rubro, rIdx) => (
-                          <span key={rIdx} style={{ background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.3)", color: "#38BDF8", padding: "3px 8px", borderRadius: "6px", fontSize: "11px", fontWeight: "700" }}>
-                            {rubro}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
                   </div>
 
+                  {/* Sectores Clave */}
                   <div>
-                    <h4 style={{ fontSize: "13.5px", fontWeight: "800", color: "#38BDF8", margin: "0 0 10px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#38BDF8", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                       Sectores Productivos Clave
                     </h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "14px" }}>
                       {selectedDeptForDetails.economia.sectores.map((sec, idx) => (
                         <div key={idx} style={{
                           background: "linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(10, 30, 50, 0.9) 100%)",
                           border: "1px solid rgba(56, 189, 248, 0.3)",
-                          borderRadius: "14px",
-                          padding: "12px 14px",
-                          display: "flex",
-                          alignItems: "flex-start",
-                          gap: "10px"
+                          borderRadius: "16px",
+                          padding: "16px"
                         }}>
-                          <div style={{ width: "30px", height: "30px", borderRadius: "8px", background: "rgba(56, 189, 248, 0.18)", display: "flex", alignItems: "center", justifyContent: "center", color: "#38BDF8", flexShrink: 0 }}>
-                            <img src="/images/cacao.svg" alt="Sector" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(73%) sepia(35%) saturate(1637%) hue-rotate(170deg) brightness(102%) contrast(97%)" }} />
+                          <div style={{ width: "34px", height: "34px", borderRadius: "10px", background: "rgba(56, 189, 248, 0.18)", display: "flex", alignItems: "center", justifyContent: "center", color: "#38BDF8", marginBottom: "10px" }}>
+                            <img src="/images/cacao.svg" alt="Sector" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(73%) sepia(35%) saturate(1637%) hue-rotate(170deg) brightness(102%) contrast(97%)" }} />
                           </div>
-                          <div>
-                            <h5 style={{ fontSize: "13.5px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 3px" }}>
-                              {sec.titulo}
-                            </h5>
-                            <p style={{ margin: 0, fontSize: "12px", color: "rgba(255,255,255,0.8)", lineHeight: 1.45 }}>
-                              {sec.desc}
-                            </p>
-                          </div>
+                          <h5 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px" }}>
+                            {sec.titulo}
+                          </h5>
+                          <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.8)", lineHeight: 1.5 }}>
+                            {sec.desc}
+                          </p>
                         </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Rubros y Producción Destacada */}
+                  <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "14px", padding: "14px", display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+                    <span style={{ fontSize: "12px", fontWeight: "800", color: "#FFD700", textTransform: "uppercase" }}>Rubros Principales:</span>
+                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                      {["Agroindustria", "Comercio Regional", "Ganadería y Lácteos", "Exportación y Servicios", "Turismo y Artesanía"].map((rubro, rIdx) => (
+                        <span key={rIdx} style={{ background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.3)", color: "#38BDF8", padding: "3px 10px", borderRadius: "8px", fontSize: "11.5px", fontWeight: "700" }}>
+                          {rubro}
+                        </span>
                       ))}
                     </div>
                   </div>
@@ -1069,47 +1073,49 @@ export default function MasDeNicaraguaPage() {
 
               {/* 3. TURISMO */}
               {modalActiveTab === "turismo" && (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(460px, 1fr))", gap: "16px", alignItems: "start" }}>
-                  <div style={{ background: "linear-gradient(135deg, rgba(8, 35, 28, 0.85) 0%, rgba(10, 25, 20, 0.95) 100%)", border: "1px solid rgba(16, 185, 129, 0.3)", borderRadius: "18px", padding: "18px", display: "flex", flexDirection: "column", gap: "12px" }}>
-                    <h3 style={{ fontSize: "16px", fontWeight: "900", color: "#10B981", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                  <div style={{ background: "linear-gradient(135deg, rgba(8, 35, 28, 0.85) 0%, rgba(10, 25, 20, 0.95) 100%)", border: "1px solid rgba(16, 185, 129, 0.3)", borderRadius: "18px", padding: "20px" }}>
+                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#10B981", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px" }}>
                       <img src="/images/playa.svg" alt="Turismo" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(67%) sepia(38%) saturate(972%) hue-rotate(113deg) brightness(97%) contrast(90%)" }} />
-                      <span>Oferta Turística y Experiencias</span>
+                      <span>Oferta Turística y Experiencias de {selectedDeptForDetails.nombre}</span>
                     </h3>
-                    <p style={{ fontSize: "13px", lineHeight: "1.6", color: "rgba(255,255,255,0.9)", margin: 0 }}>
+                    <p style={{ fontSize: "14px", lineHeight: "1.65", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                       {selectedDeptForDetails.turismo.resumen}
                     </p>
-                    <div style={{ background: "rgba(16, 185, 129, 0.08)", border: "1px solid rgba(16, 185, 129, 0.25)", borderRadius: "12px", padding: "12px" }}>
-                      <span style={{ fontSize: "11.5px", fontWeight: "800", color: "#10B981", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>Experiencias Recomendadas:</span>
-                      <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                        {["Ecoturismo & Senderismo", "Rutas Históricas", "Gastronomía Autóctona", "Sol & Naturaleza", "Fotografía"].map((exp, eIdx) => (
-                          <span key={eIdx} style={{ background: "rgba(16, 185, 129, 0.18)", border: "1px solid rgba(16, 185, 129, 0.35)", color: "#FFFFFF", padding: "3px 8px", borderRadius: "6px", fontSize: "11px", fontWeight: "700" }}>
-                            ✓ {exp}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
                   </div>
 
                   <div>
-                    <h4 style={{ fontSize: "13.5px", fontWeight: "800", color: "#10B981", margin: "0 0 10px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-                      Principales Atractivos e Hitos
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#10B981", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      Principales Atractivos e Hitos Turísticos
                     </h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "14px" }}>
                       {selectedDeptForDetails.turismo.atractivos.map((atr, idx) => (
                         <div key={idx} style={{
                           background: "linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(10, 35, 25, 0.9) 100%)",
                           border: "1px solid rgba(16, 185, 129, 0.3)",
-                          borderRadius: "14px",
-                          padding: "12px 14px"
+                          borderRadius: "16px",
+                          padding: "16px"
                         }}>
-                          <h5 style={{ fontSize: "13.5px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 4px", display: "flex", alignItems: "center", gap: "6px" }}>
-                            <Icon name="mapPin" size={13} color="#10B981" />
+                          <h5 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px", display: "flex", alignItems: "center", gap: "6px" }}>
+                            <Icon name="mapPin" size={14} color="#10B981" />
                             <span>{atr.nombre}</span>
                           </h5>
-                          <p style={{ margin: 0, fontSize: "12px", color: "rgba(255,255,255,0.85)", lineHeight: 1.45 }}>
+                          <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
                             {atr.desc}
                           </p>
                         </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Experiencias Turísticas Sugeridas */}
+                  <div style={{ background: "rgba(16, 185, 129, 0.08)", border: "1px solid rgba(16, 185, 129, 0.25)", borderRadius: "14px", padding: "14px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                    <span style={{ fontSize: "12px", fontWeight: "800", color: "#10B981", textTransform: "uppercase" }}>Experiencias Recomendadas:</span>
+                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                      {["Ecoturismo & Senderismo", "Rutas Históricas", "Gastronomía Autóctona", "Sol & Naturaleza", "Fotografía de Paisajes"].map((exp, eIdx) => (
+                        <span key={eIdx} style={{ background: "rgba(16, 185, 129, 0.18)", border: "1px solid rgba(16, 185, 129, 0.35)", color: "#FFFFFF", padding: "3px 10px", borderRadius: "8px", fontSize: "11.5px", fontWeight: "700" }}>
+                          ✓ {exp}
+                        </span>
                       ))}
                     </div>
                   </div>
@@ -1118,217 +1124,281 @@ export default function MasDeNicaraguaPage() {
 
               {/* 4. PASATIEMPOS Y CULTURA */}
               {modalActiveTab === "pasatiempos" && (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(460px, 1fr))", gap: "16px", alignItems: "start" }}>
-                  <div style={{ background: "linear-gradient(135deg, rgba(42, 28, 10, 0.85) 0%, rgba(20, 15, 10, 0.95) 100%)", border: "1px solid rgba(245, 158, 11, 0.35)", borderRadius: "18px", padding: "18px", display: "flex", flexDirection: "column", gap: "12px" }}>
-                    <h3 style={{ fontSize: "16px", fontWeight: "900", color: "#F59E0B", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                  <div style={{ background: "linear-gradient(135deg, rgba(42, 28, 10, 0.85) 0%, rgba(20, 15, 10, 0.95) 100%)", border: "1px solid rgba(245, 158, 11, 0.35)", borderRadius: "18px", padding: "20px" }}>
+                    <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#F59E0B", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px" }}>
                       <img src="/images/Volcan.svg" alt="Pasatiempos" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(70%) sepia(50%) saturate(1500%) hue-rotate(1deg) brightness(100%) contrast(100%)" }} />
-                      <span>Pasatiempos y Estilo de Vida Local</span>
+                      <span>Pasatiempos, Tradiciones y Estilo de Vida Local</span>
                     </h3>
-                    <p style={{ fontSize: "13px", lineHeight: "1.6", color: "rgba(255,255,255,0.9)", margin: 0 }}>
+                    <p style={{ fontSize: "14px", lineHeight: "1.65", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                       {selectedDeptForDetails.pasatiempos.resumen}
                     </p>
-                    <div style={{ background: "rgba(245, 158, 11, 0.08)", border: "1px solid rgba(245, 158, 11, 0.25)", borderRadius: "12px", padding: "12px" }}>
-                      <h5 style={{ fontSize: "11.5px", fontWeight: "800", color: "#F59E0B", margin: "0 0 4px", textTransform: "uppercase" }}>
-                        💡 Sabor y Tradición Autóctona
-                      </h5>
-                      <p style={{ margin: 0, fontSize: "12px", color: "rgba(255,255,255,0.85)", lineHeight: 1.45 }}>
-                        Cada rincón conserva recetas ancestrales en maíz, bebidas tradicionales (chicha, pinolillo) y expresiones folclóricas transmitidas por generaciones.
-                      </p>
-                    </div>
                   </div>
 
                   <div>
-                    <h4 style={{ fontSize: "13.5px", fontWeight: "800", color: "#F59E0B", margin: "0 0 10px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#F59E0B", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                       Costumbres y Actividades Populares
                     </h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
                       {selectedDeptForDetails.pasatiempos.items.map((item, idx) => (
                         <div key={idx} style={{
                           background: "linear-gradient(135deg, rgba(30, 20, 10, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)",
                           border: "1px solid rgba(245, 158, 11, 0.25)",
                           borderRadius: "14px",
-                          padding: "12px 14px",
+                          padding: "16px",
                           display: "flex",
                           alignItems: "center",
-                          gap: "10px"
+                          gap: "12px"
                         }}>
-                          <div style={{ minWidth: "26px", height: "26px", borderRadius: "50%", background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0F172A", fontWeight: "900", fontSize: "12px" }}>
+                          <div style={{ minWidth: "30px", height: "30px", borderRadius: "50%", background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0F172A", fontWeight: "900", fontSize: "13px" }}>
                             {idx + 1}
                           </div>
-                          <p style={{ margin: 0, fontSize: "12.5px", fontWeight: "600", color: "#FFFFFF", lineHeight: 1.45 }}>
+                          <p style={{ margin: 0, fontSize: "13.5px", fontWeight: "600", color: "#FFFFFF", lineHeight: 1.5 }}>
                             {item}
                           </p>
                         </div>
                       ))}
                     </div>
                   </div>
+
+                  {/* Gastronomía y Tradición Autóctona */}
+                  <div style={{ background: "rgba(245, 158, 11, 0.08)", border: "1px solid rgba(245, 158, 11, 0.25)", borderRadius: "14px", padding: "14px" }}>
+                    <h5 style={{ fontSize: "13px", fontWeight: "800", color: "#F59E0B", margin: "0 0 6px", textTransform: "uppercase" }}>
+                      💡 Sabor y Tradición Autóctona
+                    </h5>
+                    <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                      Cada rincón del departamento conserva recetas ancestrales en maíz, bebidas tradicionales (chicha, pinolillo) y expresiones folclóricas transmitidas por generaciones.
+                    </p>
+                  </div>
                 </div>
               )}
 
               {/* 5. LUGARES IMPORTANTES Y ACTIVIDADES (COMBINADO) */}
               {(modalActiveTab === "lugares" || modalActiveTab === "actividades") && (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(460px, 1fr))", gap: "16px", alignItems: "start" }}>
-                  {/* Columna Izquierda: Sitios Emblemáticos Imperdibles */}
-                  <div>
-                    <h4 style={{ fontSize: "13.5px", fontWeight: "800", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-                      <img src="/images/San Juan del sur.svg" alt="Lugares" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
-                      <span>Sitios Emblemáticos Imperdibles</span>
-                    </h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                      {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => (
-                        <div key={idx} style={{
-                          background: "linear-gradient(135deg, rgba(28, 25, 23, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%)",
-                          border: "1px solid rgba(255, 215, 0, 0.35)",
-                          borderRadius: "14px",
-                          padding: "12px 14px",
-                          boxShadow: "0 4px 14px rgba(0,0,0,0.3)"
-                        }}>
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
-                            <span style={{
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: "4px",
-                              background: "rgba(255, 215, 0, 0.15)",
-                              border: "1px solid rgba(255, 215, 0, 0.3)",
-                              color: "#FFD700",
-                              padding: "2px 8px",
-                              borderRadius: "6px",
-                              fontSize: "10.5px",
-                              fontWeight: "800"
-                            }}>
-                              <Icon name="mapPin" size={11} color="#FFD700" />
-                              <span>Sitio #{idx + 1}</span>
-                            </span>
-                            <img src="/images/San Juan del sur.svg" alt="Emblema" style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
-                          </div>
-                          <h5 style={{ fontSize: "13.5px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 3px" }}>
-                            {lugar.nombre}
-                          </h5>
-                          <p style={{ margin: 0, fontSize: "12px", color: "rgba(255,255,255,0.85)", lineHeight: 1.45 }}>
-                            {lugar.desc}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Columna Derecha: Fiestas Patronales y Tradiciones */}
-                  <div>
-                    <h4 style={{ fontSize: "13.5px", fontWeight: "800", color: "#F59E0B", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-                      <img src="/images/caña.svg" alt="Actividades" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(70%) sepia(50%) saturate(1500%) hue-rotate(1deg) brightness(100%) contrast(100%)" }} />
-                      <span>Fiestas Patronales y Tradiciones</span>
-                    </h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                      {selectedDeptForDetails.actividades.map((act, idx) => (
-                        <div key={idx} style={{
-                          background: "linear-gradient(135deg, rgba(42, 28, 10, 0.85) 0%, rgba(18, 20, 35, 0.95) 100%)",
-                          border: "1px solid rgba(245, 158, 11, 0.35)",
-                          borderRadius: "14px",
-                          padding: "12px 14px",
-                          boxShadow: "0 4px 14px rgba(0,0,0,0.3)"
-                        }}>
-                          <span style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "4px",
-                            background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
-                            color: "#0F172A",
-                            padding: "2px 8px",
-                            borderRadius: "6px",
-                            fontWeight: "900",
-                            fontSize: "10.5px",
-                            marginBottom: "6px"
-                          }}>
-                            <Icon name="calendar" size={11} color="#0F172A" />
-                            <span>{act.fecha}</span>
-                          </span>
-                          <h5 style={{ fontSize: "13.5px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 3px" }}>
-                            {act.nombre}
-                          </h5>
-                          <p style={{ margin: 0, fontSize: "12px", color: "rgba(255,255,255,0.85)", lineHeight: 1.45 }}>
-                            {act.desc}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* 6. GALERÍA DE IMÁGENES */}
-              {modalActiveTab === "galeria" && (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "16px", alignItems: "start" }}>
-                  {/* Columna Izquierda: Imagen de Referencia */}
-                  {(selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard) && (
-                    <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(236, 72, 153, 0.3)", borderRadius: "16px", padding: "12px" }}>
-                      <h4 style={{ fontSize: "12.5px", fontWeight: "800", color: "#FFD700", margin: "0 0 8px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase" }}>
-                        <img src="/images/masaaya.svg" alt="Masaya" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
-                        <span>Fotografía de Referencia</span>
+                <div>
+                  {/* Subsección 1: Sitios Emblemáticos Imperdibles */}
+                  {selectedDeptForDetails.lugaresImportantes && selectedDeptForDetails.lugaresImportantes.length > 0 && (
+                    <div style={{ marginBottom: "28px" }}>
+                      <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#FFD700", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <img src="/images/San Juan del sur.svg" alt="Lugares" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
+                        <span>Sitios Emblemáticos Imperdibles</span>
                       </h4>
-                      <div
-                        onClick={() => setLightboxIndex(-1)}
-                        style={{
-                          width: "100%",
-                          height: "240px",
-                          borderRadius: "12px",
-                          overflow: "hidden",
-                          position: "relative",
-                          cursor: "pointer",
-                          border: "1.5px solid rgba(236, 72, 153, 0.4)",
-                          boxShadow: "0 6px 18px rgba(0,0,0,0.5)",
-                          background: "#0F172A"
-                        }}
-                      >
-                        <img
-                          src={selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard}
-                          alt={`Galería Fotográfica de ${selectedDeptForDetails.nombre}`}
-                          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                          loading="lazy"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Columna Derecha: Miniaturas de Galería */}
-                  {selectedDeptForDetails.galeria && selectedDeptForDetails.galeria.length > 0 && (
-                    <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "16px", padding: "12px" }}>
-                      <h4 style={{ fontSize: "12px", fontWeight: "800", color: "rgba(255,255,255,0.8)", margin: "0 0 8px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase" }}>
-                        <img src="/images/masaaya.svg" alt="Galería" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(0.85)" }} />
-                        <span>Álbum de Fotografía ({selectedDeptForDetails.galeria.length} imágenes)</span>
-                      </h4>
-                      <div style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(3, 1fr)",
-                        gap: "8px"
-                      }}>
-                        {selectedDeptForDetails.galeria.map((imgSrc, idx) => (
-                          <div
-                            key={idx}
-                            onClick={() => setLightboxIndex(idx)}
-                            style={{
-                              position: "relative",
-                              borderRadius: "10px",
-                              overflow: "hidden",
-                              cursor: "pointer",
-                              border: "1px solid rgba(255,255,255,0.1)",
-                              height: "110px",
-                              background: "#0F172A",
-                              transition: "transform 0.2s"
-                            }}
-                            onMouseOver={(e) => { e.currentTarget.style.transform = "scale(1.04)"; }}
-                            onMouseOut={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" }}>
+                        {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => (
+                          <div key={idx} style={{
+                            background: "linear-gradient(135deg, rgba(28, 25, 23, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%)",
+                            border: "1px solid rgba(255, 215, 0, 0.35)",
+                            borderRadius: "16px",
+                            padding: "16px 18px",
+                            position: "relative",
+                            transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                            boxShadow: "0 6px 18px rgba(0,0,0,0.4)"
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.7)";
+                            e.currentTarget.style.transform = "translateY(-2px)";
+                            e.currentTarget.style.boxShadow = "0 10px 24px rgba(255, 215, 0, 0.18)";
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.35)";
+                            e.currentTarget.style.transform = "translateY(0)";
+                            e.currentTarget.style.boxShadow = "0 6px 18px rgba(0,0,0,0.4)";
+                          }}
                           >
-                            <img
-                              src={imgSrc}
-                              alt={`${selectedDeptForDetails.nombre} - Foto ${idx + 1}`}
-                              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                              loading="lazy"
-                            />
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+                              <span style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                background: "linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(180, 130, 0, 0.3) 100%)",
+                                border: "1px solid rgba(255, 215, 0, 0.4)",
+                                color: "#FFD700",
+                                padding: "3px 10px",
+                                borderRadius: "8px",
+                                fontSize: "11px",
+                                fontWeight: "800"
+                              }}>
+                                <Icon name="mapPin" size={12} color="#FFD700" />
+                                <span>Sitio #{idx + 1}</span>
+                              </span>
+
+                              <img
+                                src="/images/San Juan del sur.svg"
+                                alt="Emblema"
+                                style={{
+                                  width: "16px",
+                                  height: "16px",
+                                  objectFit: "contain",
+                                  opacity: 0.9,
+                                  filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)"
+                                }}
+                              />
+                            </div>
+
+                            <h5 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px", lineHeight: "1.35" }}>
+                              {lugar.nombre}
+                            </h5>
+                            <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                              {lugar.desc}
+                            </p>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
+
+                  {/* Subsección 2: Fiestas Patronales, Eventos y Tradiciones (Estilo Ámbar Dorado Sol Festivo) */}
+                  {selectedDeptForDetails.actividades && selectedDeptForDetails.actividades.length > 0 && (
+                    <div>
+                      <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#F59E0B", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <img src="/images/caña.svg" alt="Actividades" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(70%) sepia(50%) saturate(1500%) hue-rotate(1deg) brightness(100%) contrast(100%)" }} />
+                        <span>Fiestas Patronales, Eventos y Tradiciones</span>
+                      </h4>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" }}>
+                        {selectedDeptForDetails.actividades.map((act, idx) => (
+                          <div key={idx} style={{
+                            background: "linear-gradient(135deg, rgba(42, 28, 10, 0.85) 0%, rgba(18, 20, 35, 0.95) 100%)",
+                            border: "1px solid rgba(245, 158, 11, 0.35)",
+                            borderRadius: "16px",
+                            padding: "16px 18px",
+                            transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                            boxShadow: "0 6px 18px rgba(0,0,0,0.4)"
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.borderColor = "rgba(245, 158, 11, 0.7)";
+                            e.currentTarget.style.transform = "translateY(-2px)";
+                            e.currentTarget.style.boxShadow = "0 10px 24px rgba(245, 158, 11, 0.2)";
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.borderColor = "rgba(245, 158, 11, 0.35)";
+                            e.currentTarget.style.transform = "translateY(0)";
+                            e.currentTarget.style.boxShadow = "0 6px 18px rgba(0,0,0,0.4)";
+                          }}
+                          >
+                            <span style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
+                              color: "#0F172A",
+                              padding: "3px 10px",
+                              borderRadius: "8px",
+                              fontWeight: "900",
+                              fontSize: "11px",
+                              marginBottom: "10px",
+                              boxShadow: "0 2px 10px rgba(245, 158, 11, 0.3)"
+                            }}>
+                              <Icon name="calendar" size={12} color="#0F172A" />
+                              <span>{act.fecha}</span>
+                            </span>
+
+                            <h5 style={{ fontSize: "15.5px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px", lineHeight: "1.35" }}>
+                              {act.nombre}
+                            </h5>
+
+                            <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                              {act.desc}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 6. GALERÍA DE IMÁGENES */}
+              {modalActiveTab === "galeria" && (
+                <div>
+                  <div style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+                    gap: "18px",
+                    alignItems: "start"
+                  }}>
+                    {/* Columna Izquierda: Galería Fotográfica de [Departamento] */}
+                    {(selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard) && (
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(236, 72, 153, 0.3)", borderRadius: "18px", padding: "14px" }}>
+                        <h4 style={{ fontSize: "13px", fontWeight: "800", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                          <img src="/images/masaaya.svg" alt="Masaya" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
+                          <span>Galería Fotográfica de {selectedDeptForDetails.nombre}</span>
+                        </h4>
+                        <div
+                          onClick={() => setLightboxIndex(-1)}
+                          style={{
+                            width: "100%",
+                            height: "288px",
+                            borderRadius: "14px",
+                            overflow: "hidden",
+                            position: "relative",
+                            cursor: "pointer",
+                            border: "1.5px solid rgba(236, 72, 153, 0.4)",
+                            boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+                            background: "#0F172A"
+                          }}
+                        >
+                          <img
+                            src={selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard}
+                            alt={`Galería Fotográfica de ${selectedDeptForDetails.nombre}`}
+                            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.4s" }}
+                            loading="lazy"
+                            onMouseOver={(e) => { e.currentTarget.style.transform = "scale(1.03)"; }}
+                            onMouseOut={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+                          />
+                          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(10,25,47,0.7) 100%)" }} />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Columna Derecha: Grid de Galería (Fotos 2 a 7) */}
+                    {selectedDeptForDetails.galeria && selectedDeptForDetails.galeria.length > 0 && (
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "18px", padding: "14px" }}>
+                        <h4 style={{ fontSize: "12px", fontWeight: "800", color: "rgba(255,255,255,0.8)", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                          <img src="/images/masaaya.svg" alt="Galería" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(0.85)" }} />
+                          <span>Fotografías de Galería</span>
+                        </h4>
+                        <div style={{
+                          display: "grid",
+                          gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
+                          gap: "10px"
+                        }}>
+                          {selectedDeptForDetails.galeria.map((imgSrc, idx) => (
+                            <div
+                              key={idx}
+                              onClick={() => setLightboxIndex(idx)}
+                              style={{
+                                position: "relative",
+                                borderRadius: "12px",
+                                overflow: "hidden",
+                                cursor: "pointer",
+                                border: "1px solid rgba(255,255,255,0.1)",
+                                boxShadow: "0 4px 14px rgba(0,0,0,0.4)",
+                                height: "139px",
+                                background: "#0F172A",
+                                transition: "transform 0.25s, box-shadow 0.25s"
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.transform = "scale(1.04)";
+                                e.currentTarget.style.borderColor = "rgba(236, 72, 153, 0.6)";
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.transform = "scale(1)";
+                                e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                              }}
+                            >
+                              <img
+                                src={imgSrc}
+                                alt={`${selectedDeptForDetails.nombre} - Foto ${idx + 1}`}
+                                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                                loading="lazy"
+                              />
+                              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(10,25,47,0.6) 100%)" }} />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
