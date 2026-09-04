@@ -363,7 +363,7 @@ export const DEPARTAMENTOS_DATA = {
       ],
       patrimonio: [
         { sitio: "Basílica Menor de San Sebastián", epoca: "Neoclásico (1891)", desc: "Templo emblemático de Diriamba decorado con bellos vitrales italianos y escenario del baile de El Güegüense." },
-        { sitio: "Reloj Público de Jinotepe", epoca: "1923", desc: "Torre de reloj traída de Alemania que constituye el punto de referencia histórico de la cabecera caraceña." }
+        { sitio: "Torre del Reloj Público de Diriamba", epoca: "1935", desc: "Emblemática torre de reloj traída de Alemania e instalada en el parque central de Diriamba, icono arquitectónico de la meseta caraceña." }
       ]
     },
     economia: {
@@ -393,7 +393,7 @@ export const DEPARTAMENTOS_DATA = {
     lugaresImportantes: [
       { nombre: "Basílica de San Sebastián", desc: "Templo neoclásico con cúpula icónica en Diriamba.", imagen: "/images/departamentos/carazo-basilica.png" },
       { nombre: "Centro Turístico La Boquita", desc: "Área de sol y playa con restaurantes y paseos a caballo.", imagen: "/images/departamentos/carazo-boquita.png" },
-      { nombre: "Reloj Público de Jinotepe", desc: "Monumento histórico en el parque central de Jinotepe.", imagen: "/images/departamentos/carazo-reloj.png" }
+      { nombre: "Torre del Reloj de Diriamba", desc: "Monumento histórico traído de Alemania en el parque central de Diriamba.", imagen: "/images/departamentos/carazo-reloj.png" }
     ],
     actividades: [
       { nombre: "Fiestas de San Sebastián en Diriamba", fecha: "20 de Enero", desc: "Bailes de El Güegüense, El Toro Huaco y El Gigante en las calles." },
