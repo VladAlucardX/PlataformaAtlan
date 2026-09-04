@@ -439,7 +439,7 @@ export default function GuiasPage() {
               (dbG) => dbG.id === mockG.id || (dbG.nombre_completo && dbG.nombre_completo.toLowerCase().trim() === mockG.nombre_completo.toLowerCase().trim())
             );
 
-            const source = activeProfile || dbMatch;
+            const source = dbMatch || activeProfile;
             if (source) {
               if (dbMatch) usedDbIds.add(dbMatch.id);
               merged.push({
