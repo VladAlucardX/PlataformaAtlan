@@ -403,7 +403,8 @@ export default function GuiasPage() {
         const { data, error } = await supabase
           .from("guias_turisticos")
           .select("*, perfiles(nombre_completo, avatar_url, email)")
-          .eq("activo", true);
+          .eq("activo", true)
+          .order("updated_at", { ascending: false });
 
         let rawSaved = null;
         try {
@@ -416,8 +417,8 @@ export default function GuiasPage() {
         if (!error && data && data.length > 0) {
           const formattedDbGuias = data.map((g) => ({
             ...g,
-            nombre_completo: g.perfiles?.nombre_completo || g.nombre_completo || "Guía Turístico",
-            avatar_url: g.perfiles?.avatar_url || g.avatar_url || "/images/perfil.svg",
+            nombre_completo: g.nombre_completo || g.perfiles?.nombre_completo || "Guía Turístico",
+            avatar_url: g.avatar_url || g.perfiles?.avatar_url || "/images/perfil.svg",
             resenas: g.resenas || [],
             galeria_fotos: g.galeria_fotos && g.galeria_fotos.length > 0 ? g.galeria_fotos : [
               "/images/galeria-departamentos/leon/1.1.jpg",
@@ -425,19 +426,26 @@ export default function GuiasPage() {
             ]
           }));
 
-          // Combinar guías de la BD con MOCK_GUIAS
+          // Combinar guías de la BD con MOCK_GUIAS (priorizando el registro de BD más reciente)
           const merged = [];
+          const usedDbIds = new Set();
+
           MOCK_GUIAS.forEach((mockG) => {
             const isCarlos = mockG.nombre_completo.toLowerCase().includes("carlos");
             const activeProfile = isCarlos && rawSaved ? rawSaved : null;
+
+            // Buscar coincidencia en la BD ordenada por actualización reciente
             const dbMatch = formattedDbGuias.find(
               (dbG) => dbG.id === mockG.id || (dbG.nombre_completo && dbG.nombre_completo.toLowerCase().trim().includes("carlos mendoza")) || (dbG.nombre_completo && dbG.nombre_completo.toLowerCase().trim() === mockG.nombre_completo.toLowerCase().trim())
             );
+
             const source = activeProfile || dbMatch;
             if (source) {
+              if (dbMatch) usedDbIds.add(dbMatch.id);
               merged.push({
                 ...mockG,
                 ...source,
+                id: mockG.id, // mantener id de navegación
                 departamento_principal: source.departamento_principal || mockG.departamento_principal,
                 especialidad: source.especialidad || mockG.especialidad,
                 tarifa_aprox: source.tarifa_aprox || mockG.tarifa_aprox,
@@ -452,10 +460,11 @@ export default function GuiasPage() {
             }
           });
 
-          // Agregar guías adicionales de BD
+          // Agregar cualquier guía adicional de la BD que no haya sido emparejada
           formattedDbGuias.forEach((dbG) => {
-            const alreadyIn = merged.some(m => m.id === dbG.id || (m.nombre_completo && m.nombre_completo.toLowerCase().trim() === dbG.nombre_completo?.toLowerCase().trim()));
-            if (!alreadyIn) merged.push(dbG);
+            if (!usedDbIds.has(dbG.id)) {
+              merged.push(dbG);
+            }
           });
 
           setGuias(merged);
