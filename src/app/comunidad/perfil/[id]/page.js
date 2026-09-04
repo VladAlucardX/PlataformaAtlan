@@ -433,21 +433,102 @@ export default function PerfilPublico() {
       setLoading(true);
       try {
         let pData = null;
-        let isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawUserId);
+        const slugLower = (rawUserId || "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
-        if (isUuid) {
-          const { data } = await supabase.from("perfiles").select("*").eq("id", rawUserId).maybeSingle();
-          pData = data;
-        } else {
-          const slugLower = rawUserId.toLowerCase().replace(/[^a-z0-9]/g, "");
-          const { data: allP } = await supabase.from("perfiles").select("*");
-          if (allP) {
-            pData = allP.find(p => {
-              const nameSlug = (p.nombre_completo || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-              const emailSlug = (p.email || "").split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "");
-              return nameSlug === slugLower || emailSlug === slugLower;
-            }) || null;
+        // 1. Comprobar si el slug coincide con el usuario de sesión activo (myPerfil)
+        if (myPerfil) {
+          const mySlug = getProfileSlug(myPerfil).toLowerCase().replace(/[^a-z0-9]/g, "");
+          const myNameSlug = (myPerfil.nombre_completo || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+          if (myPerfil.id === rawUserId || mySlug === slugLower || myNameSlug === slugLower) {
+            pData = myPerfil;
           }
+        }
+
+        // 2. Si no es el usuario activo, consultar la tabla perfiles de Supabase
+        if (!pData) {
+          let isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawUserId);
+
+          if (isUuid) {
+            const { data } = await supabase.from("perfiles").select("*").eq("id", rawUserId).maybeSingle();
+            pData = data;
+          } else {
+            const { data: allP } = await supabase.from("perfiles").select("*");
+            if (allP) {
+              pData = allP.find(p => {
+                const pSlug = getProfileSlug(p).toLowerCase().replace(/[^a-z0-9]/g, "");
+                const nameSlug = (p.nombre_completo || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+                const emailSlug = (p.email || "").split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "");
+                return p.id === rawUserId || pSlug === slugLower || nameSlug === slugLower || emailSlug === slugLower;
+              }) || null;
+            }
+          }
+        }
+
+        // 3. Si no se encuentra en perfiles, buscar en guias_turisticos de Supabase
+        if (!pData) {
+          try {
+            const { data: gData } = await supabase.from("guias_turisticos").select("*");
+            if (gData && gData.length > 0) {
+              const foundGuia = gData.find(g => {
+                const gSlug = (g.nombre_completo || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+                const gSlugLower = gSlug.replace(/[^a-z0-9]/g, "");
+                const gNameLower = (g.nombre_completo || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+                return g.id === rawUserId || gSlug === rawUserId || gSlugLower === slugLower || gNameLower === slugLower;
+              });
+              if (foundGuia) {
+                pData = {
+                  id: foundGuia.id,
+                  nombre_completo: foundGuia.nombre_completo,
+                  avatar_url: foundGuia.avatar_url,
+                  rol: "guia_turistico",
+                  bio: foundGuia.biografia,
+                  departamento_principal: foundGuia.departamento_principal,
+                  especialidad: foundGuia.especialidad
+                };
+              }
+            }
+          } catch (err) {
+            console.warn("Notice: guias_turisticos fallback search:", err);
+          }
+        }
+
+        // 4. Fallback con guías de demostración (MOCK_GUIAS)
+        if (!pData) {
+          const MOCK_GUIAS_FALLBACK = [
+            { id: "guia-1", nombre_completo: "Carlos Mendoza Silva", avatar_url: "/images/art1.jpeg", departamento_principal: "León", especialidad: "Senderismo y Volcanes", biografia: "Guía nativo de León con más de 8 años guiando excursiones al Cerro Negro..." },
+            { id: "guia-2", nombre_completo: "María José López", avatar_url: "/images/art2.jpeg", departamento_principal: "Granada", especialidad: "Cultura e Historia", biografia: "Historiadora y guía certificada..." },
+            { id: "guia-3", nombre_completo: "Alejandro Jarquín", avatar_url: "/images/art3.jpeg", departamento_principal: "Rivas", especialidad: "Ecoturismo Integral", biografia: "Especialista en la mística Isla de Ometepe..." },
+            { id: "guia-4", nombre_completo: "Brenda Castillo", avatar_url: "/images/art5.png", departamento_principal: "Matagalpa", especialidad: "Avistamiento de Aves", biografia: "Ornitóloga y guía de ecoturismo..." },
+            { id: "guia-5", nombre_completo: "Nestor Moncada", avatar_url: "/images/art4.png", departamento_principal: "Masaya", especialidad: "Gastronomía Tradicional", biografia: "Apasionado por el folclore de Masaya..." }
+          ];
+
+          const foundMock = MOCK_GUIAS_FALLBACK.find(g => {
+            const gSlug = (g.nombre_completo || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+            const gSlugLower = gSlug.replace(/[^a-z0-9]/g, "");
+            const gNameLower = (g.nombre_completo || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+            return g.id === rawUserId || gSlug === rawUserId || gSlugLower === slugLower || gNameLower === slugLower;
+          });
+          if (foundMock) {
+            pData = {
+              id: foundMock.id,
+              nombre_completo: foundMock.nombre_completo,
+              avatar_url: foundMock.avatar_url,
+              rol: "guia_turistico",
+              bio: foundMock.biografia,
+              departamento_principal: foundMock.departamento_principal,
+              especialidad: foundMock.especialidad
+            };
+          }
+        }
+
+        // 5. Último fallback para el usuario en sesión activa
+        if (!pData && session?.user) {
+          pData = myPerfil || {
+            id: session.user.id,
+            nombre_completo: session.user.user_metadata?.nombre_completo || session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "Usuario Atlan",
+            avatar_url: session.user.user_metadata?.avatar_url || null,
+            rol: session.user.user_metadata?.rol || "guia_turistico"
+          };
         }
 
         if (!pData) {
@@ -457,7 +538,7 @@ export default function PerfilPublico() {
 
         if (isMounted) setTargetPerfil(pData);
 
-        // Fetch posts for target user
+        // Cargar publicaciones del usuario destino
         const { data: postsData } = await supabase
           .from("publicaciones")
           .select("*, perfiles(id, nombre_completo, avatar_url, rol)")
@@ -484,7 +565,7 @@ export default function PerfilPublico() {
     }
     loadData();
     return () => { isMounted = false; };
-  }, [rawUserId, session]);
+  }, [rawUserId, session, myPerfil]);
 
   const handleFollow = async () => {
     if (!session) { setShowLoginModal(true); return; }
