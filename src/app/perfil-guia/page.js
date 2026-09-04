@@ -55,6 +55,44 @@ const SERVICIOS_LIST = [
   "Atención a Grupos Grandes"
 ];
 
+// CATÁLOGO OFICIAL DE DESTINOS TURÍSTICOS Y LUGARES EN EL MAPA DE NICARAGUA
+const CATALOGO_DESTINOS_MAPA = [
+  // León
+  { id: "dest-1", nombre: "Volcán Cerro Negro", categoria: "Sandboarding", icono: "🌋", deptSlug: "leon", departamento: "León", imagen: "/images/galeria-departamentos/leon/1.1.jpg", desc: "Ascenso directo al volcán más joven de Centroamérica y descenso en tabla sobre arena volcánica." },
+  { id: "dest-2", nombre: "Catedral de León", categoria: "Patrimonio UNESCO", icono: "🏛️", deptSlug: "leon", departamento: "León", imagen: "/images/galeria-departamentos/leon/2.jpg", desc: "La catedral más grande de Centroamérica. Recorrido por sus cúpulas blancas y cripta colonial." },
+  { id: "dest-3", nombre: "Volcán Telica (Lava Nocturna)", categoria: "Senderismo", icono: "🔥", deptSlug: "leon", departamento: "León", imagen: "/images/galeria-departamentos/leon/3.jpg", desc: "Excursión nocturna a la cumbre para contemplar la lava incandescente en el cráter activo." },
+  { id: "dest-4", nombre: "Ruinas de León Viejo", categoria: "Historia UNESCO", icono: "🏛️", deptSlug: "leon", departamento: "León", imagen: "/images/galeria-departamentos/leon/4.jpg", desc: "Primer asentamiento colonial de León destruido por el volcán Momotombo en 1610." },
+  { id: "dest-5", nombre: "Playa Las Peñitas & Poneloya", categoria: "Playa & Surf", icono: "🏖️", deptSlug: "leon", departamento: "León", imagen: "/images/galeria-departamentos/leon/5.jpg", desc: "Playas del Pacífico leonés famosas por sus puestas de sol, surf y reserva de manglares Isla Juan Venado." },
+  { id: "dest-6", nombre: "Volcán Momotombo", categoria: "Montañismo", icono: "⛰️", deptSlug: "leon", departamento: "León", imagen: "/images/galeria-departamentos/leon/6.jpg", desc: "Ascenso técnico y desafiante al majestuoso cono perfecto del volcán Momotombo." },
+
+  // Granada
+  { id: "dest-7", nombre: "Isletas de Granada", categoria: "Naturaleza & Náutica", icono: "🏝️", deptSlug: "granada", departamento: "Granada", imagen: "/images/galeria-departamentos/granada/1.1.jpg", desc: "Travesía en lancha o kayak por las 365 islas de origen volcánico en el Lago Cocibolca." },
+  { id: "dest-8", nombre: "Reserva Volcán Mombacho", categoria: "Ecoturismo", icono: "🌿", deptSlug: "granada", departamento: "Granada", imagen: "/images/galeria-departamentos/granada/2.jpg", desc: "Sendero por el bosque nuboso, cráteres extintos y vistas espectaculares de Granada." },
+  { id: "dest-9", nombre: "Catedral de Granada & Centro Histórico", categoria: "Cultura e Historia", icono: "🏛️", deptSlug: "granada", departamento: "Granada", imagen: "/images/galeria-departamentos/granada/3.jpg", desc: "Recorrido por la arquitectura colonial, parque central e iglesia de la Merced." },
+
+  // Masaya
+  { id: "dest-10", nombre: "Parque Nacional Volcán Masaya", categoria: "Lava Nocturna", icono: "🔥", deptSlug: "masaya", departamento: "Masaya", imagen: "/images/galeria-departamentos/masaya/1.1.jpg", desc: "Observación directa del cráter Santiago y el impresionante lago de lava ardiente." },
+  { id: "dest-11", nombre: "Mirador de Catarina & Laguna de Apoyo", categoria: "Ecoturismo", icono: "💧", deptSlug: "masaya", departamento: "Masaya", imagen: "/images/galeria-departamentos/masaya/2.jpg", desc: "Vistas panorámicas hacia la laguna cratérica de agua cristalina y mercados de artesanía." },
+  { id: "dest-12", nombre: "Mercado de Artesanías de Masaya", categoria: "Gastronomía & Arte", icono: "🎭", deptSlug: "masaya", departamento: "Masaya", imagen: "/images/galeria-departamentos/masaya/3.jpg", desc: "Epicentro de la cultura artesanal, hamacas de hilo, madera tallada y bailes folclóricos." },
+
+  // Rivas & Ometepe
+  { id: "dest-13", nombre: "Isla de Ometepe (Concepción & Maderas)", categoria: "Ecoturismo & Volcanes", icono: "🌋", deptSlug: "rivas", departamento: "Rivas", imagen: "/images/galeria-departamentos/rivas/1.1.jpg", desc: "Mítica isla en forma de ocho formada por dos majestuosos volcanes en medio del lago." },
+  { id: "dest-14", nombre: "Playa San Juan del Sur", categoria: "Playa & Surf", icono: "🏖️", deptSlug: "rivas", departamento: "Rivas", imagen: "/images/galeria-departamentos/rivas/2.jpg", desc: "Bahía costera icónica, centro del surf centroamericano y avistamiento de tortugas en La Flor." },
+  { id: "dest-15", nombre: "Reserva Ojo de Agua", categoria: "Manantial Natural", icono: "💧", deptSlug: "rivas", departamento: "Rivas", imagen: "/images/galeria-departamentos/rivas/3.jpg", desc: "Piscinas naturales de agua volcánica medicinal rodeadas de exuberante selva tropical." },
+
+  // Managua
+  { id: "dest-16", nombre: "Puerto Salvador Allende & Malecón", categoria: "Turismo Urbano", icono: "🏛️", deptSlug: "managua", departamento: "Managua", imagen: "/images/departamentos/managua-hero.png", desc: "Malecón histórico a orillas del Lago Xolotlán con restaurantes y paseos en barco." },
+  { id: "dest-17", nombre: "Reserva Laguna de Tiscapa", categoria: "Patrimonio & Ecoturismo", icono: "⛰️", deptSlug: "managua", departamento: "Managua", imagen: "/images/departamentos/managua-tiscapa.png", desc: "Mirador con la silueta de Sandino y laguna cratérica en el corazón de Managua." },
+
+  // Matagalpa & Jinotega
+  { id: "dest-18", nombre: "Reserva Selva Negra & Ruta del Café", categoria: "Agroturismo & Montaña", icono: "🌿", deptSlug: "matagalpa", departamento: "Matagalpa", imagen: "/images/departamentos/matagalpa-hero.png", desc: "Caminatas en el bosque de nebliselva y recorrido por haciendas cafetaleras tradicionales." },
+  { id: "dest-19", nombre: "Cascada Blanca & Peñas Blancas", categoria: "Senderismo & Cascadas", icono: "💧", deptSlug: "matagalpa", departamento: "Matagalpa", imagen: "/images/departamentos/matagalpa-cascada.png", desc: "Imponentes saltos de agua y macizo boscoso de la Reserva de Biósfera Bosawás." },
+
+  // Río San Juan & RACS
+  { id: "dest-20", nombre: "Fortaleza de El Castillo & Río San Juan", categoria: "Historia & Selva", icono: "🏛️", deptSlug: "rio-san-juan", departamento: "Río San Juan", imagen: "/images/departamentos/rio-san-juan-fortaleza.png", desc: "Fortaleza colonial española a orillas del histórico río e itinerario a la Reserva Indio Maíz." },
+  { id: "dest-21", nombre: "Corn Island (Little & Big Corn)", categoria: "Caribe & Buceo", icono: "🏖️", deptSlug: "raccs", departamento: "RACCS", imagen: "/images/departamentos/corn-island.png", desc: "Paraíso caribeño de agua turquesa, arrecifes de coral y cultura garífuna/creole." }
+];
+
 export default function PerfilGuiaPage() {
   const { t, lang } = useTranslation();
   const router = useRouter();
@@ -80,6 +118,10 @@ export default function PerfilGuiaPage() {
     "Fotos & Videos de Travesía"
   ]);
 
+  // Filtros del catálogo de lugares en Tab 3
+  const [searchDestinoQuery, setSearchDestinoQuery] = useState("");
+  const [selectedDeptFilter, setSelectedDeptFilter] = useState("Todos");
+
   const toggleIdioma = (langName) => {
     const currentArray = guiaIdiomas
       ? guiaIdiomas.split(",").map(s => s.trim()).filter(Boolean)
@@ -99,6 +141,28 @@ export default function PerfilGuiaPage() {
       setGuiaServicios(guiaServicios.filter(s => s !== servicioName));
     } else {
       setGuiaServicios([...guiaServicios, servicioName]);
+    }
+  };
+
+  const toggleDestinoMapa = (destObj) => {
+    const exists = guiaDestinosMapa.some(d => d.id === destObj.id || d.nombre.toLowerCase().trim() === destObj.nombre.toLowerCase().trim());
+    let updated;
+    if (exists) {
+      updated = guiaDestinosMapa.filter(d => d.id !== destObj.id && d.nombre.toLowerCase().trim() !== destObj.nombre.toLowerCase().trim());
+    } else {
+      updated = [...guiaDestinosMapa, destObj];
+    }
+    setGuiaDestinosMapa(updated);
+
+    // Guardar inmediatamente en LocalStorage / Supabase
+    try {
+      localStorage.setItem("atlan_guia_profile_global", JSON.stringify({ ...perfil, destinos_mapa: updated }));
+    } catch (e) {}
+    if (user?.id) {
+      supabase.from("guias_turisticos").upsert({
+        id: user.id,
+        destinos_mapa: updated,
+      }).then();
     }
   };
   const [guiaBiografia, setGuiaBiografia] = useState("");
@@ -1065,39 +1129,40 @@ export default function PerfilGuiaPage() {
             {/* PESTAÑA 3: LUGARES EN EL MAPA */}
             {activeTab === "mapa_destinos" && (
               <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+                {/* Encabezado */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px", flexShrink: 0 }}>
                   <div>
-                    <h3 style={{ margin: 0, fontSize: "14px", fontWeight: "900", color: "#0A192F", display: "flex", alignItems: "center", gap: "4px" }}>
+                    <h3 style={{ margin: 0, fontSize: "14px", fontWeight: "900", color: "#0A192F", display: "flex", alignItems: "center", gap: "6px" }}>
                       <span>🗺️</span>
-                      <span>Lugares y Destinos de Tours en el Mapa</span>
+                      <span>Catálogo de Lugares del Mapa de Nicaragua</span>
                     </h3>
                     <p style={{ margin: 0, fontSize: "10.5px", color: "#64748B" }}>
-                      Sitios donde ofreces tus servicios guiados.
+                      Haz clic en los destinos oficiales del mapa para agregarlos o quitarlos de tus tours.
                     </p>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => setShowAddDestForm(!showAddDestForm)}
-                    style={{ background: "#10B981", color: "#FFF", border: "none", padding: "5px 12px", borderRadius: "7px", fontSize: "11.5px", fontWeight: "800", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
+                    style={{ background: showAddDestForm ? "#EF4444" : "rgba(16, 185, 129, 0.12)", color: showAddDestForm ? "#FFF" : "#059669", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "4px 10px", borderRadius: "7px", fontSize: "11px", fontWeight: "800", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
                   >
                     <Icon name={showAddDestForm ? "x" : "plus"} size={12} />
-                    <span>{showAddDestForm ? "Cancelar" : "Agregar Destino"}</span>
+                    <span>{showAddDestForm ? "Cancelar" : "+ Sitio Personalizado"}</span>
                   </button>
                 </div>
 
-                {/* Form Inline Agregar Destino */}
+                {/* Formulario Inline Sitio Personalizado */}
                 {showAddDestForm && (
                   <form onSubmit={handleAddDestinoMapa} style={{ background: "rgba(16, 185, 129, 0.04)", border: "1px solid rgba(16, 185, 129, 0.25)", borderRadius: "10px", padding: "10px", marginBottom: "8px", flexShrink: 0 }}>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "6px" }}>
                       <div>
                         <label style={{ fontSize: "10px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "1px" }}>
-                          Nombre del Sitio:
+                          Nombre del Sitio Personalizado:
                         </label>
                         <input
                           type="text"
                           required
-                          placeholder="Ej. Volcán Cerro Negro"
+                          placeholder="Ej. Mirador Secreto El Crucero"
                           value={newDestNombre}
                           onChange={(e) => setNewDestNombre(e.target.value)}
                           style={{ width: "100%", padding: "4px 8px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px" }}
@@ -1127,7 +1192,7 @@ export default function PerfilGuiaPage() {
                         </label>
                         <input
                           type="text"
-                          placeholder="Ej. Sandboarding"
+                          placeholder="Ej. Ecoturismo Secreto"
                           value={newDestCategoria}
                           onChange={(e) => setNewDestCategoria(e.target.value)}
                           style={{ width: "100%", padding: "4px 8px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px" }}
@@ -1163,7 +1228,7 @@ export default function PerfilGuiaPage() {
                       </label>
                       <input
                         type="text"
-                        placeholder="Ej. Ascenso y descenso en tabla de sandboard..."
+                        placeholder="Ej. Recorrido privado a mirador natural..."
                         value={newDestDesc}
                         onChange={(e) => setNewDestDesc(e.target.value)}
                         style={{ width: "100%", padding: "4px 8px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px" }}
@@ -1176,65 +1241,200 @@ export default function PerfilGuiaPage() {
                         disabled={!newDestNombre.trim()}
                         style={{ background: "#10B981", color: "#FFF", border: "none", padding: "4px 12px", borderRadius: "6px", fontSize: "11px", fontWeight: "800", cursor: "pointer" }}
                       >
-                        Guardar Destino
+                        Guardar Destino Personalizado
                       </button>
                     </div>
                   </form>
                 )}
 
-                {/* Lista Destinos Creados */}
-                {guiaDestinosMapa.length === 0 ? (
-                  <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "20px", background: "rgba(16, 185, 129, 0.03)", border: "1.5px dashed rgba(16, 185, 129, 0.25)", borderRadius: "12px" }}>
-                    <span style={{ fontSize: "24px" }}>🗺️</span>
-                    <p style={{ fontSize: "11.5px", color: "#64748B", fontWeight: "700", marginTop: "4px" }}>
-                      Aún no has agregado destinos de mapa a tu perfil de guía.
-                    </p>
+                {/* RESUMEN DE DESTINOS SELECCIONADOS POR EL GUÍA */}
+                <div style={{ background: "rgba(14, 165, 233, 0.04)", border: "1px solid rgba(14, 165, 233, 0.2)", borderRadius: "10px", padding: "8px 12px", marginBottom: "8px", flexShrink: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: guiaDestinosMapa.length > 0 ? "6px" : 0 }}>
+                    <span style={{ fontSize: "11px", fontWeight: "800", color: "#0284C7", display: "flex", alignItems: "center", gap: "5px" }}>
+                      <span>📍</span>
+                      <span>Tus Lugares en Tour ({guiaDestinosMapa.length})</span>
+                    </span>
+                    <span style={{ fontSize: "10px", fontWeight: "700", color: "#64748B" }}>
+                      {guiaDestinosMapa.length === 0 ? "Sin lugares seleccionados" : "Visibles en tu perfil público"}
+                    </span>
                   </div>
-                ) : (
-                  <div style={{ flex: 1, minHeight: 0, overflowY: "auto", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "8px", paddingRight: "4px" }}>
-                    {guiaDestinosMapa.map((dest) => (
+
+                  {guiaDestinosMapa.length === 0 ? (
+                    <p style={{ margin: 0, fontSize: "10.5px", color: "#94A3B8", fontStyle: "italic" }}>
+                      Haz clic en cualquier lugar del catálogo oficial abajo para añadirlo a tu oferta turística.
+                    </p>
+                  ) : (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", maxHeight: "75px", overflowY: "auto" }}>
+                      {guiaDestinosMapa.map((dest) => (
+                        <div
+                          key={dest.id || dest.nombre}
+                          style={{
+                            background: "#FFFFFF",
+                            border: "1px solid #0284C7",
+                            borderRadius: "20px",
+                            padding: "2px 8px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "5px",
+                            fontSize: "10.5px",
+                            fontWeight: "750",
+                            color: "#0A192F",
+                            boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+                          }}
+                        >
+                          <span>{dest.icono || "📍"}</span>
+                          <span>{dest.nombre}</span>
+                          <span style={{ background: "rgba(14, 165, 233, 0.15)", color: "#0284C7", padding: "1px 5px", borderRadius: "10px", fontSize: "9px" }}>
+                            {dest.departamento}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => toggleDestinoMapa(dest)}
+                            style={{ background: "none", border: "none", color: "#EF4444", fontWeight: "900", cursor: "pointer", fontSize: "11px", padding: "0 2px", marginLeft: "2px" }}
+                            title="Quitar de mis tours"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* BARRA DE BÚSQUEDA Y FILTRADO DE DEPARTAMENTO */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "8px", marginBottom: "8px", flexShrink: 0 }}>
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type="text"
+                      placeholder="🔍 Buscar atracción (ej: Cerro Negro, Isletas, Lava)..."
+                      value={searchDestinoQuery}
+                      onChange={(e) => setSearchDestinoQuery(e.target.value)}
+                      style={{
+                        width: "100%",
+                        padding: "6px 10px",
+                        borderRadius: "8px",
+                        border: "1px solid #CBD5E1",
+                        fontSize: "11.5px",
+                        outline: "none",
+                        boxShadow: "inset 0 1px 2px rgba(0,0,0,0.03)"
+                      }}
+                    />
+                  </div>
+
+                  <select
+                    value={selectedDeptFilter}
+                    onChange={(e) => setSelectedDeptFilter(e.target.value)}
+                    style={{
+                      padding: "6px 10px",
+                      borderRadius: "8px",
+                      border: "1px solid #CBD5E1",
+                      fontSize: "11.5px",
+                      fontWeight: "750",
+                      color: "#0A192F",
+                      background: "#F8FAFC",
+                      cursor: "pointer",
+                      outline: "none"
+                    }}
+                  >
+                    <option value="Todos">🗺️ Todos los Departamentos</option>
+                    {DEPARTAMENTOS_LIST.map(dept => (
+                      <option key={dept} value={dept}>{dept}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* GRILLA INTERACTIVA DEL CATÁLOGO DE LUGARES */}
+                <div style={{ flex: 1, minHeight: 0, overflowY: "auto", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", gap: "8px", paddingRight: "4px" }}>
+                  {CATALOGO_DESTINOS_MAPA.filter(dest => {
+                    const matchesDept = selectedDeptFilter === "Todos" || dest.departamento === selectedDeptFilter;
+                    const matchesSearch = !searchDestinoQuery.trim() ||
+                      dest.nombre.toLowerCase().includes(searchDestinoQuery.toLowerCase()) ||
+                      dest.departamento.toLowerCase().includes(searchDestinoQuery.toLowerCase()) ||
+                      dest.categoria.toLowerCase().includes(searchDestinoQuery.toLowerCase()) ||
+                      dest.desc.toLowerCase().includes(searchDestinoQuery.toLowerCase());
+                    return matchesDept && matchesSearch;
+                  }).map((dest) => {
+                    const isSelected = guiaDestinosMapa.some(
+                      d => (d.id && d.id === dest.id) || d.nombre.toLowerCase().trim() === dest.nombre.toLowerCase().trim()
+                    );
+
+                    return (
                       <div
                         key={dest.id}
+                        onClick={() => toggleDestinoMapa(dest)}
                         style={{
-                          background: "#FFFFFF",
-                          border: "1px solid rgba(16, 185, 129, 0.25)",
+                          background: isSelected ? "#F0FDF4" : "#FFFFFF",
+                          border: isSelected ? "1.5px solid #10B981" : "1px solid #E2E8F0",
                           borderRadius: "10px",
                           padding: "8px 10px",
                           display: "flex",
                           flexDirection: "column",
-                          justifyContent: "space-between"
+                          justifyContent: "space-between",
+                          cursor: "pointer",
+                          transition: "all 0.15s ease-in-out",
+                          boxShadow: isSelected ? "0 2px 8px rgba(16, 185, 129, 0.15)" : "0 1px 3px rgba(0,0,0,0.02)"
                         }}
                       >
                         <div>
-                          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "4px", marginBottom: "2px" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                              <span style={{ fontSize: "14px" }}>{dest.icono}</span>
-                              <h4 style={{ margin: 0, fontSize: "12px", fontWeight: "800", color: "#0A192F" }}>{dest.nombre}</h4>
+                          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "4px", marginBottom: "4px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                              <span style={{ fontSize: "15px" }}>{dest.icono}</span>
+                              <h4 style={{ margin: 0, fontSize: "11.5px", fontWeight: "800", color: "#0A192F", lineHeight: "1.2" }}>
+                                {dest.nombre}
+                              </h4>
                             </div>
-                            <span style={{ background: "rgba(14, 165, 233, 0.12)", color: "#0EA5E9", fontSize: "9.5px", fontWeight: "800", padding: "1px 5px", borderRadius: "4px" }}>
+                            <span style={{
+                              background: isSelected ? "rgba(16, 185, 129, 0.15)" : "rgba(14, 165, 233, 0.1)",
+                              color: isSelected ? "#059669" : "#0EA5E9",
+                              fontSize: "9px",
+                              fontWeight: "800",
+                              padding: "1px 6px",
+                              borderRadius: "4px",
+                              whiteSpace: "nowrap"
+                            }}>
                               {dest.departamento}
                             </span>
                           </div>
-                          <p style={{ margin: "0 0 4px", fontSize: "10.5px", color: "#64748B", lineHeight: "1.3" }}>
+
+                          <p style={{ margin: "0 0 6px", fontSize: "10.5px", color: "#64748B", lineHeight: "1.3", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                             {dest.desc}
                           </p>
                         </div>
 
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "4px", borderTop: "1px solid rgba(0,0,0,0.05)" }}>
-                          <span style={{ fontSize: "9.5px", fontWeight: "700", color: "#10B981" }}>{dest.categoria}</span>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "5px", borderTop: "1px solid rgba(0,0,0,0.05)" }}>
+                          <span style={{ fontSize: "9.5px", fontWeight: "750", color: "#64748B" }}>
+                            {dest.categoria}
+                          </span>
+
                           <button
                             type="button"
-                            onClick={() => handleRemoveDestinoMapa(dest.id)}
-                            style={{ background: "rgba(239, 68, 68, 0.1)", color: "#EF4444", border: "none", padding: "2px 6px", borderRadius: "4px", fontSize: "10px", fontWeight: "750", cursor: "pointer", display: "flex", alignItems: "center", gap: "2px" }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleDestinoMapa(dest);
+                            }}
+                            style={{
+                              background: isSelected ? "#10B981" : "#0284C7",
+                              color: "#FFFFFF",
+                              border: "none",
+                              padding: "3px 8px",
+                              borderRadius: "5px",
+                              fontSize: "10px",
+                              fontWeight: "800",
+                              cursor: "pointer",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "3px",
+                              transition: "background 0.2s"
+                            }}
                           >
-                            <Icon name="trash" size={10} />
-                            <span>Quitar</span>
+                            <Icon name={isSelected ? "check" : "plus"} size={10} color="#FFFFFF" />
+                            <span>{isSelected ? "En tus Tours" : "Agregar"}</span>
                           </button>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
