@@ -417,15 +417,34 @@ export default function GuiasPage() {
             ]
           }));
 
-          // Combinar guías de la BD con MOCK_GUIAS (priorizando BD por ID o nombre)
-          const merged = [...formattedDbGuias];
+          // Combinar guías de la BD con MOCK_GUIAS (haciendo que los datos reales de Supabase sobrescriban a los MOCKS)
+          const merged = [];
           MOCK_GUIAS.forEach((mockG) => {
-            const exists = merged.some(
-              (dbG) => dbG.id === mockG.id || (dbG.nombre_completo && dbG.nombre_completo.toLowerCase().trim() === mockG.nombre_completo.toLowerCase().trim())
+            const dbMatch = formattedDbGuias.find(
+              (dbG) => dbG.id === mockG.id || (dbG.nombre_completo && dbG.nombre_completo.toLowerCase().trim().includes("carlos mendoza")) || (dbG.nombre_completo && dbG.nombre_completo.toLowerCase().trim() === mockG.nombre_completo.toLowerCase().trim())
             );
-            if (!exists) {
+            if (dbMatch) {
+              merged.push({
+                ...mockG,
+                ...dbMatch,
+                departamento_principal: dbMatch.departamento_principal || mockG.departamento_principal,
+                especialidad: dbMatch.especialidad || mockG.especialidad,
+                tarifa_aprox: dbMatch.tarifa_aprox || mockG.tarifa_aprox,
+                experiencia_anios: dbMatch.experiencia_anios || mockG.experiencia_anios,
+                biografia: dbMatch.biografia || mockG.biografia,
+                whatsapp: dbMatch.whatsapp || mockG.whatsapp,
+                licencia_intur: dbMatch.licencia_intur || mockG.licencia_intur,
+                idiomas: dbMatch.idiomas || mockG.idiomas,
+              });
+            } else {
               merged.push(mockG);
             }
+          });
+
+          // Agregar guías adicionales registradas en BD que no estén en MOCK_GUIAS
+          formattedDbGuias.forEach((dbG) => {
+            const alreadyIn = merged.some(m => m.id === dbG.id || (m.nombre_completo && m.nombre_completo.toLowerCase().trim() === dbG.nombre_completo?.toLowerCase().trim()));
+            if (!alreadyIn) merged.push(dbG);
           });
 
           setGuias(merged);
