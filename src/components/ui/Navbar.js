@@ -292,9 +292,9 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                     <Icon name="user" size={16} /> {lang === "en" ? "My Personal Profile" : "Mi Perfil Personal"}
                   </Link>
 
-                  {/* Opción Guía: Mi Perfil de Guía y Destinos */}
+                  {/* Opción Guía: Mi Perfil de Guía (Sección independiente /perfil-guia) */}
                   <Link
-                    href="/perfil?editGuia=true"
+                    href="/perfil-guia"
                     onClick={() => setUserDropdownOpen(false)}
                     style={{
                       display: "flex",
@@ -312,7 +312,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                     onMouseEnter={(e) => e.currentTarget.style.background = "rgba(14, 165, 233, 0.16)"}
                     onMouseLeave={(e) => e.currentTarget.style.background = "rgba(14, 165, 233, 0.08)"}
                   >
-                    <Icon name="compass" size={16} color="#0EA5E9" /> {lang === "en" ? "My Guide Profile & Map Places" : "Mi Perfil de Guía y Destinos"}
+                    <Icon name="compass" size={16} color="#0EA5E9" /> {lang === "en" ? "My Guide Profile Section" : "Mi Perfil de Guía Turístico"}
                   </Link>
 
                   {/* Opción 3: Mis Negocios (Solo si posee 1 o más negocios) */}
