@@ -278,6 +278,13 @@ nav button, nav button *,
   transform: scale(1.08);
 }
 
+/* Opciones de desplegable SELECT legibles en fondo oscuro */
+select option {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+  padding: 6px 10px;
+}
+
 /* Forzar fuente Delight a toda la sección del mapa interactivo */
 .map-page-container,
 .map-page-container * {

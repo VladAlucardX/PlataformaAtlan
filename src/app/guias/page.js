@@ -218,14 +218,6 @@ const RANGOS_PRECIO_LIST = [
   "Premium (> $50)"
 ];
 
-const DESTINOS_POPULARES = [
-  { label: "Cerro Negro", query: "Cerro Negro" },
-  { label: "Isla de Ometepe", query: "Ometepe" },
-  { label: "Granada Colonial", query: "Granada" },
-  { label: "Selva Negra", query: "Selva Negra" },
-  { label: "Volcán Masaya", query: "Masaya" }
-];
-
 export default function GuiasPage() {
   const { lang } = useTranslation();
   const { session, perfil } = useAuth();
@@ -236,9 +228,8 @@ export default function GuiasPage() {
   // Filtros
   const [selectedDept, setSelectedDept] = useState("Todos");
   const [selectedEspecialidad, setSelectedEspecialidad] = useState("Todas");
-  const [selectedIdioma, setSelectedIdioma] = useState("Todos");
+  const [selectedIdiomas, setSelectedIdiomas] = useState([]);
   const [selectedRangoPrecio, setSelectedRangoPrecio] = useState("Todos");
-  const [selectedTagPopular, setSelectedTagPopular] = useState("Todos");
   const [solamenteVerificados, setSolamenteVerificados] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -289,22 +280,33 @@ export default function GuiasPage() {
     loadGuias();
   }, []);
 
+  // Manejador de selección múltiple de idiomas
+  const handleToggleIdioma = (langItem) => {
+    if (langItem === "Todos") {
+      setSelectedIdiomas([]);
+    } else {
+      if (selectedIdiomas.includes(langItem)) {
+        setSelectedIdiomas(selectedIdiomas.filter((i) => i !== langItem));
+      } else {
+        setSelectedIdiomas([...selectedIdiomas, langItem]);
+      }
+    }
+  };
+
   // Limpiar todos los filtros
   const hasActiveFilters =
     selectedDept !== "Todos" ||
     selectedEspecialidad !== "Todas" ||
-    selectedIdioma !== "Todos" ||
+    selectedIdiomas.length > 0 ||
     selectedRangoPrecio !== "Todos" ||
-    selectedTagPopular !== "Todos" ||
     solamenteVerificados ||
     searchQuery.trim() !== "";
 
   const clearAllFilters = () => {
     setSelectedDept("Todos");
     setSelectedEspecialidad("Todas");
-    setSelectedIdioma("Todos");
+    setSelectedIdiomas([]);
     setSelectedRangoPrecio("Todos");
-    setSelectedTagPopular("Todos");
     setSolamenteVerificados(false);
     setSearchQuery("");
   };
@@ -325,10 +327,12 @@ export default function GuiasPage() {
       selectedEspecialidad === "Todas" ||
       guia.especialidad?.toLowerCase().includes(selectedEspecialidad.toLowerCase());
 
-    // 3. Idioma
+    // 3. Selección múltiple de Idiomas (Coincide si el guía habla cualquiera de los seleccionados)
     const matchIdioma =
-      selectedIdioma === "Todos" ||
-      guia.idiomas?.toLowerCase().includes(selectedIdioma.toLowerCase());
+      selectedIdiomas.length === 0 ||
+      selectedIdiomas.some((i) =>
+        guia.idiomas?.toLowerCase().includes(i.toLowerCase())
+      );
 
     // 4. INTUR Verificados
     const matchVerificados = !solamenteVerificados || Boolean(guia.licencia_intur);
@@ -346,19 +350,7 @@ export default function GuiasPage() {
       }
     }
 
-    // 6. Destino / Tag Popular
-    let matchTag = true;
-    if (selectedTagPopular !== "Todos") {
-      const tagLower = selectedTagPopular.toLowerCase();
-      matchTag =
-        guia.biografia?.toLowerCase().includes(tagLower) ||
-        guia.especialidad?.toLowerCase().includes(tagLower) ||
-        guia.departamento_principal?.toLowerCase().includes(tagLower) ||
-        (guia.departamentos_secundarios &&
-          guia.departamentos_secundarios.some((d) => d.toLowerCase().includes(tagLower)));
-    }
-
-    // 7. Buscador multi-campo inteligente
+    // 6. Buscador multi-campo inteligente
     const q = searchQuery.trim().toLowerCase();
     const matchQuery =
       !q ||
@@ -377,7 +369,6 @@ export default function GuiasPage() {
       matchIdioma &&
       matchVerificados &&
       matchPrecio &&
-      matchTag &&
       matchQuery
     );
   }).sort((a, b) => {
@@ -556,9 +547,9 @@ export default function GuiasPage() {
                 onChange={(e) => setSelectedDept(e.target.value)}
                 style={styles.selectInputCompact}
               >
-                <option value="Todos">{lang === "en" ? "All Depts" : "Todos los Deptos"}</option>
+                <option value="Todos" style={styles.selectOption}>{lang === "en" ? "All Depts" : "Todos los Deptos"}</option>
                 {DEPARTAMENTOS_LIST.filter(d => d !== "Todos").map((dept) => (
-                  <option key={dept} value={dept}>{dept}</option>
+                  <option key={dept} value={dept} style={styles.selectOption}>{dept}</option>
                 ))}
               </select>
             </div>
@@ -571,9 +562,9 @@ export default function GuiasPage() {
                 onChange={(e) => setSelectedEspecialidad(e.target.value)}
                 style={styles.selectInputCompact}
               >
-                <option value="Todas">{lang === "en" ? "All Specialties" : "Todas las Especialidades"}</option>
+                <option value="Todas" style={styles.selectOption}>{lang === "en" ? "All Specialties" : "Todas las Especialidades"}</option>
                 {ESPECIALIDADES_LIST.filter(e => e !== "Todas").map((esp) => (
-                  <option key={esp} value={esp}>{esp}</option>
+                  <option key={esp} value={esp} style={styles.selectOption}>{esp}</option>
                 ))}
               </select>
             </div>
@@ -585,10 +576,10 @@ export default function GuiasPage() {
                 onChange={(e) => setSortBy(e.target.value)}
                 style={styles.selectInputSlim}
               >
-                <option value="rating">{lang === "en" ? "Best Rating" : "Mejor Calificación"}</option>
-                <option value="experiencia">{lang === "en" ? "Experience" : "Más Experiencia"}</option>
-                <option value="precio_asc">{lang === "en" ? "Price: Low to High" : "Precio: Menor a Mayor"}</option>
-                <option value="precio_desc">{lang === "en" ? "Price: High to Low" : "Precio: Mayor a Menor"}</option>
+                <option value="rating" style={styles.selectOption}>{lang === "en" ? "Best Rating" : "Mejor Calificación"}</option>
+                <option value="experiencia" style={styles.selectOption}>{lang === "en" ? "Experience" : "Más Experiencia"}</option>
+                <option value="precio_asc" style={styles.selectOption}>{lang === "en" ? "Price: Low to High" : "Precio: Menor a Mayor"}</option>
+                <option value="precio_desc" style={styles.selectOption}>{lang === "en" ? "Price: High to Low" : "Precio: Mayor a Menor"}</option>
               </select>
             </div>
 
@@ -597,43 +588,46 @@ export default function GuiasPage() {
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
               style={{
                 ...styles.advancedToggleBtn,
-                background: showAdvancedFilters || selectedIdioma !== "Todos" || selectedRangoPrecio !== "Todos" || selectedTagPopular !== "Todos" || solamenteVerificados
+                background: showAdvancedFilters || selectedIdiomas.length > 0 || selectedRangoPrecio !== "Todos" || solamenteVerificados
                   ? "rgba(14, 165, 233, 0.22)"
                   : "rgba(30, 41, 59, 0.8)",
-                border: showAdvancedFilters || selectedIdioma !== "Todos" || selectedRangoPrecio !== "Todos" || selectedTagPopular !== "Todos" || solamenteVerificados
+                border: showAdvancedFilters || selectedIdiomas.length > 0 || selectedRangoPrecio !== "Todos" || solamenteVerificados
                   ? "1.5px solid #0EA5E9"
                   : "1px solid rgba(255, 255, 255, 0.12)",
-                color: showAdvancedFilters || selectedIdioma !== "Todos" || selectedRangoPrecio !== "Todos" || selectedTagPopular !== "Todos" || solamenteVerificados
+                color: showAdvancedFilters || selectedIdiomas.length > 0 || selectedRangoPrecio !== "Todos" || solamenteVerificados
                   ? "#38BDF8"
                   : "#94A3B8"
               }}
             >
               <Icon name="filter" size={13} />
               <span>{lang === "en" ? "Filters" : "Filtros"}</span>
-              {(selectedIdioma !== "Todos" || selectedRangoPrecio !== "Todos" || selectedTagPopular !== "Todos" || solamenteVerificados) && (
+              {(selectedIdiomas.length > 0 || selectedRangoPrecio !== "Todos" || solamenteVerificados) && (
                 <span style={styles.activeFilterDot} />
               )}
               <Icon name={showAdvancedFilters ? "chevronUp" : "chevronDown"} size={12} />
             </button>
           </div>
 
-          {/* DESPLEGABLE DE FILTROS AVANZADOS (IDIOMA, PRECIO, INTUR Y DESTINOS POPULARES) */}
+          {/* DESPLEGABLE DE FILTROS AVANZADOS (IDIOMAS MÚLTIPLES, PRECIO E INTUR) */}
           {showAdvancedFilters && (
             <div style={styles.advancedFiltersDropdownContainer}>
               <div style={styles.dualFiltersRow}>
-                {/* Idioma */}
-                <div style={{ flex: 1, minWidth: "200px" }}>
+                {/* Idioma Múltiple */}
+                <div style={{ flex: 1, minWidth: "220px" }}>
                   <span style={styles.filterSectionTitleSlim}>
                     <Icon name="globe" size={13} color="#10B981" />
-                    {lang === "en" ? "Language:" : "Idioma:"}
+                    {lang === "en" ? "Languages (Multi-select):" : "Idiomas del Guía (Selección Múltiple):"}
                   </span>
                   <div style={{ display: "flex", gap: "5px", flexWrap: "wrap", marginTop: "4px" }}>
                     {IDIOMAS_LIST.map((langItem) => {
-                      const isActive = selectedIdioma === langItem;
+                      const isTodos = langItem === "Todos";
+                      const isActive = isTodos
+                        ? selectedIdiomas.length === 0
+                        : selectedIdiomas.includes(langItem);
                       return (
                         <button
                           key={langItem}
-                          onClick={() => setSelectedIdioma(langItem)}
+                          onClick={() => handleToggleIdioma(langItem)}
                           style={{
                             ...styles.pillBtnSlim,
                             border: isActive ? "1.5px solid #10B981" : "1px solid rgba(255, 255, 255, 0.12)",
@@ -641,7 +635,7 @@ export default function GuiasPage() {
                             color: isActive ? "#34D399" : "#94A3B8"
                           }}
                         >
-                          {langItem}
+                          {isActive && !isTodos ? "✓ " : ""}{langItem}
                         </button>
                       );
                     })}
@@ -691,33 +685,6 @@ export default function GuiasPage() {
                   </button>
                 </div>
               </div>
-
-              {/* Destinos Populares */}
-              <div style={styles.trendingSpotsRowCompact}>
-                <span style={styles.trendingLabel}>
-                  <Icon name="compass" size={12} color="#FFD700" />
-                  <span>{lang === "en" ? "Popular Spots:" : "Destinos Populares:"}</span>
-                </span>
-                <div style={styles.trendingChipsList}>
-                  {DESTINOS_POPULARES.map((spot) => {
-                    const isActive = selectedTagPopular === spot.query;
-                    return (
-                      <button
-                        key={spot.query}
-                        onClick={() => setSelectedTagPopular(isActive ? "Todos" : spot.query)}
-                        style={{
-                          ...styles.trendingChipBtn,
-                          background: isActive ? "rgba(255, 215, 0, 0.25)" : "rgba(30, 41, 59, 0.6)",
-                          border: isActive ? "1px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.1)",
-                          color: isActive ? "#FFD700" : "#CBD5E1"
-                        }}
-                      >
-                        ★ {spot.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
             </div>
           )}
 
@@ -744,14 +711,14 @@ export default function GuiasPage() {
                 </span>
               )}
 
-              {selectedIdioma !== "Todos" && (
-                <span style={styles.activeChip}>
-                  <span>Idioma: <b>{selectedIdioma}</b></span>
-                  <button onClick={() => setSelectedIdioma("Todos")} style={styles.chipRemoveBtn}>
+              {selectedIdiomas.map((idioma) => (
+                <span key={idioma} style={styles.activeChip}>
+                  <span>Idioma: <b>{idioma}</b></span>
+                  <button onClick={() => handleToggleIdioma(idioma)} style={styles.chipRemoveBtn}>
                     <Icon name="x" size={12} />
                   </button>
                 </span>
-              )}
+              ))}
 
               {selectedRangoPrecio !== "Todos" && (
                 <span style={styles.activeChip}>
@@ -1355,7 +1322,10 @@ const styles = {
     color: "#FFFFFF",
     letterSpacing: "-0.5px",
     margin: "12px 0 6px 0",
-    lineHeight: "1.25"
+    lineHeight: "1.25",
+    textAlign: "center",
+    textShadow: "0 4px 16px rgba(0, 0, 0, 0.95), 0 2px 4px rgba(0, 0, 0, 0.95)",
+    filter: "drop-shadow(0 4px 12px rgba(0, 0, 0, 0.95))"
   },
   flagSpan: {
     fontFamily: "'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-display), sans-serif",
@@ -1631,6 +1601,12 @@ const styles = {
     transition: "all 0.2s"
   },
 
+  selectOption: {
+    backgroundColor: "#0F172A",
+    color: "#F8FAFC",
+    padding: "8px 12px"
+  },
+
   resultsHeaderSlim: {
     display: "flex",
     alignItems: "center",
@@ -1643,7 +1619,9 @@ const styles = {
     color: "#F8FAFC",
     display: "flex",
     alignItems: "center",
-    gap: "8px"
+    gap: "8px",
+    textShadow: "0 3px 12px rgba(0, 0, 0, 0.95), 0 1px 3px rgba(0, 0, 0, 0.95)",
+    filter: "drop-shadow(0 3px 8px rgba(0, 0, 0, 0.95))"
   },
   resultsBadgeSlim: {
     background: "rgba(14, 165, 233, 0.2)",
