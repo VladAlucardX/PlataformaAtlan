@@ -895,7 +895,7 @@ const styles = {
   pageWrapper: {
     minHeight: "100vh",
     width: "100%",
-    backgroundImage: "linear-gradient(180deg, rgba(10, 25, 47, 0.78) 0%, rgba(15, 23, 42, 0.88) 100%), url('/images/Frame 8.png')",
+    backgroundImage: "url('/images/Frame 8.png')",
     backgroundSize: "cover",
     backgroundPosition: "center center",
     backgroundRepeat: "no-repeat",
@@ -945,7 +945,7 @@ const styles = {
   heroSectionCompact: {
     position: "relative",
     padding: "70px 24px 20px 24px",
-    background: "linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(15, 23, 42, 0.85) 100%)",
+    background: "transparent",
     borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
     zIndex: 2
   },
