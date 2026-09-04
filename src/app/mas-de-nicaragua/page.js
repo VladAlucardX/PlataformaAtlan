@@ -1024,20 +1024,28 @@ export default function MasDeNicaraguaPage() {
                     display: "grid",
                     gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
                     gap: "18px",
-                    alignItems: "start"
+                    alignItems: "stretch"
                   }}>
                     {/* Columna Izquierda: Galería Fotográfica de [Departamento] */}
                     {(selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard) && (
-                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(236, 72, 153, 0.3)", borderRadius: "18px", padding: "14px" }}>
-                        <h4 style={{ fontSize: "13px", fontWeight: "800", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                          <Icon name="image" size={16} color="#EC4899" />
+                      <div style={{
+                        background: "rgba(255,255,255,0.03)",
+                        border: "1px solid rgba(236, 72, 153, 0.3)",
+                        borderRadius: "18px",
+                        padding: "14px",
+                        display: "flex",
+                        flexDirection: "column"
+                      }}>
+                        <h4 style={{ fontSize: "13px", fontWeight: "800", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                          <img src="/images/masaaya.svg" alt="Masaya" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                           <span>Galería Fotográfica de {selectedDeptForDetails.nombre}</span>
                         </h4>
                         <div
                           onClick={() => setLightboxIndex(-1)}
                           style={{
                             width: "100%",
-                            height: "246px",
+                            flex: 1,
+                            minHeight: 0,
                             borderRadius: "14px",
                             overflow: "hidden",
                             position: "relative",
@@ -1055,41 +1063,30 @@ export default function MasDeNicaraguaPage() {
                             onMouseOver={(e) => { e.currentTarget.style.transform = "scale(1.03)"; }}
                             onMouseOut={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
                           />
-                          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(10,25,47,0.85) 100%)" }} />
-                          <div style={{
-                            position: "absolute",
-                            bottom: "12px",
-                            left: "14px",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px"
-                          }}>
-                            <span style={{
-                              background: "linear-gradient(135deg, #EC4899 0%, #DB2777 100%)",
-                              color: "#FFFFFF",
-                              padding: "4px 12px",
-                              borderRadius: "10px",
-                              fontSize: "11px",
-                              fontWeight: "800",
-                              letterSpacing: "0.5px"
-                            }}>
-                              📸 Foto Principal
-                            </span>
-                          </div>
+                          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(10,25,47,0.7) 100%)" }} />
                         </div>
                       </div>
                     )}
 
                     {/* Columna Derecha: Grid de Galería (Fotos 2 a 7) */}
                     {selectedDeptForDetails.galeria && selectedDeptForDetails.galeria.length > 0 && (
-                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "18px", padding: "14px" }}>
-                        <h4 style={{ fontSize: "12px", fontWeight: "800", color: "rgba(255,255,255,0.8)", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                          <span>🖼️ Fotografías de Galería</span>
+                      <div style={{
+                        background: "rgba(255,255,255,0.03)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        borderRadius: "18px",
+                        padding: "14px",
+                        display: "flex",
+                        flexDirection: "column"
+                      }}>
+                        <h4 style={{ fontSize: "12px", fontWeight: "800", color: "rgba(255,255,255,0.8)", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                          <img src="/images/castillorio san juan.svg" alt="Castillo San Juan" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                          <span>Fotografías de Galería</span>
                         </h4>
                         <div style={{
                           display: "grid",
                           gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
-                          gap: "10px"
+                          gap: "10px",
+                          flex: 1
                         }}>
                           {selectedDeptForDetails.galeria.map((imgSrc, idx) => (
                             <div
@@ -1122,20 +1119,6 @@ export default function MasDeNicaraguaPage() {
                                 loading="lazy"
                               />
                               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(10,25,47,0.6) 100%)" }} />
-                              <span style={{
-                                position: "absolute",
-                                bottom: "6px",
-                                right: "6px",
-                                background: "rgba(10, 25, 47, 0.85)",
-                                backdropFilter: "blur(4px)",
-                                color: "#FFFFFF",
-                                padding: "2px 6px",
-                                borderRadius: "6px",
-                                fontSize: "10px",
-                                fontWeight: "800"
-                              }}>
-                                {idx + 1}/{selectedDeptForDetails.galeria.length}
-                              </span>
                             </div>
                           ))}
                         </div>
