@@ -624,26 +624,26 @@ export default function DepartamentosPage() {
           {/* Columna Derecha: Ranking Top Lugares (Panel Traslúcido Azul Navbar con Tortuga de Fondo) */}
           <div style={{ background: "rgba(10, 25, 47, 0.72)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255, 255, 255, 0.14)", borderRadius: "20px", padding: "14px", boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)", display: "flex", flexDirection: "column", height: "100%", maxHeight: "100%", minHeight: 0, boxSizing: "border-box", overflow: "hidden", position: "relative" }}>
             
-            {/* Elemento Decorativo: Volcan SVG Agrandado al Fondo del Panel Derecho */}
+            {/* Elemento Decorativo: Guardabarranco SVG Agrandado al Fondo del Panel Derecho */}
             <div
               style={{
                 position: "absolute",
                 top: "52%",
                 left: "50%",
                 transform: "translate(-50%, -50%)",
-                width: "min(580px, 115%)",
-                height: "min(580px, 115%)",
+                width: "min(720px, 140%)",
+                height: "min(720px, 140%)",
                 pointerEvents: "none",
                 zIndex: 0,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                opacity: 0.42
+                opacity: 0.45
               }}
             >
               <img
-                src="/images/Volcan.svg"
-                alt="Volcán Atlan"
+                src="/images/guardabarranco chochoyo.svg"
+                alt="Guardabarranco Atlan"
                 style={{
                   width: "100%",
                   height: "100%",
