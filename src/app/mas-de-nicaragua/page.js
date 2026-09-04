@@ -1043,30 +1043,30 @@ export default function MasDeNicaraguaPage() {
                     </div>
                   )}
 
-                  {/* Subsección 2: Fiestas Patronales, Eventos y Tradiciones (Estilo Rubí Coral) */}
+                  {/* Subsección 2: Fiestas Patronales, Eventos y Tradiciones (Estilo Ámbar Dorado Sol Festivo) */}
                   {selectedDeptForDetails.actividades && selectedDeptForDetails.actividades.length > 0 && (
                     <div>
-                      <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#F43F5E", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                        <img src="/images/caña.svg" alt="Actividades" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(43%) sepia(85%) saturate(2250%) hue-rotate(327deg) brightness(97%) contrast(94%)" }} />
+                      <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#F59E0B", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <img src="/images/caña.svg" alt="Actividades" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(70%) sepia(50%) saturate(1500%) hue-rotate(1deg) brightness(100%) contrast(100%)" }} />
                         <span>Fiestas Patronales, Eventos y Tradiciones</span>
                       </h4>
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" }}>
                         {selectedDeptForDetails.actividades.map((act, idx) => (
                           <div key={idx} style={{
-                            background: "linear-gradient(135deg, rgba(45, 15, 25, 0.85) 0%, rgba(20, 10, 20, 0.95) 100%)",
-                            border: "1px solid rgba(244, 63, 94, 0.4)",
+                            background: "linear-gradient(135deg, rgba(42, 28, 10, 0.85) 0%, rgba(18, 20, 35, 0.95) 100%)",
+                            border: "1px solid rgba(245, 158, 11, 0.35)",
                             borderRadius: "16px",
                             padding: "16px 18px",
                             transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
                             boxShadow: "0 6px 18px rgba(0,0,0,0.4)"
                           }}
                           onMouseOver={(e) => {
-                            e.currentTarget.style.borderColor = "rgba(244, 63, 94, 0.7)";
+                            e.currentTarget.style.borderColor = "rgba(245, 158, 11, 0.7)";
                             e.currentTarget.style.transform = "translateY(-2px)";
-                            e.currentTarget.style.boxShadow = "0 10px 24px rgba(244, 63, 94, 0.2)";
+                            e.currentTarget.style.boxShadow = "0 10px 24px rgba(245, 158, 11, 0.2)";
                           }}
                           onMouseOut={(e) => {
-                            e.currentTarget.style.borderColor = "rgba(244, 63, 94, 0.4)";
+                            e.currentTarget.style.borderColor = "rgba(245, 158, 11, 0.35)";
                             e.currentTarget.style.transform = "translateY(0)";
                             e.currentTarget.style.boxShadow = "0 6px 18px rgba(0,0,0,0.4)";
                           }}
@@ -1075,16 +1075,16 @@ export default function MasDeNicaraguaPage() {
                               display: "inline-flex",
                               alignItems: "center",
                               gap: "6px",
-                              background: "linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)",
-                              color: "#FFFFFF",
+                              background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
+                              color: "#0F172A",
                               padding: "3px 10px",
                               borderRadius: "8px",
                               fontWeight: "900",
                               fontSize: "11px",
                               marginBottom: "10px",
-                              boxShadow: "0 2px 8px rgba(244, 63, 94, 0.35)"
+                              boxShadow: "0 2px 10px rgba(245, 158, 11, 0.3)"
                             }}>
-                              <Icon name="calendar" size={12} color="#FFFFFF" />
+                              <Icon name="calendar" size={12} color="#0F172A" />
                               <span>{act.fecha}</span>
                             </span>
 
