@@ -38,6 +38,49 @@ export default function PerfilPage() {
   // Avatar upload
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarHover, setAvatarHover] = useState(false);
+
+  // Editar Perfil General State
+  const [isEditing, setIsEditing] = useState(false);
+  const [editNombre, setEditNombre] = useState("");
+  const [editBio, setEditBio] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
+
+  // Cambiar Contraseña State
+  const [isChangingPass, setIsChangingPass] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [savingPass, setSavingPass] = useState(false);
+
+  // Confirm Modal State
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: "", message: "", confirmText: "", onConfirm: null, loading: false });
+
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    if (!user) return;
+    setSavingProfile(true);
+    try {
+      const { error } = await supabase
+        .from("perfiles")
+        .update({
+          nombre_completo: editNombre,
+          bio: editBio,
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      setPerfil((p) => ({ ...p, nombre_completo: editNombre, bio: editBio }));
+      if (updatePerfil) updatePerfil({ nombre_completo: editNombre, bio: editBio });
+      alert(lang === "en" ? "Profile updated successfully!" : "¡Perfil actualizado con éxito!");
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      alert(lang === "en" ? "Failed to update profile" : "Error al actualizar perfil: " + (err.message || ""));
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
   // Editar Perfil de Guía Turístico State
   const [isEditingGuia, setIsEditingGuia] = useState(false);
   const [guiaDeptPrincipal, setGuiaDeptPrincipal] = useState("León");
