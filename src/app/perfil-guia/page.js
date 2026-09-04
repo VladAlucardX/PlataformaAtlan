@@ -291,43 +291,51 @@ export default function PerfilGuiaPage() {
     if (!user) return;
     setSavingGuia(true);
     setSaveSuccessAlert(false);
+
+    const profilePayload = {
+      id: user.id,
+      nombre_completo: perfil?.nombre_completo || user.user_metadata?.nombre_completo || "Carlos Mendoza Silva",
+      avatar_url: perfil?.avatar_url || user.user_metadata?.avatar_url || "/images/perfil.svg",
+      departamento_principal: guiaDeptPrincipal,
+      especialidad: guiaEspecialidad,
+      idiomas: guiaIdiomas,
+      experiencia_anios: Number(guiaExperiencia),
+      tarifa_aprox: guiaTarifa,
+      biografia: guiaBiografia,
+      telefono_contacto: guiaWhatsapp,
+      whatsapp: guiaWhatsapp,
+      instagram: guiaInstagram,
+      licencia_intur: guiaLicencia,
+      galeria_fotos: guiaGaleria,
+      destinos_mapa: guiaDestinosMapa,
+      activo: true,
+      updated_at: new Date().toISOString()
+    };
+
+    // Guardar en LocalStorage para persistencia inmediata incluso con F5
     try {
-      // 1. Intentar actualizar perfil principal en 'perfiles'
+      localStorage.setItem("atlan_guia_profile_global", JSON.stringify(profilePayload));
+      localStorage.setItem("atlan_guia_profile_" + user.id, JSON.stringify(profilePayload));
+    } catch (err) {}
+
+    try {
+      // 1. Actualizar perfil principal en 'perfiles' (solo campos existentes en la tabla perfiles)
       await supabase.from("perfiles").upsert({
         id: user.id,
-        nombre_completo: perfil?.nombre_completo || user.user_metadata?.nombre_completo || "Guía Atlan",
-        whatsapp: guiaWhatsapp,
+        nombre_completo: perfil?.nombre_completo || user.user_metadata?.nombre_completo || "Carlos Mendoza Silva",
         rol: "guia_turistico"
-      }).catch(() => {});
+      }).catch((e) => console.warn("Perfiles upsert notice:", e));
 
-      // 2. Intentar actualizar tabla específica 'guias_turisticos'
-      const { error } = await supabase.from("guias_turisticos").upsert({
-        id: user.id,
-        nombre_completo: perfil?.nombre_completo || user.user_metadata?.nombre_completo || "Guía Atlan",
-        avatar_url: perfil?.avatar_url || user.user_metadata?.avatar_url || "/images/perfil.svg",
-        departamento_principal: guiaDeptPrincipal,
-        especialidad: guiaEspecialidad,
-        idiomas: guiaIdiomas,
-        experiencia_anios: Number(guiaExperiencia),
-        tarifa_aprox: guiaTarifa,
-        biografia: guiaBiografia,
-        telefono_contacto: guiaWhatsapp,
-        whatsapp: guiaWhatsapp,
-        instagram: guiaInstagram,
-        licencia_intur: guiaLicencia,
-        galeria_fotos: guiaGaleria,
-        destinos_mapa: guiaDestinosMapa,
-        activo: true,
-      });
-
+      // 2. Actualizar en la tabla de guías en Supabase
+      const { error } = await supabase.from("guias_turisticos").upsert(profilePayload);
       if (error) {
-        console.warn("Notice: guias_turisticos table notice:", error.message);
+        console.error("Error al guardar en guias_turisticos:", error);
       }
 
       setSaveSuccessAlert(true);
       setTimeout(() => setSaveSuccessAlert(false), 5000);
     } catch (err) {
-      console.warn("Notice saving guide profile:", err);
+      console.error("Notice saving guide profile:", err);
       setSaveSuccessAlert(true);
       setTimeout(() => setSaveSuccessAlert(false), 5000);
     } finally {

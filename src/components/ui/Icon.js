@@ -303,6 +303,9 @@ const icons = {
   ir: (p) => (
     <svg {...p}><polygon points="3 11 22 2 13 21 11 13 3 11" fill="currentColor" fillOpacity="0.2" /></svg>
   ),
+  filter: (p) => (
+    <svg {...p}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></svg>
+  ),
   more: (p) => (
     <svg {...p}><path d="M12 2v20M2 12h20" strokeWidth="2.5" strokeLinecap="round" /><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" strokeWidth="1.5" /></svg>
   ),
