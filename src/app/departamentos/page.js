@@ -667,18 +667,18 @@ export default function DepartamentosPage() {
             {/* Selector de Modo con SVGs Personalizados: Clic en Ranking Global resetea departamento a Todos */}
             <div style={{ 
               display: "flex", 
-              gap: "6px", 
+              gap: "8px", 
               marginBottom: "12px", 
               flexShrink: 0, 
               position: "relative", 
               zIndex: 1,
-              background: "rgba(3, 14, 33, 0.75)",
-              padding: "4px",
+              background: "rgba(3, 14, 33, 0.90)",
+              padding: "5px",
               borderRadius: "14px",
-              border: "1px solid rgba(255, 255, 255, 0.16)",
-              backdropFilter: "blur(12px)",
-              WebkitBackdropFilter: "blur(12px)",
-              boxShadow: "inset 0 2px 4px rgba(0,0,0,0.3)"
+              border: "1.5px solid rgba(56, 189, 248, 0.35)",
+              backdropFilter: "blur(14px)",
+              WebkitBackdropFilter: "blur(14px)",
+              boxShadow: "0 6px 20px rgba(0,0,0,0.4)"
             }}>
               {/* Botón Ranking Global */}
               <button
@@ -689,24 +689,23 @@ export default function DepartamentosPage() {
                 }}
                 style={{
                   flex: 1,
-                  padding: "9px 14px",
+                  padding: "10px 14px",
                   borderRadius: "10px",
-                  border: rankingMode === 'global' ? "1px solid rgba(255, 255, 255, 0.45)" : "1px solid rgba(255, 255, 255, 0.08)",
+                  border: rankingMode === 'global' ? "1.5px solid #FFFFFF" : "1px solid rgba(255, 255, 255, 0.22)",
                   background: rankingMode === 'global' 
                     ? "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)" 
-                    : "rgba(255, 255, 255, 0.05)",
-                  color: rankingMode === 'global' ? "#FFFFFF" : "#CBD5E1",
-                  fontWeight: "800",
-                  fontSize: "13.5px",
+                    : "rgba(255, 255, 255, 0.10)",
+                  color: rankingMode === 'global' ? "#FFFFFF" : "#F8FAFC",
+                  fontWeight: rankingMode === 'global' ? "900" : "800",
+                  fontSize: "14px",
                   letterSpacing: "0.3px",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "7px",
-                  textShadow: rankingMode === 'global' ? "0 1px 3px rgba(0, 0, 0, 0.5)" : "0 1px 2px rgba(0, 0, 0, 0.4)",
-                  boxShadow: rankingMode === 'global' ? "0 4px 14px rgba(14, 165, 233, 0.45)" : "none",
-                  transition: "all 0.25s ease"
+                  boxShadow: rankingMode === 'global' ? "0 4px 14px rgba(14, 165, 233, 0.5)" : "none",
+                  transition: "all 0.2s ease"
                 }}
               >
                 <img 
@@ -716,48 +715,47 @@ export default function DepartamentosPage() {
                     width: "19px", 
                     height: "19px", 
                     objectFit: "contain", 
-                    filter: rankingMode === 'global' ? "brightness(0) invert(1)" : "brightness(0) invert(0.75)" 
+                    filter: rankingMode === 'global' ? "brightness(0) invert(1)" : "brightness(0) invert(0.95)" 
                   }} 
                 />
                 <span>Ranking Global</span>
               </button>
 
-              {/* Botón Ranking Propio */}
+              {/* Botón Ranking Personal */}
               <button
                 onClick={() => setRankingMode('propio')}
                 style={{
                   flex: 1,
-                  padding: "9px 14px",
+                  padding: "10px 14px",
                   borderRadius: "10px",
-                  border: rankingMode === 'propio' ? "1px solid rgba(255, 255, 255, 0.45)" : "1px solid rgba(255, 255, 255, 0.08)",
+                  border: rankingMode === 'propio' ? "1.5px solid #FFFFFF" : "1px solid rgba(255, 255, 255, 0.22)",
                   background: rankingMode === 'propio' 
                     ? "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)" 
-                    : "rgba(255, 255, 255, 0.05)",
-                  color: rankingMode === 'propio' ? "#FFFFFF" : "#CBD5E1",
-                  fontWeight: "800",
-                  fontSize: "13.5px",
+                    : "rgba(255, 255, 255, 0.10)",
+                  color: rankingMode === 'propio' ? "#FFFFFF" : "#F8FAFC",
+                  fontWeight: rankingMode === 'propio' ? "900" : "800",
+                  fontSize: "14px",
                   letterSpacing: "0.3px",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "7px",
-                  textShadow: rankingMode === 'propio' ? "0 1px 3px rgba(0, 0, 0, 0.5)" : "0 1px 2px rgba(0, 0, 0, 0.4)",
-                  boxShadow: rankingMode === 'propio' ? "0 4px 14px rgba(14, 165, 233, 0.45)" : "none",
-                  transition: "all 0.25s ease"
+                  boxShadow: rankingMode === 'propio' ? "0 4px 14px rgba(14, 165, 233, 0.5)" : "none",
+                  transition: "all 0.2s ease"
                 }}
               >
                 <img 
                   src="/images/perfil.svg" 
-                  alt="Ranking Propio" 
+                  alt="Ranking Personal" 
                   style={{ 
                     width: "17px", 
                     height: "17px", 
                     objectFit: "contain", 
-                    filter: rankingMode === 'propio' ? "brightness(0) invert(1)" : "brightness(0) invert(0.75)" 
+                    filter: rankingMode === 'propio' ? "brightness(0) invert(1)" : "brightness(0) invert(0.95)" 
                   }} 
                 />
-                <span>Ranking Propio</span>
+                <span>Ranking Personal</span>
               </button>
             </div>
 
