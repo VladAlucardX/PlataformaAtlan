@@ -675,7 +675,7 @@ export default function MasDeNicaraguaPage() {
           inset: 0,
           zIndex: 9999,
           backgroundColor: "#0A192F",
-          padding: "85px 20px 20px",
+          padding: "70px 20px 20px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -721,12 +721,12 @@ export default function MasDeNicaraguaPage() {
             zIndex: 0
           }} />
 
-          {/* Tarjeta Modal (Restaurada al estilo oscuro original) */}
+          {/* Tarjeta Modal General Ampliada */}
           <div style={{
-            maxWidth: "1160px",
+            maxWidth: "1320px",
             width: "100%",
-            height: "560px",
-            maxHeight: "82vh",
+            height: "670px",
+            maxHeight: "88vh",
             display: "flex",
             flexDirection: "column",
             position: "relative",
