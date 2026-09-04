@@ -895,7 +895,7 @@ const styles = {
   pageWrapper: {
     minHeight: "100vh",
     width: "100%",
-    backgroundImage: "url('/images/Frame 8.png')",
+    backgroundImage: "url('/images/fondohracio.png')",
     backgroundSize: "cover",
     backgroundPosition: "center center",
     backgroundRepeat: "no-repeat",
