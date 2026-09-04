@@ -405,6 +405,14 @@ export default function GuiasPage() {
           .select("*, perfiles(nombre_completo, avatar_url, email)")
           .eq("activo", true);
 
+        let rawSaved = null;
+        try {
+          if (typeof window !== "undefined") {
+            const raw = localStorage.getItem("atlan_guia_profile_global") || localStorage.getItem("atlan_guia_profile_carlos");
+            if (raw) rawSaved = JSON.parse(raw);
+          }
+        } catch (e) {}
+
         if (!error && data && data.length > 0) {
           const formattedDbGuias = data.map((g) => ({
             ...g,
@@ -417,31 +425,34 @@ export default function GuiasPage() {
             ]
           }));
 
-          // Combinar guías de la BD con MOCK_GUIAS (haciendo que los datos reales de Supabase sobrescriban a los MOCKS)
+          // Combinar guías de la BD con MOCK_GUIAS
           const merged = [];
           MOCK_GUIAS.forEach((mockG) => {
+            const isCarlos = mockG.nombre_completo.toLowerCase().includes("carlos");
+            const activeProfile = isCarlos && rawSaved ? rawSaved : null;
             const dbMatch = formattedDbGuias.find(
               (dbG) => dbG.id === mockG.id || (dbG.nombre_completo && dbG.nombre_completo.toLowerCase().trim().includes("carlos mendoza")) || (dbG.nombre_completo && dbG.nombre_completo.toLowerCase().trim() === mockG.nombre_completo.toLowerCase().trim())
             );
-            if (dbMatch) {
+            const source = activeProfile || dbMatch;
+            if (source) {
               merged.push({
                 ...mockG,
-                ...dbMatch,
-                departamento_principal: dbMatch.departamento_principal || mockG.departamento_principal,
-                especialidad: dbMatch.especialidad || mockG.especialidad,
-                tarifa_aprox: dbMatch.tarifa_aprox || mockG.tarifa_aprox,
-                experiencia_anios: dbMatch.experiencia_anios || mockG.experiencia_anios,
-                biografia: dbMatch.biografia || mockG.biografia,
-                whatsapp: dbMatch.whatsapp || mockG.whatsapp,
-                licencia_intur: dbMatch.licencia_intur || mockG.licencia_intur,
-                idiomas: dbMatch.idiomas || mockG.idiomas,
+                ...source,
+                departamento_principal: source.departamento_principal || mockG.departamento_principal,
+                especialidad: source.especialidad || mockG.especialidad,
+                tarifa_aprox: source.tarifa_aprox || mockG.tarifa_aprox,
+                experiencia_anios: source.experiencia_anios || mockG.experiencia_anios,
+                biografia: source.biografia || mockG.biografia,
+                whatsapp: source.whatsapp || mockG.whatsapp,
+                licencia_intur: source.licencia_intur || mockG.licencia_intur,
+                idiomas: source.idiomas || mockG.idiomas,
               });
             } else {
               merged.push(mockG);
             }
           });
 
-          // Agregar guías adicionales registradas en BD que no estén en MOCK_GUIAS
+          // Agregar guías adicionales de BD
           formattedDbGuias.forEach((dbG) => {
             const alreadyIn = merged.some(m => m.id === dbG.id || (m.nombre_completo && m.nombre_completo.toLowerCase().trim() === dbG.nombre_completo?.toLowerCase().trim()));
             if (!alreadyIn) merged.push(dbG);
@@ -449,7 +460,29 @@ export default function GuiasPage() {
 
           setGuias(merged);
         } else {
-          setGuias(MOCK_GUIAS);
+          // Si BD no tiene registros pero hay localSaved, aplicar localSaved a Carlos Mendoza
+          if (rawSaved) {
+            const merged = MOCK_GUIAS.map(mockG => {
+              if (mockG.nombre_completo.toLowerCase().includes("carlos")) {
+                return {
+                  ...mockG,
+                  ...rawSaved,
+                  departamento_principal: rawSaved.departamento_principal || mockG.departamento_principal,
+                  especialidad: rawSaved.especialidad || mockG.especialidad,
+                  tarifa_aprox: rawSaved.tarifa_aprox || mockG.tarifa_aprox,
+                  experiencia_anios: rawSaved.experiencia_anios || mockG.experiencia_anios,
+                  biografia: rawSaved.biografia || mockG.biografia,
+                  whatsapp: rawSaved.whatsapp || mockG.whatsapp,
+                  licencia_intur: rawSaved.licencia_intur || mockG.licencia_intur,
+                  idiomas: rawSaved.idiomas || mockG.idiomas,
+                };
+              }
+              return mockG;
+            });
+            setGuias(merged);
+          } else {
+            setGuias(MOCK_GUIAS);
+          }
         }
       } catch (err) {
         console.warn("Could not query guias_turisticos, using fallback data:", err);

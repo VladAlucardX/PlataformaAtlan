@@ -158,24 +158,26 @@ export default function PerfilGuiaPage() {
 
         let savedLocal = null;
         try {
-          const rawLocal = localStorage.getItem("atlan_guia_profile_" + currentUser.id) || localStorage.getItem("atlan_guia_profile_carlos");
+          const rawLocal = localStorage.getItem("atlan_guia_profile_global") ||
+            localStorage.getItem("atlan_guia_profile_" + currentUser.id) ||
+            localStorage.getItem("atlan_guia_profile_carlos");
           if (rawLocal) savedLocal = JSON.parse(rawLocal);
         } catch (e) {}
 
         const activeData = gData || savedLocal;
 
         if (activeData) {
-          setGuiaDeptPrincipal(activeData.departamento_principal || "León");
-          setGuiaEspecialidad(activeData.especialidad || "Senderismo y Volcanes");
-          setGuiaIdiomas(activeData.idiomas || "Español, Inglés");
-          setGuiaExperiencia(activeData.experiencia_anios || 5);
-          setGuiaTarifa(activeData.tarifa_aprox || "$30 - $50 / día");
-          setGuiaBiografia(activeData.biografia || "");
-          setGuiaWhatsapp(activeData.whatsapp || activeData.telefono_contacto || "");
-          setGuiaInstagram(activeData.instagram || "");
-          setGuiaLicencia(activeData.licencia_intur || "");
-          setGuiaGaleria(activeData.galeria_fotos || []);
-          setGuiaDestinosMapa(activeData.destinos_mapa || []);
+          if (activeData.departamento_principal) setGuiaDeptPrincipal(activeData.departamento_principal);
+          if (activeData.especialidad) setGuiaEspecialidad(activeData.especialidad);
+          if (activeData.idiomas) setGuiaIdiomas(activeData.idiomas);
+          if (activeData.experiencia_anios) setGuiaExperiencia(activeData.experiencia_anios);
+          if (activeData.tarifa_aprox) setGuiaTarifa(activeData.tarifa_aprox);
+          if (activeData.biografia !== undefined) setGuiaBiografia(activeData.biografia);
+          if (activeData.whatsapp || activeData.telefono_contacto) setGuiaWhatsapp(activeData.whatsapp || activeData.telefono_contacto);
+          if (activeData.instagram) setGuiaInstagram(activeData.instagram);
+          if (activeData.licencia_intur) setGuiaLicencia(activeData.licencia_intur);
+          if (activeData.galeria_fotos) setGuiaGaleria(activeData.galeria_fotos);
+          if (activeData.destinos_mapa) setGuiaDestinosMapa(activeData.destinos_mapa);
         } else {
           // Prepopulado inicial si coincide con guía de prueba (ej: Carlos Mendoza Silva)
           const nameLower = (perfilData?.nombre_completo || currentUser.user_metadata?.nombre_completo || "").toLowerCase();
@@ -797,9 +799,7 @@ export default function PerfilGuiaPage() {
                         <span>Rango Tarifa (/día)</span>
                       </label>
                       <select
-                        value={
-                          TARIFAS_LIST.find(t => guiaTarifa && guiaTarifa.includes(t.split(" ")[0])) || guiaTarifa || "$30 - $50 / día"
-                        }
+                        value={guiaTarifa || "$30 - $50 / día"}
                         onChange={(e) => setGuiaTarifa(e.target.value)}
                         style={{ width: "100%", padding: "6px 8px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "800", color: "#059669" }}
                       >
