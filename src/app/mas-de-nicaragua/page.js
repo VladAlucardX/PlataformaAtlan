@@ -972,15 +972,6 @@ export default function MasDeNicaraguaPage() {
               {/* 5. LUGARES IMPORTANTES Y ACTIVIDADES (COMBINADO) */}
               {(modalActiveTab === "lugares" || modalActiveTab === "actividades") && (
                 <div>
-                  {/* Encabezado General Integrado con Ambos SVGs */}
-                  <h3 style={{ fontSize: "18px", fontWeight: "900", color: "#FFFFFF", marginBottom: "22px", display: "flex", alignItems: "center", gap: "10px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                      <img src="/images/San Juan del sur.svg" alt="Lugares" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
-                      <img src="/images/caña.svg" alt="Actividades" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
-                    </div>
-                    <span>Lugares Emblemáticos y Actividades Tradicionales</span>
-                  </h3>
-
                   {/* Subsección 1: Sitios Emblemáticos Imperdibles */}
                   {selectedDeptForDetails.lugaresImportantes && selectedDeptForDetails.lugaresImportantes.length > 0 && (
                     <div style={{ marginBottom: "28px" }}>
