@@ -505,11 +505,19 @@ export default function GuiasPage() {
           <h1 style={styles.heroTitleMain}>
             {lang === "en" ? (
               <>
-                Explore <span className="text-flag-nicaragua" style={styles.flagSpan}>Nicaragua</span> with Expert Local Guides
+                <span style={styles.whiteTextWithShadow}>Explore</span>{" "}
+                <span style={styles.flagShadowWrapper}>
+                  <span className="text-flag-nicaragua" style={styles.flagSpan}>Nicaragua</span>
+                </span>{" "}
+                <span style={styles.whiteTextWithShadow}>with Expert Local Guides</span>
               </>
             ) : (
               <>
-                Explora <span className="text-flag-nicaragua" style={styles.flagSpan}>Nicaragua</span> con Guías Turísticos Locales
+                <span style={styles.whiteTextWithShadow}>Explora</span>{" "}
+                <span style={styles.flagShadowWrapper}>
+                  <span className="text-flag-nicaragua" style={styles.flagSpan}>Nicaragua</span>
+                </span>{" "}
+                <span style={styles.whiteTextWithShadow}>con Guías Turísticos Locales</span>
               </>
             )}
           </h1>
@@ -1317,6 +1325,15 @@ const styles = {
     margin: "12px 0 6px 0",
     lineHeight: "1.25",
     textAlign: "center"
+  },
+  whiteTextWithShadow: {
+    color: "#FFFFFF",
+    textShadow: "0 4px 16px rgba(0, 0, 0, 0.95), 0 2px 4px rgba(0, 0, 0, 0.95)",
+    filter: "drop-shadow(0 4px 10px rgba(0, 0, 0, 0.95))"
+  },
+  flagShadowWrapper: {
+    display: "inline-block",
+    filter: "drop-shadow(0 6px 10px rgba(0, 0, 0, 0.95))"
   },
   flagSpan: {
     fontFamily: "'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-display), sans-serif",
