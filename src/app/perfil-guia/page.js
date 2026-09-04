@@ -145,25 +145,37 @@ export default function PerfilGuiaPage() {
         }
         setPerfil(perfilData);
 
-        // Cargar datos de guía desde Supabase
-        const { data: gData } = await supabase
-          .from("guias_turisticos")
-          .select("*")
-          .eq("id", currentUser.id)
-          .single();
+        // Cargar datos de guía desde Supabase o caché LocalStorage
+        let gData = null;
+        try {
+          const { data } = await supabase
+            .from("guias_turisticos")
+            .select("*")
+            .eq("id", currentUser.id)
+            .maybeSingle();
+          gData = data;
+        } catch (e) {}
 
-        if (gData) {
-          setGuiaDeptPrincipal(gData.departamento_principal || "León");
-          setGuiaEspecialidad(gData.especialidad || "Senderismo y Volcanes");
-          setGuiaIdiomas(gData.idiomas || "Español, Inglés");
-          setGuiaExperiencia(gData.experiencia_anios || 5);
-          setGuiaTarifa(gData.tarifa_aprox || "$25 - $40 / día");
-          setGuiaBiografia(gData.biografia || "");
-          setGuiaWhatsapp(gData.whatsapp || gData.telefono_contacto || "");
-          setGuiaInstagram(gData.instagram || "");
-          setGuiaLicencia(gData.licencia_intur || "");
-          setGuiaGaleria(gData.galeria_fotos || []);
-          setGuiaDestinosMapa(gData.destinos_mapa || []);
+        let savedLocal = null;
+        try {
+          const rawLocal = localStorage.getItem("atlan_guia_profile_" + currentUser.id) || localStorage.getItem("atlan_guia_profile_carlos");
+          if (rawLocal) savedLocal = JSON.parse(rawLocal);
+        } catch (e) {}
+
+        const activeData = gData || savedLocal;
+
+        if (activeData) {
+          setGuiaDeptPrincipal(activeData.departamento_principal || "León");
+          setGuiaEspecialidad(activeData.especialidad || "Senderismo y Volcanes");
+          setGuiaIdiomas(activeData.idiomas || "Español, Inglés");
+          setGuiaExperiencia(activeData.experiencia_anios || 5);
+          setGuiaTarifa(activeData.tarifa_aprox || "$30 - $50 / día");
+          setGuiaBiografia(activeData.biografia || "");
+          setGuiaWhatsapp(activeData.whatsapp || activeData.telefono_contacto || "");
+          setGuiaInstagram(activeData.instagram || "");
+          setGuiaLicencia(activeData.licencia_intur || "");
+          setGuiaGaleria(activeData.galeria_fotos || []);
+          setGuiaDestinosMapa(activeData.destinos_mapa || []);
         } else {
           // Prepopulado inicial si coincide con guía de prueba (ej: Carlos Mendoza Silva)
           const nameLower = (perfilData?.nombre_completo || currentUser.user_metadata?.nombre_completo || "").toLowerCase();
