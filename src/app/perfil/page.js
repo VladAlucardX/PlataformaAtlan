@@ -49,9 +49,52 @@ export default function PerfilPage() {
   const [guiaInstagram, setGuiaInstagram] = useState("");
   const [guiaLicencia, setGuiaLicencia] = useState("");
   const [guiaGaleria, setGuiaGaleria] = useState([]);
+  const [guiaDestinosMapa, setGuiaDestinosMapa] = useState([]);
+  const [showAddDestForm, setShowAddDestForm] = useState(false);
+  const [newDestNombre, setNewDestNombre] = useState("");
+  const [newDestCategoria, setNewDestCategoria] = useState("Senderismo");
+  const [newDestIcono, setNewDestIcono] = useState("🌋");
+  const [newDestDept, setNewDestDept] = useState("León");
+  const [newDestDesc, setNewDestDesc] = useState("");
   const [uploadingTravesiaFoto, setUploadingTravesiaFoto] = useState(false);
   const [savingGuia, setSavingGuia] = useState(false);
   const travesiaFotoInputRef = useRef(null);
+
+  const handleAddDestinoMapa = (e) => {
+    e.preventDefault();
+    if (!newDestNombre.trim()) return;
+    const newDest = {
+      id: "dest-" + Date.now(),
+      nombre: newDestNombre.trim(),
+      categoria: newDestCategoria,
+      icono: newDestIcono,
+      deptSlug: newDestDept.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-"),
+      departamento: newDestDept,
+      desc: newDestDesc.trim() || "Punto de interés turístico guiado."
+    };
+    const updated = [...guiaDestinosMapa, newDest];
+    setGuiaDestinosMapa(updated);
+    if (user?.id) {
+      supabase.from("guias_turisticos").upsert({
+        id: user.id,
+        destinos_mapa: updated,
+      }).then();
+    }
+    setNewDestNombre("");
+    setNewDestDesc("");
+    setShowAddDestForm(false);
+  };
+
+  const handleRemoveDestinoMapa = (destId) => {
+    const updated = guiaDestinosMapa.filter(d => d.id !== destId);
+    setGuiaDestinosMapa(updated);
+    if (user?.id) {
+      supabase.from("guias_turisticos").upsert({
+        id: user.id,
+        destinos_mapa: updated,
+      }).then();
+    }
+  };
 
   const handleUploadTravesiaFoto = async (e) => {
     const file = e.target.files[0];
@@ -107,6 +150,7 @@ export default function PerfilPage() {
         instagram: guiaInstagram,
         licencia_intur: guiaLicencia,
         galeria_fotos: guiaGaleria,
+        destinos_mapa: guiaDestinosMapa,
         activo: true,
       });
 
@@ -237,6 +281,7 @@ export default function PerfilPage() {
               setGuiaInstagram(gData.instagram || "");
               setGuiaLicencia(gData.licencia_intur || "");
               setGuiaGaleria(gData.galeria_fotos || []);
+              setGuiaDestinosMapa(gData.destinos_mapa || []);
             }
           } catch (gErr) {
             console.warn("Notice: could not fetch guide profile from DB:", gErr);
@@ -1388,6 +1433,174 @@ export default function PerfilPage() {
                           title="Eliminar foto"
                         >
                           <Icon name="x" size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* SECCIÓN GESTIÓN DE LUGARES Y DESTINOS DE TOURS EN EL MAPA */}
+              <div style={{ background: "rgba(16, 185, 129, 0.05)", border: "1.5px dashed rgba(16, 185, 129, 0.3)", borderRadius: "16px", padding: "14px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+                  <div>
+                    <span style={{ fontSize: "13px", fontWeight: "800", color: "#10B981", display: "flex", alignItems: "center", gap: "6px" }}>
+                      <span>🗺️</span>
+                      {lang === "en" ? "Map Tour Destinations" : "Lugares y Destinos de Tours en el Mapa"}
+                    </span>
+                    <span style={{ fontSize: "11.5px", color: "#64748B", display: "block" }}>
+                      {lang === "en" ? "Specify points of interest you cover so tourists can view them on Atlan map." : "Agrega los puntos de interés que cubres para que los turistas los vean en tu tarjeta y perfil de Atlan."}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowAddDestForm(!showAddDestForm)}
+                    style={{ background: "#10B981", color: "#FFF", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "750", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}
+                  >
+                    <Icon name={showAddDestForm ? "x" : "plus"} size={14} />
+                    <span>{showAddDestForm ? (lang === "en" ? "Cancel" : "Cancelar") : (lang === "en" ? "Add Place" : "Agregar Lugar")}</span>
+                  </button>
+                </div>
+
+                {/* Formulario Inline para Agregar Nuevo Destino */}
+                {showAddDestForm && (
+                  <div style={{ background: "#FFFFFF", border: "1px solid rgba(16, 185, 129, 0.25)", borderRadius: "12px", padding: "12px", marginBottom: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.04)" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "8px" }}>
+                      <div>
+                        <label style={{ fontSize: "11.5px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "3px" }}>
+                          {lang === "en" ? "Place/Attraction Name:" : "Nombre del Sitio o Destino:"}
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="Ej. Volcán Cerro Negro"
+                          value={newDestNombre}
+                          onChange={(e) => setNewDestNombre(e.target.value)}
+                          style={{ width: "100%", padding: "7px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12.5px" }}
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{ fontSize: "11.5px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "3px" }}>
+                          {lang === "en" ? "Department:" : "Departamento:"}
+                        </label>
+                        <select
+                          value={newDestDept}
+                          onChange={(e) => setNewDestDept(e.target.value)}
+                          style={{ width: "100%", padding: "7px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12.5px" }}
+                        >
+                          {["León", "Granada", "Rivas", "Masaya", "Matagalpa", "Jinotega", "Estelí", "Managua", "Chinandega", "Carazo", "Madriz", "Nueva Segovia", "Boaco", "Chontales", "Río San Juan", "RACCN", "RACCS"].map(dept => (
+                            <option key={dept} value={dept}>{dept}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "8px" }}>
+                      <div>
+                        <label style={{ fontSize: "11.5px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "3px" }}>
+                          {lang === "en" ? "Category:" : "Categoría del Tour:"}
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Ej. Sandboarding / Senderismo"
+                          value={newDestCategoria}
+                          onChange={(e) => setNewDestCategoria(e.target.value)}
+                          style={{ width: "100%", padding: "7px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12.5px" }}
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{ fontSize: "11.5px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "3px" }}>
+                          {lang === "en" ? "Icon / Emoji:" : "Ícono o Emoji:"}
+                        </label>
+                        <select
+                          value={newDestIcono}
+                          onChange={(e) => setNewDestIcono(e.target.value)}
+                          style={{ width: "100%", padding: "7px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12.5px" }}
+                        >
+                          <option value="🌋">🌋 Volcán</option>
+                          <option value="🏛️">🏛️ Historia / Cultura</option>
+                          <option value="🏝️">🏝️ Isla / Náutica</option>
+                          <option value="⛰️">⛰️ Montañismo</option>
+                          <option value="🌿">🌿 Ecoturismo</option>
+                          <option value="🦜">🦜 Avistamiento Aves</option>
+                          <option value="🏖️">🏖️ Playa / Surf</option>
+                          <option value="💧">💧 Manantial / Cascada</option>
+                          <option value="🔥">🔥 Lava Nocturna</option>
+                          <option value="🎭">🎭 Artesanía / Gastronomía</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: "10px" }}>
+                      <label style={{ fontSize: "11.5px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "3px" }}>
+                        {lang === "en" ? "Tour Activity Description:" : "Descripción Corta del Tour:"}
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ej. Ascenso y vertiginoso descenso en tabla de sandboard sobre arena volcánica..."
+                        value={newDestDesc}
+                        onChange={(e) => setNewDestDesc(e.target.value)}
+                        style={{ width: "100%", padding: "7px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12.5px" }}
+                      />
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                      <button
+                        type="button"
+                        onClick={handleAddDestinoMapa}
+                        disabled={!newDestNombre.trim()}
+                        style={{ background: "#10B981", color: "#FFF", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "800", cursor: "pointer" }}
+                      >
+                        {lang === "en" ? "Save Destination" : "Guardar Destino"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Lista de Destinos Actualmente Agregados */}
+                {guiaDestinosMapa.length === 0 ? (
+                  <p style={{ fontSize: "12px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", margin: "8px 0" }}>
+                    {lang === "en" ? "No map destinations added yet." : "Aún no has agregado destinos de mapa."}
+                  </p>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    {guiaDestinosMapa.map((dest) => (
+                      <div
+                        key={dest.id}
+                        style={{
+                          background: "#FFFFFF",
+                          border: "1px solid rgba(16, 185, 129, 0.2)",
+                          borderRadius: "10px",
+                          padding: "8px 12px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          gap: "8px"
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <span style={{ fontSize: "16px" }}>{dest.icono}</span>
+                          <div>
+                            <span style={{ fontSize: "13px", fontWeight: "800", color: "#0A192F", display: "block" }}>
+                              {dest.nombre} <span style={{ fontSize: "11px", fontWeight: "600", color: "#0EA5E9" }}>({dest.departamento})</span>
+                            </span>
+                            <span style={{ fontSize: "11px", color: "#64748B" }}>
+                              {dest.categoria} • {dest.desc?.length > 45 ? dest.desc.substring(0, 45) + "..." : dest.desc}
+                            </span>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveDestinoMapa(dest.id)}
+                          style={{ background: "rgba(239, 68, 68, 0.1)", color: "#EF4444", border: "none", padding: "4px 8px", borderRadius: "6px", fontSize: "11px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
+                          title="Eliminar lugar"
+                        >
+                          <Icon name="trash" size={12} />
+                          <span>{lang === "en" ? "Delete" : "Quitar"}</span>
                         </button>
                       </div>
                     ))}
