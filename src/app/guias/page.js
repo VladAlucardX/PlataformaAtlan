@@ -510,37 +510,9 @@ export default function GuiasPage() {
         <div style={styles.heroGlowLeft} />
 
         <div style={styles.heroContentWide}>
-          <div style={styles.topMetaHeader}>
-            <div style={styles.heroBadgesGroup}>
-              <span style={styles.badgeHeroVerified}>
-                <Icon name="checkCircle" size={14} color="#10B981" />
-                <span>{lang === "en" ? "INTUR Certified Guides" : "Guías Verificados INTUR"}</span>
-              </span>
-              <span style={styles.badgeHeroExp}>
-                <Icon name="compass" size={14} color="#38BDF8" />
-                <span>{lang === "en" ? "Authentic Local Tours" : "Experiencias Locales Auténticas"}</span>
-              </span>
-            </div>
-
-            {/* Quick Stats Pill */}
-            <div style={styles.statsRowCompact}>
-              <span style={styles.statPill}><b>17</b> {lang === "en" ? "Depts" : "Departamentos"}</span>
-              <span style={styles.statDividerDot}>•</span>
-              <span style={{ ...styles.statPill, color: "#FFD700" }}><b>4.9 ★</b> {lang === "en" ? "Rating" : "Promedio"}</span>
-              <span style={styles.statDividerDot}>•</span>
-              <span style={{ ...styles.statPill, color: "#10B981" }}><b>100%</b> {lang === "en" ? "Verified" : "Certificados"}</span>
-            </div>
-          </div>
-
           <h1 style={styles.heroTitleGradient}>
             {lang === "en" ? "Explore Nicaragua with Expert Local Guides" : "Explora Nicaragua con Guías Turísticos Locales"}
           </h1>
-
-          <p style={styles.heroSubtitleDescription}>
-            {lang === "en"
-              ? "Connect directly with experienced local experts for volcano hiking, cultural journeys, birdwatching, and tailored adventures across all 17 departments."
-              : "Conecta directamente con guías locales certificados para ascensos a volcanes, historia colonial, avistamiento de aves y experiencias a la medida en los 17 departamentos."}
-          </p>
         </div>
       </section>
 
@@ -1366,22 +1338,15 @@ const styles = {
     fontSize: "12px"
   },
   heroTitleGradient: {
-    fontSize: "clamp(24px, 3.5vw, 38px)",
+    fontSize: "clamp(26px, 3.8vw, 42px)",
     fontWeight: "900",
-    background: "linear-gradient(135deg, #FFFFFF 0%, #38BDF8 50%, #FFD700 100%)",
+    background: "linear-gradient(90deg, #0067C6 0%, #38BDF8 25%, #FFFFFF 50%, #38BDF8 75%, #0067C6 100%)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
+    filter: "drop-shadow(0 4px 15px rgba(0, 103, 198, 0.3))",
     letterSpacing: "-0.8px",
-    margin: "10px 0 8px 0",
+    margin: "12px 0 6px 0",
     lineHeight: "1.18"
-  },
-  heroSubtitleDescription: {
-    fontSize: "clamp(13px, 1.3vw, 15px)",
-    color: "#CBD5E1",
-    maxWidth: "850px",
-    lineHeight: "1.5",
-    margin: "0",
-    fontWeight: "500"
   },
 
   mainContainerWide: {
