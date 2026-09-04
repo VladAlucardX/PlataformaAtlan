@@ -895,7 +895,11 @@ const styles = {
   pageWrapper: {
     minHeight: "100vh",
     width: "100%",
-    background: "linear-gradient(180deg, #0A192F 0%, #0F172A 50%, #0B132B 100%)",
+    backgroundImage: "linear-gradient(180deg, rgba(10, 25, 47, 0.78) 0%, rgba(15, 23, 42, 0.88) 100%), url('/images/Frame 8.png')",
+    backgroundSize: "cover",
+    backgroundPosition: "center center",
+    backgroundRepeat: "no-repeat",
+    backgroundAttachment: "fixed",
     color: "#F8FAFC",
     fontFamily: "var(--font-outfit), sans-serif",
     paddingBottom: "60px",
