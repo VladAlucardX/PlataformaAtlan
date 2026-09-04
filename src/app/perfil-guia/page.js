@@ -44,6 +44,17 @@ const IDIOMAS_OPCIONES = [
   "Portugués"
 ];
 
+const SERVICIOS_LIST = [
+  "Equipamiento de Seguridad",
+  "Primeros Auxilios de Montaña",
+  "Transporte Incluido",
+  "Fotos & Videos de Travesía",
+  "Entradas a Áreas Protegidas",
+  "Tours Privados / Personalizados",
+  "Snacks & Hidratación",
+  "Atención a Grupos Grandes"
+];
+
 export default function PerfilGuiaPage() {
   const { t, lang } = useTranslation();
   const router = useRouter();
@@ -63,6 +74,11 @@ export default function PerfilGuiaPage() {
   const [guiaIdiomas, setGuiaIdiomas] = useState("Español, Inglés");
   const [guiaExperiencia, setGuiaExperiencia] = useState(5);
   const [guiaTarifa, setGuiaTarifa] = useState("$30 - $50 / día");
+  const [guiaServicios, setGuiaServicios] = useState([
+    "Equipamiento de Seguridad",
+    "Primeros Auxilios de Montaña",
+    "Fotos & Videos de Travesía"
+  ]);
 
   const toggleIdioma = (langName) => {
     const currentArray = guiaIdiomas
@@ -76,6 +92,14 @@ export default function PerfilGuiaPage() {
       updated = [...currentArray, langName];
     }
     setGuiaIdiomas(updated.join(", "));
+  };
+
+  const toggleServicio = (servicioName) => {
+    if (guiaServicios.includes(servicioName)) {
+      setGuiaServicios(guiaServicios.filter(s => s !== servicioName));
+    } else {
+      setGuiaServicios([...guiaServicios, servicioName]);
+    }
   };
   const [guiaBiografia, setGuiaBiografia] = useState("");
   const [guiaWhatsapp, setGuiaWhatsapp] = useState("");
@@ -651,182 +675,226 @@ export default function PerfilGuiaPage() {
                 display: "flex",
                 flexDirection: "column",
                 height: "100%",
-                gap: "10px",
+                gap: "8px",
                 boxSizing: "border-box",
                 justifyContent: "space-between"
               }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
-                  <h3 style={{ margin: 0, fontSize: "14.5px", fontWeight: "900", color: "#0A192F" }}>
-                    Información y Credenciales del Guía Turístico
-                  </h3>
-                  <span style={{ fontSize: "10.5px", color: "#64748B", fontWeight: "700" }}>
-                    🔒 Perfil Público Verificado
-                  </span>
+                {/* ENCABEZADO DE LA SECCIÓN DE CONFIGURACIÓN */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, paddingBottom: "4px", borderBottom: "1px solid rgba(226, 232, 240, 0.8)" }}>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: "14.5px", fontWeight: "900", color: "#0A192F", display: "flex", alignItems: "center", gap: "6px" }}>
+                      <span>⚙️</span>
+                      <span>Configuración del Perfil de Guía Turístico</span>
+                    </h3>
+                    <p style={{ margin: 0, fontSize: "10.5px", color: "#64748B" }}>
+                      Información visible para los turistas en el directorio público y mapa interactivo.
+                    </p>
+                  </div>
+                  <div style={{ background: "rgba(16, 185, 129, 0.1)", color: "#10B981", fontSize: "10px", fontWeight: "800", padding: "3px 8px", borderRadius: "6px", display: "flex", alignItems: "center", gap: "4px" }}>
+                    <Icon name="checkCircle" size={12} color="#10B981" />
+                    <span>Perfil Verificado INTUR</span>
+                  </div>
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px", flex: 1, minHeight: 0 }}>
-                  {/* SECCIÓN 1: DATOS OPERATIVOS Y TARIFAS */}
-                  <div style={{
-                    background: "rgba(248, 250, 252, 0.8)",
-                    border: "1px solid rgba(226, 232, 240, 0.9)",
-                    borderRadius: "10px",
-                    padding: "10px 12px"
-                  }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1.2fr 90px 1.4fr", gap: "10px", alignItems: "center" }}>
-                      <div>
-                        <label style={{ fontSize: "10.5px", fontWeight: "750", color: "#1E293B", display: "block", marginBottom: "2px" }}>
-                          Departamento Principal:
-                        </label>
-                        <select
-                          value={guiaDeptPrincipal}
-                          onChange={(e) => setGuiaDeptPrincipal(e.target.value)}
-                          style={{ width: "100%", padding: "5px 8px", borderRadius: "7px", border: "1px solid #CBD5E1", fontSize: "11.5px", background: "#FFFFFF" }}
-                        >
-                          {DEPARTAMENTOS_LIST.map(dept => (
-                            <option key={dept} value={dept}>{dept}</option>
-                          ))}
-                        </select>
-                      </div>
+                {/* CONTENIDO PRINCIPAL EN BLOQUES TIPO TARJETAS DASHBOARD */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1, minHeight: 0 }}>
 
-                      <div>
-                        <label style={{ fontSize: "10.5px", fontWeight: "750", color: "#1E293B", display: "block", marginBottom: "2px" }}>
-                          Especialidad Principal:
-                        </label>
-                        <select
-                          value={guiaEspecialidad}
-                          onChange={(e) => setGuiaEspecialidad(e.target.value)}
-                          style={{ width: "100%", padding: "5px 8px", borderRadius: "7px", border: "1px solid #CBD5E1", fontSize: "11.5px", background: "#FFFFFF" }}
-                        >
-                          {ESPECIALIDADES_LIST.map(esp => (
-                            <option key={esp} value={esp}>{esp}</option>
-                          ))}
-                        </select>
-                      </div>
+                  {/* BLOQUE 1: DATOS CLAVE DE OPERACIÓN */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 90px 1.3fr", gap: "8px" }}>
+                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
+                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
+                        <span>📍</span>
+                        <span>Departamento Principal</span>
+                      </label>
+                      <select
+                        value={guiaDeptPrincipal}
+                        onChange={(e) => setGuiaDeptPrincipal(e.target.value)}
+                        style={{ width: "100%", padding: "4px 7px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px", background: "#FFFFFF", fontWeight: "700" }}
+                      >
+                        {DEPARTAMENTOS_LIST.map(dept => (
+                          <option key={dept} value={dept}>{dept}</option>
+                        ))}
+                      </select>
+                    </div>
 
-                      <div>
-                        <label style={{ fontSize: "10.5px", fontWeight: "750", color: "#1E293B", display: "block", marginBottom: "2px" }}>
-                          Años Exp:
-                        </label>
-                        <input
-                          type="number"
-                          min="1"
-                          max="40"
-                          value={guiaExperiencia}
-                          onChange={(e) => setGuiaExperiencia(e.target.value)}
-                          style={{ width: "100%", padding: "5px 8px", borderRadius: "7px", border: "1px solid #CBD5E1", fontSize: "11.5px", background: "#FFFFFF" }}
-                        />
-                      </div>
+                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
+                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
+                        <span>🎯</span>
+                        <span>Especialidad Principal</span>
+                      </label>
+                      <select
+                        value={guiaEspecialidad}
+                        onChange={(e) => setGuiaEspecialidad(e.target.value)}
+                        style={{ width: "100%", padding: "4px 7px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px", background: "#FFFFFF", fontWeight: "700" }}
+                      >
+                        {ESPECIALIDADES_LIST.map(esp => (
+                          <option key={esp} value={esp}>{esp}</option>
+                        ))}
+                      </select>
+                    </div>
 
-                      <div>
-                        <label style={{ fontSize: "10.5px", fontWeight: "750", color: "#1E293B", display: "block", marginBottom: "2px" }}>
-                          Rango de Tarifa (/día):
-                        </label>
-                        <select
-                          value={
-                            TARIFAS_LIST.find(t => guiaTarifa && guiaTarifa.includes(t.split(" ")[0])) || guiaTarifa || "$30 - $50 / día"
-                          }
-                          onChange={(e) => setGuiaTarifa(e.target.value)}
-                          style={{ width: "100%", padding: "5px 8px", borderRadius: "7px", border: "1px solid #CBD5E1", fontSize: "11.5px", background: "#FFFFFF", fontWeight: "800", color: "#059669" }}
-                        >
-                          {TARIFAS_LIST.map(tOption => (
-                            <option key={tOption} value={tOption}>{tOption}</option>
-                          ))}
-                        </select>
-                      </div>
+                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
+                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "block", marginBottom: "2px" }}>
+                        Años Exp.
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="40"
+                        value={guiaExperiencia}
+                        onChange={(e) => setGuiaExperiencia(e.target.value)}
+                        style={{ width: "100%", padding: "4px 7px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px", background: "#FFFFFF", fontWeight: "700" }}
+                      />
+                    </div>
+
+                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
+                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
+                        <span>💵</span>
+                        <span>Rango de Tarifa (/día)</span>
+                      </label>
+                      <select
+                        value={
+                          TARIFAS_LIST.find(t => guiaTarifa && guiaTarifa.includes(t.split(" ")[0])) || guiaTarifa || "$30 - $50 / día"
+                        }
+                        onChange={(e) => setGuiaTarifa(e.target.value)}
+                        style={{ width: "100%", padding: "4px 7px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px", background: "#FFFFFF", fontWeight: "800", color: "#059669" }}
+                      >
+                        {TARIFAS_LIST.map(tOption => (
+                          <option key={tOption} value={tOption}>{tOption}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 
-                  {/* SECCIÓN 2: IDIOMAS Y CONTACTO */}
-                  <div style={{
-                    background: "rgba(248, 250, 252, 0.8)",
-                    border: "1px solid rgba(226, 232, 240, 0.9)",
-                    borderRadius: "10px",
-                    padding: "10px 12px"
-                  }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr", gap: "10px", alignItems: "start" }}>
-                      <div>
-                        <label style={{ fontSize: "10.5px", fontWeight: "750", color: "#1E293B", display: "block", marginBottom: "3px" }}>
-                          Idiomas que Dominas (Selecciona):
-                        </label>
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
-                          {IDIOMAS_OPCIONES.map(langOpt => {
-                            const isSelected = guiaIdiomas
-                              ? guiaIdiomas.split(",").map(s => s.trim()).includes(langOpt)
-                              : langOpt === "Español";
-                            return (
-                              <button
-                                key={langOpt}
-                                type="button"
-                                onClick={() => toggleIdioma(langOpt)}
-                                style={{
-                                  padding: "3px 8px",
-                                  borderRadius: "10px",
-                                  border: isSelected ? "1.5px solid #0EA5E9" : "1px solid #CBD5E1",
-                                  background: isSelected ? "rgba(14, 165, 233, 0.12)" : "#FFFFFF",
-                                  color: isSelected ? "#0284C7" : "#475569",
-                                  fontSize: "10.5px",
-                                  fontWeight: isSelected ? "800" : "600",
-                                  cursor: "pointer",
-                                  display: "inline-flex",
-                                  alignItems: "center",
-                                  gap: "3px",
-                                  transition: "all 0.15s"
-                                }}
-                              >
-                                <span>{isSelected ? "✓" : "+"}</span>
-                                <span>{langOpt}</span>
-                              </button>
-                            );
-                          })}
-                        </div>
+                  {/* BLOQUE 2: IDIOMAS Y CONTACTO */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr", gap: "8px" }}>
+                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
+                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "3px" }}>
+                        <span>🗣️</span>
+                        <span>Idiomas que Dominas</span>
+                      </label>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "3px" }}>
+                        {IDIOMAS_OPCIONES.map(langOpt => {
+                          const isSelected = guiaIdiomas
+                            ? guiaIdiomas.split(",").map(s => s.trim()).includes(langOpt)
+                            : langOpt === "Español";
+                          return (
+                            <button
+                              key={langOpt}
+                              type="button"
+                              onClick={() => toggleIdioma(langOpt)}
+                              style={{
+                                padding: "2px 7px",
+                                borderRadius: "8px",
+                                border: isSelected ? "1.5px solid #0EA5E9" : "1px solid #CBD5E1",
+                                background: isSelected ? "rgba(14, 165, 233, 0.12)" : "#FFFFFF",
+                                color: isSelected ? "#0284C7" : "#64748B",
+                                fontSize: "10px",
+                                fontWeight: isSelected ? "800" : "600",
+                                cursor: "pointer",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "3px"
+                              }}
+                            >
+                              <span>{isSelected ? "✓" : "+"}</span>
+                              <span>{langOpt}</span>
+                            </button>
+                          );
+                        })}
                       </div>
+                    </div>
 
-                      <div>
-                        <label style={{ fontSize: "10.5px", fontWeight: "750", color: "#1E293B", display: "block", marginBottom: "2px" }}>
-                          WhatsApp de Contacto:
-                        </label>
-                        <input
-                          type="text"
-                          value={guiaWhatsapp}
-                          onChange={(e) => setGuiaWhatsapp(e.target.value)}
-                          placeholder="+505 8888 8888"
-                          style={{ width: "100%", padding: "5px 8px", borderRadius: "7px", border: "1px solid #CBD5E1", fontSize: "11.5px", background: "#FFFFFF" }}
-                        />
-                      </div>
+                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
+                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
+                        <Icon name="whatsapp" size={12} color="#25D366" />
+                        <span>WhatsApp Directo</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={guiaWhatsapp}
+                        onChange={(e) => setGuiaWhatsapp(e.target.value)}
+                        placeholder="+505 8888 8888"
+                        style={{ width: "100%", padding: "4px 7px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px", background: "#FFFFFF" }}
+                      />
+                    </div>
 
-                      <div>
-                        <label style={{ fontSize: "10.5px", fontWeight: "750", color: "#1E293B", display: "block", marginBottom: "2px" }}>
-                          Licencia INTUR (Opcional):
-                        </label>
-                        <input
-                          type="text"
-                          value={guiaLicencia}
-                          onChange={(e) => setGuiaLicencia(e.target.value)}
-                          placeholder="Ej. INTUR-LE-2024-99"
-                          style={{ width: "100%", padding: "5px 8px", borderRadius: "7px", border: "1px solid #CBD5E1", fontSize: "11.5px", background: "#FFFFFF" }}
-                        />
-                      </div>
+                    <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
+                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
+                        <span>📜</span>
+                        <span>Licencia INTUR</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={guiaLicencia}
+                        onChange={(e) => setGuiaLicencia(e.target.value)}
+                        placeholder="Ej. INTUR-LE-2024-99"
+                        style={{ width: "100%", padding: "4px 7px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "11px", background: "#FFFFFF" }}
+                      />
                     </div>
                   </div>
 
-                  {/* SECCIÓN 3: BIOGRAFÍA Y PRESENTACIÓN */}
-                  <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
-                    <label style={{ fontSize: "10.5px", fontWeight: "750", color: "#1E293B", display: "block", marginBottom: "2px" }}>
-                      Biografía y Presentación para Turistas:
+                  {/* BLOQUE 3: SERVICIOS Y VENTAJAS INCLUIDAS EN TUS TOURS */}
+                  <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "7px 9px" }}>
+                    <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px", marginBottom: "3px" }}>
+                      <span>✨</span>
+                      <span>Servicios Incluidos en tus Tours (Selecciona las ventajas para turistas):</span>
                     </label>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                      {SERVICIOS_LIST.map(servicioOpt => {
+                        const isInc = guiaServicios.includes(servicioOpt);
+                        return (
+                          <button
+                            key={servicioOpt}
+                            type="button"
+                            onClick={() => toggleServicio(servicioOpt)}
+                            style={{
+                              padding: "2px 7px",
+                              borderRadius: "7px",
+                              border: isInc ? "1.5px solid #10B981" : "1px solid #CBD5E1",
+                              background: isInc ? "rgba(16, 185, 129, 0.1)" : "#FFFFFF",
+                              color: isInc ? "#047857" : "#64748B",
+                              fontSize: "10px",
+                              fontWeight: isInc ? "800" : "600",
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "3px",
+                              transition: "all 0.15s"
+                            }}
+                          >
+                            <span>{isInc ? "✓" : "+"}</span>
+                            <span>{servicioOpt}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* BLOQUE 4: BIOGRAFÍA Y PRESENTACIÓN */}
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: "75px" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2px" }}>
+                      <label style={{ fontSize: "10.5px", fontWeight: "800", color: "#475569", display: "flex", alignItems: "center", gap: "4px" }}>
+                        <span>📝</span>
+                        <span>Biografía y Presentación Profesional</span>
+                      </label>
+                      <span style={{ fontSize: "10px", color: "#94A3B8", fontWeight: "600" }}>
+                        {guiaBiografia.length} / 400 caracteres
+                      </span>
+                    </div>
                     <textarea
                       value={guiaBiografia}
-                      onChange={(e) => setGuiaBiografia(e.target.value)}
-                      placeholder="Describe tus especialidades, volcanes o rutas que recorres, certificación de primeros auxilios y experiencia..."
+                      onChange={(e) => setGuiaBiografia(e.target.value.slice(0, 400))}
+                      placeholder="Escribe un resumen atractivo sobre tu trayectoria, rutas guiadas, volcanes que dominas y equipamiento de seguridad..."
                       style={{
                         width: "100%",
                         flex: 1,
-                        minHeight: "70px",
-                        padding: "8px 10px",
+                        minHeight: "60px",
+                        padding: "7px 9px",
                         borderRadius: "8px",
                         border: "1px solid #CBD5E1",
-                        fontSize: "11.5px",
-                        lineHeight: "1.45",
+                        fontSize: "11px",
+                        lineHeight: "1.4",
                         resize: "none",
                         fontFamily: "inherit",
                         boxSizing: "border-box",
@@ -836,29 +904,34 @@ export default function PerfilGuiaPage() {
                   </div>
                 </div>
 
-                {/* BOTÓN Y FOOTER DEL FORMULARIO */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "6px", borderTop: "1px solid rgba(226, 232, 240, 0.8)", flexShrink: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10.5px", color: "#64748B", fontWeight: "700" }}>
-                    <Icon name="checkCircle" size={12} color="#10B981" />
+                {/* BARRA INFERIOR DE ACCIÓN */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "4px", borderTop: "1px solid rgba(226, 232, 240, 0.8)", flexShrink: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "10.5px", color: "#64748B", fontWeight: "700" }}>
                     <span>Idiomas: <strong style={{ color: "#0EA5E9" }}>{guiaIdiomas || "Español"}</strong></span>
+                    <span>•</span>
+                    <span>Servicios: <strong style={{ color: "#10B981" }}>{guiaServicios.length} incluidos</strong></span>
                   </div>
 
                   <button
                     type="submit"
                     disabled={savingGuia}
                     style={{
-                      padding: "7px 20px",
+                      padding: "6px 18px",
                       borderRadius: "8px",
                       border: "none",
                       background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
                       color: "#FFFFFF",
                       fontWeight: "800",
-                      fontSize: "12px",
+                      fontSize: "11.5px",
                       cursor: "pointer",
-                      boxShadow: "0 2px 8px rgba(14, 165, 233, 0.25)"
+                      boxShadow: "0 3px 12px rgba(14, 165, 233, 0.25)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px"
                     }}
                   >
-                    {savingGuia ? "Guardando..." : "Guardar Información de Guía"}
+                    <Icon name="checkCircle" size={13} color="#FFFFFF" />
+                    <span>{savingGuia ? "Guardando..." : "Guardar Cambios del Perfil"}</span>
                   </button>
                 </div>
               </form>
