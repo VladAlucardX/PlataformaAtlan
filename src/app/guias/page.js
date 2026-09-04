@@ -510,8 +510,16 @@ export default function GuiasPage() {
         <div style={styles.heroGlowLeft} />
 
         <div style={styles.heroContentWide}>
-          <h1 style={styles.heroTitleGradient}>
-            {lang === "en" ? "Explore Nicaragua with Expert Local Guides" : "Explora Nicaragua con Guías Turísticos Locales"}
+          <h1 style={styles.heroTitleMain}>
+            {lang === "en" ? (
+              <>
+                Explore <span className="text-flag-nicaragua" style={styles.flagSpan}>Nicaragua</span> with Expert Local Guides
+              </>
+            ) : (
+              <>
+                Explora <span className="text-flag-nicaragua" style={styles.flagSpan}>Nicaragua</span> con Guías Turísticos Locales
+              </>
+            )}
           </h1>
         </div>
       </section>
@@ -1337,17 +1345,23 @@ const styles = {
     color: "#64748B",
     fontSize: "12px"
   },
-  heroTitleGradient: {
-    fontFamily: "'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-display), sans-serif",
+  heroTitleMain: {
     fontSize: "clamp(26px, 3.8vw, 42px)",
     fontWeight: "900",
+    color: "#FFFFFF",
+    letterSpacing: "-0.5px",
+    margin: "12px 0 6px 0",
+    lineHeight: "1.25"
+  },
+  flagSpan: {
+    fontFamily: "'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-display), sans-serif",
     background: "linear-gradient(180deg, #0072CE 0%, #0072CE 32%, #FFFFFF 32%, #FFFFFF 68%, #0072CE 68%, #0072CE 100%)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
     filter: "drop-shadow(0 5px 8px rgba(0, 0, 0, 0.9))",
     letterSpacing: "0.04em",
-    margin: "12px 0 6px 0",
-    lineHeight: "1.25"
+    display: "inline-block",
+    padding: "0 4px"
   },
 
   mainContainerWide: {
