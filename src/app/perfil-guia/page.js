@@ -579,11 +579,21 @@ export default function PerfilGuiaPage() {
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
-                gap: "4px",
+                gap: "5px",
                 transition: "all 0.2s"
               }}
             >
-              <Icon name="user" size={12} color={activeTab === "info" ? "#FFFFFF" : "rgba(255,255,255,0.75)"} />
+              <img
+                src="/images/perfil.svg"
+                alt="Datos del Guía"
+                style={{
+                  width: "13px",
+                  height: "13px",
+                  objectFit: "contain",
+                  filter: "brightness(0) invert(1)",
+                  opacity: activeTab === "info" ? 1 : 0.75
+                }}
+              />
               <span>1. Datos del Guía</span>
             </button>
 
@@ -623,11 +633,21 @@ export default function PerfilGuiaPage() {
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
-                gap: "4px",
+                gap: "5px",
                 transition: "all 0.2s"
               }}
             >
-              <span style={{ fontSize: "11px" }}>🗺️</span>
+              <img
+                src="/images/edificio.svg"
+                alt="Lugares"
+                style={{
+                  width: "13px",
+                  height: "13px",
+                  objectFit: "contain",
+                  filter: "brightness(0) invert(1)",
+                  opacity: activeTab === "mapa_destinos" ? 1 : 0.75
+                }}
+              />
               <span>3. Lugares ({guiaDestinosMapa.length})</span>
             </button>
           </div>
@@ -647,11 +667,15 @@ export default function PerfilGuiaPage() {
                 textDecoration: "none",
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "4px"
+                gap: "5px"
               }}
             >
-              <Icon name="globe" size={12} />
-              <span>Directorio</span>
+              <img
+                src="/images/gueguense.svg"
+                alt="Lista de Guías"
+                style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) invert(1)" }}
+              />
+              <span>Lista de Guías</span>
             </Link>
 
             <Link
@@ -667,10 +691,14 @@ export default function PerfilGuiaPage() {
                 textDecoration: "none",
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "4px"
+                gap: "5px"
               }}
             >
-              <Icon name="user" size={12} />
+              <img
+                src="/images/perfil.svg"
+                alt="Mi Perfil"
+                style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) invert(1)" }}
+              />
               <span>Mi Perfil</span>
             </Link>
           </div>
@@ -1196,8 +1224,12 @@ export default function PerfilGuiaPage() {
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px", flexShrink: 0 }}>
                   <div>
                     <h3 style={{ margin: 0, fontSize: "14px", fontWeight: "900", color: "#0A192F", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <span>🗺️</span>
-                      <span>Catálogo de Lugares del Mapa de Nicaragua</span>
+                      <img
+                        src="/images/edificio.svg"
+                        alt="Lugares"
+                        style={{ width: "18px", height: "18px", objectFit: "contain" }}
+                      />
+                      <span>Lista de Lugares del Mapa de Nicaragua</span>
                     </h3>
                     <p style={{ margin: 0, fontSize: "10.5px", color: "#64748B" }}>
                       Haz clic en los destinos oficiales del mapa para agregarlos o quitarlos de tus tours.
@@ -1314,7 +1346,11 @@ export default function PerfilGuiaPage() {
                 <div style={{ background: "rgba(14, 165, 233, 0.04)", border: "1px solid rgba(14, 165, 233, 0.2)", borderRadius: "10px", padding: "8px 12px", marginBottom: "8px", flexShrink: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: guiaDestinosMapa.length > 0 ? "6px" : 0 }}>
                     <span style={{ fontSize: "11px", fontWeight: "800", color: "#0284C7", display: "flex", alignItems: "center", gap: "5px" }}>
-                      <span>📍</span>
+                      <img
+                        src="/images/Ubicacion.svg"
+                        alt="Tus Lugares"
+                        style={{ width: "15px", height: "15px", objectFit: "contain" }}
+                      />
                       <span>Tus Lugares en Tour ({guiaDestinosMapa.length})</span>
                     </span>
                     <span style={{ fontSize: "10px", fontWeight: "700", color: "#64748B" }}>
