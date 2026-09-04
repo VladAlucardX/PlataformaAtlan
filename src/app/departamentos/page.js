@@ -672,13 +672,13 @@ export default function DepartamentosPage() {
               flexShrink: 0, 
               position: "relative", 
               zIndex: 1,
-              background: "rgba(3, 14, 33, 0.90)",
-              padding: "5px",
+              background: "rgba(3, 14, 33, 0.95)",
+              padding: "6px",
               borderRadius: "14px",
-              border: "1.5px solid rgba(56, 189, 248, 0.35)",
+              border: "2px solid #000000",
               backdropFilter: "blur(14px)",
               WebkitBackdropFilter: "blur(14px)",
-              boxShadow: "0 6px 20px rgba(0,0,0,0.4)"
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.15)"
             }}>
               {/* Botón Ranking Global */}
               <button
@@ -691,12 +691,12 @@ export default function DepartamentosPage() {
                   flex: 1,
                   padding: "10px 14px",
                   borderRadius: "10px",
-                  border: rankingMode === 'global' ? "1.5px solid #FFFFFF" : "1px solid rgba(255, 255, 255, 0.22)",
+                  border: rankingMode === 'global' ? "2px solid #FFFFFF" : "1.5px solid rgba(255, 255, 255, 0.3)",
                   background: rankingMode === 'global' 
                     ? "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)" 
-                    : "rgba(255, 255, 255, 0.10)",
-                  color: rankingMode === 'global' ? "#FFFFFF" : "#F8FAFC",
-                  fontWeight: rankingMode === 'global' ? "700" : "600",
+                    : "rgba(15, 23, 42, 0.80)",
+                  color: "#FFFFFF",
+                  fontWeight: rankingMode === 'global' ? "800" : "700",
                   fontSize: "14px",
                   letterSpacing: "0.3px",
                   cursor: "pointer",
@@ -704,7 +704,8 @@ export default function DepartamentosPage() {
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "7px",
-                  boxShadow: rankingMode === 'global' ? "0 4px 14px rgba(14, 165, 233, 0.5)" : "none",
+                  textShadow: "0 1px 3px #000000, 0 0 3px #000000",
+                  boxShadow: rankingMode === 'global' ? "0 4px 16px rgba(14, 165, 233, 0.5), inset 0 0 0 1px #000000" : "none",
                   transition: "all 0.2s ease"
                 }}
               >
@@ -715,7 +716,7 @@ export default function DepartamentosPage() {
                     width: "19px", 
                     height: "19px", 
                     objectFit: "contain", 
-                    filter: rankingMode === 'global' ? "brightness(0) invert(1)" : "brightness(0) invert(0.95)" 
+                    filter: rankingMode === 'global' ? "brightness(0) invert(1) drop-shadow(0 1px 2px #000)" : "brightness(0) invert(0.95) drop-shadow(0 1px 2px #000)" 
                   }} 
                 />
                 <span>Ranking Global</span>
@@ -728,12 +729,12 @@ export default function DepartamentosPage() {
                   flex: 1,
                   padding: "10px 14px",
                   borderRadius: "10px",
-                  border: rankingMode === 'propio' ? "1.5px solid #FFFFFF" : "1px solid rgba(255, 255, 255, 0.22)",
+                  border: rankingMode === 'propio' ? "2px solid #FFFFFF" : "1.5px solid rgba(255, 255, 255, 0.3)",
                   background: rankingMode === 'propio' 
                     ? "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)" 
-                    : "rgba(255, 255, 255, 0.10)",
-                  color: rankingMode === 'propio' ? "#FFFFFF" : "#F8FAFC",
-                  fontWeight: rankingMode === 'propio' ? "700" : "600",
+                    : "rgba(15, 23, 42, 0.80)",
+                  color: "#FFFFFF",
+                  fontWeight: rankingMode === 'propio' ? "800" : "700",
                   fontSize: "14px",
                   letterSpacing: "0.3px",
                   cursor: "pointer",
@@ -741,7 +742,8 @@ export default function DepartamentosPage() {
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "7px",
-                  boxShadow: rankingMode === 'propio' ? "0 4px 14px rgba(14, 165, 233, 0.5)" : "none",
+                  textShadow: "0 1px 3px #000000, 0 0 3px #000000",
+                  boxShadow: rankingMode === 'propio' ? "0 4px 16px rgba(14, 165, 233, 0.5), inset 0 0 0 1px #000000" : "none",
                   transition: "all 0.2s ease"
                 }}
               >
@@ -752,7 +754,7 @@ export default function DepartamentosPage() {
                     width: "17px", 
                     height: "17px", 
                     objectFit: "contain", 
-                    filter: rankingMode === 'propio' ? "brightness(0) invert(1)" : "brightness(0) invert(0.95)" 
+                    filter: rankingMode === 'propio' ? "brightness(0) invert(1) drop-shadow(0 1px 2px #000)" : "brightness(0) invert(0.95) drop-shadow(0 1px 2px #000)" 
                   }} 
                 />
                 <span>Ranking Personal</span>
@@ -877,7 +879,8 @@ export default function DepartamentosPage() {
                                   whiteSpace: "nowrap", 
                                   overflow: "hidden", 
                                   textOverflow: "ellipsis",
-                                  letterSpacing: "0.2px"
+                                  letterSpacing: "0.2px",
+                                  textShadow: "0 1px 4px #000000, 0 0 3px #000000"
                                 }}>
                                   {lugar.nombre}
                                 </h3>
