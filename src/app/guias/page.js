@@ -402,7 +402,7 @@ export default function GuiasPage() {
       try {
         const { data, error } = await supabase
           .from("guias_turisticos")
-          .select("*, perfiles(nombre_completo, avatar_url, email)")
+          .select("*")
           .eq("activo", true)
           .order("updated_at", { ascending: false });
 
