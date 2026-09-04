@@ -1338,15 +1338,16 @@ const styles = {
     fontSize: "12px"
   },
   heroTitleGradient: {
+    fontFamily: "'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-display), sans-serif",
     fontSize: "clamp(26px, 3.8vw, 42px)",
     fontWeight: "900",
-    background: "linear-gradient(90deg, #0067C6 0%, #38BDF8 25%, #FFFFFF 50%, #38BDF8 75%, #0067C6 100%)",
+    background: "linear-gradient(180deg, #0072CE 0%, #0072CE 32%, #FFFFFF 32%, #FFFFFF 68%, #0072CE 68%, #0072CE 100%)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
-    filter: "drop-shadow(0 4px 15px rgba(0, 103, 198, 0.3))",
-    letterSpacing: "-0.8px",
+    filter: "drop-shadow(0 5px 8px rgba(0, 0, 0, 0.9))",
+    letterSpacing: "0.04em",
     margin: "12px 0 6px 0",
-    lineHeight: "1.18"
+    lineHeight: "1.25"
   },
 
   mainContainerWide: {

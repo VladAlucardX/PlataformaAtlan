@@ -263,6 +263,16 @@ nav button, nav button *,
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* EFECTO BANDERA DE NICARAGUA (FRANJAS VERTICALES AZUL - BLANCO - AZUL CON FUENTE LC MOGI) */
+.text-flag-nicaragua {
+  font-family: 'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-outfit), sans-serif !important;
+  background: linear-gradient(180deg, #0072CE 0%, #0072CE 32%, #FFFFFF 32%, #FFFFFF 68%, #0072CE 68%, #0072CE 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.9)) !important;
+  letter-spacing: 0.04em !important;
+}
+
 .logoText:hover,
 .brand-atlan:hover {
   transform: scale(1.08);
