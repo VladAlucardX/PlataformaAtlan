@@ -240,6 +240,7 @@ export default function GuiasPage() {
   const [selectedRangoPrecio, setSelectedRangoPrecio] = useState("Todos");
   const [selectedTagPopular, setSelectedTagPopular] = useState("Todos");
   const [solamenteVerificados, setSolamenteVerificados] = useState(false);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("rating");
 
@@ -526,15 +527,16 @@ export default function GuiasPage() {
 
       {/* FILTROS Y CONTENEDOR ANCHO */}
       <main style={styles.mainContainerWide}>
-        {/* BARRA DE FILTROS ULTRA PROFESIONAL AVANZADA */}
+        {/* BARRA DE FILTROS ULTRA COMPACTA (1 FILA PRINCIPAL + DESPLEGABLE DE FILTROS AVANZADOS) */}
         <div style={styles.filterPanelProfessional}>
-          {/* Fila 1: Buscador Multi-campo, Ordenamiento y Toggle INTUR */}
+          {/* Fila Principal Unificada y Compacta */}
           <div style={styles.filterRow1}>
+            {/* 1. Buscador Slim */}
             <div style={styles.searchBoxSlim}>
               <Icon name="search" size={16} color="#0EA5E9" />
               <input
                 type="text"
-                placeholder={lang === "en" ? "Search guide by name, volcano, city or license..." : "Buscar guía por nombre, volcán, ciudad o licencia INTUR..."}
+                placeholder={lang === "en" ? "Search by name, city, volcano..." : "Buscar guía por nombre, volcán, ciudad..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={styles.searchInputSlim}
@@ -546,8 +548,38 @@ export default function GuiasPage() {
               )}
             </div>
 
+            {/* 2. Selector Desplegable de Departamento */}
+            <div style={styles.selectFilterWrapper}>
+              <Icon name="mapPin" size={14} color="#0EA5E9" />
+              <select
+                value={selectedDept}
+                onChange={(e) => setSelectedDept(e.target.value)}
+                style={styles.selectInputCompact}
+              >
+                <option value="Todos">{lang === "en" ? "All Depts" : "Todos los Deptos"}</option>
+                {DEPARTAMENTOS_LIST.filter(d => d !== "Todos").map((dept) => (
+                  <option key={dept} value={dept}>{dept}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* 3. Selector Desplegable de Especialidad */}
+            <div style={styles.selectFilterWrapper}>
+              <Icon name="tag" size={14} color="#FFD700" />
+              <select
+                value={selectedEspecialidad}
+                onChange={(e) => setSelectedEspecialidad(e.target.value)}
+                style={styles.selectInputCompact}
+              >
+                <option value="Todas">{lang === "en" ? "All Specialties" : "Todas las Especialidades"}</option>
+                {ESPECIALIDADES_LIST.filter(e => e !== "Todas").map((esp) => (
+                  <option key={esp} value={esp}>{esp}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* 4. Ordenamiento */}
             <div style={styles.sortBoxSlim}>
-              <span style={styles.sortLabelSlim}>{lang === "en" ? "Sort:" : "Ordenar:"}</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -560,162 +592,134 @@ export default function GuiasPage() {
               </select>
             </div>
 
-            {/* Toggle de Solo INTUR Verificados */}
+            {/* 5. Botón Toggle Filtros Avanzados */}
             <button
-              onClick={() => setSolamenteVerificados(!solamenteVerificados)}
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
               style={{
-                ...styles.verifiedToggleBtn,
-                background: solamenteVerificados ? "rgba(16, 185, 129, 0.25)" : "rgba(30, 41, 59, 0.7)",
-                border: solamenteVerificados ? "1.5px solid #10B981" : "1px solid rgba(255, 255, 255, 0.12)",
-                color: solamenteVerificados ? "#34D399" : "#94A3B8"
+                ...styles.advancedToggleBtn,
+                background: showAdvancedFilters || selectedIdioma !== "Todos" || selectedRangoPrecio !== "Todos" || selectedTagPopular !== "Todos" || solamenteVerificados
+                  ? "rgba(14, 165, 233, 0.22)"
+                  : "rgba(30, 41, 59, 0.8)",
+                border: showAdvancedFilters || selectedIdioma !== "Todos" || selectedRangoPrecio !== "Todos" || selectedTagPopular !== "Todos" || solamenteVerificados
+                  ? "1.5px solid #0EA5E9"
+                  : "1px solid rgba(255, 255, 255, 0.12)",
+                color: showAdvancedFilters || selectedIdioma !== "Todos" || selectedRangoPrecio !== "Todos" || selectedTagPopular !== "Todos" || solamenteVerificados
+                  ? "#38BDF8"
+                  : "#94A3B8"
               }}
             >
-              <Icon name="checkCircle" size={14} color={solamenteVerificados ? "#10B981" : "#64748B"} />
-              <span>{lang === "en" ? "INTUR Verified Only" : "Solo Certificados INTUR"}</span>
+              <Icon name="filter" size={13} />
+              <span>{lang === "en" ? "Filters" : "Filtros"}</span>
+              {(selectedIdioma !== "Todos" || selectedRangoPrecio !== "Todos" || selectedTagPopular !== "Todos" || solamenteVerificados) && (
+                <span style={styles.activeFilterDot} />
+              )}
+              <Icon name={showAdvancedFilters ? "chevronUp" : "chevronDown"} size={12} />
             </button>
           </div>
 
-          {/* Fila 2: DESTELLOS Y CHIPS DE DESTINOS POPULARES */}
-          <div style={styles.trendingSpotsRow}>
-            <span style={styles.trendingLabel}>
-              <Icon name="compass" size={13} color="#FFD700" />
-              <span>{lang === "en" ? "Popular Spots:" : "Destinos Populares:"}</span>
-            </span>
-            <div style={styles.trendingChipsList}>
-              {DESTINOS_POPULARES.map((spot) => {
-                const isActive = selectedTagPopular === spot.query;
-                return (
+          {/* DESPLEGABLE DE FILTROS AVANZADOS (IDIOMA, PRECIO, INTUR Y DESTINOS POPULARES) */}
+          {showAdvancedFilters && (
+            <div style={styles.advancedFiltersDropdownContainer}>
+              <div style={styles.dualFiltersRow}>
+                {/* Idioma */}
+                <div style={{ flex: 1, minWidth: "200px" }}>
+                  <span style={styles.filterSectionTitleSlim}>
+                    <Icon name="globe" size={13} color="#10B981" />
+                    {lang === "en" ? "Language:" : "Idioma:"}
+                  </span>
+                  <div style={{ display: "flex", gap: "5px", flexWrap: "wrap", marginTop: "4px" }}>
+                    {IDIOMAS_LIST.map((langItem) => {
+                      const isActive = selectedIdioma === langItem;
+                      return (
+                        <button
+                          key={langItem}
+                          onClick={() => setSelectedIdioma(langItem)}
+                          style={{
+                            ...styles.pillBtnSlim,
+                            border: isActive ? "1.5px solid #10B981" : "1px solid rgba(255, 255, 255, 0.12)",
+                            background: isActive ? "rgba(16, 185, 129, 0.22)" : "rgba(15, 23, 42, 0.7)",
+                            color: isActive ? "#34D399" : "#94A3B8"
+                          }}
+                        >
+                          {langItem}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Rango de Tarifa */}
+                <div style={{ flex: 1, minWidth: "200px" }}>
+                  <span style={styles.filterSectionTitleSlim}>
+                    <Icon name="dollarSign" size={13} color="#38BDF8" />
+                    {lang === "en" ? "Rate Range:" : "Tarifa Estimada:"}
+                  </span>
+                  <div style={{ display: "flex", gap: "5px", flexWrap: "wrap", marginTop: "4px" }}>
+                    {RANGOS_PRECIO_LIST.map((rango) => {
+                      const isActive = selectedRangoPrecio === rango;
+                      return (
+                        <button
+                          key={rango}
+                          onClick={() => setSelectedRangoPrecio(rango)}
+                          style={{
+                            ...styles.pillBtnSlim,
+                            border: isActive ? "1.5px solid #38BDF8" : "1px solid rgba(255, 255, 255, 0.12)",
+                            background: isActive ? "rgba(14, 165, 233, 0.22)" : "rgba(15, 23, 42, 0.7)",
+                            color: isActive ? "#38BDF8" : "#94A3B8"
+                          }}
+                        >
+                          {rango}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Solo Certificados INTUR Toggle */}
+                <div style={{ display: "flex", alignItems: "flex-end" }}>
                   <button
-                    key={spot.query}
-                    onClick={() => setSelectedTagPopular(isActive ? "Todos" : spot.query)}
+                    onClick={() => setSolamenteVerificados(!solamenteVerificados)}
                     style={{
-                      ...styles.trendingChipBtn,
-                      background: isActive ? "rgba(255, 215, 0, 0.25)" : "rgba(30, 41, 59, 0.6)",
-                      border: isActive ? "1px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.1)",
-                      color: isActive ? "#FFD700" : "#CBD5E1"
+                      ...styles.verifiedToggleBtn,
+                      background: solamenteVerificados ? "rgba(16, 185, 129, 0.25)" : "rgba(30, 41, 59, 0.7)",
+                      border: solamenteVerificados ? "1.5px solid #10B981" : "1px solid rgba(255, 255, 255, 0.12)",
+                      color: solamenteVerificados ? "#34D399" : "#94A3B8"
                     }}
                   >
-                    ★ {spot.label}
+                    <Icon name="checkCircle" size={14} color={solamenteVerificados ? "#10B981" : "#64748B"} />
+                    <span>{lang === "en" ? "INTUR Verified Only" : "Solo Certificados INTUR"}</span>
                   </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Fila 3: SELECCIÓN INDEPENDIENTE DE DEPARTAMENTO */}
-          <div style={styles.filterGroupSection}>
-            <div style={styles.filterSectionTitle}>
-              <Icon name="mapPin" size={14} color="#0EA5E9" />
-              <span>{lang === "en" ? "Filter by Department:" : "Filtrar por Departamento:"}</span>
-            </div>
-            <div style={styles.pillsScrollContainer}>
-              {DEPARTAMENTOS_LIST.map((dept) => {
-                const isActive = selectedDept.toLowerCase() === dept.toLowerCase();
-                return (
-                  <button
-                    key={dept}
-                    onClick={() => setSelectedDept(dept)}
-                    style={{
-                      ...styles.pillBtnSlim,
-                      border: isActive ? "1.5px solid #0EA5E9" : "1px solid rgba(255, 255, 255, 0.12)",
-                      background: isActive ? "rgba(14, 165, 233, 0.28)" : "rgba(15, 23, 42, 0.7)",
-                      color: isActive ? "#38BDF8" : "#94A3B8",
-                      fontWeight: isActive ? "800" : "600",
-                    }}
-                  >
-                    {dept}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Fila 4: SELECCIÓN INDEPENDIENTE DE ESPECIALIDAD */}
-          <div style={styles.filterGroupSection}>
-            <div style={styles.filterSectionTitle}>
-              <Icon name="tag" size={14} color="#FFD700" />
-              <span>{lang === "en" ? "Tour Specialty / Experience:" : "Tipo de Tour / Especialidad del Guía:"}</span>
-            </div>
-            <div style={styles.pillsScrollContainer}>
-              {ESPECIALIDADES_LIST.map((esp) => {
-                const isActive = selectedEspecialidad.toLowerCase() === esp.toLowerCase();
-                return (
-                  <button
-                    key={esp}
-                    onClick={() => setSelectedEspecialidad(esp)}
-                    style={{
-                      ...styles.pillBtnSlim,
-                      border: isActive ? "1.5px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.12)",
-                      background: isActive ? "rgba(255, 215, 0, 0.22)" : "rgba(15, 23, 42, 0.7)",
-                      color: isActive ? "#FFD700" : "#94A3B8",
-                      fontWeight: isActive ? "800" : "600",
-                    }}
-                  >
-                    {esp}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Fila 5: FILTROS SECUNDARIOS (IDIOMAS & RANGO DE PRECIO) */}
-          <div style={styles.dualFiltersRow}>
-            {/* Idiomas */}
-            <div style={{ flex: 1, minWidth: "240px" }}>
-              <div style={styles.filterSectionTitle}>
-                <Icon name="globe" size={14} color="#10B981" />
-                <span>{lang === "en" ? "Filter by Language:" : "Idioma del Guía:"}</span>
+                </div>
               </div>
-              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "4px" }}>
-                {IDIOMAS_LIST.map((langItem) => {
-                  const isActive = selectedIdioma === langItem;
-                  return (
-                    <button
-                      key={langItem}
-                      onClick={() => setSelectedIdioma(langItem)}
-                      style={{
-                        ...styles.pillBtnSlim,
-                        border: isActive ? "1.5px solid #10B981" : "1px solid rgba(255, 255, 255, 0.12)",
-                        background: isActive ? "rgba(16, 185, 129, 0.22)" : "rgba(15, 23, 42, 0.7)",
-                        color: isActive ? "#34D399" : "#94A3B8",
-                        fontWeight: isActive ? "800" : "600"
-                      }}
-                    >
-                      {langItem}
-                    </button>
-                  );
-                })}
+
+              {/* Destinos Populares */}
+              <div style={styles.trendingSpotsRowCompact}>
+                <span style={styles.trendingLabel}>
+                  <Icon name="compass" size={12} color="#FFD700" />
+                  <span>{lang === "en" ? "Popular Spots:" : "Destinos Populares:"}</span>
+                </span>
+                <div style={styles.trendingChipsList}>
+                  {DESTINOS_POPULARES.map((spot) => {
+                    const isActive = selectedTagPopular === spot.query;
+                    return (
+                      <button
+                        key={spot.query}
+                        onClick={() => setSelectedTagPopular(isActive ? "Todos" : spot.query)}
+                        style={{
+                          ...styles.trendingChipBtn,
+                          background: isActive ? "rgba(255, 215, 0, 0.25)" : "rgba(30, 41, 59, 0.6)",
+                          border: isActive ? "1px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.1)",
+                          color: isActive ? "#FFD700" : "#CBD5E1"
+                        }}
+                      >
+                        ★ {spot.label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
-
-            {/* Rango de Precio */}
-            <div style={{ flex: 1, minWidth: "240px" }}>
-              <div style={styles.filterSectionTitle}>
-                <Icon name="dollarSign" size={14} color="#38BDF8" />
-                <span>{lang === "en" ? "Approx Rate Range:" : "Rango de Tarifa Estimada:"}</span>
-              </div>
-              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "4px" }}>
-                {RANGOS_PRECIO_LIST.map((rango) => {
-                  const isActive = selectedRangoPrecio === rango;
-                  return (
-                    <button
-                      key={rango}
-                      onClick={() => setSelectedRangoPrecio(rango)}
-                      style={{
-                        ...styles.pillBtnSlim,
-                        border: isActive ? "1.5px solid #38BDF8" : "1px solid rgba(255, 255, 255, 0.12)",
-                        background: isActive ? "rgba(14, 165, 233, 0.22)" : "rgba(15, 23, 42, 0.7)",
-                        color: isActive ? "#38BDF8" : "#94A3B8",
-                        fontWeight: isActive ? "800" : "600"
-                      }}
-                    >
-                      {rango}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          )}
 
           {/* CHIPS DE FILTROS ACTIVOS CON BOTÓN PARA ELIMINAR INDIVIDUALMENTE */}
           {hasActiveFilters && (
@@ -1436,6 +1440,68 @@ const styles = {
     fontSize: "12.5px",
     outline: "none",
     cursor: "pointer"
+  },
+  selectFilterWrapper: {
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+    background: "rgba(30, 41, 59, 0.85)",
+    border: "1px solid rgba(255, 255, 255, 0.12)",
+    borderRadius: "10px",
+    padding: "6px 10px"
+  },
+  selectInputCompact: {
+    background: "none",
+    border: "none",
+    color: "#F8FAFC",
+    fontSize: "12.5px",
+    fontWeight: "600",
+    outline: "none",
+    cursor: "pointer",
+    maxWidth: "160px"
+  },
+  advancedToggleBtn: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    padding: "7px 12px",
+    borderRadius: "10px",
+    fontSize: "12px",
+    fontWeight: "750",
+    cursor: "pointer",
+    transition: "all 0.2s",
+    position: "relative"
+  },
+  activeFilterDot: {
+    width: "6px",
+    height: "6px",
+    borderRadius: "50%",
+    background: "#0EA5E9",
+    boxShadow: "0 0 8px #0EA5E9"
+  },
+  advancedFiltersDropdownContainer: {
+    paddingTop: "12px",
+    borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+    marginTop: "4px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  },
+  filterSectionTitleSlim: {
+    fontSize: "11.5px",
+    fontWeight: "750",
+    color: "#CBD5E1",
+    display: "flex",
+    alignItems: "center",
+    gap: "4px"
+  },
+  trendingSpotsRowCompact: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    flexWrap: "wrap",
+    paddingTop: "8px",
+    borderTop: "1px dashed rgba(255, 255, 255, 0.08)"
   },
   verifiedToggleBtn: {
     display: "inline-flex",
