@@ -28,6 +28,38 @@ const MOCK_GUIAS = [
     rating_promedio: 4.9,
     total_resenas: 34,
     activo: true,
+    destinos_mapa: [
+      {
+        id: "dest-1",
+        nombre: "Volcán Cerro Negro",
+        categoria: "Sandboarding",
+        icono: "🌋",
+        deptSlug: "leon",
+        departamento: "León",
+        imagen: "/images/galeria-departamentos/leon/1.1.jpg",
+        desc: "Ascenso directo al volcán más joven de Centroamérica y vertiginoso descenso en tabla de sandboard sobre arena volcánica."
+      },
+      {
+        id: "dest-2",
+        nombre: "Catedral de León",
+        categoria: "Patrimonio UNESCO",
+        icono: "🏛️",
+        deptSlug: "leon",
+        departamento: "León",
+        imagen: "/images/galeria-departamentos/leon/2.jpg",
+        desc: "La catedral más grande de Centroamérica. Recorrido histórico por sus cúpulas blancas y cripta colonial."
+      },
+      {
+        id: "dest-3",
+        nombre: "Volcán Telica (Lava Nocturna)",
+        categoria: "Senderismo",
+        icono: "🔥",
+        deptSlug: "leon",
+        departamento: "León",
+        imagen: "/images/galeria-departamentos/leon/3.jpg",
+        desc: "Excursión nocturna a la cumbre para contemplar la lava incandescente en las profundidades del cráter activo."
+      }
+    ],
     galeria_fotos: [
       "/images/galeria-departamentos/leon/1.1.jpg",
       "/images/galeria-departamentos/leon/2.jpg",
@@ -71,6 +103,38 @@ const MOCK_GUIAS = [
     rating_promedio: 5.0,
     total_resenas: 42,
     activo: true,
+    destinos_mapa: [
+      {
+        id: "dest-4",
+        nombre: "Isletas de Granada",
+        categoria: "Naturaleza & Náutica",
+        icono: "🏝️",
+        deptSlug: "granada",
+        departamento: "Granada",
+        imagen: "/images/galeria-departamentos/granada/1.1.jpg",
+        desc: "Travesía en lancha o kayak por las 365 islas de origen volcánico en el Gran Lago Cocibolca."
+      },
+      {
+        id: "dest-5",
+        nombre: "Reserva Volcán Mombacho",
+        categoria: "Ecoturismo",
+        icono: "🌿",
+        deptSlug: "granada",
+        departamento: "Granada",
+        imagen: "/images/galeria-departamentos/granada/2.jpg",
+        desc: "Senderismo por el bosque de neblina alrededor del cráter extinto y miradores hacia Granada."
+      },
+      {
+        id: "dest-6",
+        nombre: "Centro Histórico & Convento",
+        categoria: "Cultura",
+        icono: "🏰",
+        deptSlug: "granada",
+        departamento: "Granada",
+        imagen: "/images/galeria-departamentos/granada/3.jpg",
+        desc: "Caminata cultural guiada por los templos coloniales, la Calzada y el Museo San Francisco."
+      }
+    ],
     galeria_fotos: [
       "/images/galeria-departamentos/granada/1.1.jpg",
       "/images/galeria-departamentos/granada/2.jpg",
@@ -106,6 +170,38 @@ const MOCK_GUIAS = [
     rating_promedio: 4.8,
     total_resenas: 27,
     activo: true,
+    destinos_mapa: [
+      {
+        id: "dest-7",
+        nombre: "Volcanes Concepción y Maderas",
+        categoria: "Montañismo",
+        icono: "⛰️",
+        deptSlug: "rivas",
+        departamento: "Rivas",
+        imagen: "/images/galeria-departamentos/rivas/1.1.webp",
+        desc: "Ascensos desafiantes a las cumbres icónicas que forman la mística Isla de Ometepe."
+      },
+      {
+        id: "dest-8",
+        nombre: "Ojo de Agua Ometepe",
+        categoria: "Relajación Natural",
+        icono: "💧",
+        deptSlug: "rivas",
+        departamento: "Rivas",
+        imagen: "/images/galeria-departamentos/rivas/2.jpg",
+        desc: "Reserva de aguas manantiales volcánicas ultra cristalinas y propiedades curativas."
+      },
+      {
+        id: "dest-9",
+        nombre: "San Juan del Sur & Cristo",
+        categoria: "Playas & Surf",
+        icono: "🏖️",
+        deptSlug: "rivas",
+        departamento: "Rivas",
+        imagen: "/images/galeria-departamentos/rivas/3.jpg",
+        desc: "Bahía turística, miradores panorámicos del Pacífico y playas vírgenes para practicar surf."
+      }
+    ],
     galeria_fotos: [
       "/images/galeria-departamentos/rivas/1.1.webp",
       "/images/galeria-departamentos/rivas/2.jpg",
@@ -141,6 +237,28 @@ const MOCK_GUIAS = [
     rating_promedio: 4.9,
     total_resenas: 39,
     activo: true,
+    destinos_mapa: [
+      {
+        id: "dest-10",
+        nombre: "Reserva Selva Negra",
+        categoria: "Avistamiento & Café",
+        icono: "🦜",
+        deptSlug: "matagalpa",
+        departamento: "Matagalpa",
+        imagen: "/images/galeria-departamentos/matagalpa/1.1.jpg",
+        desc: "Observación de aves exóticas (Quetzales) y tours por plantaciones de café orgánico en la montaña."
+      },
+      {
+        id: "dest-11",
+        nombre: "Macizo Peñas Blancas",
+        categoria: "Senderismo Neotropical",
+        icono: "🏔️",
+        deptSlug: "matagalpa",
+        departamento: "Matagalpa",
+        imagen: "/images/galeria-departamentos/matagalpa/2.jpg",
+        desc: "Expediciones a farallones rocosos cubiertos de bosque nuboso y cascadas monumentales."
+      }
+    ],
     galeria_fotos: [
       "/images/galeria-departamentos/matagalpa/1.1.jpg",
       "/images/galeria-departamentos/matagalpa/2.jpg",
@@ -176,6 +294,38 @@ const MOCK_GUIAS = [
     rating_promedio: 4.7,
     total_resenas: 19,
     activo: true,
+    destinos_mapa: [
+      {
+        id: "dest-12",
+        nombre: "Volcán Masaya (Lago de Lava)",
+        categoria: "Vulcanología",
+        icono: "🌋",
+        deptSlug: "masaya",
+        departamento: "Masaya",
+        imagen: "/images/galeria-departamentos/masaya/1.1.jpg",
+        desc: "Mirador directo al cráter activo Santiago y su impresionante caldera magma incandescente."
+      },
+      {
+        id: "dest-13",
+        nombre: "Mercado de Artesanías",
+        categoria: "Folclore & Compras",
+        icono: "🎭",
+        deptSlug: "masaya",
+        departamento: "Masaya",
+        imagen: "/images/galeria-departamentos/masaya/2.jpg",
+        desc: "Templo del arte folclórico nicaragüense, marimbas, cuero, madera tallada y hamacas."
+      },
+      {
+        id: "dest-14",
+        nombre: "Mirador de Catarina & Apoyo",
+        categoria: "Vistas Panorámicas",
+        icono: "🌅",
+        deptSlug: "masaya",
+        departamento: "Masaya",
+        imagen: "/images/galeria-departamentos/masaya/3.jpg",
+        desc: "Espectacular vista panorámica hacia la laguna de cráter volcánico de Apoyo."
+      }
+    ],
     galeria_fotos: [
       "/images/galeria-departamentos/masaya/1.1.jpg",
       "/images/galeria-departamentos/masaya/2.jpg",
@@ -858,6 +1008,45 @@ export default function GuiasPage() {
                       : guia.biografia}
                   </p>
 
+                  {/* Destinos en el Mapa cubiertos por el Guía */}
+                  {guia.destinos_mapa && guia.destinos_mapa.length > 0 && (
+                    <div style={styles.guideDestinationsContainer}>
+                      <div style={styles.guideDestinationsHeader}>
+                        <Icon name="mapPin" size={12} color="#38BDF8" />
+                        <span>{lang === "en" ? "Map Destinations:" : "Lugares en el Mapa:"}</span>
+                      </div>
+                      <div style={styles.guideDestinationsChipsRow}>
+                        {guia.destinos_mapa.slice(0, 3).map((dest) => (
+                          <span
+                            key={dest.id}
+                            style={styles.mapDestChip}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedGuiaModal(guia);
+                              setActiveModalTab("mapa_destinos");
+                            }}
+                            title={lang === "en" ? `View ${dest.nombre} in detail` : `Ver ${dest.nombre} en el mapa`}
+                          >
+                            <span style={{ fontSize: "12px" }}>{dest.icono}</span>
+                            <span>{dest.nombre}</span>
+                          </span>
+                        ))}
+                        {guia.destinos_mapa.length > 3 && (
+                          <span
+                            style={styles.mapDestMoreChip}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedGuiaModal(guia);
+                              setActiveModalTab("mapa_destinos");
+                            }}
+                          >
+                            +{guia.destinos_mapa.length - 3} {lang === "en" ? "more" : "más"}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Footer de Tarjeta: Tarifa y Botones de Acción */}
                   <div style={styles.cardFooterWide}>
                     <div style={styles.priceBoxSlim}>
@@ -1011,6 +1200,19 @@ export default function GuiasPage() {
               >
                 <Icon name="star" size={14} />
                 <span>{lang === "en" ? "Reviews" : "Reseñas"} ({selectedGuiaModal.total_resenas || 0})</span>
+              </button>
+
+              <button
+                onClick={() => setActiveModalTab("mapa_destinos")}
+                style={{
+                  ...styles.modalTabBtn,
+                  borderBottom: activeModalTab === "mapa_destinos" ? "2.5px solid #10B981" : "none",
+                  color: activeModalTab === "mapa_destinos" ? "#34D399" : "#94A3B8",
+                  fontWeight: activeModalTab === "mapa_destinos" ? "800" : "600"
+                }}
+              >
+                <Icon name="mapPin" size={14} color={activeModalTab === "mapa_destinos" ? "#10B981" : "#94A3B8"} />
+                <span>{lang === "en" ? "Map Destinations" : "Lugares en el Mapa"} ({selectedGuiaModal.destinos_mapa?.length || 0})</span>
               </button>
             </div>
 
@@ -1185,6 +1387,52 @@ export default function GuiasPage() {
                     ))
                   )}
                 </div>
+              </div>
+            )}
+
+            {/* PESTAÑA 4: LUGARES Y DESTINOS EN EL MAPA */}
+            {activeModalTab === "mapa_destinos" && (
+              <div style={{ marginTop: "16px" }}>
+                <h4 style={styles.modalSectionTitle}>
+                  {lang === "en" ? "Points of Interest & Map Destinations" : "Sitios de Interés y Lugares Cubiertos en el Mapa"}
+                </h4>
+                {(!selectedGuiaModal.destinos_mapa || selectedGuiaModal.destinos_mapa.length === 0) ? (
+                  <p style={{ fontSize: "13px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", padding: "30px 0" }}>
+                    {lang === "en" ? "No map destinations configured for this guide." : "No se han configurado destinos de mapa para este guía."}
+                  </p>
+                ) : (
+                  <div style={styles.destinosMapaGrid}>
+                    {selectedGuiaModal.destinos_mapa.map((dest) => (
+                      <div key={dest.id} style={styles.destinoMapaCard}>
+                        {dest.imagen && (
+                          <div style={styles.destinoMapaImageWrapper}>
+                            <img src={dest.imagen} alt={dest.nombre} style={styles.destinoMapaImg} />
+                            <span style={styles.destinoMapaCategoryBadge}>
+                              {dest.icono} {dest.categoria}
+                            </span>
+                          </div>
+                        )}
+                        <div style={styles.destinoMapaContent}>
+                          <div style={styles.destinoMapaHeader}>
+                            <h5 style={styles.destinoMapaTitle}>{dest.nombre}</h5>
+                            <span style={styles.destinoMapaDeptBadge}>{dest.departamento}</span>
+                          </div>
+                          <p style={styles.destinoMapaDesc}>{dest.desc}</p>
+                          <div style={{ marginTop: "12px", display: "flex", justifyContent: "flex-end" }}>
+                            <Link
+                              href={`/departamentos?dept=${dest.deptSlug}`}
+                              style={styles.destinoMapaLinkBtn}
+                            >
+                              <Icon name="mapPin" size={13} color="#0EA5E9" />
+                              <span>{lang === "en" ? "Explore in Department Map" : "Ver en Mapa Departamental"}</span>
+                              <Icon name="chevronRight" size={12} color="#0EA5E9" />
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -2109,5 +2357,138 @@ const styles = {
     border: "1px solid rgba(255, 255, 255, 0.08)",
     borderRadius: "10px",
     padding: "10px"
+  },
+  guideDestinationsContainer: {
+    marginTop: "8px",
+    marginBottom: "10px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px"
+  },
+  guideDestinationsHeader: {
+    display: "flex",
+    alignItems: "center",
+    gap: "5px",
+    fontSize: "11.5px",
+    fontWeight: "750",
+    color: "#94A3B8"
+  },
+  guideDestinationsChipsRow: {
+    display: "flex",
+    gap: "6px",
+    flexWrap: "wrap",
+    alignItems: "center"
+  },
+  mapDestChip: {
+    background: "rgba(14, 165, 233, 0.12)",
+    border: "1px solid rgba(14, 165, 233, 0.3)",
+    borderRadius: "20px",
+    padding: "3px 10px",
+    fontSize: "11.5px",
+    fontWeight: "600",
+    color: "#38BDF8",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "4px",
+    cursor: "pointer",
+    transition: "all 0.2s ease"
+  },
+  mapDestMoreChip: {
+    background: "rgba(255, 255, 255, 0.08)",
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    borderRadius: "20px",
+    padding: "3px 8px",
+    fontSize: "11px",
+    fontWeight: "700",
+    color: "#CBD5E1",
+    cursor: "pointer"
+  },
+  destinosMapaGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+    gap: "14px",
+    marginTop: "12px"
+  },
+  destinoMapaCard: {
+    background: "rgba(15, 23, 42, 0.7)",
+    border: "1px solid rgba(255, 255, 255, 0.12)",
+    borderRadius: "14px",
+    overflow: "hidden",
+    display: "flex",
+    flexDirection: "column"
+  },
+  destinoMapaImageWrapper: {
+    width: "100%",
+    height: "120px",
+    position: "relative",
+    overflow: "hidden"
+  },
+  destinoMapaImg: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover"
+  },
+  destinoMapaCategoryBadge: {
+    position: "absolute",
+    top: "8px",
+    right: "8px",
+    background: "rgba(15, 23, 42, 0.85)",
+    backdropFilter: "blur(4px)",
+    color: "#38BDF8",
+    fontSize: "10.5px",
+    fontWeight: "800",
+    padding: "2px 8px",
+    borderRadius: "6px",
+    border: "1px solid rgba(56, 189, 248, 0.3)"
+  },
+  destinoMapaContent: {
+    padding: "12px",
+    display: "flex",
+    flexDirection: "column",
+    flex: 1
+  },
+  destinoMapaHeader: {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: "8px",
+    marginBottom: "6px"
+  },
+  destinoMapaTitle: {
+    fontSize: "13.5px",
+    fontWeight: "800",
+    color: "#FFFFFF",
+    margin: 0,
+    lineHeight: "1.3"
+  },
+  destinoMapaDeptBadge: {
+    background: "rgba(14, 165, 233, 0.15)",
+    color: "#0EA5E9",
+    fontSize: "10.5px",
+    fontWeight: "750",
+    padding: "2px 6px",
+    borderRadius: "4px",
+    whiteSpace: "nowrap"
+  },
+  destinoMapaDesc: {
+    fontSize: "12px",
+    color: "#94A3B8",
+    lineHeight: "1.4",
+    margin: 0,
+    flex: 1
+  },
+  destinoMapaLinkBtn: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "5px",
+    fontSize: "11.5px",
+    fontWeight: "750",
+    color: "#38BDF8",
+    textDecoration: "none",
+    background: "rgba(14, 165, 233, 0.1)",
+    border: "1px solid rgba(14, 165, 233, 0.25)",
+    padding: "5px 10px",
+    borderRadius: "8px",
+    transition: "all 0.2s ease"
   }
 };
