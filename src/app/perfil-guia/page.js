@@ -787,10 +787,10 @@ export default function PerfilGuiaPage() {
                 display: "flex",
                 flexDirection: "column",
                 gap: "8px",
-                background: "rgba(241, 245, 249, 0.8)",
+                background: "linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, rgba(2, 132, 199, 0.02) 100%)",
                 padding: "10px 12px",
                 borderRadius: "12px",
-                border: "1px solid rgba(226, 232, 240, 0.9)",
+                border: "1.5px solid rgba(14, 165, 233, 0.18)",
                 marginBottom: "12px"
               }}>
                 <div>
@@ -907,15 +907,15 @@ export default function PerfilGuiaPage() {
 
                   {/* FILA 1: DEPARTAMENTO Y ESPECIALIDAD PRINCIPAL (2 COLUMNAS) */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", flexShrink: 0 }}>
-                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px" }}>
-                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px" }}>
+                    <div style={{ background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%)", border: "1.5px solid rgba(14, 165, 233, 0.18)", borderRadius: "10px", padding: "8px 11px", boxShadow: "0 2px 8px rgba(14, 165, 233, 0.03)" }}>
+                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#0F172A", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
                         <Icon name="mapPin" size={13} color="#0EA5E9" />
                         <span>Departamento Principal</span>
                       </label>
                       <select
                         value={guiaDeptPrincipal}
                         onChange={(e) => setGuiaDeptPrincipal(e.target.value)}
-                        style={{ width: "100%", padding: "6px 8px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "700", color: "#1E293B" }}
+                        style={{ width: "100%", padding: "6px 8px", borderRadius: "7px", border: "1.5px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "750", color: "#0F172A", boxShadow: "inset 0 1px 2px rgba(0,0,0,0.03)", outline: "none" }}
                       >
                         {DEPARTAMENTOS_LIST.map(dept => (
                           <option key={dept} value={dept}>{dept}</option>
@@ -923,15 +923,15 @@ export default function PerfilGuiaPage() {
                       </select>
                     </div>
 
-                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px" }}>
-                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px" }}>
+                    <div style={{ background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%)", border: "1.5px solid rgba(14, 165, 233, 0.18)", borderRadius: "10px", padding: "8px 11px", boxShadow: "0 2px 8px rgba(14, 165, 233, 0.03)" }}>
+                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#0F172A", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
                         <Icon name="compass" size={13} color="#0EA5E9" />
                         <span>Especialidad Principal</span>
                       </label>
                       <select
                         value={guiaEspecialidad}
                         onChange={(e) => setGuiaEspecialidad(e.target.value)}
-                        style={{ width: "100%", padding: "6px 8px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "700", color: "#1E293B" }}
+                        style={{ width: "100%", padding: "6px 8px", borderRadius: "7px", border: "1.5px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "750", color: "#0F172A", boxShadow: "inset 0 1px 2px rgba(0,0,0,0.03)", outline: "none" }}
                       >
                         {ESPECIALIDADES_LIST.map(esp => (
                           <option key={esp} value={esp}>{esp}</option>
@@ -942,8 +942,8 @@ export default function PerfilGuiaPage() {
 
                   {/* FILA 2: AÑOS EXP + TARIFA + WHATSAPP + LICENCIA (4 COLUMNAS EN UNA SOLA FILA COMPACTA) */}
                   <div style={{ display: "grid", gridTemplateColumns: "0.7fr 1.3fr 1.1fr 1.1fr", gap: "8px", flexShrink: 0 }}>
-                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px" }}>
-                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
+                    <div style={{ background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%)", border: "1.5px solid rgba(14, 165, 233, 0.18)", borderRadius: "10px", padding: "8px 11px", boxShadow: "0 2px 8px rgba(14, 165, 233, 0.03)" }}>
+                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#0F172A", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                         <Icon name="calendar" size={13} color="#0EA5E9" />
                         <span>Años Exp.</span>
                       </label>
@@ -953,19 +953,19 @@ export default function PerfilGuiaPage() {
                         max="40"
                         value={guiaExperiencia}
                         onChange={(e) => setGuiaExperiencia(e.target.value)}
-                        style={{ width: "100%", padding: "6px 8px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "700", color: "#1E293B" }}
+                        style={{ width: "100%", padding: "6px 8px", borderRadius: "7px", border: "1.5px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "750", color: "#0F172A", boxShadow: "inset 0 1px 2px rgba(0,0,0,0.03)", outline: "none" }}
                       />
                     </div>
 
-                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px" }}>
-                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
+                    <div style={{ background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%)", border: "1.5px solid rgba(14, 165, 233, 0.18)", borderRadius: "10px", padding: "8px 11px", boxShadow: "0 2px 8px rgba(14, 165, 233, 0.03)" }}>
+                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#0F172A", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                         <Icon name="tag" size={13} color="#10B981" />
                         <span>Rango Tarifa (/día)</span>
                       </label>
                       <select
                         value={guiaTarifa || "$30 - $50 / día"}
                         onChange={(e) => setGuiaTarifa(e.target.value)}
-                        style={{ width: "100%", padding: "6px 8px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "800", color: "#059669" }}
+                        style={{ width: "100%", padding: "6px 8px", borderRadius: "7px", border: "1.5px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "800", color: "#059669", boxShadow: "inset 0 1px 2px rgba(0,0,0,0.03)", outline: "none" }}
                       >
                         {TARIFAS_LIST.map(tOption => (
                           <option key={tOption} value={tOption}>{tOption}</option>
@@ -973,8 +973,8 @@ export default function PerfilGuiaPage() {
                       </select>
                     </div>
 
-                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px" }}>
-                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
+                    <div style={{ background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%)", border: "1.5px solid rgba(14, 165, 233, 0.18)", borderRadius: "10px", padding: "8px 11px", boxShadow: "0 2px 8px rgba(14, 165, 233, 0.03)" }}>
+                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#0F172A", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                         <Icon name="whatsapp" size={13} color="#25D366" />
                         <span>WhatsApp Directo</span>
                       </label>
@@ -983,12 +983,12 @@ export default function PerfilGuiaPage() {
                         value={guiaWhatsapp}
                         onChange={(e) => setGuiaWhatsapp(e.target.value)}
                         placeholder="+505 8888 8888"
-                        style={{ width: "100%", padding: "6px 8px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "700" }}
+                        style={{ width: "100%", padding: "6px 8px", borderRadius: "7px", border: "1.5px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "750", color: "#0F172A", boxShadow: "inset 0 1px 2px rgba(0,0,0,0.03)", outline: "none" }}
                       />
                     </div>
 
-                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px" }}>
-                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
+                    <div style={{ background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%)", border: "1.5px solid rgba(14, 165, 233, 0.18)", borderRadius: "10px", padding: "8px 11px", boxShadow: "0 2px 8px rgba(14, 165, 233, 0.03)" }}>
+                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#0F172A", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                         <Icon name="shield" size={13} color="#10B981" />
                         <span>Licencia INTUR</span>
                       </label>
@@ -997,14 +997,14 @@ export default function PerfilGuiaPage() {
                         value={guiaLicencia}
                         onChange={(e) => setGuiaLicencia(e.target.value)}
                         placeholder="Ej. INTUR-LE-2024-99"
-                        style={{ width: "100%", padding: "6px 8px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "700" }}
+                        style={{ width: "100%", padding: "6px 8px", borderRadius: "7px", border: "1.5px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "750", color: "#0F172A", boxShadow: "inset 0 1px 2px rgba(0,0,0,0.03)", outline: "none" }}
                       />
                     </div>
                   </div>
 
                   {/* FILA 3: IDIOMAS QUE DOMINAS (A LO LARGO - 1 COLUMNA ANCHA) */}
-                  <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px", flexShrink: 0 }}>
-                    <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                  <div style={{ background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%)", border: "1.5px solid rgba(14, 165, 233, 0.18)", borderRadius: "10px", padding: "8px 11px", flexShrink: 0, boxShadow: "0 2px 8px rgba(14, 165, 233, 0.03)" }}>
+                    <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#0F172A", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
                       <Icon name="globe" size={13} color="#0EA5E9" />
                       <span>Idiomas que Dominas</span>
                     </label>
@@ -1042,8 +1042,8 @@ export default function PerfilGuiaPage() {
                   </div>
 
                   {/* BLOQUE 3: SERVICIOS Y VENTAJAS INCLUIDAS EN TUS TOURS */}
-                  <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px", flexShrink: 0 }}>
-                    <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                  <div style={{ background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%)", border: "1.5px solid rgba(14, 165, 233, 0.18)", borderRadius: "10px", padding: "8px 11px", flexShrink: 0, boxShadow: "0 2px 8px rgba(14, 165, 233, 0.03)" }}>
+                    <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#0F172A", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
                       <Icon name="sparkles" size={13} color="#F59E0B" />
                       <span>Servicios Incluidos en tus Tours (Ventajas para Turistas)</span>
                     </label>
@@ -1079,13 +1079,13 @@ export default function PerfilGuiaPage() {
                   </div>
 
                   {/* BLOQUE 4: BIOGRAFÍA Y PRESENTACIÓN */}
-                  <div style={{ flexShrink: 0, display: "flex", flexDirection: "column" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "3px" }}>
-                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <div style={{ background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%)", border: "1.5px solid rgba(14, 165, 233, 0.18)", borderRadius: "10px", padding: "8px 11px", flexShrink: 0, boxShadow: "0 2px 8px rgba(14, 165, 233, 0.03)" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
+                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#0F172A", display: "flex", alignItems: "center", gap: "6px" }}>
                         <Icon name="fileText" size={13} color="#0EA5E9" />
                         <span>Biografía y Presentación Profesional</span>
                       </label>
-                      <span style={{ fontSize: "10px", color: "#94A3B8", fontWeight: "700" }}>
+                      <span style={{ fontSize: "10px", color: "#64748B", fontWeight: "700" }}>
                         {guiaBiografia.length} / 400 caracteres
                       </span>
                     </div>
@@ -1095,18 +1095,20 @@ export default function PerfilGuiaPage() {
                       placeholder="Escribe un resumen atractivo sobre tu trayectoria, rutas guiadas, volcanes que dominas y equipamiento de seguridad..."
                       style={{
                         width: "100%",
-                        height: "58px",
+                        height: "54px",
                         padding: "7px 10px",
                         borderRadius: "7px",
-                        border: "1px solid #CBD5E1",
+                        border: "1.5px solid #CBD5E1",
                         fontSize: "12px",
                         lineHeight: "1.4",
                         resize: "none",
                         fontFamily: "inherit",
                         boxSizing: "border-box",
                         background: "#FFFFFF",
-                        color: "#1E293B",
-                        overflowY: "auto"
+                        color: "#0F172A",
+                        overflowY: "auto",
+                        boxShadow: "inset 0 1px 2px rgba(0,0,0,0.03)",
+                        outline: "none"
                       }}
                     />
                   </div>
@@ -1118,9 +1120,9 @@ export default function PerfilGuiaPage() {
                   alignItems: "center",
                   justifyContent: "space-between",
                   paddingTop: "8px",
-                  borderTop: "1.5px solid #E2E8F0",
+                  borderTop: "1.5px solid rgba(14, 165, 233, 0.15)",
                   flexShrink: 0,
-                  background: "#FFFFFF",
+                  background: "transparent",
                   position: "relative",
                   zIndex: 5,
                   marginTop: "4px"
