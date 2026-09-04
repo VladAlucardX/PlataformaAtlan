@@ -653,7 +653,7 @@ export default function DepartamentosPage() {
               />
             </div>
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", flexWrap: "wrap", gap: "8px", flexShrink: 0, position: "relative", zIndex: 1 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "8px", flexShrink: 0, position: "relative", zIndex: 1 }}>
               <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#FFFFFF", textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}>
                 {selectedDept === "Todos" 
                   ? (rankingMode === 'global' ? 'Lugares Más Visitados' : 'Mis Lugares Más Visitados')
@@ -668,12 +668,12 @@ export default function DepartamentosPage() {
             <div style={{ 
               display: "flex", 
               gap: "8px", 
-              marginBottom: "12px", 
+              marginBottom: "8px", 
               flexShrink: 0, 
               position: "relative", 
               zIndex: 1,
               background: "rgba(3, 14, 33, 0.95)",
-              padding: "6px",
+              padding: "4px 6px",
               borderRadius: "14px",
               border: "2px solid #000000",
               backdropFilter: "blur(14px)",
@@ -689,7 +689,7 @@ export default function DepartamentosPage() {
                 }}
                 style={{
                   flex: 1,
-                  padding: "10px 14px",
+                  padding: "8px 12px",
                   borderRadius: "10px",
                   border: rankingMode === 'global' ? "2px solid #FFFFFF" : "1.5px solid rgba(255, 255, 255, 0.3)",
                   background: rankingMode === 'global' 
@@ -727,7 +727,7 @@ export default function DepartamentosPage() {
                 onClick={() => setRankingMode('propio')}
                 style={{
                   flex: 1,
-                  padding: "10px 14px",
+                  padding: "8px 12px",
                   borderRadius: "10px",
                   border: rankingMode === 'propio' ? "2px solid #FFFFFF" : "1.5px solid rgba(255, 255, 255, 0.3)",
                   background: rankingMode === 'propio' 
@@ -762,7 +762,7 @@ export default function DepartamentosPage() {
             </div>
 
             {/* Contenedor desplazable con Scroll Interno Exclusivo y Tarjetas Traslúcidas */}
-            <div className="dept-tabs-scroll" style={{ flex: 1, minHeight: 0, maxHeight: "100%", overflowY: "auto", paddingRight: "4px", display: "flex", flexDirection: "column", gap: "8px", position: "relative", zIndex: 1 }}>
+            <div className="dept-tabs-scroll" style={{ flex: 1, minHeight: 0, maxHeight: "100%", overflowY: "auto", paddingRight: "4px", display: "flex", flexDirection: "column", gap: "6px", position: "relative", zIndex: 1 }}>
               {loading ? (
                 <div style={{ textAlign: "center", padding: "40px 0" }}>
                   <div style={{ width: "36px", height: "36px", border: "3px solid rgba(255,255,255,0.2)", borderTopColor: "#FFFFFF", borderRadius: "50%", margin: "0 auto 12px auto", animation: "spin 1s linear infinite" }} />
@@ -804,7 +804,7 @@ export default function DepartamentosPage() {
                 </div>
               ) : (
                 <>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                     {rankingData.slice(0, visibleCount).map((lugar, idx) => {
                       const pos = idx + 1;
                       const countVisits = rankingMode === 'propio' ? (lugar.mis_visitas || 1) : (lugar.total_visitas || 0);
@@ -825,7 +825,7 @@ export default function DepartamentosPage() {
                             WebkitBackdropFilter: "blur(8px)",
                             border: pos === 1 ? "1px solid rgba(255, 215, 0, 0.55)" : "1px solid rgba(255, 255, 255, 0.18)",
                             borderRadius: "14px",
-                            padding: "11px 14px",
+                            padding: "8px 12px",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "space-between",
@@ -873,14 +873,14 @@ export default function DepartamentosPage() {
                               <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "nowrap", overflow: "hidden" }}>
                                 <h3 style={{ 
                                   margin: 0, 
-                                  fontSize: "15.5px", 
+                                  fontSize: "17.5px", 
                                   fontWeight: "900", 
                                   color: "#FFFFFF", 
                                   whiteSpace: "nowrap", 
                                   overflow: "hidden", 
                                   textOverflow: "ellipsis",
-                                  letterSpacing: "0.2px",
-                                  textShadow: "0 1px 4px #000000, 0 0 3px #000000"
+                                  letterSpacing: "0.3px",
+                                  textShadow: "0 1.5px 5px #000000, 0 0 3px #000000"
                                 }}>
                                   {lugar.nombre}
                                 </h3>
