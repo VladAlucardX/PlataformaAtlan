@@ -112,10 +112,12 @@ export default function LoginPage() {
     setLoading(true);
     setErrorMsg("");
 
+    const cleanEmail = email.trim().toLowerCase();
+
     try {
       // Verificar que las credenciales son correctas
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
+        email: cleanEmail,
         password,
       });
 
@@ -127,8 +129,8 @@ export default function LoginPage() {
         ) {
           setErrorMsg(
             lang === "en"
-              ? "Invalid login credentials."
-              : "Credenciales de inicio de sesión no válidas."
+              ? "Invalid email or password. Please verify your credentials."
+              : "Correo o contraseña incorrectos. Verifica que tus datos sean correctos (ej: guia@atlan.com / password123)."
           );
         } else {
           setErrorMsg(authError.message);
@@ -142,17 +144,20 @@ export default function LoginPage() {
 
       // Enviar código OTP al correo del usuario
       const { error: otpError } = await supabase.auth.signInWithOtp({
-        email,
+        email: cleanEmail,
         options: {
           shouldCreateUser: false, // No crear usuario nuevo, solo enviar OTP
         },
       });
 
       const isDevOrTestEmail =
-        email.endsWith("@atlan.com") ||
-        email.endsWith("@demo.com") ||
-        email.endsWith("@test.com") ||
-        (typeof window !== "undefined" && window.location.hostname === "localhost");
+        cleanEmail.endsWith("@atlan.com") ||
+        cleanEmail.endsWith("@demo.com") ||
+        cleanEmail.endsWith("@test.com") ||
+        (typeof window !== "undefined" &&
+          (window.location.hostname === "localhost" ||
+           window.location.hostname === "127.0.0.1" ||
+           window.location.hostname.startsWith("192.168.")));
 
       if (otpError && !isDevOrTestEmail) {
         setErrorMsg(
@@ -187,6 +192,7 @@ export default function LoginPage() {
     setLoading(true);
     setErrorMsg("");
 
+    const cleanEmail = email.trim().toLowerCase();
     const code = otpCode.join("");
     if (code.length !== 6) {
       setErrorMsg(
@@ -200,15 +206,18 @@ export default function LoginPage() {
 
     try {
       const isDevOrTestEmail =
-        email.endsWith("@atlan.com") ||
-        email.endsWith("@demo.com") ||
-        email.endsWith("@test.com") ||
-        (typeof window !== "undefined" && window.location.hostname === "localhost");
+        cleanEmail.endsWith("@atlan.com") ||
+        cleanEmail.endsWith("@demo.com") ||
+        cleanEmail.endsWith("@test.com") ||
+        (typeof window !== "undefined" &&
+          (window.location.hostname === "localhost" ||
+           window.location.hostname === "127.0.0.1" ||
+           window.location.hostname.startsWith("192.168.")));
 
       // 1. Soporte para Código Maestro de Desarrollo (123456)
       if (code === "123456" && isDevOrTestEmail) {
         const { data: devAuthData, error: devAuthError } = await supabase.auth.signInWithPassword({
-          email,
+          email: cleanEmail,
           password,
         });
 
@@ -220,7 +229,7 @@ export default function LoginPage() {
 
       // 2. Verificación real con el código OTP recibido en el correo
       const { data, error } = await supabase.auth.verifyOtp({
-        email,
+        email: cleanEmail,
         token: code,
         type: "email",
       });
@@ -392,6 +401,90 @@ export default function LoginPage() {
                 <Icon name="alertTriangle" size={16} /> {formatAuthError(errorMsg, lang)}
               </div>
             )}
+
+            {/* Acceso Rápido Cuentas de Prueba */}
+            <div style={{
+              background: "rgba(20, 109, 158, 0.06)",
+              border: "1px solid rgba(20, 109, 158, 0.15)",
+              borderRadius: "14px",
+              padding: "10px 12px",
+              marginBottom: "16px"
+            }}>
+              <div style={{
+                fontSize: "11.5px",
+                fontWeight: "800",
+                color: "#146D9E",
+                marginBottom: "8px",
+                display: "flex",
+                alignItems: "center",
+                gap: "5px"
+              }}>
+                <Icon name="info" size={13} />
+                <span>{lang === "en" ? "Quick Test Credentials (Click to fill):" : "Cuentas de Prueba (Haz clic para llenar):"}</span>
+              </div>
+              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail("guia@atlan.com");
+                    setPassword("password123");
+                    setErrorMsg("");
+                  }}
+                  style={{
+                    padding: "5px 10px",
+                    borderRadius: "8px",
+                    border: "1px solid rgba(14, 165, 233, 0.3)",
+                    background: "rgba(14, 165, 233, 0.12)",
+                    color: "#0284C7",
+                    fontSize: "12px",
+                    fontWeight: "750",
+                    cursor: "pointer"
+                  }}
+                >
+                  🚩 Guía: guia@atlan.com
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail("turista@atlan.com");
+                    setPassword("password123");
+                    setErrorMsg("");
+                  }}
+                  style={{
+                    padding: "5px 10px",
+                    borderRadius: "8px",
+                    border: "1px solid rgba(23, 170, 74, 0.3)",
+                    background: "rgba(23, 170, 74, 0.12)",
+                    color: "#17AA4A",
+                    fontSize: "12px",
+                    fontWeight: "750",
+                    cursor: "pointer"
+                  }}
+                >
+                  🎒 Turista: turista@atlan.com
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail("dueno@atlan.com");
+                    setPassword("password123");
+                    setErrorMsg("");
+                  }}
+                  style={{
+                    padding: "5px 10px",
+                    borderRadius: "8px",
+                    border: "1px solid rgba(245, 158, 11, 0.3)",
+                    background: "rgba(245, 158, 11, 0.12)",
+                    color: "#D97706",
+                    fontSize: "12px",
+                    fontWeight: "750",
+                    cursor: "pointer"
+                  }}
+                >
+                  🏡 Dueño: dueno@atlan.com
+                </button>
+              </div>
+            </div>
 
             <form onSubmit={handleLogin} style={styles.form} autoComplete="off">
               <div style={styles.inputGroup}>
@@ -587,14 +680,21 @@ export default function LoginPage() {
                 ))}
               </div>
 
-              {typeof window !== "undefined" && window.location.hostname === "localhost" && (
+              {typeof window !== "undefined" && (
+                email.endsWith("@atlan.com") ||
+                email.endsWith("@demo.com") ||
+                email.endsWith("@test.com") ||
+                window.location.hostname === "localhost" ||
+                window.location.hostname === "127.0.0.1" ||
+                window.location.hostname.startsWith("192.168.")
+              ) && (
                 <div style={{
                   textAlign: "center",
-                  fontSize: "12px",
+                  fontSize: "12.5px",
                   color: "#146D9E",
                   background: "rgba(20, 109, 158, 0.08)",
-                  border: "1px solid rgba(20, 109, 158, 0.15)",
-                  padding: "6px 12px",
+                  border: "1px solid rgba(20, 109, 158, 0.2)",
+                  padding: "8px 12px",
                   borderRadius: "10px",
                   marginBottom: "16px",
                   fontWeight: "600",
@@ -604,7 +704,7 @@ export default function LoginPage() {
                   gap: "6px"
                 }}>
                   <Icon name="info" size={14} />
-                  <span>Modo de prueba: usa tu correo real o el código <strong>123456</strong></span>
+                  <span>Modo de prueba: el código de verificación es <strong>123456</strong></span>
                 </div>
               )}
 

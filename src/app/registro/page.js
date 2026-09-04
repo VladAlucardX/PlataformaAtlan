@@ -62,10 +62,12 @@ export default function RegisterPage() {
       return;
     }
 
+    const cleanEmail = email.trim().toLowerCase();
+
     try {
       // Registrar en Supabase Auth pasándole los metadatos al trigger de base de datos
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: cleanEmail,
         password,
         options: {
           data: {
