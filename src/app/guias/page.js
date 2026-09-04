@@ -318,6 +318,40 @@ export default function GuiasPage() {
     <div style={styles.pageWrapper}>
       <Navbar activePage="guias" />
 
+      {/* CAPA DE FONDO DUPLICADA EN ESPEJO DE FONDOHRACIO.PNG */}
+      <div style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden", pointerEvents: "none" }}>
+        {/* Mitad Izquierda (Normal) */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            left: 0,
+            width: "50%",
+            backgroundImage: "url('/images/fondohracio.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "left center",
+            backgroundRepeat: "no-repeat",
+          }}
+        />
+
+        {/* Mitad Derecha (Invertida Espejo) */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            right: 0,
+            width: "50%",
+            backgroundImage: "url('/images/fondohracio.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "left center",
+            backgroundRepeat: "no-repeat",
+            transform: "scaleX(-1)",
+          }}
+        />
+      </div>
+
       {/* ELEMENTOS DE FONDO SVG (MARCA DE AGUA EMBLEMÁTICA DE NICARAGUA) */}
       <img
         src="/images/guardabarranco.svg"
@@ -895,11 +929,7 @@ const styles = {
   pageWrapper: {
     minHeight: "100vh",
     width: "100%",
-    backgroundImage: "url('/images/fondohracio.png')",
-    backgroundSize: "cover",
-    backgroundPosition: "center center",
-    backgroundRepeat: "no-repeat",
-    backgroundAttachment: "fixed",
+    background: "#0A192F",
     color: "#F8FAFC",
     fontFamily: "var(--font-outfit), sans-serif",
     paddingBottom: "60px",
