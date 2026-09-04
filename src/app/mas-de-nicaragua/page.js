@@ -1083,7 +1083,7 @@ export default function MasDeNicaraguaPage() {
                                 cursor: "pointer",
                                 border: "1px solid rgba(255,255,255,0.1)",
                                 boxShadow: "0 4px 14px rgba(0,0,0,0.4)",
-                                aspectRatio: "4 / 3",
+                                height: "139px",
                                 background: "#0F172A",
                                 transition: "transform 0.25s, box-shadow 0.25s"
                               }}
