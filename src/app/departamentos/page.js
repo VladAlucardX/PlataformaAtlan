@@ -624,7 +624,7 @@ export default function DepartamentosPage() {
           {/* Columna Derecha: Ranking Top Lugares (Panel Traslúcido Azul Navbar con Tortuga de Fondo) */}
           <div style={{ background: "rgba(10, 25, 47, 0.72)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255, 255, 255, 0.14)", borderRadius: "20px", padding: "14px", boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)", display: "flex", flexDirection: "column", height: "100%", maxHeight: "100%", minHeight: 0, boxSizing: "border-box", overflow: "hidden", position: "relative" }}>
             
-            {/* Elemento Decorativo: Güegüense SVG Agrandado al Fondo del Panel Derecho */}
+            {/* Elemento Decorativo: Tortuga SVG Agrandada al Fondo del Panel Derecho */}
             <div
               style={{
                 position: "absolute",
@@ -642,8 +642,8 @@ export default function DepartamentosPage() {
               }}
             >
               <img
-                src="/images/gueguense.svg"
-                alt="Güegüense Atlan"
+                src="/images/tortuga.svg"
+                alt="Tortuga Atlan"
                 style={{
                   width: "100%",
                   height: "100%",
