@@ -292,7 +292,9 @@ export default function PerfilPage() {
     );
   }
 
-  const rolText = perfil?.rol === "dueno"
+  const rolText = perfil?.rol === "guia_turistico"
+    ? (lang === "en" ? "Tour Guide" : "Guía Turístico Certificado")
+    : perfil?.rol === "dueno"
     ? (lang === "en" ? "Business Owner" : "Propietario de Negocio")
     : perfil?.rol === "admin"
     ? (lang === "en" ? "Admin" : "Administrador")

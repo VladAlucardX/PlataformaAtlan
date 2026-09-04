@@ -145,6 +145,9 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           <Link href="/comunidad" className={`nav-pill-link ${activePage === "comunidad" ? "active" : ""}`}>
             <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {t("social.community")}
           </Link>
+          <Link href="/guias" className={`nav-pill-link ${activePage === "guias" ? "active" : ""}`}>
+            <Icon name="compass" size={16} color={activePage === "guias" ? "#38BDF8" : "currentColor"} /> {lang === "en" ? "Guides" : "Guías"}
+          </Link>
           {session && (
             <Link href="/chat" className={`nav-pill-link ${activePage === "chat" ? "active" : ""}`}>
               <img src="/images/comentarios.svg" alt="Mensajes" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {t("chat.title")}
@@ -429,6 +432,9 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           </Link>
           <Link href="/comunidad" className={`mobile-menu-item ${activePage === "comunidad" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
             <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{t("social.community")}</span>
+          </Link>
+          <Link href="/guias" className={`mobile-menu-item ${activePage === "guias" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
+            <Icon name="compass" size={20} color={activePage === "guias" ? "#38BDF8" : "#FFD700"} /> <span>{lang === "en" ? "Tour Guides" : "Guías Turísticos"}</span>
           </Link>
           {session && (
             <Link href="/chat" className={`mobile-menu-item ${activePage === "chat" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>

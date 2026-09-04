@@ -40,7 +40,11 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [rol, setRol] = useState("turista"); // 'turista' | 'dueno'
+  const [rol, setRol] = useState("turista"); // 'turista' | 'dueno' | 'guia_turistico'
+  const [deptGuia, setDeptGuia] = useState("León");
+  const [especialidadGuia, setEspecialidadGuia] = useState("Senderismo y Volcanes");
+  const [idiomasGuia, setIdiomasGuia] = useState("Español, Inglés");
+  const [telefonoGuia, setTelefonoGuia] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -67,6 +71,12 @@ export default function RegisterPage() {
           data: {
             nombre_completo: fullName,
             rol: rol,
+            ...(rol === "guia_turistico" ? {
+              departamento_principal: deptGuia,
+              especialidad: especialidadGuia,
+              idiomas: idiomasGuia,
+              telefono_contacto: telefonoGuia,
+            } : {}),
           },
         },
       });
@@ -78,6 +88,23 @@ export default function RegisterPage() {
       }
 
       if (data?.user) {
+        // Si el rol es guía turístico, intentar registrar también en guias_turisticos
+        if (rol === "guia_turistico") {
+          try {
+            await supabase.from("guias_turisticos").insert({
+              id: data.user.id,
+              departamento_principal: deptGuia,
+              especialidad: especialidadGuia,
+              idiomas: idiomasGuia,
+              telefono_contacto: telefonoGuia,
+              whatsapp: telefonoGuia,
+              activo: true,
+            });
+          } catch (gErr) {
+            console.warn("Notice: could not auto-create guide profile row:", gErr);
+          }
+        }
+
         setSuccessMsg(
           lang === "en"
             ? "Account created successfully! Redirecting..."
@@ -86,8 +113,7 @@ export default function RegisterPage() {
 
         // Retraso de 1.5s para mostrar el mensaje de éxito antes de redirigir
         setTimeout(() => {
-          // Redirigir siempre a la página de bienvenida (/)
-          router.push("/");
+          router.push(rol === "guia_turistico" ? "/guias" : "/");
         }, 1500);
       }
     } catch (err) {
@@ -121,6 +147,12 @@ export default function RegisterPage() {
     }
   };
 
+  const DEPARTAMENTOS_LIST = [
+    "Managua", "León", "Chinandega", "Granada", "Masaya", "Carazo", "Rivas",
+    "Matagalpa", "Jinotega", "Estelí", "Madriz", "Nueva Segovia", "Boaco",
+    "Chontales", "Río San Juan", "RACCN", "RACCS"
+  ];
+
   return (
     <div style={styles.container}>
       {/* Fondo volteado horizontalmente cubriendo el 100% sin franjas ni costuras */}
@@ -137,9 +169,7 @@ export default function RegisterPage() {
         }}
       />
 
-
-
-      {/* Tortuga SVG bastante más grande en la esquina inferior izquierda */}
+      {/* Tortuga SVG en la esquina inferior izquierda */}
       <img
         src="/images/tortuga.svg"
         alt="Tortuga"
@@ -168,7 +198,7 @@ export default function RegisterPage() {
         <LanguageToggle variant="pill" />
       </header>
 
-      <div style={styles.card} className="clay-card-static no-sheen register-card animate-fade-in-up">
+      <div style={{ ...styles.card, maxWidth: rol === "guia_turistico" ? "560px" : "520px" }} className="clay-card-static no-sheen register-card animate-fade-in-up">
         <h2 style={styles.title}>{t("auth.registerTitle")}</h2>
         <p style={styles.subtitle}>{t("auth.registerSubtitle")}</p>
 
@@ -176,9 +206,9 @@ export default function RegisterPage() {
         {successMsg && <div style={styles.successBanner}><Icon name="checkCircle" size={15} /> {successMsg}</div>}
 
         <form onSubmit={handleRegister} style={styles.form} autoComplete="off">
-          {/* Selector de Rol Premium Compacto */}
+          {/* Selector de Rol Premium Compacto (3 opciones) */}
           <div style={styles.inputGroup}>
-            <label style={styles.label}>{t("addPoint.category")}</label>
+            <label style={styles.label}>{lang === "en" ? "Select your Role" : "Selecciona tu Rol"}</label>
             <div style={styles.roleSelector}>
               <button
                 type="button"
@@ -195,15 +225,15 @@ export default function RegisterPage() {
                   src="/images/perfil.svg"
                   alt="Turista"
                   style={{
-                    width: "22px",
-                    height: "22px",
+                    width: "20px",
+                    height: "20px",
                     objectFit: "contain",
                     filter: rol === "turista"
                       ? "brightness(0) saturate(100%) invert(48%) sepia(85%) saturate(1400%) hue-rotate(100deg)"
                       : "brightness(0) opacity(0.55)"
                   }}
                 />
-                <span style={{ fontWeight: "750", fontSize: "14px" }}>
+                <span style={{ fontWeight: "750", fontSize: "13px" }}>
                   {lang === "en" ? "Tourist" : "Turista"}
                 </span>
               </button>
@@ -222,22 +252,39 @@ export default function RegisterPage() {
                   src="/images/edificio.svg"
                   alt="Propietario"
                   style={{
-                    width: "22px",
-                    height: "22px",
+                    width: "20px",
+                    height: "20px",
                     objectFit: "contain",
                     filter: rol === "dueno"
                       ? "brightness(0) saturate(100%) invert(75%) sepia(90%) saturate(1200%) hue-rotate(350deg)"
                       : "brightness(0) opacity(0.55)"
                   }}
                 />
-                <span style={{ fontWeight: "750", fontSize: "14px" }}>
-                  {lang === "en" ? "Business Owner" : "Propietario"}
+                <span style={{ fontWeight: "750", fontSize: "13px" }}>
+                  {lang === "en" ? "Owner" : "Propietario"}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setRol("guia_turistico")}
+                className={`clay-role-btn no-sheen ${rol === "guia_turistico" ? "active-guia" : ""}`}
+                style={{
+                  ...styles.roleBtnCompact,
+                  border: rol === "guia_turistico" ? "1.5px solid #0EA5E9" : "1px solid rgba(20, 109, 158, 0.12)",
+                  background: rol === "guia_turistico" ? "rgba(14, 165, 233, 0.12)" : "rgba(255, 255, 255, 0.6)",
+                  color: rol === "guia_turistico" ? "#0284C7" : "#4A5568",
+                }}
+              >
+                <Icon name="compass" size={20} color={rol === "guia_turistico" ? "#0284C7" : "#64748B"} />
+                <span style={{ fontWeight: "750", fontSize: "13px" }}>
+                  {lang === "en" ? "Tour Guide" : "Guía Turístico"}
                 </span>
               </button>
             </div>
           </div>
 
-          {/* Cuadrícula de 2 columnas para campos de texto */}
+          {/* Cuadrícula de 2 columnas para campos principales */}
           <div style={styles.grid2Col} className="register-grid-2col">
             <div style={styles.inputGroup}>
               <label style={styles.label}>{t("auth.fullName")}</label>
@@ -299,6 +346,82 @@ export default function RegisterPage() {
               />
             </div>
           </div>
+
+          {/* Campos adicionales de Guía Turístico */}
+          {rol === "guia_turistico" && (
+            <div style={{
+              background: "rgba(14, 165, 233, 0.05)",
+              border: "1px solid rgba(14, 165, 233, 0.2)",
+              borderRadius: "14px",
+              padding: "12px 14px",
+              marginTop: "4px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px"
+            }}>
+              <div style={{ fontSize: "12px", fontWeight: "800", color: "#0284C7", display: "flex", alignItems: "center", gap: "6px" }}>
+                <Icon name="compass" size={14} color="#0284C7" />
+                {lang === "en" ? "Guide Profile Details" : "Datos de tu Perfil de Guía"}
+              </div>
+
+              <div style={styles.grid2Col}>
+                <div style={styles.inputGroup}>
+                  <label style={styles.label}>{lang === "en" ? "Primary Department" : "Departamento Principal"}</label>
+                  <select
+                    value={deptGuia}
+                    onChange={(e) => setDeptGuia(e.target.value)}
+                    className="clay-input"
+                    style={{ ...styles.inputCompact, backgroundColor: "#FFF" }}
+                  >
+                    {DEPARTAMENTOS_LIST.map((d) => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div style={styles.inputGroup}>
+                  <label style={styles.label}>{lang === "en" ? "Specialty" : "Especialidad"}</label>
+                  <select
+                    value={especialidadGuia}
+                    onChange={(e) => setEspecialidadGuia(e.target.value)}
+                    className="clay-input"
+                    style={{ ...styles.inputCompact, backgroundColor: "#FFF" }}
+                  >
+                    <option value="Senderismo y Volcanes">Senderismo y Volcanes</option>
+                    <option value="Cultura e Historia">Cultura e Historia</option>
+                    <option value="Avistamiento de Aves">Avistamiento de Aves</option>
+                    <option value="Playa y Surf">Playa y Surf</option>
+                    <option value="Gastronomía Tradicional">Gastronomía Tradicional</option>
+                    <option value="Ecoturismo Integral">Ecoturismo Integral</option>
+                  </select>
+                </div>
+
+                <div style={styles.inputGroup}>
+                  <label style={styles.label}>{lang === "en" ? "Languages Spoken" : "Idiomas"}</label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Español, Inglés"
+                    value={idiomasGuia}
+                    onChange={(e) => setIdiomasGuia(e.target.value)}
+                    className="clay-input"
+                    style={styles.inputCompact}
+                  />
+                </div>
+
+                <div style={styles.inputGroup}>
+                  <label style={styles.label}>{lang === "en" ? "WhatsApp / Phone" : "WhatsApp / Teléfono"}</label>
+                  <input
+                    type="text"
+                    placeholder="+505 8888 8888"
+                    value={telefonoGuia}
+                    onChange={(e) => setTelefonoGuia(e.target.value)}
+                    className="clay-input"
+                    style={styles.inputCompact}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           <button
             type="submit"
