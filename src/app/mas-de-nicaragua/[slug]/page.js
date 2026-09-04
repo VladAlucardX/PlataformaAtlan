@@ -371,34 +371,73 @@ export default function DepartamentoDetailPage() {
 
         {/* 1. PESTAÑA HISTORIA */}
         {activeTab === "historia" && (
-          <div className="animate-fade-in">
-            <div style={{ background: "rgba(15, 23, 42, 0.75)", border: "1.5px solid rgba(255,255,255,0.12)", borderRadius: "24px", padding: "32px", marginBottom: "32px" }}>
-              <h2 style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700", margin: "0 0 16px", display: "flex", alignItems: "center", gap: "10px" }}>
-                📜 Resumen Histórico de {dept.nombre}
-              </h2>
-              <p style={{ fontSize: "16px", lineHeight: "1.8", color: "rgba(255,255,255,0.9)", margin: 0 }}>
+          <div className="animate-fade-in" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+            <div style={{ background: "linear-gradient(135deg, rgba(28, 25, 20, 0.92) 0%, rgba(15, 23, 42, 0.95) 100%)", border: "1.5px solid rgba(255, 215, 0, 0.4)", borderRadius: "24px", padding: "32px", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
+                <h2 style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700", margin: 0, display: "flex", alignItems: "center", gap: "12px" }}>
+                  📜 Resumen Histórico y Orígenes de {dept.nombre}
+                </h2>
+                <span style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid rgba(255, 215, 0, 0.4)", color: "#FFD700", padding: "5px 14px", borderRadius: "12px", fontSize: "13px", fontWeight: "800" }}>
+                  🏛️ Patrimonio Histórico Nacional
+                </span>
+              </div>
+
+              <p style={{ fontSize: "16px", lineHeight: "1.8", color: "rgba(255,255,255,0.92)", margin: "0 0 20px" }}>
                 {dept.historia.resumen}
               </p>
+
+              {/* Origen Etimológico */}
+              {dept.historia.origenEtimologico && (
+                <div style={{ background: "rgba(255, 215, 0, 0.08)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "16px", padding: "16px 20px", marginBottom: "20px" }}>
+                  <span style={{ fontSize: "13px", fontWeight: "900", color: "#FFD700", textTransform: "uppercase", display: "block", marginBottom: "4px", letterSpacing: "0.5px" }}>
+                    📜 Origen Etimológico y Raíces Indígenas
+                  </span>
+                  <p style={{ margin: 0, fontSize: "14px", color: "rgba(255,255,255,0.9)", lineHeight: "1.6" }}>
+                    {dept.historia.origenEtimologico}
+                  </p>
+                </div>
+              )}
+
+              {/* Ficha de Datos Clave */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "14px", paddingTop: "18px", borderTop: "1px dashed rgba(255, 215, 0, 0.25)" }}>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "12px 16px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "3px" }}>Cabecera Histórica</span>
+                  <span style={{ fontSize: "15px", fontWeight: "800", color: "#FFD700" }}>{dept.cabecera}</span>
+                </div>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "12px 16px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "3px" }}>Fundación / Hito</span>
+                  <span style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF" }}>{dept.fundacion}</span>
+                </div>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "12px 16px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "3px" }}>Extensión Territorial</span>
+                  <span style={{ fontSize: "15px", fontWeight: "800", color: "#38BDF8" }}>{dept.extension}</span>
+                </div>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "12px 16px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "3px" }}>Región Geográfica</span>
+                  <span style={{ fontSize: "15px", fontWeight: "800", color: "#10B981" }}>{dept.region}</span>
+                </div>
+              </div>
             </div>
 
             {/* Timeline de Hitos */}
             {dept.historia.hitos && dept.historia.hitos.length > 0 && (
               <div>
-                <h3 style={{ fontSize: "20px", fontWeight: "800", color: "#FFFFFF", marginBottom: "20px" }}>
-                  ⏳ Hitos Históricos Fundamentales
+                <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#FFFFFF", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                  <Icon name="clock" size={20} color="#FFD700" />
+                  <span>Línea de Tiempo e Hitos Fundamentales</span>
                 </h3>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "18px" }}>
                   {dept.historia.hitos.map((hito, idx) => (
                     <div key={idx} style={{
                       background: "linear-gradient(135deg, rgba(20, 109, 158, 0.2) 0%, rgba(15, 23, 42, 0.8) 100%)",
-                      border: "1px solid rgba(20, 109, 158, 0.3)",
+                      border: "1px solid rgba(20, 109, 158, 0.35)",
                       borderRadius: "18px",
                       padding: "20px"
                     }}>
-                      <span style={{ fontSize: "22px", fontWeight: "900", color: "#FFD700", display: "block", marginBottom: "6px" }}>
+                      <span style={{ fontSize: "20px", fontWeight: "900", color: "#FFD700", display: "inline-block", background: "rgba(255, 215, 0, 0.12)", border: "1px solid rgba(255, 215, 0, 0.3)", padding: "2px 12px", borderRadius: "10px", marginBottom: "8px" }}>
                         {hito.año}
                       </span>
-                      <p style={{ margin: 0, fontSize: "14px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                      <p style={{ margin: 0, fontSize: "14px", color: "rgba(255,255,255,0.88)", lineHeight: 1.6 }}>
                         {hito.evento}
                       </p>
                     </div>
@@ -406,6 +445,59 @@ export default function DepartamentoDetailPage() {
                 </div>
               </div>
             )}
+
+            {/* Personajes Ilustres */}
+            {dept.historia.personajes && dept.historia.personajes.length > 0 && (
+              <div>
+                <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#FFD700", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                  <Icon name="award" size={20} color="#FFD700" />
+                  <span>Personajes Ilustres y Héroes de la Historia</span>
+                </h3>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "18px" }}>
+                  {dept.historia.personajes.map((per, idx) => (
+                    <div key={idx} style={{ background: "linear-gradient(135deg, rgba(30, 25, 15, 0.85) 0%, rgba(15, 23, 42, 0.9) 100%)", border: "1px solid rgba(255, 215, 0, 0.3)", borderRadius: "18px", padding: "20px" }}>
+                      <span style={{ fontSize: "15px", fontWeight: "900", color: "#FFD700", display: "block", marginBottom: "3px" }}>
+                        📜 {per.nombre}
+                      </span>
+                      <span style={{ fontSize: "12px", fontWeight: "700", color: "#38BDF8", display: "block", marginBottom: "8px" }}>
+                        {per.titulo}
+                      </span>
+                      <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                        {per.aporte}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Patrimonio Histórico Protegido */}
+            {dept.historia.patrimonio && dept.historia.patrimonio.length > 0 && (
+              <div>
+                <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#38BDF8", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                  <Icon name="landmark" size={20} color="#38BDF8" />
+                  <span>Patrimonio Protegido, Templos y Sitios Arqueológicos</span>
+                </h3>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "18px" }}>
+                  {dept.historia.patrimonio.map((pat, idx) => (
+                    <div key={idx} style={{ background: "linear-gradient(135deg, rgba(15, 30, 50, 0.85) 0%, rgba(10, 20, 35, 0.9) 100%)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "18px", padding: "20px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                        <span style={{ fontSize: "15px", fontWeight: "900", color: "#FFFFFF" }}>
+                          🏛️ {pat.sitio}
+                        </span>
+                        <span style={{ fontSize: "11px", fontWeight: "800", color: "#10B981", background: "rgba(16, 185, 129, 0.15)", padding: "3px 10px", borderRadius: "8px" }}>
+                          {pat.epoca}
+                        </span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                        {pat.desc}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
           </div>
         )}
 

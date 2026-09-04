@@ -17,11 +17,21 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/managua/2.jpg","/images/galeria-departamentos/managua/3.jpg","/images/galeria-departamentos/managua/4.jpg","/images/galeria-departamentos/managua/5.jpg","/images/galeria-departamentos/managua/6.webp","/images/galeria-departamentos/managua/7.jpg"],
     historia: {
       resumen: "Asentada sobre un histórico poblado precolombino a orillas del lago Xolotlán, Managua fue elevada a villa en 1819 y declarada capital de la nación en 1852 para resolver la disputa histórica entre León y Granada. Su centro urbano resurgió tras el devastador terremoto de 1972, transformándose en una metrópoli verde y descentralizada.",
+      origenEtimologico: "Proveniente del Náhuatl 'Mana-ahuac', que traduce 'Junto al agua' o 'Lugar rodeado de grandes aguas', en referencia al Lago Xolotlán y sus numerosas lagunas cratéricas.",
       hitos: [
         { año: "1819", evento: "Es elevada al rango de Villa por Real Cédula del Rey Fernando VII." },
-        { año: "1852", evento: "Se declara formalmente Capital de la República de Nicaragua." },
-        { año: "1972", evento: "Gran terremoto que redefinió la estructura urbana y trazado de la ciudad." },
-        { año: "2008", evento: "Construcción y apertura del Paseo Xolotlán y Puerto Salvador Allende." }
+        { año: "1852", evento: "Se declara formalmente Capital de la República de Nicaragua para pacificar la rivalidad León-Granada." },
+        { año: "1972", evento: "Devastador terremoto que redefinió la estructura urbana y dio origen a la metrópoli descentralizada actual." },
+        { año: "2008", evento: "Construcción y apertura del Paseo Xolotlán y Puerto Salvador Allende, rescatando el malecón histórico." }
+      ],
+      personajes: [
+        { nombre: "Salomón Ibarra Mayorga", titulo: "Poeta y Humanista (1887-1985)", aporte: "Autor de la hermosa letra del Himno Nacional de Nicaragua 'Salve a ti, Nicaragua'." },
+        { nombre: "Alexis Argüello", titulo: "Trisoberano del Boxeo (1952-2009)", aporte: "Ídolo deportivo mundial y símbolo de disciplina, superación y nobleza nicaragüense." },
+        { nombre: "Josefa Toledo de Aguerri", titulo: "Pionera de la Educación (1866-1962)", aporte: "Educadora insigne y primera gran defensora de los derechos civiles de la mujer." }
+      ],
+      patrimonio: [
+        { sitio: "Huellas de Acahualinca", epoca: "Prehistórico (~6,000 a.C.)", desc: "Fósiles humanos y de fauna extinta petrificados en barro volcánico a orillas del Lago Xolotlán." },
+        { sitio: "Antigua Catedral de Managua", epoca: "Neoclásico (1928)", desc: "Majestuosa estructura de acero traída de Bélgica que sobrevivió al gran terremoto de 1972." }
       ]
     },
     economia: {
@@ -75,11 +85,21 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/leon/2.jpg","/images/galeria-departamentos/leon/3.jpg","/images/galeria-departamentos/leon/4.jpg","/images/galeria-departamentos/leon/5.jpg","/images/galeria-departamentos/leon/6.jpg","/images/galeria-departamentos/leon/7.jpg"],
     historia: {
       resumen: "Fundada en 1524 por Francisco Hernández de Córdoba junto al lago Xolotlán. Tras una erupción del volcán Momotombo en 1610, la ciudad fue trasladada a su ubicación actual. Es la cuna intelectual de Nicaragua y hogar del insigne poeta Rubén Darío.",
+      origenEtimologico: "Fundada originalmente en 1524 en Nagrando junto al lago Xolotlán y trasladada en 1610 al histórico asentamiento aborigen de Sutiaba.",
       hitos: [
         { año: "1524", evento: "Fundación de León Viejo (declarado Patrimonio de la Humanidad por UNESCO)." },
-        { año: "1610", evento: "Traslado de la ciudad a su sitio actual tras el terremoto y erupción volcánica." },
-        { año: "1812", evento: "Fundación de la UNAN-León, primera universidad de Nicaragua." },
-        { año: "2011", evento: "La Real e Insigne Basílica Catedral es nombrada Patrimonio de la Humanidad." }
+        { año: "1610", evento: "Traslado de la ciudad a su sitio actual tras el terremoto y erupción volcánica del Momotombo." },
+        { año: "1812", evento: "Fundación de la UNAN-León, primera universidad de Nicaragua y referente centroamericano." },
+        { año: "2011", evento: "La Real e Insigne Basílica Catedral es nombrada Patrimonio de la Humanidad por la UNESCO." }
+      ],
+      personajes: [
+        { nombre: "Rubén Darío", titulo: "Príncipe de las Letras Castellanas (1867-1916)", aporte: "Padre del Modernismo literario universal que revolucionó la lengua española en América y Europa." },
+        { nombre: "Miguel Larreynaga", titulo: "Prócer de la Independencia (1772-1847)", aporte: "Jurista, filósofo y diplomático clave en la firma de la Independencia de Centroamérica en 1821." },
+        { nombre: "Alfonso Cortés", titulo: "Poeta de las Metafísicas (1893-1969)", aporte: "Genio lírico que escribió sus versos universales desde su estancia en la Casa de los Leones." }
+      ],
+      patrimonio: [
+        { sitio: "Basílica Catedral de León", epoca: "Barroco-Neoclásico (1747-1814)", desc: "Patrimonio de la Humanidad UNESCO. La catedral más monumental de Centroamérica y tumba de Rubén Darío." },
+        { sitio: "Ruinas de León Viejo", epoca: "Colonial (1524)", desc: "Patrimonio de la Humanidad UNESCO. Las ruinas de la primera capital española conservadas bajo ceniza volcánica." }
       ]
     },
     economia: {
@@ -133,10 +153,19 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/chinandega/2.jpg","/images/galeria-departamentos/chinandega/3.jpg","/images/galeria-departamentos/chinandega/4.jpg","/images/galeria-departamentos/chinandega/5.jpg","/images/galeria-departamentos/chinandega/6.jpg","/images/galeria-departamentos/chinandega/7.jpg"],
     historia: {
       resumen: "Ubicada en fértiles planicies volcánicas del noroeste. Su nombre proviene del náhuatl 'Chinamitl-tacalt' (lugar cercado por cañas). Fue capital de la Confederación Centroamericana en 1842 y es guardiana de valiosas tradiciones chorotegas y nicaraos.",
+      origenEtimologico: "Del Náhuatl 'Chinamitl-tacalt', que significa 'Lugar rodeado de cañas' o 'Poblado protegido por cercas de cañaverales'.",
       hitos: [
         { año: "1835", evento: "Erupción histórica del Volcán Cosigüina que creó su famosa laguna en el cráter." },
         { año: "1842", evento: "Designada capital temporal de la Confederación de Centroamérica." },
-        { año: "1858", evento: "Inauguración del Puerto de Corinto, motor del comercio marítimo." }
+        { año: "1858", evento: "Inauguración del Puerto de Corinto, motor del comercio marítimo nacional." }
+      ],
+      personajes: [
+        { nombre: "Tiburcio Aguilera", titulo: "Educador y Poeta (1880-1950)", aporte: "Ilustre promotor cultural e historiador de las gestas independentistas de occidente." },
+        { nombre: "Padre Francisco de Paula Lejarza", titulo: "Párroco Benemérito", aporte: "Líder espiritual e impulsor del tesoro sacro del Santuario Nacional de El Viejo." }
+      ],
+      patrimonio: [
+        { sitio: "Santuario Basílica de El Viejo", epoca: "Colonial (1562)", desc: "Templo histórico donde reposa la imagen venerada de la Virgen del Trono traída por Don Pedro de Zepeda." },
+        { sitio: "Parroquia Nuestra Señora de Santa Ana", epoca: "Siglo XVIII", desc: "Joya arquitectónica neoclásica con imponentes retablos de madera tallada." }
       ]
     },
     economia: {
@@ -189,17 +218,27 @@ export const DEPARTAMENTOS_DATA = {
     imagenReferencia: "/images/galeria-departamentos/granada/1.1.jpg",
     galeria: ["/images/galeria-departamentos/granada/2.jpg","/images/galeria-departamentos/granada/3.jpg","/images/galeria-departamentos/granada/4.jpg","/images/galeria-departamentos/granada/5.png","/images/galeria-departamentos/granada/6.jpg","/images/galeria-departamentos/granada/7.jpg"],
     historia: {
-      resumen: "Fundada el 8 de diciembre de 1524 por Francisco Hernández de Córdoba a orillas del Gran Lago Cocibolca. Es una de las ciudades coloniales continentales más antiguas que conserva su trazado original. Resistió ataques piratas y incendios históricos.",
+      resumen: "Fundada el 8 de diciembre de 1524 por Francisco Hernández de Córdoba a orillas del Gran Lago Cocibolca. Es una de las ciudades coloniales continentales más antiguas que conserva su trazado original. Resistió ataques piratas e incendios históricos.",
+      origenEtimologico: "Bautizada en 1524 en memoria de la Granada española, erigida sobre el milenario asentamiento indígena Nahua de Xalteva.",
       hitos: [
         { año: "1524", evento: "Fundación de la ciudad a orillas del asentamiento indígena de Xalteva." },
         { año: "1856", evento: "Incendio provocado por el filibustero William Walker dejando la célebre frase 'Here was Granada'." },
-        { año: "2024", evento: "Declarada Tesoro Nacional de la Cultura, Historia y Naturaleza." }
+        { año: "2024", evento: "Declarada Tesoro Nacional de la Cultura, Historia y Naturaleza por su V Centenario." }
+      ],
+      personajes: [
+        { nombre: "General José Dolores Estrada", titulo: "Héroe Nacional (1792-1869)", aporte: "Comandante victorioso de la Batalla de San Jacinto de 1856 contra las tropas de William Walker." },
+        { nombre: "Beata Sor María Romero", titulo: "Misionera de la Caridad (1902-1977)", aporte: "Religiosa salesiana nacida en Granada elevada a los altares por su incondicional amor a los desposeídos." },
+        { nombre: "Pablo Antonio Cuadra", titulo: "Poeta e Intelectual (1912-2002)", aporte: "Figura cumbre del Movimiento de Vanguardia y renovador de la identidad poética nicaragüense." }
+      ],
+      patrimonio: [
+        { sitio: "Convento e Iglesia San Francisco", epoca: "Fundado en 1529", desc: "El convento más antiguo del país, custodio de las célebres estatuas estelaroides precolombinas de la Isla Zapatera." },
+        { sitio: "Fortaleza de La Pólvora", epoca: "Colonial (1748)", desc: "Baluarte militar español diseñado para defender los almacenes de armamento contra ataques piratas." }
       ]
     },
     economia: {
       resumen: "El turismo es su motor principal, impulsado por su riqueza arquitectónica colonial, la hotelería boutique y el ecoturismo lacustre.",
       sectores: [
-        { titulo: "Turismo y Hotelería", desc: "Hoteles boutique en casonas coloniales restored, restaurantes y touroperadores." },
+        { titulo: "Turismo y Hotelería", desc: "Hoteles boutique en casonas coloniales restauradas, restaurantes y touroperadores." },
         { titulo: "Comercio e Industrias Creativas", desc: "Producción de cigarros artesanales, chocolate y artesanía fina." },
         { titulo: "Agricultura y Pesca", desc: "Cultivo de arroz, plátano y pesca artesanal en el Lago Cocibolca." }
       ]
@@ -221,7 +260,7 @@ export const DEPARTAMENTOS_DATA = {
       ]
     },
     lugaresImportantes: [
-      { nombre: "Catedral de Granada", desc: "Icono neoclásico amarrillo y blanco dominating el parque central.", imagen: "/images/departamentos/granada-catedral.png" },
+      { nombre: "Catedral de Granada", desc: "Icono neoclásico amarillo y blanco dominando el parque central.", imagen: "/images/departamentos/granada-catedral.png" },
       { nombre: "Convento e Iglesia San Francisco", desc: "Museo con estatuas precolombinas de la Isla Zapatera.", imagen: "/images/departamentos/granada-convento.png" },
       { nombre: "Fortaleza La Pólvora", desc: "Antiguo fuerte español del siglo XVIII construido para almacenar pertrechos de guerra.", imagen: "/images/departamentos/granada-fortaleza.png" }
     ],
@@ -247,10 +286,19 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/masaya/2.jpg","/images/galeria-departamentos/masaya/3.jpg","/images/galeria-departamentos/masaya/4.jpeg","/images/galeria-departamentos/masaya/5.jpg","/images/galeria-departamentos/masaya/6.jpeg","/images/galeria-departamentos/masaya/7.jpg"],
     historia: {
       resumen: "Corazón espiritual y artesanal de Nicaragua. El barrio de Monimbó mantiene vivas las raíces indígenas dirianes y náhuatl. Masaya jugó un rol heroico en la historia nacional y el derrocamiento de las dictaduras.",
+      origenEtimologico: "Del Náhuatl 'Mazalt-yan', que significa 'Lugar de los venados' o 'Montaña de las flores', bastión ancestral de la etnia Diriane.",
       hitos: [
         { año: "1839", evento: "Declarada Ciudad con el lema 'Muy Noble y Leal Ciudad de Masaya'." },
         { año: "1979", evento: "Insurrección popular y repliegue táctico a Masaya durante la revolución." },
-        { año: "2000", evento: "Declarada oficialmente Capital del Folclore Nicaragüense." }
+        { año: "2000", evento: "Declarada oficialmente Capital del Folclore Nicaragüense por el Congreso Nacional." }
+      ],
+      personajes: [
+        { nombre: "General Augusto C. Sandino", titulo: "Héroe Nacional (1895-1934)", aporte: "Nacido en Niquinohomo, Masaya; Líder insigne del Ejército Defensor de la Soberanía Nacional." },
+        { nombre: "Alejandro Vega Matus", titulo: "Compositor insigne (1863-1937)", aporte: "Padre de los sones de pascua y marchas religiosas que identifican la identidad musical de Nicaragua." }
+      ],
+      patrimonio: [
+        { sitio: "Fortaleza El Coyotepe", epoca: "Militar (1893)", desc: "Fuerte estratégico erigido en la cumbre del cerro del mismo nombre, testigo de heroicas batallas nacionales." },
+        { sitio: "Mercado de Artesanías de Masaya", epoca: "Neogótico (1891)", desc: "Castillo urbano de piedra rosada que alberga el centro neurálgico del folclore y arte tradicional." }
       ]
     },
     economia: {
@@ -304,9 +352,18 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/carazo/2.jpg","/images/galeria-departamentos/carazo/3.jpg","/images/galeria-departamentos/carazo/4.jpg","/images/galeria-departamentos/carazo/5.jpg","/images/galeria-departamentos/carazo/6.jpg","/images/galeria-departamentos/carazo/7.jpg"],
     historia: {
       resumen: "Creado como departamento en 1891 en honor al expresidente Evaristo Carazo. Habitado por los antiguos indígenas dirianes, es la cuna de 'El Güegüense o Macho Ratón', obra maestra del patrimonio oral e inmaterial de la humanidad por la UNESCO.",
+      origenEtimologico: "Territorio originario de los aborígenes Dirianes. Creado en 1891 rindiendo homenaje al expresidente Evaristo Carazo.",
       hitos: [
         { año: "1891", evento: "Creación del departamento de Carazo separándose de Managua y Granada." },
         { año: "2005", evento: "La UNESCO proclama a 'El Güegüense' Patrimonio Oral e Inmaterial de la Humanidad." }
+      ],
+      personajes: [
+        { nombre: "Evaristo Carazo", titulo: "Presidente de la República (1821-1889)", aporte: "Estadista promotor de la red ferroviaria y la modernización agrícola nicaragüense." },
+        { nombre: "Maestros del Güegüense", titulo: "Dramaturgos Anónimos (Siglo XVII)", aporte: "Creadores de la primera obra teatral satírica de la América hispana en Diriamba." }
+      ],
+      patrimonio: [
+        { sitio: "Basílica Menor de San Sebastián", epoca: "Neoclásico (1891)", desc: "Templo emblemático de Diriamba decorado con bellos vitrales italianos y escenario del baile de El Güegüense." },
+        { sitio: "Reloj Público de Jinotepe", epoca: "1923", desc: "Torre de reloj traída de Alemania que constituye el punto de referencia histórico de la cabecera caraceña." }
       ]
     },
     economia: {
@@ -360,10 +417,19 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/rivas/2.jpg","/images/galeria-departamentos/rivas/3.jpg","/images/galeria-departamentos/rivas/4.jpg","/images/galeria-departamentos/rivas/5.jpg","/images/galeria-departamentos/rivas/6.jpg","/images/galeria-departamentos/rivas/7.jpg"],
     historia: {
       resumen: "Escenario principal de la Guerra Nacional de 1856 donde el héroe Emmanuel Mongalo y Rubio y la batalla de Rivas inmortalizaron la defensa de la soberanía nacional contra los filibusteros de William Walker.",
+      origenEtimologico: "Asentamiento precolombino de Nicaraocallan, sede del gran Cacique Nicarao. Titulada en 1720 en honor a Francisco Rodríguez de Rivas.",
       hitos: [
-        { año: "1855", evento: "Primera Batalla de Rivas con la hazaña heroica de Emmanuel Mongalo." },
-        { año: "1856", evento: "Segunda Batalla de Rivas clave para la expulsión de William Walker." },
+        { año: "1855", evento: "Primera Batalla de Rivas con la hazaña heroica de Emmanuel Mongalo prendiendo fuego al Mesón." },
+        { año: "1856", evento: "Segunda Batalla de Rivas clave para la derrota y expulsión de William Walker." },
         { año: "2010", evento: "La Isla de Ometepe es declarada Reserva de Biosfera por la UNESCO." }
+      ],
+      personajes: [
+        { nombre: "Enmanuel Mongalo y Rubio", titulo: "Héroe Nacional (1834-1872)", aporte: "Maestro que en la Batalla de Rivas (1855) prendió fuego al Mesón donde se atrincheraban los filibusteros." },
+        { nombre: "Cacique Nicarao", titulo: "Gobernante Aborigen (Siglo XVI)", aporte: "Sabio líder indígena que protagonizó el histórico encuentro filosófico y teológico con los conquistadores." }
+      ],
+      patrimonio: [
+        { sitio: "Petroglifos de la Isla de Ometepe", epoca: "Precolombino (~1,000 a.C.)", desc: "Más de 1,700 grabados en piedra volcánica que documentan la cosmovisión astronómica de las tribus Nahuas." },
+        { sitio: "Parroquia San Pedro de Rivas", epoca: "Siglo XVIII", desc: "Iglesia parroquial que conserva huellas de proyectiles de las batallas históricas contra los filibusteros." }
       ]
     },
     economia: {
@@ -417,17 +483,26 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/matagalpa/2.jpg","/images/galeria-departamentos/matagalpa/3.jpg","/images/galeria-departamentos/matagalpa/4.jpg","/images/galeria-departamentos/matagalpa/5.jpg","/images/galeria-departamentos/matagalpa/6.jpg","/images/galeria-departamentos/matagalpa/7.jpg"],
     historia: {
       resumen: "Tierra de origen indígena matagalpa. En el siglo XIX la llegada de inmigrantes europeos revolucionó el cultivo del café en sus montañas nebliselvas, convirtiendo a la región en el motor cafetalero del país.",
+      origenEtimologico: "Del idioma indígena Matagalpa 'Ma-takt-ka-lpa', que traduce 'Pueblo de las diez familias' o 'Tierra de las diez casas'.",
       hitos: [
-        { año: "1856", evento: "Participación decisiva de los Flecheros de Matagalpa en la Batalla de San Jacinto." },
+        { año: "1856", evento: "Participación decisiva de los Flecheros de Matagalpa en la Batalla de San Jacinto para expulsar al filibustero." },
         { año: "1862", evento: "Elevada al rango de Ciudad de Matagalpa." },
-        { año: "1990", evento: "Desarrollo del circuito ecoturístico de la Ruta del Café." }
+        { año: "1990", evento: "Desarrollo del circuito ecoturístico de la Ruta del Café en nebliselvas." }
+      ],
+      personajes: [
+        { nombre: "Comandante Carlos Fonseca Amador", titulo: "Héroe Nacional (1936-1976)", aporte: "Nacido en Matagalpa; fundador del FSLN e ideólogo fundamental de la lucha social y patriótica." },
+        { nombre: "Indios Flecheros de Matagalpa", titulo: "Héroes de la Patria (1856)", aporte: "Batallón aborigen cuyas flechas fueron determinantes para derrocar al invasor filibustero en San Jacinto." }
+      ],
+      patrimonio: [
+        { sitio: "Catedral de San Pedro de Matagalpa", epoca: "Barroco (1874)", desc: "La tercera catedral más grande del país, construida enteramente por artesanos y constructores locales." },
+        { sitio: "Casa Cuna de Carlos Fonseca", epoca: "Histórico", desc: "Museo memoria preservado en el centro urbano que custodia el legado histórico del héroe matagalpino." }
       ]
     },
     economia: {
       resumen: "Corazón agrícola del norte. Lidera la producción de café de exportación, hortalizas, flores, lácteos de montaña y cacao.",
       sectores: [
         { titulo: "Caficultura de Altura", desc: "Cultivo de grano de oro arábico de alta puntuación en tazas de excelencia mundial." },
-        { titulo: "Agroturismo y Bosques Nubosos", desc: "Haciendas cafetaleras convertidas en ecologdes boutique." },
+        { titulo: "Agroturismo y Bosques Nubosos", desc: "Haciendas cafetaleras convertidas en ecolodges boutique." },
         { titulo: "Ganadería y Horticultura", desc: "Producción de papas, repollo, zanahorias y quesos de montaña." }
       ]
     },
@@ -474,16 +549,25 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/jinotega/2.jpg","/images/galeria-departamentos/jinotega/3.jpg","/images/galeria-departamentos/jinotega/4.jpg","/images/galeria-departamentos/jinotega/5.jpg","/images/galeria-departamentos/jinotega/6.jpg","/images/galeria-departamentos/jinotega/7.jpg"],
     historia: {
       resumen: "El departamento más extenso de la región central. Su nombre náhuatl significa 'Ciudad de los hombres que viven entre brumas'. Escenario histórico de las gestas del General Augusto C. Sandino en San Rafael del Norte.",
+      origenEtimologico: "Del Náhuatl 'Xiuh-notl-tecatl', que significa 'Ciudad de los hombres que viven entre brumas' o 'Vecinos de los matagalpas'.",
       hitos: [
         { año: "1891", evento: "Creación del departamento de Jinotega." },
         { año: "1930", evento: "Cuartel general del General Sandino y Blanca Aráuz en San Rafael del Norte." },
-        { año: "1964", evento: "Construcción del Embalse y Lago Apanás para generación hidroeléctrica." }
+        { año: "1964", evento: "Construcción del Embalse y Lago Apanás para generación hidroeléctrica limpia." }
+      ],
+      personajes: [
+        { nombre: "Blanca Aráuz Pineda", titulo: "Heroína Nacional (1909-1933)", aporte: "Nacida en San Rafael del Norte; telegrafista y estratega clave del Ejército Defensor de la Soberanía." },
+        { nombre: "Padre Odorico D'Andrea", titulo: "Misionero de la Paz (1916-1990)", aporte: "Fraile franciscano que pacificó la región montañosa y construyó escuelas, caminos y capillas." }
+      ],
+      patrimonio: [
+        { sitio: "Santuario Tepeyac de San Rafael", epoca: "Siglo XX", desc: "Complejo religioso y mirador erigido en las alturas de San Rafael del Norte como remanso de fe." },
+        { sitio: "Catedral San Juan Bautista de Jinotega", epoca: "1805 / 1952", desc: "Templo neoclásico que alberga valiosos retablos tallados y esculturas religiosas coloniales." }
       ]
     },
     economia: {
       resumen: "El departamento que más volumen de café produce en Nicaragua. Posee una pujante agricultura de hortalizas y generación limpia de energía.",
       sectores: [
-        { titulo: "Producción Cafetalera Lider", desc: "Aporta más del 65% del volumen del café de exportación del país." },
+        { titulo: "Producción Cafetalera Líder", desc: "Aporta más del 65% del volumen del café de exportación del país." },
         { titulo: "Horticultura de Altura", desc: "Producción de papa, lechuga, repollo y apio abasteciendo los mercados nacionales." },
         { titulo: "Energía Hidroeléctrica", desc: "Planta Centroamérica utilizando las aguas del Lago Apanás." }
       ]
@@ -531,10 +615,19 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/esteli/2.jpg","/images/galeria-departamentos/esteli/3.jpg","/images/galeria-departamentos/esteli/4.jpg","/images/galeria-departamentos/esteli/5.jpg","/images/galeria-departamentos/esteli/6.jpg","/images/galeria-departamentos/esteli/7.jpg"],
     historia: {
       resumen: "Conocida como la 'Ciudad del Muralismo' por las pinturas de arte público que narran su historia. Fundada en el valle del río Estelí, ha crecido hasta convertirse en la capital económica de la zona norte de Nicaragua.",
+      origenEtimologico: "Del idioma Matagalpa/Sumo 'Li' (río) y 'Estelí', traducido como 'Río de ojos de agua' o 'Río de lechos de sangre'.",
       hitos: [
         { año: "1891", evento: "Creación del departamento de Estelí." },
         { año: "1979", evento: "Tres insurrecciones históricas marcaron su identidad de resistencia heroica." },
-        { año: "1995", evento: "Auge mundial de las fábricas de puros de hoja de tabaco premium." }
+        { año: "1995", evento: "Auge mundial de las fábricas de puros de hoja de tabaco premium de exportación." }
+      ],
+      personajes: [
+        { nombre: "Leonel Rugama", titulo: "Poeta y Guerrero (1949-1970)", aporte: "Autor del legendario grito '¡Que se rinda tu madre!' y uno de los poetas más influyentes del siglo XX." },
+        { nombre: "Don Alberto Gutiérrez", titulo: "Escultor del Jalacate", aporte: "Artista ermitaño que ha esculpido durante décadas más de 200 relieves en la roca del cerro Tisey." }
+      ],
+      patrimonio: [
+        { sitio: "Galería de Murales Históricos", epoca: "Contemporáneo (1979-presente)", desc: "Más de 300 murales artísticos en las fachadas urbanas que narran la memoria y luchas del pueblo norteño." },
+        { sitio: "Catedral de Nuestra Señora del Rosario", epoca: "1888", desc: "Majestuoso templo que combina elementos neoclásicos y góticos en el corazón del centro histórico." }
       ]
     },
     economia: {
@@ -588,10 +681,19 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/madriz/2.jpg","/images/galeria-departamentos/madriz/3.jpg","/images/galeria-departamentos/madriz/4.jpg","/images/galeria-departamentos/madriz/5.jpg","/images/galeria-departamentos/madriz/6.jpg","/images/galeria-departamentos/madriz/7.jpg"],
     historia: {
       resumen: "Creado en 1936 separándose de Nueva Segovia. Su cabecera, Somoto, proviene de 'Tecpecxomotli' (Valle de los Gansos). Es famosa por su hospitalidad, su acervo musical campesino y su riqueza geológica milenaria.",
+      origenEtimologico: "Asentamiento ancestral 'Tecpecxomotli' (Valle de los gansos). Erigido en departamento en 1936 en honor al Dr. José Madriz.",
       hitos: [
         { año: "1936", evento: "Creación del departamento nombrándolo Madriz en honor a José Madriz." },
         { año: "2004", evento: "Descubrimiento y puesta en valor turístico del majestuoso Cañón de Somoto." },
         { año: "2006", evento: "Declaración del Cañón de Somoto como Monumento Nacional." }
+      ],
+      personajes: [
+        { nombre: "Luis Enrique & Carlos Mejía Godoy", titulo: "Cantautores Nacionales", aporte: "Nacidos en Somoto; creadores del Son Nica, la Misa Campesina y el cancionero popular revolucionario." },
+        { nombre: "Colectivo de Madres del Maíz", titulo: "Guardianas del Sabor", aporte: "Mujeres artesanas que preservan la receta ancestral de las tradicionales rosquillas somoteñas." }
+      ],
+      patrimonio: [
+        { sitio: "Monumento Nacional Cañón de Somoto", epoca: "Falla Geológica (~10-15 Millones de años)", desc: "Imponente desfiladero esculpido por el cauce inicial del Río Coco, declarado área protegida nacional." },
+        { sitio: "Templo Parroquial de Santiago Apóstol", epoca: "Colonial (1870)", desc: "Iglesia que conserva elementos de la arquitectura vernácula segoviana y altares de madera tallada." }
       ]
     },
     economia: {
@@ -624,7 +726,7 @@ export const DEPARTAMENTOS_DATA = {
       { nombre: "Mirador Cerro El Cañón", desc: "Vista panorámica superior del cañón y la frontera norte.", imagen: "/images/departamentos/madriz-mirador.png" }
     ],
     actividades: [
-      { nombre: "Festival de las Rosquillas Somoteñas", fecha: "Agosto", desc: "Celebración con degusación masiva de rosquillas y bailes tradicionales." },
+      { nombre: "Festival de las Rosquillas Somoteñas", fecha: "Agosto", desc: "Celebración con degustación masiva de rosquillas y bailes tradicionales." },
       { nombre: "Fiestas Patronales de Santiago", fecha: "Julio", desc: "Desfiles hípicos y corridas de toros al estilo del norte." }
     ]
   },
@@ -645,10 +747,19 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/nueva-segovia/2.jpg","/images/galeria-departamentos/nueva-segovia/3.jpg","/images/galeria-departamentos/nueva-segovia/4.jpg","/images/galeria-departamentos/nueva-segovia/5.jpg","/images/galeria-departamentos/nueva-segovia/6.jpeg","/images/galeria-departamentos/nueva-segovia/7.jpeg"],
     historia: {
       resumen: "Una de las zonas con mayor historia colonial e independentista. Asentada originalmente cerca de Jalapa, su cabecera Ocotal se consolidó rodeada de bosques de pino. Fue baluarte histórico del Ejército Defensor de la Soberanía Nacional.",
+      origenEtimologico: "Fundada en 1543 como Ciudad Vieja por el capitán Diego de Castañeda en homenaje a la histórica ciudad de Segovia en España.",
       hitos: [
         { año: "1543", evento: "Fundación de Ciudad Vieja por Diego de Castañeda." },
         { año: "1927", evento: "Batalla de Ocotal entre las fuerzas del General Sandino y los marines estadounidenses." },
         { año: "2015", evento: "Consolidación de las fincas cafetaleras con premios de Taza de Excelencia." }
+      ],
+      personajes: [
+        { nombre: "Monseñor Nicolás Antonio Madrigal", titulo: "Padre del Norte (1898-1977)", aporte: "Sacerdote benemérito impulsor de las obras sociales, educativas y el arte en el departamento." },
+        { nombre: "General Miguel Ángel Ortez", titulo: "Joven Héroe de Palacagüina (1907-1931)", aporte: "Jefe militar de las fuerzas de Sandino inmortalizado por su valentía e integridad." }
+      ],
+      patrimonio: [
+        { sitio: "Ruinas de Ciudad Vieja", epoca: "Colonial (1543)", desc: "Asentamiento hispánico pionero de la minería de oro abandonado tras incursiones de tribus feroces." },
+        { sitio: "Santuario de la Virgen de la Piedra (Dipilto)", epoca: "1947", desc: "Gruta natural y río sagrado rodeado de bosques de pino a donde acuden miles de peregrinos." }
       ]
     },
     economia: {
@@ -702,9 +813,18 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/boaco/2.jpg","/images/galeria-departamentos/boaco/3.jpg","/images/galeria-departamentos/boaco/4.jpg","/images/galeria-departamentos/boaco/5.jpg","/images/galeria-departamentos/boaco/6.jpg","/images/galeria-departamentos/boaco/7.jpg"],
     historia: {
       resumen: "Boaco proviene del náhuatl 'Boaj-yarr' (Lugar de los encantados). Su cabecera es famosa mundialmente por su topografía accidentada y empinada que da la ilusión óptica de estar dividida en niveles o 'pisos'.",
+      origenEtimologico: "Del Náhuatl y Sumo 'Boaj-yarr', que traduce 'Pueblo de los encantadores' o 'Lugar de los sabios de la montaña'.",
       hitos: [
-        { año: "1895", evento: "Elevada a la categoría de Ciudad." },
+        { año: "1895", evento: "Elevada a la categoría de Ciudad por el Presidente José Santos Zelaya." },
         { año: "1935", evento: "Creación del departamento de Boaco independizándose de Chontales." }
+      ],
+      personajes: [
+        { nombre: "Dr. Hernán Robleto Huete", titulo: "Escritor y Periodista (1892-1968)", aporte: "Novelista boaqueño de trascendencia hispanoamericana autor de 'Sangre en el Trópico'." },
+        { nombre: "Armando Incer Barquero", titulo: "Historiador y Cronista", aporte: "Investigador fundamental que inmortalizó el patrimonio folclórico y urbano de la Ciudad de Dos Pisos." }
+      ],
+      patrimonio: [
+        { sitio: "Graderías y Paseo Tovar", epoca: "Urbano (Siglo XIX)", desc: "Trazado escalonado único en el país que conecta los dos niveles arquitectónicos de la ciudad." },
+        { sitio: "Parroquia Santiago Apóstol de Boaco", epoca: "Colonial (1860)", desc: "Templo de sólida mampostería colonial donde se celebra la ancestral comedia de Moros y Cristianos." }
       ]
     },
     economia: {
@@ -716,7 +836,7 @@ export const DEPARTAMENTOS_DATA = {
       ]
     },
     turismo: {
-      resumen: "Turismo rural en fincas ganaderas, senderismo montañoso en formaciones rocosas y tradiciones folclóricas coloniales.",
+      resumen: "Turismo rural en fincas ganaderas, senderismo montañoso en formaciones rocosas y traditions folclóricas coloniales.",
       atractivos: [
         { nombre: "La Ciudad de Dos Pisos (Boaco)", desc: "Recorrido a pie por sus empinadas gradas, parques a desnivel y miradores urbanos." },
         { nombre: "Piedra del Cuachilape en Camoapa", desc: "Imponente monolito rocoso ideal para el senderismo y la escalada." },
@@ -758,9 +878,18 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/chontales/2.jpg","/images/galeria-departamentos/chontales/3.jpg","/images/galeria-departamentos/chontales/4.jpg","/images/galeria-departamentos/chontales/5.jpg","/images/galeria-departamentos/chontales/6.jpg","/images/galeria-departamentos/chontales/7.jpg"],
     historia: {
       resumen: "Su nombre proviene del náhuatl 'Chondalli' (extranjero o montaraz). Región habitada por valientes tribus precolombinas que dejaron petroglifos y estatuas monolíticas únicas. Es el corazón de la cultura vaquera nicaragüense.",
+      origenEtimologico: "Del Náhuatl 'Chontalli', vocablo con el que las tribus del pacífico llamaban a los 'pueblos extranjeros o serranos'.",
       hitos: [
         { año: "1858", evento: "Creación del departamento de Chontales." },
         { año: "1965", evento: "Fundación del Museo Arqueológico Gregorio Aguilar Barea con estatuaria gigante." }
+      ],
+      personajes: [
+        { nombre: "Prof. Gregorio Aguilar Barea", titulo: "Arqueólogo e Historiador (1910-1970)", aporte: "Fundador del Museo Arqueológico de Juigalpa e impulsor de la preservación estatuaria monolítica." },
+        { nombre: "Guillermo Rothschuh Tablada", titulo: "Poeta de Amerrisque (1926-2022)", aporte: "Cantaor mayor de la comarca chontaleña y educador de generaciones de intelectuales nicaragüenses." }
+      ],
+      patrimonio: [
+        { sitio: "Museo Arqueológico Gregorio Aguilar Barea", epoca: "Precolombino (~500 d.C.)", desc: "Custodia la mayor colección del continente de estatuas antropomorfas esculpidas en basalto." },
+        { sitio: "Cordillera Sierra de Amerrisque", epoca: "Formación Geológica Prehistórica", desc: "Meseta rocosa sagrada para los antiguos chontales con abundantes petroglifos y miradores míticos." }
       ]
     },
     economia: {
@@ -814,10 +943,19 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/rio-san-juan/2.jpg","/images/galeria-departamentos/rio-san-juan/3.jpg","/images/galeria-departamentos/rio-san-juan/4.jpg","/images/galeria-departamentos/rio-san-juan/5.jpg","/images/galeria-departamentos/rio-san-juan/6.jpg","/images/galeria-departamentos/rio-san-juan/7.jpg"],
     historia: {
       resumen: "Corredor fluvial histórico que une el Gran Lago de Nicaragua con el Mar Caribe. En la época colonial fue la ruta elegida por exploradores y piratas. En 1762 la joven Rafaela Herrera defendió heroicamente la Fortaleza de El Castillo del ataque británico.",
+      origenEtimologico: "Bautizado en 1539 por Alonso Calero al navegar el 'Desaguadero del Lago' en la festividad de San Juan Bautista.",
       hitos: [
         { año: "1675", evento: "Construcción de la Fortaleza de la Inmaculada Concepción en El Castillo." },
-        { año: "1762", evento: "Gesta heroica de Rafaela Herrera repeliendo la invasión inglesa." },
+        { año: "1762", evento: "Gesta heroica de Rafaela Herrera repeliendo la invasión naval inglesa." },
         { año: "1977", evento: "Ernesto Cardenal funda la comunidad artística en el Archipiélago de Solentiname." }
+      ],
+      personajes: [
+        { nombre: "Rafaela Herrera", titulo: "Heroína de la Patria (1742-1805)", aporte: "Joven de 19 años que en 1762 lideró la artillería de la Fortaleza El Castillo derrotando a la armada británica." },
+        { nombre: "Ernesto Cardenal", titulo: "Poeta y Sacerdote (1925-2020)", aporte: "Fundador de la comunidad de Solentiname y promotor mundial de la pintura primitivista." }
+      ],
+      patrimonio: [
+        { sitio: "Fortaleza de la Inmaculada Concepción", epoca: "Colonial (1675)", desc: "Monumento Nacional. Castillo de piedra abaluartado erigido en la selva sobre los rápidos del río San Juan." },
+        { sitio: "Archipiélago de Solentiname", epoca: "Reserva Histórico-Cultural", desc: "Conjunto de 36 islas en el lago Cocibolca donde floreció el movimiento primitivista de pintura y artesanía." }
       ]
     },
     economia: {
@@ -871,10 +1009,19 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/raccn/2.jpg","/images/galeria-departamentos/raccn/3.jpg","/images/galeria-departamentos/raccn/4.jpg","/images/galeria-departamentos/raccn/5.jpg","/images/galeria-departamentos/raccn/6.jpeg","/images/galeria-departamentos/raccn/7.jpg"],
     historia: {
       resumen: "La región autónoma más extensa de Nicaragua. Hogar ancestral del pueblo Miskito, Mayangna y Creoles. Mantuvo un protectorado británico histórico que moldeó su idioma (miskito y criollo inglés) y sus tradiciones únicas.",
+      origenEtimologico: "Territorio soberano de la gran nación Miskita, Mayangna y Tuahka que mantuvo la independencia comunitaria durante siglos.",
       hitos: [
         { año: "1894", evento: "Reincorporación de la Mosquitia a la República de Nicaragua." },
         { año: "1987", evento: "Promulgación de la Ley de Autonomía de las Regiones de la Costa Caribe." },
-        { año: "1997", evento: "Declaración de la Reserva de Biosfera Bosawás como patrimonio mundial." }
+        { año: "1997", evento: "Declaración de la Reserva de Biosfera Bosawás como patrimonio mundial de la UNESCO." }
+      ],
+      personajes: [
+        { nombre: "Rey Robert Charles Frederic", titulo: "Monarca de la Mosquitia (1824-1842)", aporte: "Líder soberano que consolidó las alianzas territoriales e internacionales del pueblo miskito." },
+        { nombre: "Consejo de Ancianos Mayangnas", titulo: "Guardianes de Bosawás", aporte: "Autoridades comunitarias que preservan el conocimiento botánico y cosmológico de la nebliselva." }
+      ],
+      patrimonio: [
+        { sitio: "Reserva de Biosfera Bosawás", epoca: "Patrimonio Mundial UNESCO (1997)", desc: "El segundo pulmón tropical del continente americano y hogar ancestral de etnias autóctonas." },
+        { sitio: "Cayos Miskitos", epoca: "Reserva Biológica y Marina", desc: "Santuario caribeño de arrecifes de coral y praderas marinas donde se conservan las tradiciones de pesca indígena." }
       ]
     },
     economia: {
@@ -902,12 +1049,12 @@ export const DEPARTAMENTOS_DATA = {
       ]
     },
     lugaresImportantes: [
-      { nombre: "Reserva de Biosfera Bosawás", desc: "Hogar de jaguares, águilas harpía y bosques primarios virgenes.", imagen: "/images/departamentos/raccn-bosawas.png" },
+      { nombre: "Reserva de Biosfera Bosawás", desc: "Hogar de jaguares, águilas harpía y bosques primarios vírgenes.", imagen: "/images/departamentos/raccn-bosawas.png" },
       { nombre: "Cayos Miskitos", desc: "Reserva marina paradisíaca ideal para el buceo y la conservación de tortugas verdes.", imagen: "/images/departamentos/raccn-cayos.png" },
       { nombre: "Muelle de Bilwi", desc: "Estructura sobre el Caribe icono del comercio del norte caribeño.", imagen: "/images/departamentos/raccn-muelle.png" }
     ],
     actividades: [
-      { nombre: "King Pulanka", fecha: "Enero", desc: "Fiesta tradicional miskita que recrea la coronación del Rey Miskito con bailes e sátira." },
+      { nombre: "King Pulanka", fecha: "Enero", desc: "Fiesta tradicional miskita que recrea la coronación del Rey Miskito con bailes y sátira." },
       { nombre: "Fiestas del Palo de Mayo", fecha: "Mayo", desc: "Bailes afrocaribeños de fertilidad y bienvenida a las lluvias." }
     ]
   },
@@ -928,10 +1075,19 @@ export const DEPARTAMENTOS_DATA = {
     galeria: ["/images/galeria-departamentos/raccs/2.jpg","/images/galeria-departamentos/raccs/3.jpg","/images/galeria-departamentos/raccs/4.jpg","/images/galeria-departamentos/raccs/5.webp","/images/galeria-departamentos/raccs/6.jpg","/images/galeria-departamentos/raccs/7.jpg"],
     historia: {
       resumen: "Mosaico cultural fascinante habitado por seis pueblos (Creole, Miskito, Mestizo, Garífuna, Rama y Ulwa). Su cabecera Bluefields debe su nombre al pirata holandés Abraham Blauvelt. En 1841 se decretó la emancipación de la esclavitud en Corn Island.",
+      origenEtimologico: "Punto neurálgico del Caribe Sur habitado por seis pueblos hermanos (Creole, Miskito, Garífuna, Rama, Ulwa y Mestizo).",
       hitos: [
         { año: "1841", evento: "Decreto histórico de abolición de la esclavitud en Corn Island por el superintendente británico." },
         { año: "1987", evento: "Establecimiento de la Región Autónoma del Caribe Sur." },
         { año: "2019", evento: "Inauguración de la primera carretera pavimentada que une el Pacífico con Bluefields." }
+      ],
+      personajes: [
+        { nombre: "Abraham Blauvelt", titulo: "Corsario Neerlandés (Siglo XVII)", aporte: "Navegante holandés cuyos refugios costeros dieron origen a la fundación y nombre de Bluefields." },
+        { nombre: "Miss Lizzie Nelson", titulo: "Matriarca del Folclore (1925-2015)", aporte: "Embajadora cultural que preservó el baile y ritmos del Mayo Ya (Palo de Mayo) caribeño." }
+      ],
+      patrimonio: [
+        { sitio: "Monumento a la Emancipación en Corn Island", epoca: "Histórico (1841)", desc: "Conmemora la abolición definitiva de la esclavitud en las islas del caribe nicaragüense." },
+        { sitio: "Barrio Histórico de Cotton Tree", epoca: "Tradicional", desc: "Cuna de la cultura Creole de Bluefields con sus icónicas casonas de madera y festivales afrocaribeños." }
       ]
     },
     economia: {
