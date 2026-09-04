@@ -10,6 +10,7 @@ import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
 import { uploadMedia } from "@/lib/storage";
 import { DEPARTAMENTOS_DATA } from "@/data/departamentos-data";
+import { getCategorySvg } from "@/lib/imageUtils";
 
 const DEPARTAMENTOS_LIST = [
   "León", "Granada", "Rivas", "Masaya", "Matagalpa", "Jinotega", "Estelí",
@@ -1344,7 +1345,11 @@ export default function PerfilGuiaPage() {
                             boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
                           }}
                         >
-                          <span>{dest.icono || "📍"}</span>
+                          <img
+                            src={getCategorySvg(dest)}
+                            alt={dest.nombre}
+                            style={{ width: "14px", height: "14px", objectFit: "contain" }}
+                          />
                           <span>{dest.nombre}</span>
                           <span style={{ background: "rgba(14, 165, 233, 0.15)", color: "#0284C7", padding: "1px 5px", borderRadius: "10px", fontSize: "9px" }}>
                             {dest.departamento}
@@ -1440,8 +1445,23 @@ export default function PerfilGuiaPage() {
                       >
                         <div>
                           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "4px", marginBottom: "4px" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                              <span style={{ fontSize: "15px" }}>{dest.icono}</span>
+                            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                              <div style={{
+                                width: "24px",
+                                height: "24px",
+                                borderRadius: "6px",
+                                background: isSelected ? "rgba(16, 185, 129, 0.15)" : "rgba(14, 165, 233, 0.1)",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                flexShrink: 0
+                              }}>
+                                <img
+                                  src={getCategorySvg(dest)}
+                                  alt={dest.nombre}
+                                  style={{ width: "15px", height: "15px", objectFit: "contain" }}
+                                />
+                              </div>
                               <h4 style={{ margin: 0, fontSize: "11.5px", fontWeight: "800", color: "#0A192F", lineHeight: "1.2" }}>
                                 {dest.nombre}
                               </h4>

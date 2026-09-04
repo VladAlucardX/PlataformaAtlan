@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
+import { getCategorySvg } from "@/lib/imageUtils";
 
 // Guías turísticos de demostración con imágenes REALES del proyecto
 const MOCK_GUIAS = [
@@ -1100,7 +1101,11 @@ export default function GuiasPage() {
                             }}
                             title={lang === "en" ? `View ${dest.nombre} in detail` : `Ver ${dest.nombre} en el mapa`}
                           >
-                            <span style={{ fontSize: "12px" }}>{dest.icono}</span>
+                            <img
+                              src={getCategorySvg(dest)}
+                              alt={dest.nombre}
+                              style={{ width: "13px", height: "13px", objectFit: "contain" }}
+                            />
                             <span>{dest.nombre}</span>
                           </span>
                         ))}
@@ -1480,8 +1485,13 @@ export default function GuiasPage() {
                         {dest.imagen && (
                           <div style={styles.destinoMapaImageWrapper}>
                             <img src={dest.imagen} alt={dest.nombre} style={styles.destinoMapaImg} />
-                            <span style={styles.destinoMapaCategoryBadge}>
-                              {dest.icono} {dest.categoria}
+                            <span style={{ ...styles.destinoMapaCategoryBadge, display: "flex", alignItems: "center", gap: "4px" }}>
+                              <img
+                                src={getCategorySvg(dest)}
+                                alt={dest.nombre}
+                                style={{ width: "12px", height: "12px", objectFit: "contain", filter: "brightness(0) invert(1)" }}
+                              />
+                              <span>{dest.categoria}</span>
                             </span>
                           </div>
                         )}
