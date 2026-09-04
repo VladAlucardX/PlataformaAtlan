@@ -1037,7 +1037,7 @@ export default function MasDeNicaraguaPage() {
                           onClick={() => setLightboxIndex(-1)}
                           style={{
                             width: "100%",
-                            height: "254px",
+                            height: "288px",
                             borderRadius: "14px",
                             overflow: "hidden",
                             position: "relative",
