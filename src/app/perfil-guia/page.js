@@ -727,7 +727,7 @@ export default function PerfilGuiaPage() {
                 {/* CONTENIDO PRINCIPAL EN BLOQUES TIPO TARJETAS DASHBOARD */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1, minHeight: 0, overflowY: "auto", paddingRight: "4px" }}>
 
-                  {/* BLOQUE 1: DATOS CLAVE DE OPERACIÓN (2 FILAS X 2 COLUMNAS - TARIFA ABAJO DE ESPECIALIDAD!) */}
+                  {/* FILA 1: DEPARTAMENTO Y ESPECIALIDAD PRINCIPAL (2 COLUMNAS) */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", flexShrink: 0 }}>
                     <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px" }}>
                       <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px" }}>
@@ -760,11 +760,14 @@ export default function PerfilGuiaPage() {
                         ))}
                       </select>
                     </div>
+                  </div>
 
+                  {/* FILA 2: AÑOS EXP + TARIFA + WHATSAPP + LICENCIA (4 COLUMNAS EN UNA SOLA FILA COMPACTA) */}
+                  <div style={{ display: "grid", gridTemplateColumns: "0.7fr 1.3fr 1.1fr 1.1fr", gap: "8px", flexShrink: 0 }}>
                     <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px" }}>
-                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px" }}>
+                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                         <Icon name="calendar" size={13} color="#0EA5E9" />
-                        <span>Años de Experiencia</span>
+                        <span>Años Exp.</span>
                       </label>
                       <input
                         type="number"
@@ -777,9 +780,9 @@ export default function PerfilGuiaPage() {
                     </div>
 
                     <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px" }}>
-                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px" }}>
+                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                         <Icon name="tag" size={13} color="#10B981" />
-                        <span>Rango de Tarifa (/día)</span>
+                        <span>Rango Tarifa (/día)</span>
                       </label>
                       <select
                         value={
@@ -793,49 +796,9 @@ export default function PerfilGuiaPage() {
                         ))}
                       </select>
                     </div>
-                  </div>
-
-                  {/* BLOQUE 2: IDIOMAS Y CONTACTO */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr", gap: "8px", flexShrink: 0 }}>
-                    <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px" }}>
-                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
-                        <Icon name="globe" size={13} color="#0EA5E9" />
-                        <span>Idiomas que Dominas</span>
-                      </label>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: "3px" }}>
-                        {IDIOMAS_OPCIONES.map(langOpt => {
-                          const isSelected = guiaIdiomas
-                            ? guiaIdiomas.split(",").map(s => s.trim()).includes(langOpt)
-                            : langOpt === "Español";
-                          return (
-                            <button
-                              key={langOpt}
-                              type="button"
-                              onClick={() => toggleIdioma(langOpt)}
-                              style={{
-                                padding: "3px 8px",
-                                borderRadius: "6px",
-                                border: isSelected ? "1.5px solid #0EA5E9" : "1px solid #CBD5E1",
-                                background: isSelected ? "rgba(14, 165, 233, 0.12)" : "#FFFFFF",
-                                color: isSelected ? "#0284C7" : "#475569",
-                                fontSize: "11px",
-                                fontWeight: isSelected ? "800" : "600",
-                                cursor: "pointer",
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "3px"
-                              }}
-                            >
-                              <span>{isSelected ? "✓" : "+"}</span>
-                              <span>{langOpt}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
 
                     <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px" }}>
-                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px" }}>
+                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                         <Icon name="whatsapp" size={13} color="#25D366" />
                         <span>WhatsApp Directo</span>
                       </label>
@@ -849,7 +812,7 @@ export default function PerfilGuiaPage() {
                     </div>
 
                     <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px" }}>
-                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px" }}>
+                      <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                         <Icon name="shield" size={13} color="#10B981" />
                         <span>Licencia INTUR</span>
                       </label>
@@ -860,6 +823,45 @@ export default function PerfilGuiaPage() {
                         placeholder="Ej. INTUR-LE-2024-99"
                         style={{ width: "100%", padding: "6px 8px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12px", background: "#FFFFFF", fontWeight: "700" }}
                       />
+                    </div>
+                  </div>
+
+                  {/* FILA 3: IDIOMAS QUE DOMINAS (A LO LARGO - 1 COLUMNA ANCHA) */}
+                  <div style={{ background: "#F8FAFC", border: "1.5px solid #E2E8F0", borderRadius: "9px", padding: "7px 10px", flexShrink: 0 }}>
+                    <label style={{ fontSize: "11.5px", fontWeight: "800", color: "#334155", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                      <Icon name="globe" size={13} color="#0EA5E9" />
+                      <span>Idiomas que Dominas</span>
+                    </label>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+                      {IDIOMAS_OPCIONES.map(langOpt => {
+                        const isSelected = guiaIdiomas
+                          ? guiaIdiomas.split(",").map(s => s.trim()).includes(langOpt)
+                          : langOpt === "Español";
+                        return (
+                          <button
+                            key={langOpt}
+                            type="button"
+                            onClick={() => toggleIdioma(langOpt)}
+                            style={{
+                              padding: "3.5px 10px",
+                              borderRadius: "7px",
+                              border: isSelected ? "1.5px solid #0EA5E9" : "1px solid #CBD5E1",
+                              background: isSelected ? "rgba(14, 165, 233, 0.12)" : "#FFFFFF",
+                              color: isSelected ? "#0284C7" : "#475569",
+                              fontSize: "11.5px",
+                              fontWeight: isSelected ? "800" : "600",
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "4px",
+                              whiteSpace: "nowrap"
+                            }}
+                          >
+                            <span>{isSelected ? "✓" : "+"}</span>
+                            <span>{langOpt}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
