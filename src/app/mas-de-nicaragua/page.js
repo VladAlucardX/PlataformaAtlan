@@ -674,13 +674,55 @@ export default function MasDeNicaraguaPage() {
           position: "fixed",
           inset: 0,
           zIndex: 9999,
-          backgroundColor: "rgba(10, 25, 47, 0.92)",
-          backdropFilter: "blur(14px)",
+          backgroundColor: "#0A192F",
           padding: "85px 20px 20px",
           display: "flex",
           justifyContent: "center",
-          alignItems: "center"
+          alignItems: "center",
+          overflow: "hidden"
         }}>
+          {/* Capa de Fondo Izquierda en Pantalla: Frame 15 con dibujo original en el extremo izquierdo */}
+          <div style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            left: 0,
+            width: "50%",
+            backgroundImage: "url('/images/Frame 15.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "left center",
+            backgroundRepeat: "no-repeat",
+            pointerEvents: "none",
+            zIndex: 0
+          }} />
+
+          {/* Capa de Fondo Derecha en Pantalla: Frame 15 reflejado en el extremo derecho */}
+          <div style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            right: 0,
+            width: "50%",
+            backgroundImage: "url('/images/Frame 15.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "left center",
+            backgroundRepeat: "no-repeat",
+            transform: "scaleX(-1)",
+            pointerEvents: "none",
+            zIndex: 0
+          }} />
+
+          {/* Overlay de oscurecimiento sutil para el backdrop de pantalla */}
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            background: "rgba(10, 25, 47, 0.65)",
+            backdropFilter: "blur(6px)",
+            pointerEvents: "none",
+            zIndex: 0
+          }} />
+
+          {/* Tarjeta Modal (Restaurada al estilo oscuro original) */}
           <div style={{
             maxWidth: "1160px",
             width: "100%",
@@ -689,61 +731,20 @@ export default function MasDeNicaraguaPage() {
             display: "flex",
             flexDirection: "column",
             position: "relative",
-            background: "#0A192F",
-            border: "1.5px solid rgba(255, 215, 0, 0.4)",
+            zIndex: 1,
+            background: "rgba(15, 23, 42, 0.97)",
+            border: "1.5px solid rgba(255, 215, 0, 0.35)",
             borderRadius: "24px",
             boxShadow: "0 25px 60px rgba(0,0,0,0.85)",
             overflow: "hidden"
           }}>
-            {/* Capa de Fondo Izquierda: Frame 15 con dibujo original */}
+            {/* Header del Modal Completo Restaurado */}
             <div style={{
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              left: 0,
-              width: "50%",
-              backgroundImage: "url('/images/Frame 15.png')",
-              backgroundSize: "cover",
-              backgroundPosition: "left center",
-              backgroundRepeat: "no-repeat",
-              pointerEvents: "none",
-              zIndex: 0
-            }} />
-
-            {/* Capa de Fondo Derecha: Frame 15 reflejado horizontalmente */}
-            <div style={{
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              right: 0,
-              width: "50%",
-              backgroundImage: "url('/images/Frame 15.png')",
-              backgroundSize: "cover",
-              backgroundPosition: "left center",
-              backgroundRepeat: "no-repeat",
-              transform: "scaleX(-1)",
-              pointerEvents: "none",
-              zIndex: 0
-            }} />
-
-            {/* Tint/Oscurecimiento sutil para legibilidad impecable sobre la imagen Frame 15 */}
-            <div style={{
-              position: "absolute",
-              inset: 0,
-              background: "linear-gradient(180deg, rgba(10, 25, 47, 0.65) 0%, rgba(10, 25, 47, 0.78) 100%)",
-              backdropFilter: "blur(2px)",
-              pointerEvents: "none",
-              zIndex: 0
-            }} />
-
-            {/* Header del Modal Completo */}
-            <div style={{
-              background: "rgba(10, 25, 47, 0.4)",
+              background: "linear-gradient(180deg, rgba(20, 109, 158, 0.4) 0%, rgba(15, 23, 42, 1) 100%)",
               padding: "14px 20px 10px",
               position: "relative",
-              borderBottom: "1px solid rgba(255,255,255,0.12)",
-              flexShrink: 0,
-              zIndex: 1
+              borderBottom: "1px solid rgba(255,255,255,0.1)",
+              flexShrink: 0
             }}>
               {/* Botón de Cierre */}
               <button
@@ -817,12 +818,10 @@ export default function MasDeNicaraguaPage() {
             </div>
 
             {/* Selector de Pestañas Compacto */}
-            <div style={{ position: "relative", zIndex: 1 }}>
-              <DepartmentTabs activeTab={modalActiveTab} onSelectTab={setModalActiveTab} isModal={true} />
-            </div>
+            <DepartmentTabs activeTab={modalActiveTab} onSelectTab={setModalActiveTab} isModal={true} />
 
             {/* Cuerpo del Modal Scrollable Interno */}
-            <div style={{ padding: "18px 20px", flex: 1, overflowY: "auto", position: "relative", zIndex: 1 }}>
+            <div style={{ padding: "18px 20px", flex: 1, overflowY: "auto" }}>
 
               {/* 1. HISTORIA */}
               {modalActiveTab === "historia" && (
@@ -1026,18 +1025,11 @@ export default function MasDeNicaraguaPage() {
                     display: "grid",
                     gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
                     gap: "18px",
-                    alignItems: "stretch"
+                    alignItems: "start"
                   }}>
                     {/* Columna Izquierda: Galería Fotográfica de [Departamento] */}
                     {(selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard) && (
-                      <div style={{
-                        background: "rgba(255,255,255,0.03)",
-                        border: "1px solid rgba(236, 72, 153, 0.3)",
-                        borderRadius: "18px",
-                        padding: "14px",
-                        display: "flex",
-                        flexDirection: "column"
-                      }}>
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(236, 72, 153, 0.3)", borderRadius: "18px", padding: "14px" }}>
                         <h4 style={{ fontSize: "13px", fontWeight: "800", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                           <Icon name="image" size={16} color="#EC4899" />
                           <span>Galería Fotográfica de {selectedDeptForDetails.nombre}</span>
@@ -1046,8 +1038,7 @@ export default function MasDeNicaraguaPage() {
                           onClick={() => setLightboxIndex(-1)}
                           style={{
                             width: "100%",
-                            flex: 1,
-                            minHeight: "320px",
+                            height: "246px",
                             borderRadius: "14px",
                             overflow: "hidden",
                             position: "relative",
@@ -1209,9 +1200,7 @@ export default function MasDeNicaraguaPage() {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              gap: "12px",
-              position: "relative",
-              zIndex: 1
+              gap: "12px"
             }}>
               <button
                 onClick={() => {
