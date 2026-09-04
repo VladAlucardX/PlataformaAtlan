@@ -8,7 +8,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
 
-// Guías turísticos de demostración (fallback si Supabase aún no tiene registros)
+// Guías turísticos de demostración con Galería de Fotos de Travesías
 const MOCK_GUIAS = [
   {
     id: "guia-1",
@@ -28,13 +28,18 @@ const MOCK_GUIAS = [
     rating_promedio: 4.9,
     total_resenas: 34,
     activo: true,
+    galeria_fotos: [
+      "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=500&q=80", // Cerro negro / Montaña
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&q=80", // Cumbre volcánica
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500&q=80"  // Paisaje volcánico
+    ],
     resenas: [
       {
         id: "r1",
         autor_nombre: "Sarah Jenkins",
         autor_avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80",
         puntuacion: 5,
-        comentario: "¡Carlos fue insuperable en Cerro Negro! Nos cuidó en todo momento y nos contó la historia geológica fascinante de Nicaragua. 100% recomendado.",
+        comentario: "¡Carlos fue insuperable en Cerro Negro! Nos cuidó en todo momento y nos contó la historia geológica fascinante de Nicaragua.",
         created_at: "2026-08-15T10:30:00Z"
       },
       {
@@ -42,7 +47,7 @@ const MOCK_GUIAS = [
         autor_nombre: "Mateo Rivas",
         autor_avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80",
         puntuacion: 5,
-        comentario: "Excelente tour nocturno en el volcán Telica viendo la lava arder. Muy puntual, profesional y conoce los mejores spots fotográficos.",
+        comentario: "Excelente tour nocturno en el volcán Telica viendo la lava arder. Conoce los mejores spots fotográficos.",
         created_at: "2026-07-28T14:15:00Z"
       }
     ]
@@ -65,13 +70,18 @@ const MOCK_GUIAS = [
     rating_promedio: 5.0,
     total_resenas: 42,
     activo: true,
+    galeria_fotos: [
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80", // Colonial Granada
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500&q=80", // Isletas bote
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80"  // Lago Cocibolca
+    ],
     resenas: [
       {
         id: "r3",
         autor_nombre: "Lucía Fernández",
         autor_avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80",
         puntuacion: 5,
-        comentario: "Un recorrido cultural inolvidable por los templos y el Convento San Francisco. María transmite un amor contagioso por la historia nicaragüense.",
+        comentario: "Un recorrido cultural inolvidable por los templos y el Convento San Francisco. María transmite un amor contagioso por la historia.",
         created_at: "2026-08-20T11:00:00Z"
       }
     ]
@@ -94,6 +104,11 @@ const MOCK_GUIAS = [
     rating_promedio: 4.8,
     total_resenas: 27,
     activo: true,
+    galeria_fotos: [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80", // Ometepe isla
+      "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=500&q=80", // Playa San Juan
+      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500&q=80"  // Cascada San Ramón
+    ],
     resenas: [
       {
         id: "r4",
@@ -123,6 +138,11 @@ const MOCK_GUIAS = [
     rating_promedio: 4.9,
     total_resenas: 39,
     activo: true,
+    galeria_fotos: [
+      "https://images.unsplash.com/photo-1448375240586-882707db888b?w=500&q=80", // Bosque nuboso
+      "https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=500&q=80", // Ave quetzal / ornitología
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=500&q=80"  // Finca café
+    ],
     resenas: [
       {
         id: "r5",
@@ -133,26 +153,6 @@ const MOCK_GUIAS = [
         created_at: "2026-07-12T09:20:00Z"
       }
     ]
-  },
-  {
-    id: "guia-5",
-    nombre_completo: "Nestor Moncada",
-    avatar_url: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&q=80",
-    departamento_principal: "Masaya",
-    departamentos_secundarios: ["Carazo", "Granada"],
-    especialidad: "Gastronomía Tradicional",
-    idiomas: "Español, Inglés",
-    experiencia_anios: 7,
-    tarifa_aprox: "$25 - $40 / día",
-    biografia: "Apasionado por el folclore y los sabores auténticos de Masaya y los Pueblos Blancos. Experto en recorridos artesanales por Monimbó, Catarina, San Juan de Oriente y avistamiento del lago de lava en el Volcán Masaya.",
-    telefono_contacto: "+505 8633 2211",
-    whatsapp: "50586332211",
-    instagram: "@nestor_masaya_tradicion",
-    licencia_intur: "INTUR-MS-2019-722",
-    rating_promedio: 4.7,
-    total_resenas: 19,
-    activo: true,
-    resenas: []
   }
 ];
 
@@ -184,10 +184,11 @@ export default function GuiasPage() {
   const [selectedDept, setSelectedDept] = useState("Todos");
   const [selectedEspecialidad, setSelectedEspecialidad] = useState("Todas");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("rating"); // 'rating' | 'experiencia'
+  const [sortBy, setSortBy] = useState("rating");
 
   // Modal de Detalle de Guía
   const [selectedGuiaModal, setSelectedGuiaModal] = useState(null);
+  const [activeModalTab, setActiveModalTab] = useState("info"); // 'info' | 'galeria' | 'resenas'
 
   // Formulario de Reseña
   const [newRating, setNewRating] = useState(5);
@@ -206,16 +207,15 @@ export default function GuiasPage() {
           .eq("activo", true);
 
         if (!error && data && data.length > 0) {
-          // Mapear datos formateados
           const formatted = data.map((g) => ({
             ...g,
             nombre_completo: g.perfiles?.nombre_completo || g.nombre_completo || "Guía Turístico",
             avatar_url: g.perfiles?.avatar_url || g.avatar_url || "/images/perfil.svg",
-            resenas: g.resenas || []
+            resenas: g.resenas || [],
+            galeria_fotos: g.galeria_fotos || []
           }));
           setGuias(formatted);
         } else {
-          // Usar mock si la tabla está vacía o no ha sido creada aún
           setGuias(MOCK_GUIAS);
         }
       } catch (err) {
@@ -230,7 +230,6 @@ export default function GuiasPage() {
 
   // Filtrado y ordenamiento de guías
   const guiasFiltrados = guias.filter((guia) => {
-    // Filtro departamento
     const matchDept =
       selectedDept === "Todos" ||
       guia.departamento_principal?.toLowerCase() === selectedDept.toLowerCase() ||
@@ -239,12 +238,10 @@ export default function GuiasPage() {
           (d) => d.toLowerCase() === selectedDept.toLowerCase()
         ));
 
-    // Filtro especialidad
     const matchEspec =
       selectedEspecialidad === "Todas" ||
       guia.especialidad?.toLowerCase().includes(selectedEspecialidad.toLowerCase());
 
-    // Buscador general
     const q = searchQuery.trim().toLowerCase();
     const matchQuery =
       !q ||
@@ -279,7 +276,6 @@ export default function GuiasPage() {
     };
 
     try {
-      // Intentar guardar en Supabase
       await supabase.from("resenas_guias").insert({
         guia_id: selectedGuiaModal.id,
         autor_id: session?.user?.id,
@@ -287,10 +283,9 @@ export default function GuiasPage() {
         comentario: newComment.trim()
       });
     } catch (err) {
-      console.warn("Notice: Saved review to local state (Supabase table not sync yet):", err);
+      console.warn("Notice: Saved review to local state:", err);
     }
 
-    // Actualizar estado local
     setGuias((prevGuias) =>
       prevGuias.map((g) => {
         if (g.id === selectedGuiaModal.id) {
@@ -306,7 +301,6 @@ export default function GuiasPage() {
             rating_promedio: nuevoPromedio
           };
 
-          // Actualizar también el modal seleccionado
           setSelectedGuiaModal(guiaActualizado);
           return guiaActualizado;
         }
@@ -324,60 +318,64 @@ export default function GuiasPage() {
     <div style={styles.pageWrapper}>
       <Navbar activePage="guias" />
 
-      {/* HERO BANNER DE GUÍAS TURÍSTICOS */}
-      <section style={styles.heroSection}>
-        <div style={styles.heroGlowLeft} />
-        <div style={styles.heroGlowRight} />
+      {/* ELEMENTOS DE FONDO SVG (MARCA DE AGUA EMBLEMÁTICA DE NICARAGUA) */}
+      <img
+        src="/images/guardabarranco.svg"
+        alt=""
+        style={styles.bgSvgGuardabarranco}
+      />
+      <img
+        src="/images/tortuga.svg"
+        alt=""
+        style={styles.bgSvgTortuga}
+      />
+      <img
+        src="/images/gueguense.svg"
+        alt=""
+        style={styles.bgSvgGueguense}
+      />
 
-        <div style={styles.heroContent}>
-          <div style={styles.badgeHero}>
-            <Icon name="compass" size={16} color="#38BDF8" />
-            <span>{lang === "en" ? "Official Guide Catalogue" : "Directorio Nacional de Guías"}</span>
+      {/* HERO BANNER DE ALTO COMPACTO Y DISEÑO ANCHO */}
+      <section style={styles.heroSectionCompact}>
+        <div style={styles.heroGlowLeft} />
+
+        <div style={styles.heroContentWide}>
+          <div style={styles.topMetaHeader}>
+            <div style={styles.badgeHeroCompact}>
+              <Icon name="compass" size={15} color="#38BDF8" />
+              <span>{lang === "en" ? "Official Guide Catalogue" : "Directorio Nacional de Guías Turísticos"}</span>
+            </div>
+
+            {/* Quick Stats Pill */}
+            <div style={styles.statsRowCompact}>
+              <span style={styles.statPill}><b>17</b> {lang === "en" ? "Depts" : "Departamentos"}</span>
+              <span style={styles.statDividerDot}>•</span>
+              <span style={{ ...styles.statPill, color: "#FFD700" }}><b>4.9 ★</b> {lang === "en" ? "Rating" : "Promedio"}</span>
+              <span style={styles.statDividerDot}>•</span>
+              <span style={{ ...styles.statPill, color: "#10B981" }}><b>100%</b> {lang === "en" ? "Verified" : "Verificados INTUR"}</span>
+            </div>
           </div>
 
-          <h1 style={styles.heroTitle}>
+          <h1 style={styles.heroTitleCompact}>
             {lang === "en" ? "Explore Nicaragua with Expert Local Guides" : "Explora Nicaragua con Guías Turísticos Locales"}
           </h1>
-
-          <p style={styles.heroSubtitle}>
-            {lang === "en"
-              ? "Connect with certified guides in volcanoes, hiking, culture, birdwatching, and gastronomy across all 17 departments."
-              : "Conecta con guías experimentados en volcanes, senderismo, cultura, avistamiento de aves y ecoturismo en los 17 departamentos."}
-          </p>
-
-          {/* Tarjetas de Estadísticas Rápida */}
-          <div style={styles.statsRow}>
-            <div style={styles.statBox}>
-              <span style={styles.statNum}>17</span>
-              <span style={styles.statLabel}>{lang === "en" ? "Departments" : "Departamentos"}</span>
-            </div>
-            <div style={styles.statDivider} />
-            <div style={styles.statBox}>
-              <span style={{ ...styles.statNum, color: "#38BDF8" }}>4.9 ★</span>
-              <span style={styles.statLabel}>{lang === "en" ? "Average Rating" : "Calificación Promedio"}</span>
-            </div>
-            <div style={styles.statDivider} />
-            <div style={styles.statBox}>
-              <span style={{ ...styles.statNum, color: "#10B981" }}>100%</span>
-              <span style={styles.statLabel}>{lang === "en" ? "Local Expertise" : "Experiencia Local"}</span>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* FILTROS Y BÚSQUEDA */}
-      <main style={styles.mainContainer}>
-        <div style={styles.filterCard} className="clay-card-static no-sheen">
-          {/* Barra Superior: Buscador y Ordenamiento */}
-          <div style={styles.filterTopRow}>
-            <div style={styles.searchBox}>
-              <Icon name="search" size={18} color="#64748B" />
+      {/* FILTROS Y CONTENEDOR ANCHO */}
+      <main style={styles.mainContainerWide}>
+        {/* BARRA DE FILTROS DELGADA Y HORIZONTAL */}
+        <div style={styles.filterBarSlim} className="clay-card-static no-sheen">
+          {/* Fila 1: Buscador + Ordenar */}
+          <div style={styles.filterRow1}>
+            <div style={styles.searchBoxSlim}>
+              <Icon name="search" size={16} color="#0EA5E9" />
               <input
                 type="text"
                 placeholder={lang === "en" ? "Search guide by name, city or volcano..." : "Buscar guía por nombre, especialidad o ciudad..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                style={styles.searchInput}
+                style={styles.searchInputSlim}
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery("")} style={styles.clearSearchBtn}>
@@ -386,81 +384,82 @@ export default function GuiasPage() {
               )}
             </div>
 
-            <div style={styles.sortBox}>
-              <span style={styles.sortLabel}>{lang === "en" ? "Sort by:" : "Ordenar por:"}</span>
+            <div style={styles.sortBoxSlim}>
+              <span style={styles.sortLabelSlim}>{lang === "en" ? "Sort:" : "Ordenar:"}</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                style={styles.selectInput}
+                style={styles.selectInputSlim}
               >
                 <option value="rating">{lang === "en" ? "Best Rating" : "Mejor Calificación"}</option>
-                <option value="experiencia">{lang === "en" ? "Years of Experience" : "Años de Experiencia"}</option>
+                <option value="experiencia">{lang === "en" ? "Experience" : "Más Experiencia"}</option>
               </select>
             </div>
           </div>
 
-          {/* Filtro 1: Departamentos en Pills desplazables */}
-          <div style={styles.filterPillsSection}>
-            <span style={styles.filterPillsTitle}>
-              <Icon name="mapPin" size={14} color="#0EA5E9" />
-              {lang === "en" ? "Department:" : "Departamento:"}
-            </span>
-            <div style={styles.pillsScrollContainer}>
-              {DEPARTAMENTOS_LIST.map((dept) => {
-                const isActive = selectedDept.toLowerCase() === dept.toLowerCase();
-                return (
-                  <button
-                    key={dept}
-                    onClick={() => setSelectedDept(dept)}
-                    style={{
-                      ...styles.pillBtn,
-                      border: isActive ? "1.5px solid #0EA5E9" : "1px solid rgba(255, 255, 255, 0.15)",
-                      background: isActive ? "rgba(14, 165, 233, 0.2)" : "rgba(15, 23, 42, 0.6)",
-                      color: isActive ? "#38BDF8" : "#94A3B8",
-                      fontWeight: isActive ? "800" : "600",
-                    }}
-                  >
-                    {dept}
-                  </button>
-                );
-              })}
+          {/* Fila 2: Pills de Departamentos y Especialidades */}
+          <div style={styles.filterRow2}>
+            {/* Departamentos */}
+            <div style={styles.pillsScrollWrapper}>
+              <span style={styles.pillsLabel}>
+                <Icon name="mapPin" size={13} color="#0EA5E9" />
+              </span>
+              <div style={styles.pillsScrollContainer}>
+                {DEPARTAMENTOS_LIST.map((dept) => {
+                  const isActive = selectedDept.toLowerCase() === dept.toLowerCase();
+                  return (
+                    <button
+                      key={dept}
+                      onClick={() => setSelectedDept(dept)}
+                      style={{
+                        ...styles.pillBtnSlim,
+                        border: isActive ? "1.5px solid #0EA5E9" : "1px solid rgba(255, 255, 255, 0.12)",
+                        background: isActive ? "rgba(14, 165, 233, 0.25)" : "rgba(15, 23, 42, 0.7)",
+                        color: isActive ? "#38BDF8" : "#94A3B8",
+                        fontWeight: isActive ? "800" : "600",
+                      }}
+                    >
+                      {dept}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
-          {/* Filtro 2: Especialidad */}
-          <div style={styles.filterPillsSection}>
-            <span style={styles.filterPillsTitle}>
-              <Icon name="tag" size={14} color="#FFD700" />
-              {lang === "en" ? "Specialty:" : "Especialidad:"}
-            </span>
-            <div style={styles.pillsScrollContainer}>
-              {ESPECIALIDADES_LIST.map((esp) => {
-                const isActive = selectedEspecialidad.toLowerCase() === esp.toLowerCase();
-                return (
-                  <button
-                    key={esp}
-                    onClick={() => setSelectedEspecialidad(esp)}
-                    style={{
-                      ...styles.pillBtn,
-                      border: isActive ? "1.5px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.15)",
-                      background: isActive ? "rgba(255, 215, 0, 0.18)" : "rgba(15, 23, 42, 0.6)",
-                      color: isActive ? "#FFD700" : "#94A3B8",
-                      fontWeight: isActive ? "800" : "600",
-                    }}
-                  >
-                    {esp}
-                  </button>
-                );
-              })}
+            {/* Especialidad */}
+            <div style={styles.pillsScrollWrapper}>
+              <span style={styles.pillsLabel}>
+                <Icon name="tag" size={13} color="#FFD700" />
+              </span>
+              <div style={styles.pillsScrollContainer}>
+                {ESPECIALIDADES_LIST.map((esp) => {
+                  const isActive = selectedEspecialidad.toLowerCase() === esp.toLowerCase();
+                  return (
+                    <button
+                      key={esp}
+                      onClick={() => setSelectedEspecialidad(esp)}
+                      style={{
+                        ...styles.pillBtnSlim,
+                        border: isActive ? "1.5px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.12)",
+                        background: isActive ? "rgba(255, 215, 0, 0.2)" : "rgba(15, 23, 42, 0.7)",
+                        color: isActive ? "#FFD700" : "#94A3B8",
+                        fontWeight: isActive ? "800" : "600",
+                      }}
+                    >
+                      {esp}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
 
         {/* CONTADOR DE RESULTADOS */}
-        <div style={styles.resultsHeader}>
-          <h2 style={styles.resultsTitle}>
-            {lang === "en" ? "Available Tour Guides" : "Guías Turísticos Disponibles"}
-            <span style={styles.resultsBadge}>{guiasFiltrados.length}</span>
+        <div style={styles.resultsHeaderSlim}>
+          <h2 style={styles.resultsTitleSlim}>
+            {lang === "en" ? "Available Guides" : "Guías Turísticos Disponibles"}
+            <span style={styles.resultsBadgeSlim}>{guiasFiltrados.length}</span>
           </h2>
           {(selectedDept !== "Todos" || selectedEspecialidad !== "Todas" || searchQuery) && (
             <button
@@ -469,132 +468,161 @@ export default function GuiasPage() {
                 setSelectedEspecialidad("Todas");
                 setSearchQuery("");
               }}
-              style={styles.resetFiltersBtn}
+              style={styles.resetFiltersBtnSlim}
             >
-              <Icon name="x" size={14} />
+              <Icon name="x" size={13} />
               {lang === "en" ? "Clear Filters" : "Limpiar Filtros"}
             </button>
           )}
         </div>
 
-        {/* REJILLA DE TARJETAS DE GUÍAS */}
+        {/* REJILLA DE TARJETAS HORIZONTALES DE GUÍAS (DISEÑO A LO ANCHO) */}
         {guiasFiltrados.length === 0 ? (
-          <div style={styles.emptyState}>
-            <Icon name="compass" size={48} color="#475569" />
-            <h3 style={styles.emptyTitle}>
+          <div style={styles.emptyStateSlim}>
+            <Icon name="compass" size={42} color="#475569" />
+            <h3 style={styles.emptyTitleSlim}>
               {lang === "en" ? "No tour guides found" : "No se encontraron guías turísticos"}
             </h3>
-            <p style={styles.emptySubtitle}>
+            <p style={styles.emptySubtitleSlim}>
               {lang === "en"
                 ? "Try selecting another department or clearing search filters."
                 : "Intenta seleccionando otro departamento o limpiando los filtros de búsqueda."}
             </p>
           </div>
         ) : (
-          <div style={styles.guidesGrid}>
+          <div style={styles.guidesGridWide}>
             {guiasFiltrados.map((guia) => (
               <div
                 key={guia.id}
-                style={styles.guideCard}
+                style={styles.guideCardWide}
                 className="clay-card-static no-sheen guide-card-hover"
               >
-                {/* Header de la tarjeta */}
-                <div style={styles.cardHeader}>
-                  <div style={styles.avatarWrapper}>
-                    <img
-                      src={guia.avatar_url}
-                      alt={guia.nombre_completo}
-                      style={styles.avatarImg}
-                    />
-                    <div style={styles.verifiedIcon} title="Guía Certificado INTUR">
-                      <Icon name="checkCircle" size={14} color="#FFFFFF" />
-                    </div>
-                  </div>
-
-                  <div style={styles.headerInfo}>
-                    <div style={styles.deptBadge}>
-                      <Icon name="mapPin" size={12} color="#0EA5E9" />
-                      <span>{guia.departamento_principal}</span>
-                    </div>
-
-                    <h3 style={styles.guideName}>{guia.nombre_completo}</h3>
-
-                    {/* Rating con Flor de Sacuanjoche/Estrella */}
-                    <div style={styles.ratingRow}>
-                      <div style={styles.starsBox}>
-                        <span style={{ color: "#FFD700", fontWeight: "900", fontSize: "14px" }}>★</span>
-                        <span style={styles.ratingValue}>{guia.rating_promedio}</span>
+                {/* Columna Izquierda: Información de Guía */}
+                <div style={styles.guideCardMainInfo}>
+                  <div style={styles.cardHeaderHorizontal}>
+                    <div style={styles.avatarWrapperWide}>
+                      <img
+                        src={guia.avatar_url}
+                        alt={guia.nombre_completo}
+                        style={styles.avatarImgWide}
+                      />
+                      <div style={styles.verifiedBadgeIcon} title="Guía INTUR Certificado">
+                        <Icon name="checkCircle" size={13} color="#FFFFFF" />
                       </div>
-                      <span style={styles.reviewsCount}>({guia.total_resenas} {lang === "en" ? "reviews" : "reseñas"})</span>
+                    </div>
+
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "2px" }}>
+                        <span style={styles.deptBadgeSlim}>
+                          <Icon name="mapPin" size={11} color="#0EA5E9" />
+                          {guia.departamento_principal}
+                        </span>
+                        {guia.licencia_intur && (
+                          <span style={styles.licenseBadgeSlim}>INTUR</span>
+                        )}
+                      </div>
+
+                      <h3 style={styles.guideNameWide}>{guia.nombre_completo}</h3>
+
+                      <div style={styles.ratingRowWide}>
+                        <span style={{ color: "#FFD700", fontWeight: "900", fontSize: "14px" }}>★</span>
+                        <span style={styles.ratingValueWide}>{guia.rating_promedio}</span>
+                        <span style={styles.reviewsCountWide}>({guia.total_resenas} {lang === "en" ? "reviews" : "reseñas"})</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Etiquetas de especialidad e idioma */}
+                  <div style={styles.detailsRowSlim}>
+                    <span style={styles.tagChip}>
+                      <Icon name="tag" size={12} color="#0EA5E9" />
+                      {guia.especialidad}
+                    </span>
+                    <span style={styles.tagChip}>
+                      <Icon name="globe" size={12} color="#FFD700" />
+                      {guia.idiomas}
+                    </span>
+                    <span style={styles.tagChip}>
+                      <Icon name="clock" size={12} color="#10B981" />
+                      {guia.experiencia_anios} {lang === "en" ? "yrs exp" : "años exp"}
+                    </span>
+                  </div>
+
+                  <p style={styles.bioSnippetWide}>
+                    {guia.biografia?.length > 110
+                      ? guia.biografia.substring(0, 110) + "..."
+                      : guia.biografia}
+                  </p>
+
+                  {/* Footer de Tarjeta: Tarifa y Botones de Acción */}
+                  <div style={styles.cardFooterWide}>
+                    <div style={styles.priceBoxSlim}>
+                      <span style={styles.priceLabelSlim}>{lang === "en" ? "Rate" : "Tarifa aprox."}</span>
+                      <span style={styles.priceValueSlim}>{guia.tarifa_aprox || "$25/día"}</span>
+                    </div>
+
+                    <div style={styles.actionButtonsGroupSlim}>
+                      {guia.whatsapp && (
+                        <a
+                          href={`https://wa.me/${guia.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${guia.nombre_completo}! Te vi en Plataforma Atlan y me gustaría consultar tu disponibilidad para un tour en ${guia.departamento_principal}.`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={styles.whatsappBtnSlim}
+                          title="Contactar por WhatsApp"
+                        >
+                          <Icon name="whatsapp" size={17} color="#FFFFFF" />
+                        </a>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          setSelectedGuiaModal(guia);
+                          setActiveModalTab("info");
+                        }}
+                        style={styles.detailsBtnSlim}
+                      >
+                        <span>{lang === "en" ? "Details & Photos" : "Ver Detalle y Fotos"}</span>
+                        <Icon name="chevronRight" size={13} />
+                      </button>
                     </div>
                   </div>
                 </div>
 
-                {/* Especialidad & Idiomas */}
-                <div style={styles.detailsRow}>
-                  <div style={styles.detailItem}>
-                    <Icon name="tag" size={13} color="#CBD5E1" />
-                    <span style={styles.detailText}>{guia.especialidad}</span>
+                {/* Columna Derecha: Tira de Galería de Travesías (Vista Previa de Fotos del Guía) */}
+                {guia.galeria_fotos && guia.galeria_fotos.length > 0 && (
+                  <div style={styles.travesiaStripRight}>
+                    <div style={styles.travesiaStripHeader}>
+                      <Icon name="image" size={12} color="#38BDF8" />
+                      <span>Travesías ({guia.galeria_fotos.length})</span>
+                    </div>
+                    <div style={styles.travesiaImagesGrid}>
+                      {guia.galeria_fotos.slice(0, 3).map((imgUrl, i) => (
+                        <div
+                          key={i}
+                          style={styles.travesiaThumbBox}
+                          onClick={() => {
+                            setSelectedGuiaModal(guia);
+                            setActiveModalTab("galeria");
+                          }}
+                          title="Ver foto de travesía"
+                        >
+                          <img src={imgUrl} alt={`Travesía ${i + 1}`} style={styles.travesiaThumbImg} />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div style={styles.detailItem}>
-                    <Icon name="globe" size={13} color="#CBD5E1" />
-                    <span style={styles.detailText}>{guia.idiomas}</span>
-                  </div>
-                  <div style={styles.detailItem}>
-                    <Icon name="clock" size={13} color="#CBD5E1" />
-                    <span style={styles.detailText}>{guia.experiencia_anios} {lang === "en" ? "years experience" : "años de experiencia"}</span>
-                  </div>
-                </div>
-
-                {/* Biografía corta */}
-                <p style={styles.bioSnippet}>
-                  {guia.biografia?.length > 130
-                    ? guia.biografia.substring(0, 130) + "..."
-                    : guia.biografia}
-                </p>
-
-                {/* Footer de Tarjeta: Tarifa y Botones de Acción */}
-                <div style={styles.cardFooter}>
-                  <div style={styles.priceBox}>
-                    <span style={styles.priceLabel}>{lang === "en" ? "Approx Rate" : "Tarifa aprox."}</span>
-                    <span style={styles.priceValue}>{guia.tarifa_aprox || "$25/día"}</span>
-                  </div>
-
-                  <div style={styles.actionButtonsGroup}>
-                    {/* Botón WhatsApp */}
-                    {guia.whatsapp && (
-                      <a
-                        href={`https://wa.me/${guia.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${guia.nombre_completo}! Te vi en Plataforma Atlan y me gustaría consultar tu disponibilidad para un tour en ${guia.departamento_principal}.`)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={styles.whatsappBtn}
-                        title="Contactar por WhatsApp"
-                      >
-                        <Icon name="whatsapp" size={18} color="#FFFFFF" />
-                      </a>
-                    )}
-
-                    {/* Botón Ver Detalle */}
-                    <button
-                      onClick={() => setSelectedGuiaModal(guia)}
-                      style={styles.detailsBtn}
-                    >
-                      <span>{lang === "en" ? "View Profile" : "Ver Detalle"}</span>
-                      <Icon name="chevronRight" size={14} />
-                    </button>
-                  </div>
-                </div>
+                )}
               </div>
             ))}
           </div>
         )}
       </main>
 
-      {/* MODAL DETALLADO DEL GUÍA TURÍSTICO */}
+      {/* MODAL EXTENDIDO DEL GUÍA CON PESTAÑAS (INFO, GALERÍA DE TRAVESÍAS, RESEÑAS) */}
       {selectedGuiaModal && (
         <div style={styles.modalOverlay} onClick={() => setSelectedGuiaModal(null)}>
           <div
-            style={styles.modalCard}
+            style={styles.modalCardWide}
             className="clay-card-static no-sheen animate-fade-in-up"
             onClick={(e) => e.stopPropagation()}
           >
@@ -607,11 +635,11 @@ export default function GuiasPage() {
             </button>
 
             {/* Cabecera Modal */}
-            <div style={styles.modalHeader}>
+            <div style={styles.modalHeaderWide}>
               <img
                 src={selectedGuiaModal.avatar_url}
                 alt={selectedGuiaModal.nombre_completo}
-                style={styles.modalAvatar}
+                style={styles.modalAvatarWide}
               />
 
               <div>
@@ -625,7 +653,7 @@ export default function GuiasPage() {
                   )}
                 </div>
 
-                <h2 style={styles.modalGuideName}>{selectedGuiaModal.nombre_completo}</h2>
+                <h2 style={styles.modalGuideNameWide}>{selectedGuiaModal.nombre_completo}</h2>
 
                 <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "4px" }}>
                   <div style={styles.starsBox}>
@@ -641,158 +669,221 @@ export default function GuiasPage() {
               </div>
             </div>
 
-            {/* Biografía e Información */}
-            <div style={styles.modalSection}>
-              <h4 style={styles.modalSectionTitle}>{lang === "en" ? "About this Guide" : "Acerca del Guía"}</h4>
-              <p style={styles.modalBioText}>{selectedGuiaModal.biografia}</p>
-            </div>
-
-            {/* Ficha técnica */}
-            <div style={styles.modalTechGrid}>
-              <div style={styles.techItem}>
-                <span style={styles.techLabel}>{lang === "en" ? "Specialty" : "Especialidad"}</span>
-                <span style={styles.techValue}>{selectedGuiaModal.especialidad}</span>
-              </div>
-              <div style={styles.techItem}>
-                <span style={styles.techLabel}>{lang === "en" ? "Languages" : "Idiomas"}</span>
-                <span style={styles.techValue}>{selectedGuiaModal.idiomas}</span>
-              </div>
-              <div style={styles.techItem}>
-                <span style={styles.techLabel}>{lang === "en" ? "Experience" : "Experiencia"}</span>
-                <span style={styles.techValue}>{selectedGuiaModal.experiencia_anios} {lang === "en" ? "Years" : "Años"}</span>
-              </div>
-              <div style={styles.techItem}>
-                <span style={styles.techLabel}>{lang === "en" ? "Approx Rate" : "Tarifa Aprox."}</span>
-                <span style={{ ...styles.techValue, color: "#10B981" }}>{selectedGuiaModal.tarifa_aprox || "$30 / día"}</span>
-              </div>
-            </div>
-
-            {/* Botón directo de Contacto por WhatsApp */}
-            {selectedGuiaModal.whatsapp && (
-              <a
-                href={`https://wa.me/${selectedGuiaModal.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${selectedGuiaModal.nombre_completo}! Te encontré en Plataforma Atlan y me gustaría consultar disponibilidad para contratar un tour.`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={styles.modalWhatsappBanner}
+            {/* Pestañas del Modal: Información | Galería de Travesías | Reseñas */}
+            <div style={styles.modalTabsRow}>
+              <button
+                onClick={() => setActiveModalTab("info")}
+                style={{
+                  ...styles.modalTabBtn,
+                  borderBottom: activeModalTab === "info" ? "2.5px solid #0EA5E9" : "none",
+                  color: activeModalTab === "info" ? "#38BDF8" : "#94A3B8",
+                  fontWeight: activeModalTab === "info" ? "800" : "600"
+                }}
               >
-                <Icon name="whatsapp" size={22} color="#FFFFFF" />
-                <span>{lang === "en" ? "Contact via WhatsApp Now" : "Contactar por WhatsApp Ahora"}</span>
-              </a>
+                <Icon name="user" size={14} />
+                <span>{lang === "en" ? "Profile Info" : "Perfil y Datos"}</span>
+              </button>
+
+              <button
+                onClick={() => setActiveModalTab("galeria")}
+                style={{
+                  ...styles.modalTabBtn,
+                  borderBottom: activeModalTab === "galeria" ? "2.5px solid #38BDF8" : "none",
+                  color: activeModalTab === "galeria" ? "#38BDF8" : "#94A3B8",
+                  fontWeight: activeModalTab === "galeria" ? "800" : "600"
+                }}
+              >
+                <Icon name="image" size={14} />
+                <span>{lang === "en" ? "Tour Gallery" : "Galería de Travesías"} ({selectedGuiaModal.galeria_fotos?.length || 0})</span>
+              </button>
+
+              <button
+                onClick={() => setActiveModalTab("resenas")}
+                style={{
+                  ...styles.modalTabBtn,
+                  borderBottom: activeModalTab === "resenas" ? "2.5px solid #FFD700" : "none",
+                  color: activeModalTab === "resenas" ? "#FFD700" : "#94A3B8",
+                  fontWeight: activeModalTab === "resenas" ? "800" : "600"
+                }}
+              >
+                <Icon name="star" size={14} />
+                <span>{lang === "en" ? "Reviews" : "Reseñas"} ({selectedGuiaModal.total_resenas || 0})</span>
+              </button>
+            </div>
+
+            {/* PESTAÑA 1: INFORMACIÓN Y DATOS */}
+            {activeModalTab === "info" && (
+              <div style={{ marginTop: "16px" }}>
+                <div style={styles.modalSection}>
+                  <h4 style={styles.modalSectionTitle}>{lang === "en" ? "About this Guide" : "Acerca del Guía"}</h4>
+                  <p style={styles.modalBioText}>{selectedGuiaModal.biografia}</p>
+                </div>
+
+                <div style={styles.modalTechGridWide}>
+                  <div style={styles.techItem}>
+                    <span style={styles.techLabel}>{lang === "en" ? "Specialty" : "Especialidad"}</span>
+                    <span style={styles.techValue}>{selectedGuiaModal.especialidad}</span>
+                  </div>
+                  <div style={styles.techItem}>
+                    <span style={styles.techLabel}>{lang === "en" ? "Languages" : "Idiomas"}</span>
+                    <span style={styles.techValue}>{selectedGuiaModal.idiomas}</span>
+                  </div>
+                  <div style={styles.techItem}>
+                    <span style={styles.techLabel}>{lang === "en" ? "Experience" : "Experiencia"}</span>
+                    <span style={styles.techValue}>{selectedGuiaModal.experiencia_anios} {lang === "en" ? "Years" : "Años"}</span>
+                  </div>
+                  <div style={styles.techItem}>
+                    <span style={styles.techLabel}>{lang === "en" ? "Approx Rate" : "Tarifa Aprox."}</span>
+                    <span style={{ ...styles.techValue, color: "#10B981" }}>{selectedGuiaModal.tarifa_aprox || "$30 / día"}</span>
+                  </div>
+                </div>
+
+                {selectedGuiaModal.whatsapp && (
+                  <a
+                    href={`https://wa.me/${selectedGuiaModal.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${selectedGuiaModal.nombre_completo}! Te encontré en Plataforma Atlan y me gustaría consultar disponibilidad para contratar un tour.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={styles.modalWhatsappBanner}
+                  >
+                    <Icon name="whatsapp" size={22} color="#FFFFFF" />
+                    <span>{lang === "en" ? "Contact via WhatsApp Now" : "Contactar por WhatsApp Ahora"}</span>
+                  </a>
+                )}
+              </div>
             )}
 
-            {/* SECCIÓN DE RESEÑAS */}
-            <div style={{ marginTop: "24px", paddingTop: "20px", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-              <h4 style={styles.modalSectionTitle}>
-                {lang === "en" ? "Tourist Reviews" : "Reseñas de Turistas"}
-                <span style={{ fontSize: "13px", fontWeight: "600", color: "#94A3B8", marginLeft: "8px" }}>
-                  ({selectedGuiaModal.resenas?.length || 0})
-                </span>
-              </h4>
-
-              {/* Formulario para agregar nueva reseña */}
-              {session ? (
-                <form onSubmit={handleAddReview} style={styles.reviewForm}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: "13px", fontWeight: "700", color: "#E2E8F0" }}>
-                      {lang === "en" ? "Rate your experience:" : "Califica tu experiencia:"}
-                    </span>
-                    <div style={{ display: "flex", gap: "4px" }}>
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          onClick={() => setNewRating(star)}
-                          style={{
-                            background: "none",
-                            border: "none",
-                            cursor: "pointer",
-                            fontSize: "20px",
-                            color: star <= newRating ? "#FFD700" : "#475569",
-                            padding: "0 2px"
-                          }}
-                        >
-                          ★
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <textarea
-                    rows={3}
-                    required
-                    placeholder={lang === "en" ? "Write a comment about this guide..." : "Escribe tu opinión o comentario sobre este guía..."}
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    style={styles.reviewTextarea}
-                  />
-
-                  {reviewSuccessMsg && (
-                    <div style={styles.reviewSuccessAlert}>
-                      <Icon name="checkCircle" size={14} color="#10B981" />
-                      <span>{reviewSuccessMsg}</span>
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={submittingReview || !newComment.trim()}
-                    style={styles.submitReviewBtn}
-                  >
-                    <Icon name="send" size={14} />
-                    <span>{submittingReview ? (lang === "en" ? "Submitting..." : "Enviando...") : (lang === "en" ? "Submit Review" : "Publicar Reseña")}</span>
-                  </button>
-                </form>
-              ) : (
-                <div style={styles.loginToReviewAlert}>
-                  <Icon name="info" size={16} color="#38BDF8" />
-                  <span>
-                    {lang === "en" ? "Log in to leave a rating and review for this guide." : "Inicia sesión para dejar una calificación y opinión a este guía."}
-                  </span>
-                  <Link href="/login" style={{ color: "#38BDF8", fontWeight: "700", textDecoration: "underline", marginLeft: "6px" }}>
-                    {lang === "en" ? "Log In" : "Iniciar Sesión"}
-                  </Link>
-                </div>
-              )}
-
-              {/* Lista de Reseñas */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "16px" }}>
-                {(!selectedGuiaModal.resenas || selectedGuiaModal.resenas.length === 0) ? (
-                  <p style={{ fontSize: "13px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", padding: "16px 0" }}>
-                    {lang === "en" ? "No reviews yet. Be the first to leave one!" : "Aún no hay reseñas. ¡Sé el primero en dejar una!"}
+            {/* PESTAÑA 2: GALERÍA DE FOTOS DE TRAVESÍAS */}
+            {activeModalTab === "galeria" && (
+              <div style={{ marginTop: "16px" }}>
+                <h4 style={styles.modalSectionTitle}>
+                  {lang === "en" ? "Expeditions & Guided Tours Photos" : "Fotos de Travesías y Excursiones Guiadas"}
+                </h4>
+                {(!selectedGuiaModal.galeria_fotos || selectedGuiaModal.galeria_fotos.length === 0) ? (
+                  <p style={{ fontSize: "13px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", padding: "30px 0" }}>
+                    {lang === "en" ? "This guide has not uploaded tour photos yet." : "Este guía aún no ha subido fotos de sus travesías."}
                   </p>
                 ) : (
-                  selectedGuiaModal.resenas.map((res) => (
-                    <div key={res.id} style={styles.reviewItemCard}>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                          <img
-                            src={res.autor_avatar || "/images/perfil.svg"}
-                            alt={res.autor_nombre}
-                            style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover" }}
-                          />
-                          <div>
-                            <span style={{ fontSize: "13.5px", fontWeight: "750", color: "#F8FAFC", display: "block" }}>
-                              {res.autor_nombre}
-                            </span>
-                            <span style={{ fontSize: "11px", color: "#64748B" }}>
-                              {new Date(res.created_at).toLocaleDateString()}
-                            </span>
+                  <div style={styles.fullGalleryGrid}>
+                    {selectedGuiaModal.galeria_fotos.map((photoUrl, idx) => (
+                      <div key={idx} style={styles.fullGalleryCard}>
+                        <img src={photoUrl} alt={`Travesía ${idx + 1}`} style={styles.fullGalleryImg} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* PESTAÑA 3: RESEÑAS */}
+            {activeModalTab === "resenas" && (
+              <div style={{ marginTop: "16px" }}>
+                <h4 style={styles.modalSectionTitle}>
+                  {lang === "en" ? "Tourist Reviews" : "Reseñas de Turistas"}
+                </h4>
+
+                {session ? (
+                  <form onSubmit={handleAddReview} style={styles.reviewForm}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: "13px", fontWeight: "700", color: "#E2E8F0" }}>
+                        {lang === "en" ? "Rate your experience:" : "Califica tu experiencia:"}
+                      </span>
+                      <div style={{ display: "flex", gap: "4px" }}>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setNewRating(star)}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              cursor: "pointer",
+                              fontSize: "20px",
+                              color: star <= newRating ? "#FFD700" : "#475569",
+                              padding: "0 2px"
+                            }}
+                          >
+                            ★
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <textarea
+                      rows={3}
+                      required
+                      placeholder={lang === "en" ? "Write a comment about this guide..." : "Escribe tu opinión o comentario sobre este guía..."}
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      style={styles.reviewTextarea}
+                    />
+
+                    {reviewSuccessMsg && (
+                      <div style={styles.reviewSuccessAlert}>
+                        <Icon name="checkCircle" size={14} color="#10B981" />
+                        <span>{reviewSuccessMsg}</span>
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={submittingReview || !newComment.trim()}
+                      style={styles.submitReviewBtn}
+                    >
+                      <Icon name="send" size={14} />
+                      <span>{submittingReview ? (lang === "en" ? "Submitting..." : "Enviando...") : (lang === "en" ? "Submit Review" : "Publicar Reseña")}</span>
+                    </button>
+                  </form>
+                ) : (
+                  <div style={styles.loginToReviewAlert}>
+                    <Icon name="info" size={16} color="#38BDF8" />
+                    <span>
+                      {lang === "en" ? "Log in to leave a rating and review for this guide." : "Inicia sesión para dejar una calificación y opinión a este guía."}
+                    </span>
+                    <Link href="/login" style={{ color: "#38BDF8", fontWeight: "700", textDecoration: "underline", marginLeft: "6px" }}>
+                      {lang === "en" ? "Log In" : "Iniciar Sesión"}
+                    </Link>
+                  </div>
+                )}
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "16px" }}>
+                  {(!selectedGuiaModal.resenas || selectedGuiaModal.resenas.length === 0) ? (
+                    <p style={{ fontSize: "13px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", padding: "16px 0" }}>
+                      {lang === "en" ? "No reviews yet. Be the first to leave one!" : "Aún no hay reseñas. ¡Sé el primero en dejar una!"}
+                    </p>
+                  ) : (
+                    selectedGuiaModal.resenas.map((res) => (
+                      <div key={res.id} style={styles.reviewItemCard}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <img
+                              src={res.autor_avatar || "/images/perfil.svg"}
+                              alt={res.autor_nombre}
+                              style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover" }}
+                            />
+                            <div>
+                              <span style={{ fontSize: "13.5px", fontWeight: "750", color: "#F8FAFC", display: "block" }}>
+                                {res.autor_nombre}
+                              </span>
+                              <span style={{ fontSize: "11px", color: "#64748B" }}>
+                                {new Date(res.created_at).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div style={{ color: "#FFD700", fontWeight: "800", fontSize: "14px" }}>
+                            {"★".repeat(res.puntuacion)}
                           </div>
                         </div>
 
-                        <div style={{ color: "#FFD700", fontWeight: "800", fontSize: "14px" }}>
-                          {"★".repeat(res.puntuacion)}
-                        </div>
+                        <p style={{ fontSize: "13px", color: "#CBD5E1", margin: "8px 0 0 0", lineHeight: "1.4" }}>
+                          {res.comentario}
+                        </p>
                       </div>
-
-                      <p style={{ fontSize: "13px", color: "#CBD5E1", margin: "8px 0 0 0", lineHeight: "1.4" }}>
-                        {res.comentario}
-                      </p>
-                    </div>
-                  ))
-                )}
+                    ))
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}
@@ -807,139 +898,156 @@ const styles = {
     background: "linear-gradient(180deg, #0A192F 0%, #0F172A 50%, #0B132B 100%)",
     color: "#F8FAFC",
     fontFamily: "var(--font-outfit), sans-serif",
-    paddingBottom: "80px"
-  },
-  heroSection: {
+    paddingBottom: "60px",
     position: "relative",
-    padding: "100px 24px 60px 24px",
-    background: "linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(15, 23, 42, 0.9) 100%)",
+    overflowX: "hidden"
+  },
+  // SVGs Emblemáticos de Nicaragua de fondo con marca de agua sutil
+  bgSvgGuardabarranco: {
+    position: "absolute",
+    top: "40px",
+    right: "-60px",
+    width: "480px",
+    height: "480px",
+    objectFit: "contain",
+    zIndex: 0,
+    pointerEvents: "none",
+    filter: "brightness(0) saturate(100%) invert(60%) sepia(85%) saturate(1200%) hue-rotate(180deg) opacity(0.08)",
+  },
+  bgSvgTortuga: {
+    position: "absolute",
+    bottom: "20px",
+    left: "-80px",
+    width: "500px",
+    height: "500px",
+    objectFit: "contain",
+    zIndex: 0,
+    pointerEvents: "none",
+    filter: "brightness(0) saturate(100%) invert(48%) sepia(85%) saturate(1400%) hue-rotate(100deg) opacity(0.07)",
+  },
+  bgSvgGueguense: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "600px",
+    height: "600px",
+    objectFit: "contain",
+    zIndex: 0,
+    pointerEvents: "none",
+    filter: "brightness(0) saturate(100%) invert(75%) sepia(90%) saturate(1200%) hue-rotate(350deg) opacity(0.04)",
+  },
+
+  heroSectionCompact: {
+    position: "relative",
+    padding: "70px 24px 20px 24px",
+    background: "linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(15, 23, 42, 0.85) 100%)",
     borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-    overflow: "hidden",
-    textAlign: "center"
+    zIndex: 2
   },
   heroGlowLeft: {
     position: "absolute",
-    top: "-100px",
-    left: "-100px",
-    width: "400px",
-    height: "400px",
+    top: "-80px",
+    left: "-80px",
+    width: "350px",
+    height: "350px",
     borderRadius: "50%",
     background: "radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(0,0,0,0) 70%)",
     pointerEvents: "none"
   },
-  heroGlowRight: {
-    position: "absolute",
-    bottom: "-100px",
-    right: "-100px",
-    width: "400px",
-    height: "400px",
-    borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(255, 215, 0, 0.12) 0%, rgba(0,0,0,0) 70%)",
-    pointerEvents: "none"
+  heroContentWide: {
+    maxWidth: "1400px",
+    margin: "0 auto"
   },
-  heroContent: {
-    maxWidth: "800px",
-    margin: "0 auto",
-    position: "relative",
-    zIndex: 2
+  topMetaHeader: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: "12px",
+    marginBottom: "8px"
   },
-  badgeHero: {
+  badgeHeroCompact: {
     display: "inline-flex",
     alignItems: "center",
     gap: "8px",
-    background: "rgba(14, 165, 233, 0.12)",
+    background: "rgba(14, 165, 233, 0.15)",
     border: "1px solid rgba(14, 165, 233, 0.3)",
     color: "#38BDF8",
-    padding: "6px 16px",
+    padding: "4px 14px",
     borderRadius: "999px",
-    fontSize: "13px",
-    fontWeight: "750",
-    marginBottom: "16px"
+    fontSize: "12.5px",
+    fontWeight: "750"
   },
-  heroTitle: {
-    fontSize: "clamp(28px, 4vw, 42px)",
+  statsRowCompact: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "8px",
+    background: "rgba(15, 23, 42, 0.6)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    borderRadius: "999px",
+    padding: "4px 14px"
+  },
+  statPill: {
+    fontSize: "12px",
+    color: "#CBD5E1",
+    fontWeight: "600"
+  },
+  statDividerDot: {
+    color: "#64748B",
+    fontSize: "12px"
+  },
+  heroTitleCompact: {
+    fontSize: "clamp(22px, 3vw, 32px)",
     fontWeight: "900",
     color: "#FFFFFF",
     letterSpacing: "-0.5px",
-    margin: "0 0 14px 0",
+    margin: "0",
     lineHeight: "1.2"
   },
-  heroSubtitle: {
-    fontSize: "15px",
-    color: "#94A3B8",
-    lineHeight: "1.6",
-    margin: "0 auto 30px auto",
-    maxWidth: "680px"
-  },
-  statsRow: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "24px",
-    background: "rgba(15, 23, 42, 0.75)",
-    border: "1px solid rgba(255, 255, 255, 0.12)",
-    borderRadius: "20px",
-    padding: "14px 28px",
-    backdropFilter: "blur(12px)"
-  },
-  statBox: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center"
-  },
-  statNum: {
-    fontSize: "20px",
-    fontWeight: "900",
-    color: "#FFD700"
-  },
-  statLabel: {
-    fontSize: "12px",
-    color: "#94A3B8",
-    fontWeight: "600"
-  },
-  statDivider: {
-    width: "1px",
-    height: "28px",
-    background: "rgba(255, 255, 255, 0.15)"
-  },
-  mainContainer: {
-    maxWidth: "1200px",
+
+  mainContainerWide: {
+    maxWidth: "1400px",
     margin: "0 auto",
-    padding: "30px 20px"
+    padding: "20px 24px",
+    position: "relative",
+    zIndex: 2
   },
-  filterCard: {
-    background: "rgba(15, 23, 42, 0.8)",
+
+  filterBarSlim: {
+    background: "rgba(15, 23, 42, 0.85)",
     border: "1px solid rgba(255, 255, 255, 0.12)",
-    borderRadius: "20px",
-    padding: "20px",
+    borderRadius: "16px",
+    padding: "12px 16px",
     backdropFilter: "blur(16px)",
-    marginBottom: "30px",
+    marginBottom: "20px",
     display: "flex",
     flexDirection: "column",
-    gap: "16px"
+    gap: "10px"
   },
-  filterTopRow: {
+  filterRow1: {
     display: "flex",
     alignItems: "center",
-    gap: "16px",
+    gap: "14px",
     flexWrap: "wrap"
   },
-  searchBox: {
+  searchBoxSlim: {
     flex: 1,
     minWidth: "260px",
     display: "flex",
     alignItems: "center",
-    gap: "10px",
+    gap: "8px",
     background: "rgba(30, 41, 59, 0.8)",
     border: "1px solid rgba(255, 255, 255, 0.12)",
-    borderRadius: "12px",
-    padding: "10px 14px"
+    borderRadius: "10px",
+    padding: "8px 12px"
   },
-  searchInput: {
+  searchInputSlim: {
     width: "100%",
     background: "none",
     border: "none",
     color: "#F8FAFC",
-    fontSize: "14px",
+    fontSize: "13.5px",
     outline: "none"
   },
   clearSearchBtn: {
@@ -949,272 +1057,319 @@ const styles = {
     cursor: "pointer",
     padding: "2px"
   },
-  sortBox: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px"
-  },
-  sortLabel: {
-    fontSize: "13px",
-    color: "#94A3B8",
-    fontWeight: "600"
-  },
-  selectInput: {
-    background: "rgba(30, 41, 59, 0.9)",
-    border: "1px solid rgba(255, 255, 255, 0.15)",
-    color: "#F8FAFC",
-    padding: "8px 12px",
-    borderRadius: "10px",
-    fontSize: "13px",
-    outline: "none",
-    cursor: "pointer"
-  },
-  filterPillsSection: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px"
-  },
-  filterPillsTitle: {
-    fontSize: "13px",
-    fontWeight: "750",
-    color: "#E2E8F0",
-    display: "flex",
-    alignItems: "center",
-    gap: "6px",
-    whiteSpace: "nowrap"
-  },
-  pillsScrollContainer: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    overflowX: "auto",
-    paddingBottom: "4px",
-    scrollbarWidth: "none"
-  },
-  pillBtn: {
-    padding: "6px 14px",
-    borderRadius: "999px",
-    fontSize: "12.5px",
-    cursor: "pointer",
-    whiteSpace: "nowrap",
-    transition: "all 0.2s"
-  },
-  resultsHeader: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: "20px"
-  },
-  resultsTitle: {
-    fontSize: "20px",
-    fontWeight: "800",
-    color: "#F8FAFC",
-    display: "flex",
-    alignItems: "center",
-    gap: "10px"
-  },
-  resultsBadge: {
-    background: "rgba(14, 165, 233, 0.2)",
-    color: "#38BDF8",
-    fontSize: "13px",
-    padding: "2px 10px",
-    borderRadius: "999px",
-    border: "1px solid rgba(14, 165, 233, 0.3)"
-  },
-  resetFiltersBtn: {
-    background: "rgba(239, 68, 68, 0.12)",
-    border: "1px solid rgba(239, 68, 68, 0.3)",
-    color: "#EF4444",
-    padding: "6px 12px",
-    borderRadius: "10px",
-    fontSize: "12.5px",
-    fontWeight: "700",
-    cursor: "pointer",
+  sortBoxSlim: {
     display: "flex",
     alignItems: "center",
     gap: "6px"
   },
-  guidesGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
-    gap: "24px"
+  sortLabelSlim: {
+    fontSize: "12px",
+    color: "#94A3B8",
+    fontWeight: "600"
   },
-  guideCard: {
-    background: "rgba(15, 23, 42, 0.75)",
-    border: "1px solid rgba(255, 255, 255, 0.12)",
-    borderRadius: "20px",
-    padding: "20px",
+  selectInputSlim: {
+    background: "rgba(30, 41, 59, 0.9)",
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    color: "#F8FAFC",
+    padding: "6px 10px",
+    borderRadius: "8px",
+    fontSize: "12.5px",
+    outline: "none",
+    cursor: "pointer"
+  },
+  filterRow2: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "12px"
+  },
+  pillsScrollWrapper: {
     display: "flex",
-    flexDirection: "column",
+    alignItems: "center",
+    gap: "6px",
+    overflow: "hidden"
+  },
+  pillsLabel: {
+    display: "flex",
+    alignItems: "center",
+    flexShrink: 0
+  },
+  pillsScrollContainer: {
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+    overflowX: "auto",
+    paddingBottom: "2px",
+    scrollbarWidth: "none"
+  },
+  pillBtnSlim: {
+    padding: "4px 12px",
+    borderRadius: "999px",
+    fontSize: "12px",
+    cursor: "pointer",
+    whiteSpace: "nowrap",
+    transition: "all 0.2s"
+  },
+
+  resultsHeaderSlim: {
+    display: "flex",
+    alignItems: "center",
     justifyContent: "space-between",
+    marginBottom: "14px"
+  },
+  resultsTitleSlim: {
+    fontSize: "17px",
+    fontWeight: "800",
+    color: "#F8FAFC",
+    display: "flex",
+    alignItems: "center",
+    gap: "8px"
+  },
+  resultsBadgeSlim: {
+    background: "rgba(14, 165, 233, 0.2)",
+    color: "#38BDF8",
+    fontSize: "12px",
+    padding: "1px 8px",
+    borderRadius: "999px",
+    border: "1px solid rgba(14, 165, 233, 0.3)"
+  },
+  resetFiltersBtnSlim: {
+    background: "rgba(239, 68, 68, 0.12)",
+    border: "1px solid rgba(239, 68, 68, 0.3)",
+    color: "#EF4444",
+    padding: "4px 10px",
+    borderRadius: "8px",
+    fontSize: "12px",
+    fontWeight: "700",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: "4px"
+  },
+
+  // REJILLA HORIZONTAL A LO ANCHO
+  guidesGridWide: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(430px, 1fr))",
+    gap: "18px"
+  },
+  guideCardWide: {
+    background: "rgba(15, 23, 42, 0.8)",
+    border: "1px solid rgba(255, 255, 255, 0.12)",
+    borderRadius: "18px",
+    padding: "16px",
+    display: "flex",
+    gap: "14px",
     backdropFilter: "blur(12px)",
     transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
   },
-  cardHeader: {
+  guideCardMainInfo: {
+    flex: 1,
     display: "flex",
-    gap: "16px",
-    marginBottom: "14px"
+    flexDirection: "column",
+    justifyContent: "space-between"
   },
-  avatarWrapper: {
+  cardHeaderHorizontal: {
+    display: "flex",
+    gap: "12px",
+    marginBottom: "8px"
+  },
+  avatarWrapperWide: {
     position: "relative",
-    width: "64px",
-    height: "64px",
+    width: "54px",
+    height: "54px",
     flexShrink: 0
   },
-  avatarImg: {
+  avatarImgWide: {
     width: "100%",
     height: "100%",
     borderRadius: "50%",
     objectFit: "cover",
     border: "2px solid #0EA5E9"
   },
-  verifiedIcon: {
+  verifiedBadgeIcon: {
     position: "absolute",
     bottom: "0",
     right: "0",
     background: "#10B981",
     borderRadius: "50%",
-    width: "20px",
-    height: "20px",
+    width: "18px",
+    height: "18px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     boxShadow: "0 2px 6px rgba(0,0,0,0.3)"
   },
-  headerInfo: {
-    flex: 1
+  deptBadgeSlim: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "3px",
+    background: "rgba(14, 165, 233, 0.15)",
+    color: "#38BDF8",
+    fontSize: "11px",
+    fontWeight: "750",
+    padding: "1px 6px",
+    borderRadius: "4px"
   },
-  deptBadge: {
+  licenseBadgeSlim: {
+    background: "rgba(16, 185, 129, 0.15)",
+    color: "#10B981",
+    fontSize: "10.5px",
+    fontWeight: "750",
+    padding: "1px 6px",
+    borderRadius: "4px"
+  },
+  guideNameWide: {
+    fontSize: "16px",
+    fontWeight: "800",
+    color: "#FFFFFF",
+    margin: "1px 0 2px 0",
+    lineHeight: "1.2"
+  },
+  ratingRowWide: {
+    display: "flex",
+    alignItems: "center",
+    gap: "6px"
+  },
+  ratingValueWide: {
+    fontWeight: "800",
+    fontSize: "13px",
+    color: "#F8FAFC"
+  },
+  reviewsCountWide: {
+    fontSize: "11.5px",
+    color: "#94A3B8"
+  },
+  detailsRowSlim: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "6px",
+    margin: "4px 0 6px 0"
+  },
+  tagChip: {
     display: "inline-flex",
     alignItems: "center",
     gap: "4px",
-    background: "rgba(14, 165, 233, 0.15)",
-    color: "#38BDF8",
-    fontSize: "11.5px",
-    fontWeight: "750",
-    padding: "2px 8px",
-    borderRadius: "6px",
-    marginBottom: "4px"
-  },
-  guideName: {
-    fontSize: "17px",
-    fontWeight: "800",
-    color: "#FFFFFF",
-    margin: "2px 0 4px 0",
-    lineHeight: "1.3"
-  },
-  ratingRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px"
-  },
-  starsBox: {
-    display: "flex",
-    alignItems: "center",
-    gap: "4px"
-  },
-  ratingValue: {
-    fontWeight: "800",
-    fontSize: "13.5px",
-    color: "#F8FAFC"
-  },
-  reviewsCount: {
-    fontSize: "12px",
-    color: "#94A3B8"
-  },
-  detailsRow: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px",
-    background: "rgba(30, 41, 59, 0.5)",
-    borderRadius: "12px",
-    padding: "10px 12px",
-    margin: "8px 0 12px 0"
-  },
-  detailItem: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px"
-  },
-  detailText: {
-    fontSize: "12.5px",
+    background: "rgba(30, 41, 59, 0.6)",
     color: "#CBD5E1",
-    fontWeight: "600"
+    fontSize: "11.5px",
+    fontWeight: "600",
+    padding: "2px 8px",
+    borderRadius: "6px"
   },
-  bioSnippet: {
-    fontSize: "13px",
+  bioSnippetWide: {
+    fontSize: "12.5px",
     color: "#94A3B8",
-    lineHeight: "1.5",
-    marginBottom: "16px"
+    lineHeight: "1.4",
+    margin: "0 0 10px 0"
   },
-  cardFooter: {
+  cardFooterWide: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: "12px",
+    paddingTop: "8px",
     borderTop: "1px solid rgba(255, 255, 255, 0.08)"
   },
-  priceBox: {
+  priceBoxSlim: {
     display: "flex",
     flexDirection: "column"
   },
-  priceLabel: {
-    fontSize: "11px",
+  priceLabelSlim: {
+    fontSize: "10.5px",
     color: "#64748B",
     fontWeight: "600"
   },
-  priceValue: {
-    fontSize: "14px",
+  priceValueSlim: {
+    fontSize: "13.5px",
     fontWeight: "800",
     color: "#10B981"
   },
-  actionButtonsGroup: {
+  actionButtonsGroupSlim: {
     display: "flex",
     alignItems: "center",
-    gap: "8px"
+    gap: "6px"
   },
-  whatsappBtn: {
+  whatsappBtnSlim: {
     background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
-    width: "36px",
-    height: "36px",
-    borderRadius: "10px",
+    width: "32px",
+    height: "32px",
+    borderRadius: "8px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     textDecoration: "none",
-    boxShadow: "0 4px 10px rgba(37, 211, 102, 0.25)",
-    transition: "transform 0.2s"
+    boxShadow: "0 4px 10px rgba(37, 211, 102, 0.25)"
   },
-  detailsBtn: {
+  detailsBtnSlim: {
     background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
     color: "#FFFFFF",
     border: "none",
-    padding: "8px 14px",
-    borderRadius: "10px",
-    fontSize: "13px",
+    padding: "6px 12px",
+    borderRadius: "8px",
+    fontSize: "12px",
     fontWeight: "750",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
-    gap: "4px",
-    boxShadow: "0 4px 12px rgba(14, 165, 233, 0.25)"
+    gap: "4px"
   },
-  emptyState: {
+
+  // TIRA DE VISTA PREVIA DE FOTOS DE TRAVESÍAS
+  travesiaStripRight: {
+    width: "110px",
+    flexShrink: 0,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    borderLeft: "1px solid rgba(255,255,255,0.08)",
+    paddingLeft: "12px"
+  },
+  travesiaStripHeader: {
+    fontSize: "10.5px",
+    fontWeight: "750",
+    color: "#38BDF8",
+    marginBottom: "6px",
+    display: "flex",
+    alignItems: "center",
+    gap: "4px"
+  },
+  travesiaImagesGrid: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px"
+  },
+  travesiaThumbBox: {
+    width: "100%",
+    height: "44px",
+    borderRadius: "8px",
+    overflow: "hidden",
+    cursor: "pointer",
+    border: "1px solid rgba(255,255,255,0.15)",
+    transition: "transform 0.2s"
+  },
+  travesiaThumbImg: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover"
+  },
+
+  emptyStateSlim: {
     textAlign: "center",
-    padding: "60px 20px",
+    padding: "40px 20px",
     background: "rgba(15, 23, 42, 0.6)",
-    borderRadius: "20px",
+    borderRadius: "16px",
     border: "1px dashed rgba(255, 255, 255, 0.15)"
   },
-  emptyTitle: {
-    fontSize: "18px",
+  emptyTitleSlim: {
+    fontSize: "16px",
     fontWeight: "800",
-    margin: "12px 0 6px 0"
+    margin: "8px 0 4px 0"
   },
-  emptySubtitle: {
-    fontSize: "14px",
+  emptySubtitleSlim: {
+    fontSize: "13px",
     color: "#94A3B8"
   },
+
+  // MODAL EXTENDIDO ANCHO
   modalOverlay: {
     position: "fixed",
     inset: 0,
@@ -1226,15 +1381,15 @@ const styles = {
     justifyContent: "center",
     padding: "20px"
   },
-  modalCard: {
+  modalCardWide: {
     width: "100%",
-    maxWidth: "600px",
+    maxWidth: "680px",
     maxHeight: "90vh",
     overflowY: "auto",
     background: "#0F172A",
     border: "1px solid rgba(255, 255, 255, 0.15)",
     borderRadius: "24px",
-    padding: "26px",
+    padding: "24px",
     position: "relative",
     boxShadow: "0 20px 50px rgba(0, 0, 0, 0.5)"
   },
@@ -1253,15 +1408,15 @@ const styles = {
     alignItems: "center",
     justifyContent: "center"
   },
-  modalHeader: {
+  modalHeaderWide: {
     display: "flex",
-    gap: "18px",
+    gap: "16px",
     alignItems: "center",
-    marginBottom: "20px"
+    marginBottom: "16px"
   },
-  modalAvatar: {
-    width: "80px",
-    height: "80px",
+  modalAvatarWide: {
+    width: "72px",
+    height: "72px",
     borderRadius: "50%",
     objectFit: "cover",
     border: "3px solid #0EA5E9",
@@ -1286,17 +1441,38 @@ const styles = {
     alignItems: "center",
     gap: "4px"
   },
-  modalGuideName: {
-    fontSize: "22px",
+  modalGuideNameWide: {
+    fontSize: "20px",
     fontWeight: "900",
     color: "#FFFFFF",
-    margin: "4px 0"
+    margin: "2px 0"
+  },
+  starsBox: {
+    display: "flex",
+    alignItems: "center",
+    gap: "4px"
+  },
+  modalTabsRow: {
+    display: "flex",
+    gap: "12px",
+    borderBottom: "1px solid rgba(255,255,255,0.12)",
+    paddingBottom: "4px"
+  },
+  modalTabBtn: {
+    background: "none",
+    border: "none",
+    padding: "8px 12px",
+    fontSize: "13px",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: "6px"
   },
   modalSection: {
-    marginBottom: "18px"
+    marginBottom: "16px"
   },
   modalSectionTitle: {
-    fontSize: "15px",
+    fontSize: "14.5px",
     fontWeight: "800",
     color: "#F8FAFC",
     marginBottom: "8px",
@@ -1304,30 +1480,30 @@ const styles = {
     alignItems: "center"
   },
   modalBioText: {
-    fontSize: "14px",
+    fontSize: "13.5px",
     color: "#CBD5E1",
-    lineHeight: "1.6"
+    lineHeight: "1.5"
   },
-  modalTechGrid: {
+  modalTechGridWide: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
     gap: "10px",
     background: "rgba(30, 41, 59, 0.6)",
-    borderRadius: "14px",
-    padding: "14px",
-    marginBottom: "20px"
+    borderRadius: "12px",
+    padding: "12px",
+    marginBottom: "16px"
   },
   techItem: {
     display: "flex",
     flexDirection: "column"
   },
   techLabel: {
-    fontSize: "11.5px",
+    fontSize: "11px",
     color: "#64748B",
     fontWeight: "600"
   },
   techValue: {
-    fontSize: "13.5px",
+    fontSize: "13px",
     color: "#F8FAFC",
     fontWeight: "750"
   },
@@ -1335,33 +1511,50 @@ const styles = {
     width: "100%",
     background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
     color: "#FFFFFF",
-    padding: "12px",
-    borderRadius: "14px",
+    padding: "11px",
+    borderRadius: "12px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     gap: "10px",
     fontWeight: "800",
-    fontSize: "14.5px",
+    fontSize: "14px",
     textDecoration: "none",
     boxShadow: "0 6px 18px rgba(37, 211, 102, 0.3)"
+  },
+  fullGalleryGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+    gap: "12px",
+    marginTop: "12px"
+  },
+  fullGalleryCard: {
+    width: "100%",
+    height: "140px",
+    borderRadius: "12px",
+    overflow: "hidden",
+    border: "1px solid rgba(255,255,255,0.15)"
+  },
+  fullGalleryImg: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover"
   },
   reviewForm: {
     background: "rgba(30, 41, 59, 0.5)",
     border: "1px solid rgba(255, 255, 255, 0.1)",
     borderRadius: "14px",
-    padding: "14px",
+    padding: "12px",
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
-    marginTop: "10px"
+    gap: "8px"
   },
   reviewTextarea: {
     width: "100%",
     background: "rgba(15, 23, 42, 0.8)",
     border: "1px solid rgba(255, 255, 255, 0.15)",
     borderRadius: "10px",
-    padding: "10px",
+    padding: "8px 10px",
     color: "#F8FAFC",
     fontSize: "13px",
     outline: "none",
@@ -1371,10 +1564,10 @@ const styles = {
     background: "rgba(16, 185, 129, 0.15)",
     border: "1px solid rgba(16, 185, 129, 0.3)",
     color: "#10B981",
-    fontSize: "12.5px",
+    fontSize: "12px",
     fontWeight: "700",
-    padding: "8px 12px",
-    borderRadius: "8px",
+    padding: "6px 10px",
+    borderRadius: "6px",
     display: "flex",
     alignItems: "center",
     gap: "6px"
@@ -1384,9 +1577,9 @@ const styles = {
     background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
     color: "#FFFFFF",
     border: "none",
-    padding: "8px 16px",
+    padding: "6px 14px",
     borderRadius: "8px",
-    fontSize: "13px",
+    fontSize: "12.5px",
     fontWeight: "750",
     cursor: "pointer",
     display: "flex",
@@ -1396,19 +1589,18 @@ const styles = {
   loginToReviewAlert: {
     background: "rgba(14, 165, 233, 0.1)",
     border: "1px solid rgba(14, 165, 233, 0.25)",
-    padding: "12px",
-    borderRadius: "12px",
-    fontSize: "13px",
+    padding: "10px",
+    borderRadius: "10px",
+    fontSize: "12.5px",
     color: "#94A3B8",
     display: "flex",
     alignItems: "center",
-    gap: "8px",
-    marginTop: "10px"
+    gap: "8px"
   },
   reviewItemCard: {
     background: "rgba(30, 41, 59, 0.4)",
     border: "1px solid rgba(255, 255, 255, 0.08)",
-    borderRadius: "12px",
-    padding: "12px"
+    borderRadius: "10px",
+    padding: "10px"
   }
 };

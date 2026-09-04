@@ -37,62 +37,88 @@ export default function PerfilPage() {
   // Avatar upload
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarHover, setAvatarHover] = useState(false);
-  const avatarInputRef = useRef(null);
+  // Editar Perfil de Guía Turístico State
+  const [isEditingGuia, setIsEditingGuia] = useState(false);
+  const [guiaDeptPrincipal, setGuiaDeptPrincipal] = useState("León");
+  const [guiaEspecialidad, setGuiaEspecialidad] = useState("Senderismo y Volcanes");
+  const [guiaIdiomas, setGuiaIdiomas] = useState("Español, Inglés");
+  const [guiaExperiencia, setGuiaExperiencia] = useState(5);
+  const [guiaTarifa, setGuiaTarifa] = useState("$25 - $40 / día");
+  const [guiaBiografia, setGuiaBiografia] = useState("");
+  const [guiaWhatsapp, setGuiaWhatsapp] = useState("");
+  const [guiaInstagram, setGuiaInstagram] = useState("");
+  const [guiaLicencia, setGuiaLicencia] = useState("");
+  const [guiaGaleria, setGuiaGaleria] = useState([]);
+  const [uploadingTravesiaFoto, setUploadingTravesiaFoto] = useState(false);
+  const [savingGuia, setSavingGuia] = useState(false);
+  const travesiaFotoInputRef = useRef(null);
 
-  // Editar Perfil Modal State
-  const [isEditing, setIsEditing] = useState(false);
-  const [editNombre, setEditNombre] = useState("");
-  const [editBio, setEditBio] = useState("");
-  const [savingProfile, setSavingProfile] = useState(false);
+  const handleUploadTravesiaFoto = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadingTravesiaFoto(true);
+    try {
+      const publicUrl = await uploadMedia(file, "galeria_guias");
+      const updatedGaleria = [...guiaGaleria, publicUrl];
+      setGuiaGaleria(updatedGaleria);
 
-  // Cambiar Contraseña Modal State (Independiente)
-  const [isChangingPass, setIsChangingPass] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [savingPass, setSavingPass] = useState(false);
+      if (user?.id) {
+        await supabase.from("guias_turisticos").upsert({
+          id: user.id,
+          galeria_fotos: updatedGaleria,
+        });
+      }
+    } catch (err) {
+      console.error("Error uploading tour photo:", err);
+      alert(lang === "en" ? "Failed to upload photo" : "Error al subir la foto de travesía");
+    } finally {
+      setUploadingTravesiaFoto(false);
+    }
+  };
 
-  // Custom Modal de Confirmación Atlan (Reemplaza el confirm() nativo del navegador)
-  const [confirmModal, setConfirmModal] = useState({
-    isOpen: false,
-    title: "",
-    message: "",
-    confirmText: "",
-    onConfirm: null,
-    loading: false
-  });
+  const handleRemoveTravesiaFoto = (indexToRemove) => {
+    const updated = guiaGaleria.filter((_, idx) => idx !== indexToRemove);
+    setGuiaGaleria(updated);
+    if (user?.id) {
+      supabase.from("guias_turisticos").upsert({
+        id: user.id,
+        galeria_fotos: updated,
+      }).then();
+    }
+  };
 
-  const handleSaveProfile = async (e) => {
+  const handleSaveGuiaProfile = async (e) => {
     e.preventDefault();
     if (!user) return;
-    setSavingProfile(true);
+    setSavingGuia(true);
     try {
-      const { error } = await supabase
-        .from("perfiles")
-        .update({
-          nombre_completo: editNombre.trim(),
-          bio: editBio.trim(),
-        })
-        .eq("id", user.id);
+      const { error } = await supabase.from("guias_turisticos").upsert({
+        id: user.id,
+        nombre_completo: perfil?.nombre_completo,
+        avatar_url: perfil?.avatar_url,
+        departamento_principal: guiaDeptPrincipal,
+        especialidad: guiaEspecialidad,
+        idiomas: guiaIdiomas,
+        experiencia_anios: Number(guiaExperiencia),
+        tarifa_aprox: guiaTarifa,
+        biografia: guiaBiografia,
+        telefono_contacto: guiaWhatsapp,
+        whatsapp: guiaWhatsapp,
+        instagram: guiaInstagram,
+        licencia_intur: guiaLicencia,
+        galeria_fotos: guiaGaleria,
+        activo: true,
+      });
 
       if (error) throw error;
 
-      setPerfil((prev) => ({
-        ...prev,
-        nombre_completo: editNombre.trim(),
-        bio: editBio.trim(),
-      }));
-      if (updatePerfil) {
-        updatePerfil({
-          nombre_completo: editNombre.trim(),
-          bio: editBio.trim(),
-        });
-      }
-      setIsEditing(false);
+      alert(lang === "en" ? "Guide profile updated successfully!" : "¡Perfil de Guía Turístico actualizado con éxito!");
+      setIsEditingGuia(false);
     } catch (err) {
-      console.error("Error updating profile:", err);
-      alert(lang === "en" ? "Failed to update profile" : "Error al actualizar el perfil: " + (err.message || ""));
+      console.error("Error saving guide profile:", err);
+      alert(lang === "en" ? "Error updating guide profile" : "Error al guardar el perfil de guía: " + (err.message || ""));
     } finally {
-      setSavingProfile(false);
+      setSavingGuia(false);
     }
   };
 
@@ -191,6 +217,31 @@ export default function PerfilPage() {
           .eq("usuario_id", currentUser.id)
           .order("created_at", { ascending: false });
         setFavoritos(favData || []);
+
+        // Cargar Perfil de Guía si aplica
+        if (perfilData?.rol === "guia_turistico") {
+          try {
+            const { data: gData } = await supabase
+              .from("guias_turisticos")
+              .select("*")
+              .eq("id", currentUser.id)
+              .single();
+            if (gData) {
+              setGuiaDeptPrincipal(gData.departamento_principal || "León");
+              setGuiaEspecialidad(gData.especialidad || "Senderismo y Volcanes");
+              setGuiaIdiomas(gData.idiomas || "Español, Inglés");
+              setGuiaExperiencia(gData.experiencia_anios || 5);
+              setGuiaTarifa(gData.tarifa_aprox || "$25 - $40 / día");
+              setGuiaBiografia(gData.biografia || "");
+              setGuiaWhatsapp(gData.whatsapp || gData.telefono_contacto || "");
+              setGuiaInstagram(gData.instagram || "");
+              setGuiaLicencia(gData.licencia_intur || "");
+              setGuiaGaleria(gData.galeria_fotos || []);
+            }
+          } catch (gErr) {
+            console.warn("Notice: could not fetch guide profile from DB:", gErr);
+          }
+        }
 
       } catch (err) {
         console.error("Error loading profile data:", err);
@@ -725,6 +776,34 @@ export default function PerfilPage() {
                   <span>{lang === "en" ? "Change Password" : "Cambiar Contraseña"}</span>
                 </button>
 
+                {/* Botón Guía: Mi Perfil de Guía & Galería de Travesías */}
+                {perfil?.rol === "guia_turistico" && (
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingGuia(true)}
+                    style={{
+                      width: "100%",
+                      padding: "11px 16px",
+                      marginBottom: "10px",
+                      borderRadius: "14px",
+                      background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
+                      color: "#FFFFFF",
+                      fontWeight: "800",
+                      fontSize: "13px",
+                      border: "none",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "8px",
+                      boxShadow: "0 4px 14px rgba(14, 165, 233, 0.3)"
+                    }}
+                  >
+                    <Icon name="compass" size={18} color="#FFFFFF" />
+                    <span>{lang === "en" ? "My Guide Profile & Photos" : "Mi Perfil de Guía y Fotos"}</span>
+                  </button>
+                )}
+
                 {/* Botón 4: Reclamar o Registrar Negocio (Azul Menú #0A192F) */}
                 <Link
                   href="/dashboard"
@@ -1124,6 +1203,204 @@ export default function PerfilPage() {
                 </button>
                 <button type="submit" disabled={savingPass} style={{ padding: "10px 22px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: "white", fontWeight: "800", fontSize: "13px", cursor: "pointer" }}>
                   {savingPass ? "..." : (lang === "en" ? "Update Password" : "Actualizar Contraseña")}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 2.5: EDITAR PERFIL DE GUÍA TURÍSTICO Y GALERÍA DE TRAVESÍAS */}
+      {isEditingGuia && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 1100, background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
+          <div style={{ background: "#FFFFFF", width: "100%", maxWidth: "600px", maxHeight: "90vh", overflowY: "auto", borderRadius: "24px", padding: "28px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 25px 60px rgba(0,0,0,0.25)" }}>
+            <h3 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "900", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "8px" }}>
+              <Icon name="compass" size={22} color="#0EA5E9" />
+              {lang === "en" ? "Manage Guide Profile & Tour Photos" : "Configurar mi Perfil de Guía y Fotos"}
+            </h3>
+            <p style={{ margin: "0 0 20px", fontSize: "13px", color: "var(--atlan-text-muted)" }}>
+              {lang === "en" ? "Update your guide bio, specialty, rates and tour photo gallery visible to tourists." : "Actualiza tu presentación de guía, especialidades, tarifas y galería de travesías visible a turistas."}
+            </p>
+
+            <form onSubmit={handleSaveGuiaProfile} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                <div>
+                  <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
+                    {lang === "en" ? "Primary Department" : "Departamento Principal"}
+                  </label>
+                  <select
+                    value={guiaDeptPrincipal}
+                    onChange={(e) => setGuiaDeptPrincipal(e.target.value)}
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", fontSize: "13.5px" }}
+                  >
+                    {["Managua", "León", "Chinandega", "Granada", "Masaya", "Carazo", "Rivas", "Matagalpa", "Jinotega", "Estelí", "Madriz", "Nueva Segovia", "Boaco", "Chontales", "Río San Juan", "RACCN", "RACCS"].map((d) => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
+                    {lang === "en" ? "Specialty" : "Especialidad"}
+                  </label>
+                  <select
+                    value={guiaEspecialidad}
+                    onChange={(e) => setGuiaEspecialidad(e.target.value)}
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", fontSize: "13.5px" }}
+                  >
+                    <option value="Senderismo y Volcanes">Senderismo y Volcanes</option>
+                    <option value="Cultura e Historia">Cultura e Historia</option>
+                    <option value="Avistamiento de Aves">Avistamiento de Aves</option>
+                    <option value="Playa y Surf">Playa y Surf</option>
+                    <option value="Gastronomía Tradicional">Gastronomía Tradicional</option>
+                    <option value="Ecoturismo Integral">Ecoturismo Integral</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                <div>
+                  <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
+                    {lang === "en" ? "Languages" : "Idiomas"}
+                  </label>
+                  <input
+                    type="text"
+                    value={guiaIdiomas}
+                    onChange={(e) => setGuiaIdiomas(e.target.value)}
+                    placeholder="Ej. Español, Inglés, Francés"
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", fontSize: "13.5px" }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
+                    {lang === "en" ? "Experience (Years)" : "Años de Experiencia"}
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={50}
+                    value={guiaExperiencia}
+                    onChange={(e) => setGuiaExperiencia(e.target.value)}
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", fontSize: "13.5px" }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                <div>
+                  <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
+                    {lang === "en" ? "Approx Rate" : "Tarifa Aprox. por día"}
+                  </label>
+                  <input
+                    type="text"
+                    value={guiaTarifa}
+                    onChange={(e) => setGuiaTarifa(e.target.value)}
+                    placeholder="Ej. $25 - $40 / día"
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", fontSize: "13.5px" }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
+                    {lang === "en" ? "WhatsApp Number" : "Número de WhatsApp"}
+                  </label>
+                  <input
+                    type="text"
+                    value={guiaWhatsapp}
+                    onChange={(e) => setGuiaWhatsapp(e.target.value)}
+                    placeholder="+505 8888 8888"
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", fontSize: "13.5px" }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
+                  {lang === "en" ? "INTUR License Number" : "Número de Licencia INTUR (Opcional)"}
+                </label>
+                <input
+                  type="text"
+                  value={guiaLicencia}
+                  onChange={(e) => setGuiaLicencia(e.target.value)}
+                  placeholder="Ej. INTUR-LE-2024-99"
+                  style={{ width: "100%", padding: "9px 12px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", fontSize: "13.5px" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
+                  {lang === "en" ? "Guide Biography & Route Experience" : "Biografía y Rutas de Trabajo"}
+                </label>
+                <textarea
+                  rows={3}
+                  value={guiaBiografia}
+                  onChange={(e) => setGuiaBiografia(e.target.value)}
+                  placeholder="Describe tus especialidades, volcanes que recorres, equipamiento de seguridad y lo que incluye tu guía..."
+                  style={{ width: "100%", padding: "10px 12px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", fontSize: "13px", resize: "none" }}
+                />
+              </div>
+
+              {/* SECCIÓN GALERÍA DE FOTOS DE TRAVESÍAS */}
+              <div style={{ background: "rgba(14, 165, 233, 0.05)", border: "1.5px dashed rgba(14, 165, 233, 0.3)", borderRadius: "16px", padding: "14px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+                  <div>
+                    <span style={{ fontSize: "13px", fontWeight: "800", color: "#0284C7", display: "block" }}>
+                      {lang === "en" ? "Tour Photo Gallery" : "Galería de Fotos de Travesías"}
+                    </span>
+                    <span style={{ fontSize: "11.5px", color: "#64748B" }}>
+                      {lang === "en" ? "Upload photos of your guided tours and expeditions." : "Sube fotos de tus excursiones y travesías guiadas."}
+                    </span>
+                  </div>
+
+                  <input
+                    type="file"
+                    ref={travesiaFotoInputRef}
+                    accept="image/*"
+                    onChange={handleUploadTravesiaFoto}
+                    style={{ display: "none" }}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => !uploadingTravesiaFoto && travesiaFotoInputRef.current?.click()}
+                    disabled={uploadingTravesiaFoto}
+                    style={{ background: "#0284C7", color: "#FFF", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "750", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}
+                  >
+                    <Icon name="plus" size={14} />
+                    <span>{uploadingTravesiaFoto ? "Subiendo..." : "Agregar Foto"}</span>
+                  </button>
+                </div>
+
+                {guiaGaleria.length === 0 ? (
+                  <p style={{ fontSize: "12px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", margin: "8px 0" }}>
+                    {lang === "en" ? "No tour photos uploaded yet." : "Aún no has agregado fotos de tus travesías."}
+                  </p>
+                ) : (
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))", gap: "8px" }}>
+                    {guiaGaleria.map((url, idx) => (
+                      <div key={idx} style={{ position: "relative", width: "100%", height: "70px", borderRadius: "10px", overflow: "hidden", border: "1px solid rgba(0,0,0,0.1)" }}>
+                        <img src={url} alt={`Travesía ${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTravesiaFoto(idx)}
+                          style={{ position: "absolute", top: "2px", right: "2px", background: "rgba(239, 68, 68, 0.85)", color: "#FFF", border: "none", width: "20px", height: "20px", borderRadius: "50%", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                          title="Eliminar foto"
+                        >
+                          <Icon name="x" size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "10px" }}>
+                <button type="button" onClick={() => setIsEditingGuia(false)} style={{ padding: "10px 18px", borderRadius: "10px", border: "none", background: "rgba(0,0,0,0.06)", color: "#64748B", fontWeight: "700", fontSize: "13px", cursor: "pointer" }}>
+                  {lang === "en" ? "Cancel" : "Cancelar"}
+                </button>
+                <button type="submit" disabled={savingGuia} style={{ padding: "10px 22px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)", color: "white", fontWeight: "800", fontSize: "13px", cursor: "pointer", boxShadow: "0 4px 14px rgba(14, 165, 233, 0.3)" }}>
+                  {savingGuia ? "..." : (lang === "en" ? "Save Guide Profile" : "Guardar Perfil de Guía")}
                 </button>
               </div>
             </form>
