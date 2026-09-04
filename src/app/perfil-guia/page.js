@@ -109,7 +109,32 @@ export default function PerfilGuiaPage() {
           setGuiaGaleria(gData.galeria_fotos || []);
           setGuiaDestinosMapa(gData.destinos_mapa || []);
         } else {
-          setGuiaBiografia("Guía turístico apasionado por mostrar las maravillas naturales, volcanes y cultura colonial de Nicaragua.");
+          // Prepopulado inicial si coincide con guía de prueba (ej: Carlos Mendoza Silva)
+          const nameLower = (perfilData?.nombre_completo || currentUser.user_metadata?.nombre_completo || "").toLowerCase();
+          if (nameLower.includes("carlos") && nameLower.includes("mendoza")) {
+            setGuiaDeptPrincipal("León");
+            setGuiaEspecialidad("Senderismo y Volcanes");
+            setGuiaIdiomas("Español, Inglés");
+            setGuiaExperiencia(8);
+            setGuiaTarifa("$30 - $50 / día");
+            setGuiaWhatsapp("+505 8899 1122");
+            setGuiaInstagram("@carlos_volcano_tours");
+            setGuiaLicencia("INTUR-LE-2018-941");
+            setGuiaBiografia("Guía nativo de León con más de 8 años guiando excursiones al Cerro Negro (Sandboarding), Volcán Momotombo y Telica. Especialista en vulcanología de la Cordillera de los Maribios y primeros auxilios de montaña.");
+            setGuiaGaleria([
+              "/images/galeria-departamentos/leon/1.1.jpg",
+              "/images/galeria-departamentos/leon/2.jpg",
+              "/images/galeria-departamentos/leon/3.jpg",
+              "/images/galeria-departamentos/leon/4.jpg"
+            ]);
+            setGuiaDestinosMapa([
+              { id: "dest-1", nombre: "Volcán Cerro Negro", categoria: "Sandboarding", icono: "🌋", deptSlug: "leon", departamento: "León", imagen: "/images/galeria-departamentos/leon/1.1.jpg", desc: "Ascenso directo al volcán más joven de Centroamérica y vertiginoso descenso en tabla de sandboard sobre arena volcánica." },
+              { id: "dest-2", nombre: "Catedral de León", categoria: "Patrimonio UNESCO", icono: "🏛️", deptSlug: "leon", departamento: "León", imagen: "/images/galeria-departamentos/leon/2.jpg", desc: "La catedral más grande de Centroamérica. Recorrido histórico por sus cúpulas blancas y cripta colonial." },
+              { id: "dest-3", nombre: "Volcán Telica (Lava Nocturna)", categoria: "Senderismo", icono: "🔥", deptSlug: "leon", departamento: "León", imagen: "/images/galeria-departamentos/leon/3.jpg", desc: "Excursión nocturna a la cumbre para contemplar la lava incandescente en las profundidades del cráter activo." }
+            ]);
+          } else {
+            setGuiaBiografia("Guía turístico apasionado por mostrar las maravillas naturales, volcanes y cultura colonial de Nicaragua.");
+          }
         }
       } catch (err) {
         console.warn("Notice: fetch profile/guide info:", err);

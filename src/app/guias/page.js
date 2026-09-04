@@ -395,7 +395,7 @@ export default function GuiasPage() {
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviewSuccessMsg, setReviewSuccessMsg] = useState("");
 
-  // Cargar guías de Supabase (con fallback a MOCK_GUIAS)
+  // Cargar guías de Supabase (combinando registros de BD con MOCK_GUIAS)
   useEffect(() => {
     async function loadGuias() {
       setLoading(true);
@@ -406,7 +406,7 @@ export default function GuiasPage() {
           .eq("activo", true);
 
         if (!error && data && data.length > 0) {
-          const formatted = data.map((g) => ({
+          const formattedDbGuias = data.map((g) => ({
             ...g,
             nombre_completo: g.perfiles?.nombre_completo || g.nombre_completo || "Guía Turístico",
             avatar_url: g.perfiles?.avatar_url || g.avatar_url || "/images/perfil.svg",
@@ -416,7 +416,19 @@ export default function GuiasPage() {
               "/images/galeria-departamentos/leon/2.jpg"
             ]
           }));
-          setGuias(formatted);
+
+          // Combinar guías de la BD con MOCK_GUIAS (priorizando BD por ID o nombre)
+          const merged = [...formattedDbGuias];
+          MOCK_GUIAS.forEach((mockG) => {
+            const exists = merged.some(
+              (dbG) => dbG.id === mockG.id || (dbG.nombre_completo && dbG.nombre_completo.toLowerCase().trim() === mockG.nombre_completo.toLowerCase().trim())
+            );
+            if (!exists) {
+              merged.push(mockG);
+            }
+          });
+
+          setGuias(merged);
         } else {
           setGuias(MOCK_GUIAS);
         }
