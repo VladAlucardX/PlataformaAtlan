@@ -320,11 +320,14 @@ export default function PerfilGuiaPage() {
 
     try {
       // 1. Actualizar perfil principal en 'perfiles' (solo campos existentes en la tabla perfiles)
-      await supabase.from("perfiles").upsert({
+      const { error: pError } = await supabase.from("perfiles").upsert({
         id: user.id,
         nombre_completo: perfil?.nombre_completo || user.user_metadata?.nombre_completo || "Carlos Mendoza Silva",
         rol: "guia_turistico"
-      }).catch((e) => console.warn("Perfiles upsert notice:", e));
+      });
+      if (pError) {
+        console.warn("Perfiles upsert notice:", pError.message);
+      }
 
       // 2. Actualizar en la tabla de guías en Supabase
       const { error } = await supabase.from("guias_turisticos").upsert(profilePayload);
