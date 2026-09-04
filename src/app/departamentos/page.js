@@ -696,7 +696,7 @@ export default function DepartamentosPage() {
                     ? "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)" 
                     : "rgba(255, 255, 255, 0.10)",
                   color: rankingMode === 'global' ? "#FFFFFF" : "#F8FAFC",
-                  fontWeight: rankingMode === 'global' ? "900" : "800",
+                  fontWeight: rankingMode === 'global' ? "700" : "600",
                   fontSize: "14px",
                   letterSpacing: "0.3px",
                   cursor: "pointer",
@@ -733,7 +733,7 @@ export default function DepartamentosPage() {
                     ? "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)" 
                     : "rgba(255, 255, 255, 0.10)",
                   color: rankingMode === 'propio' ? "#FFFFFF" : "#F8FAFC",
-                  fontWeight: rankingMode === 'propio' ? "900" : "800",
+                  fontWeight: rankingMode === 'propio' ? "700" : "600",
                   fontSize: "14px",
                   letterSpacing: "0.3px",
                   cursor: "pointer",
