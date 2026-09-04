@@ -982,23 +982,23 @@ export default function MasDeNicaraguaPage() {
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" }}>
                         {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => (
                           <div key={idx} style={{
-                            background: "linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.9) 100%)",
-                            border: "1px solid rgba(255, 215, 0, 0.25)",
+                            background: "linear-gradient(135deg, rgba(28, 25, 23, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%)",
+                            border: "1px solid rgba(255, 215, 0, 0.35)",
                             borderRadius: "16px",
-                            padding: "18px 20px",
+                            padding: "16px 18px",
                             position: "relative",
                             transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
-                            boxShadow: "0 4px 14px rgba(0,0,0,0.35)"
+                            boxShadow: "0 6px 18px rgba(0,0,0,0.4)"
                           }}
                           onMouseOver={(e) => {
-                            e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.6)";
+                            e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.7)";
                             e.currentTarget.style.transform = "translateY(-2px)";
-                            e.currentTarget.style.boxShadow = "0 8px 22px rgba(255, 215, 0, 0.15)";
+                            e.currentTarget.style.boxShadow = "0 10px 24px rgba(255, 215, 0, 0.18)";
                           }}
                           onMouseOut={(e) => {
-                            e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.25)";
+                            e.currentTarget.style.borderColor = "rgba(255, 215, 0, 0.35)";
                             e.currentTarget.style.transform = "translateY(0)";
-                            e.currentTarget.style.boxShadow = "0 4px 14px rgba(0,0,0,0.35)";
+                            e.currentTarget.style.boxShadow = "0 6px 18px rgba(0,0,0,0.4)";
                           }}
                           >
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
@@ -1006,8 +1006,8 @@ export default function MasDeNicaraguaPage() {
                                 display: "inline-flex",
                                 alignItems: "center",
                                 gap: "6px",
-                                background: "rgba(255, 215, 0, 0.12)",
-                                border: "1px solid rgba(255, 215, 0, 0.3)",
+                                background: "linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(180, 130, 0, 0.3) 100%)",
+                                border: "1px solid rgba(255, 215, 0, 0.4)",
                                 color: "#FFD700",
                                 padding: "3px 10px",
                                 borderRadius: "8px",
@@ -1025,16 +1025,16 @@ export default function MasDeNicaraguaPage() {
                                   width: "16px",
                                   height: "16px",
                                   objectFit: "contain",
-                                  opacity: 0.85,
+                                  opacity: 0.9,
                                   filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)"
                                 }}
                               />
                             </div>
 
-                            <h5 style={{ fontSize: "16px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px", lineHeight: "1.3" }}>
+                            <h5 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px", lineHeight: "1.35" }}>
                               {lugar.nombre}
                             </h5>
-                            <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                            <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
                               {lugar.desc}
                             </p>
                           </div>
@@ -1043,42 +1043,56 @@ export default function MasDeNicaraguaPage() {
                     </div>
                   )}
 
-                  {/* Subsección 2: Fiestas Patronales, Eventos y Tradiciones */}
+                  {/* Subsección 2: Fiestas Patronales, Eventos y Tradiciones (Estilo Rubí Coral) */}
                   {selectedDeptForDetails.actividades && selectedDeptForDetails.actividades.length > 0 && (
                     <div>
-                      <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#FFD700", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                        <img src="/images/caña.svg" alt="Actividades" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
+                      <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#F43F5E", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <img src="/images/caña.svg" alt="Actividades" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(43%) sepia(85%) saturate(2250%) hue-rotate(327deg) brightness(97%) contrast(94%)" }} />
                         <span>Fiestas Patronales, Eventos y Tradiciones</span>
                       </h4>
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "18px" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" }}>
                         {selectedDeptForDetails.actividades.map((act, idx) => (
                           <div key={idx} style={{
-                            background: "linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(15, 23, 42, 0.85) 100%)",
-                            border: "1.5px solid rgba(255, 215, 0, 0.3)",
-                            borderRadius: "18px",
-                            padding: "20px"
-                          }}>
+                            background: "linear-gradient(135deg, rgba(45, 15, 25, 0.85) 0%, rgba(20, 10, 20, 0.95) 100%)",
+                            border: "1px solid rgba(244, 63, 94, 0.4)",
+                            borderRadius: "16px",
+                            padding: "16px 18px",
+                            transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                            boxShadow: "0 6px 18px rgba(0,0,0,0.4)"
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.borderColor = "rgba(244, 63, 94, 0.7)";
+                            e.currentTarget.style.transform = "translateY(-2px)";
+                            e.currentTarget.style.boxShadow = "0 10px 24px rgba(244, 63, 94, 0.2)";
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.borderColor = "rgba(244, 63, 94, 0.4)";
+                            e.currentTarget.style.transform = "translateY(0)";
+                            e.currentTarget.style.boxShadow = "0 6px 18px rgba(0,0,0,0.4)";
+                          }}
+                          >
                             <span style={{
                               display: "inline-flex",
                               alignItems: "center",
                               gap: "6px",
-                              background: "#FFD700",
-                              color: "#0A192F",
+                              background: "linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)",
+                              color: "#FFFFFF",
                               padding: "3px 10px",
                               borderRadius: "8px",
                               fontWeight: "900",
                               fontSize: "11px",
-                              marginBottom: "10px"
+                              marginBottom: "10px",
+                              boxShadow: "0 2px 8px rgba(244, 63, 94, 0.35)"
                             }}>
-                              <Icon name="calendar" size={12} color="#0A192F" />
+                              <Icon name="calendar" size={12} color="#FFFFFF" />
                               <span>{act.fecha}</span>
                             </span>
 
-                            <h5 style={{ fontSize: "17px", fontWeight: "900", color: "#FFFFFF", margin: "0 0 6px" }}>
+                            <h5 style={{ fontSize: "15.5px", fontWeight: "800", color: "#FFFFFF", margin: "0 0 6px", lineHeight: "1.35" }}>
                               {act.nombre}
                             </h5>
 
-                            <p style={{ margin: 0, fontSize: "13.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
+                            <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
                               {act.desc}
                             </p>
                           </div>

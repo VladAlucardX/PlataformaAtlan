@@ -13,7 +13,7 @@ export default function DepartmentTabs({ activeTab, onSelectTab, isModal = false
     { id: "economia", label: lang === "en" ? "Economy" : "Economía", svgs: ["/images/cacao.svg"] },
     { id: "turismo", label: lang === "en" ? "Tourism" : "Turismo", svgs: ["/images/playa.svg"] },
     { id: "pasatiempos", label: lang === "en" ? "Hobbies & Culture" : "Pasatiempos", svgs: ["/images/Volcan.svg"] },
-    { id: "lugares", label: lang === "en" ? "Landmarks & Activities" : "Lugares Emblemáticos y Actividades Tradicionales", svgs: ["/images/San Juan del sur.svg", "/images/caña.svg"] },
+    { id: "lugares", label: lang === "en" ? "Landmarks & Activities" : "Lugares y Actividades", svgs: ["/images/San Juan del sur.svg", "/images/caña.svg"] },
   ];
 
   return (
