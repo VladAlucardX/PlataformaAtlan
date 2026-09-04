@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/lib/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import Navbar from "@/components/ui/Navbar";
+import Icon from "@/components/ui/Icon";
 import { uploadMedia } from "@/lib/storage";
 
 export default function PerfilPage() {
