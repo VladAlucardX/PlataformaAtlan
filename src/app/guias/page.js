@@ -729,14 +729,7 @@ export default function GuiasPage() {
                 </span>
               )}
 
-              {selectedTagPopular !== "Todos" && (
-                <span style={styles.activeChip}>
-                  <span>Destino: <b>{selectedTagPopular}</b></span>
-                  <button onClick={() => setSelectedTagPopular("Todos")} style={styles.chipRemoveBtn}>
-                    <Icon name="x" size={12} />
-                  </button>
-                </span>
-              )}
+
 
               {solamenteVerificados && (
                 <span style={styles.activeChip}>
@@ -1323,17 +1316,14 @@ const styles = {
     letterSpacing: "-0.5px",
     margin: "12px 0 6px 0",
     lineHeight: "1.25",
-    textAlign: "center",
-    textShadow: "0 4px 16px rgba(0, 0, 0, 0.95), 0 2px 4px rgba(0, 0, 0, 0.95)",
-    filter: "drop-shadow(0 4px 12px rgba(0, 0, 0, 0.95))"
+    textAlign: "center"
   },
   flagSpan: {
     fontFamily: "'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-display), sans-serif",
-    background: "linear-gradient(180deg, #0072CE 0%, #0072CE 32%, #FFFFFF 32%, #FFFFFF 68%, #0072CE 68%, #0072CE 100%)",
+    background: "linear-gradient(180deg, #0072CE 0%, #0072CE 33%, #FFFFFF 33%, #FFFFFF 67%, #0072CE 67%, #0072CE 100%)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
-    filter: "drop-shadow(0 5px 8px rgba(0, 0, 0, 0.9))",
-    letterSpacing: "0.04em",
+    letterSpacing: "0.02em",
     display: "inline-block",
     padding: "0 4px"
   },
