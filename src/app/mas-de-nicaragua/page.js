@@ -84,7 +84,7 @@ export default function MasDeNicaraguaPage() {
 
   // Estado Modal Nivel 2: Modal Completo con Pestañas
   const [selectedDeptForDetails, setSelectedDeptForDetails] = useState(null);
-  const [modalActiveTab, setModalActiveTab] = useState("historia");
+  const [modalActiveTab, setModalActiveTab] = useState("galeria");
 
   // Estado del Lightbox de Galería de Imágenes
   const [lightboxIndex, setLightboxIndex] = useState(null);
@@ -635,7 +635,7 @@ export default function MasDeNicaraguaPage() {
                     <button
                       onClick={() => {
                         setSelectedDeptForDetails(selectedDeptForPreview);
-                        setModalActiveTab("historia");
+                        setModalActiveTab("galeria");
                       }}
                       style={{
                         width: "100%",
@@ -1206,22 +1206,6 @@ export default function MasDeNicaraguaPage() {
               }}>
                 Fuente y créditos de las Imágenes: INTUR, Mapa Nacional de Turismo.
               </span>
-
-              <button
-                onClick={() => setSelectedDeptForDetails(null)}
-                style={{
-                  background: "rgba(255, 255, 255, 0.1)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  color: "#FFFFFF",
-                  padding: "8px 20px",
-                  borderRadius: "12px",
-                  fontWeight: "800",
-                  fontSize: "13px",
-                  cursor: "pointer"
-                }}
-              >
-                Cerrar Ventana
-              </button>
             </div>
 
           </div>

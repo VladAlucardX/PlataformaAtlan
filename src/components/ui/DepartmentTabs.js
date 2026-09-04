@@ -8,12 +8,12 @@ export default function DepartmentTabs({ activeTab, onSelectTab, isModal = false
   const { t, lang } = useTranslation();
 
   const TABS = [
+    { id: "galeria", label: t("nicaragua.gallery") || (lang === "en" ? "Gallery" : "Galería"), icon: "image", emoji: "📸" },
     { id: "historia", label: t("nicaragua.history") || (lang === "en" ? "History" : "Historia"), icon: "book", emoji: "📜" },
     { id: "economia", label: t("nicaragua.economy") || (lang === "en" ? "Economy" : "Economía"), icon: "trendingUp", emoji: "💰" },
     { id: "turismo", label: t("nicaragua.tourism") || (lang === "en" ? "Tourism" : "Turismo"), icon: "compass", emoji: "🏖️" },
     { id: "pasatiempos", label: t("nicaragua.hobbies") || (lang === "en" ? "Hobbies & Culture" : "Pasatiempos"), icon: "music", emoji: "🎭" },
     { id: "lugares", label: t("nicaragua.landmarks") || (lang === "en" ? "Landmarks" : "Lugares Importantes"), icon: "landmark", emoji: "📍" },
-    { id: "galeria", label: t("nicaragua.gallery") || (lang === "en" ? "Gallery" : "Galería"), icon: "image", emoji: "📸" },
     { id: "actividades", label: t("nicaragua.activities") || (lang === "en" ? "Activities & Events" : "Actividades"), icon: "calendar", emoji: "🎉" },
   ];
 
