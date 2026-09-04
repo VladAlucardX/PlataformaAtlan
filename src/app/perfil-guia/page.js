@@ -9,6 +9,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
 import { uploadMedia } from "@/lib/storage";
+import { DEPARTAMENTOS_DATA } from "@/data/departamentos-data";
 
 const DEPARTAMENTOS_LIST = [
   "León", "Granada", "Rivas", "Masaya", "Matagalpa", "Jinotega", "Estelí",
@@ -118,9 +119,70 @@ export default function PerfilGuiaPage() {
     "Fotos & Videos de Travesía"
   ]);
 
-  // Filtros del catálogo de lugares en Tab 3
+  // Filtros y catálogo dinámico de lugares en Tab 3
   const [searchDestinoQuery, setSearchDestinoQuery] = useState("");
   const [selectedDeptFilter, setSelectedDeptFilter] = useState("Todos");
+  const [catalogoLugaresCompleto, setCatalogoLugaresCompleto] = useState(CATALOGO_DESTINOS_MAPA);
+
+  useEffect(() => {
+    const fetchTodosLosLugares = async () => {
+      try {
+        // 1. Obtener puntos levantados por turistas y comunidad desde Supabase ('puntos')
+        let puntosComunidad = [];
+        const { data: puntosData } = await supabase.from("puntos").select("*");
+        if (puntosData && puntosData.length > 0) {
+          puntosComunidad = puntosData.map(p => ({
+            id: "punto-sp-" + p.id,
+            nombre: p.nombre,
+            categoria: p.categoria ? (p.categoria.charAt(0).toUpperCase() + p.categoria.slice(1)) : "Comunidad",
+            icono: p.categoria === "playa" ? "🏖️" : p.categoria === "tour" ? "🌋" : p.categoria === "comideria" || p.categoria === "restaurante" ? "🍲" : p.categoria === "artesanal" ? "🎭" : p.categoria === "hotel" || p.categoria === "hostal" ? "🏨" : "📍",
+            deptSlug: p.departamento ? p.departamento.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-") : "nicaragua",
+            departamento: p.departamento || "Managua",
+            desc: p.descripcion || (p.nombre_creador ? `Punto turístico creado por ${p.nombre_creador}` : "Punto turístico levantado por la comunidad Atlan."),
+            origen: p.nombre_creador ? `Agregado por ${p.nombre_creador}` : "Turista / Comunidad"
+          }));
+        }
+
+        // 2. Extraer atracciones de DEPARTAMENTOS_DATA (17 departamentos)
+        const deptsLugares = [];
+        if (DEPARTAMENTOS_DATA) {
+          Object.values(DEPARTAMENTOS_DATA).forEach(dept => {
+            if (dept.lugaresImportantes) {
+              dept.lugaresImportantes.forEach((l, idx) => {
+                deptsLugares.push({
+                  id: `dept-${dept.slug}-${idx}`,
+                  nombre: l.nombre,
+                  categoria: "Atracción Turística",
+                  icono: "🏛️",
+                  deptSlug: dept.slug,
+                  departamento: dept.nombre,
+                  desc: l.desc || `Lugar emblemático del departamento de ${dept.nombre}.`,
+                  origen: "Oficial Atlan"
+                });
+              });
+            }
+          });
+        }
+
+        // 3. Fusionar listas evitando duplicados por nombre
+        const mapUnico = new Map();
+        [...CATALOGO_DESTINOS_MAPA, ...puntosComunidad, ...deptsLugares].forEach(item => {
+          if (item && item.nombre) {
+            const key = item.nombre.toLowerCase().trim();
+            if (!mapUnico.has(key)) {
+              mapUnico.set(key, item);
+            }
+          }
+        });
+
+        setCatalogoLugaresCompleto(Array.from(mapUnico.values()));
+      } catch (err) {
+        console.warn("Notice loading community places:", err);
+      }
+    };
+
+    fetchTodosLosLugares();
+  }, []);
 
   const toggleIdioma = (langName) => {
     const currentArray = guiaIdiomas
@@ -1345,13 +1407,14 @@ export default function PerfilGuiaPage() {
 
                 {/* GRILLA INTERACTIVA DEL CATÁLOGO DE LUGARES */}
                 <div style={{ flex: 1, minHeight: 0, overflowY: "auto", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", gap: "8px", paddingRight: "4px" }}>
-                  {CATALOGO_DESTINOS_MAPA.filter(dest => {
+                  {catalogoLugaresCompleto.filter(dest => {
                     const matchesDept = selectedDeptFilter === "Todos" || dest.departamento === selectedDeptFilter;
                     const matchesSearch = !searchDestinoQuery.trim() ||
                       dest.nombre.toLowerCase().includes(searchDestinoQuery.toLowerCase()) ||
                       dest.departamento.toLowerCase().includes(searchDestinoQuery.toLowerCase()) ||
                       dest.categoria.toLowerCase().includes(searchDestinoQuery.toLowerCase()) ||
-                      dest.desc.toLowerCase().includes(searchDestinoQuery.toLowerCase());
+                      (dest.desc && dest.desc.toLowerCase().includes(searchDestinoQuery.toLowerCase())) ||
+                      (dest.origen && dest.origen.toLowerCase().includes(searchDestinoQuery.toLowerCase()));
                     return matchesDept && matchesSearch;
                   }).map((dest) => {
                     const isSelected = guiaDestinosMapa.some(
@@ -1399,6 +1462,12 @@ export default function PerfilGuiaPage() {
                           <p style={{ margin: "0 0 6px", fontSize: "10.5px", color: "#64748B", lineHeight: "1.3", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                             {dest.desc}
                           </p>
+
+                          {dest.origen && dest.origen !== "Oficial Atlan" && (
+                            <span style={{ display: "inline-block", background: "rgba(139, 92, 246, 0.1)", color: "#7C3AED", fontSize: "8.5px", fontWeight: "750", padding: "1px 5px", borderRadius: "4px", marginBottom: "4px" }}>
+                              👤 {dest.origen}
+                            </span>
+                          )}
                         </div>
 
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "5px", borderTop: "1px solid rgba(0,0,0,0.05)" }}>
