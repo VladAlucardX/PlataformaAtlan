@@ -712,12 +712,11 @@ export default function MasDeNicaraguaPage() {
             zIndex: 0
           }} />
 
-          {/* Overlay de oscurecimiento sutil para el backdrop de pantalla */}
+          {/* Overlay cristalino para mantener la imagen Frame 15 100% nítida y en su estado original (sin blur ni distorsión) */}
           <div style={{
             position: "absolute",
             inset: 0,
-            background: "rgba(10, 25, 47, 0.65)",
-            backdropFilter: "blur(6px)",
+            background: "rgba(0, 0, 0, 0.15)",
             pointerEvents: "none",
             zIndex: 0
           }} />
