@@ -485,7 +485,7 @@ export default function PerfilGuiaPage() {
     <div style={{
       height: "100vh",
       maxHeight: "100vh",
-      background: "var(--atlan-bg-primary, #F8FAFC)",
+      background: "url('/images/Frame 5.png') center/cover no-repeat fixed, #F8FAFC",
       color: "var(--atlan-text-primary, #1E293B)",
       fontFamily: "var(--font-outfit), sans-serif",
       position: "relative",
@@ -735,10 +735,11 @@ export default function PerfilGuiaPage() {
         }}>
           {/* COLUMNA IZQUIERDA: TARJETA RESUMEN GUÍA */}
           <div style={{
-            background: "#FFFFFF",
+            background: "rgba(255, 255, 255, 0.94)",
+            backdropFilter: "blur(10px)",
             borderRadius: "14px",
-            border: "1.5px solid rgba(226, 232, 240, 0.8)",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.03)",
+            border: "1.5px solid rgba(255, 255, 255, 0.6)",
+            boxShadow: "0 8px 32px rgba(10, 25, 47, 0.08)",
             padding: "16px",
             display: "flex",
             flexDirection: "column",
@@ -866,10 +867,11 @@ export default function PerfilGuiaPage() {
 
           {/* COLUMNA DERECHA: PANEL DE CONTENIDO DE LA PESTAÑA ACTIVA */}
           <div style={{
-            background: "#FFFFFF",
+            background: "rgba(255, 255, 255, 0.94)",
+            backdropFilter: "blur(10px)",
             borderRadius: "14px",
-            border: "1.5px solid rgba(226, 232, 240, 0.8)",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.03)",
+            border: "1.5px solid rgba(255, 255, 255, 0.6)",
+            boxShadow: "0 8px 32px rgba(10, 25, 47, 0.08)",
             padding: "14px 16px",
             display: "flex",
             flexDirection: "column",
