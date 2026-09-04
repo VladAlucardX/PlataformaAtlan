@@ -721,11 +721,11 @@ export default function MasDeNicaraguaPage() {
             zIndex: 0
           }} />
 
-          {/* Tarjeta Modal General Ampliada */}
+          {/* Tarjeta Modal General (Ancho original 1160px, altura mayor 650px / 88vh) */}
           <div style={{
-            maxWidth: "1320px",
+            maxWidth: "1160px",
             width: "100%",
-            height: "670px",
+            height: "650px",
             maxHeight: "88vh",
             display: "flex",
             flexDirection: "column",
@@ -1024,18 +1024,11 @@ export default function MasDeNicaraguaPage() {
                     display: "grid",
                     gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
                     gap: "18px",
-                    alignItems: "stretch"
+                    alignItems: "start"
                   }}>
                     {/* Columna Izquierda: Galería Fotográfica de [Departamento] */}
                     {(selectedDeptForDetails.imagenReferencia || selectedDeptForDetails.imagenCard) && (
-                      <div style={{
-                        background: "rgba(255,255,255,0.03)",
-                        border: "1px solid rgba(236, 72, 153, 0.3)",
-                        borderRadius: "18px",
-                        padding: "14px",
-                        display: "flex",
-                        flexDirection: "column"
-                      }}>
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(236, 72, 153, 0.3)", borderRadius: "18px", padding: "14px" }}>
                         <h4 style={{ fontSize: "13px", fontWeight: "800", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                           <img src="/images/masaaya.svg" alt="Masaya" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                           <span>Galería Fotográfica de {selectedDeptForDetails.nombre}</span>
@@ -1044,8 +1037,7 @@ export default function MasDeNicaraguaPage() {
                           onClick={() => setLightboxIndex(-1)}
                           style={{
                             width: "100%",
-                            flex: 1,
-                            minHeight: 0,
+                            height: "230px",
                             borderRadius: "14px",
                             overflow: "hidden",
                             position: "relative",
@@ -1070,14 +1062,7 @@ export default function MasDeNicaraguaPage() {
 
                     {/* Columna Derecha: Grid de Galería (Fotos 2 a 7) */}
                     {selectedDeptForDetails.galeria && selectedDeptForDetails.galeria.length > 0 && (
-                      <div style={{
-                        background: "rgba(255,255,255,0.03)",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        borderRadius: "18px",
-                        padding: "14px",
-                        display: "flex",
-                        flexDirection: "column"
-                      }}>
+                      <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "18px", padding: "14px" }}>
                         <h4 style={{ fontSize: "12px", fontWeight: "800", color: "rgba(255,255,255,0.8)", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                           <img src="/images/castillorio san juan.svg" alt="Castillo San Juan" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                           <span>Fotografías de Galería</span>
@@ -1085,8 +1070,7 @@ export default function MasDeNicaraguaPage() {
                         <div style={{
                           display: "grid",
                           gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
-                          gap: "10px",
-                          flex: 1
+                          gap: "10px"
                         }}>
                           {selectedDeptForDetails.galeria.map((imgSrc, idx) => (
                             <div
