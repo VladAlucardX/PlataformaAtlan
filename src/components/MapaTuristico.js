@@ -1663,6 +1663,94 @@ export default function MapaTuristico() {
     return 'straight';
   };
 
+  const renderManeuverIcon = (key, size = 24, color = '#FFFFFF') => {
+    const props = {
+      width: size,
+      height: size,
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: color,
+      strokeWidth: "2.5",
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      style: { display: 'block' }
+    };
+
+    switch (key) {
+      case 'arrive':
+        return (
+          <svg {...props}>
+            <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z" />
+            <circle cx="12" cy="10" r="3" fill={color} />
+          </svg>
+        );
+      case 'turn-right':
+        return (
+          <svg {...props}>
+            <path d="M6 20v-8a4 4 0 0 1 4-4h8" />
+            <polyline points="14 4 18 8 14 12" />
+          </svg>
+        );
+      case 'turn-left':
+        return (
+          <svg {...props}>
+            <path d="M18 20v-8a4 4 0 0 0-4-4H6" />
+            <polyline points="10 4 6 8 10 12" />
+          </svg>
+        );
+      case 'slight-right':
+        return (
+          <svg {...props}>
+            <path d="M7 17L17 7" />
+            <polyline points="10 7 17 7 17 14" />
+          </svg>
+        );
+      case 'slight-left':
+        return (
+          <svg {...props}>
+            <path d="M17 17L7 7" />
+            <polyline points="14 7 7 7 7 14" />
+          </svg>
+        );
+      case 'sharp-right':
+        return (
+          <svg {...props}>
+            <path d="M6 19v-4a6 6 0 0 1 6-6h6" />
+            <polyline points="14 5 18 9 14 13" />
+          </svg>
+        );
+      case 'sharp-left':
+        return (
+          <svg {...props}>
+            <path d="M18 19v-4a6 6 0 0 0-6-6H6" />
+            <polyline points="10 5 6 9 10 13" />
+          </svg>
+        );
+      case 'uturn':
+        return (
+          <svg {...props}>
+            <path d="M18 20V10A6 6 0 0 0 6 10v6" />
+            <polyline points="10 12 6 16 2 12" />
+          </svg>
+        );
+      case 'roundabout':
+        return (
+          <svg {...props}>
+            <path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.8 1 6.5 2.7L21 8" />
+            <polyline points="21 3 21 8 16 8" />
+          </svg>
+        );
+      case 'straight':
+      default:
+        return (
+          <svg {...props}>
+            <line x1="12" y1="19" x2="12" y2="5" />
+            <polyline points="5 12 12 5 19 12" />
+          </svg>
+        );
+    }
+  };
+
   const buildManeuverList = (steps) => {
     const list = [];
     steps.forEach((step, idx) => {
