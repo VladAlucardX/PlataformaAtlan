@@ -968,7 +968,7 @@ export default function MasDeNicaraguaPage() {
                             padding: "16px"
                           }}>
                             <span style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700", display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
-                              <img src="/images/sombrero.svg" alt="Sombrero" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
+                              <img src="/images/sombrero.svg" alt="Sombrero" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                               <span>{per.nombre}</span>
                             </span>
                             <span style={{ fontSize: "11.5px", fontWeight: "700", color: "#38BDF8", display: "block", marginBottom: "8px" }}>
@@ -1166,7 +1166,7 @@ export default function MasDeNicaraguaPage() {
                   {/* Gastronomía y Tradición Autóctona */}
                   <div style={{ background: "rgba(245, 158, 11, 0.08)", border: "1px solid rgba(245, 158, 11, 0.25)", borderRadius: "14px", padding: "14px" }}>
                     <h5 style={{ fontSize: "13px", fontWeight: "800", color: "#F59E0B", margin: "0 0 6px", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <img src="/images/flor.svg" alt="Flor" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
+                      <img src="/images/flor.svg" alt="Flor" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                       <span>Sabor y Tradición Autóctona</span>
                     </h5>
                     <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
