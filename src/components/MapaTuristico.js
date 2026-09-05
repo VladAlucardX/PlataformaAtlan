@@ -2072,11 +2072,14 @@ export default function MapaTuristico() {
       maxBounds: CENTRAL_AMERICA_BOUNDS, // Restringir memoria al área estrictamente necesaria
     });
 
-    mapRef.current.on('movestart', () => {
+    mapRef.current.on('dragstart', () => {
       if (activePopupRef.current) {
         activePopupRef.current.remove();
         activePopupRef.current = null;
       }
+    });
+
+    mapRef.current.on('movestart', () => {
       if (typeof window !== 'undefined') {
         window.__atlanMapMoving = true;
         window.resetAtlanInactivityTimer?.();
