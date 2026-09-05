@@ -55,47 +55,32 @@ export default function BusinessProfileModal({
     const category = (cat || '').toLowerCase();
     if (category.includes('restaurante') || category.includes('comida') || category.includes('café') || category.includes('bar')) {
       return {
-        cover: 'linear-gradient(135deg, #FF6B6B 0%, #D93838 100%)',
-        accent: '#D93838'
+        cover: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #991B1B 100%)',
+        accent: '#EF4444'
       };
     } else if (category.includes('hotel') || category.includes('hospedaje') || category.includes('hostal')) {
       return {
-        cover: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
-        accent: '#1D4ED8'
+        cover: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #1E40AF 100%)',
+        accent: '#3B82F6'
       };
     } else if (category.includes('naturaleza') || category.includes('tour') || category.includes('aventura') || category.includes('parque')) {
       return {
-        cover: 'linear-gradient(135deg, #10B981 0%, #047857 100%)',
-        accent: '#047857'
+        cover: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #065F46 100%)',
+        accent: '#10B981'
       };
     } else if (category.includes('cultura') || category.includes('arte') || category.includes('museo')) {
       return {
-        cover: 'linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%)',
-        accent: '#6D28D9'
+        cover: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #5B21B6 100%)',
+        accent: '#8B5CF6'
       };
     }
     return {
-      cover: 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)',
-      accent: '#146D9E'
+      cover: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #075985 100%)',
+      accent: '#0EA5E9'
     };
   };
 
   const theme = getCategoryTheme(point.category);
-  const heroPhoto = details?.fotos && details.fotos.length > 0 ? details.fotos[0] : null;
-
-  // Servicios activos en el negocio
-  const servs = details?.servicios || {};
-  const activeServiceList = [
-    { key: 'has_wifi', label: lang === 'en' ? 'Free Wi-Fi' : 'WiFi Gratis', icon: 'wifi' },
-    { key: 'has_parking', label: lang === 'en' ? 'Parking' : 'Estacionamiento', icon: 'parking' },
-    { key: 'has_pets', label: lang === 'en' ? 'Pet Friendly' : 'Mascotas Bienvenidas', icon: 'pet' },
-    { key: 'has_card_payment', label: lang === 'en' ? 'Card Payment' : 'Pagos con Tarjeta', icon: 'creditCard' },
-    { key: 'has_accessibility', label: lang === 'en' ? 'Accessible' : 'Accesibilidad', icon: 'accessibility' },
-    { key: 'has_delivery', label: lang === 'en' ? 'Delivery' : 'Envíos / Delivery', icon: 'delivery' },
-    { key: 'has_ac', label: lang === 'en' ? 'A/C' : 'Aire Acondicionado', icon: 'ac' },
-    { key: 'has_live_music', label: lang === 'en' ? 'Live Music' : 'Música en Vivo', icon: 'music' },
-  ].filter(s => !!servs[s.key]);
-
   const phoneNum = details?.telefono || point?.telefono;
   const whatsappNum = details?.whatsapp || point?.whatsapp || phoneNum;
 
@@ -105,7 +90,7 @@ export default function BusinessProfileModal({
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
-        backgroundColor: 'rgba(10, 15, 28, 0.8)',
+        backgroundColor: 'rgba(10, 15, 28, 0.82)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
@@ -136,220 +121,203 @@ export default function BusinessProfileModal({
           position: 'relative'
         }}
       >
-        {/* BANNER COVER HERO DE CABECERA */}
+        {/* CABECERA RESALTADA CON FONDO ELEGANTE Y ESPACIO MAXIMIZADO */}
         <div
           style={{
-            height: heroPhoto ? '130px' : '90px',
-            background: heroPhoto ? `url(${heroPhoto}) center/cover no-repeat` : theme.cover,
+            background: theme.cover,
+            padding: '20px 24px 0px',
             position: 'relative',
-            flexShrink: 0
+            color: '#FFFFFF',
+            flexShrink: 0,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.15)'
           }}
         >
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: heroPhoto
-                ? 'linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(10,15,28,0.75) 100%)'
-                : 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.25) 100%)'
-            }}
-          />
-
-          {/* BOTONES SUPERIORES FLOTANTES */}
-          <div style={{ position: 'absolute', top: '14px', right: '16px', display: 'flex', gap: '8px', zIndex: 2 }}>
+          {/* BOTONES ACCION SUPERIOR DERECHA */}
+          <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', gap: '8px', zIndex: 2 }}>
             {userSession && (
               <button
                 onClick={onToggleFavorite}
                 title={isFavorite ? (lang === 'en' ? 'Remove Favorite' : 'Quitar de Favoritos') : (lang === 'en' ? 'Save Favorite' : 'Guardar Favorito')}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.85)',
+                  background: 'rgba(255, 255, 255, 0.15)',
                   backdropFilter: 'blur(8px)',
-                  border: isFavorite ? '1.5px solid #FFD700' : '1px solid rgba(255,255,255,0.4)',
-                  color: isFavorite ? '#B8960E' : '#475569',
-                  width: '38px',
-                  height: '38px',
+                  border: isFavorite ? '1.5px solid #FFD700' : '1px solid rgba(255,255,255,0.25)',
+                  color: isFavorite ? '#FFD700' : '#FFFFFF',
+                  width: '36px',
+                  height: '36px',
                   borderRadius: '50%',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                  transition: 'transform 0.2s'
+                  transition: 'all 0.2s'
                 }}
               >
-                <Icon name={isFavorite ? 'heartFilled' : 'heart'} size={18} color={isFavorite ? '#B8960E' : '#475569'} />
+                <Icon name={isFavorite ? 'heartFilled' : 'heart'} size={18} color={isFavorite ? '#FFD700' : '#FFFFFF'} />
               </button>
             )}
 
             <button
               onClick={onClose}
               style={{
-                background: 'rgba(255, 255, 255, 0.85)',
+                background: 'rgba(255, 255, 255, 0.15)',
                 backdropFilter: 'blur(8px)',
-                border: '1px solid rgba(255,255,255,0.4)',
-                color: '#1E293B',
-                width: '38px',
-                height: '38px',
+                border: '1px solid rgba(255,255,255,0.25)',
+                color: '#FFFFFF',
+                width: '36px',
+                height: '36px',
                 borderRadius: '50%',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                transition: 'transform 0.2s'
+                transition: 'all 0.2s'
               }}
             >
-              <Icon name="x" size={18} color="#1E293B" />
+              <Icon name="x" size={18} color="#FFFFFF" />
             </button>
           </div>
-        </div>
 
-        {/* CONTENIDO PRINCIPAL CABECERA */}
-        <div
-          style={{
-            padding: '0 28px 12px',
-            borderBottom: '1px solid rgba(20, 109, 158, 0.1)',
-            background: '#FFFFFF',
-            position: 'relative',
-            marginTop: '12px',
-            flexShrink: 0
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
-              {details?.logo_url ? (
-                <img
-                  src={details.logo_url}
-                  alt={point.nombre}
-                  style={{
-                    width: '70px',
-                    height: '70px',
-                    borderRadius: '18px',
-                    objectFit: 'cover',
-                    border: '3px solid #FFFFFF',
-                    boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
-                    background: '#FFFFFF'
-                  }}
-                />
-              ) : (
-                <div
-                  style={{
-                    width: '70px',
-                    height: '70px',
-                    borderRadius: '18px',
-                    background: theme.cover,
-                    color: '#FFFFFF',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '28px',
-                    fontWeight: '800',
-                    border: '3px solid #FFFFFF',
-                    boxShadow: '0 8px 20px rgba(0,0,0,0.15)'
-                  }}
-                >
-                  {point.nombre?.charAt(0)?.toUpperCase() || <Icon name="building" size={30} color="#FFFFFF" />}
-                </div>
-              )}
+          {/* INFORMACION PRINCIPAL DEL NEGOCIO */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingRight: '90px', flexWrap: 'wrap', marginBottom: '16px' }}>
+            {details?.logo_url ? (
+              <img
+                src={details.logo_url}
+                alt={point.nombre}
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '16px',
+                  objectFit: 'cover',
+                  border: '2px solid rgba(255,255,255,0.8)',
+                  boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
+                  background: '#FFFFFF',
+                  flexShrink: 0
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '16px',
+                  background: 'rgba(255,255,255,0.15)',
+                  backdropFilter: 'blur(8px)',
+                  color: '#FFFFFF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '26px',
+                  fontWeight: '800',
+                  border: '2px solid rgba(255,255,255,0.8)',
+                  boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
+                  flexShrink: 0
+                }}
+              >
+                {point.nombre?.charAt(0)?.toUpperCase() || <Icon name="building" size={28} color="#FFFFFF" />}
+              </div>
+            )}
 
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
-                  {(() => {
-                    let statusText = '';
-                    let statusColor = '';
-                    let statusBg = '';
+            <div style={{ flex: 1, minWidth: '220px' }}>
+              {/* BADGES */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                {(() => {
+                  let statusText = '';
+                  let statusColor = '';
+                  let statusBg = '';
 
-                    if (point.estado === 'en_verificacion') {
-                      statusText = lang === 'en' ? 'Awaiting Verification' : 'En Espera de Verificación';
-                      statusColor = '#f97316';
-                      statusBg = 'rgba(249, 115, 22, 0.12)';
-                    } else if (point.estado === 'aprobado') {
-                      statusText = lang === 'en' ? 'Verified Business' : 'Negocio Verificado';
-                      statusColor = '#10b981';
-                      statusBg = 'rgba(16, 185, 129, 0.12)';
-                    } else {
-                      const isClaimed = !!point.negocio_id;
-                      statusText = isClaimed ? (t('map.claimed') || 'Reclamado') : (t('map.unclaimed') || 'Sin Reclamar');
-                      statusColor = isClaimed ? '#10b981' : '#f59e0b';
-                      statusBg = isClaimed ? 'rgba(16, 185, 129, 0.12)' : 'rgba(245, 158, 11, 0.12)';
-                    }
+                  if (point.estado === 'en_verificacion') {
+                    statusText = lang === 'en' ? 'Awaiting Verification' : 'En Espera de Verificación';
+                    statusColor = '#FB923C';
+                    statusBg = 'rgba(251, 146, 60, 0.2)';
+                  } else if (point.estado === 'aprobado') {
+                    statusText = lang === 'en' ? 'Verified Business' : 'Negocio Verificado';
+                    statusColor = '#34D399';
+                    statusBg = 'rgba(52, 211, 153, 0.2)';
+                  } else {
+                    const isClaimed = !!point.negocio_id;
+                    statusText = isClaimed ? (t('map.claimed') || 'Reclamado') : (t('map.unclaimed') || 'Sin Reclamar');
+                    statusColor = isClaimed ? '#34D399' : '#FBBF24';
+                    statusBg = isClaimed ? 'rgba(52, 211, 153, 0.2)' : 'rgba(251, 191, 36, 0.2)';
+                  }
 
-                    return (
-                      <span
-                        style={{
-                          fontSize: '11px',
-                          fontWeight: '800',
-                          textTransform: 'uppercase',
-                          color: statusColor,
-                          background: statusBg,
-                          padding: '3px 9px',
-                          borderRadius: '6px',
-                          border: `1px solid ${statusColor}40`,
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}
-                      >
-                        <Icon name={point.estado === 'aprobado' ? 'checkCircle' : 'shield'} size={12} color={statusColor} />
-                        {statusText}
-                      </span>
-                    );
-                  })()}
-
-                  {avgRating && (
+                  return (
                     <span
                       style={{
-                        fontSize: '12px',
+                        fontSize: '11px',
                         fontWeight: '800',
-                        color: '#B8960E',
-                        background: 'rgba(255, 215, 0, 0.18)',
-                        padding: '3px 8px',
+                        textTransform: 'uppercase',
+                        color: statusColor,
+                        background: statusBg,
+                        padding: '3px 9px',
                         borderRadius: '6px',
+                        border: `1px solid ${statusColor}50`,
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '4px'
                       }}
                     >
-                      <Icon name="starFilled" size={13} color="#B8960E" />
-                      {avgRating} ({reviews.length})
+                      <Icon name={point.estado === 'aprobado' ? 'checkCircle' : 'shield'} size={12} color={statusColor} />
+                      {statusText}
                     </span>
-                  )}
+                  );
+                })()}
 
-                  {details?.rango_precios && (
-                    <span
-                      style={{
-                        fontSize: '11px',
-                        fontWeight: '800',
-                        color: '#1E293B',
-                        background: '#F1F5F9',
-                        padding: '3px 8px',
-                        borderRadius: '6px',
-                        border: '1px solid #E2E8F0'
-                      }}
-                    >
-                      {details.rango_precios}
-                    </span>
-                  )}
-                </div>
+                {avgRating && (
+                  <span
+                    style={{
+                      fontSize: '11.5px',
+                      fontWeight: '800',
+                      color: '#FFD700',
+                      background: 'rgba(255, 215, 0, 0.2)',
+                      padding: '3px 8px',
+                      borderRadius: '6px',
+                      border: '1px solid rgba(255, 215, 0, 0.4)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <Icon name="starFilled" size={13} color="#FFD700" />
+                    {avgRating} ({reviews.length})
+                  </span>
+                )}
 
-                <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '850', color: '#0F172A', lineHeight: '1.2' }}>
-                  {point.nombre}
-                </h2>
-                <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#64748B', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <Icon name="mapPin" size={14} color="#64748B" />
-                  <span>{t(`addPoint.categories.${point.category || 'otro'}`) || point.category}</span>
-                </p>
+                {details?.rango_precios && (
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: '800',
+                      color: '#E2E8F0',
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      padding: '3px 8px',
+                      borderRadius: '6px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)'
+                    }}
+                  >
+                    {details.rango_precios}
+                  </span>
+                )}
               </div>
+
+              {/* TITULO RESALTADO */}
+              <h2 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#FFFFFF', lineHeight: '1.25', letterSpacing: '-0.3px' }}>
+                {point.nombre}
+              </h2>
+              <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#CBD5E1', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Icon name="mapPin" size={14} color="#38BDF8" />
+                <span>{t(`addPoint.categories.${point.category || 'otro'}`) || point.category}</span>
+              </p>
             </div>
 
-            {/* BOTÓN DE INICIAR VIAJE */}
+            {/* BOTON INICIAR VIAJE EN CABECERA */}
             <button
               onClick={() => onIniciarViaje(point)}
               style={{
-                padding: '9.5px 18px',
-                background: 'rgba(20, 109, 158, 0.12)',
-                color: '#146D9E',
-                border: '1.5px solid rgba(20, 109, 158, 0.25)',
+                padding: '9px 16px',
+                background: 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)',
+                color: '#FFFFFF',
+                border: '1px solid rgba(255,255,255,0.3)',
                 borderRadius: '12px',
                 fontWeight: '800',
                 fontSize: '13px',
@@ -358,26 +326,21 @@ export default function BusinessProfileModal({
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                backdropFilter: 'blur(10px)',
+                boxShadow: '0 4px 14px rgba(2, 132, 199, 0.4)',
                 transition: 'all 0.2s ease',
-                boxShadow: '0 4px 12px rgba(20, 109, 158, 0.08)'
+                flexShrink: 0
               }}
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#146D9E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-              <span style={{ fontWeight: '800', fontSize: '13px', color: '#146D9E' }}>
-                {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
-              </span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              <span>{lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}</span>
             </button>
           </div>
 
-          {/* NAVEGACIÓN MULTI-PESTAÑA CON ICONOS SVG */}
+          {/* TAB BAR NAVEGACION INTEGRADO DENTRO DE CABECERA */}
           <div
             style={{
               display: 'flex',
               gap: '6px',
-              borderBottom: '1px solid rgba(20, 109, 158, 0.1)',
-              paddingBottom: '2px',
-              marginTop: '16px',
               overflowX: 'auto',
               scrollbarWidth: 'none'
             }}
@@ -394,13 +357,13 @@ export default function BusinessProfileModal({
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   style={{
-                    padding: '9px 18px',
+                    padding: '10px 18px',
                     fontSize: '13.5px',
                     fontWeight: isActive ? '800' : '600',
-                    color: isActive ? theme.accent : '#64748B',
-                    background: isActive ? 'rgba(20, 109, 158, 0.08)' : 'transparent',
+                    color: isActive ? '#FFFFFF' : '#94A3B8',
+                    background: isActive ? 'rgba(255, 255, 255, 0.18)' : 'transparent',
                     border: 'none',
-                    borderBottom: isActive ? `2.5px solid ${theme.accent}` : '2.5px solid transparent',
+                    borderBottom: isActive ? '3px solid #38BDF8' : '3px solid transparent',
                     borderRadius: '10px 10px 0 0',
                     cursor: 'pointer',
                     display: 'flex',
@@ -410,7 +373,7 @@ export default function BusinessProfileModal({
                     whiteSpace: 'nowrap'
                   }}
                 >
-                  <Icon name={tab.iconName} size={16} color={isActive ? theme.accent : '#64748B'} />
+                  <Icon name={tab.iconName} size={16} color={isActive ? '#38BDF8' : '#94A3B8'} />
                   <span>{tab.label}</span>
                   {tab.count > 0 && (
                     <span
@@ -419,8 +382,8 @@ export default function BusinessProfileModal({
                         fontWeight: '800',
                         padding: '2px 7px',
                         borderRadius: '10px',
-                        background: isActive ? theme.accent : 'rgba(100, 116, 139, 0.15)',
-                        color: isActive ? '#FFFFFF' : '#64748B'
+                        background: isActive ? '#0284C7' : 'rgba(255, 255, 255, 0.15)',
+                        color: '#FFFFFF'
                       }}
                     >
                       {tab.count}
@@ -445,7 +408,7 @@ export default function BusinessProfileModal({
           {/* PESTAÑA 1: INFORMACIÓN Y SECCIÓN DE INTERÉS TURÍSTICO */}
           {activeTab === 'info' && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
-              {/* COLUMNA IZQUIERDA: Descripción, Servicios & Interés Turístico */}
+              {/* COLUMNA IZQUIERDA: Descripción & Interés Turístico */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {/* Banner de Reclamo si está en verificación */}
                 {point.estado === 'en_verificacion' && (
@@ -506,42 +469,6 @@ export default function BusinessProfileModal({
                   <p style={{ margin: 0, fontSize: '14px', color: '#475569', lineHeight: '1.65' }}>
                     {point.descripcion || (lang === 'en' ? 'No detailed description available for this place.' : 'Sin descripción disponible para este destino.')}
                   </p>
-                </div>
-
-                {/* Comodidades & Servicios Turísticos */}
-                <div className="clay-card-static" style={{ padding: '20px', borderRadius: '18px' }}>
-                  <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Icon name="sparkles" size={15} color={theme.accent} />
-                    <span>{lang === 'en' ? 'Amenities & Services' : 'Servicios y Comodidades'}</span>
-                  </h4>
-                  {activeServiceList.length > 0 ? (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                      {activeServiceList.map(s => (
-                        <span
-                          key={s.key}
-                          style={{
-                            fontSize: '12.5px',
-                            fontWeight: '700',
-                            color: '#1E293B',
-                            background: 'rgba(20, 109, 158, 0.08)',
-                            border: '1px solid rgba(20, 109, 158, 0.2)',
-                            padding: '6px 12px',
-                            borderRadius: '20px',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '6px'
-                          }}
-                        >
-                          <Icon name={s.icon} size={14} color={theme.accent} />
-                          {s.label}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <p style={{ margin: 0, fontSize: '13px', color: '#94A3B8', fontStyle: 'italic' }}>
-                      {lang === 'en' ? 'Standard tourist amenities available.' : 'Servicios turísticos estándar disponibles en el establecimiento.'}
-                    </p>
-                  )}
                 </div>
 
                 {/* Consejos para Turistas / Información de Interés */}
@@ -1093,7 +1020,7 @@ export default function BusinessProfileModal({
                     <span>{t('reviews.title') || 'Reseñas de la Comunidad'}</span>
                   </h4>
                   {avgRating ? (
-                    <div style={{ fontSize: '13.5px', fontWeight: '800', color: '#B8960E', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <div style={{ fontSize: '13.5px', fontWeight: '850', color: '#B8960E', display: 'flex', alignItems: 'center', gap: '5px' }}>
                       <Icon name="starFilled" size={15} color="#B8960E" />
                       <span>{avgRating} / 5.0 ({reviews.length})</span>
                     </div>
