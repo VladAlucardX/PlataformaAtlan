@@ -1800,6 +1800,7 @@ export default function MapaTuristico() {
 
     let dist = calcDistanceMeters([currentLng, currentLat], [next.lng, next.lat]);
     const now = Date.now();
+    const silenceSec = (now - (lastAnnouncementTimeRef.current || 0)) / 1000;
 
     const isCloseToTurn = dist < 65;
     const isMovingAwayAfterApproach = next.lastDist !== undefined && dist > next.lastDist + 20 && next.lastDist < 150;
