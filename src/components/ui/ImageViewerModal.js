@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import Icon from "@/components/ui/Icon";
@@ -31,6 +32,7 @@ function avatarStyle(url, size) {
 }
 
 export default function ImageViewerModal({ post, session, perfil, lang, onClose }) {
+  const [mounted, setMounted] = useState(false);
   const [comments, setComments] = useState([]);
   const [loadingComments, setLoadingComments] = useState(true);
   const [newComment, setNewComment] = useState("");
@@ -40,6 +42,10 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
   const commentsEndRef = useRef(null);
 
   const autor = post.perfiles || {};
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Fetch comments
   useEffect(() => {
@@ -118,7 +124,9 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
     } catch (err) { console.error("Delete comment error:", err); }
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div style={styles.overlay} onClick={onClose}>
       <div style={styles.container} onClick={e => e.stopPropagation()} className="animate-fade-in-up">
         {/* Close button */}
@@ -281,25 +289,27 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
 // Estilos
 const styles = {
   overlay: {
-    position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", zIndex: 9999,
+    position: "fixed", top: 0, left: 0, right: 0, bottom: 0, width: "100vw", height: "100vh", zIndex: 999999,
     background: "rgba(0,0,0,0.85)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
     display: "flex", alignItems: "center", justifyContent: "center",
-    padding: "20px", boxSizing: "border-box"
+    padding: "24px", boxSizing: "border-box"
   },
   container: {
-    width: "100%", maxWidth: "1100px", height: "80vh", maxHeight: "800px",
+    width: "100%", maxWidth: "1100px", height: "82vh", maxHeight: "820px",
     background: "#FFFFFF",
     border: "1px solid rgba(255, 255, 255, 0.2)",
     borderRadius: "28px", overflow: "hidden", position: "relative",
     boxShadow: "0 32px 64px rgba(0,0,0,0.5)",
-    display: "flex", flexDirection: "column", boxSizing: "border-box"
+    display: "flex", flexDirection: "column", boxSizing: "border-box",
+    margin: "0 auto"
   },
   closeBtn: {
     position: "absolute", top: "12px", right: "12px", zIndex: 10,
