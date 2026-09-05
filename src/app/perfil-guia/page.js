@@ -548,11 +548,6 @@ export default function PerfilGuiaPage() {
                 <span style={{ background: "rgba(14, 165, 233, 0.2)", color: "#38BDF8", fontSize: "9.5px", fontWeight: "800", padding: "1px 5px", borderRadius: "4px" }}>
                   PANEL GUÍA
                 </span>
-                {guiaLicencia && (
-                  <span style={{ background: "rgba(16, 185, 129, 0.15)", color: "#10B981", fontSize: "9.5px", fontWeight: "800", padding: "1px 5px", borderRadius: "4px" }}>
-                    ✓ INTUR
-                  </span>
-                )}
               </div>
               <h1 style={{ margin: 0, fontSize: "15px", fontWeight: "900", color: "#FFFFFF", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {perfil?.nombre_completo || "Guía Turístico Atlan"}
