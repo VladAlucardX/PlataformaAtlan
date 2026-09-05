@@ -692,8 +692,10 @@ function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChang
         disabled={loading}
         style={{
           ...sidebarStyles.followBtn,
-          background: isFollowing ? "rgba(20,109,158,0.06)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
-          color: isFollowing ? "var(--atlan-text-secondary)" : "white",
+          background: isFollowing ? "rgba(100, 116, 139, 0.08)" : "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
+          color: isFollowing ? "#64748B" : "#FFFFFF",
+          border: isFollowing ? "1px solid rgba(148, 163, 184, 0.25)" : "1px solid rgba(20, 109, 158, 0.25)",
+          boxShadow: isFollowing ? "none" : "0 2px 8px rgba(20, 109, 158, 0.2)",
         }}
       >
         {isFollowing ? (lang === "en" ? "Following" : "Siguiendo") : (lang === "en" ? "Follow" : "Seguir")}
@@ -1335,79 +1337,80 @@ const pageStyles = {
     display: "flex",
     alignItems: "center",
     gap: "14px",
-    padding: "18px 24px",
+    padding: "16px 22px",
     background: "#FFFFFF",
-    border: "2px solid rgba(255, 255, 255, 0.95)",
-    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 16px 36px -6px rgba(20, 109, 158, 0.10)",
-    borderRadius: "24px",
+    border: "1px solid rgba(226, 232, 240, 0.95)",
+    boxShadow: "0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)",
+    borderRadius: "22px",
     cursor: "pointer",
-    transition: "all 0.2s",
+    transition: "all 0.2s ease",
     marginBottom: "24px"
   },
   createPostInput: {
     flex: 1,
-    fontSize: "15px",
+    fontSize: "14.5px",
     color: "var(--atlan-text-muted)",
     fontWeight: "500",
-    padding: "12px 20px",
-    background: "#F4F6F9",
-    borderRadius: "24px",
-    border: "1.5px solid rgba(20, 109, 158, 0.12)"
+    padding: "11px 18px",
+    background: "#F8FAFC",
+    borderRadius: "20px",
+    border: "1px solid rgba(226, 232, 240, 0.9)"
   },
   createPostBtn: {
-    background: "linear-gradient(145deg, #FFE033 0%, #FFD700 60%, #E6C200 100%)",
-    border: "2px solid rgba(255, 255, 255, 0.6)",
-    width: "42px", height: "42px", borderRadius: "12px", fontSize: "16px", cursor: "pointer",
+    background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
+    border: "none",
+    color: "#FFFFFF",
+    width: "40px", height: "40px", borderRadius: "14px", fontSize: "15px", cursor: "pointer",
     display: "flex", alignItems: "center", justifyContent: "center",
-    boxShadow: "inset 2px 2px 4px rgba(255, 255, 255, 0.7), inset -3px -3px 6px rgba(180, 140, 0, 0.35), 0 6px 14px rgba(255, 215, 0, 0.35)",
-    transition: "all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
+    boxShadow: "0 4px 12px rgba(20, 109, 158, 0.25)",
+    transition: "all 0.2s ease",
   },
   emptyState: {
     textAlign: "center", padding: "80px 24px",
-    background: "#FFFFFF", border: "2px dashed rgba(20,109,158,0.2)",
-    borderRadius: "24px", boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.06)",
+    background: "#FFFFFF", border: "2px dashed rgba(20,109,158,0.15)",
+    borderRadius: "24px", boxShadow: "0 4px 20px -2px rgba(15, 23, 42, 0.04)",
   },
   fab: {
-    position: "fixed", bottom: "24px", right: "24px", width: "58px", height: "58px",
-    borderRadius: "50%", background: "linear-gradient(145deg, #FFE033 0%, #FFD700 60%, #E6C200 100%)",
-    border: "2px solid rgba(255, 255, 255, 0.7)", fontSize: "24px", cursor: "pointer", zIndex: 90,
-    boxShadow: "inset 3px 3px 6px rgba(255, 255, 255, 0.8), inset -4px -4px 8px rgba(180, 140, 0, 0.35), 0 12px 24px -4px rgba(255, 215, 0, 0.45)",
+    position: "fixed", bottom: "24px", right: "24px", width: "56px", height: "56px",
+    borderRadius: "50%", background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
+    border: "2px solid rgba(255, 255, 255, 0.8)", fontSize: "22px", color: "#FFFFFF", cursor: "pointer", zIndex: 90,
+    boxShadow: "0 8px 24px rgba(20, 109, 158, 0.35)",
     display: "flex", alignItems: "center", justifyContent: "center",
-    transition: "all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
+    transition: "all 0.2s ease",
   },
 };
 
 const cardStyles = {
   card: {
     background: "#FFFFFF",
-    border: "2px solid rgba(255, 255, 255, 0.95)",
-    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 18px 40px -6px rgba(20, 109, 158, 0.12), 0 4px 12px rgba(0, 0, 0, 0.03)",
-    borderRadius: "28px",
-    padding: "28px",
-    marginBottom: "24px",
-    transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"
+    border: "1px solid rgba(226, 232, 240, 0.95)",
+    boxShadow: "0 4px 24px -2px rgba(15, 23, 42, 0.05), 0 2px 8px -1px rgba(15, 23, 42, 0.03)",
+    borderRadius: "24px",
+    padding: "24px",
+    marginBottom: "20px",
+    transition: "all 0.2s ease"
   },
   publicidadCard: {
-    background: "radial-gradient(circle at top right, rgba(23, 170, 74, 0.08) 0%, #FFFFFF 70%)",
-    border: "2px solid #17AA4A",
-    boxShadow: "0 10px 30px -4px rgba(23, 170, 74, 0.25), 0 2px 6px rgba(0, 0, 0, 0.04)",
-    borderRadius: "20px", padding: "24px", marginBottom: "20px",
-    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+    background: "radial-gradient(circle at top right, rgba(20, 109, 158, 0.05) 0%, #FFFFFF 70%)",
+    border: "1.5px solid #146D9E",
+    boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.15)",
+    borderRadius: "24px", padding: "24px", marginBottom: "20px",
+    transition: "all 0.2s ease",
   },
   promoBadge: {
     display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "12px",
     padding: "4px 12px", borderRadius: "20px", fontSize: "11px", fontWeight: "800",
-    background: "linear-gradient(135deg, rgba(255,215,0,0.10) 0%, rgba(230,194,0,0.10) 100%)",
-    border: "1px solid rgba(255,215,0,0.25)", color: "#E6C200",
+    background: "rgba(245, 158, 11, 0.1)",
+    border: "1px solid rgba(245, 158, 11, 0.25)", color: "#D97706",
     textTransform: "uppercase", letterSpacing: "0.5px",
   },
   publicidadBadge: {
     display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "12px",
-    padding: "5px 14px", borderRadius: "20px", fontSize: "11px", fontWeight: "900",
-    background: "linear-gradient(135deg, #FFD700 0%, #E6A800 100%)",
-    border: "1px solid rgba(20, 109, 158, 0.18)", color: "#1A1A2E",
+    padding: "5px 14px", borderRadius: "20px", fontSize: "11px", fontWeight: "800",
+    background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
+    border: "none", color: "#FFFFFF",
     textTransform: "uppercase", letterSpacing: "0.8px",
-    boxShadow: "0 2px 8px rgba(255, 215, 0, 0.3)",
+    boxShadow: "0 2px 8px rgba(20, 109, 158, 0.25)",
   },
   header: {
     display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px",
@@ -1415,30 +1418,30 @@ const cardStyles = {
   roleBadge: {
     display: "inline-flex", alignItems: "center", justifyContent: "center",
     width: "20px", height: "20px", borderRadius: "6px", fontSize: "10px",
-    background: "rgba(255,215,0,0.10)", color: "var(--atlan-gold-dark)",
+    background: "rgba(245, 158, 11, 0.12)", color: "#D97706",
   },
   content: {
-    margin: "0 0 16px", fontSize: "15.5px", lineHeight: "1.65",
+    margin: "0 0 16px", fontSize: "15px", lineHeight: "1.65",
     color: "var(--atlan-text-primary)", whiteSpace: "pre-wrap", wordBreak: "break-word",
   },
   imageContainer: {
     borderRadius: "18px", overflow: "hidden", marginBottom: "16px",
-    border: "1px solid rgba(20,109,158,0.08)",
+    border: "1px solid rgba(226, 232, 240, 0.8)",
   },
   image: { width: "100%", maxHeight: "540px", objectFit: "cover", display: "block" },
   statsBar: {
     display: "flex", justifyContent: "space-between", padding: "8px 4px",
-    borderBottom: "1px solid rgba(20,109,158,0.06)", marginBottom: "4px",
+    borderBottom: "1px solid rgba(226, 232, 240, 0.7)", marginBottom: "4px",
   },
   statText: { fontSize: "12px", color: "var(--atlan-text-muted)", fontWeight: "600" },
   actionBar: {
-    display: "flex", gap: "4px", padding: "4px 0",
+    display: "flex", gap: "8px", padding: "6px 0 0 0",
   },
   actionBtn: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-    padding: "8px 0", background: "none", border: "none",
-    color: "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "700",
-    cursor: "pointer", borderRadius: "10px", transition: "all 0.2s",
+    padding: "9px 0", background: "rgba(248, 250, 252, 0.8)", border: "1px solid rgba(226, 232, 240, 0.8)",
+    color: "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "650",
+    cursor: "pointer", borderRadius: "12px", transition: "all 0.2s ease",
   },
   menuBtn: {
     background: "none", border: "none", color: "var(--atlan-text-muted)", fontSize: "20px",
@@ -1446,65 +1449,65 @@ const cardStyles = {
   },
   menuDropdown: {
     position: "absolute", top: "100%", right: 0, zIndex: 50,
-    background: "var(--atlan-bg-elevated)", border: "1px solid rgba(20, 109, 158, 0.12)",
+    background: "var(--atlan-bg-elevated)", border: "1px solid rgba(226, 232, 240, 0.9)",
     borderRadius: "12px", padding: "4px", minWidth: "140px",
-    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.10)",
+    boxShadow: "0 8px 24px rgba(15, 23, 42, 0.12)",
   },
   menuItem: {
     display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "10px 12px",
-    background: "none", border: "none", color: "#ef4444", fontSize: "13px", fontWeight: "700",
+    background: "none", border: "none", color: "#EF4444", fontSize: "13px", fontWeight: "700",
     cursor: "pointer", borderRadius: "8px", transition: "background 0.15s",
   },
   commentsSection: {
-    borderTop: "1px solid rgba(20,109,158,0.06)", paddingTop: "14px", marginTop: "4px",
+    borderTop: "1px solid rgba(226, 232, 240, 0.7)", paddingTop: "14px", marginTop: "8px",
   },
   commentItem: {
     display: "flex", gap: "10px", marginBottom: "12px", alignItems: "flex-start",
   },
   commentBubble: {
-    background: "#F4F6F9", padding: "8px 14px", borderRadius: "0 14px 14px 14px",
-    boxShadow: "inset 1px 1px 3px rgba(255, 255, 255, 0.8), inset -1px -1px 3px rgba(20, 109, 158, 0.04)",
-    border: "1px solid rgba(255, 255, 255, 0.9)",
+    background: "#F8FAFC", padding: "10px 14px", borderRadius: "0 14px 14px 14px",
+    border: "1px solid rgba(226, 232, 240, 0.8)",
   },
   commentInput: {
     display: "flex", alignItems: "center", gap: "10px", marginTop: "12px",
   },
   commentTextField: {
-    flex: 1, padding: "10px 16px", background: "#F4F6F9",
-    border: "1.5px solid rgba(20,109,158,0.12)", borderRadius: "20px",
+    flex: 1, padding: "10px 16px", background: "#F8FAFC",
+    border: "1px solid rgba(226, 232, 240, 0.9)", borderRadius: "20px",
     color: "#1A1A2E", fontSize: "13px", outline: "none",
   },
   sendBtn: {
-    background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none",
+    background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)", border: "none",
     width: "36px", height: "36px", borderRadius: "50%", color: "white", fontSize: "14px",
     cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-    boxShadow: "0 2px 8px rgba(23,170,74,0.25)",
+    boxShadow: "0 2px 8px rgba(20, 109, 158, 0.25)",
   },
 };
 
 const sidebarStyles = {
   profileCard: {
-    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
-    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
-    borderRadius: "24px", overflow: "hidden",
+    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.95)",
+    boxShadow: "0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)",
+    borderRadius: "22px", overflow: "hidden",
   },
   profileBanner: {
-    height: "60px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
+    height: "60px", background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)",
   },
   loginCard: {
-    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
-    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
-    borderRadius: "24px", padding: "24px", textAlign: "center",
+    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.95)",
+    boxShadow: "0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)",
+    borderRadius: "22px", padding: "24px", textAlign: "center",
   },
   sectionCard: {
-    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
-    boxShadow: "inset 3px 3px 8px rgba(255, 255, 255, 1), inset -4px -4px 10px rgba(20, 109, 158, 0.05), 0 12px 28px -6px rgba(20, 109, 158, 0.10)",
-    borderRadius: "24px", overflow: "hidden", padding: "0 0 16px 0",
+    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.95)",
+    boxShadow: "0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)",
+    borderRadius: "22px", overflow: "hidden", padding: "0 0 16px 0",
   },
   cardHeaderBanner: {
-    padding: "12px 18px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
-    color: "#FFFFFF", fontSize: "14px", fontWeight: "800", display: "flex",
+    padding: "12px 18px", background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)",
+    color: "#FFFFFF", fontSize: "13.5px", fontWeight: "750", display: "flex",
     alignItems: "center", gap: "8px", marginBottom: "14px",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
   },
   sectionTitle: {
     margin: "0 0 14px", fontSize: "15px", fontWeight: "800",
@@ -1512,17 +1515,17 @@ const sidebarStyles = {
   },
   userCard: {
     display: "flex", alignItems: "center", gap: "10px", padding: "8px 0",
-    borderBottom: "1px solid rgba(20,109,158,0.06)",
+    borderBottom: "1px solid rgba(226, 232, 240, 0.6)",
   },
   followBtn: {
     padding: "6px 14px", border: "none", borderRadius: "20px",
-    fontSize: "12px", fontWeight: "800", cursor: "pointer", whiteSpace: "nowrap",
-    transition: "all 0.2s",
+    fontSize: "12px", fontWeight: "750", cursor: "pointer", whiteSpace: "nowrap",
+    transition: "all 0.2s ease",
   },
   exploreLink: {
     display: "flex", alignItems: "center", gap: "8px", padding: "10px 12px",
     color: "var(--atlan-text-secondary)", textDecoration: "none", fontSize: "13px",
-    fontWeight: "600", borderRadius: "10px", transition: "all 0.2s",
+    fontWeight: "600", borderRadius: "10px", transition: "all 0.2s ease",
     marginBottom: "4px",
   },
 };
@@ -1535,9 +1538,9 @@ const modalStyles = {
   },
   modal: {
     width: "100%", maxWidth: "480px", maxHeight: "90vh", overflowY: "auto",
-    background: "#FFFFFF", border: "2px solid rgba(255, 255, 255, 0.95)",
+    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.95)",
     borderRadius: "28px", padding: "32px", position: "relative",
-    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 24px 56px -8px rgba(20, 109, 158, 0.16)",
+    boxShadow: "0 24px 56px -8px rgba(15, 23, 42, 0.16)",
   },
   closeBtn: {
     position: "absolute", top: "16px", right: "16px", background: "rgba(20,109,158,0.06)",
@@ -1549,12 +1552,11 @@ const modalStyles = {
 
 const postFormStyles = {
   textarea: {
-    width: "100%", padding: "14px 18px", background: "#F4F6F9",
-    border: "1.5px solid rgba(20,109,158,0.12)", borderRadius: "18px",
+    width: "100%", padding: "14px 18px", background: "#F8FAFC",
+    border: "1px solid rgba(226, 232, 240, 0.9)", borderRadius: "18px",
     color: "var(--atlan-text-primary)", fontSize: "15px", lineHeight: "1.5",
     outline: "none", resize: "vertical", minHeight: "100px",
     fontFamily: "var(--font-outfit), system-ui, sans-serif",
-    boxShadow: "inset 2px 2px 4px rgba(20, 109, 158, 0.04), inset -1px -1px 3px rgba(255, 255, 255, 0.8)",
   },
   removeImgBtn: {
     position: "absolute", top: "8px", right: "8px", background: "rgba(0,0,0,0.6)",
@@ -1562,25 +1564,25 @@ const postFormStyles = {
     fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
   },
   promoSection: {
-    padding: "12px 16px", background: "rgba(255,215,0,0.06)",
-    border: "1px solid rgba(255,215,0,0.15)", borderRadius: "12px",
+    padding: "12px 16px", background: "rgba(245,158,11,0.06)",
+    border: "1px solid rgba(245,158,11,0.15)", borderRadius: "12px",
     display: "flex", flexDirection: "column", gap: "10px",
   },
   select: {
-    width: "100%", padding: "8px 12px", background: "rgba(20, 109, 158, 0.04)",
-    border: "1px solid rgba(20,109,158,0.12)", borderRadius: "8px",
+    width: "100%", padding: "8px 12px", background: "#F8FAFC",
+    border: "1px solid rgba(226, 232, 240, 0.9)", borderRadius: "8px",
     color: "var(--atlan-text-primary)", fontSize: "13px", outline: "none",
   },
   attachBtn: {
     padding: "8px 14px", background: "rgba(20,109,158,0.04)",
     border: "1px solid rgba(20,109,158,0.10)", borderRadius: "10px",
     color: "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "700",
-    cursor: "pointer", transition: "all 0.2s",
+    cursor: "pointer", transition: "all 0.2s ease",
   },
   publishBtn: {
-    padding: "10px 28px", background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
+    padding: "10px 28px", background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
     border: "none", borderRadius: "12px", color: "white", fontSize: "14px",
-    fontWeight: "800", cursor: "pointer", boxShadow: "0 4px 12px rgba(23,170,74,0.25)",
-    transition: "all 0.2s",
+    fontWeight: "800", cursor: "pointer", boxShadow: "0 4px 14px rgba(20,109,158,0.25)",
+    transition: "all 0.2s ease",
   },
 };
