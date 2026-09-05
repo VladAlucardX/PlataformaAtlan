@@ -1445,6 +1445,7 @@ export default function DashboardPage() {
               boxShadow: "0 18px 45px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 1)",
               position: "relative",
               overflow: "hidden",
+              marginBottom: "28px",
             }}
           >
             {/* Franja decorativa superior con gradiente Atlan */}
@@ -3421,7 +3422,9 @@ const styles = {
     maxHeight: "calc(100vh - 105px)",
     overflowY: "auto",
     boxSizing: "border-box",
-    paddingRight: "4px",
+    paddingTop: "6px",
+    paddingBottom: "28px",
+    paddingRight: "6px",
     position: "relative",
     zIndex: 2,
   },
@@ -3457,7 +3460,7 @@ const styles = {
   overviewGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-    gap: "16px",
+    gap: "22px",
   },
   dashboardCard: {
     background: "rgba(255, 255, 255, 0.94)",
