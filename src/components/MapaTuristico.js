@@ -1261,12 +1261,26 @@ export default function MapaTuristico() {
                 </div>
               </button>
 
-              <button id="${btnInfoId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:10px 14px; background:rgba(255,255,255,0.12); color:#FFFFFF; border:1px solid rgba(255,255,255,0.25); border-radius:12px; font-weight:800; font-size:12px; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
-                <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                  <span style="display:inline-block; text-align:center; line-height:1.2;">${lang === 'en' ? 'Details & Booking' : 'Detalles y Reservas'}</span>
-                </div>
-              </button>
+              ${(() => {
+                const puntoServs = punto.servicios || punto.detalles?.servicios || {};
+                const puntoCanBook = Boolean(
+                  puntoServs.has_online_booking === true ||
+                  punto.has_online_booking === true ||
+                  punto.detalles?.has_online_booking === true ||
+                  puntoServs.has_reservas === true
+                );
+                const btnLabel = puntoCanBook 
+                  ? (lang === 'en' ? 'Details & Booking' : 'Detalles y Reservas')
+                  : (lang === 'en' ? 'View Details' : 'Ver Detalles');
+                return `
+                  <button id="${btnInfoId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:10px 14px; background:rgba(255,255,255,0.12); color:#FFFFFF; border:1px solid rgba(255,255,255,0.25); border-radius:12px; font-weight:800; font-size:12px; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
+                    <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                      <span style="display:inline-block; text-align:center; line-height:1.2;">${btnLabel}</span>
+                    </div>
+                  </button>
+                `;
+              })()}
             </div>
           </div>
         `;

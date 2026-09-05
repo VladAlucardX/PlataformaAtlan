@@ -57,6 +57,20 @@ export default function BusinessProfileModal({
 
   if (!isOpen || !point) return null;
 
+  const servs = details?.servicios || point?.servicios || {};
+  const canBook = Boolean(
+    servs.has_online_booking === true ||
+    details?.has_online_booking === true ||
+    point?.has_online_booking === true ||
+    servs.has_reservas === true ||
+    details?.has_reservas === true ||
+    point?.has_reservas === true ||
+    details?.permite_reserva === true ||
+    point?.permite_reserva === true ||
+    details?.acepta_reservas === true ||
+    point?.acepta_reservas === true
+  );
+
   // Cálculo de promedio de calificaciones
   const avgRating = reviews.length > 0
     ? (reviews.reduce((acc, r) => acc + Number(r.estrellas || 5), 0) / reviews.length).toFixed(1)
@@ -358,8 +372,6 @@ export default function BusinessProfileModal({
             }}
           >
             {(() => {
-              const servs = details?.servicios || {};
-              const canBook = !!(servs.has_online_booking || servs.has_lodging || servs.has_reservas);
               const showMenuTab = !!(servs.has_menu || menu.length > 0);
 
               const availableTabs = [
@@ -729,7 +741,7 @@ export default function BusinessProfileModal({
           )}
 
           {/* PESTAÑA 3: RESERVAS EN VISTA ÚNICA DE 2 COLUMNAS */}
-          {activeTab === 'reservas' && (
+          {activeTab === 'reservas' && canBook && (
             <div
               style={{
                 display: 'grid',
