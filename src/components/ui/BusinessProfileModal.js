@@ -893,25 +893,29 @@ export default function BusinessProfileModal({
             >
               {/* COLUMNA IZQUIERDA: Formulario de Reseñas */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div className="clay-card-static" style={{ padding: '20px', borderRadius: '18px' }}>
-                  <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: '800', color: '#B8960E', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Icon name="edit" size={16} color="#B8960E" />
+                <div className="clay-card-static" style={{ padding: '22px', borderRadius: '18px', border: '1px solid #E2E8F0' }}>
+                  <h4 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Icon name="edit" size={17} color="#146D9E" />
                     <span>{t('reviews.writeReview') || 'Escribir una Reseña'}</span>
                   </h4>
 
                   {!userSession ? (
-                    <div style={{ textAlign: 'center', padding: '12px 0' }}>
-                      <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#64748B', lineHeight: '1.4' }}>
+                    <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                      <p style={{ margin: '0 0 14px', fontSize: '13px', color: '#64748B', lineHeight: '1.5' }}>
                         {lang === 'en' ? 'Log in to write reviews & rate this place.' : 'Inicia sesión para calificar este lugar y compartir tu opinión.'}
                       </p>
                       <a
                         href="/login"
-                        className="clay-btn-gold no-sheen"
                         style={{
                           display: 'inline-flex',
-                          padding: '8px 20px',
-                          fontSize: '12.5px',
-                          textDecoration: 'none'
+                          padding: '9px 22px',
+                          fontSize: '13px',
+                          fontWeight: '800',
+                          textDecoration: 'none',
+                          background: 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)',
+                          color: '#FFFFFF',
+                          borderRadius: '10px',
+                          boxShadow: '0 4px 12px rgba(20, 109, 158, 0.25)'
                         }}
                       >
                         {t('nav.login') || 'Iniciar Sesión'}
@@ -920,14 +924,14 @@ export default function BusinessProfileModal({
                   ) : (
                     <form onSubmit={handleCrearResena} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                       {reviewErrorMsg && (
-                        <div style={{ color: '#ef4444', fontSize: '12px', fontWeight: '600', background: 'rgba(239,68,68,0.1)', padding: '8px 10px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <Icon name="alertTriangle" size={14} color="#ef4444" />
+                        <div style={{ color: '#EF4444', fontSize: '12.5px', fontWeight: '600', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '9px 12px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Icon name="alertTriangle" size={15} color="#EF4444" />
                           <span>{reviewErrorMsg}</span>
                         </div>
                       )}
 
                       <div>
-                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#334155', display: 'block', marginBottom: '5px' }}>
                           {t('reviews.yourName') || 'Tu Nombre'}
                         </label>
                         <input
@@ -938,15 +942,15 @@ export default function BusinessProfileModal({
                           onChange={(e) => setNewReviewNombre(e.target.value)}
                           placeholder="Ej: Carlos"
                           className="clay-input"
-                          style={{ padding: '9px 12px', width: '100%' }}
+                          style={{ padding: '9.5px 12px', width: '100%', fontSize: '13px', borderRadius: '10px', background: '#F8FAFC', border: '1px solid #E2E8F0' }}
                         />
                       </div>
 
                       <div>
-                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#334155', display: 'block', marginBottom: '6px' }}>
                           {t('reviews.rating') || 'Calificación'}
                         </label>
-                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', paddingTop: '2px' }}>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', paddingTop: '2px' }}>
                           {[1, 2, 3, 4, 5].map((star) => (
                             <button
                               key={star}
@@ -959,11 +963,13 @@ export default function BusinessProfileModal({
                                 padding: 0,
                                 transition: 'transform 0.15s ease'
                               }}
+                              onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.15)'; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
                             >
                               <Icon
                                 name={star <= newReviewEstrellas ? 'starFilled' : 'star'}
                                 size={24}
-                                color={star <= newReviewEstrellas ? '#B8960E' : '#CBD5E1'}
+                                color={star <= newReviewEstrellas ? '#F59E0B' : '#CBD5E1'}
                               />
                             </button>
                           ))}
@@ -971,7 +977,7 @@ export default function BusinessProfileModal({
                       </div>
 
                       <div>
-                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#334155', display: 'block', marginBottom: '5px' }}>
                           {t('reviews.yourComment') || 'Tu Comentario'}
                         </label>
                         <textarea
@@ -981,17 +987,33 @@ export default function BusinessProfileModal({
                           onChange={(e) => setNewReviewComment(e.target.value)}
                           placeholder={lang === 'en' ? 'Share your experience at this place...' : 'Comparte tu experiencia en este lugar...'}
                           className="clay-textarea"
-                          style={{ padding: '10px 12px', width: '100%', fontSize: '13px' }}
+                          style={{ padding: '10px 12px', width: '100%', fontSize: '13px', borderRadius: '10px', background: '#F8FAFC', border: '1px solid #E2E8F0' }}
                         />
                       </div>
 
                       <button
                         type="submit"
                         disabled={isSubmittingReview}
-                        className="clay-btn-green no-sheen"
-                        style={{ width: '100%', padding: '11px', fontSize: '13px', fontWeight: '800' }}
+                        style={{
+                          width: '100%',
+                          padding: '11px 16px',
+                          fontSize: '13.5px',
+                          fontWeight: '850',
+                          color: '#FFFFFF',
+                          background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                          border: 'none',
+                          borderRadius: '12px',
+                          cursor: isSubmittingReview ? 'not-allowed' : 'pointer',
+                          boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
+                          transition: 'all 0.2s ease',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px'
+                        }}
                       >
-                        {isSubmittingReview ? '...' : (t('reviews.submit') || 'Publicar Reseña')}
+                        <Icon name="checkCircle" size={16} color="#FFFFFF" />
+                        <span>{isSubmittingReview ? '...' : (t('reviews.submit') || 'Enviar Reseña')}</span>
                       </button>
                     </form>
                   )}
@@ -1005,19 +1027,19 @@ export default function BusinessProfileModal({
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    background: 'rgba(255, 215, 0, 0.08)',
-                    padding: '12px 18px',
+                    background: 'linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(20, 109, 158, 0.03) 100%)',
+                    padding: '13px 18px',
                     borderRadius: '14px',
-                    border: '1px solid rgba(255, 215, 0, 0.25)'
+                    border: '1px solid rgba(20, 109, 158, 0.15)'
                   }}
                 >
-                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#0F172A', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Icon name="star" size={16} color="#B8960E" />
+                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#0F172A', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Icon name="star" size={16} color="#F59E0B" />
                     <span>{t('reviews.title') || 'Reseñas de la Comunidad'}</span>
                   </h4>
                   {avgRating ? (
-                    <div style={{ fontSize: '13.5px', fontWeight: '850', color: '#B8960E', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <Icon name="starFilled" size={15} color="#B8960E" />
+                    <div style={{ fontSize: '13.5px', fontWeight: '850', color: '#D97706', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <Icon name="starFilled" size={16} color="#F59E0B" />
                       <span>{avgRating} / 5.0 ({reviews.length})</span>
                     </div>
                   ) : (
@@ -1038,36 +1060,37 @@ export default function BusinessProfileModal({
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        gap: '10px'
+                        gap: '10px',
+                        border: '1px solid #E2E8F0'
                       }}
                     >
-                      <Icon name="messageCircle" size={32} color="#CBD5E1" />
+                      <Icon name="messageCircle" size={32} color="#94A3B8" />
                       <p style={{ margin: 0, fontSize: '13.5px', color: '#64748B', fontStyle: 'italic' }}>
                         {lang === 'en' ? 'No reviews yet. Be the first to review!' : 'No hay reseñas aún. ¡Sé el primero en calificar este negocio!'}
                       </p>
                     </div>
                   ) : (
                     reviews.map((rev) => (
-                      <div key={rev.id} className="clay-card-static" style={{ padding: '14px 18px', borderRadius: '14px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                          <span style={{ fontSize: '13.5px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: theme.cover, color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '800' }}>
+                      <div key={rev.id} className="clay-card-static" style={{ padding: '16px 18px', borderRadius: '14px', border: '1px solid #E2E8F0' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '13.5px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: '800', boxShadow: '0 2px 6px rgba(20,109,158,0.25)' }}>
                               {rev.autor_nombre?.charAt(0)?.toUpperCase() || 'U'}
                             </div>
                             <span>{rev.autor_nombre}</span>
                           </span>
-                          <div style={{ display: 'flex', gap: '2px' }}>
+                          <div style={{ display: 'flex', gap: '3px' }}>
                             {[1, 2, 3, 4, 5].map((s) => (
                               <Icon
                                 key={s}
                                 name={s <= rev.estrellas ? 'starFilled' : 'star'}
-                                size={13}
-                                color={s <= rev.estrellas ? '#B8960E' : '#E2E8F0'}
+                                size={14}
+                                color={s <= rev.estrellas ? '#F59E0B' : '#E2E8F0'}
                               />
                             ))}
                           </div>
                         </div>
-                        <p style={{ margin: 0, fontSize: '13.5px', color: '#475569', lineHeight: '1.5' }}>{rev.comentario}</p>
+                        <p style={{ margin: 0, fontSize: '13.5px', color: '#334155', lineHeight: '1.55' }}>{rev.comentario}</p>
                       </div>
                     ))
                   )}
