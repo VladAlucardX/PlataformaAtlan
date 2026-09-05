@@ -1552,17 +1552,28 @@ export default function DashboardPage() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "22px"
                   }}
                 >
-                  🏬
+                  <div style={{
+                    width: "24px",
+                    height: "24px",
+                    backgroundColor: "#FFD700",
+                    WebkitMaskImage: "url('/images/edificio.svg')",
+                    WebkitMaskRepeat: "no-repeat",
+                    WebkitMaskSize: "contain",
+                    WebkitMaskPosition: "center",
+                    maskImage: "url('/images/edificio.svg')",
+                    maskRepeat: "no-repeat",
+                    maskSize: "contain",
+                    maskPosition: "center",
+                  }} />
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
                   <span style={{ fontSize: "10px", fontWeight: "850", color: "#FFD700", letterSpacing: "0.09em", textTransform: "uppercase" }}>
-                    {lang === "en" ? "MULTI-BUSINESS HUB" : "GALERÍA DE LOCALES"}
+                    {lang === "en" ? "MY BUSINESSES" : "MIS NEGOCIOS"}
                   </span>
                   <span style={{ fontSize: "14px", fontWeight: "800", color: "#FFFFFF", marginTop: "2px", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span>{lang === "en" ? "Switch Business" : "Mis Negocios (Galería)"}</span>
+                    <span>{lang === "en" ? "My Businesses" : "Mis Negocios"}</span>
                     <span style={{ color: "#FFD700", fontSize: "16px" }}>➔</span>
                   </span>
                 </div>
