@@ -681,12 +681,22 @@ function ChatContent() {
                     <div style={{ width: "30px", height: "30px", border: "2.5px solid rgba(255, 215, 0, 0.2)", borderTopColor: "#FFD700", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
                   </div>
                 ) : filteredMutuals.length === 0 ? (
-                  <div style={{ textAlign: "center", padding: "30px" }}>
-                    <span style={{ fontSize: "36px", display: "block", marginBottom: "8px" }}>🤝</span>
-                    <p style={{ margin: "0 0 4px", fontSize: "14px", fontWeight: "800", color: "#FFFFFF" }}>
+                  <div style={{ textAlign: "center", padding: "30px 16px" }}>
+                    <img
+                      src="/images/comunidad.svg"
+                      alt="Sin seguidores mutuos"
+                      style={{
+                        width: "48px",
+                        height: "48px",
+                        objectFit: "contain",
+                        margin: "0 auto 12px",
+                        filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)"
+                      }}
+                    />
+                    <p style={{ margin: "0 0 6px", fontSize: "15px", fontWeight: "900", color: "#FFFFFF" }}>
                       {t("chat.noMutualFollows")}
                     </p>
-                    <p style={{ margin: 0, fontSize: "12px", color: "rgba(255, 255, 255, 0.65)", lineHeight: "1.5" }}>
+                    <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255, 255, 255, 0.7)", lineHeight: "1.5" }}>
                       {t("chat.noMutualFollowsDesc")}
                     </p>
                   </div>
