@@ -3750,71 +3750,78 @@ export default function MapaTuristico() {
 
                 {/* DATOS Y ESTRUCTURA PRINCIPAL ABAJO DE LA CABECERA */}
                 <div style={{ padding: '12px 18px 14px', position: 'relative' }}>
-                  {/* HORARIO PROMINENTE SUPERIOR CON ESTADO ABIERTO / CERRADO */}
-                  {selectedPointDetails?.horarios && Object.keys(selectedPointDetails.horarios).length > 0 && (() => {
-                    const daysEnToEs = { 0: 'domingo', 1: 'lunes', 2: 'martes', 3: 'miercoles', 4: 'jueves', 5: 'viernes', 6: 'sabado' };
-                    const dayNamesEs = { domingo: 'Domingo', lunes: 'Lunes', martes: 'Martes', miercoles: 'Miércoles', jueves: 'Jueves', viernes: 'Viernes', sabado: 'Sábado' };
-                    const dayNamesEn = { domingo: 'Sunday', lunes: 'Monday', martes: 'Tuesday', miercoles: 'Wednesday', jueves: 'Thursday', viernes: 'Friday', sabado: 'Saturday' };
-                    const now = new Date();
-                    const currentDayKey = daysEnToEs[now.getDay()];
-                    const todayInfo = selectedPointDetails.horarios[currentDayKey];
-                    const isOpen = isBusinessOpenNow(selectedPointDetails.horarios);
+                  {/* LÍNEA DE CATEGORÍA, PRECIO Y HORARIO DESTACADO EN UNA SOLA LÍNEA */}
+                  <div
+                    style={{
+                      marginBottom: '12px',
+                      padding: '8px 12px',
+                      borderRadius: '12px',
+                      background: 'rgba(20, 109, 158, 0.07)',
+                      border: '1px solid rgba(20, 109, 158, 0.18)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '10px',
+                      flexWrap: 'wrap'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', fontSize: '13px', color: '#1E293B', fontWeight: '700' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#64748B', fontWeight: '600' }}>
+                        <Icon name="mapPin" size={14} color="#64748B" />
+                        {t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}
+                      </span>
 
-                    const dayLabel = lang === 'en' ? dayNamesEn[currentDayKey] : dayNamesEs[currentDayKey];
-                    const hoursStr = todayInfo?.abierto
-                      ? `${todayInfo.apertura || ''} - ${todayInfo.cierre || ''}`
-                      : (lang === 'en' ? 'Closed' : 'Cerrado');
+                      {selectedPointDetails?.rango_precios && (
+                        <>
+                          <span style={{ color: '#CBD5E1' }}>•</span>
+                          <span style={{ color: '#0F172A' }}>
+                            <strong>Precio:</strong> {formatPriceRange(selectedPointDetails.rango_precios)}
+                          </span>
+                        </>
+                      )}
 
-                    return (
-                      <div
+                      {selectedPointDetails?.horarios && Object.keys(selectedPointDetails.horarios).length > 0 && (() => {
+                        const daysEnToEs = { 0: 'domingo', 1: 'lunes', 2: 'martes', 3: 'miercoles', 4: 'jueves', 5: 'viernes', 6: 'sabado' };
+                        const dayNamesEs = { domingo: 'Domingo', lunes: 'Lunes', martes: 'Martes', miercoles: 'Miércoles', jueves: 'Jueves', viernes: 'Viernes', sabado: 'Sábado' };
+                        const dayNamesEn = { domingo: 'Sunday', lunes: 'Monday', martes: 'Tuesday', miercoles: 'Wednesday', thursday: 'Thursday', viernes: 'Friday', sabado: 'Saturday' };
+                        const now = new Date();
+                        const currentDayKey = daysEnToEs[now.getDay()];
+                        const todayInfo = selectedPointDetails.horarios[currentDayKey];
+
+                        const dayLabel = lang === 'en' ? dayNamesEn[currentDayKey] : dayNamesEs[currentDayKey];
+                        const hoursStr = todayInfo?.abierto
+                          ? `${todayInfo.apertura || ''} - ${todayInfo.cierre || ''}`
+                          : (lang === 'en' ? 'Closed' : 'Cerrado');
+
+                        return (
+                          <>
+                            <span style={{ color: '#CBD5E1' }}>•</span>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#1E293B' }}>
+                              <Icon name="clock" size={14} color="#146D9E" />
+                              <strong>Horario:</strong> {dayLabel} • ({lang === 'en' ? 'Today' : 'Hoy'}) {hoursStr}
+                            </span>
+                          </>
+                        );
+                      })()}
+                    </div>
+
+                    {selectedPointDetails?.horarios && isBusinessOpenNow(selectedPointDetails.horarios) !== null && (
+                      <span
                         style={{
-                          marginBottom: '10px',
-                          padding: '7px 12px',
-                          borderRadius: '10px',
-                          background: 'rgba(20, 109, 158, 0.07)',
-                          border: '1px solid rgba(20, 109, 158, 0.18)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          gap: '8px'
+                          fontSize: '11px',
+                          fontWeight: '850',
+                          textTransform: 'uppercase',
+                          padding: '3px 9px',
+                          borderRadius: '6px',
+                          backgroundColor: isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.12)' : 'rgba(239,68,68,0.12)',
+                          color: isBusinessOpenNow(selectedPointDetails.horarios) ? '#17AA4A' : '#ef4444',
+                          border: `1px solid ${isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.25)' : 'rgba(239,68,68,0.25)'}`,
+                          flexShrink: 0
                         }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#1E293B', fontWeight: '700' }}>
-                          <Icon name="clock" size={15} color="#146D9E" />
-                          <span>
-                            <strong>{lang === 'en' ? 'Schedule:' : 'Horario:'}</strong> {dayLabel} • ({lang === 'en' ? 'Today' : 'Hoy'}) {hoursStr}
-                          </span>
-                        </div>
-                        {isOpen !== null && (
-                          <span
-                            style={{
-                              fontSize: '11px',
-                              fontWeight: '850',
-                              textTransform: 'uppercase',
-                              padding: '2.5px 8px',
-                              borderRadius: '6px',
-                              backgroundColor: isOpen ? 'rgba(23, 170, 74, 0.12)' : 'rgba(239,68,68,0.12)',
-                              color: isOpen ? '#17AA4A' : '#ef4444',
-                              border: `1px solid ${isOpen ? 'rgba(23, 170, 74, 0.25)' : 'rgba(239,68,68,0.25)'}`,
-                              flexShrink: 0
-                            }}
-                          >
-                            {isOpen ? (lang === 'en' ? 'Open' : 'Abierto') : (lang === 'en' ? 'Closed' : 'Cerrado')}
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })()}
-
-                  {/* CATEGORÍA Y RANGO DE PRECIOS */}
-                  <div style={{ marginBottom: '10px' }}>
-                    <p style={{ margin: 0, fontSize: '12.5px', color: '#64748B', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Icon name="mapPin" size={13} color="#64748B" />
-                      <span>{t(`addPoint.categories.${selectedPoint.category || 'otro'}`)}</span>
-                      {selectedPointDetails?.rango_precios && (
-                        <span style={{ color: '#0F172A', fontWeight: '800', marginLeft: '3px' }}>• {formatPriceRange(selectedPointDetails.rango_precios)}</span>
-                      )}
-                    </p>
+                        {isBusinessOpenNow(selectedPointDetails.horarios) ? (lang === 'en' ? 'Open' : 'Abierto') : (lang === 'en' ? 'Closed' : 'Cerrado')}
+                      </span>
+                    )}
                   </div>
 
                   {/* 2 COLUMNAS ABAJO: IZQUIERDA (CUADRO DE IMAGEN MUCHO MÁS GRANDE CON INFO SUPERPUESTA) / DERECHA (LOS 2 BOTONES) */}
@@ -4057,35 +4064,7 @@ export default function MapaTuristico() {
 
                   {/* TARJETA DE VISTA PREVIA RESUMIDA */}
                   <div className="clay-card-static" style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {/* Indicador de abierto/cerrado */}
-                    {selectedPointDetails?.servicios?.has_hours && selectedPointDetails?.horarios && (
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <Icon name="clock" size={13} color="#64748B" />
-                          <span>{lang === 'en' ? 'Status' : 'Horario'}</span>
-                        </span>
-                        {isBusinessOpenNow(selectedPointDetails.horarios) !== null && (
-                          <span style={{
-                            fontSize: '11px',
-                            fontWeight: '850',
-                            textTransform: 'uppercase',
-                            padding: '3px 8px',
-                            borderRadius: '6px',
-                            backgroundColor: isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.12)' : 'rgba(239,68,68,0.12)',
-                            color: isBusinessOpenNow(selectedPointDetails.horarios) ? '#17AA4A' : '#ef4444',
-                            border: `1px solid ${isBusinessOpenNow(selectedPointDetails.horarios) ? 'rgba(23, 170, 74, 0.25)' : 'rgba(239,68,68,0.25)'}`,
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                          }}>
-                            <Icon name={isBusinessOpenNow(selectedPointDetails.horarios) ? 'check' : 'x'} size={11} color={isBusinessOpenNow(selectedPointDetails.horarios) ? '#17AA4A' : '#ef4444'} />
-                            {isBusinessOpenNow(selectedPointDetails.horarios)
-                              ? (lang === 'en' ? 'Open Now' : 'Abierto Ahora')
-                              : (lang === 'en' ? 'Closed' : 'Cerrado')}
-                          </span>
-                        )}
-                      </div>
-                    )}
+
 
                     {/* Descripción rápida (Acerca de) */}
                     <div>
