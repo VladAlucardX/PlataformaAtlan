@@ -533,6 +533,40 @@ a:hover {
   filter: brightness(0) invert(1) !important;
 }
 
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  white-space: nowrap !important;
+  flex-shrink: 0;
+  background: #FFFFFF;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: var(--atlan-radius-full);
+  color: var(--atlan-text-secondary) !important;
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+.btn-ghost:hover {
+  background: #FFFFFF;
+  border-color: rgba(20, 109, 158, 0.3);
+  color: var(--atlan-ocean) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(20, 109, 158, 0.1);
+}
+
+.btn-ghost.active {
+  background: linear-gradient(135deg, #146D9E 0%, #0F5579 100%) !important;
+  color: #FFFFFF !important;
+  border-color: transparent !important;
+  font-weight: 750 !important;
+  box-shadow: 0 4px 14px rgba(20, 109, 158, 0.3) !important;
+}
+
 /* ── BOTONES CLAYMORFICOS 3D ──────────────────────────────────────────────── */
 .btn-primary,
 .clay-btn-gold {

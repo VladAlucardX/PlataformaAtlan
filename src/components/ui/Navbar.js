@@ -416,7 +416,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
             </div>
           ) : (
             <>
-              <Link href="/login" className="btn-ghost" style={{ padding: "8px 16px", fontSize: "13px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+              <Link href="/login" className={`nav-pill-link ${activePage === "login" ? "active" : ""}`}>
                 <img src="/images/gueguense.svg" alt="Iniciar Sesión" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
                 <span>{t("nav.login")}</span>
               </Link>
