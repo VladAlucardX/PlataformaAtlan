@@ -739,11 +739,11 @@ export default function BusinessProfileModal({
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '14px',
-                  background: 'linear-gradient(135deg, rgba(20, 109, 158, 0.06) 0%, rgba(255, 215, 0, 0.08) 100%)',
-                  border: '1.5px solid rgba(20, 109, 158, 0.15)'
+                  background: 'linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(20, 109, 158, 0.02) 100%)',
+                  border: '1px solid rgba(20, 109, 158, 0.18)'
                 }}
               >
-                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: theme.cover, color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(20, 109, 158, 0.3)' }}>
                   <Icon name="calendar" size={22} color="#FFFFFF" />
                 </div>
                 <div>
@@ -756,13 +756,13 @@ export default function BusinessProfileModal({
                       : 'Reserva instantáneamente sin comisiones ni intermediarios. Tu solicitud llegará directamente al negocio.'}
                   </p>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '10px', borderTop: '1px dashed rgba(20,109,158,0.15)', fontSize: '12.5px', color: '#475569' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Icon name="checkCircle" size={14} color="#16A34A" />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '12px', borderTop: '1px dashed rgba(20,109,158,0.18)', fontSize: '12.5px', color: '#475569' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}>
+                    <Icon name="checkCircle" size={15} color="#10B981" />
                     <span>Confirmación inmediata por el local</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Icon name="shield" size={14} color="#2563EB" />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}>
+                    <Icon name="shield" size={15} color="#2563EB" />
                     <span>Garantía de servicio Atlan</span>
                   </div>
                 </div>
@@ -771,46 +771,50 @@ export default function BusinessProfileModal({
               {/* COLUMNA DERECHA: Formulario de Reserva compacto */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {reservaSuccess ? (
-                  <div className="clay-card-static" style={{ background: 'rgba(23, 170, 74, 0.10)', border: '1.5px solid #17AA4A', color: '#17AA4A', padding: '24px', textAlign: 'center', fontWeight: '700', borderRadius: '18px' }}>
-                    <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-                      <Icon name="checkCircle" size={28} color="#16A34A" />
+                  <div className="clay-card-static" style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1.5px solid #10B981', color: '#059669', padding: '24px', textAlign: 'center', fontWeight: '700', borderRadius: '18px' }}>
+                    <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: '#D1FAE5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.2)' }}>
+                      <Icon name="checkCircle" size={28} color="#10B981" />
                     </div>
-                    <div style={{ fontSize: '16px', fontWeight: '850' }}>{t('reservations.success') || '¡Reserva enviada con éxito!'}</div>
+                    <div style={{ fontSize: '16px', fontWeight: '850', color: '#047857' }}>{t('reservations.success') || '¡Reserva enviada con éxito!'}</div>
                     <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#475569', fontWeight: 'normal' }}>
                       {lang === 'en' ? 'The business will contact you shortly to confirm your booking.' : 'El negocio se pondrá en contacto contigo muy pronto para confirmar tu reserva.'}
                     </p>
                   </div>
                 ) : !userSession ? (
-                  <div className="clay-card-static" style={{ padding: '24px', textAlign: 'center', borderRadius: '18px' }}>
-                    <p style={{ margin: '0 0 14px', fontSize: '14px', color: '#475569', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                      <Icon name="lock" size={16} color="#64748B" />
+                  <div className="clay-card-static" style={{ padding: '24px', textAlign: 'center', borderRadius: '18px', border: '1px solid #E2E8F0' }}>
+                    <p style={{ margin: '0 0 14px', fontSize: '14px', color: '#475569', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                      <Icon name="lock" size={17} color="#146D9E" />
                       <span>{t('reservations.loginRequired') || 'Inicia sesión para realizar reservas'}</span>
                     </p>
                     <a
                       href="/login"
-                      className="clay-btn-gold no-sheen"
                       style={{
                         display: 'inline-flex',
-                        padding: '10px 24px',
+                        padding: '9.5px 24px',
                         fontSize: '13px',
-                        textDecoration: 'none'
+                        fontWeight: '800',
+                        textDecoration: 'none',
+                        background: 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)',
+                        color: '#FFFFFF',
+                        borderRadius: '10px',
+                        boxShadow: '0 4px 12px rgba(20, 109, 158, 0.25)'
                       }}
                     >
                       {t('nav.login') || 'Iniciar Sesión'}
                     </a>
                   </div>
                 ) : (
-                  <form onSubmit={handleCrearReserva} className="clay-card-static" style={{ display: 'flex', flexDirection: 'column', gap: '14px', padding: '20px', borderRadius: '18px' }}>
+                  <form onSubmit={handleCrearReserva} className="clay-card-static" style={{ display: 'flex', flexDirection: 'column', gap: '14px', padding: '22px', borderRadius: '18px', border: '1px solid #E2E8F0' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                       <div>
-                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#334155', display: 'block', marginBottom: '5px' }}>
                           {t('reservations.type') || 'Tipo de Reserva'}
                         </label>
                         <select
                           value={reservaTipo}
                           onChange={(e) => setReservaTipo(e.target.value)}
                           className="clay-input"
-                          style={{ padding: '9px 12px', width: '100%', fontSize: '13px' }}
+                          style={{ padding: '9.5px 12px', width: '100%', fontSize: '13px', borderRadius: '10px', background: '#F8FAFC', border: '1px solid #E2E8F0' }}
                         >
                           <option value="mesa">{t('reservations.types.mesa') || 'Mesa / Restaurante'}</option>
                           <option value="habitacion">{t('reservations.types.habitacion') || 'Habitación / Hospedaje'}</option>
@@ -820,8 +824,8 @@ export default function BusinessProfileModal({
                       </div>
 
                       <div>
-                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                          <Icon name="users" size={13} color="#64748B" />
+                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#334155', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
+                          <Icon name="users" size={13} color="#146D9E" />
                           <span>{t('reservations.people') || 'N° Personas'}</span>
                         </label>
                         <input
@@ -831,14 +835,14 @@ export default function BusinessProfileModal({
                           value={reservaPersonas}
                           onChange={(e) => setReservaPersonas(e.target.value)}
                           className="clay-input"
-                          style={{ padding: '9px 12px', width: '100%', fontSize: '13px' }}
+                          style={{ padding: '9.5px 12px', width: '100%', fontSize: '13px', borderRadius: '10px', background: '#F8FAFC', border: '1px solid #E2E8F0' }}
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                        <Icon name="calendar" size={13} color="#64748B" />
+                      <label style={{ fontSize: '12px', fontWeight: '800', color: '#334155', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
+                        <Icon name="calendar" size={13} color="#146D9E" />
                         <span>{t('reservations.date') || 'Fecha y Hora'}</span>
                       </label>
                       <input
@@ -847,13 +851,13 @@ export default function BusinessProfileModal({
                         value={reservaFechaHora}
                         onChange={(e) => setReservaFechaHora(e.target.value)}
                         className="clay-input"
-                        style={{ padding: '9px 12px', width: '100%', fontSize: '13px' }}
+                        style={{ padding: '9.5px 12px', width: '100%', fontSize: '13px', borderRadius: '10px', background: '#F8FAFC', border: '1px solid #E2E8F0' }}
                       />
                     </div>
 
                     <div>
-                      <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                        <Icon name="fileText" size={13} color="#64748B" />
+                      <label style={{ fontSize: '12px', fontWeight: '800', color: '#334155', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
+                        <Icon name="fileText" size={13} color="#146D9E" />
                         <span>{t('reservations.notes') || 'Notas especiales o peticiones'}</span>
                       </label>
                       <textarea
@@ -862,17 +866,33 @@ export default function BusinessProfileModal({
                         onChange={(e) => setReservaNotas(e.target.value)}
                         placeholder={lang === 'en' ? 'Indicate allergies, special seating preferences, etc.' : 'Indica preferencias de asientos, alergias, o detalles adicionales...'}
                         className="clay-textarea"
-                        style={{ padding: '9px 12px', width: '100%', fontSize: '12.5px' }}
+                        style={{ padding: '10px 12px', width: '100%', fontSize: '13px', borderRadius: '10px', background: '#F8FAFC', border: '1px solid #E2E8F0' }}
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={isSubmittingReserva}
-                      className="clay-btn-gold no-sheen"
-                      style={{ width: '100%', padding: '12px', fontSize: '13.5px', fontWeight: '800' }}
+                      style={{
+                        width: '100%',
+                        padding: '11.5px 16px',
+                        fontSize: '13.5px',
+                        fontWeight: '850',
+                        color: '#FFFFFF',
+                        background: 'linear-gradient(135deg, #146D9E 0%, #0D496B 100%)',
+                        border: 'none',
+                        borderRadius: '12px',
+                        cursor: isSubmittingReserva ? 'not-allowed' : 'pointer',
+                        boxShadow: '0 4px 14px rgba(20, 109, 158, 0.35)',
+                        transition: 'all 0.2s ease',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px'
+                      }}
                     >
-                      {isSubmittingReserva ? (lang === 'en' ? 'Submitting...' : 'Enviando...') : (t('reservations.submit') || 'Confirmar Reserva')}
+                      <Icon name="calendar" size={16} color="#FFFFFF" />
+                      <span>{isSubmittingReserva ? (lang === 'en' ? 'Submitting...' : 'Enviando...') : (t('reservations.submit') || 'Confirmar Reserva')}</span>
                     </button>
                   </form>
                 )}
