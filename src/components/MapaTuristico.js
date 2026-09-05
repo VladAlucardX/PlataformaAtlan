@@ -1500,6 +1500,11 @@ export default function MapaTuristico() {
   const handlePositionUpdate = (longitude, latitude, bearing = null) => {
     currentPosRef.current = [longitude, latitude];
 
+    if (typeof window !== 'undefined') {
+      window.resetAtlanInactivityTimer?.();
+      window.__atlanActiveNavigation = !!(isNavigatingRef.current || isDemoRunningRef.current);
+    }
+
     if (mapRef.current) {
       if (!userMarkerRef.current) {
         const el = document.createElement('div');
@@ -2067,10 +2072,21 @@ export default function MapaTuristico() {
       maxBounds: CENTRAL_AMERICA_BOUNDS, // Restringir memoria al área estrictamente necesaria
     });
 
-    mapRef.current.on('dragstart', () => {
+    mapRef.current.on('movestart', () => {
       if (activePopupRef.current) {
         activePopupRef.current.remove();
         activePopupRef.current = null;
+      }
+      if (typeof window !== 'undefined') {
+        window.__atlanMapMoving = true;
+        window.resetAtlanInactivityTimer?.();
+      }
+    });
+
+    mapRef.current.on('moveend', () => {
+      if (typeof window !== 'undefined') {
+        window.__atlanMapMoving = false;
+        window.resetAtlanInactivityTimer?.();
       }
     });
 

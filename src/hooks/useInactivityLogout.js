@@ -5,19 +5,24 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 /**
- * useInactivityLogout — Cierra la sesión del usuario tras 15 minutos sin interacción.
+ * useInactivityLogout — Cierra la sesión del usuario tras inactividad prolongada (30 minutos).
  *
- * Escucha eventos DOM de interacción real (mouse, teclado, touch, scroll).
- * Cualquier uso del mapa (pan, zoom, click en marcadores) genera estos mismos
- * eventos nativos, por lo que el timer se reinicia automáticamente al usar el mapa.
+ * Mantiene la sesión activa si:
+ * 1. El usuario interactúa con la app (mouse, teclado, touch, scroll, click, zoom/pan en mapa).
+ * 2. Hay una ruta/navegación activa en el mapa o el mapa se está moviendo.
+ * 3. La ventana o pestaña está activa.
  *
  * @param {boolean} isAuthenticated - Si hay sesión activa
  * @param {Function} onLogout - Callback para limpiar estado de auth
- * @param {number} timeoutMs - Tiempo de inactividad en ms (default: 900000 = 15 min)
+ * @param {number} timeoutMs - Tiempo de inactividad en ms (default: 1800000 = 30 min)
  */
-export function useInactivityLogout(isAuthenticated, onLogout, timeoutMs = 900000) {
-  const timerRef = useRef(null);
+export function useInactivityLogout(isAuthenticated, onLogout, timeoutMs = 1800000) {
+  const lastActivityRef = useRef(Date.now());
   const router = useRouter();
+
+  const resetActivity = useCallback(() => {
+    lastActivityRef.current = Date.now();
+  }, []);
 
   const performLogout = useCallback(async () => {
     try {
@@ -29,22 +34,14 @@ export function useInactivityLogout(isAuthenticated, onLogout, timeoutMs = 90000
     router.push("/login");
   }, [onLogout, router]);
 
-  const resetTimer = useCallback(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    timerRef.current = setTimeout(performLogout, timeoutMs);
-  }, [performLogout, timeoutMs]);
-
   useEffect(() => {
-    if (!isAuthenticated) {
-      // Sin sesión activa, no activar el timer
-      if (timerRef.current) clearTimeout(timerRef.current);
-      return;
+    if (!isAuthenticated) return;
+
+    lastActivityRef.current = Date.now();
+    if (typeof window !== "undefined") {
+      window.resetAtlanInactivityTimer = resetActivity;
     }
 
-    // Eventos que consideramos como "actividad del usuario"
-    // Incluye todos los que Mapbox GL genera al interactuar con el mapa
     const activityEvents = [
       "mousemove",
       "mousedown",
@@ -56,23 +53,41 @@ export function useInactivityLogout(isAuthenticated, onLogout, timeoutMs = 90000
       "wheel",
       "pointerdown",
       "pointermove",
+      "atlan-user-activity",
+      "focus",
+      "visibilitychange",
     ];
 
-    // Iniciar el timer al montar
-    resetTimer();
-
-    // Registrar listeners
-    const handleActivity = () => resetTimer();
+    const handleActivity = () => {
+      lastActivityRef.current = Date.now();
+    };
 
     activityEvents.forEach((event) => {
       window.addEventListener(event, handleActivity, { passive: true });
     });
 
+    // Verificar inactividad cada 10 segundos
+    const interval = setInterval(() => {
+      // Si la navegación está activa o el mapa está en movimiento activo, mantener fresca la actividad
+      if (typeof window !== "undefined" && (window.__atlanActiveNavigation || window.__atlanMapMoving)) {
+        lastActivityRef.current = Date.now();
+        return;
+      }
+
+      const elapsed = Date.now() - lastActivityRef.current;
+      if (elapsed >= timeoutMs) {
+        performLogout();
+      }
+    }, 10000);
+
     return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
+      clearInterval(interval);
+      if (typeof window !== "undefined") {
+        delete window.resetAtlanInactivityTimer;
+      }
       activityEvents.forEach((event) => {
         window.removeEventListener(event, handleActivity);
       });
     };
-  }, [isAuthenticated, resetTimer]);
+  }, [isAuthenticated, performLogout, resetActivity, timeoutMs]);
 }
