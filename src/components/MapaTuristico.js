@@ -727,18 +727,27 @@ export default function MapaTuristico() {
     setIsSubmittingReserva(true);
 
     try {
+      let isoDate = reservaFechaHora;
+      if (reservaFechaHora) {
+        try {
+          isoDate = new Date(reservaFechaHora).toISOString();
+        } catch (_) {}
+      }
+
+      const insertPayload = {
+        punto_id: selectedPoint?.id || null,
+        negocio_id: selectedPoint?.negocio_id || null,
+        cliente_id: userSession.user.id,
+        fecha_hora: isoDate,
+        num_personas: parseInt(reservaPersonas) || 1,
+        notas: reservaNotas || '',
+        tipo_reserva: reservaTipo || 'mesa',
+        estado_reserva: 'pendiente'
+      };
+
       const { error } = await supabase
         .from('reservas')
-        .insert([{
-          lugar_id: selectedPoint.id,
-          negocio_id: selectedPoint.negocio_id,
-          cliente_id: userSession.user.id,
-          fecha_hora: reservaFechaHora,
-          num_personas: parseInt(reservaPersonas),
-          notas: reservaNotas,
-          tipo_reserva: reservaTipo,
-          estado_reserva: 'pendiente'
-        }]);
+        .insert([insertPayload]);
 
       if (error) throw error;
       setReservaSuccess(true);
@@ -747,7 +756,7 @@ export default function MapaTuristico() {
       setTimeout(() => setReservaSuccess(false), 4000);
     } catch (err) {
       console.error("Error reservando:", err);
-      alert("Error al procesar reserva.");
+      alert("Error al procesar reserva: " + (err.message || 'Intente nuevamente'));
     } finally {
       setIsSubmittingReserva(false);
     }
