@@ -1072,28 +1072,57 @@ export default function DashboardPage() {
       {viewMode === "hub" || !negocio ? (
         <div style={styles.dashboardOverviewLayout} className="animate-fade-in-up">
           <div style={{
+            background: "rgba(10, 25, 47, 0.65)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            padding: "24px 30px",
+            borderRadius: "24px",
+            border: "1.5px solid rgba(255, 255, 255, 0.18)",
+            boxShadow: "0 14px 36px rgba(0, 0, 0, 0.35)",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
             flexWrap: "wrap",
-            gap: "16px",
-            marginBottom: "28px"
+            gap: "20px",
+            marginBottom: "30px"
           }}>
             <div>
               <div style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
                 fontSize: "12px",
-                fontWeight: "800",
-                color: "var(--atlan-gold)",
+                fontWeight: "850",
+                color: "#FFD700",
                 textTransform: "uppercase",
-                letterSpacing: "1px",
-                marginBottom: "6px"
+                letterSpacing: "1.2px",
+                marginBottom: "8px",
+                background: "rgba(255, 215, 0, 0.15)",
+                padding: "5px 14px",
+                borderRadius: "20px",
+                border: "1px solid rgba(255, 215, 0, 0.35)",
+                boxShadow: "0 2px 8px rgba(255, 215, 0, 0.1)"
               }}>
                 🏬 {lang === "en" ? "Business Management Hub" : "Panel de Gestión de Negocios"}
               </div>
-              <h2 style={{ fontSize: "32px", fontWeight: "900", color: "#1A1A2E", margin: 0 }}>
+              <h2 style={{
+                fontSize: "34px",
+                fontWeight: "900",
+                color: "#FFFFFF",
+                margin: "4px 0 0",
+                letterSpacing: "-0.02em",
+                textShadow: "0 2px 12px rgba(0, 0, 0, 0.6)"
+              }}>
                 {lang === "en" ? "My Businesses" : "Mis Negocios"}
               </h2>
-              <p style={{ color: "var(--atlan-text-secondary)", margin: "4px 0 0", fontSize: "14.5px" }}>
+              <p style={{
+                color: "#E2E8F0",
+                margin: "6px 0 0",
+                fontSize: "14.5px",
+                lineHeight: "1.4",
+                maxWidth: "640px",
+                textShadow: "0 1px 4px rgba(0, 0, 0, 0.5)"
+              }}>
                 {lang === "en"
                   ? "Manage your registered properties or claim/register new locations on the map."
                   : "Administra las fotos, menús y horarios de tus locales o reclama/registra nuevos puntos en el mapa."}
@@ -1104,7 +1133,7 @@ export default function DashboardPage() {
               <button
                 onClick={() => setViewMode("manage")}
                 className="clay-btn-gold"
-                style={{ padding: "10px 20px", fontSize: "13px" }}
+                style={{ padding: "12px 24px", fontSize: "13.5px", flexShrink: 0 }}
               >
                 ⚡ {lang === "en" ? "Manage Selected Business" : "Administrar Negocio Actual"}
               </button>
@@ -1114,8 +1143,8 @@ export default function DashboardPage() {
           {/* Grid de tarjetas por negocio (Compacto) */}
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-            gap: "16px"
+            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+            gap: "18px"
           }}>
             {(misNegocios || []).map((n) => {
               const bgImg = n.logo_url || (n.fotos && n.fotos.length > 0 ? n.fotos[0] : getCategoryFallbackImage(n.tipo));
@@ -1126,21 +1155,21 @@ export default function DashboardPage() {
                   key={n.id}
                   className="clay-card"
                   style={{
-                    borderRadius: "18px",
+                    borderRadius: "20px",
                     overflow: "hidden",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
                     background: "#FFFFFF",
-                    border: isSelected ? "2px solid #FFD700" : "1.5px solid rgba(20, 109, 158, 0.12)",
+                    border: isSelected ? "2.5px solid #FFD700" : "1.5px solid rgba(20, 109, 158, 0.15)",
                     boxShadow: isSelected
-                      ? "0 8px 20px rgba(255, 215, 0, 0.25), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
-                      : "0 6px 16px rgba(0, 0, 0, 0.05), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
+                      ? "0 10px 24px rgba(255, 215, 0, 0.3), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
+                      : "0 8px 20px rgba(0, 0, 0, 0.06), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
                     transition: "all 0.3s ease"
                   }}
                 >
                   {/* Encabezado con imagen del negocio */}
-                  <div style={{ position: "relative", height: "110px", width: "100%", background: "#F1F5F9" }}>
+                  <div style={{ position: "relative", height: "120px", width: "100%", background: "#F1F5F9" }}>
                     <img
                       src={bgImg}
                       alt={n.nombre}
@@ -1158,16 +1187,16 @@ export default function DashboardPage() {
                       top: "8px",
                       right: "8px",
                       background: n.activo
-                        ? "#17AA4A"
+                        ? "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)"
                         : n.motivo_rechazo
-                        ? "#ef4444"
-                        : "#E6A800",
+                        ? "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)"
+                        : "linear-gradient(135deg, #E6A800 0%, #ca8a04 100%)",
                       color: "#FFFFFF",
-                      padding: "3px 9px",
+                      padding: "4px 10px",
                       borderRadius: "16px",
                       fontSize: "10px",
                       fontWeight: "850",
-                      boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
                       textTransform: "uppercase"
                     }}>
                       {n.activo
@@ -1183,29 +1212,31 @@ export default function DashboardPage() {
                       bottom: "8px",
                       left: "8px",
                       background: "rgba(255, 255, 255, 0.95)",
-                      color: "#1A1A2E",
-                      padding: "3px 8px",
-                      borderRadius: "10px",
-                      fontSize: "10px",
-                      fontWeight: "800",
-                      textTransform: "uppercase"
+                      backdropFilter: "blur(4px)",
+                      color: "#146D9E",
+                      padding: "4px 10px",
+                      borderRadius: "12px",
+                      fontSize: "10.5px",
+                      fontWeight: "850",
+                      textTransform: "uppercase",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
                     }}>
                       🏷️ {n.tipo || "Comercial"}
                     </div>
                   </div>
 
                   {/* Cuerpo de la tarjeta */}
-                  <div style={{ padding: "14px 16px", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "10px" }}>
+                  <div style={{ padding: "16px", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "12px" }}>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "850", color: "#1A1A2E" }}>
+                      <h3 style={{ margin: 0, fontSize: "16.5px", fontWeight: "850", color: "#0F172A" }}>
                         {n.nombre}
                       </h3>
                       {n.descripcion && (
                         <p style={{
-                          margin: "4px 0 0",
+                          margin: "5px 0 0",
                           fontSize: "12px",
-                          color: "#4A5568",
-                          lineHeight: "1.35",
+                          color: "#475569",
+                          lineHeight: "1.4",
                           display: "-webkit-box",
                           WebkitLineClamp: 2,
                           WebkitBoxOrient: "vertical",
@@ -1216,7 +1247,7 @@ export default function DashboardPage() {
                       )}
                     </div>
 
-                    <div style={{ fontSize: "11px", color: "#64748B", display: "flex", flexDirection: "column", gap: "2px" }}>
+                    <div style={{ fontSize: "11.5px", color: "#64748B", display: "flex", flexDirection: "column", gap: "3px" }}>
                       {n.telefono && <span>📞 Tel: {n.telefono}</span>}
                       {n.rango_precios && <span>💵 Precios: {n.rango_precios}</span>}
                     </div>
@@ -1230,11 +1261,11 @@ export default function DashboardPage() {
                       className="clay-btn-blue"
                       style={{
                         width: "100%",
-                        padding: "7px 12px",
-                        fontSize: "12px",
+                        padding: "9px 14px",
+                        fontSize: "12.5px",
                         justifyContent: "center",
-                        borderRadius: "10px",
-                        marginTop: "4px"
+                        borderRadius: "12px",
+                        marginTop: "6px"
                       }}
                     >
                       ⚙️ {lang === "en" ? "Manage This Business" : "Administrar este Negocio"}
@@ -1248,47 +1279,48 @@ export default function DashboardPage() {
             <div
               className="clay-card"
               style={{
-                borderRadius: "18px",
-                padding: "16px",
+                borderRadius: "20px",
+                padding: "20px 18px",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
                 textAlign: "center",
-                background: "rgba(255, 255, 255, 0.9)",
-                border: "2px dashed rgba(20, 109, 158, 0.3)",
-                boxShadow: "0 6px 16px rgba(0, 0, 0, 0.04)",
-                minHeight: "220px",
-                gap: "10px"
+                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(241, 245, 249, 0.95) 100%)",
+                border: "2px dashed rgba(20, 109, 158, 0.4)",
+                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.08)",
+                minHeight: "230px",
+                gap: "12px"
               }}
             >
               <div style={{
-                width: "44px",
-                height: "44px",
+                width: "48px",
+                height: "48px",
                 borderRadius: "50%",
-                background: "rgba(23, 170, 74, 0.12)",
-                color: "#17AA4A",
+                background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
+                color: "#FFFFFF",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 fontSize: "22px",
-                fontWeight: "900"
+                fontWeight: "900",
+                boxShadow: "0 6px 16px rgba(23, 170, 74, 0.35)"
               }}>
                 ➕
               </div>
 
               <div>
-                <h3 style={{ margin: 0, fontSize: "15px", fontWeight: "850", color: "#1A1A2E" }}>
+                <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "850", color: "#0F172A" }}>
                   {lang === "en" ? "Claim or Register New Business" : "Reclama o Registra Otro Negocio"}
                 </h3>
-                <p style={{ margin: "4px 0 0", fontSize: "11.5px", color: "#4A5568", lineHeight: "1.3" }}>
+                <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#475569", lineHeight: "1.35" }}>
                   {lang === "en"
                     ? "Claim an existing point or register a new location."
                     : "¿Posees otro local? Reclama un punto libre o registra uno nuevo."}
                 </p>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%", marginTop: "4px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "9px", width: "100%", marginTop: "4px" }}>
                 <button
                   type="button"
                   onClick={() => {
@@ -1296,7 +1328,7 @@ export default function DashboardPage() {
                     setShowSearchClaimModal(true);
                   }}
                   className="clay-btn-gold"
-                  style={{ width: "100%", height: "38px", padding: "0 12px", fontSize: "11.5px", justifyContent: "center", borderRadius: "10px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
+                  style={{ width: "100%", height: "40px", padding: "0 14px", fontSize: "12px", justifyContent: "center", borderRadius: "12px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
                 >
                   🔍 {lang === "en" ? "Search Unclaimed Point" : "Buscar Punto Existente a Reclamar"}
                 </button>
@@ -1306,7 +1338,7 @@ export default function DashboardPage() {
                   onClick={() => handleInitiateClaim("gps")}
                   disabled={isClaiming}
                   className="clay-btn-green"
-                  style={{ width: "100%", height: "38px", padding: "0 12px", fontSize: "11.5px", justifyContent: "center", borderRadius: "10px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
+                  style={{ width: "100%", height: "40px", padding: "0 14px", fontSize: "12px", justifyContent: "center", borderRadius: "12px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
                 >
                   📍 {lang === "en" ? "Register with GPS" : "Registrar con mi ubicación GPS"}
                 </button>
@@ -1316,7 +1348,7 @@ export default function DashboardPage() {
                   onClick={handleIrAlMapaParaMarcar}
                   disabled={isClaiming}
                   className="clay-btn-blue"
-                  style={{ width: "100%", height: "38px", padding: "0 12px", fontSize: "11.5px", justifyContent: "center", borderRadius: "10px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
+                  style={{ width: "100%", height: "40px", padding: "0 14px", fontSize: "12px", justifyContent: "center", borderRadius: "12px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
                 >
                   🗺️ {lang === "en" ? "Mark on Map Manually" : "Marcar punto en el mapa"}
                 </button>
