@@ -65,6 +65,8 @@ export default function MapaTuristico() {
   const prevSelectedPointRef = useRef(null);
   const lastRecalculateTimeRef = useRef(0);
   const hasFlownInitialDescentRef = useRef(false);
+  const previewRouteBoundsRef = useRef(null);
+  const loadedPointIdRef = useRef(null);
 
 
   // --- ESTADO DE REACT ---
@@ -247,11 +249,44 @@ export default function MapaTuristico() {
       setIsOnline(navigator.onLine);
       const handleOnline = () => setIsOnline(true);
       const handleOffline = () => setIsOnline(false);
+
+      const handleReFocusOrResize = () => {
+        if (mapRef.current) {
+          mapRef.current.stop();
+          mapRef.current.resize();
+          if (selectedPointRef.current && previewRouteBoundsRef.current) {
+            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+            mapRef.current.fitBounds(previewRouteBoundsRef.current, {
+              padding: isMobile
+                ? { top: 90, bottom: 250, left: 35, right: 35 }
+                : { top: 100, bottom: 100, left: 80, right: 80 },
+              maxZoom: 15.5,
+              duration: 0,
+              pitch: 15,
+              essential: true
+            });
+          }
+        }
+      };
+
       window.addEventListener('online', handleOnline);
       window.addEventListener('offline', handleOffline);
+      window.addEventListener('focus', handleReFocusOrResize);
+      window.addEventListener('resize', handleReFocusOrResize);
+
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === 'visible') {
+          handleReFocusOrResize();
+        }
+      };
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+
       return () => {
         window.removeEventListener('online', handleOnline);
         window.removeEventListener('offline', handleOffline);
+        window.removeEventListener('focus', handleReFocusOrResize);
+        window.removeEventListener('resize', handleReFocusOrResize);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
       };
     }
   }, []);
@@ -415,8 +450,9 @@ export default function MapaTuristico() {
     };
 
     const timer = setTimeout(() => {
+      if (mapRef.current) mapRef.current.resize();
       fetchPreviewRoute();
-    }, 150);
+    }, 280);
 
     return () => clearTimeout(timer);
   }, [selectedPoint]);
@@ -452,14 +488,26 @@ export default function MapaTuristico() {
   }, []);
 
   useEffect(() => {
-    // Resetear inmediatamente estados previos para evitar fuga de información entre puntos
-    setSelectedPointDetails(null);
-    setPointReviews([]);
-    setPointMenu([]);
-    setIsFavorite(false);
-    setFavoriteId(null);
+    if (!selectedPoint) {
+      loadedPointIdRef.current = null;
+      setSelectedPointDetails(null);
+      setPointReviews([]);
+      setPointMenu([]);
+      setIsFavorite(false);
+      setFavoriteId(null);
+      return;
+    }
 
-    if (!selectedPoint) return;
+    // Si es un punto nuevo, resetear estados previos; si es el mismo punto al re-enfocar la pestaña, mantener la imagen y datos sin parpadeo
+    const pointIdChanged = loadedPointIdRef.current !== selectedPoint.id;
+    if (pointIdChanged) {
+      loadedPointIdRef.current = selectedPoint.id;
+      setSelectedPointDetails(null);
+      setPointReviews([]);
+      setPointMenu([]);
+      setIsFavorite(false);
+      setFavoriteId(null);
+    }
 
     const loadPointDetails = async () => {
       const cacheKey = `atlan_point_details_${selectedPoint.id}`;
@@ -597,6 +645,10 @@ export default function MapaTuristico() {
     if (selectedPoint) {
       prevSelectedPointRef.current = selectedPoint;
       isInteractionPausedRef.current = false; // Resetear siempre para permitir que la ruta se encuadre al seleccionar punto nuevo
+
+      if (mapRef.current) {
+        mapRef.current.stop(); // Detener de inmediato cualquier vuelo o animación activa
+      }
 
       // Si el usuario abre detalles, cancelamos cualquier animación inicial de aproximación
       if (cinematicTimeoutsRef.current.length > 0) {
@@ -1384,18 +1436,25 @@ export default function MapaTuristico() {
     }
 
     // Ajustar vista del mapa si es el fit inicial (Centrar trayectoria completa)
-    if (isInitialFit && mapRef.current && coords.length > 0) {
+    if (coords.length > 0) {
       const bounds = new mapboxgl.LngLatBounds();
       coords.forEach(coord => bounds.extend(coord));
-      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-      mapRef.current.fitBounds(bounds, {
-        padding: isMobile
-          ? { top: 40, bottom: 200, left: 25, right: 25 }
-          : { top: 120, bottom: 120, left: 120, right: 420 },
-        duration: 2200,
-        pitch: 35,
-        essential: true
-      });
+      previewRouteBoundsRef.current = bounds;
+
+      if ((isInitialFit || selectedPointRef.current) && mapRef.current) {
+        mapRef.current.stop();
+        if (mapRef.current.resize) mapRef.current.resize();
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+        mapRef.current.fitBounds(bounds, {
+          padding: isMobile
+            ? { top: 90, bottom: 250, left: 35, right: 35 }
+            : { top: 100, bottom: 100, left: 80, right: 80 },
+          maxZoom: 15.5,
+          duration: isInitialFit ? 1800 : 0,
+          pitch: 15,
+          essential: true
+        });
+      }
     }
 
     setPreviewRouteInfo({
@@ -1437,7 +1496,7 @@ export default function MapaTuristico() {
       }
     }
 
-    if (directionsRef.current) {
+    if (directionsRef.current && isNavigatingRef.current) {
       directionsRef.current.setOrigin([longitude, latitude]);
     }
 
@@ -1917,6 +1976,16 @@ export default function MapaTuristico() {
         ];
 
         styleLayers.forEach((layer) => {
+          // 0. Ocultar todos los negocios, comercios y Puntos de Interés (POIs) predeterminados de Mapbox
+          if (
+            layer.id.includes('poi') ||
+            layer.id.includes('transit') ||
+            (layer['source-layer'] && (layer['source-layer'] === 'poi_label' || layer['source-layer'] === 'transit_label'))
+          ) {
+            mapRef.current.setLayoutProperty(layer.id, 'visibility', 'none');
+            return;
+          }
+
           // 1. Filtrar etiquetas de texto (ciudades, países, nombres de lugares)
           if (layer.type === 'symbol' && layer.layout && layer.layout['text-field']) {
             const existingFilter = mapRef.current.getFilter(layer.id);
@@ -2268,7 +2337,7 @@ export default function MapaTuristico() {
 
       // Retardo de 150ms para que la UI desvanezca la portada de carga y active el renderizado WebGL en WebView Android
       const descentTimer = setTimeout(() => {
-        if (!mapRef.current) return;
+        if (!mapRef.current || selectedPointRef.current) return;
 
         // Prevenir caídas de WebGL en Android WebView
         const canvas = mapRef.current.getCanvas();
@@ -2476,7 +2545,7 @@ export default function MapaTuristico() {
             WebkitTextStroke: '0.5px rgba(0,0,0,0.5)',
             textShadow: '0 1px 4px rgba(0,0,0,0.8)'
           }}>
-            Nicaragua Turismo
+            Vive y siente Nicaragua.
           </div>
         </div>
 
@@ -2574,7 +2643,7 @@ export default function MapaTuristico() {
           textTransform: 'uppercase',
           fontFamily: "'Delight', var(--font-inter), sans-serif"
         }}>
-          {lang === 'en' ? 'Preparing map experience...' : 'Preparando experiencia de mapa...'}
+          {lang === 'en' ? 'Preparing your Experience inside the Map...' : 'Preparando tu Experiencia dentro del Mapa.'}
         </div>
       </div>
 
@@ -3001,10 +3070,23 @@ export default function MapaTuristico() {
                 cursor: 'pointer',
                 backdropFilter: 'blur(12px)',
                 boxShadow: filtroCategoria === null ? '0 4px 12px rgba(255,215,0,0.3)' : '0 4px 10px rgba(0,0,0,0.25)',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
               }}
             >
-              🌍 {t('map.allCategories')}
+              <img
+                src="/images/remolino.svg"
+                alt="Todas"
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  objectFit: 'contain',
+                  filter: filtroCategoria === null ? 'brightness(0)' : 'brightness(0) invert(1)'
+                }}
+              />
+              <span>{t('map.allCategories')}</span>
             </button>
 
             {Object.entries(CATEGORIAS_CONFIG).map(([key, config]) => {
