@@ -288,18 +288,18 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
 // Estilos
 const styles = {
   overlay: {
-    position: "fixed", inset: 0, zIndex: 300,
-    background: "rgba(0,0,0,0.85)", backdropFilter: "blur(12px)",
+    position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", zIndex: 9999,
+    background: "rgba(0,0,0,0.85)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
     display: "flex", alignItems: "center", justifyContent: "center",
-    padding: "24px",
+    padding: "20px", boxSizing: "border-box"
   },
   container: {
-    width: "100%", maxWidth: "1100px", height: "82vh", maxHeight: "82vh",
+    width: "100%", maxWidth: "1100px", height: "80vh", maxHeight: "800px",
     background: "#FFFFFF",
     border: "1px solid rgba(255, 255, 255, 0.2)",
     borderRadius: "28px", overflow: "hidden", position: "relative",
     boxShadow: "0 32px 64px rgba(0,0,0,0.5)",
-    margin: "auto", display: "flex", flexDirection: "column"
+    display: "flex", flexDirection: "column", boxSizing: "border-box"
   },
   closeBtn: {
     position: "absolute", top: "12px", right: "12px", zIndex: 10,
@@ -310,16 +310,16 @@ const styles = {
     transition: "background 0.2s",
   },
   splitLayout: {
-    display: "flex", height: "100%", width: "100%", overflow: "hidden"
+    display: "flex", height: "100%", width: "100%", flex: 1, minHeight: 0, overflow: "hidden"
   },
   imageSection: {
-    flex: "1 1 60%", background: "#000",
+    flex: "1 1 60%", background: "#000000",
     display: "flex", alignItems: "center", justifyContent: "center",
-    minWidth: 0, overflow: "hidden", height: "100%"
+    minWidth: 0, overflow: "hidden", height: "100%", padding: "16px", boxSizing: "border-box"
   },
   media: {
-    maxWidth: "100%", maxHeight: "100%", objectFit: "contain",
-    display: "block",
+    maxWidth: "100%", maxHeight: "100%", width: "auto", height: "auto", objectFit: "contain",
+    display: "block", margin: "auto"
   },
   commentSection: {
     flex: "0 0 380px", display: "flex", flexDirection: "column",
