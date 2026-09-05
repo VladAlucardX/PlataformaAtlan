@@ -419,11 +419,11 @@ export default function MasDeNicaraguaPage() {
                 }}>
                   <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                   <span style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700", letterSpacing: "0.6px", textShadow: "0 0 8px rgba(255, 215, 0, 0.4)" }}>
-                    Enciclopedia Viva
+                    Nicaragua Viva
                   </span>
                 </div>
                 <span style={{ fontSize: "17.5px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "0.4px" }}>
-                  17 Departamentos de{" "}
+                  Conoce más sobre los Departamentos de{" "}
                   <span style={{
                     fontSize: "18.5px",
                     fontWeight: "900",

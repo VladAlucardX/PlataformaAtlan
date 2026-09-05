@@ -47,7 +47,7 @@ export default function DepartamentoDetailPage() {
             }}
           >
             <Icon name="arrowLeft" size={16} color="#1A1A2E" />
-            <span>Volver a la Enciclopedia</span>
+            <span>Volver a Nicaragua Viva</span>
           </Link>
         </div>
       </div>
