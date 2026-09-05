@@ -12,6 +12,7 @@ import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
 import { uploadMedia } from "@/lib/storage";
 import { obtenerDepartamentoPorCoordenadas } from "@/lib/geoUtils";
+import { getCategorySvg } from "@/lib/imageUtils";
 
 // Helper para obtener imagen por defecto según la categoría del negocio
 const getCategoryFallbackImage = (categoria) => {
@@ -1477,8 +1478,11 @@ export default function DashboardPage() {
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <h2 style={{ fontSize: "26px", fontWeight: "900", color: "#0F172A", margin: 0, fontFamily: "'LC Mogi', var(--font-outfit), sans-serif", letterSpacing: "-0.02em" }}>
-                    {lang === "en" ? "Welcome," : "Bienvenido,"} <span style={{ color: "#146D9E" }}>{perfil?.nombre_completo || "Propietario"}</span> 👋
+                  <h2 style={{ fontSize: "26px", fontWeight: "900", color: "#0F172A", margin: 0, fontFamily: "'LC Mogi', var(--font-outfit), sans-serif", letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span>{lang === "en" ? "Welcome," : "Bienvenido,"} <span style={{ color: "#146D9E" }}>{perfil?.nombre_completo || "Propietario"}</span></span>
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" style={{ display: "inline-block", flexShrink: 0 }}>
+                      <path d="M12.5 11.5V5.5C12.5 4.67 11.83 4 11 4C10.17 4 9.5 4.67 9.5 5.5V11.5M9.5 9.5V3.5C9.5 2.67 8.83 2 8 2C7.17 2 6.5 2.67 6.5 3.5V11.5M6.5 11.5V5.5C6.5 4.67 5.83 4 5 4C4.17 4 3.5 4.67 3.5 5.5V13.5M3.5 12V10.5C3.5 9.67 2.83 9 2 9C1.17 9 0.5 9.67 0.5 10.5V15.5C0.5 19.09 3.41 22 7 22H11.5C14.81 22 17.5 19.31 17.5 16V13.5C17.5 12.67 16.83 12 16 12C15.17 12 14.5 12.67 14.5 13.5V11.5C14.5 10.67 13.83 10 13 10C12.17 10 11.5 10.67 11.5 11.5" stroke="#146D9E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </h2>
                   <p style={{ color: "#475569", margin: 0, fontSize: "14px", fontWeight: "500", display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
                     <span>{lang === "en" ? "What would you like to manage today for" : "¿Qué deseas gestionar hoy para"}</span>
@@ -1493,7 +1497,7 @@ export default function DashboardPage() {
                       alignItems: "center",
                       gap: "6px"
                     }}>
-                      <span>🏪</span>
+                      <img src={getCategorySvg(negocio)} alt="" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
                       <span>{negocio.nombre}</span>
                     </strong>?
                   </p>
@@ -1534,7 +1538,7 @@ export default function DashboardPage() {
                   boxShadow: "0 12px 28px rgba(15, 23, 42, 0.35), 0 0 15px rgba(255, 215, 0, 0.15)",
                   display: "flex",
                   alignItems: "center",
-                  gap: "14px",
+                  gap: "12px",
                   cursor: "pointer",
                   transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
                   flexShrink: 0,
@@ -1544,19 +1548,20 @@ export default function DashboardPage() {
               >
                 <div
                   style={{
-                    width: "42px",
-                    height: "42px",
+                    width: "40px",
+                    height: "40px",
                     borderRadius: "14px",
                     background: "rgba(255, 215, 0, 0.18)",
-                    border: "1px solid rgba(255, 215, 0, 0.4)",
+                    border: "1.5px solid rgba(255, 215, 0, 0.4)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
+                    flexShrink: 0
                   }}
                 >
                   <div style={{
-                    width: "24px",
-                    height: "24px",
+                    width: "22px",
+                    height: "22px",
                     backgroundColor: "#FFD700",
                     WebkitMaskImage: "url('/images/edificio.svg')",
                     WebkitMaskRepeat: "no-repeat",
@@ -1568,15 +1573,10 @@ export default function DashboardPage() {
                     maskPosition: "center",
                   }} />
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
-                  <span style={{ fontSize: "10px", fontWeight: "850", color: "#FFD700", letterSpacing: "0.09em", textTransform: "uppercase" }}>
-                    {lang === "en" ? "MY BUSINESSES" : "MIS NEGOCIOS"}
-                  </span>
-                  <span style={{ fontSize: "14px", fontWeight: "800", color: "#FFFFFF", marginTop: "2px", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span>{lang === "en" ? "My Businesses" : "Mis Negocios"}</span>
-                    <span style={{ color: "#FFD700", fontSize: "16px" }}>➔</span>
-                  </span>
-                </div>
+                <span style={{ fontSize: "14.5px", fontWeight: "850", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span>{lang === "en" ? "My Businesses" : "Mis Negocios"}</span>
+                  <span style={{ color: "#FFD700", fontSize: "16px" }}>➔</span>
+                </span>
               </button>
             </div>
           </div>
