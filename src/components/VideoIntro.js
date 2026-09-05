@@ -8,6 +8,7 @@ export default function VideoIntro({ onComplete }) {
   const videoRef = useRef(null);
   const [phase, setPhase] = useState("playing"); // "playing" | "fading" | "done"
   const [videoReady, setVideoReady] = useState(false);
+  const [progressPercent, setProgressPercent] = useState(0);
 
   // Fade-out
   const startFadeOut = useCallback(() => {
@@ -29,10 +30,10 @@ export default function VideoIntro({ onComplete }) {
       }
     }
 
-    // Fallback rápido: Si el video tarda más de 2s en cargar por red móvil, mostrar la interfaz de Atlan de inmediato
+    // Fallback rápido: Si el video tarda más de 3s en cargar por red móvil, mostrar la interfaz de Atlan de inmediato
     const fallbackTimer = setTimeout(() => {
       setVideoReady(true);
-    }, 2000);
+    }, 3000);
 
     return () => clearTimeout(fallbackTimer);
   }, []);
@@ -48,13 +49,20 @@ export default function VideoIntro({ onComplete }) {
     }
   }, [phase, onComplete]);
 
-  // Timeout de seguridad (Máximo 6 segundos para no hacer esperar al usuario en móvil)
+  // Timeout de seguridad máximo (30s) por si el video no dispara ended
   useEffect(() => {
     const safety = setTimeout(() => {
       startFadeOut();
-    }, 6000);
+    }, 30000);
     return () => clearTimeout(safety);
   }, [startFadeOut]);
+
+  const handleTimeUpdate = () => {
+    if (videoRef.current && videoRef.current.duration) {
+      const pct = (videoRef.current.currentTime / videoRef.current.duration) * 100;
+      setProgressPercent(pct);
+    }
+  };
 
   if (phase === "done") return null;
 
@@ -107,11 +115,12 @@ export default function VideoIntro({ onComplete }) {
         src="/videos/portada2.0.mp4"
         autoPlay
         muted
-        loop
         playsInline
         preload="auto"
         onCanPlayThrough={() => setVideoReady(true)}
         onError={startFadeOut}
+        onEnded={startFadeOut}
+        onTimeUpdate={handleTimeUpdate}
         onLoadedData={() => {
           if (videoRef.current && videoRef.current.readyState >= 3) {
             setVideoReady(true);
@@ -201,12 +210,13 @@ export default function VideoIntro({ onComplete }) {
         </div>
       </div>
 
-      {/* Barra de progreso de 8 segundos */}
+      {/* Barra de progreso sincronizada en tiempo real con el video */}
       <div style={introStyles.progressBar}>
         <div
           style={{
             ...introStyles.progressFill,
-            animation: "introProgress 8s linear forwards, shimmerProgress 2s linear infinite",
+            width: `${progressPercent}%`,
+            transition: "width 0.15s linear",
             boxShadow: "0 0 10px rgba(212,175,55,0.5)",
           }}
         />
