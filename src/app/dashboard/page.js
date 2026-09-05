@@ -1587,17 +1587,20 @@ export default function DashboardPage() {
                   className="hover-card clay-card animate-fade-in-up"
                   style={{
                     ...styles.dashboardCard,
+                    background: "linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)",
+                    border: "2px solid #C7D2FE",
+                    boxShadow: "0 12px 28px -4px rgba(79, 70, 229, 0.14)",
                     opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
-                  <div style={styles.cardIcon}>
+                  <div style={{ ...styles.cardIcon, background: "#4F46E5", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(79, 70, 229, 0.35)" }}>
                     <Icon name="info" size={22} color="#FFFFFF" />
                   </div>
-                  <h3 style={{ ...styles.cardTitle, display: "flex", alignItems: "center", gap: "6px" }}>
+                  <h3 style={{ ...styles.cardTitle, color: "#3730A3", display: "flex", alignItems: "center", gap: "6px" }}>
                     <span>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</span>
-                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#0F172A" />}
+                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#3730A3" />}
                   </h3>
-                  <p style={styles.cardDesc}>{lang === "en" ? "Update photos, description, logo and contact info" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
+                  <p style={{ ...styles.cardDesc, color: "#4338CA" }}>{lang === "en" ? "Update photos, description, logo and contact info" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
                 </button>
 
                 {/* Checklist Card */}
@@ -1607,17 +1610,20 @@ export default function DashboardPage() {
                   className="hover-card clay-card animate-fade-in-up"
                   style={{
                     ...styles.dashboardCard,
+                    background: "linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)",
+                    border: "2px solid #86EFAC",
+                    boxShadow: "0 12px 28px -4px rgba(22, 163, 74, 0.14)",
                     opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
-                  <div style={styles.cardIcon}>
+                  <div style={{ ...styles.cardIcon, background: "#16A34A", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(22, 163, 74, 0.35)" }}>
                     <Icon name="settings" size={22} color="#FFFFFF" />
                   </div>
-                  <h3 style={{ ...styles.cardTitle, display: "flex", alignItems: "center", gap: "6px" }}>
+                  <h3 style={{ ...styles.cardTitle, color: "#166534", display: "flex", alignItems: "center", gap: "6px" }}>
                     <span>{lang === "en" ? "Services Checklist" : "Checklist de Servicios"}</span>
-                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#0F172A" />}
+                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#166534" />}
                   </h3>
-                  <p style={styles.cardDesc}>{lang === "en" ? "Enable menu, wifi, parking or lodging modules" : "Activa wifi, parqueo, menú, hospedaje o amenidades"}</p>
+                  <p style={{ ...styles.cardDesc, color: "#15803D" }}>{lang === "en" ? "Enable menu, wifi, parking or lodging modules" : "Activa wifi, parqueo, menú, hospedaje o amenidades"}</p>
                 </button>
 
                 {/* Hours Card */}
@@ -1628,17 +1634,20 @@ export default function DashboardPage() {
                     className="hover-card clay-card animate-fade-in-up"
                     style={{
                       ...styles.dashboardCard,
+                      background: "linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)",
+                      border: "2px solid #FDE68A",
+                      boxShadow: "0 12px 28px -4px rgba(217, 119, 6, 0.14)",
                       opacity: negocio && !negocio.activo ? 0.75 : 1
                     }}
                   >
-                    <div style={styles.cardIcon}>
+                    <div style={{ ...styles.cardIcon, background: "#D97706", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(217, 119, 6, 0.35)" }}>
                       <Icon name="clock" size={22} color="#FFFFFF" />
                     </div>
-                    <h3 style={{ ...styles.cardTitle, display: "flex", alignItems: "center", gap: "6px" }}>
+                    <h3 style={{ ...styles.cardTitle, color: "#92400E", display: "flex", alignItems: "center", gap: "6px" }}>
                       <span>{lang === "en" ? "Opening Hours" : "Horarios de Atención"}</span>
-                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#0F172A" />}
+                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#92400E" />}
                     </h3>
-                    <p style={styles.cardDesc}>{lang === "en" ? "Manage your daily opening and closing times" : "Configura tus horarios de apertura y cierre"}</p>
+                    <p style={{ ...styles.cardDesc, color: "#B45309" }}>{lang === "en" ? "Manage your daily opening and closing times" : "Configura tus horarios de apertura y cierre"}</p>
                   </button>
                 )}
 
@@ -1650,17 +1659,20 @@ export default function DashboardPage() {
                     className="hover-card clay-card animate-fade-in-up"
                     style={{
                       ...styles.dashboardCard,
+                      background: "linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)",
+                      border: "2px solid #93C5FD",
+                      boxShadow: "0 12px 28px -4px rgba(37, 99, 235, 0.14)",
                       opacity: negocio && !negocio.activo ? 0.75 : 1
                     }}
                   >
-                    <div style={styles.cardIcon}>
+                    <div style={{ ...styles.cardIcon, background: "#2563EB", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(37, 99, 235, 0.35)" }}>
                       <Icon name="utensils" size={22} color="#FFFFFF" />
                     </div>
-                    <h3 style={{ ...styles.cardTitle, display: "flex", alignItems: "center", gap: "6px" }}>
+                    <h3 style={{ ...styles.cardTitle, color: "#1E40AF", display: "flex", alignItems: "center", gap: "6px" }}>
                       <span>{lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"}</span>
-                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#0F172A" />}
+                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#1E40AF" />}
                     </h3>
-                    <p style={styles.cardDesc}>{lang === "en" ? "Add or remove dishes, photos, and set prices" : "Agrega, edita o elimina platillos, fotos y precios"}</p>
+                    <p style={{ ...styles.cardDesc, color: "#1D4ED8" }}>{lang === "en" ? "Add or remove dishes, photos, and set prices" : "Agrega, edita o elimina platillos, fotos y precios"}</p>
                   </button>
                 )}
 
@@ -1672,17 +1684,20 @@ export default function DashboardPage() {
                     className="hover-card clay-card animate-fade-in-up"
                     style={{
                       ...styles.dashboardCard,
+                      background: "linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%)",
+                      border: "2px solid #D8B4FE",
+                      boxShadow: "0 12px 28px -4px rgba(147, 51, 234, 0.14)",
                       opacity: negocio && !negocio.activo ? 0.75 : 1
                     }}
                   >
-                    <div style={styles.cardIcon}>
+                    <div style={{ ...styles.cardIcon, background: "#9333EA", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(147, 51, 234, 0.35)" }}>
                       <Icon name="calendar" size={22} color="#FFFFFF" />
                     </div>
-                    <h3 style={{ ...styles.cardTitle, display: "flex", alignItems: "center", gap: "6px" }}>
+                    <h3 style={{ ...styles.cardTitle, color: "#6B21A8", display: "flex", alignItems: "center", gap: "6px" }}>
                       <span>{lang === "en" ? "Reservations Manager" : "Gestor de Reservas"}</span>
-                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#0F172A" />}
+                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#6B21A8" />}
                     </h3>
-                    <p style={styles.cardDesc}>{lang === "en" ? "Approve or cancel incoming booking requests" : "Aprueba o cancela solicitudes de reserva"}</p>
+                    <p style={{ ...styles.cardDesc, color: "#7E22CE" }}>{lang === "en" ? "Approve or cancel incoming booking requests" : "Aprueba o cancela solicitudes de reserva"}</p>
                     {(reservas || []).filter(r => r.estado_reserva === "pendiente").length > 0 && (
                       <div style={styles.cardBadge}>
                         {(reservas || []).filter(r => r.estado_reserva === "pendiente").length} {lang === "en" ? "Pending" : "Pendientes"}
@@ -1698,17 +1713,20 @@ export default function DashboardPage() {
                   className="hover-card clay-card animate-fade-in-up"
                   style={{
                     ...styles.dashboardCard,
+                    background: "linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%)",
+                    border: "2px solid #FECDD3",
+                    boxShadow: "0 12px 28px -4px rgba(225, 29, 72, 0.14)",
                     opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
-                  <div style={styles.cardIcon}>
+                  <div style={{ ...styles.cardIcon, background: "#E11D48", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(225, 29, 72, 0.35)" }}>
                     <Icon name="star" size={22} color="#FFFFFF" />
                   </div>
-                  <h3 style={{ ...styles.cardTitle, display: "flex", alignItems: "center", gap: "6px" }}>
+                  <h3 style={{ ...styles.cardTitle, color: "#9F1239", display: "flex", alignItems: "center", gap: "6px" }}>
                     <span>{lang === "en" ? "Customer Reviews" : "Reseñas de Clientes"}</span>
-                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#0F172A" />}
+                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#9F1239" />}
                   </h3>
-                  <p style={styles.cardDesc}>{lang === "en" ? "Read what tourists think about your business" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
+                  <p style={{ ...styles.cardDesc, color: "#BE123C" }}>{lang === "en" ? "Read what tourists think about your business" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
                 </button>
               </div>
             </div>
@@ -3097,7 +3115,7 @@ const styles = {
     height: "100vh",
     maxHeight: "100vh",
     width: "100vw",
-    background: "linear-gradient(180deg, rgba(10, 18, 35, 0.75) 0%, rgba(5, 10, 20, 0.88) 100%), url('/images/loginbg.jpeg') center / cover no-repeat fixed",
+    background: "linear-gradient(rgba(10, 15, 28, 0.55), rgba(10, 15, 28, 0.55)), url('/images/loginbg.jpeg') center / cover no-repeat fixed",
     color: "#1A1A2E",
     fontFamily: "var(--font-outfit), sans-serif",
     padding: "85px 24px 16px 24px",
