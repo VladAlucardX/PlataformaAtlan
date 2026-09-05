@@ -180,14 +180,23 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
             {/* Like bar */}
             <div style={styles.likeBar}>
               <button onClick={handleLike} style={{ ...styles.likeBtn, color: liked ? "#ef4444" : "var(--atlan-text-secondary)" }}>
-                <span style={{ transition: "transform 0.2s", transform: liked ? "scale(1.2)" : "scale(1)" }}>
-                  {liked ? <Icon name="heartFilled" size={18} color="#ef4444" /> : <Icon name="heart" size={18} />}
-                </span>
+                <img
+                  src="/images/Like.svg"
+                  alt=""
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    objectFit: "contain",
+                    transform: liked ? "scale(1.15)" : "scale(1)",
+                    filter: liked ? "drop-shadow(0 0 5px rgba(239, 68, 68, 0.6))" : "brightness(0)",
+                    transition: "all 0.2s"
+                  }}
+                />
                 {likesCount > 0 && <span>{likesCount}</span>}
                 <span>{lang === "en" ? (liked ? "Liked" : "Like") : (liked ? "Te gusta" : "Me gusta")}</span>
               </button>
-              <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)", fontWeight: "600" }}>
-                <Icon name="messageCircle" size={14} /> {comments.length} {comments.length === 1 ? (lang === "en" ? "comment" : "comentario") : (lang === "en" ? "comments" : "comentarios")}
+              <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)", fontWeight: "600", display: "flex", alignItems: "center", gap: "5px" }}>
+                <img src="/images/comentarios.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} /> {comments.length} {comments.length === 1 ? (lang === "en" ? "comment" : "comentario") : (lang === "en" ? "comments" : "comentarios")}
               </span>
             </div>
 
@@ -198,8 +207,8 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
                   <div style={{ width: "24px", height: "24px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
                 </div>
               ) : comments.length === 0 ? (
-                <div style={{ padding: "32px 16px", textAlign: "center" }}>
-                  <span style={{ fontSize: "28px", display: "block", marginBottom: "8px" }}><Icon name="messageCircle" size={28} /></span>
+                <div style={{ padding: "32px 16px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <img src="/images/comentarios.svg" alt="" style={{ width: "32px", height: "32px", objectFit: "contain", filter: "brightness(0)", opacity: 0.4, marginBottom: "8px" }} />
                   <p style={{ margin: 0, fontSize: "13px", color: "var(--atlan-text-muted)" }}>
                     {lang === "en" ? "No comments yet. Be the first!" : "Sin comentarios aún. ¡Sé el primero!"}
                   </p>
@@ -282,14 +291,15 @@ const styles = {
     position: "fixed", inset: 0, zIndex: 300,
     background: "rgba(0,0,0,0.85)", backdropFilter: "blur(12px)",
     display: "flex", alignItems: "center", justifyContent: "center",
-    padding: "16px",
+    padding: "24px",
   },
   container: {
-    width: "100%", maxWidth: "1100px", maxHeight: "90vh",
+    width: "100%", maxWidth: "1100px", height: "82vh", maxHeight: "82vh",
     background: "#FFFFFF",
-    border: "2px solid rgba(255, 255, 255, 0.95)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
     borderRadius: "28px", overflow: "hidden", position: "relative",
-    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 32px 64px rgba(0,0,0,0.4)",
+    boxShadow: "0 32px 64px rgba(0,0,0,0.5)",
+    margin: "auto", display: "flex", flexDirection: "column"
   },
   closeBtn: {
     position: "absolute", top: "12px", right: "12px", zIndex: 10,
@@ -300,12 +310,12 @@ const styles = {
     transition: "background 0.2s",
   },
   splitLayout: {
-    display: "flex", height: "85vh", maxHeight: "85vh",
+    display: "flex", height: "100%", width: "100%", overflow: "hidden"
   },
   imageSection: {
     flex: "1 1 60%", background: "#000",
     display: "flex", alignItems: "center", justifyContent: "center",
-    minWidth: 0, overflow: "hidden",
+    minWidth: 0, overflow: "hidden", height: "100%"
   },
   media: {
     maxWidth: "100%", maxHeight: "100%", objectFit: "contain",
@@ -363,10 +373,10 @@ const styles = {
     transition: "all 0.2s",
   },
   sendBtn: {
-    background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none",
+    background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)", border: "none",
     width: "34px", height: "34px", borderRadius: "50%", color: "white", fontSize: "13px",
     cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-    boxShadow: "0 2px 8px rgba(23, 170, 74,0.25)", flexShrink: 0,
+    boxShadow: "0 2px 8px rgba(20, 109, 158, 0.25)", flexShrink: 0,
   },
 };
 
