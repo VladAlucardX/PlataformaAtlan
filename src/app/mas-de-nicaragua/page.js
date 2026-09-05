@@ -846,9 +846,13 @@ export default function MasDeNicaraguaPage() {
                         padding: "4px 12px",
                         borderRadius: "10px",
                         fontSize: "12px",
-                        fontWeight: "800"
+                        fontWeight: "800",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px"
                       }}>
-                        🏛️ Patrimonio Histórico Nacional
+                        <img src="/images/edificio.svg" alt="Patrimonio" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                        <span>Patrimonio Histórico Nacional</span>
                       </span>
                     </div>
 
@@ -865,8 +869,9 @@ export default function MasDeNicaraguaPage() {
                         padding: "12px 16px",
                         marginBottom: "16px"
                       }}>
-                        <span style={{ fontSize: "12px", fontWeight: "900", color: "#FFD700", textTransform: "uppercase", display: "block", marginBottom: "4px", letterSpacing: "0.5px" }}>
-                          📜 Origen Etimológico y Raíces Indígenas
+                        <span style={{ fontSize: "12px", fontWeight: "900", color: "#FFD700", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px", letterSpacing: "0.5px" }}>
+                          <img src="/images/sombrero.svg" alt="Origen" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                          <span>Origen Etimológico y Raíces Indígenas</span>
                         </span>
                         <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.9)", lineHeight: "1.6" }}>
                           {selectedDeptForDetails.historia.origenEtimologico}

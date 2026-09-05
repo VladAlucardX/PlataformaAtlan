@@ -374,11 +374,13 @@ export default function DepartamentoDetailPage() {
           <div className="animate-fade-in" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
             <div style={{ background: "linear-gradient(135deg, rgba(28, 25, 20, 0.92) 0%, rgba(15, 23, 42, 0.95) 100%)", border: "1.5px solid rgba(255, 215, 0, 0.4)", borderRadius: "24px", padding: "32px", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
-                <h2 style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700", margin: 0, display: "flex", alignItems: "center", gap: "12px" }}>
-                  📜 Resumen Histórico y Orígenes de {dept.nombre}
+                <h2 style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700", margin: 0, display: "flex", alignItems: "center", gap: "10px" }}>
+                  <img src="/images/managua catedral.svg" alt="Historia" style={{ width: "24px", height: "24px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                  <span>Resumen Histórico y Orígenes de {dept.nombre}</span>
                 </h2>
-                <span style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid rgba(255, 215, 0, 0.4)", color: "#FFD700", padding: "5px 14px", borderRadius: "12px", fontSize: "13px", fontWeight: "800" }}>
-                  🏛️ Patrimonio Histórico Nacional
+                <span style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid rgba(255, 215, 0, 0.4)", color: "#FFD700", padding: "5px 14px", borderRadius: "12px", fontSize: "13px", fontWeight: "800", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                  <img src="/images/edificio.svg" alt="Patrimonio" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                  <span>Patrimonio Histórico Nacional</span>
                 </span>
               </div>
 
@@ -389,8 +391,9 @@ export default function DepartamentoDetailPage() {
               {/* Origen Etimológico */}
               {dept.historia.origenEtimologico && (
                 <div style={{ background: "rgba(255, 215, 0, 0.08)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "16px", padding: "16px 20px", marginBottom: "20px" }}>
-                  <span style={{ fontSize: "13px", fontWeight: "900", color: "#FFD700", textTransform: "uppercase", display: "block", marginBottom: "4px", letterSpacing: "0.5px" }}>
-                    📜 Origen Etimológico y Raíces Indígenas
+                  <span style={{ fontSize: "13px", fontWeight: "900", color: "#FFD700", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px", letterSpacing: "0.5px" }}>
+                    <img src="/images/sombrero.svg" alt="Origen" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                    <span>Origen Etimológico y Raíces Indígenas</span>
                   </span>
                   <p style={{ margin: 0, fontSize: "14px", color: "rgba(255,255,255,0.9)", lineHeight: "1.6" }}>
                     {dept.historia.origenEtimologico}
