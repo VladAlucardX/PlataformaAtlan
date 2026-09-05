@@ -188,7 +188,7 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
         onClick={() => { setOpen(!open); setShowSendChat(false); }}
         style={styles.actionBtn}
       >
-        <img src="/images/repst.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} /> {lang === "en" ? "Share" : "Compartir"}
+        <img src="/images/repst.svg" alt="" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0)" }} /> {lang === "en" ? "Share" : "Compartir"}
       </button>
 
       {open && (
@@ -200,7 +200,7 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
                 {lang === "en" ? "Copy link" : "Copiar enlace"}
               </button>
               <button onClick={handleRepost} style={styles.dropdownItem}>
-                <span style={styles.dropdownIcon}><img src="/images/repst.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} /></span>
+                <span style={styles.dropdownIcon}><img src="/images/repst.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0)" }} /></span>
                 {lang === "en" ? "Share to my feed" : "Compartir en mi muro"}
               </button>
               <div style={styles.dropdownDivider} />

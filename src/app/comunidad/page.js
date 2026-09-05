@@ -527,12 +527,12 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
       <div style={cardStyles.statsBar}>
         {likesCount > 0 && (
           <span style={{ ...cardStyles.statText, display: "inline-flex", alignItems: "center", gap: "4px" }}>
-            <img src="/images/Like.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0)" }} /> {likesCount}
+            <img src="/images/Like.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} /> {likesCount}
           </span>
         )}
         {commentsCount > 0 && (
           <button onClick={handleToggleComments} style={{ ...cardStyles.statText, background: "none", border: "none", cursor: "pointer", padding: 0, display: "inline-flex", alignItems: "center", gap: "4px" }}>
-            <img src="/images/comentarios.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0)" }} /> {commentsCount} {commentsCount === 1 ? (lang === "en" ? "comment" : "comentario") : (lang === "en" ? "comments" : "comentarios")}
+            <img src="/images/comentarios.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} /> {commentsCount} {commentsCount === 1 ? (lang === "en" ? "comment" : "comentario") : (lang === "en" ? "comments" : "comentarios")}
           </button>
         )}
       </div>
@@ -544,8 +544,8 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
             src="/images/Like.svg"
             alt=""
             style={{
-              width: "18px",
-              height: "18px",
+              width: "22px",
+              height: "22px",
               objectFit: "contain",
               transform: liked ? "scale(1.15)" : "scale(1)",
               filter: liked ? "drop-shadow(0 0 5px rgba(239, 68, 68, 0.6))" : "brightness(0)",
@@ -555,7 +555,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
           {lang === "en" ? (liked ? "Liked" : "Like") : (liked ? "Te gusta" : "Me gusta")}
         </button>
         <button onClick={handleToggleComments} style={cardStyles.actionBtn}>
-          <img src="/images/comentarios.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0)" }} />
+          <img src="/images/comentarios.svg" alt="" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0)" }} />
           {lang === "en" ? "Comment" : "Comentar"}
         </button>
         <ShareDropdown post={post} session={session} perfil={perfil} lang={lang} onRequireLogin={onRequireLogin} onRepost={onRepost} />
