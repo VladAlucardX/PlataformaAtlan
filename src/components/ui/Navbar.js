@@ -18,7 +18,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
   const auth = useAuth();
   const session = sessionProp || auth.session;
   const perfil = perfilProp || auth.perfil;
-  const { t, lang } = useTranslation();
+  const { t, lang, setLang } = useTranslation();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -340,10 +340,52 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                       <Icon name="briefcase" size={16} /> {lang === "en" ? "My Businesses" : "Mis Negocios"}
                     </Link>
                   )}
+                        <div style={{ height: "1px", background: "rgba(20, 109, 158, 0.08)", margin: "4px 0" }} />
+
+                  {/* Opción 4: Traducir Página */}
+                  <button
+                    onClick={() => {
+                      setLang(lang === "es" ? "en" : "es");
+                    }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      width: "100%",
+                      padding: "10px 14px",
+                      borderRadius: "12px",
+                      background: "transparent",
+                      border: "none",
+                      color: "#1A1A2E",
+                      fontSize: "13px",
+                      fontWeight: "750",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      transition: "background 0.15s"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
+                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <img src="/images/remolino.svg" alt="Idioma" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
+                      <span>{lang === "es" ? "Traducir Página" : "Translate Page"}</span>
+                    </div>
+                    <span style={{
+                      fontSize: "11px",
+                      fontWeight: "800",
+                      padding: "3px 8px",
+                      borderRadius: "8px",
+                      background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
+                      color: "#FFFFFF",
+                      letterSpacing: "0.5px"
+                    }}>
+                      {lang === "es" ? "🇬🇧 EN" : "🇳🇮 ES"}
+                    </span>
+                  </button>
 
                   <div style={{ height: "1px", background: "rgba(20, 109, 158, 0.08)", margin: "4px 0" }} />
 
-                  {/* Opción 4: Cerrar Sesión */}
+                  {/* Opción 5: Cerrar Sesión */}
                   <button
                     onClick={() => {
                       setUserDropdownOpen(false);
@@ -366,17 +408,17 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                       transition: "background 0.15s"
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.background = "rgba(239, 68, 68, 0.08)"}
-                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                    onMouseLeave={(e) => e.currentTarget.style.background = "none"}
                   >
-                    <Icon name="logOut" size={16} /> {t("nav.logout") || "Cerrar Sesión"}
+                    <Icon name="logOut" size={16} color="#ef4444" /> {t("nav.logout") || (lang === "en" ? "Log Out" : "Cerrar Sesión")}
                   </button>
                 </div>
               )}
             </div>
           ) : (
             <>
-              <Link href="/login" className="nav-pill-link" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-                <img src="/images/gueguense.svg" alt="Iniciar Sesión" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+              <Link href="/login" className="btn-ghost" style={{ padding: "8px 16px", fontSize: "13px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                <img src="/images/gueguense.svg" alt="Iniciar Sesión" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
                 <span>{t("nav.login")}</span>
               </Link>
               <Link href="/registro" className="btn-primary" style={{ padding: "8px 20px", fontSize: "13px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
@@ -486,7 +528,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           )}
           {session ? (
             <>
-              <Link href={communityProfileLink} className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+              <Link href={communityProfileUrl} className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
                 <Icon name="users" size={18} /> <span>{lang === "en" ? "My Community Profile" : "Mi Perfil Comunidad"}</span>
               </Link>
               <Link href="/perfil" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
@@ -497,6 +539,20 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                   <Icon name="briefcase" size={18} /> <span>{lang === "en" ? "My Business" : "Mi Negocio"}</span>
                 </Link>
               )}
+              <button
+                type="button"
+                onClick={() => setLang(lang === "es" ? "en" : "es")}
+                className="mobile-menu-item"
+                style={{ width: "100%", textAlign: "left", cursor: "pointer", justifyContent: "space-between", background: "rgba(20, 109, 158, 0.15)", borderColor: "rgba(20, 109, 158, 0.3)" }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <img src="/images/remolino.svg" alt="Idioma" style={{ width: "20px", height: "20px", objectFit: "contain" }} />
+                  <span>{lang === "es" ? "Traducir Página" : "Translate Page"}</span>
+                </div>
+                <span style={{ fontSize: "11px", fontWeight: "800", padding: "2px 8px", borderRadius: "6px", background: "#146D9E", color: "white" }}>
+                  {lang === "es" ? "🇬🇧 EN" : "🇳🇮 ES"}
+                </span>
+              </button>
               <button
                 type="button"
                 onClick={() => { setMenuOpen(false); handleLogout(); }}
