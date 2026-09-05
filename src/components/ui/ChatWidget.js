@@ -25,8 +25,8 @@ function avatarStyle(url, size) {
     width: `${size}px`, height: `${size}px`, borderRadius: "50%", flexShrink: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
     fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "800", color: "#FFFFFF",
-    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #FFD700 0%, #FFDF33 100%)",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
   };
 }
 
@@ -207,7 +207,7 @@ export default function ChatWidget({ session, perfil, lang }) {
       {/* Floating button */}
       {!isOpen && (
         <button onClick={() => setIsOpen(true)} style={styles.fab}>
-          <Icon name="messageCircle" size={24} />
+          <Icon name="messageCircle" size={24} color="#FFFFFF" />
           {totalUnread > 0 && (
             <span style={styles.badge}>{totalUnread > 9 ? "9+" : totalUnread}</span>
           )}
@@ -326,13 +326,13 @@ export default function ChatWidget({ session, perfil, lang }) {
                       <div key={msg.id} style={{ display: "flex", justifyContent: isMe ? "flex-end" : "flex-start", marginBottom: "6px" }}>
                         <div style={{
                           maxWidth: "80%", padding: "8px 14px", borderRadius: isMe ? "18px 18px 5px 18px" : "18px 18px 18px 5px",
-                          background: isMe ? "linear-gradient(145deg, #FFE033 0%, #FFD700 60%, #E6C200 100%)" : "#F4F6F9",
-                          color: isMe ? "#1A1A2E" : "var(--atlan-text-primary)",
+                          background: isMe ? "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)" : "#F8FAFC",
+                          color: isMe ? "#FFFFFF" : "var(--atlan-text-primary)",
                           fontSize: "13px", lineHeight: "1.4", wordBreak: "break-word",
                           boxShadow: isMe
-                            ? "inset 2px 2px 4px rgba(255,255,255,0.6), inset -2px -2px 4px rgba(180,140,0,0.2), 0 4px 10px -2px rgba(255,215,0,0.25)"
-                            : "inset 1px 1px 3px rgba(255,255,255,0.9), inset -1px -1px 3px rgba(20,109,158,0.04), 0 2px 6px -2px rgba(20,109,158,0.06)",
-                          border: isMe ? "1.5px solid rgba(255,255,255,0.5)" : "1.5px solid rgba(255,255,255,0.85)",
+                            ? "0 2px 8px rgba(20, 109, 158, 0.2)"
+                            : "0 2px 6px -2px rgba(15, 23, 42, 0.05)",
+                          border: isMe ? "none" : "1px solid rgba(226, 232, 240, 0.8)",
                         }}>
                           {msg.imagen_url && (
                             <img src={msg.imagen_url} alt="" style={{ maxWidth: "100%", borderRadius: "8px", marginBottom: msg.contenido ? "6px" : 0, display: "block" }} />
@@ -381,18 +381,14 @@ const styles = {
     position: "fixed", bottom: "24px", right: "24px", zIndex: 150,
   },
   fab: {
-    width: "58px", height: "58px", borderRadius: "50%",
-    background: "linear-gradient(145deg, #FFE033 0%, #FFD700 60%, #E6C200 100%)",
-    border: "2px solid rgba(255, 255, 255, 0.7)",
+    width: "56px", height: "56px", borderRadius: "50%",
+    background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
+    border: "2px solid #FFFFFF",
+    color: "#FFFFFF",
     fontSize: "24px", cursor: "pointer",
-    boxShadow: `
-      inset 3px 3px 6px rgba(255, 255, 255, 0.8),
-      inset -4px -4px 8px rgba(180, 140, 0, 0.35),
-      0 12px 24px -4px rgba(255, 215, 0, 0.45),
-      0 4px 8px rgba(0, 0, 0, 0.05)
-    `,
+    boxShadow: "0 8px 24px rgba(20, 109, 158, 0.35)",
     display: "flex", alignItems: "center", justifyContent: "center",
-    position: "relative", transition: "all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
+    position: "relative", transition: "all 0.2s ease",
   },
   badge: {
     position: "absolute", top: "-4px", right: "-4px",

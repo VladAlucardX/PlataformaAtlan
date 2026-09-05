@@ -24,7 +24,7 @@ function avatarStyle(url, size) {
     width: `${size}px`, height: `${size}px`, borderRadius: "50%", flexShrink: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
     fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "600", color: "#FFFFFF",
-    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #FFD700 0%, #FFDF33 100%)",
+    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
     boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
   };
 }

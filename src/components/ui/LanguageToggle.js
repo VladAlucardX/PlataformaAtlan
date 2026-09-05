@@ -97,16 +97,12 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
           width: '34px',
           height: '28px',
           borderRadius: 'var(--atlan-radius-full)',
-          background: 'linear-gradient(145deg, #FFE033 0%, #FFD700 70%, #E6C200 100%)',
-          color: '#1A1A2E',
+          background: 'linear-gradient(135deg, #146D9E 0%, #0F5579 100%)',
+          color: '#FFFFFF',
           fontWeight: '800',
           fontSize: '11px',
           letterSpacing: '0.05em',
-          boxShadow: `
-            inset 2px 2px 4px rgba(255, 255, 255, 0.7),
-            inset -2px -2px 4px rgba(180, 140, 0, 0.35),
-            0 4px 10px rgba(255, 215, 0, 0.3)
-          `,
+          boxShadow: '0 2px 8px rgba(20, 109, 158, 0.25)',
         }}
       >
         {lang.toUpperCase()}
