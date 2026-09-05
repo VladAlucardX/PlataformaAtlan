@@ -42,7 +42,6 @@ export default function BusinessProfileModal({
   handleCrearResena
 }) {
   const [activeTab, setActiveTab] = useState('info'); // 'info' | 'menu' | 'reservas' | 'reseñas'
-  const [selectedPhoto, setSelectedPhoto] = useState(null);
 
   if (!isOpen || !point) return null;
 
@@ -97,6 +96,9 @@ export default function BusinessProfileModal({
     { key: 'has_live_music', label: lang === 'en' ? 'Live Music' : 'Música en Vivo', icon: 'music' },
   ].filter(s => !!servs[s.key]);
 
+  const phoneNum = details?.telefono || point?.telefono;
+  const whatsappNum = details?.whatsapp || point?.whatsapp || phoneNum;
+
   return (
     <div
       style={{
@@ -120,8 +122,10 @@ export default function BusinessProfileModal({
         className="business-profile-modal"
         style={{
           width: '100%',
-          maxWidth: '880px',
-          maxHeight: '92vh',
+          maxWidth: '960px',
+          height: '85vh',
+          maxHeight: '680px',
+          minHeight: '520px',
           backgroundColor: '#FFFFFF',
           borderRadius: '24px',
           boxShadow: '0 25px 60px rgba(0, 0, 0, 0.4), 0 0 1px rgba(0,0,0,0.1)',
@@ -135,7 +139,7 @@ export default function BusinessProfileModal({
         {/* BANNER COVER HERO DE CABECERA */}
         <div
           style={{
-            height: heroPhoto ? '140px' : '90px',
+            height: heroPhoto ? '130px' : '90px',
             background: heroPhoto ? `url(${heroPhoto}) center/cover no-repeat` : theme.cover,
             position: 'relative',
             flexShrink: 0
@@ -203,11 +207,12 @@ export default function BusinessProfileModal({
         {/* CONTENIDO PRINCIPAL CABECERA */}
         <div
           style={{
-            padding: '0 28px 16px',
+            padding: '0 28px 12px',
             borderBottom: '1px solid rgba(20, 109, 158, 0.1)',
             background: '#FFFFFF',
             position: 'relative',
-            marginTop: '16px'
+            marginTop: '12px',
+            flexShrink: 0
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', flexWrap: 'wrap' }}>
@@ -217,9 +222,9 @@ export default function BusinessProfileModal({
                   src={details.logo_url}
                   alt={point.nombre}
                   style={{
-                    width: '76px',
-                    height: '76px',
-                    borderRadius: '20px',
+                    width: '70px',
+                    height: '70px',
+                    borderRadius: '18px',
                     objectFit: 'cover',
                     border: '3px solid #FFFFFF',
                     boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
@@ -229,21 +234,21 @@ export default function BusinessProfileModal({
               ) : (
                 <div
                   style={{
-                    width: '76px',
-                    height: '76px',
-                    borderRadius: '20px',
+                    width: '70px',
+                    height: '70px',
+                    borderRadius: '18px',
                     background: theme.cover,
                     color: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '30px',
+                    fontSize: '28px',
                     fontWeight: '800',
                     border: '3px solid #FFFFFF',
                     boxShadow: '0 8px 20px rgba(0,0,0,0.15)'
                   }}
                 >
-                  {point.nombre?.charAt(0)?.toUpperCase() || <Icon name="building" size={32} color="#FFFFFF" />}
+                  {point.nombre?.charAt(0)?.toUpperCase() || <Icon name="building" size={30} color="#FFFFFF" />}
                 </div>
               )}
 
@@ -327,7 +332,7 @@ export default function BusinessProfileModal({
                   )}
                 </div>
 
-                <h2 style={{ margin: 0, fontSize: '24px', fontWeight: '850', color: '#0F172A', lineHeight: '1.2' }}>
+                <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '850', color: '#0F172A', lineHeight: '1.2' }}>
                   {point.nombre}
                 </h2>
                 <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#64748B', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -372,7 +377,7 @@ export default function BusinessProfileModal({
               gap: '6px',
               borderBottom: '1px solid rgba(20, 109, 158, 0.1)',
               paddingBottom: '2px',
-              marginTop: '20px',
+              marginTop: '16px',
               overflowX: 'auto',
               scrollbarWidth: 'none'
             }}
@@ -389,7 +394,7 @@ export default function BusinessProfileModal({
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   style={{
-                    padding: '10px 18px',
+                    padding: '9px 18px',
                     fontSize: '13.5px',
                     fontWeight: isActive ? '800' : '600',
                     color: isActive ? theme.accent : '#64748B',
@@ -427,7 +432,7 @@ export default function BusinessProfileModal({
           </div>
         </div>
 
-        {/* CUERPO SCROLLABLE SEGÚN PESTAÑA ACTIVA */}
+        {/* CUERPO UNIFORME SEGÚN PESTAÑA ACTIVA */}
         <div
           style={{
             flex: 1,
@@ -437,79 +442,151 @@ export default function BusinessProfileModal({
             scrollbarColor: 'rgba(20, 109, 158, 0.2) transparent'
           }}
         >
-          {/* PESTAÑA 1: INFORMACIÓN */}
+          {/* PESTAÑA 1: INFORMACIÓN Y SECCIÓN DE INTERÉS TURÍSTICO */}
           {activeTab === 'info' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              {/* Banner de Reclamo si está en verificación */}
-              {point.estado === 'en_verificacion' && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+              {/* COLUMNA IZQUIERDA: Descripción, Servicios & Interés Turístico */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {/* Banner de Reclamo si está en verificación */}
+                {point.estado === 'en_verificacion' && (
+                  <div
+                    style={{
+                      padding: '14px 18px',
+                      background: 'rgba(249, 115, 22, 0.1)',
+                      border: '1.5px solid rgba(249, 115, 22, 0.3)',
+                      borderRadius: '16px',
+                      fontSize: '13.5px',
+                      color: '#C2410C',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px'
+                    }}
+                  >
+                    <Icon name="hourglass" size={24} color="#f97316" />
+                    <div>
+                      <strong style={{ color: '#1A1A2E' }}>
+                        {lang === 'en' ? 'Claim Under Review' : 'Solicitud de Reclamo en Verificación'}
+                      </strong>
+                      <div style={{ fontSize: '12.5px', color: '#4A5568', marginTop: '2px', lineHeight: 1.4 }}>
+                        {lang === 'en'
+                          ? 'A owner verification claim is currently being evaluated by Atlan administration.'
+                          : 'Una solicitud de verificación de propiedad sobre este local se encuentra actualmente en revisión por la administración.'}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Botón Reclamar Negocio */}
+                {!point.negocio_id && point.estado === 'sin_reclamar' && (
+                  <Link
+                    href="/dashboard"
+                    className="clay-btn-gold"
+                    style={{
+                      width: '100%',
+                      padding: '12px 18px',
+                      fontSize: '13.5px',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <Icon name="claim" size={18} color="#1A1A2E" />
+                    <span>{lang === 'en' ? 'Are you the owner? Claim this business' : '¿Eres el dueño? Reclamar este negocio'}</span>
+                  </Link>
+                )}
+
+                {/* Descripción */}
+                <div className="clay-card-static" style={{ padding: '20px', borderRadius: '18px' }}>
+                  <h4 style={{ margin: '0 0 10px', fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Icon name="info" size={15} color={theme.accent} />
+                    <span>{lang === 'en' ? 'About this Destination' : 'Acerca de este Destino'}</span>
+                  </h4>
+                  <p style={{ margin: 0, fontSize: '14px', color: '#475569', lineHeight: '1.65' }}>
+                    {point.descripcion || (lang === 'en' ? 'No detailed description available for this place.' : 'Sin descripción disponible para este destino.')}
+                  </p>
+                </div>
+
+                {/* Comodidades & Servicios Turísticos */}
+                <div className="clay-card-static" style={{ padding: '20px', borderRadius: '18px' }}>
+                  <h4 style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Icon name="sparkles" size={15} color={theme.accent} />
+                    <span>{lang === 'en' ? 'Amenities & Services' : 'Servicios y Comodidades'}</span>
+                  </h4>
+                  {activeServiceList.length > 0 ? (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      {activeServiceList.map(s => (
+                        <span
+                          key={s.key}
+                          style={{
+                            fontSize: '12.5px',
+                            fontWeight: '700',
+                            color: '#1E293B',
+                            background: 'rgba(20, 109, 158, 0.08)',
+                            border: '1px solid rgba(20, 109, 158, 0.2)',
+                            padding: '6px 12px',
+                            borderRadius: '20px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px'
+                          }}
+                        >
+                          <Icon name={s.icon} size={14} color={theme.accent} />
+                          {s.label}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p style={{ margin: 0, fontSize: '13px', color: '#94A3B8', fontStyle: 'italic' }}>
+                      {lang === 'en' ? 'Standard tourist amenities available.' : 'Servicios turísticos estándar disponibles en el establecimiento.'}
+                    </p>
+                  )}
+                </div>
+
+                {/* Consejos para Turistas / Información de Interés */}
                 <div
                   style={{
-                    padding: '14px 18px',
-                    background: 'rgba(249, 115, 22, 0.1)',
-                    border: '1.5px solid rgba(249, 115, 22, 0.3)',
-                    borderRadius: '16px',
-                    fontSize: '13.5px',
-                    color: '#C2410C',
+                    padding: '20px',
+                    borderRadius: '18px',
+                    background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(20, 109, 158, 0.08) 100%)',
+                    border: '1.5px solid rgba(255, 215, 0, 0.3)',
                     display: 'flex',
-                    alignItems: 'center',
+                    flexDirection: 'column',
                     gap: '12px'
                   }}
                 >
-                  <Icon name="hourglass" size={24} color="#f97316" />
-                  <div>
-                    <strong style={{ color: '#1A1A2E' }}>
-                      {lang === 'en' ? 'Claim Under Review' : 'Solicitud de Reclamo en Verificación'}
-                    </strong>
-                    <div style={{ fontSize: '12.5px', color: '#4A5568', marginTop: '2px', lineHeight: 1.4 }}>
-                      {lang === 'en'
-                        ? 'A owner verification claim is currently being evaluated by Atlan administration.'
-                        : 'Una solicitud de verificación de propiedad sobre este local se encuentra actualmente en revisión por la administración.'}
+                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#856404', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Icon name="compass" size={16} color="#B8960E" />
+                    <span>{lang === 'en' ? 'Tourist Tips & Information' : 'Interés Turístico y Consejos'}</span>
+                  </h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: '#475569' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                      <Icon name="dollarSign" size={15} color="#16A34A" style={{ marginTop: '2px' }} />
+                      <span><strong>{lang === 'en' ? 'Accepted Currency:' : 'Moneda & Pagos:'}</strong> {lang === 'en' ? 'Nicaraguan Córdobas (NIO) & US Dollars (USD). Cash & Card accepted.' : 'Aceptan Córdobas (NIO) y Dólares (USD). Pagos en efectivo y tarjeta.'}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                      <Icon name="shield" size={15} color="#2563EB" style={{ marginTop: '2px' }} />
+                      <span><strong>{lang === 'en' ? 'Visitor Experience:' : 'Experiencia Verificada:'}</strong> {lang === 'en' ? 'Recommended destination for solo travelers, couples & families.' : 'Destino recomendado para familias, parejas y mochileros en Nicaragua.'}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                      <Icon name="mapPin" size={15} color="#E11D48" style={{ marginTop: '2px' }} />
+                      <span><strong>{lang === 'en' ? 'Navigation:' : 'Indicaciones de Llegada:'}</strong> {lang === 'en' ? 'Direct map route guidance available. Tap "Start Trip" above.' : 'Ruta directa disponible. Toca el botón "Iniciar Viaje" para navegación activa.'}</span>
                     </div>
                   </div>
                 </div>
-              )}
-
-              {/* Botón Reclamar Negocio */}
-              {!point.negocio_id && point.estado === 'sin_reclamar' && (
-                <Link
-                  href="/dashboard"
-                  className="clay-btn-gold"
-                  style={{
-                    width: '100%',
-                    padding: '12px 18px',
-                    fontSize: '13.5px',
-                    textDecoration: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
-                  }}
-                >
-                  <Icon name="claim" size={18} color="#1A1A2E" />
-                  <span>{lang === 'en' ? 'Are you the owner? Claim this business' : '¿Eres el dueño? Reclamar este negocio'}</span>
-                </Link>
-              )}
-
-              {/* Descripción */}
-              <div>
-                <h4 style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Icon name="info" size={15} color={theme.accent} />
-                  <span>{lang === 'en' ? 'About this Business' : 'Acerca de este Negocio'}</span>
-                </h4>
-                <p style={{ margin: 0, fontSize: '14.5px', color: '#475569', lineHeight: '1.65' }}>
-                  {point.descripcion || (lang === 'en' ? 'No description available.' : 'Sin descripción disponible.')}
-                </p>
               </div>
 
-              {/* Horarios de Atención */}
-              {details?.horarios && Object.keys(details.horarios).length > 0 && (
-                <div style={{ borderTop: '1px solid rgba(20, 109, 158, 0.1)', paddingTop: '20px' }}>
+              {/* COLUMNA DERECHA: Horarios + Contacto Directo */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {/* Horarios de Atención */}
+                <div className="clay-card-static" style={{ padding: '20px', borderRadius: '18px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
                     <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <Icon name="clock" size={15} color={theme.accent} />
-                      <span>{lang === 'en' ? 'Opening Hours' : 'Horarios de Atención'}</span>
+                      <span>{lang === 'en' ? 'Opening Schedule' : 'Horarios de Atención'}</span>
                     </h4>
-                    {isBusinessOpenNow && isBusinessOpenNow(details.horarios) !== null && (
+                    {isBusinessOpenNow && details?.horarios && isBusinessOpenNow(details.horarios) !== null && (
                       <span
                         style={{
                           fontSize: '11px',
@@ -532,46 +609,120 @@ export default function BusinessProfileModal({
                       </span>
                     )}
                   </div>
-                  <div className="clay-card-static" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {Object.entries(details.horarios).map(([day, info]) => {
-                      const dayLabels = {
-                        lunes: lang === 'en' ? 'Monday' : 'Lunes',
-                        martes: lang === 'en' ? 'Tuesday' : 'Martes',
-                        miercoles: lang === 'en' ? 'Wednesday' : 'Miércoles',
-                        jueves: lang === 'en' ? 'Thursday' : 'Jueves',
-                        viernes: lang === 'en' ? 'Friday' : 'Viernes',
-                        sabado: lang === 'en' ? 'Saturday' : 'Sábado',
-                        domingo: lang === 'en' ? 'Sunday' : 'Domingo',
-                      };
-                      const isToday = new Date().getDay() === {
-                        domingo: 0, lunes: 1, martes: 2, miercoles: 3, jueves: 4, viernes: 5, sabado: 6
-                      }[day];
 
-                      return (
-                        <div
-                          key={day}
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            fontSize: '13.5px',
-                            color: isToday ? '#1E293B' : '#64748B',
-                            fontWeight: isToday ? '800' : '500',
-                            padding: '4px 0',
-                            borderBottom: '1px dashed rgba(20, 109, 158, 0.08)'
-                          }}
-                        >
-                          <span>{dayLabels[day] || day} {isToday && '• (Hoy)'}</span>
-                          <span>
-                            {info?.abierto
-                              ? `${info.apertura || ''} - ${info.cierre || ''}`
-                              : (lang === 'en' ? 'Closed' : 'Cerrado')}
-                          </span>
-                        </div>
-                      );
-                    })}
+                  {details?.horarios && Object.keys(details.horarios).length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {Object.entries(details.horarios).map(([day, info]) => {
+                        const dayLabels = {
+                          lunes: lang === 'en' ? 'Monday' : 'Lunes',
+                          martes: lang === 'en' ? 'Tuesday' : 'Martes',
+                          miercoles: lang === 'en' ? 'Wednesday' : 'Miércoles',
+                          jueves: lang === 'en' ? 'Thursday' : 'Jueves',
+                          viernes: lang === 'en' ? 'Friday' : 'Viernes',
+                          sabado: lang === 'en' ? 'Saturday' : 'Sábado',
+                          domingo: lang === 'en' ? 'Sunday' : 'Domingo',
+                        };
+                        const isToday = new Date().getDay() === {
+                          domingo: 0, lunes: 1, martes: 2, miercoles: 3, jueves: 4, viernes: 5, sabado: 6
+                        }[day];
+
+                        return (
+                          <div
+                            key={day}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              fontSize: '13px',
+                              color: isToday ? '#0F172A' : '#64748B',
+                              fontWeight: isToday ? '800' : '500',
+                              padding: '5px 8px',
+                              borderRadius: '8px',
+                              background: isToday ? 'rgba(20, 109, 158, 0.08)' : 'transparent',
+                              borderBottom: isToday ? 'none' : '1px dashed rgba(20, 109, 158, 0.08)'
+                            }}
+                          >
+                            <span>{dayLabels[day] || day} {isToday && '• (Hoy)'}</span>
+                            <span>
+                              {info?.abierto
+                                ? `${info.apertura || ''} - ${info.cierre || ''}`
+                                : (lang === 'en' ? 'Closed' : 'Cerrado')}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p style={{ margin: 0, fontSize: '13px', color: '#94A3B8', fontStyle: 'italic' }}>
+                      {lang === 'en' ? 'Regular business hours apply.' : 'Consulte directamente para confirmación de horario exacto.'}
+                    </p>
+                  )}
+                </div>
+
+                {/* Contacto Directo */}
+                <div className="clay-card-static" style={{ padding: '20px', borderRadius: '18px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Icon name="messageCircle" size={15} color={theme.accent} />
+                    <span>{lang === 'en' ? 'Direct Contact' : 'Contacto Directo'}</span>
+                  </h4>
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                    {whatsappNum && (
+                      <a
+                        href={`https://wa.me/${whatsappNum.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hola, vi su negocio "${point.nombre}" en Atlan y me gustaría más información.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          flex: 1,
+                          minWidth: '130px',
+                          padding: '10px 14px',
+                          borderRadius: '12px',
+                          background: '#25D366',
+                          color: '#FFFFFF',
+                          fontWeight: '800',
+                          fontSize: '13px',
+                          textDecoration: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          boxShadow: '0 4px 12px rgba(37, 211, 102, 0.25)'
+                        }}
+                      >
+                        <Icon name="whatsapp" size={16} color="#FFFFFF" />
+                        <span>WhatsApp</span>
+                      </a>
+                    )}
+                    {phoneNum && (
+                      <a
+                        href={`tel:${phoneNum}`}
+                        style={{
+                          flex: 1,
+                          minWidth: '130px',
+                          padding: '10px 14px',
+                          borderRadius: '12px',
+                          background: '#1E293B',
+                          color: '#FFFFFF',
+                          fontWeight: '800',
+                          fontSize: '13px',
+                          textDecoration: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          boxShadow: '0 4px 12px rgba(30, 41, 59, 0.15)'
+                        }}
+                      >
+                        <Icon name="phone" size={16} color="#FFFFFF" />
+                        <span>{lang === 'en' ? 'Call' : 'Llamar'}</span>
+                      </a>
+                    )}
+                    {!whatsappNum && !phoneNum && (
+                      <div style={{ fontSize: '13px', color: '#64748B', fontStyle: 'italic' }}>
+                        {lang === 'en' ? 'Direct contact available through Atlan messaging.' : 'Contacto disponible a través de reservación directa en la app.'}
+                      </div>
+                    )}
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           )}
 
@@ -806,157 +957,198 @@ export default function BusinessProfileModal({
             </div>
           )}
 
-          {/* PESTAÑA 4: RESEÑAS */}
+          {/* PESTAÑA 4: RESEÑAS EN VISTA ÚNICA DE 2 COLUMNAS */}
           {activeTab === 'reseñas' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-                <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#0F172A', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Icon name="star" size={16} color="#B8960E" />
-                  <span>{t('reviews.title') || 'Reseñas de la Comunidad'}</span>
-                </h4>
-                {avgRating && (
-                  <div style={{ fontSize: '14px', fontWeight: '800', color: '#B8960E', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <Icon name="starFilled" size={15} color="#B8960E" />
-                    <span>Calificación promedio: {avgRating} / 5.0</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Formulario de Reseña */}
-              {!userSession ? (
-                <div className="clay-card-static" style={{ padding: '18px', textAlign: 'center' }}>
-                  <p style={{ margin: '0 0 10px', fontSize: '13.5px', color: '#475569', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                    <Icon name="lock" size={16} color="#64748B" />
-                    <span>{lang === 'en' ? 'Log in to write reviews & comments' : 'Inicia sesión para escribir reseñas y comentarios'}</span>
-                  </p>
-                  <a
-                    href="/login"
-                    className="clay-btn-gold"
-                    style={{
-                      display: 'inline-flex',
-                      padding: '8px 20px',
-                      fontSize: '12.5px',
-                      textDecoration: 'none'
-                    }}
-                  >
-                    {t('nav.login') || 'Iniciar Sesión'}
-                  </a>
-                </div>
-              ) : (
-                <form onSubmit={handleCrearResena} className="clay-card-static" style={{ display: 'flex', flexDirection: 'column', gap: '14px', padding: '20px' }}>
-                  <p style={{ margin: 0, fontSize: '14px', fontWeight: '800', color: '#B8960E', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'minmax(300px, 360px) 1fr',
+                gap: '24px',
+                height: '100%',
+                alignItems: 'start'
+              }}
+            >
+              {/* COLUMNA IZQUIERDA: Formulario de Reseñas */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div className="clay-card-static" style={{ padding: '20px', borderRadius: '18px' }}>
+                  <h4 style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: '800', color: '#B8960E', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Icon name="edit" size={16} color="#B8960E" />
                     <span>{t('reviews.writeReview') || 'Escribir una Reseña'}</span>
-                  </p>
+                  </h4>
 
-                  {reviewErrorMsg && (
-                    <div style={{ color: '#ef4444', fontSize: '12.5px', fontWeight: '600', background: 'rgba(239,68,68,0.1)', padding: '10px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <Icon name="alertTriangle" size={16} color="#ef4444" />
-                      <span>{reviewErrorMsg}</span>
+                  {!userSession ? (
+                    <div style={{ textAlign: 'center', padding: '12px 0' }}>
+                      <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#64748B', lineHeight: '1.4' }}>
+                        {lang === 'en' ? 'Log in to write reviews & rate this place.' : 'Inicia sesión para calificar este lugar y compartir tu opinión.'}
+                      </p>
+                      <a
+                        href="/login"
+                        className="clay-btn-gold"
+                        style={{
+                          display: 'inline-flex',
+                          padding: '8px 20px',
+                          fontSize: '12.5px',
+                          textDecoration: 'none'
+                        }}
+                      >
+                        {t('nav.login') || 'Iniciar Sesión'}
+                      </a>
                     </div>
-                  )}
+                  ) : (
+                    <form onSubmit={handleCrearResena} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                      {reviewErrorMsg && (
+                        <div style={{ color: '#ef4444', fontSize: '12px', fontWeight: '600', background: 'rgba(239,68,68,0.1)', padding: '8px 10px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Icon name="alertTriangle" size={14} color="#ef4444" />
+                          <span>{reviewErrorMsg}</span>
+                        </div>
+                      )}
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-                    <div>
-                      <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
-                        {t('reviews.yourName') || 'Tu Nombre'}
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        disabled={!!userSession}
-                        value={newReviewNombre}
-                        onChange={(e) => setNewReviewNombre(e.target.value)}
-                        placeholder="Ej: Carlos"
-                        className="clay-input"
-                        style={{ padding: '9px 12px', width: '100%' }}
-                      />
-                    </div>
-
-                    <div>
-                      <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
-                        {t('reviews.rating') || 'Calificación'}
-                      </label>
-                      <div style={{ display: 'flex', gap: '6px', alignItems: 'center', paddingTop: '4px' }}>
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <button
-                            key={star}
-                            type="button"
-                            onClick={() => setNewReviewEstrellas(star)}
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              cursor: 'pointer',
-                              padding: 0,
-                              transition: 'transform 0.1s ease'
-                            }}
-                          >
-                            <Icon
-                              name={star <= newReviewEstrellas ? 'starFilled' : 'star'}
-                              size={22}
-                              color={star <= newReviewEstrellas ? '#B8960E' : '#CBD5E1'}
-                            />
-                          </button>
-                        ))}
+                      <div>
+                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                          {t('reviews.yourName') || 'Tu Nombre'}
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          disabled={!!userSession}
+                          value={newReviewNombre}
+                          onChange={(e) => setNewReviewNombre(e.target.value)}
+                          placeholder="Ej: Carlos"
+                          className="clay-input"
+                          style={{ padding: '9px 12px', width: '100%' }}
+                        />
                       </div>
-                    </div>
-                  </div>
 
-                  <div>
-                    <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
-                      {t('reviews.yourComment') || 'Tu Comentario'}
-                    </label>
-                    <textarea
-                      required
-                      rows="3"
-                      value={newReviewComment}
-                      onChange={(e) => setNewReviewComment(e.target.value)}
-                      placeholder={lang === 'en' ? 'Share your experience at this place...' : 'Comparte tu experiencia en este lugar...'}
-                      className="clay-textarea"
-                      style={{ padding: '11px 14px', width: '100%' }}
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmittingReview}
-                    className="clay-btn-green"
-                    style={{ width: '100%', padding: '12px', fontSize: '13.5px', fontWeight: '800' }}
-                  >
-                    {isSubmittingReview ? '...' : (t('reviews.submit') || 'Publicar Reseña')}
-                  </button>
-                </form>
-              )}
-
-              {/* Listado de Reseñas */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                {reviews.length === 0 ? (
-                  <p style={{ margin: 0, fontSize: '13.5px', color: '#64748B', fontStyle: 'italic', textAlign: 'center', padding: '20px 0' }}>
-                    {lang === 'en' ? 'No reviews yet. Be the first!' : 'No hay reseñas aún. ¡Sé el primero en calificar este negocio!'}
-                  </p>
-                ) : (
-                  reviews.map((rev) => (
-                    <div key={rev.id} className="clay-card-static" style={{ padding: '16px 20px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <Icon name="user" size={14} color="#64748B" />
-                          <span>{rev.autor_nombre}</span>
-                        </span>
-                        <div style={{ display: 'flex', gap: '2px' }}>
-                          {[1, 2, 3, 4, 5].map((s) => (
-                            <Icon
-                              key={s}
-                              name={s <= rev.estrellas ? 'starFilled' : 'star'}
-                              size={14}
-                              color={s <= rev.estrellas ? '#B8960E' : '#E2E8F0'}
-                            />
+                      <div>
+                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                          {t('reviews.rating') || 'Calificación'}
+                        </label>
+                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', paddingTop: '2px' }}>
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setNewReviewEstrellas(star)}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                padding: 0,
+                                transition: 'transform 0.15s ease'
+                              }}
+                            >
+                              <Icon
+                                name={star <= newReviewEstrellas ? 'starFilled' : 'star'}
+                                size={24}
+                                color={star <= newReviewEstrellas ? '#B8960E' : '#CBD5E1'}
+                              />
+                            </button>
                           ))}
                         </div>
                       </div>
-                      <p style={{ margin: 0, fontSize: '13.5px', color: '#475569', lineHeight: '1.55' }}>{rev.comentario}</p>
+
+                      <div>
+                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                          {t('reviews.yourComment') || 'Tu Comentario'}
+                        </label>
+                        <textarea
+                          required
+                          rows="3"
+                          value={newReviewComment}
+                          onChange={(e) => setNewReviewComment(e.target.value)}
+                          placeholder={lang === 'en' ? 'Share your experience at this place...' : 'Comparte tu experiencia en este lugar...'}
+                          className="clay-textarea"
+                          style={{ padding: '10px 12px', width: '100%', fontSize: '13px' }}
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={isSubmittingReview}
+                        className="clay-btn-green"
+                        style={{ width: '100%', padding: '11px', fontSize: '13px', fontWeight: '800' }}
+                      >
+                        {isSubmittingReview ? '...' : (t('reviews.submit') || 'Publicar Reseña')}
+                      </button>
+                    </form>
+                  )}
+                </div>
+              </div>
+
+              {/* COLUMNA DERECHA: Listado y Resumen de Reseñas */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%', overflowY: 'auto', paddingRight: '4px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    background: 'rgba(255, 215, 0, 0.08)',
+                    padding: '12px 18px',
+                    borderRadius: '14px',
+                    border: '1px solid rgba(255, 215, 0, 0.25)'
+                  }}
+                >
+                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#0F172A', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Icon name="star" size={16} color="#B8960E" />
+                    <span>{t('reviews.title') || 'Reseñas de la Comunidad'}</span>
+                  </h4>
+                  {avgRating ? (
+                    <div style={{ fontSize: '13.5px', fontWeight: '800', color: '#B8960E', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <Icon name="starFilled" size={15} color="#B8960E" />
+                      <span>{avgRating} / 5.0 ({reviews.length})</span>
                     </div>
-                  ))
-                )}
+                  ) : (
+                    <span style={{ fontSize: '12px', color: '#94A3B8', fontStyle: 'italic' }}>
+                      {lang === 'en' ? 'No ratings yet' : 'Sin calificaciones aún'}
+                    </span>
+                  )}
+                </div>
+
+                {/* Feed de Comentarios */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {reviews.length === 0 ? (
+                    <div
+                      className="clay-card-static"
+                      style={{
+                        padding: '30px 20px',
+                        textAlign: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '10px'
+                      }}
+                    >
+                      <Icon name="messageCircle" size={32} color="#CBD5E1" />
+                      <p style={{ margin: 0, fontSize: '13.5px', color: '#64748B', fontStyle: 'italic' }}>
+                        {lang === 'en' ? 'No reviews yet. Be the first to review!' : 'No hay reseñas aún. ¡Sé el primero en calificar este negocio!'}
+                      </p>
+                    </div>
+                  ) : (
+                    reviews.map((rev) => (
+                      <div key={rev.id} className="clay-card-static" style={{ padding: '14px 18px', borderRadius: '14px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                          <span style={{ fontSize: '13.5px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: theme.cover, color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '800' }}>
+                              {rev.autor_nombre?.charAt(0)?.toUpperCase() || 'U'}
+                            </div>
+                            <span>{rev.autor_nombre}</span>
+                          </span>
+                          <div style={{ display: 'flex', gap: '2px' }}>
+                            {[1, 2, 3, 4, 5].map((s) => (
+                              <Icon
+                                key={s}
+                                name={s <= rev.estrellas ? 'starFilled' : 'star'}
+                                size={13}
+                                color={s <= rev.estrellas ? '#B8960E' : '#E2E8F0'}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <p style={{ margin: 0, fontSize: '13.5px', color: '#475569', lineHeight: '1.5' }}>{rev.comentario}</p>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -965,3 +1157,4 @@ export default function BusinessProfileModal({
     </div>
   );
 }
+
