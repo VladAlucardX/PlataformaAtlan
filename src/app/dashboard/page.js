@@ -962,11 +962,16 @@ export default function DashboardPage() {
   // Reservas: Cambiar estado
   const handleUpdateReservaStatus = async (reservaId, newStatus) => {
     try {
-      await supabase
+      const { error } = await supabase
         .from("reservas")
         .update({ estado_reserva: newStatus })
         .eq("id", reservaId);
-      loadReservas(negocio.id);
+
+      if (error) {
+        console.error("Error actualizando reserva:", error);
+      } else if (negocio?.id) {
+        loadReservas(negocio.id);
+      }
     } catch (err) {
       console.error("Error actualizando reserva:", err);
     }
@@ -2686,15 +2691,15 @@ export default function DashboardPage() {
                             fontWeight: "800",
                             padding: "3px 8px",
                             borderRadius: "6px",
-                            background: res.estado_reserva === "aprobada" ? "rgba(23, 170, 74,0.15)" : res.estado_reserva === "pendiente" ? "rgba(230, 194, 0,0.15)" : "rgba(239,68,68,0.15)",
-                            color: res.estado_reserva === "aprobada" ? "#17AA4A" : res.estado_reserva === "pendiente" ? "#E6A800" : "#ef4444"
+                            background: (res.estado_reserva === "confirmada" || res.estado_reserva === "aprobada") ? "rgba(23, 170, 74,0.15)" : res.estado_reserva === "pendiente" ? "rgba(230, 194, 0,0.15)" : "rgba(239,68,68,0.15)",
+                            color: (res.estado_reserva === "confirmada" || res.estado_reserva === "aprobada") ? "#17AA4A" : res.estado_reserva === "pendiente" ? "#E6A800" : "#ef4444"
                           }}>
                             {(res.estado_reserva || "pendiente").toUpperCase()}
                           </span>
                           
                           {res.estado_reserva === "pendiente" && (
                             <div style={{ display: "flex", gap: "6px" }}>
-                              <button onClick={() => handleUpdateReservaStatus(res.id, "aprobada")} style={styles.actionApproveBtn}>✓</button>
+                              <button onClick={() => handleUpdateReservaStatus(res.id, "confirmada")} style={styles.actionApproveBtn}>✓</button>
                               <button onClick={() => handleUpdateReservaStatus(res.id, "cancelada")} style={styles.actionCancelBtn}>✗</button>
                             </div>
                           )}
