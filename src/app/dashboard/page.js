@@ -994,6 +994,29 @@ export default function DashboardPage() {
 
   return (
     <div style={{ ...styles.container, position: "relative", overflow: "hidden" }} className="dashboard-container">
+      {/* Ilustración Guardabarranco SVG en la esquina inferior izquierda en amarillo/dorado que coincide con la flor del fondo */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: "-15px",
+          left: "-10px",
+          width: "360px",
+          height: "310px",
+          backgroundColor: "#FFD700",
+          WebkitMaskImage: "url('/images/guardabarranco chochoyo.svg')",
+          WebkitMaskRepeat: "no-repeat",
+          WebkitMaskSize: "contain",
+          WebkitMaskPosition: "bottom left",
+          maskImage: "url('/images/guardabarranco chochoyo.svg')",
+          maskRepeat: "no-repeat",
+          maskSize: "contain",
+          maskPosition: "bottom left",
+          opacity: 0.85,
+          pointerEvents: "none",
+          zIndex: 1,
+          filter: "drop-shadow(0 4px 16px rgba(255, 215, 0, 0.4))",
+        }}
+      />
       {/* Orbes de luz ambientales de fondo */}
       <div style={{
         position: "absolute", top: "-5%", right: "-5%", width: "650px", height: "650px", borderRadius: "50%",
@@ -1580,7 +1603,7 @@ export default function DashboardPage() {
               )}
 
               <div style={styles.overviewGrid}>
-                {/* General Info Card */}
+                {/* General Info Card: edificio.svg */}
                 <button
                   type="button"
                   onClick={(e) => handleCardClick(e, "general")}
@@ -1593,8 +1616,20 @@ export default function DashboardPage() {
                     opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
-                  <div style={{ ...styles.cardIcon, background: "#4F46E5", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(79, 70, 229, 0.35)" }}>
-                    <Icon name="info" size={22} color="#FFFFFF" />
+                  <div style={{ ...styles.cardIcon, background: "#4F46E5", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(79, 70, 229, 0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{
+                      width: "24px",
+                      height: "24px",
+                      backgroundColor: "#FFFFFF",
+                      WebkitMaskImage: "url('/images/edificio.svg')",
+                      WebkitMaskRepeat: "no-repeat",
+                      WebkitMaskSize: "contain",
+                      WebkitMaskPosition: "center",
+                      maskImage: "url('/images/edificio.svg')",
+                      maskRepeat: "no-repeat",
+                      maskSize: "contain",
+                      maskPosition: "center",
+                    }} />
                   </div>
                   <h3 style={{ ...styles.cardTitle, color: "#3730A3", display: "flex", alignItems: "center", gap: "6px" }}>
                     <span>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</span>
@@ -1603,7 +1638,7 @@ export default function DashboardPage() {
                   <p style={{ ...styles.cardDesc, color: "#4338CA" }}>{lang === "en" ? "Update photos, description, logo and contact info" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
                 </button>
 
-                {/* Checklist Card */}
+                {/* Checklist Card: flor.svg */}
                 <button
                   type="button"
                   onClick={(e) => handleCardClick(e, "excentricidades")}
@@ -1616,8 +1651,20 @@ export default function DashboardPage() {
                     opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
-                  <div style={{ ...styles.cardIcon, background: "#16A34A", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(22, 163, 74, 0.35)" }}>
-                    <Icon name="settings" size={22} color="#FFFFFF" />
+                  <div style={{ ...styles.cardIcon, background: "#16A34A", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(22, 163, 74, 0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{
+                      width: "24px",
+                      height: "24px",
+                      backgroundColor: "#FFFFFF",
+                      WebkitMaskImage: "url('/images/flor.svg')",
+                      WebkitMaskRepeat: "no-repeat",
+                      WebkitMaskSize: "contain",
+                      WebkitMaskPosition: "center",
+                      maskImage: "url('/images/flor.svg')",
+                      maskRepeat: "no-repeat",
+                      maskSize: "contain",
+                      maskPosition: "center",
+                    }} />
                   </div>
                   <h3 style={{ ...styles.cardTitle, color: "#166534", display: "flex", alignItems: "center", gap: "6px" }}>
                     <span>{lang === "en" ? "Services Checklist" : "Checklist de Servicios"}</span>
@@ -1706,7 +1753,7 @@ export default function DashboardPage() {
                   </button>
                 )}
 
-                {/* Reviews Card */}
+                {/* Reviews Card: sombrero.svg */}
                 <button
                   type="button"
                   onClick={(e) => handleCardClick(e, "resenas")}
@@ -1719,8 +1766,20 @@ export default function DashboardPage() {
                     opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
-                  <div style={{ ...styles.cardIcon, background: "#E11D48", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(225, 29, 72, 0.35)" }}>
-                    <Icon name="star" size={22} color="#FFFFFF" />
+                  <div style={{ ...styles.cardIcon, background: "#E11D48", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(225, 29, 72, 0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{
+                      width: "24px",
+                      height: "24px",
+                      backgroundColor: "#FFFFFF",
+                      WebkitMaskImage: "url('/images/sombrero.svg')",
+                      WebkitMaskRepeat: "no-repeat",
+                      WebkitMaskSize: "contain",
+                      WebkitMaskPosition: "center",
+                      maskImage: "url('/images/sombrero.svg')",
+                      maskRepeat: "no-repeat",
+                      maskSize: "contain",
+                      maskPosition: "center",
+                    }} />
                   </div>
                   <h3 style={{ ...styles.cardTitle, color: "#9F1239", display: "flex", alignItems: "center", gap: "6px" }}>
                     <span>{lang === "en" ? "Customer Reviews" : "Reseñas de Clientes"}</span>
