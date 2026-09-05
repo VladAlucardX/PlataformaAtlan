@@ -4095,71 +4095,7 @@ export default function MapaTuristico() {
                       </p>
                     </div>
 
-                    {/* GALERÍA DE 6 ESPACIOS (3 COLUMNAS X 2 FILAS) CON MAYOR TAMAÑO */}
-                    <div>
-                      <h4 style={{ margin: '0 0 8px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <Icon name="image" size={13} color="#64748B" />
-                        <span>{lang === 'en' ? 'Photos & Media' : 'Galería de Fotos'} ({selectedPointDetails?.fotos?.length || 0}/6)</span>
-                      </h4>
-
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                        {[0, 1, 2, 3, 4, 5].map((index) => {
-                          const photoUrl = selectedPointDetails?.fotos?.[index];
-
-                          if (photoUrl) {
-                            return (
-                              <div
-                                key={index}
-                                onClick={() => setPreviewPhotoModal(photoUrl)}
-                                style={{
-                                  height: '105px',
-                                  borderRadius: '12px',
-                                  overflow: 'hidden',
-                                  border: '1px solid rgba(20, 109, 158, 0.12)',
-                                  boxShadow: '0 3px 8px rgba(0,0,0,0.08)',
-                                  cursor: 'pointer',
-                                  transition: 'transform 0.2s ease'
-                                }}
-                                onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.04)'; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-                              >
-                                <img
-                                  src={photoUrl}
-                                  alt={`Foto ${index + 1}`}
-                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                />
-                              </div>
-                            );
-                          }
-
-                          return (
-                            <div
-                              key={index}
-                              style={{
-                                height: '105px',
-                                borderRadius: '12px',
-                                border: '1.5px dashed rgba(20, 109, 158, 0.22)',
-                                background: 'rgba(20, 109, 158, 0.03)',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '4px',
-                                padding: '6px',
-                                textAlign: 'center'
-                              }}
-                            >
-                              <Icon name="image" size={20} color="#94A3B8" />
-                              <span style={{ fontSize: '10px', fontWeight: '750', color: '#94A3B8', lineHeight: '1.1' }}>
-                                {lang === 'en' ? 'Coming Soon' : 'Próximamente'}
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* BARRA DE CONTACTO DIRECTO Y REDES SOCIALES (JUSTO DEBAJO DE LAS IMÁGENES) */}
+                    {/* BARRA DE CONTACTO DIRECTO Y REDES SOCIALES (UBICADA SUPERIOR ABAJO DE ACERCA DE) */}
                     {(() => {
                       const phone = selectedPointDetails?.telefono;
                       const whatsapp = selectedPointDetails?.whatsapp;
@@ -4185,7 +4121,7 @@ export default function MapaTuristico() {
                       const webUrl = website ? (website.startsWith('http') ? website : `https://${website}`) : null;
 
                       return (
-                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', borderTop: '1px dashed rgba(20, 109, 158, 0.12)', paddingTop: '10px', marginTop: '2px' }}>
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', background: 'rgba(20, 109, 158, 0.04)', border: '1px solid rgba(20, 109, 158, 0.12)', padding: '8px 10px', borderRadius: '12px' }}>
                           {whatsapp && (
                             <a
                               href={waUrl}
@@ -4194,10 +4130,10 @@ export default function MapaTuristico() {
                               title="Contactar por WhatsApp"
                               style={{
                                 padding: '7px 12px',
-                                borderRadius: '10px',
-                                background: 'rgba(34, 197, 94, 0.14)',
-                                border: '1.5px solid rgba(34, 197, 94, 0.35)',
-                                color: '#15803D',
+                                borderRadius: '9px',
+                                background: '#22C55E',
+                                border: '1px solid #16A34A',
+                                color: '#FFFFFF',
                                 fontSize: '12.5px',
                                 fontWeight: '850',
                                 textDecoration: 'none',
@@ -4205,10 +4141,11 @@ export default function MapaTuristico() {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 gap: '6px',
-                                flex: '1 1 auto'
+                                flex: '1 1 auto',
+                                boxShadow: '0 2px 8px rgba(34, 197, 94, 0.25)'
                               }}
                             >
-                              <Icon name="whatsapp" size={15} color="#16A34A" />
+                              <Icon name="whatsapp" size={15} color="#FFFFFF" />
                               <span>WhatsApp ({whatsapp})</span>
                             </a>
                           )}
@@ -4299,6 +4236,70 @@ export default function MapaTuristico() {
                         </div>
                       );
                     })()}
+
+                    {/* GALERÍA DE 6 ESPACIOS (3 COLUMNAS X 2 FILAS) CON TAMAÑO COMPACTO */}
+                    <div>
+                      <h4 style={{ margin: '0 0 8px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <Icon name="image" size={13} color="#64748B" />
+                        <span>{lang === 'en' ? 'Photos & Media' : 'Galería de Fotos'} ({selectedPointDetails?.fotos?.length || 0}/6)</span>
+                      </h4>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                        {[0, 1, 2, 3, 4, 5].map((index) => {
+                          const photoUrl = selectedPointDetails?.fotos?.[index];
+
+                          if (photoUrl) {
+                            return (
+                              <div
+                                key={index}
+                                onClick={() => setPreviewPhotoModal(photoUrl)}
+                                style={{
+                                  height: '80px',
+                                  borderRadius: '12px',
+                                  overflow: 'hidden',
+                                  border: '1px solid rgba(20, 109, 158, 0.12)',
+                                  boxShadow: '0 3px 8px rgba(0,0,0,0.08)',
+                                  cursor: 'pointer',
+                                  transition: 'transform 0.2s ease'
+                                }}
+                                onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.04)'; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+                              >
+                                <img
+                                  src={photoUrl}
+                                  alt={`Foto ${index + 1}`}
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <div
+                              key={index}
+                              style={{
+                                height: '80px',
+                                borderRadius: '12px',
+                                border: '1.5px dashed rgba(20, 109, 158, 0.22)',
+                                background: 'rgba(20, 109, 158, 0.03)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '4px',
+                                padding: '6px',
+                                textAlign: 'center'
+                              }}
+                            >
+                              <Icon name="image" size={18} color="#94A3B8" />
+                              <span style={{ fontSize: '10px', fontWeight: '750', color: '#94A3B8', lineHeight: '1.1' }}>
+                                {lang === 'en' ? 'Coming Soon' : 'Próximamente'}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
 
                   {/* BOTÓN RECLAMAR NEGOCIO SI APLICA */}
