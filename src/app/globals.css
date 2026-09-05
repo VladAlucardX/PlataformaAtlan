@@ -365,10 +365,7 @@ a:hover {
 /* Efecto de destello / brillo sutil al pasar el cursor (Gentle Sheen Sweep) */
 .glass-card::after,
 .clay-card::after,
-.btn-primary::after,
-.clay-btn-gold::after,
-.clay-btn-blue::after,
-.clay-btn-green::after {
+.btn-primary::after {
   content: '';
   position: absolute;
   top: -50%;
@@ -384,10 +381,7 @@ a:hover {
 
 .glass-card:hover::after,
 .clay-card:hover::after,
-.btn-primary:hover::after,
-.clay-btn-gold:hover::after,
-.clay-btn-blue:hover::after,
-.clay-btn-green:hover::after {
+.btn-primary:hover::after {
   left: 140%;
 }
 
@@ -637,9 +631,7 @@ a:hover {
 
 /* ── DESTELLO DE CRISTAL AL PASAR EL CURSOR (SHEEN SWEEP) ──────────────── */
 .btn-primary::after,
-.btn-secondary::after,
-.clay-btn-gold::after,
-.clay-btn-blue::after {
+.btn-secondary::after {
   content: "";
   position: absolute;
   top: -50%;
@@ -658,9 +650,7 @@ a:hover {
 }
 
 .btn-primary:hover::after,
-.btn-secondary:hover::after,
-.clay-btn-gold:hover::after,
-.clay-btn-blue:hover::after {
+.btn-secondary:hover::after {
   left: 200%;
 }
 

@@ -403,9 +403,7 @@ export default function BusinessProfileModal({
             padding: '24px 28px',
             scrollbarWidth: 'thin',
             scrollbarColor: 'rgba(20, 109, 158, 0.2) transparent'
-          }}
-        >
-          {/* PESTAÑA 1: INFORMACIÓN Y SECCIÓN DE INTERÉS TURÍSTICO */}
+          }}          {/* PESTAÑA 1: INFORMACIÓN Y SECCIÓN DE INTERÉS TURÍSTICO */}
           {activeTab === 'info' && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
               {/* COLUMNA IZQUIERDA: Descripción & Interés Turístico */}
@@ -443,7 +441,7 @@ export default function BusinessProfileModal({
                 {!point.negocio_id && point.estado === 'sin_reclamar' && (
                   <Link
                     href="/dashboard"
-                    className="clay-btn-gold"
+                    className="clay-btn-gold no-sheen"
                     style={{
                       width: '100%',
                       padding: '12px 18px',
@@ -504,9 +502,8 @@ export default function BusinessProfileModal({
                 </div>
               </div>
 
-              {/* COLUMNA DERECHA: Horarios + Contacto Directo */}
+              {/* COLUMNA DERECHA: Horarios de Atención */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {/* Horarios de Atención */}
                 <div className="clay-card-static" style={{ padding: '20px', borderRadius: '18px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
                     <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -583,71 +580,6 @@ export default function BusinessProfileModal({
                       {lang === 'en' ? 'Regular business hours apply.' : 'Consulte directamente para confirmación de horario exacto.'}
                     </p>
                   )}
-                </div>
-
-                {/* Contacto Directo */}
-                <div className="clay-card-static" style={{ padding: '20px', borderRadius: '18px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '800', color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Icon name="messageCircle" size={15} color={theme.accent} />
-                    <span>{lang === 'en' ? 'Direct Contact' : 'Contacto Directo'}</span>
-                  </h4>
-                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                    {whatsappNum && (
-                      <a
-                        href={`https://wa.me/${whatsappNum.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hola, vi su negocio "${point.nombre}" en Atlan y me gustaría más información.`)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          flex: 1,
-                          minWidth: '130px',
-                          padding: '10px 14px',
-                          borderRadius: '12px',
-                          background: '#25D366',
-                          color: '#FFFFFF',
-                          fontWeight: '800',
-                          fontSize: '13px',
-                          textDecoration: 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px',
-                          boxShadow: '0 4px 12px rgba(37, 211, 102, 0.25)'
-                        }}
-                      >
-                        <Icon name="whatsapp" size={16} color="#FFFFFF" />
-                        <span>WhatsApp</span>
-                      </a>
-                    )}
-                    {phoneNum && (
-                      <a
-                        href={`tel:${phoneNum}`}
-                        style={{
-                          flex: 1,
-                          minWidth: '130px',
-                          padding: '10px 14px',
-                          borderRadius: '12px',
-                          background: '#1E293B',
-                          color: '#FFFFFF',
-                          fontWeight: '800',
-                          fontSize: '13px',
-                          textDecoration: 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px',
-                          boxShadow: '0 4px 12px rgba(30, 41, 59, 0.15)'
-                        }}
-                      >
-                        <Icon name="phone" size={16} color="#FFFFFF" />
-                        <span>{lang === 'en' ? 'Call' : 'Llamar'}</span>
-                      </a>
-                    )}
-                    {!whatsappNum && !phoneNum && (
-                      <div style={{ fontSize: '13px', color: '#64748B', fontStyle: 'italic' }}>
-                        {lang === 'en' ? 'Direct contact available through Atlan messaging.' : 'Contacto disponible a través de reservación directa en la app.'}
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
             </div>
@@ -762,71 +694,125 @@ export default function BusinessProfileModal({
             </div>
           )}
 
-          {/* PESTAÑA 3: RESERVAS */}
+          {/* PESTAÑA 3: RESERVAS EN VISTA ÚNICA DE 2 COLUMNAS */}
           {activeTab === 'reservas' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '580px', margin: '0 auto', width: '100%' }}>
-              <div style={{ textAlign: 'center' }}>
-                <h4 style={{ margin: '0 0 6px', fontSize: '18px', fontWeight: '850', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                  <Icon name="calendar" size={20} color={theme.accent} />
-                  <span>{t('reservations.title') || 'Reserva Directa'}</span>
-                </h4>
-                <p style={{ margin: 0, fontSize: '13.5px', color: '#64748B' }}>
-                  {lang === 'en' ? 'Reserve your spot directly with this business' : 'Reserva directamente con este establecimiento sin intermediarios'}
-                </p>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'minmax(260px, 320px) 1fr',
+                gap: '24px',
+                alignItems: 'start'
+              }}
+            >
+              {/* COLUMNA IZQUIERDA: Banner informativo de Reservas */}
+              <div
+                className="clay-card-static"
+                style={{
+                  padding: '22px 20px',
+                  borderRadius: '18px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '14px',
+                  background: 'linear-gradient(135deg, rgba(20, 109, 158, 0.06) 0%, rgba(255, 215, 0, 0.08) 100%)',
+                  border: '1.5px solid rgba(20, 109, 158, 0.15)'
+                }}
+              >
+                <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: theme.cover, color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon name="calendar" size={22} color="#FFFFFF" />
+                </div>
+                <div>
+                  <h4 style={{ margin: '0 0 6px', fontSize: '16px', fontWeight: '850', color: '#0F172A' }}>
+                    {t('reservations.title') || 'Reserva Directa'}
+                  </h4>
+                  <p style={{ margin: 0, fontSize: '13px', color: '#64748B', lineHeight: '1.5' }}>
+                    {lang === 'en'
+                      ? 'Book instantly with no middleman fees. Confirmation sent directly to the business.'
+                      : 'Reserva instantáneamente sin comisiones ni intermediarios. Tu solicitud llegará directamente al negocio.'}
+                  </p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '10px', borderTop: '1px dashed rgba(20,109,158,0.15)', fontSize: '12.5px', color: '#475569' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Icon name="checkCircle" size={14} color="#16A34A" />
+                    <span>Confirmación inmediata por el local</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Icon name="shield" size={14} color="#2563EB" />
+                    <span>Garantía de servicio Atlan</span>
+                  </div>
+                </div>
               </div>
 
-              {reservaSuccess ? (
-                <div className="clay-card-static" style={{ background: 'rgba(23, 170, 74, 0.10)', border: '1.5px solid #17AA4A', color: '#17AA4A', padding: '24px', textAlign: 'center', fontWeight: '700', borderRadius: '16px' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-                    <Icon name="checkCircle" size={28} color="#16A34A" />
+              {/* COLUMNA DERECHA: Formulario de Reserva compacto */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {reservaSuccess ? (
+                  <div className="clay-card-static" style={{ background: 'rgba(23, 170, 74, 0.10)', border: '1.5px solid #17AA4A', color: '#17AA4A', padding: '24px', textAlign: 'center', fontWeight: '700', borderRadius: '18px' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                      <Icon name="checkCircle" size={28} color="#16A34A" />
+                    </div>
+                    <div style={{ fontSize: '16px', fontWeight: '850' }}>{t('reservations.success') || '¡Reserva enviada con éxito!'}</div>
+                    <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#475569', fontWeight: 'normal' }}>
+                      {lang === 'en' ? 'The business will contact you shortly to confirm your booking.' : 'El negocio se pondrá en contacto contigo muy pronto para confirmar tu reserva.'}
+                    </p>
                   </div>
-                  <div style={{ fontSize: '16px', fontWeight: '850' }}>{t('reservations.success') || '¡Reserva enviada con éxito!'}</div>
-                  <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#475569', fontWeight: 'normal' }}>
-                    {lang === 'en' ? 'The business will contact you shortly to confirm your booking.' : 'El negocio se pondrá en contacto contigo muy pronto para confirmar tu reserva.'}
-                  </p>
-                </div>
-              ) : !userSession ? (
-                <div className="clay-card-static" style={{ padding: '24px', textAlign: 'center' }}>
-                  <p style={{ margin: '0 0 14px', fontSize: '14px', color: '#475569', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                    <Icon name="lock" size={16} color="#64748B" />
-                    <span>{t('reservations.loginRequired') || 'Inicia sesión para realizar reservas'}</span>
-                  </p>
-                  <a
-                    href="/login"
-                    className="clay-btn-gold"
-                    style={{
-                      display: 'inline-flex',
-                      padding: '10px 24px',
-                      fontSize: '13px',
-                      textDecoration: 'none'
-                    }}
-                  >
-                    {t('nav.login') || 'Iniciar Sesión'}
-                  </a>
-                </div>
-              ) : (
-                <form onSubmit={handleCrearReserva} className="clay-card-static" style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px' }}>
-                  <div>
-                    <label style={{ fontSize: '12.5px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '6px' }}>
-                      {t('reservations.type') || 'Tipo de Reserva'}
-                    </label>
-                    <select
-                      value={reservaTipo}
-                      onChange={(e) => setReservaTipo(e.target.value)}
-                      className="clay-input"
-                      style={{ padding: '11px 14px', width: '100%' }}
+                ) : !userSession ? (
+                  <div className="clay-card-static" style={{ padding: '24px', textAlign: 'center', borderRadius: '18px' }}>
+                    <p style={{ margin: '0 0 14px', fontSize: '14px', color: '#475569', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                      <Icon name="lock" size={16} color="#64748B" />
+                      <span>{t('reservations.loginRequired') || 'Inicia sesión para realizar reservas'}</span>
+                    </p>
+                    <a
+                      href="/login"
+                      className="clay-btn-gold no-sheen"
+                      style={{
+                        display: 'inline-flex',
+                        padding: '10px 24px',
+                        fontSize: '13px',
+                        textDecoration: 'none'
+                      }}
                     >
-                      <option value="mesa">{t('reservations.types.mesa') || 'Mesa / Restaurante'}</option>
-                      <option value="habitacion">{t('reservations.types.habitacion') || 'Habitación / Hospedaje'}</option>
-                      <option value="tour">{t('reservations.types.tour') || 'Tour / Excursión'}</option>
-                      <option value="transporte">{t('reservations.types.transporte') || 'Transporte / Traslado'}</option>
-                    </select>
+                      {t('nav.login') || 'Iniciar Sesión'}
+                    </a>
                   </div>
+                ) : (
+                  <form onSubmit={handleCrearReserva} className="clay-card-static" style={{ display: 'flex', flexDirection: 'column', gap: '14px', padding: '20px', borderRadius: '18px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div>
+                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                          {t('reservations.type') || 'Tipo de Reserva'}
+                        </label>
+                        <select
+                          value={reservaTipo}
+                          onChange={(e) => setReservaTipo(e.target.value)}
+                          className="clay-input"
+                          style={{ padding: '9px 12px', width: '100%', fontSize: '13px' }}
+                        >
+                          <option value="mesa">{t('reservations.types.mesa') || 'Mesa / Restaurante'}</option>
+                          <option value="habitacion">{t('reservations.types.habitacion') || 'Habitación / Hospedaje'}</option>
+                          <option value="tour">{t('reservations.types.tour') || 'Tour / Excursión'}</option>
+                          <option value="transporte">{t('reservations.types.transporte') || 'Transporte / Traslado'}</option>
+                        </select>
+                      </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
+                      <div>
+                        <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                          <Icon name="users" size={13} color="#64748B" />
+                          <span>{t('reservations.people') || 'N° Personas'}</span>
+                        </label>
+                        <input
+                          type="number"
+                          min="1"
+                          required
+                          value={reservaPersonas}
+                          onChange={(e) => setReservaPersonas(e.target.value)}
+                          className="clay-input"
+                          style={{ padding: '9px 12px', width: '100%', fontSize: '13px' }}
+                        />
+                      </div>
+                    </div>
+
                     <div>
-                      <label style={{ fontSize: '12.5px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
-                        <Icon name="calendar" size={14} color="#64748B" />
+                      <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                        <Icon name="calendar" size={13} color="#64748B" />
                         <span>{t('reservations.date') || 'Fecha y Hora'}</span>
                       </label>
                       <input
@@ -835,52 +821,36 @@ export default function BusinessProfileModal({
                         value={reservaFechaHora}
                         onChange={(e) => setReservaFechaHora(e.target.value)}
                         className="clay-input"
-                        style={{ padding: '10px 12px', width: '100%' }}
+                        style={{ padding: '9px 12px', width: '100%', fontSize: '13px' }}
                       />
                     </div>
 
                     <div>
-                      <label style={{ fontSize: '12.5px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
-                        <Icon name="users" size={14} color="#64748B" />
-                        <span>{t('reservations.people') || 'Personas'}</span>
+                      <label style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                        <Icon name="fileText" size={13} color="#64748B" />
+                        <span>{t('reservations.notes') || 'Notas especiales o peticiones'}</span>
                       </label>
-                      <input
-                        type="number"
-                        min="1"
-                        required
-                        value={reservaPersonas}
-                        onChange={(e) => setReservaPersonas(e.target.value)}
-                        className="clay-input"
-                        style={{ padding: '10px 12px', width: '100%' }}
+                      <textarea
+                        rows="2"
+                        value={reservaNotas}
+                        onChange={(e) => setReservaNotas(e.target.value)}
+                        placeholder={lang === 'en' ? 'Indicate allergies, special seating preferences, etc.' : 'Indica preferencias de asientos, alergias, o detalles adicionales...'}
+                        className="clay-textarea"
+                        style={{ padding: '9px 12px', width: '100%', fontSize: '12.5px' }}
                       />
                     </div>
-                  </div>
 
-                  <div>
-                    <label style={{ fontSize: '12.5px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '6px' }}>
-                      <Icon name="fileText" size={14} color="#64748B" />
-                      <span>{t('reservations.notes') || 'Notas especiales o peticiones'}</span>
-                    </label>
-                    <textarea
-                      rows="3"
-                      value={reservaNotas}
-                      onChange={(e) => setReservaNotas(e.target.value)}
-                      placeholder={lang === 'en' ? 'Indicate allergies, special seating preferences, etc.' : 'Indica preferencias de asientos, alergias, o detalles adicionales...'}
-                      className="clay-textarea"
-                      style={{ padding: '12px 14px', width: '100%' }}
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmittingReserva}
-                    className="clay-btn-gold"
-                    style={{ width: '100%', padding: '14px', fontSize: '14px', fontWeight: '800' }}
-                  >
-                    {isSubmittingReserva ? (lang === 'en' ? 'Submitting...' : 'Enviando...') : (t('reservations.submit') || 'Confirmar Reserva')}
-                  </button>
-                </form>
-              )}
+                    <button
+                      type="submit"
+                      disabled={isSubmittingReserva}
+                      className="clay-btn-gold no-sheen"
+                      style={{ width: '100%', padding: '12px', fontSize: '13.5px', fontWeight: '800' }}
+                    >
+                      {isSubmittingReserva ? (lang === 'en' ? 'Submitting...' : 'Enviando...') : (t('reservations.submit') || 'Confirmar Reserva')}
+                    </button>
+                  </form>
+                )}
+              </div>
             </div>
           )}
 
@@ -910,7 +880,7 @@ export default function BusinessProfileModal({
                       </p>
                       <a
                         href="/login"
-                        className="clay-btn-gold"
+                        className="clay-btn-gold no-sheen"
                         style={{
                           display: 'inline-flex',
                           padding: '8px 20px',
@@ -992,7 +962,7 @@ export default function BusinessProfileModal({
                       <button
                         type="submit"
                         disabled={isSubmittingReview}
-                        className="clay-btn-green"
+                        className="clay-btn-green no-sheen"
                         style={{ width: '100%', padding: '11px', fontSize: '13px', fontWeight: '800' }}
                       >
                         {isSubmittingReview ? '...' : (t('reviews.submit') || 'Publicar Reseña')}
