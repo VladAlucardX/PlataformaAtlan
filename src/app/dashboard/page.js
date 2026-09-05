@@ -2092,6 +2092,17 @@ export default function DashboardPage() {
                   </label>
 
                   <label style={styles.checkboxLabel}>
+                    <input type="checkbox" checked={hasOnlineBooking} onChange={(e) => setHasOnlineBooking(e.target.checked)} style={styles.checkbox} />
+                    <div>
+                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Icon name="calendar" size={16} color="#16A34A" />
+                        <span>{lang === "en" ? "Online Reservations" : "Reservas en Línea"}</span>
+                      </div>
+                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Allow users to send reservation requests" : "Permite a los clientes enviar solicitudes de reserva"}</div>
+                    </div>
+                  </label>
+
+                  <label style={styles.checkboxLabel}>
                     <input type="checkbox" checked={hasTransport} onChange={(e) => setHasTransport(e.target.checked)} style={styles.checkbox} />
                     <div>
                       <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>

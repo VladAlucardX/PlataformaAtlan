@@ -357,53 +357,61 @@ export default function BusinessProfileModal({
               scrollbarWidth: 'none'
             }}
           >
-            {[
-              { id: 'info', label: lang === 'en' ? 'Information' : 'Información', iconName: 'info' },
-              { id: 'menu', label: lang === 'en' ? 'Menu & Services' : 'Menú y Servicios', iconName: 'utensils', count: menu.length },
-              { id: 'reservas', label: lang === 'en' ? 'Reservations' : 'Reservas', iconName: 'calendar' },
-              { id: 'reseñas', label: lang === 'en' ? 'Reviews' : 'Reseñas', iconName: 'star', count: reviews.length }
-            ].map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  style={{
-                    padding: '10px 18px',
-                    fontSize: '13.5px',
-                    fontWeight: isActive ? '800' : '600',
-                    color: isActive ? '#FFFFFF' : '#94A3B8',
-                    background: isActive ? 'rgba(255, 255, 255, 0.18)' : 'transparent',
-                    border: 'none',
-                    borderBottom: isActive ? '3px solid #38BDF8' : '3px solid transparent',
-                    borderRadius: '10px 10px 0 0',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  <Icon name={tab.iconName} size={16} color={isActive ? '#38BDF8' : '#94A3B8'} />
-                  <span>{tab.label}</span>
-                  {tab.count > 0 && (
-                    <span
-                      style={{
-                        fontSize: '11px',
-                        fontWeight: '800',
-                        padding: '2px 7px',
-                        borderRadius: '10px',
-                        background: isActive ? '#0284C7' : 'rgba(255, 255, 255, 0.15)',
-                        color: '#FFFFFF'
-                      }}
-                    >
-                      {tab.count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+            {(() => {
+              const servs = details?.servicios || {};
+              const canBook = !!(servs.has_online_booking || servs.has_lodging || servs.has_reservas);
+              const showMenuTab = !!(servs.has_menu || menu.length > 0);
+
+              const availableTabs = [
+                { id: 'info', label: lang === 'en' ? 'Information' : 'Información', iconName: 'info' },
+                ...(showMenuTab ? [{ id: 'menu', label: lang === 'en' ? 'Menu & Services' : 'Menú y Servicios', iconName: 'utensils', count: menu.length }] : []),
+                ...(canBook ? [{ id: 'reservas', label: lang === 'en' ? 'Reservations' : 'Reservas', iconName: 'calendar' }] : []),
+                { id: 'reseñas', label: lang === 'en' ? 'Reviews' : 'Reseñas', iconName: 'star', count: reviews.length }
+              ];
+
+              return availableTabs.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    style={{
+                      padding: '10px 18px',
+                      fontSize: '13.5px',
+                      fontWeight: isActive ? '800' : '600',
+                      color: isActive ? '#FFFFFF' : '#94A3B8',
+                      background: isActive ? 'rgba(255, 255, 255, 0.18)' : 'transparent',
+                      border: 'none',
+                      borderBottom: isActive ? '3px solid #38BDF8' : '3px solid transparent',
+                      borderRadius: '10px 10px 0 0',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    <Icon name={tab.iconName} size={16} color={isActive ? '#38BDF8' : '#94A3B8'} />
+                    <span>{tab.label}</span>
+                    {tab.count > 0 && (
+                      <span
+                        style={{
+                          fontSize: '11px',
+                          fontWeight: '800',
+                          padding: '2px 7px',
+                          borderRadius: '10px',
+                          background: isActive ? '#0284C7' : 'rgba(255, 255, 255, 0.15)',
+                          color: '#FFFFFF'
+                        }}
+                      >
+                        {tab.count}
+                      </span>
+                    )}
+                  </button>
+                );
+              });
+            })()}
           </div>
         </div>
 
