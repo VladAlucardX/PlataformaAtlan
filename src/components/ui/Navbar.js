@@ -292,28 +292,30 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                     <Icon name="user" size={16} /> {lang === "en" ? "My Personal Profile" : "Mi Perfil Personal"}
                   </Link>
 
-                  {/* Opción Guía: Mi Perfil de Guía (Sección independiente /perfil-guia) */}
-                  <Link
-                    href="/perfil-guia"
-                    onClick={() => setUserDropdownOpen(false)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                      padding: "10px 14px",
-                      borderRadius: "12px",
-                      color: "#0EA5E9",
-                      fontSize: "13px",
-                      fontWeight: "800",
-                      textDecoration: "none",
-                      background: "rgba(14, 165, 233, 0.08)",
-                      transition: "background 0.15s"
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(14, 165, 233, 0.16)"}
-                    onMouseLeave={(e) => e.currentTarget.style.background = "rgba(14, 165, 233, 0.08)"}
-                  >
-                    <Icon name="compass" size={16} color="#0EA5E9" /> {lang === "en" ? "My Guide Profile Section" : "Mi Perfil de Guía Turístico"}
-                  </Link>
+                  {/* Opción Guía: Mi Perfil de Guía (Solo si es guía turístico) */}
+                  {perfil?.rol === "guia_turistico" && (
+                    <Link
+                      href="/perfil-guia"
+                      onClick={() => setUserDropdownOpen(false)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: "10px 14px",
+                        borderRadius: "12px",
+                        color: "#0EA5E9",
+                        fontSize: "13px",
+                        fontWeight: "800",
+                        textDecoration: "none",
+                        background: "rgba(14, 165, 233, 0.08)",
+                        transition: "background 0.15s"
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(14, 165, 233, 0.16)"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "rgba(14, 165, 233, 0.08)"}
+                    >
+                      <Icon name="compass" size={16} color="#0EA5E9" /> {lang === "en" ? "My Guide Profile Section" : "Mi Perfil de Guía Turístico"}
+                    </Link>
+                  )}
 
                   {/* Opción 3: Mis Negocios (Solo si posee 1 o más negocios) */}
                   {hasBusinesses && (

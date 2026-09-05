@@ -262,11 +262,11 @@ export default function PerfilPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get("editGuia") === "true") {
+      if (urlParams.get("editGuia") === "true" && (authPerfil?.rol === "guia_turistico" || perfil?.rol === "guia_turistico")) {
         setIsEditingGuia(true);
       }
     }
-  }, []);
+  }, [authPerfil, perfil]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -875,29 +875,31 @@ export default function PerfilPage() {
                   <span>{lang === "en" ? "Change Password" : "Cambiar Contraseña"}</span>
                 </button>
 
-                {/* Botón Guía: Ir a mi Perfil de Guía (Sección propia /perfil-guia) */}
-                <Link
-                  href="/perfil-guia"
-                  style={{
-                    width: "100%",
-                    padding: "11px 16px",
-                    marginBottom: "10px",
-                    borderRadius: "14px",
-                    background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
-                    color: "#FFFFFF",
-                    fontWeight: "800",
-                    fontSize: "13px",
-                    textDecoration: "none",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "8px",
-                    boxShadow: "0 4px 14px rgba(14, 165, 233, 0.3)"
-                  }}
-                >
-                  <Icon name="compass" size={18} color="#FFFFFF" />
-                  <span>{lang === "en" ? "My Guide Profile Section" : "Mi Perfil de Guía Turístico"}</span>
-                </Link>
+                {/* Botón Guía: Ir a mi Perfil de Guía (Solo si es guía turístico) */}
+                {perfil?.rol === "guia_turistico" && (
+                  <Link
+                    href="/perfil-guia"
+                    style={{
+                      width: "100%",
+                      padding: "11px 16px",
+                      marginBottom: "10px",
+                      borderRadius: "14px",
+                      background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
+                      color: "#FFFFFF",
+                      fontWeight: "800",
+                      fontSize: "13px",
+                      textDecoration: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "8px",
+                      boxShadow: "0 4px 14px rgba(14, 165, 233, 0.3)"
+                    }}
+                  >
+                    <Icon name="compass" size={18} color="#FFFFFF" />
+                    <span>{lang === "en" ? "My Guide Profile Section" : "Mi Perfil de Guía Turístico"}</span>
+                  </Link>
+                )}
 
                 {/* Botón 4: Reclamar o Registrar Negocio (Azul Menú #0A192F) */}
                 <Link
@@ -1305,8 +1307,8 @@ export default function PerfilPage() {
         </div>
       )}
 
-      {/* MODAL 2.5: EDITAR PERFIL DE GUÍA TURÍSTICO Y GALERÍA DE TRAVESÍAS */}
-      {isEditingGuia && (
+      {/* MODAL 2.5: EDITAR PERFIL DE GUÍA TURÍSTICO Y GALERÍA DE TRAVESÍAS (Solo para Guías) */}
+      {isEditingGuia && perfil?.rol === "guia_turistico" && (
         <div style={{ position: "fixed", inset: 0, zIndex: 1100, background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
           <div style={{ background: "#FFFFFF", width: "100%", maxWidth: "600px", maxHeight: "90vh", overflowY: "auto", borderRadius: "24px", padding: "28px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 25px 60px rgba(0,0,0,0.25)" }}>
             <h3 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "900", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "8px" }}>

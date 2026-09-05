@@ -272,6 +272,11 @@ export default function PerfilGuiaPage() {
         }
         setPerfil(perfilData);
 
+        if (perfilData && perfilData.rol !== "guia_turistico") {
+          router.push("/perfil");
+          return;
+        }
+
         // Cargar datos de guía desde Supabase o caché LocalStorage
         let gData = null;
         try {
