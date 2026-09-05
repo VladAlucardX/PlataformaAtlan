@@ -1912,742 +1912,166 @@ export default function DashboardPage() {
                 </button>
               </div>
           ) : (
-            <main style={{ ...styles.mainContent, maxWidth: "800px", margin: "0 auto", width: "100%" }} className="dashboard-main glass-card animate-fade-in">
-              <button 
-                type="button"
-                onClick={(e) => { e.preventDefault(); setActiveTab("overview"); }} 
-                style={{ background: "transparent", border: "none", color: "var(--atlan-gold)", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", marginBottom: "24px", fontSize: "14px", padding: 0 }}
-              >
-                ← {lang === "en" ? "Back to Dashboard" : "Volver al Panel Principal"}
-              </button>
-
-              {saveSuccess && (
-                <div style={styles.successBanner}>
-                  ✅ {lang === "en" ? "Settings saved successfully!" : "¡Configuraciones guardadas exitosamente!"}
-                </div>
-              )}
-
-            {/* PESTAÑA 1: DATOS GENERALES */}
-            {activeTab === "general" && (
-              <div style={styles.tabContent}>
-                <h3 style={styles.tabTitle}>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</h3>
-                <form onSubmit={handleSaveGeneral} style={styles.form}>
-                  <div style={styles.inputGroup}>
-                    <label style={styles.label}>{lang === "en" ? "Business Name" : "Nombre del Negocio"}</label>
-                    <input
-                      type="text"
-                      required
-                      value={nombre}
-                      onChange={(e) => setNombre(e.target.value)}
-                      style={styles.input}
-                    />
-                  </div>
-
-                  <div style={styles.inputGroup}>
-                    <label style={styles.label}>{lang === "en" ? "Description" : "Descripción"}</label>
-                    <textarea
-                      rows="4"
-                      value={descripcion}
-                      onChange={(e) => setDescripcion(e.target.value)}
-                      style={{ ...styles.input, resize: "none" }}
-                    />
-                  </div>
-
-                  <div className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                    <div style={styles.inputGroup}>
-                      <label style={styles.label}>{lang === "en" ? "Phone" : "Teléfono"}</label>
-                      <input
-                        type="text"
-                        value={telefono}
-                        onChange={(e) => setTelefono(e.target.value)}
-                        placeholder="Ej: +505 8888 8888"
-                        style={styles.input}
-                      />
-                    </div>
-                    <div style={styles.inputGroup}>
-                      <label style={styles.label}>WhatsApp</label>
-                      <input
-                        type="text"
-                        value={whatsapp}
-                        onChange={(e) => setWhatsapp(e.target.value)}
-                        placeholder="Ej: +505 8888 8888"
-                        style={styles.input}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Redes Sociales y Sitio Web */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "12px", margin: "16px 0 8px", borderTop: "1px dashed rgba(20, 109, 158, 0.10)", paddingTop: "16px" }}>
-                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#146D9E", margin: 0, display: "flex", alignItems: "center", gap: "6px" }}>
-                      <Icon name="share2" size={16} color="#146D9E" />
-                      <span>{lang === "en" ? "Social Media & Contact Links" : "Redes Sociales y Enlaces de Contacto"}</span>
-                    </h4>
-
-                    <div className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-                      <div style={styles.inputGroup}>
-                        <label style={{ ...styles.label, display: "flex", alignItems: "center", gap: "6px" }}>
-                          <Icon name="facebook" size={14} color="#1877F2" />
-                          <span>Facebook</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={facebook}
-                          onChange={(e) => setFacebook(e.target.value)}
-                          placeholder="https://facebook.com/tunegocio"
-                          style={styles.input}
-                        />
-                      </div>
-
-                      <div style={styles.inputGroup}>
-                        <label style={{ ...styles.label, display: "flex", alignItems: "center", gap: "6px" }}>
-                          <Icon name="instagram" size={14} color="#E4405F" />
-                          <span>Instagram</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={instagram}
-                          onChange={(e) => setInstagram(e.target.value)}
-                          placeholder="https://instagram.com/tunegocio"
-                          style={styles.input}
-                        />
-                      </div>
-
-                      <div style={styles.inputGroup}>
-                        <label style={{ ...styles.label, display: "flex", alignItems: "center", gap: "6px" }}>
-                          <Icon name="tiktok" size={14} color="#000000" />
-                          <span>TikTok</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={tiktok}
-                          onChange={(e) => setTiktok(e.target.value)}
-                          placeholder="https://tiktok.com/@tunegocio"
-                          style={styles.input}
-                        />
-                      </div>
-
-                      <div style={styles.inputGroup}>
-                        <label style={{ ...styles.label, display: "flex", alignItems: "center", gap: "6px" }}>
-                          <Icon name="globe" size={14} color="#146D9E" />
-                          <span>{lang === "en" ? "Website URL" : "Sitio Web"}</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={website}
-                          onChange={(e) => setWebsite(e.target.value)}
-                          placeholder="https://tunegocio.com"
-                          style={styles.input}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={styles.inputGroup}>
-                    <label style={styles.label}>{lang === "en" ? "Price Range" : "Rango de Precios"}</label>
-                    <select
-                      value={rangoPrecios || ""}
-                      onChange={(e) => setRangoPrecios(e.target.value)}
-                      style={styles.input}
-                    >
-                      <option value="">{lang === "en" ? "-- Select Price Range --" : "-- Seleccionar Rango de Precios --"}</option>
-                      <option value="$">$ ({lang === "en" ? "Economic / Inexpensive" : "Económico"})</option>
-                      <option value="$$">$$ ({lang === "en" ? "Moderate" : "Moderado"})</option>
-                      <option value="$$$">$$$ ({lang === "en" ? "Expensive / High-end" : "Costoso / Exclusivo"})</option>
-                      <option value="$$$$">$$$$ ({lang === "en" ? "Luxury" : "Lujo / Premium"})</option>
-                    </select>
-                  </div>
-
-                  {/* Carga de Logo y Galería de Fotos */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px 0", borderTop: "1px dashed rgba(20, 109, 158, 0.10)", paddingTop: "20px" }}>
-                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "var(--atlan-gold)", margin: 0 }}>
-                      📸 {lang === "en" ? "Business Media" : "Medios del Negocio"}
-                    </h4>
-                    
-                    <div style={{ display: "grid", gridTemplateColumns: "140px 1fr", gap: "20px", alignItems: "center" }} className="form-grid-2">
-                      {/* Logo Upload */}
-                      <div style={{ textAlign: "center" }}>
-                        <div style={{
-                          width: "80px",
-                          height: "80px",
-                          borderRadius: "50%",
-                          border: "2px solid rgba(20, 109, 158, 0.12)",
-                          background: logoUrl ? `url(${logoUrl}) center/cover no-repeat` : "rgba(255,255,255,0.02)",
-                          margin: "0 auto 10px",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          fontSize: logoUrl ? "0px" : "24px",
-                          color: "#9CA3AF"
-                        }}>
-                          {!logoUrl && "🏢"}
-                        </div>
-                        <label style={{
-                          padding: "9px 16px",
-                          background: "rgba(20, 109, 158, 0.08)",
-                          border: "1.5px solid rgba(20, 109, 158, 0.18)",
-                          borderRadius: "10px",
-                          fontSize: "12.5px",
-                          fontWeight: "800",
-                          cursor: "pointer",
-                          color: "#146D9E",
-                          transition: "all 0.2s"
-                        }}>
-                          {uploadingLogo ? "..." : (lang === "en" ? "📷 Upload Logo" : "📷 Subir Logo")}
-                          <input type="file" accept="image/*" onChange={handleLogoUpload} style={{ display: "none" }} />
-                        </label>
-                      </div>
-
-                      {/* Photo Gallery Upload */}
-                      <div>
-                        <label style={styles.label}>
-                          {lang === "en" ? "Photo Gallery (Tourist View - Up to 6 Photos)" : "Galería de Fotos del Local (Vista del Turista - Hasta 6 fotos)"}
-                        </label>
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "8px" }}>
-                          {(fotos || []).map((url, index) => (
-                            <div key={index} style={{
-                              width: "70px",
-                              height: "70px",
-                              borderRadius: "10px",
-                              border: "1px solid rgba(20, 109, 158, 0.12)",
-                              background: `url(${url}) center/cover no-repeat`,
-                              position: "relative"
-                            }}>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveFoto(url)}
-                                style={{
-                                  position: "absolute",
-                                  top: "-6px",
-                                  right: "-6px",
-                                  background: "#ef4444",
-                                  color: "white",
-                                  border: "none",
-                                  borderRadius: "50%",
-                                  width: "18px",
-                                  height: "18px",
-                                  fontSize: "9px",
-                                  cursor: "pointer",
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  alignItems: "center"
-                                }}
-                              >
-                                ✗
-                              </button>
-                            </div>
-                          ))}
-                          
-                          <label style={{
-                            width: "70px",
-                            height: "70px",
-                            borderRadius: "10px",
-                            border: "1.5px dashed rgba(20, 109, 158, 0.15)",
-                            background: "rgba(255,255,255,0.01)",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            fontSize: "18px",
-                            cursor: "pointer",
-                            color: "var(--atlan-gold)"
-                          }}>
-                            {uploadingFoto ? "..." : "+"}
-                            <input type="file" accept="image/*" onChange={handleFotoUpload} style={{ display: "none" }} />
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                    <button type="submit" disabled={isSaving} style={styles.saveBtn}>
-                      {isSaving ? "..." : (lang === "en" ? "Save Profile" : "Guardar Perfil")}
-                    </button>
-                    {puntoAsociado && puntoAsociado.estado === 'rechazado' && (
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          setIsSaving(true);
-                          try {
-                            // 1. Guardar cambios
-                            const payload = {
-                              nombre: nombre || null,
-                              descripcion: descripcion || null,
-                              telefono: telefono || null,
-                              whatsapp: whatsapp || null,
-                              rango_precios: rangoPrecios || null,
-                              logo_url: logoUrl || null,
-                              fotos: fotos || [],
-                              motivo_rechazo: null // limpiar motivo
-                            };
-                            const { error: errNeg } = await supabase
-                              .from("negocios")
-                              .update(payload)
-                              .eq("id", negocio.id);
-                            if (errNeg) throw errNeg;
-
-                            // 2. Cambiar a en_verificacion
-                            const { error: errPto } = await supabase
-                              .from("puntos")
-                              .update({ estado: "en_verificacion" })
-                              .eq("id", puntoAsociado.id);
-                            if (errPto) throw errPto;
-
-                            alert(lang === "en" 
-                              ? "Saved and resubmitted successfully!" 
-                              : "¡Guardado y reenviado exitosamente!");
-                            
-                            // Recargar y volver a overview
-                            await loadNegocioData(user.id);
-                            const { data: updatedNeg } = await supabase
-                              .from("negocios")
-                              .select("*")
-                              .eq("id", negocio.id)
-                              .single();
-                            if (updatedNeg) selectNegocio(updatedNeg);
-                          } catch (e) {
-                            console.error(e);
-                            alert("Error al guardar y reenviar.");
-                          } finally {
-                            setIsSaving(false);
-                          }
-                        }}
-                        disabled={isSaving}
-                        style={{
-                          ...styles.saveBtn,
-                          background: 'linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)',
-                          border: 'none',
-                          boxShadow: '0 4px 12px rgba(23, 170, 74,0.2)'
-                        }}
-                      >
-                        {isSaving ? "..." : (lang === 'en' ? 'Save & Resubmit' : 'Guardar y Reenviar')}
-                      </button>
-                    )}
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {/* PESTAÑA 2: CHECKLIST DE EXCENTRICIDADES */}
-            {activeTab === "excentricidades" && (
-              <div style={styles.tabContent}>
-                <h3 style={styles.tabTitle}>{lang === "en" ? "Services & Features Checklist" : "Checklist de Servicios y Excentricidades"}</h3>
-                <p style={{ color: "#4A5568", fontSize: "13px", marginBottom: "20px" }}>
-                  {lang === "en" 
-                    ? "Select the options that apply to your business. This will enable custom sections in your dashboard." 
-                    : "Selecciona las opciones que aplican a tu negocio. Esto habilitará secciones personalizadas en tu panel."}
-                </p>
-
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-                  {/* Módulos de Plataforma */}
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" checked={hasMenu} onChange={(e) => setHasMenu(e.target.checked)} style={styles.checkbox} />
-                    <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Icon name="utensils" size={16} color="#146D9E" />
-                        <span>{lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Display list of dishes and prices to tourists" : "Muestra lista de platillos y precios a los turistas"}</div>
-                    </div>
-                  </label>
-
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" checked={hasHours} onChange={(e) => setHasHours(e.target.checked)} style={styles.checkbox} />
-                    <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Icon name="clock" size={16} color="#D97706" />
-                        <span>{lang === "en" ? "Opening Hours" : "Horarios de Atención"}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Specify opening and closing schedules" : "Especifica horarios de apertura y cierre"}</div>
-                    </div>
-                  </label>
-
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" checked={hasLodging} onChange={(e) => setHasLodging(e.target.checked)} style={styles.checkbox} />
-                    <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Icon name="hotel" size={16} color="#9333EA" />
-                        <span>{lang === "en" ? "Lodging Services" : "Servicios de Hospedaje"}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Accept room/bed reservations directly" : "Acepta reservas de habitaciones directamente"}</div>
-                    </div>
-                  </label>
-
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" checked={hasOnlineBooking} onChange={(e) => setHasOnlineBooking(e.target.checked)} style={styles.checkbox} />
-                    <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Icon name="calendar" size={16} color="#16A34A" />
-                        <span>{lang === "en" ? "Online Reservations" : "Reservas en Línea"}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Allow users to send reservation requests" : "Permite a los clientes enviar solicitudes de reserva"}</div>
-                    </div>
-                  </label>
-
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" checked={hasTransport} onChange={(e) => setHasTransport(e.target.checked)} style={styles.checkbox} />
-                    <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Icon name="car" size={16} color="#2563EB" />
-                        <span>{lang === "en" ? "Transport / Tours" : "Transporte o Tours"}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Provide tourist routing and itineraries" : "Provee itinerarios y rutas de viaje"}</div>
-                    </div>
-                  </label>
-
-                  {/* Amenidades y Servicios del Local */}
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" checked={hasWifi} onChange={(e) => setHasWifi(e.target.checked)} style={styles.checkbox} />
-                    <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Icon name="wifi" size={16} color="#0284C7" />
-                        <span>{lang === "en" ? "Free Wi-Fi" : "WiFi Gratis"}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "High speed internet for customers" : "Internet para clientes"}</div>
-                    </div>
-                  </label>
-
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" checked={hasParking} onChange={(e) => setHasParking(e.target.checked)} style={styles.checkbox} />
-                    <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Icon name="parking" size={16} color="#4F46E5" />
-                        <span>{lang === "en" ? "Customer Parking" : "Estacionamiento"}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "On-site or reserved parking space" : "Parqueo propio o reservado"}</div>
-                    </div>
-                  </label>
-
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" checked={hasPets} onChange={(e) => setHasPets(e.target.checked)} style={styles.checkbox} />
-                    <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Icon name="pet" size={16} color="#D97706" />
-                        <span>{lang === "en" ? "Pet Friendly" : "Mascotas Bienvenidas"}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Pets allowed on premises" : "Acepta mascotas en las instalaciones"}</div>
-                    </div>
-                  </label>
-
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" checked={hasCardPayment} onChange={(e) => setHasCardPayment(e.target.checked)} style={styles.checkbox} />
-                    <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Icon name="creditCard" size={16} color="#16A34A" />
-                        <span>{lang === "en" ? "Card Payment" : "Pagos con Tarjeta"}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Accept credit and debit cards" : "Acepta tarjetas de crédito/débito"}</div>
-                    </div>
-                  </label>
-
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" checked={hasAccessibility} onChange={(e) => setHasAccessibility(e.target.checked)} style={styles.checkbox} />
-                    <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Icon name="accessibility" size={16} color="#0D9488" />
-                        <span>{lang === "en" ? "Wheelchair Accessible" : "Accesibilidad"}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Ramps and accessible entry" : "Rampas y acceso para sillas de ruedas"}</div>
-                    </div>
-                  </label>
-
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" checked={hasDelivery} onChange={(e) => setHasDelivery(e.target.checked)} style={styles.checkbox} />
-                    <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Icon name="delivery" size={16} color="#E11D48" />
-                        <span>{lang === "en" ? "Delivery Service" : "Servicio de Delivery"}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Home delivery service available" : "Envío a domicilio disponible"}</div>
-                    </div>
-                  </label>
-
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" checked={hasAc} onChange={(e) => setHasAc(e.target.checked)} style={styles.checkbox} />
-                    <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Icon name="ac" size={16} color="#0284C7" />
-                        <span>{lang === "en" ? "Air Conditioning" : "Aire Acondicionado"}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Climatized environment" : "Ambiente climatizado"}</div>
-                    </div>
-                  </label>
-
-                  <label style={styles.checkboxLabel}>
-                    <input type="checkbox" checked={hasLiveMusic} onChange={(e) => setHasLiveMusic(e.target.checked)} style={styles.checkbox} />
-                    <div>
-                      <div style={{ fontWeight: "750", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Icon name="music" size={16} color="#8B5CF6" />
-                        <span>{lang === "en" ? "Live Music / Events" : "Música en Vivo / Eventos"}</span>
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#9CA3AF" }}>{lang === "en" ? "Live entertainment and shows" : "Shows y presentaciones de música"}</div>
-                    </div>
-                  </label>
-                </div>
-
-                <button onClick={handleSaveExcentricidades} disabled={isSaving} style={styles.saveBtn}>
-                  {isSaving ? "..." : (lang === "en" ? "Save Services" : "Guardar Servicios")}
+            <main style={{ ...styles.mainContent, maxWidth: "1060px", margin: "0 auto", width: "100%", height: "calc(100vh - 110px)", maxHeight: "calc(100vh - 110px)", overflow: "hidden", display: "flex", flexDirection: "column", padding: "18px 24px" }} className="dashboard-main glass-card animate-fade-in">
+              {/* Header Top Bar con Botón Volver y Banner de Éxito */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexShrink: 0 }}>
+                <button 
+                  type="button"
+                  onClick={(e) => { e.preventDefault(); setActiveTab("overview"); }} 
+                  style={{
+                    background: "rgba(20, 109, 158, 0.08)",
+                    border: "1.5px solid rgba(20, 109, 158, 0.2)",
+                    color: "#146D9E",
+                    fontWeight: "800",
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "8px 16px",
+                    borderRadius: "12px",
+                    fontSize: "13px",
+                    transition: "all 0.2s ease"
+                  }}
+                  className="hover-card-btn"
+                >
+                  ← {lang === "en" ? "Back to Dashboard" : "Volver al Panel Principal"}
                 </button>
-              </div>
-            )}
-            {/* PESTAÑA DE HORARIOS DE ATENCIÓN */}
-            {activeTab === "horarios" && hasHours && (
-              <div style={styles.tabContent}>
-                <h3 style={styles.tabTitle}>{lang === "en" ? "Configure Opening Hours" : "Configurar Horarios de Atención"}</h3>
-                <form onSubmit={handleSaveHorarios} style={styles.form}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
-                    {Object.keys(horarios).map((day) => {
-                      const dayLabels = {
-                        lunes: lang === "en" ? "Monday" : "Lunes",
-                        martes: lang === "en" ? "Tuesday" : "Martes",
-                        miercoles: lang === "en" ? "Wednesday" : "Miércoles",
-                        jueves: lang === "en" ? "Thursday" : "Jueves",
-                        viernes: lang === "en" ? "Friday" : "Viernes",
-                        sabado: lang === "en" ? "Saturday" : "Sábado",
-                        domingo: lang === "en" ? "Sunday" : "Domingo",
-                      };
-                      return (
-                        <div key={day} style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.02)", padding: "12px 16px", borderRadius: "12px", border: "1px solid rgba(20, 109, 158, 0.05)", gap: "10px" }}>
-                          <span style={{ fontWeight: "750", width: "120px" }}>{dayLabels[day]}</span>
-                          
-                          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-                            <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "13px" }}>
-                              <input
-                                type="checkbox"
-                                checked={horarios[day].abierto}
-                                onChange={(e) => setHorarios({
-                                  ...horarios,
-                                  [day]: { ...horarios[day], abierto: e.target.checked }
-                                })}
-                                style={{ width: "16px", height: "16px", cursor: "pointer" }}
-                              />
-                              {lang === "en" ? "Open" : "Abierto"}
-                            </label>
 
-                            {horarios[day].abierto && (
-                              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                <input
-                                  type="time"
-                                  value={horarios[day].apertura}
-                                  onChange={(e) => setHorarios({
-                                    ...horarios,
-                                    [day]: { ...horarios[day], apertura: e.target.value }
-                                  })}
-                                  style={{
-                                    background: "rgba(20, 109, 158, 0.05)",
-                                    border: "1px solid rgba(20, 109, 158, 0.15)",
-                                    borderRadius: "8px",
-                                    color: "#1A1A2E",
-                                    fontSize: "13px",
-                                    padding: "6px 10px",
-                                    outline: "none"
-                                  }}
-                                />
-                                <span>-</span>
-                                <input
-                                  type="time"
-                                  value={horarios[day].cierre}
-                                  onChange={(e) => setHorarios({
-                                    ...horarios,
-                                    [day]: { ...horarios[day], cierre: e.target.value }
-                                  })}
-                                  style={{
-                                    background: "rgba(20, 109, 158, 0.05)",
-                                    border: "1px solid rgba(20, 109, 158, 0.15)",
-                                    borderRadius: "8px",
-                                    color: "#1A1A2E",
-                                    fontSize: "13px",
-                                    padding: "6px 10px",
-                                    outline: "none"
-                                  }}
-                                />
+                {saveSuccess && (
+                  <div style={{ ...styles.successBanner, margin: 0, padding: "6px 14px", fontSize: "12.5px" }}>
+                    ✅ {lang === "en" ? "Settings saved successfully!" : "¡Configuraciones guardadas exitosamente!"}
+                  </div>
+                )}
+              </div>
+
+              {/* PESTAÑA 1: DATOS GENERALES (Perfil del Negocio) */}
+              {activeTab === "general" && (
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px", borderBottom: "2px solid rgba(79, 70, 229, 0.15)", paddingBottom: "8px", flexShrink: 0 }}>
+                    <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "#4F46E5", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: "0 4px 12px rgba(79, 70, 229, 0.3)" }}>
+                      <div style={{ width: "20px", height: "20px", backgroundColor: "#FFFFFF", WebkitMaskImage: "url('/images/edificio.svg')", WebkitMaskRepeat: "no-repeat", WebkitMaskSize: "contain", WebkitMaskPosition: "center", maskImage: "url('/images/edificio.svg')", maskRepeat: "no-repeat", maskSize: "contain", maskPosition: "center" }} />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#1A1A2E", letterSpacing: "-0.01em" }}>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</h3>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#64748B" }}>{lang === "en" ? "Update description, contact details and media gallery" : "Actualiza fotos, descripción, datos de contacto y redes sociales"}</p>
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleSaveGeneral} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", overflow: "hidden" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "18px" }}>
+                      {/* COLUMNA IZQUIERDA: DATOS BÁSICOS */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                        <div style={styles.inputGroup}>
+                          <label style={styles.label}>{lang === "en" ? "Business Name" : "Nombre del Negocio"}</label>
+                          <input type="text" required value={nombre} onChange={(e) => setNombre(e.target.value)} style={styles.input} />
+                        </div>
+
+                        <div style={styles.inputGroup}>
+                          <label style={styles.label}>{lang === "en" ? "Description" : "Descripción"}</label>
+                          <textarea rows="2" value={descripcion} onChange={(e) => setDescripcion(e.target.value)} style={{ ...styles.input, resize: "none" }} placeholder={lang === "en" ? "Short description..." : "Descripción corta del negocio..."} />
+                        </div>
+
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                          <div style={styles.inputGroup}>
+                            <label style={styles.label}>{lang === "en" ? "Phone" : "Teléfono"}</label>
+                            <input type="text" value={telefono} onChange={(e) => setTelefono(e.target.value)} placeholder="+505 8888 8888" style={styles.input} />
+                          </div>
+                          <div style={styles.inputGroup}>
+                            <label style={styles.label}>WhatsApp</label>
+                            <input type="text" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+505 8888 8888" style={styles.input} />
+                          </div>
+                        </div>
+
+                        <div style={styles.inputGroup}>
+                          <label style={styles.label}>{lang === "en" ? "Price Range" : "Rango de Precios"}</label>
+                          <select value={rangoPrecios || ""} onChange={(e) => setRangoPrecios(e.target.value)} style={styles.input}>
+                            <option value="">{lang === "en" ? "-- Select Price Range --" : "-- Seleccionar Rango de Precios --"}</option>
+                            <option value="$">$ ({lang === "en" ? "Economic" : "Económico"})</option>
+                            <option value="$$">$$ ({lang === "en" ? "Moderate" : "Moderado"})</option>
+                            <option value="$$$">$$$ ({lang === "en" ? "Exclusive" : "Exclusivo"})</option>
+                            <option value="$$$$">$$$$ ({lang === "en" ? "Luxury" : "Lujo"})</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* COLUMNA DERECHA: REDES SOCIALES Y GALERÍA */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                        <label style={{ ...styles.label, color: "#146D9E", fontWeight: "800" }}>{lang === "en" ? "Social Media & Website" : "Redes Sociales y Sitio Web"}</label>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                          <div style={styles.inputGroup}>
+                            <label style={{ ...styles.label, fontSize: "11px" }}>Facebook</label>
+                            <input type="text" value={facebook} onChange={(e) => setFacebook(e.target.value)} placeholder="https://facebook.com/..." style={styles.input} />
+                          </div>
+                          <div style={styles.inputGroup}>
+                            <label style={{ ...styles.label, fontSize: "11px" }}>Instagram</label>
+                            <input type="text" value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="https://instagram.com/..." style={styles.input} />
+                          </div>
+                          <div style={styles.inputGroup}>
+                            <label style={{ ...styles.label, fontSize: "11px" }}>TikTok</label>
+                            <input type="text" value={tiktok} onChange={(e) => setTiktok(e.target.value)} placeholder="https://tiktok.com/@..." style={styles.input} />
+                          </div>
+                          <div style={styles.inputGroup}>
+                            <label style={{ ...styles.label, fontSize: "11px" }}>Sitio Web</label>
+                            <input type="text" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://..." style={styles.input} />
+                          </div>
+                        </div>
+
+                        {/* Logo & Photos */}
+                        <label style={{ ...styles.label, color: "var(--atlan-gold-dark, #B8960E)", fontWeight: "800", marginTop: "2px" }}>📸 {lang === "en" ? "Logo & Gallery Photos" : "Logo y Fotos del Local"}</label>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "rgba(20, 109, 158, 0.03)", padding: "8px 12px", borderRadius: "12px", border: "1px solid rgba(20, 109, 158, 0.1)" }}>
+                          <div style={{ textAlign: "center", flexShrink: 0 }}>
+                            <div style={{ width: "46px", height: "46px", borderRadius: "50%", border: "2px solid rgba(20, 109, 158, 0.2)", background: logoUrl ? `url(${logoUrl}) center/cover no-repeat` : "#F1F5F9", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", color: "#9CA3AF" }}>
+                              {!logoUrl && "🏢"}
+                            </div>
+                            <label style={{ fontSize: "10px", fontWeight: "800", color: "#146D9E", cursor: "pointer", marginTop: "3px", display: "block" }}>
+                              {uploadingLogo ? "..." : (lang === "en" ? "Logo" : "Subir Logo")}
+                              <input type="file" accept="image/*" onChange={handleLogoUpload} style={{ display: "none" }} />
+                            </label>
+                          </div>
+
+                          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", flex: 1 }}>
+                            {(fotos || []).map((url, index) => (
+                              <div key={index} style={{ width: "44px", height: "44px", borderRadius: "8px", border: "1px solid rgba(20, 109, 158, 0.15)", background: `url(${url}) center/cover no-repeat`, position: "relative" }}>
+                                <button type="button" onClick={() => handleRemoveFoto(url)} style={{ position: "absolute", top: "-4px", right: "-4px", background: "#ef4444", color: "white", border: "none", borderRadius: "50%", width: "15px", height: "15px", fontSize: "8px", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center" }}>✕</button>
                               </div>
+                            ))}
+                            {(fotos || []).length < 6 && (
+                              <label style={{ width: "44px", height: "44px", borderRadius: "8px", border: "1.5px dashed rgba(20, 109, 158, 0.25)", background: "#FFFFFF", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "16px", cursor: "pointer", color: "var(--atlan-gold)" }}>
+                                {uploadingFoto ? "..." : "+"}
+                                <input type="file" accept="image/*" onChange={handleFotoUpload} style={{ display: "none" }} />
+                              </label>
                             )}
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-
-                  <button type="submit" disabled={isSaving} style={styles.saveBtn}>
-                    {isSaving ? "..." : (lang === "en" ? "Save Hours" : "Guardar Horarios")}
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {/* PESTAÑA 3: MENÚ GASTRONÓMICO */}
-            {activeTab === "menu" && hasMenu && (
-              <div style={styles.tabContent}>
-                <h3 style={styles.tabTitle}>{lang === "en" ? "Manage Gastronomic Menu" : "Gestionar Menú Gastronómico"}</h3>
-                
-                {/* Formulario Agregar */}
-                <form onSubmit={handleAddPlato} style={{ ...styles.form, background: "rgba(255,255,255,0.02)", padding: "16px", borderRadius: "14px", border: "1px solid rgba(20, 109, 158, 0.05)", marginBottom: "24px" }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "12px" }}>
-                    <input
-                      type="text"
-                      required
-                      placeholder={lang === "en" ? "Dish Name" : "Nombre del Plato"}
-                      value={newPlatoNombre}
-                      onChange={(e) => setNewPlatoNombre(e.target.value)}
-                      style={styles.input}
-                    />
-                    <input
-                      type="number"
-                      required
-                      step="0.01"
-                      placeholder={lang === "en" ? "Price ($)" : "Precio ($)"}
-                      value={newPlatoPrecio}
-                      onChange={(e) => setNewPlatoPrecio(e.target.value)}
-                      style={styles.input}
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder={lang === "en" ? "Description (optional)" : "Descripción corta (opcional)"}
-                    value={newPlatoDesc}
-                    onChange={(e) => setNewPlatoDesc(e.target.value)}
-                    style={styles.input}
-                  />
-
-                  {/* Selector de Foto para Plato */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "10px 0 16px 0" }}>
-                    {newPlatoFotoUrl ? (
-                      <div style={{
-                        width: "50px",
-                        height: "50px",
-                        borderRadius: "8px",
-                        border: "1px solid rgba(20, 109, 158, 0.12)",
-                        background: `url(${newPlatoFotoUrl}) center/cover no-repeat`
-                      }} />
-                    ) : (
-                      <div style={{
-                        width: "50px",
-                        height: "50px",
-                        borderRadius: "8px",
-                        border: "1.5px dashed rgba(20, 109, 158, 0.15)",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        fontSize: "16px",
-                        color: "#9CA3AF"
-                      }}>
-                        🍲
                       </div>
-                    )}
-                    <label style={{
-                      padding: "9px 16px",
-                      background: "rgba(20, 109, 158, 0.08)",
-                      border: "1.5px solid rgba(20, 109, 158, 0.18)",
-                      borderRadius: "10px",
-                      fontSize: "12.5px",
-                      fontWeight: "800",
-                      cursor: "pointer",
-                      color: "#146D9E",
-                      transition: "all 0.2s"
-                    }}>
-                      {uploadingPlatoFoto ? "..." : (lang === "en" ? "📸 Add Dish Photo" : "📸 Agregar Foto del Plato")}
-                      <input type="file" accept="image/*" onChange={handlePlatoFotoUpload} style={{ display: "none" }} />
-                    </label>
-                  </div>
+                    </div>
 
-                  <button type="submit" disabled={isAddingPlato || uploadingPlatoFoto} style={{ ...styles.saveBtn, margin: 0, padding: "10px" }}>
-                    {isAddingPlato ? "..." : `➕ ${lang === "en" ? "Add Item" : "Agregar Platillo"}`}
-                  </button>
-                </form>
-
-                {/* Lista Platos */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                  {(!menuItems || menuItems.length === 0) ? (
-                    <p style={{ color: "#9CA3AF", fontSize: "13px" }}>{lang === "en" ? "No dishes added yet." : "Aún no has agregado platillos a tu menú."}</p>
-                  ) : (
-                    (menuItems || []).map((item) => (
-                      <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: "rgba(20, 109, 158, 0.03)", border: "1px solid rgba(20, 109, 158, 0.08)", borderRadius: "12px", opacity: item.disponible === false ? 0.65 : 1 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                          {item.foto_url ? (
-                            <div style={{
-                              width: "52px",
-                              height: "52px",
-                              borderRadius: "10px",
-                              background: `url(${item.foto_url}) center/cover no-repeat`,
-                              border: "1px solid rgba(20, 109, 158, 0.10)",
-                              flexShrink: 0
-                            }} />
-                          ) : (
-                            <div style={{
-                              width: "52px",
-                              height: "52px",
-                              borderRadius: "10px",
-                              background: "rgba(20, 109, 158, 0.05)",
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              border: "1px solid rgba(20, 109, 158, 0.08)",
-                              flexShrink: 0
-                            }}>
-                              <Icon name="utensils" size={22} color="#146D9E" />
-                            </div>
-                          )}
-                          <div>
-                            <div style={{ fontWeight: "750", fontSize: "14px", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "8px" }}>
-                              <span>{item.nombre}</span>
-                              {item.disponible === false && (
-                                <span style={{ fontSize: "10px", fontWeight: "800", color: "#EF4444", background: "rgba(239,68,68,0.12)", padding: "2px 6px", borderRadius: "4px" }}>
-                                  {lang === "en" ? "Unavailable" : "Agotado / No disponible"}
-                                </span>
-                              )}
-                            </div>
-                            {item.descripcion && <div style={{ fontSize: "12px", color: "#4A5568", marginTop: "2px" }}>{item.descripcion}</div>}
-                          </div>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                          <span style={{ fontWeight: "800", color: "var(--atlan-gold)", fontSize: "15px" }}>C$ {item.precio}</span>
-                          
-                          <button
-                            type="button"
-                            onClick={() => handleStartEditPlato(item)}
-                            title={lang === "en" ? "Edit dish" : "Editar platillo"}
-                            style={{
-                              background: "rgba(20, 109, 158, 0.08)",
-                              border: "1px solid rgba(20, 109, 158, 0.18)",
-                              color: "#146D9E",
-                              padding: "6px 12px",
-                              borderRadius: "8px",
-                              cursor: "pointer",
-                              fontSize: "12.5px",
-                              fontWeight: "700",
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: "4px"
-                            }}
-                          >
-                            <Icon name="edit" size={13} color="#146D9E" />
-                            <span>{lang === "en" ? "Edit" : "Editar"}</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleDeletePlato(item.id)}
-                            title={lang === "en" ? "Delete dish" : "Eliminar platillo"}
-                            style={{
-                              ...styles.deleteBtn,
-                              background: "rgba(239, 68, 68, 0.08)",
-                              border: "1px solid rgba(239, 68, 68, 0.18)",
-                              color: "#EF4444",
-                              padding: "6px 10px",
-                              borderRadius: "8px",
-                              cursor: "pointer",
-                              display: "inline-flex",
-                              alignItems: "center",
-                              justifyContent: "center"
-                            }}
-                          >
-                            <Icon name="trash" size={14} color="#EF4444" />
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
+                    {/* BOTONES ACCIÓN */}
+                    <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "12px", flexShrink: 0 }}>
+                      <button type="submit" disabled={isSaving} style={{ ...styles.saveBtn, marginTop: 0, padding: "9px 22px", fontSize: "13px" }}>
+                        {isSaving ? "..." : (lang === "en" ? "Save Profile" : "Guardar Perfil")}
+                      </button>
+                      {puntoAsociado && puntoAsociado.estado === 'rechazado' && (
+                        <button type="button" onClick={async () => {
+                          setIsSaving(true);
+                          try {
+                            const payload = { nombre: nombre || null, descripcion: descripcion || null, telefono: telefono || null, whatsapp: whatsapp || null, rango_precios: rangoPrecios || null, logo_url: logoUrl || null, fotos: fotos || [], motivo_rechazo: null };
+                            await supabase.from("negocios").update(payload).eq("id", negocio.id);
+                            await supabase.from("puntos").update({ estado: "en_verificacion" }).eq("id", puntoAsociado.id);
+                            alert(lang === "en" ? "Saved & resubmitted!" : "¡Guardado y reenviado exitosamente!");
+                            await loadNegocioData(user.id);
+                          } catch (err) {
+                            console.error(err);
+                          } finally {
+                            setIsSaving(false);
+                          }
+                        }} style={{ ...styles.saveBtn, marginTop: 0, padding: "9px 22px", fontSize: "13px", background: "#EAB308", color: "#1E293B" }}>
+                          {lang === "en" ? "Save & Resubmit" : "Guardar y Reenviar a Verificación"}
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                )}
 
                 {/* MODAL DE EDICIÓN DE PLATILLO */}
                 {editingPlato && (
