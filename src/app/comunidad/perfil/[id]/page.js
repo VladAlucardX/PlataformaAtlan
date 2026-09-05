@@ -694,7 +694,9 @@ export default function PerfilPublico() {
             </div>
           ) : (
             <div style={sidebarStyles.loginCard}>
-              <span style={{ fontSize: "36px", display: "block", marginBottom: "12px" }}><Icon name="users" size={36} /></span>
+              <span style={{ display: "block", marginBottom: "12px" }}>
+                <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "42px", height: "42px", objectFit: "contain", margin: "0 auto" }} />
+              </span>
               <h4 style={{ margin: "0 0 8px", fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>Únete a la Comunidad</h4>
               <Link href="/registro" className="btn-primary" style={{ display: "block", textAlign: "center", padding: "10px", fontSize: "13px" }}>Crear Cuenta</Link>
             </div>
