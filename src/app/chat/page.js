@@ -407,11 +407,11 @@ function ChatContent() {
         pointerEvents: "none"
       }} />
 
-      {/* Capa sutil de opacidad oscura para nitidez */}
+      {/* Capa sutil de opacidad para nitidez manteniendo la luminosidad de Frame 5.png */}
       <div style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(10, 25, 47, 0.45)",
+        background: "rgba(10, 25, 47, 0.12)",
         pointerEvents: "none",
         zIndex: 0
       }} />
@@ -528,8 +528,15 @@ function ChatContent() {
                       <div style={{ fontWeight: "900", fontSize: "15px", color: "#FFFFFF" }}>
                         {activeOtherUser.nombre_completo || "Usuario"}
                       </div>
-                      <div style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)" }}>
-                        {activeOtherUser.rol === "dueno" ? "🏢 Propietario" : "🧳 Turista"}
+                      <div style={{ fontSize: "11.5px", color: "rgba(255, 255, 255, 0.8)", display: "flex", alignItems: "center", gap: "5px", marginTop: "2px" }}>
+                        <img src="/images/perfil.svg" alt="Perfil" style={{ width: "13px", height: "13px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                        <span>
+                          {activeOtherUser.rol === "dueno"
+                            ? (lang === "en" ? "Business Owner" : "Propietario")
+                            : activeOtherUser.rol === "guia_turistico"
+                            ? (lang === "en" ? "Tour Guide" : "Guía Turístico")
+                            : (lang === "en" ? "Turista Tuani" : "Turista Tuani")}
+                        </span>
                       </div>
                     </div>
                   </Link>
@@ -718,8 +725,15 @@ function ChatContent() {
                       </div>
                       <div style={{ flex: 1 }}>
                         <div style={{ fontWeight: "800", fontSize: "14px", color: "#FFFFFF" }}>{u.nombre_completo}</div>
-                        <div style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.6)" }}>
-                          {u.rol === "dueno" ? "🏢 Propietario" : "🧳 Turista"}
+                        <div style={{ fontSize: "11.5px", color: "rgba(255, 255, 255, 0.7)", display: "flex", alignItems: "center", gap: "5px", marginTop: "2px" }}>
+                          <img src="/images/perfil.svg" alt="Perfil" style={{ width: "12px", height: "12px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                          <span>
+                            {u.rol === "dueno"
+                              ? (lang === "en" ? "Business Owner" : "Propietario")
+                              : u.rol === "guia_turistico"
+                              ? (lang === "en" ? "Tour Guide" : "Guía Turístico")
+                              : (lang === "en" ? "Turista Tuani" : "Turista Tuani")}
+                          </span>
                         </div>
                       </div>
                       <img src="/images/comentarios.svg" alt="Chat" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
