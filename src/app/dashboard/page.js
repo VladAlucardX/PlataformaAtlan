@@ -1433,33 +1433,141 @@ export default function DashboardPage() {
       ) : (
         /* CASO C: EL DUEÑO YA FUE APROBADO Y SELECCIONÓ UN NEGOCIO VERIFICADO */
         <div style={activeTab === "overview" ? styles.dashboardOverviewLayout : styles.dashboardDetailLayout}>
-          {activeTab === "overview" ? (
-            <div style={styles.overviewContainer} className="animate-fade-in-up">
-              <div style={styles.overviewHeader}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
-                  <div>
-                    <h2 style={{ fontSize: "28px", fontWeight: "800", color: "#1A1A2E" }}>
-                      {lang === "en" ? "Welcome," : "Bienvenido,"} {perfil?.nombre_completo || "Propietario"}
-                    </h2>
-                    <p style={{ color: "var(--atlan-text-secondary)", marginTop: "4px" }}>
-                      {lang === "en" ? "What would you like to manage today for" : "¿Qué deseas gestionar hoy para"} <strong style={{ color: "var(--atlan-gold)" }}>{negocio.nombre}</strong>?
-                    </p>
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "16px" }}>
-                      <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: negocio.activo ? "#17AA4A" : "#E6A800" }}></span>
-                      <span style={{ fontSize: "12px", fontWeight: "750", color: negocio.activo ? "#17AA4A" : "#E6A800" }}>
-                        {negocio.activo ? (lang === "en" ? "VERIFIED BUSINESS" : "NEGOCIO VERIFICADO") : (lang === "en" ? "PENDING VERIFICATION" : "PENDIENTE DE VERIFICACIÓN")}
-                      </span>
-                    </div>
+          {/* Header Banner de Bienvenida y Acción de Mis Negocios */}
+          <div
+            style={{
+              background: "linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(241, 245, 249, 0.94) 100%)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              padding: "22px 28px",
+              borderRadius: "24px",
+              border: "1.5px solid rgba(255, 255, 255, 0.95)",
+              boxShadow: "0 18px 45px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 1)",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            {/* Franja decorativa superior con gradiente Atlan */}
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "4px", background: "linear-gradient(90deg, #146D9E 0%, #FFD700 45%, #10B981 100%)" }} />
+
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "20px" }}>
+              {/* Saludo e información del negocio */}
+              <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+                {/* Badge / Avatar del Negocio o Propietario */}
+                <div
+                  style={{
+                    width: "56px",
+                    height: "56px",
+                    borderRadius: "18px",
+                    background: "linear-gradient(135deg, #146D9E 0%, #0F172A 100%)",
+                    border: "2px solid rgba(255, 215, 0, 0.5)",
+                    boxShadow: "0 8px 20px rgba(20, 109, 158, 0.35)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0
+                  }}
+                >
+                  {negocio.logo_url ? (
+                    <img src={negocio.logo_url} alt={negocio.nombre} style={{ width: "100%", height: "100%", borderRadius: "16px", objectFit: "cover" }} />
+                  ) : (
+                    <span style={{ fontSize: "26px" }}>🏢</span>
+                  )}
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                  <h2 style={{ fontSize: "26px", fontWeight: "900", color: "#0F172A", margin: 0, fontFamily: "'LC Mogi', var(--font-outfit), sans-serif", letterSpacing: "-0.02em" }}>
+                    {lang === "en" ? "Welcome," : "Bienvenido,"} <span style={{ color: "#146D9E" }}>{perfil?.nombre_completo || "Propietario"}</span> 👋
+                  </h2>
+                  <p style={{ color: "#475569", margin: 0, fontSize: "14px", fontWeight: "500", display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+                    <span>{lang === "en" ? "What would you like to manage today for" : "¿Qué deseas gestionar hoy para"}</span>
+                    <strong style={{
+                      color: "#0F172A",
+                      fontWeight: "800",
+                      background: "linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(255, 215, 0, 0.18) 100%)",
+                      border: "1px solid rgba(20, 109, 158, 0.25)",
+                      padding: "4px 12px",
+                      borderRadius: "10px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px"
+                    }}>
+                      <span>🏪</span>
+                      <span>{negocio.nombre}</span>
+                    </strong>?
+                  </p>
+
+                  {/* Badge de estado del negocio */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px" }}>
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        fontWeight: "850",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
+                        color: negocio.activo ? "#047857" : "#B45309",
+                        background: negocio.activo ? "rgba(16, 185, 129, 0.12)" : "rgba(217, 119, 6, 0.12)",
+                        border: negocio.activo ? "1px solid rgba(16, 185, 129, 0.3)" : "1px solid rgba(217, 119, 6, 0.3)",
+                        padding: "3px 11px",
+                        borderRadius: "20px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px"
+                      }}
+                    >
+                      <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: negocio.activo ? "#10B981" : "#D97706", boxShadow: negocio.activo ? "0 0 6px #10B981" : "0 0 6px #D97706" }} />
+                      {negocio.activo ? (lang === "en" ? "VERIFIED BUSINESS" : "NEGOCIO VERIFICADO") : (lang === "en" ? "PENDING VERIFICATION" : "PENDIENTE DE VERIFICACIÓN")}
+                    </span>
                   </div>
-                  <button 
-                    onClick={() => setViewMode("hub")} 
-                    className="clay-btn-blue"
-                    style={{ padding: "10px 18px", fontSize: "13px" }}
-                  >
-                    🏢 {lang === "en" ? "My Businesses Hub" : "Mis Negocios (Galería)"}
-                  </button>
                 </div>
               </div>
+
+              {/* Tarjeta / Botón de Acción Derecha: Cambiar / Ver Mis Negocios */}
+              <button
+                onClick={() => setViewMode("hub")}
+                style={{
+                  background: "linear-gradient(135deg, #0F172A 0%, #146D9E 100%)",
+                  border: "1.5px solid rgba(255, 215, 0, 0.45)",
+                  borderRadius: "20px",
+                  padding: "12px 22px",
+                  boxShadow: "0 12px 28px rgba(15, 23, 42, 0.35), 0 0 15px rgba(255, 215, 0, 0.15)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "14px",
+                  cursor: "pointer",
+                  transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                  flexShrink: 0,
+                  outline: "none"
+                }}
+                className="hover-card-btn"
+              >
+                <div
+                  style={{
+                    width: "42px",
+                    height: "42px",
+                    borderRadius: "14px",
+                    background: "rgba(255, 215, 0, 0.18)",
+                    border: "1px solid rgba(255, 215, 0, 0.4)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "22px"
+                  }}
+                >
+                  🏬
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
+                  <span style={{ fontSize: "10px", fontWeight: "850", color: "#FFD700", letterSpacing: "0.09em", textTransform: "uppercase" }}>
+                    {lang === "en" ? "MULTI-BUSINESS HUB" : "GALERÍA DE LOCALES"}
+                  </span>
+                  <span style={{ fontSize: "14px", fontWeight: "800", color: "#FFFFFF", marginTop: "2px", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span>{lang === "en" ? "Switch Business" : "Mis Negocios (Galería)"}</span>
+                    <span style={{ color: "#FFD700", fontSize: "16px" }}>➔</span>
+                  </span>
+                </div>
+              </button>
+            </div>
+          </div>
 
               {/* Alertas de verificación */}
               {puntoAsociado && puntoAsociado.estado === 'rechazado' && (
@@ -1602,7 +1710,8 @@ export default function DashboardPage() {
                 </div>
               )}
 
-              <div style={styles.overviewGrid}>
+              {activeTab === "overview" ? (
+                <div style={styles.overviewGrid}>
                 {/* General Info Card: edificio.svg */}
                 <button
                   type="button"
@@ -1788,7 +1897,6 @@ export default function DashboardPage() {
                   <p style={{ ...styles.cardDesc, color: "#BE123C" }}>{lang === "en" ? "Read what tourists think about your business" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
                 </button>
               </div>
-            </div>
           ) : (
             <main style={{ ...styles.mainContent, maxWidth: "800px", margin: "0 auto", width: "100%" }} className="dashboard-main glass-card animate-fade-in">
               <button 
