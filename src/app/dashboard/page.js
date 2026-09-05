@@ -994,14 +994,14 @@ export default function DashboardPage() {
 
   return (
     <div style={{ ...styles.container, position: "relative", overflow: "hidden" }} className="dashboard-container">
-      {/* Ilustración Guardabarranco SVG en la esquina inferior izquierda en amarillo/dorado que coincide con la flor del fondo */}
+      {/* Ilustración Guardabarranco SVG en la esquina inferior izquierda (Capa de Fondo zIndex: 0) en amarillo/dorado que coincide con la flor del fondo */}
       <div
         style={{
           position: "absolute",
-          bottom: "-15px",
-          left: "-10px",
-          width: "360px",
-          height: "310px",
+          bottom: "-50px",
+          left: "-40px",
+          width: "580px",
+          height: "500px",
           backgroundColor: "#FFD700",
           WebkitMaskImage: "url('/images/guardabarranco chochoyo.svg')",
           WebkitMaskRepeat: "no-repeat",
@@ -1011,10 +1011,10 @@ export default function DashboardPage() {
           maskRepeat: "no-repeat",
           maskSize: "contain",
           maskPosition: "bottom left",
-          opacity: 0.85,
+          opacity: 0.75,
           pointerEvents: "none",
-          zIndex: 1,
-          filter: "drop-shadow(0 4px 16px rgba(255, 215, 0, 0.4))",
+          zIndex: 0,
+          filter: "drop-shadow(0 4px 20px rgba(255, 215, 0, 0.4))",
         }}
       />
       {/* Orbes de luz ambientales de fondo */}
@@ -3255,6 +3255,8 @@ const styles = {
     WebkitBackdropFilter: "blur(20px)",
     border: "1.5px solid rgba(255, 255, 255, 0.95)",
     boxShadow: "0 20px 50px rgba(0, 0, 0, 0.3)",
+    position: "relative",
+    zIndex: 2,
   },
   claimSection: {
     background: "rgba(255,255,255,0.02)",
@@ -3312,6 +3314,8 @@ const styles = {
     overflowY: "auto",
     boxSizing: "border-box",
     paddingRight: "4px",
+    position: "relative",
+    zIndex: 2,
   },
   dashboardDetailLayout: {
     maxWidth: "1000px",
@@ -3325,6 +3329,8 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     boxSizing: "border-box",
+    position: "relative",
+    zIndex: 2,
   },
   overviewContainer: {
     display: "flex",
