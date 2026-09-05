@@ -4,6 +4,18 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Icon from './Icon';
 
+const formatPriceRange = (rango) => {
+  if (!rango) return '';
+  const str = String(rango).trim();
+  if (str.includes('C$')) return str;
+  const r = str.toLowerCase();
+  if (r === '$' || r === 'economico' || r === 'económico') return 'Económico C$';
+  if (r === '$$' || r === 'moderado') return 'Moderado C$';
+  if (r === '$$$' || r === 'costoso') return 'Costoso C$';
+  if (r === '$$$$' || r === 'lujoso') return 'Lujoso C$';
+  return `${str} C$`;
+};
+
 export default function BusinessProfileModal({
   isOpen,
   onClose,
@@ -295,7 +307,7 @@ export default function BusinessProfileModal({
                       border: '1px solid rgba(255, 255, 255, 0.2)'
                     }}
                   >
-                    {details.rango_precios}
+                    {formatPriceRange(details.rango_precios)}
                   </span>
                 )}
               </div>
@@ -490,7 +502,12 @@ export default function BusinessProfileModal({
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: '#475569' }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                       <Icon name="dollarSign" size={15} color="#16A34A" style={{ marginTop: '2px' }} />
-                      <span><strong>{lang === 'en' ? 'Accepted Currency:' : 'Moneda & Pagos:'}</strong> {lang === 'en' ? 'Nicaraguan Córdobas (NIO) & US Dollars (USD). Cash & Card accepted.' : 'Aceptan Córdobas (NIO) y Dólares (USD). Pagos en efectivo y tarjeta.'}</span>
+                      <span>
+                        <strong>{lang === 'en' ? 'Payments & Currency:' : 'Moneda & Pagos:'}</strong>{' '}
+                        {details?.servicios?.has_card_payment
+                          ? (lang === 'en' ? 'Cash and credit/debit cards accepted.' : 'Aceptan pagos en efectivo y tarjeta (Córdobas / USD según negocio).')
+                          : (lang === 'en' ? 'Cash payments accepted (Córdobas / USD).' : 'Pagos en efectivo (Córdobas / USD).')}
+                      </span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                       <Icon name="shield" size={15} color="#2563EB" style={{ marginTop: '2px' }} />
@@ -538,44 +555,51 @@ export default function BusinessProfileModal({
 
                   {details?.horarios && Object.keys(details.horarios).length > 0 ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      {Object.entries(details.horarios).map(([day, info]) => {
-                        const dayLabels = {
-                          lunes: lang === 'en' ? 'Monday' : 'Lunes',
-                          martes: lang === 'en' ? 'Tuesday' : 'Martes',
-                          miercoles: lang === 'en' ? 'Wednesday' : 'Miércoles',
-                          jueves: lang === 'en' ? 'Thursday' : 'Jueves',
-                          viernes: lang === 'en' ? 'Friday' : 'Viernes',
-                          sabado: lang === 'en' ? 'Saturday' : 'Sábado',
-                          domingo: lang === 'en' ? 'Sunday' : 'Domingo',
-                        };
-                        const isToday = new Date().getDay() === {
-                          domingo: 0, lunes: 1, martes: 2, miercoles: 3, jueves: 4, viernes: 5, sabado: 6
-                        }[day];
-
-                        return (
-                          <div
-                            key={day}
-                            style={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              fontSize: '13px',
-                              color: isToday ? '#0F172A' : '#64748B',
-                              fontWeight: isToday ? '800' : '500',
-                              padding: '5px 8px',
-                              borderRadius: '8px',
-                              background: isToday ? 'rgba(20, 109, 158, 0.08)' : 'transparent',
-                              borderBottom: isToday ? 'none' : '1px dashed rgba(20, 109, 158, 0.08)'
-                            }}
-                          >
-                            <span>{dayLabels[day] || day} {isToday && '• (Hoy)'}</span>
-                            <span>
-                              {info?.abierto
-                                ? `${info.apertura || ''} - ${info.cierre || ''}`
-                                : (lang === 'en' ? 'Closed' : 'Cerrado')}
-                            </span>
-                          </div>
+                      {(() => {
+                        const dayOrder = { lunes: 1, martes: 2, miercoles: 3, jueves: 4, viernes: 5, sabado: 6, domingo: 7 };
+                        const sortedHorarios = Object.entries(details.horarios).sort(
+                          ([dayA], [dayB]) => (dayOrder[dayA.toLowerCase()] || 99) - (dayOrder[dayB.toLowerCase()] || 99)
                         );
-                      })}
+
+                        return sortedHorarios.map(([day, info]) => {
+                          const dayLabels = {
+                            lunes: lang === 'en' ? 'Monday' : 'Lunes',
+                            martes: lang === 'en' ? 'Tuesday' : 'Martes',
+                            miercoles: lang === 'en' ? 'Wednesday' : 'Miércoles',
+                            jueves: lang === 'en' ? 'Thursday' : 'Jueves',
+                            viernes: lang === 'en' ? 'Friday' : 'Viernes',
+                            sabado: lang === 'en' ? 'Saturday' : 'Sábado',
+                            domingo: lang === 'en' ? 'Sunday' : 'Domingo',
+                          };
+                          const isToday = new Date().getDay() === {
+                            domingo: 0, lunes: 1, martes: 2, miercoles: 3, jueves: 4, viernes: 5, sabado: 6
+                          }[day.toLowerCase()];
+
+                          return (
+                            <div
+                              key={day}
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                fontSize: '13px',
+                                color: isToday ? '#0F172A' : '#64748B',
+                                fontWeight: isToday ? '800' : '500',
+                                padding: '5px 8px',
+                                borderRadius: '8px',
+                                background: isToday ? 'rgba(20, 109, 158, 0.08)' : 'transparent',
+                                borderBottom: isToday ? 'none' : '1px dashed rgba(20, 109, 158, 0.08)'
+                              }}
+                            >
+                              <span>{dayLabels[day.toLowerCase()] || day} {isToday && '• (Hoy)'}</span>
+                              <span>
+                                {info?.abierto
+                                  ? `${info.apertura || ''} - ${info.cierre || ''}`
+                                  : (lang === 'en' ? 'Closed' : 'Cerrado')}
+                              </span>
+                            </div>
+                          );
+                        });
+                      })()}
                     </div>
                   ) : (
                     <p style={{ margin: 0, fontSize: '13px', color: '#94A3B8', fontStyle: 'italic' }}>
