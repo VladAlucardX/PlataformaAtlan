@@ -10,18 +10,13 @@ All agents and developers working on this repository MUST adhere strictly to the
 
 ## 1. Branch Architecture
 - `main`: **Production Branch.** Contains stable, deployed code. Direct commits to `main` are strictly forbidden.
-- `develop`: **Integration Branch.** Main active development branch where all features converge.
-- `feature/<task-name>`: Temporary feature branches created from `develop` for new features (e.g., `feature/filtro-mapa`).
-- `fix/<task-name>`: Temporary bugfix branches created from `develop` for fixing issues (e.g., `fix/navegacion-gps`).
+- `develop`: **Active Development Branch.** Main active branch where all work is implemented directly.
 
-## 2. Task Execution Steps
-1. Checkout `develop` and pull latest updates: `git checkout develop && git pull origin develop`
-2. Create feature branch: `git checkout -b feature/<nombre-tarea>`
-3. Implement code changes.
-4. Format commit message using Conventional Commits: `git commit -m "tipo(scope): descripción"`
-5. Push feature branch to remote GitHub: `git push -u origin feature/<nombre-tarea>`
-6. Create Pull Request (PR) from `feature/<nombre-tarea>` into `develop`.
-7. Merge `develop` into `main` via PR when ready for release to production.
+## 2. Task Execution Protocol
+1. Stay on `develop` branch and pull latest updates: `git checkout develop && git pull origin develop`
+2. Implement code changes directly on `develop` (DO NOT create `feature/*` or `fix/*` branches unless explicitly instructed by the user).
+3. Format commit message using Conventional Commits: `git commit -m "tipo(scope): descripción"`.
+4. Push directly to remote `develop`: `git push origin develop`.
 
 ## 3. Conventional Commit Standard
 Structure: `tipo(alcance): descripción imperativa corta`
