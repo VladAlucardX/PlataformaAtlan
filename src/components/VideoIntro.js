@@ -49,20 +49,41 @@ export default function VideoIntro({ onComplete }) {
     }
   }, [phase, onComplete]);
 
-  // Timeout de seguridad máximo (30s) por si el video no dispara ended
+  const TARGET_DURATION = 8; // Duración objetivo: 8 segundos
+
+  // Timeout de seguridad máximo (8.5s)
   useEffect(() => {
     const safety = setTimeout(() => {
       startFadeOut();
-    }, 30000);
+    }, 8500);
     return () => clearTimeout(safety);
   }, [startFadeOut]);
 
-  const handleTimeUpdate = () => {
-    if (videoRef.current && videoRef.current.duration) {
-      const pct = (videoRef.current.currentTime / videoRef.current.duration) * 100;
-      setProgressPercent(pct);
-    }
-  };
+  // Actualización ultra-fluida (60 FPS) de la barra de progreso sincronizada a los 8 segundos
+  useEffect(() => {
+    if (phase !== "playing") return;
+
+    let animId;
+    const updateProgress = () => {
+      if (videoRef.current) {
+        const current = videoRef.current.currentTime || 0;
+        const pct = Math.min((current / TARGET_DURATION) * 100, 100);
+        setProgressPercent(pct);
+
+        if (current >= TARGET_DURATION) {
+          startFadeOut();
+          return;
+        }
+      }
+      animId = requestAnimationFrame(updateProgress);
+    };
+
+    animId = requestAnimationFrame(updateProgress);
+
+    return () => {
+      if (animId) cancelAnimationFrame(animId);
+    };
+  }, [phase, startFadeOut]);
 
   if (phase === "done") return null;
 
@@ -120,7 +141,6 @@ export default function VideoIntro({ onComplete }) {
         onCanPlayThrough={() => setVideoReady(true)}
         onError={startFadeOut}
         onEnded={startFadeOut}
-        onTimeUpdate={handleTimeUpdate}
         onLoadedData={() => {
           if (videoRef.current && videoRef.current.readyState >= 3) {
             setVideoReady(true);
@@ -216,7 +236,7 @@ export default function VideoIntro({ onComplete }) {
           style={{
             ...introStyles.progressFill,
             width: `${progressPercent}%`,
-            transition: "width 0.15s linear",
+            transition: "width 0.05s linear",
             boxShadow: "0 0 10px rgba(212,175,55,0.5)",
           }}
         />
