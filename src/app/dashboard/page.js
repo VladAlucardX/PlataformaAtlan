@@ -1434,152 +1434,154 @@ export default function DashboardPage() {
       ) : (
         /* CASO C: EL DUEÑO YA FUE APROBADO Y SELECCIONÓ UN NEGOCIO VERIFICADO */
         <div style={activeTab === "overview" ? styles.dashboardOverviewLayout : styles.dashboardDetailLayout}>
-          {/* Header Banner de Bienvenida y Acción de Mis Negocios */}
-          <div
-            style={{
-              background: "linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(241, 245, 249, 0.94) 100%)",
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-              padding: "22px 28px",
-              borderRadius: "24px",
-              border: "1.5px solid rgba(255, 255, 255, 0.95)",
-              boxShadow: "0 18px 45px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 1)",
-              position: "relative",
-              overflow: "hidden",
-              marginBottom: "28px",
-            }}
-          >
-            {/* Franja decorativa superior con gradiente Atlan */}
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "4px", background: "linear-gradient(90deg, #146D9E 0%, #FFD700 45%, #10B981 100%)" }} />
+          {/* Header Banner de Bienvenida y Acción de Mis Negocios (Solo visible en Overview) */}
+          {activeTab === "overview" && (
+            <div
+              style={{
+                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(241, 245, 249, 0.94) 100%)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                padding: "22px 28px",
+                borderRadius: "24px",
+                border: "1.5px solid rgba(255, 255, 255, 0.95)",
+                boxShadow: "0 18px 45px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 1)",
+                position: "relative",
+                overflow: "hidden",
+                marginBottom: "28px",
+              }}
+            >
+              {/* Franja decorativa superior con gradiente Atlan */}
+              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "4px", background: "linear-gradient(90deg, #146D9E 0%, #FFD700 45%, #10B981 100%)" }} />
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "20px" }}>
-              {/* Saludo e información del negocio */}
-              <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
-                {/* Badge / Avatar del Negocio o Propietario */}
-                <div
-                  style={{
-                    width: "56px",
-                    height: "56px",
-                    borderRadius: "18px",
-                    background: "linear-gradient(135deg, #146D9E 0%, #0F172A 100%)",
-                    border: "2px solid rgba(255, 215, 0, 0.5)",
-                    boxShadow: "0 8px 20px rgba(20, 109, 158, 0.35)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0
-                  }}
-                >
-                  {negocio.logo_url ? (
-                    <img src={negocio.logo_url} alt={negocio.nombre} style={{ width: "100%", height: "100%", borderRadius: "16px", objectFit: "cover" }} />
-                  ) : (
-                    <span style={{ fontSize: "26px" }}>🏢</span>
-                  )}
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <h2 style={{ fontSize: "26px", fontWeight: "900", color: "#0F172A", margin: 0, fontFamily: "'LC Mogi', var(--font-outfit), sans-serif", letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span>{lang === "en" ? "Welcome," : "Bienvenido,"} <span style={{ color: "#146D9E" }}>{perfil?.nombre_completo || "Propietario"}</span></span>
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" style={{ display: "inline-block", flexShrink: 0 }}>
-                      <path d="M12.5 11.5V5.5C12.5 4.67 11.83 4 11 4C10.17 4 9.5 4.67 9.5 5.5V11.5M9.5 9.5V3.5C9.5 2.67 8.83 2 8 2C7.17 2 6.5 2.67 6.5 3.5V11.5M6.5 11.5V5.5C6.5 4.67 5.83 4 5 4C4.17 4 3.5 4.67 3.5 5.5V13.5M3.5 12V10.5C3.5 9.67 2.83 9 2 9C1.17 9 0.5 9.67 0.5 10.5V15.5C0.5 19.09 3.41 22 7 22H11.5C14.81 22 17.5 19.31 17.5 16V13.5C17.5 12.67 16.83 12 16 12C15.17 12 14.5 12.67 14.5 13.5V11.5C14.5 10.67 13.83 10 13 10C12.17 10 11.5 10.67 11.5 11.5" stroke="#146D9E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </h2>
-                  <p style={{ color: "#475569", margin: 0, fontSize: "14px", fontWeight: "500", display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
-                    <span>{lang === "en" ? "What would you like to manage today for" : "¿Qué deseas gestionar hoy para"}</span>
-                    <strong style={{
-                      color: "#0F172A",
-                      fontWeight: "800",
-                      background: "linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(255, 215, 0, 0.18) 100%)",
-                      border: "1px solid rgba(20, 109, 158, 0.25)",
-                      padding: "4px 12px",
-                      borderRadius: "10px",
-                      display: "inline-flex",
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "20px" }}>
+                {/* Saludo e información del negocio */}
+                <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+                  {/* Badge / Avatar del Negocio o Propietario */}
+                  <div
+                    style={{
+                      width: "56px",
+                      height: "56px",
+                      borderRadius: "18px",
+                      background: "linear-gradient(135deg, #146D9E 0%, #0F172A 100%)",
+                      border: "2px solid rgba(255, 215, 0, 0.5)",
+                      boxShadow: "0 8px 20px rgba(20, 109, 158, 0.35)",
+                      display: "flex",
                       alignItems: "center",
-                      gap: "6px"
-                    }}>
-                      <img src={getCategorySvg(negocio)} alt="" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
-                      <span>{negocio.nombre}</span>
-                    </strong>?
-                  </p>
+                      justifyContent: "center",
+                      flexShrink: 0
+                    }}
+                  >
+                    {negocio.logo_url ? (
+                      <img src={negocio.logo_url} alt={negocio.nombre} style={{ width: "100%", height: "100%", borderRadius: "16px", objectFit: "cover" }} />
+                    ) : (
+                      <span style={{ fontSize: "26px" }}>🏢</span>
+                    )}
+                  </div>
 
-                  {/* Badge de estado del negocio */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px" }}>
-                    <span
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: "850",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.05em",
-                        color: negocio.activo ? "#047857" : "#B45309",
-                        background: negocio.activo ? "rgba(16, 185, 129, 0.12)" : "rgba(217, 119, 6, 0.12)",
-                        border: negocio.activo ? "1px solid rgba(16, 185, 129, 0.3)" : "1px solid rgba(217, 119, 6, 0.3)",
-                        padding: "3px 11px",
-                        borderRadius: "20px",
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <h2 style={{ fontSize: "26px", fontWeight: "900", color: "#0F172A", margin: 0, fontFamily: "'LC Mogi', var(--font-outfit), sans-serif", letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span>{lang === "en" ? "Welcome," : "Bienvenido,"} <span style={{ color: "#146D9E" }}>{perfil?.nombre_completo || "Propietario"}</span></span>
+                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" style={{ display: "inline-block", flexShrink: 0 }}>
+                        <path d="M12.5 11.5V5.5C12.5 4.67 11.83 4 11 4C10.17 4 9.5 4.67 9.5 5.5V11.5M9.5 9.5V3.5C9.5 2.67 8.83 2 8 2C7.17 2 6.5 2.67 6.5 3.5V11.5M6.5 11.5V5.5C6.5 4.67 5.83 4 5 4C4.17 4 3.5 4.67 3.5 5.5V13.5M3.5 12V10.5C3.5 9.67 2.83 9 2 9C1.17 9 0.5 9.67 0.5 10.5V15.5C0.5 19.09 3.41 22 7 22H11.5C14.81 22 17.5 19.31 17.5 16V13.5C17.5 12.67 16.83 12 16 12C15.17 12 14.5 12.67 14.5 13.5V11.5C14.5 10.67 13.83 10 13 10C12.17 10 11.5 10.67 11.5 11.5" stroke="#146D9E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </h2>
+                    <p style={{ color: "#475569", margin: 0, fontSize: "14px", fontWeight: "500", display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+                      <span>{lang === "en" ? "What would you like to manage today for" : "¿Qué deseas gestionar hoy para"}</span>
+                      <strong style={{
+                        color: "#0F172A",
+                        fontWeight: "800",
+                        background: "linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(255, 215, 0, 0.18) 100%)",
+                        border: "1px solid rgba(20, 109, 158, 0.25)",
+                        padding: "4px 12px",
+                        borderRadius: "10px",
                         display: "inline-flex",
                         alignItems: "center",
                         gap: "6px"
-                      }}
-                    >
-                      <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: negocio.activo ? "#10B981" : "#D97706", boxShadow: negocio.activo ? "0 0 6px #10B981" : "0 0 6px #D97706" }} />
-                      {negocio.activo ? (lang === "en" ? "VERIFIED BUSINESS" : "NEGOCIO VERIFICADO") : (lang === "en" ? "PENDING VERIFICATION" : "PENDIENTE DE VERIFICACIÓN")}
-                    </span>
+                      }}>
+                        <img src={getCategorySvg(negocio)} alt="" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
+                        <span>{negocio.nombre}</span>
+                      </strong>?
+                    </p>
+
+                    {/* Badge de estado del negocio */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px" }}>
+                      <span
+                        style={{
+                          fontSize: "11px",
+                          fontWeight: "850",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05em",
+                          color: negocio.activo ? "#047857" : "#B45309",
+                          background: negocio.activo ? "rgba(16, 185, 129, 0.12)" : "rgba(217, 119, 6, 0.12)",
+                          border: negocio.activo ? "1px solid rgba(16, 185, 129, 0.3)" : "1px solid rgba(217, 119, 6, 0.3)",
+                          padding: "3px 11px",
+                          borderRadius: "20px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "6px"
+                        }}
+                      >
+                        <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: negocio.activo ? "#10B981" : "#D97706", boxShadow: negocio.activo ? "0 0 6px #10B981" : "0 0 6px #D97706" }} />
+                        {negocio.activo ? (lang === "en" ? "VERIFIED BUSINESS" : "NEGOCIO VERIFICADO") : (lang === "en" ? "PENDING VERIFICATION" : "PENDIENTE DE VERIFICACIÓN")}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Tarjeta / Botón de Acción Derecha: Cambiar / Ver Mis Negocios */}
-              <button
-                onClick={() => setViewMode("hub")}
-                style={{
-                  background: "linear-gradient(135deg, #0F172A 0%, #146D9E 100%)",
-                  border: "1.5px solid rgba(255, 215, 0, 0.45)",
-                  borderRadius: "20px",
-                  padding: "12px 22px",
-                  boxShadow: "0 12px 28px rgba(15, 23, 42, 0.35), 0 0 15px rgba(255, 215, 0, 0.15)",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  cursor: "pointer",
-                  transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
-                  flexShrink: 0,
-                  outline: "none"
-                }}
-                className="hover-card-btn"
-              >
-                <div
+                {/* Tarjeta / Botón de Acción Derecha: Cambiar / Ver Mis Negocios */}
+                <button
+                  onClick={() => setViewMode("hub")}
                   style={{
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "14px",
-                    background: "rgba(255, 215, 0, 0.18)",
-                    border: "1.5px solid rgba(255, 215, 0, 0.4)",
+                    background: "linear-gradient(135deg, #0F172A 0%, #146D9E 100%)",
+                    border: "1.5px solid rgba(255, 215, 0, 0.45)",
+                    borderRadius: "20px",
+                    padding: "12px 22px",
+                    boxShadow: "0 12px 28px rgba(15, 23, 42, 0.35), 0 0 15px rgba(255, 215, 0, 0.15)",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0
+                    gap: "12px",
+                    cursor: "pointer",
+                    transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                    flexShrink: 0,
+                    outline: "none"
                   }}
+                  className="hover-card-btn"
                 >
-                  <div style={{
-                    width: "22px",
-                    height: "22px",
-                    backgroundColor: "#FFD700",
-                    WebkitMaskImage: "url('/images/edificio.svg')",
-                    WebkitMaskRepeat: "no-repeat",
-                    WebkitMaskSize: "contain",
-                    WebkitMaskPosition: "center",
-                    maskImage: "url('/images/edificio.svg')",
-                    maskRepeat: "no-repeat",
-                    maskSize: "contain",
-                    maskPosition: "center",
-                  }} />
-                </div>
-                <span style={{ fontSize: "14.5px", fontWeight: "850", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "8px" }}>
-                  <span>{lang === "en" ? "My Businesses" : "Mis Negocios"}</span>
-                  <span style={{ color: "#FFD700", fontSize: "16px" }}>➔</span>
-                </span>
-              </button>
+                  <div
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "14px",
+                      background: "rgba(255, 215, 0, 0.18)",
+                      border: "1.5px solid rgba(255, 215, 0, 0.4)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0
+                    }}
+                  >
+                    <div style={{
+                      width: "22px",
+                      height: "22px",
+                      backgroundColor: "#FFD700",
+                      WebkitMaskImage: "url('/images/edificio.svg')",
+                      WebkitMaskRepeat: "no-repeat",
+                      WebkitMaskSize: "contain",
+                      WebkitMaskPosition: "center",
+                      maskImage: "url('/images/edificio.svg')",
+                      maskRepeat: "no-repeat",
+                      maskSize: "contain",
+                      maskPosition: "center",
+                    }} />
+                  </div>
+                  <span style={{ fontSize: "14.5px", fontWeight: "850", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span>{lang === "en" ? "My Businesses" : "Mis Negocios"}</span>
+                    <span style={{ color: "#FFD700", fontSize: "16px" }}>➔</span>
+                  </span>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
               {/* Alertas de verificación */}
               {puntoAsociado && puntoAsociado.estado === 'rechazado' && (
@@ -3449,8 +3451,12 @@ const styles = {
     height: "calc(100vh - 105px)",
     maxHeight: "calc(100vh - 105px)",
     display: "flex",
-    justifyContent: "center",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-start",
     boxSizing: "border-box",
+    paddingTop: "6px",
+    paddingBottom: "24px",
     position: "relative",
     zIndex: 2,
   },
