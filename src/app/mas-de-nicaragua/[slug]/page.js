@@ -456,8 +456,9 @@ export default function DepartamentoDetailPage() {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "18px" }}>
                   {dept.historia.personajes.map((per, idx) => (
                     <div key={idx} style={{ background: "linear-gradient(135deg, rgba(30, 25, 15, 0.85) 0%, rgba(15, 23, 42, 0.9) 100%)", border: "1px solid rgba(255, 215, 0, 0.3)", borderRadius: "18px", padding: "20px" }}>
-                      <span style={{ fontSize: "15px", fontWeight: "900", color: "#FFD700", display: "block", marginBottom: "3px" }}>
-                        📜 {per.nombre}
+                      <span style={{ fontSize: "15px", fontWeight: "900", color: "#FFD700", display: "flex", alignItems: "center", gap: "8px", marginBottom: "3px" }}>
+                        <img src="/images/sombrero.svg" alt="Sombrero" style={{ width: "20px", height: "20px", objectFit: "contain" }} />
+                        <span>{per.nombre}</span>
                       </span>
                       <span style={{ fontSize: "12px", fontWeight: "700", color: "#38BDF8", display: "block", marginBottom: "8px" }}>
                         {per.titulo}
@@ -482,8 +483,9 @@ export default function DepartamentoDetailPage() {
                   {dept.historia.patrimonio.map((pat, idx) => (
                     <div key={idx} style={{ background: "linear-gradient(135deg, rgba(15, 30, 50, 0.85) 0%, rgba(10, 20, 35, 0.9) 100%)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "18px", padding: "20px" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                        <span style={{ fontSize: "15px", fontWeight: "900", color: "#FFFFFF" }}>
-                          🏛️ {pat.sitio}
+                        <span style={{ fontSize: "15px", fontWeight: "900", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "8px" }}>
+                          <img src="/images/edificio.svg" alt="Patrimonio" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(100%)" }} />
+                          <span>{pat.sitio}</span>
                         </span>
                         <span style={{ fontSize: "11px", fontWeight: "800", color: "#10B981", background: "rgba(16, 185, 129, 0.15)", padding: "3px 10px", borderRadius: "8px" }}>
                           {pat.epoca}
