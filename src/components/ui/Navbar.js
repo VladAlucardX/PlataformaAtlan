@@ -125,11 +125,11 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
             alt="Logo"
             style={{ width: "30px", height: "30px", objectFit: "contain", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }}
           />
-          <span className="logoText" style={{ fontSize: "25px", fontWeight: "900", color: "#FFD700" }}>atlan</span>
+          <span className="logoText" style={{ fontSize: "25px", fontWeight: "900", color: "#F59E0B" }}>atlan</span>
         </Link>
 
         {/* Center Nav Pills */}
-        <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "nowrap", justifyContent: "center" }} className="hide-mobile">
+        <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "10px", flexWrap: "nowrap", justifyContent: "center" }} className="hide-mobile">
           <Link href="/" className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`}>
             <img src="/images/home.svg" alt="Inicio" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Home" : "Inicio"}
           </Link>
