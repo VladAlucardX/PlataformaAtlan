@@ -102,6 +102,7 @@ export default function DashboardPage() {
   const [menuItems, setMenuItems] = useState([]);
   const [newPlatoNombre, setNewPlatoNombre] = useState("");
   const [newPlatoPrecio, setNewPlatoPrecio] = useState("");
+  const [newPlatoCategoria, setNewPlatoCategoria] = useState("");
   const [newPlatoDesc, setNewPlatoDesc] = useState("");
   const [newPlatoFotoUrl, setNewPlatoFotoUrl] = useState("");
   const [uploadingPlatoFoto, setUploadingPlatoFoto] = useState(false);
@@ -884,6 +885,7 @@ export default function DashboardPage() {
 
       setNewPlatoNombre("");
       setNewPlatoPrecio("");
+      setNewPlatoCategoria("");
       setNewPlatoDesc("");
       setNewPlatoFotoUrl("");
       loadMenuItems(negocio.id);
