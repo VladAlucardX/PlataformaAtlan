@@ -527,12 +527,12 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
       <div style={cardStyles.statsBar}>
         {likesCount > 0 && (
           <span style={{ ...cardStyles.statText, display: "inline-flex", alignItems: "center", gap: "4px" }}>
-            <img src="/images/Like.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain" }} /> {likesCount}
+            <img src="/images/Like.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {likesCount}
           </span>
         )}
         {commentsCount > 0 && (
           <button onClick={handleToggleComments} style={{ ...cardStyles.statText, background: "none", border: "none", cursor: "pointer", padding: 0, display: "inline-flex", alignItems: "center", gap: "4px" }}>
-            <img src="/images/comentarios.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain" }} /> {commentsCount} {commentsCount === 1 ? (lang === "en" ? "comment" : "comentario") : (lang === "en" ? "comments" : "comentarios")}
+            <img src="/images/comentarios.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {commentsCount} {commentsCount === 1 ? (lang === "en" ? "comment" : "comentario") : (lang === "en" ? "comments" : "comentarios")}
           </button>
         )}
       </div>
@@ -548,14 +548,14 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
               height: "18px",
               objectFit: "contain",
               transform: liked ? "scale(1.15)" : "scale(1)",
-              filter: liked ? "drop-shadow(0 0 5px rgba(239, 68, 68, 0.6))" : "none",
-              transition: "transform 0.2s"
+              filter: liked ? "drop-shadow(0 0 5px rgba(239, 68, 68, 0.6))" : "brightness(0) invert(1)",
+              transition: "all 0.2s"
             }}
           />
           {lang === "en" ? (liked ? "Liked" : "Like") : (liked ? "Te gusta" : "Me gusta")}
         </button>
         <button onClick={handleToggleComments} style={cardStyles.actionBtn}>
-          <img src="/images/comentarios.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
+          <img src="/images/comentarios.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
           {lang === "en" ? "Comment" : "Comentar"}
         </button>
         <ShareDropdown post={post} session={session} perfil={perfil} lang={lang} onRequireLogin={onRequireLogin} onRepost={onRepost} />
@@ -965,11 +965,11 @@ export default function ComunidadPage() {
           {/* Sección Explorar debajo del Perfil */}
           <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
             <div style={sidebarStyles.cardHeaderBanner}>
-              <img src="/images/Ubicacion.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Explore" : "Explorar"}
+              <img src="/images/Ubicacion.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Explore" : "Explorar"}
             </div>
             <div style={{ padding: "0 16px" }}>
               <Link href="/mapa" style={sidebarStyles.exploreLink}>
-                <img src="/images/mapa.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Tourist Map" : "Mapa Turístico"}
+                <img src="/images/mapa.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Tourist Map" : "Mapa Turístico"}
               </Link>
               {session && (perfil?.rol === "dueno" || perfil?.rol === "admin") && (
                 <Link href="/dashboard" style={sidebarStyles.exploreLink}>
@@ -985,7 +985,7 @@ export default function ComunidadPage() {
           {/* Mobile Search Bar */}
           <div className="hide-desktop" style={{ marginBottom: "16px", background: "var(--atlan-bg-card)", border: "1px solid rgba(20, 109, 158, 0.08)", borderRadius: "18px", padding: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}>
             <h4 style={{ margin: "0 0 12px", fontSize: "14px", fontWeight: "800", color: "var(--atlan-text-primary)", display: "flex", alignItems: "center", gap: "6px" }}>
-              <img src="/images/lupa.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Find Friends" : "Buscar Personas"}
+              <img src="/images/lupa.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Find Friends" : "Buscar Personas"}
             </h4>
             <div style={{ position: "relative" }}>
               <input
@@ -1040,7 +1040,7 @@ export default function ComunidadPage() {
               boxShadow: "0 6px 18px rgba(10, 25, 47, 0.20)"
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <img src="/images/lupa.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
+                <img src="/images/lupa.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                 <span style={{ fontSize: "14px", fontWeight: "800" }}>
                   {lang === "en" ? `Search results for "${searchQuery}"` : `Resultados para "${searchQuery}"`}
                 </span>
@@ -1140,7 +1140,7 @@ export default function ComunidadPage() {
           {/* Buscador */}
           <div style={sidebarStyles.sectionCard}>
             <div style={sidebarStyles.cardHeaderBanner}>
-              <img src="/images/lupa.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Search People" : "Buscar Personas"}
+              <img src="/images/lupa.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Search People" : "Buscar Personas"}
             </div>
             <div style={{ padding: "0 16px", position: "relative" }}>
               <input
@@ -1185,7 +1185,7 @@ export default function ComunidadPage() {
           {!searchQuery.trim() && (
             <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
               <div style={sidebarStyles.cardHeaderBanner}>
-                <img src="/images/tortuga.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Suggested People" : "Personas sugeridas"}
+                <img src="/images/tortuga.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Suggested People" : "Personas sugeridas"}
               </div>
               <div style={{ padding: "0 16px" }}>
                 {suggestedUsers.length === 0 ? (

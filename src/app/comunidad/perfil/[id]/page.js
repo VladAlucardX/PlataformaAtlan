@@ -264,12 +264,12 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
       <div style={cardStyles.statsBar}>
         {likesCount > 0 && (
           <span style={{ ...cardStyles.statText, display: "inline-flex", alignItems: "center", gap: "4px" }}>
-            <img src="/images/Like.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain" }} /> {likesCount}
+            <img src="/images/Like.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {likesCount}
           </span>
         )}
         {commentsCount > 0 && (
           <button onClick={handleToggleComments} style={{ ...cardStyles.statText, background: "none", border: "none", cursor: "pointer", padding: 0, display: "inline-flex", alignItems: "center", gap: "4px" }}>
-            <img src="/images/comentarios.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain" }} /> {commentsCount} {commentsCount === 1 ? "comentario" : "comentarios"}
+            <img src="/images/comentarios.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {commentsCount} {commentsCount === 1 ? "comentario" : "comentarios"}
           </button>
         )}
       </div>
@@ -285,14 +285,14 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
               height: "18px",
               objectFit: "contain",
               transform: liked ? "scale(1.15)" : "scale(1)",
-              filter: liked ? "drop-shadow(0 0 5px rgba(239, 68, 68, 0.6))" : "none",
-              transition: "transform 0.2s"
+              filter: liked ? "drop-shadow(0 0 5px rgba(239, 68, 68, 0.6))" : "brightness(0) invert(1)",
+              transition: "all 0.2s"
             }}
           />
           {liked ? "Te gusta" : "Me gusta"}
         </button>
         <button onClick={handleToggleComments} style={cardStyles.actionBtn}>
-          <img src="/images/comentarios.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain" }} /> Comentar
+          <img src="/images/comentarios.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> Comentar
         </button>
         <ShareDropdown post={post} session={session} perfil={perfil} lang={lang} onRequireLogin={onRequireLogin} />
       </div>

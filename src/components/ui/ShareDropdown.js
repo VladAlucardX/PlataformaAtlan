@@ -188,7 +188,7 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
         onClick={() => { setOpen(!open); setShowSendChat(false); }}
         style={styles.actionBtn}
       >
-        <img src="/images/repst.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Share" : "Compartir"}
+        <img src="/images/repst.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Share" : "Compartir"}
       </button>
 
       {open && (
