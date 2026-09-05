@@ -162,7 +162,6 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
 
         {/* Far Right Actions */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }} className="hide-mobile">
-          <LanguageToggle variant="pill" />
           {session && <NotificationDropdown session={session} />}
           {session ? (
             <div style={{ position: "relative" }} ref={dropdownRef}>
@@ -432,7 +431,6 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
         {/* Mobile Hamburger Button */}
         <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           {session && <NotificationDropdown session={session} />}
-          <LanguageToggle variant="icon" />
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
