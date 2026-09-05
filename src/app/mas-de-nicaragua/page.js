@@ -846,9 +846,13 @@ export default function MasDeNicaraguaPage() {
                         padding: "4px 12px",
                         borderRadius: "10px",
                         fontSize: "12px",
-                        fontWeight: "800"
+                        fontWeight: "800",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px"
                       }}>
-                        🏛️ Patrimonio Histórico Nacional
+                        <img src="/images/edificio.svg" alt="Patrimonio" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                        <span>Patrimonio Histórico Nacional</span>
                       </span>
                     </div>
 
@@ -865,8 +869,9 @@ export default function MasDeNicaraguaPage() {
                         padding: "12px 16px",
                         marginBottom: "16px"
                       }}>
-                        <span style={{ fontSize: "12px", fontWeight: "900", color: "#FFD700", textTransform: "uppercase", display: "block", marginBottom: "4px", letterSpacing: "0.5px" }}>
-                          📜 Origen Etimológico y Raíces Indígenas
+                        <span style={{ fontSize: "12px", fontWeight: "900", color: "#FFD700", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px", letterSpacing: "0.5px" }}>
+                          <img src="/images/sombrero.svg" alt="Origen" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                          <span>Origen Etimológico y Raíces Indígenas</span>
                         </span>
                         <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.9)", lineHeight: "1.6" }}>
                           {selectedDeptForDetails.historia.origenEtimologico}
@@ -967,8 +972,9 @@ export default function MasDeNicaraguaPage() {
                             borderRadius: "16px",
                             padding: "16px"
                           }}>
-                            <span style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700", display: "block", marginBottom: "2px" }}>
-                              📜 {per.nombre}
+                            <span style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700", display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
+                              <img src="/images/sombrero.svg" alt="Sombrero" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                              <span>{per.nombre}</span>
                             </span>
                             <span style={{ fontSize: "11.5px", fontWeight: "700", color: "#38BDF8", display: "block", marginBottom: "8px" }}>
                               {per.titulo}
@@ -998,8 +1004,9 @@ export default function MasDeNicaraguaPage() {
                             padding: "16px"
                           }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                              <span style={{ fontSize: "14px", fontWeight: "900", color: "#FFFFFF" }}>
-                                🏛️ {pat.sitio}
+                              <span style={{ fontSize: "14px", fontWeight: "900", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "6px" }}>
+                                <img src="/images/edificio.svg" alt="Patrimonio" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(100%)" }} />
+                                <span>{pat.sitio}</span>
                               </span>
                               <span style={{ fontSize: "10.5px", fontWeight: "800", color: "#10B981", background: "rgba(16, 185, 129, 0.15)", padding: "2px 8px", borderRadius: "6px" }}>
                                 {pat.epoca}
@@ -1163,8 +1170,9 @@ export default function MasDeNicaraguaPage() {
 
                   {/* Gastronomía y Tradición Autóctona */}
                   <div style={{ background: "rgba(245, 158, 11, 0.08)", border: "1px solid rgba(245, 158, 11, 0.25)", borderRadius: "14px", padding: "14px" }}>
-                    <h5 style={{ fontSize: "13px", fontWeight: "800", color: "#F59E0B", margin: "0 0 6px", textTransform: "uppercase" }}>
-                      💡 Sabor y Tradición Autóctona
+                    <h5 style={{ fontSize: "13px", fontWeight: "800", color: "#F59E0B", margin: "0 0 6px", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "6px" }}>
+                      <img src="/images/flor.svg" alt="Flor" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                      <span>Sabor y Tradición Autóctona</span>
                     </h5>
                     <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
                       Cada rincón del departamento conserva recetas ancestrales en maíz, bebidas tradicionales (chicha, pinolillo) y expresiones folclóricas transmitidas por generaciones.
