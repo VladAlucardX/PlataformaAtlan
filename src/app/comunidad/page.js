@@ -982,7 +982,7 @@ export default function ComunidadPage() {
 
         {/* ── FEED CENTRAL ── */}
         <main style={pageStyles.feed}>
-          {/* Mobile Search Bar */}
+          {/* Mobile Search Bar & Results */}
           <div className="hide-desktop" style={{ marginBottom: "16px", background: "var(--atlan-bg-card)", border: "1px solid rgba(20, 109, 158, 0.08)", borderRadius: "18px", padding: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}>
             <h4 style={{ margin: "0 0 12px", fontSize: "14px", fontWeight: "800", color: "var(--atlan-text-primary)", display: "flex", alignItems: "center", gap: "6px" }}>
               <img src="/images/lupa.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Find Friends" : "Buscar Personas"}
@@ -1024,47 +1024,27 @@ export default function ComunidadPage() {
                 </button>
               )}
             </div>
+            {/* Resultados de búsqueda en móvil */}
+            {searchQuery.trim() && (
+              <div style={{ marginTop: "12px", borderTop: "1px solid rgba(20,109,158,0.08)", paddingTop: "10px" }}>
+                <div style={{ fontSize: "12px", fontWeight: "800", color: "var(--atlan-text-muted)", marginBottom: "8px" }}>
+                  {lang === "en" ? "Search Results:" : "Resultados de la Búsqueda:"}
+                </div>
+                {searching ? (
+                  <p style={{ fontSize: "12px", color: "var(--atlan-text-muted)", margin: 0 }}>{lang === "en" ? "Searching..." : "Buscando..."}</p>
+                ) : searchResults.length === 0 ? (
+                  <p style={{ fontSize: "12px", color: "var(--atlan-text-muted)", margin: 0 }}>{lang === "en" ? "No people found" : "No se encontraron personas"}</p>
+                ) : (
+                  searchResults.map((u) => (
+                    <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Banner indicador de búsqueda activa en el Feed */}
-          {searchQuery.trim() && (
-            <div style={{
-              background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
-              borderRadius: "16px",
-              padding: "14px 20px",
-              marginBottom: "16px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              color: "#FFFFFF",
-              boxShadow: "0 6px 18px rgba(10, 25, 47, 0.20)"
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <img src="/images/lupa.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                <span style={{ fontSize: "14px", fontWeight: "800" }}>
-                  {lang === "en" ? `People matching "${searchQuery}"` : `Personas encontradas para "${searchQuery}"`}
-                </span>
-              </div>
-              <button
-                onClick={() => setSearchQuery("")}
-                style={{
-                  background: "rgba(255, 255, 255, 0.15)",
-                  border: "none",
-                  color: "#FFD700",
-                  padding: "4px 12px",
-                  borderRadius: "10px",
-                  fontWeight: "800",
-                  fontSize: "12px",
-                  cursor: "pointer"
-                }}
-              >
-                {lang === "en" ? "Clear Search" : "Limpiar Búsqueda"}
-              </button>
-            </div>
-          )}
-
-          {/* Create Post Bar (Solo si no hay búsqueda activa) */}
-          {session && !searchQuery.trim() && (
+          {/* Create Post Bar */}
+          {session && (
             <div style={pageStyles.createPostBar} onClick={() => setShowCreateModal(true)}>
               <div style={avatarStyle(perfil?.avatar_url, 40)}>
                 {!perfil?.avatar_url && (perfil?.nombre_completo?.[0]?.toUpperCase() || "U")}
@@ -1078,78 +1058,42 @@ export default function ComunidadPage() {
             </div>
           )}
 
-          {/* Renderizado de Búsqueda (Solo Personas) o Muro de Publicaciones */}
-          {searchQuery.trim() ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {searching ? (
-                <div style={{ textAlign: "center", padding: "40px 20px" }}>
-                  <div style={{ width: "32px", height: "32px", border: "3px solid rgba(20, 109, 158, 0.12)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 12px" }} />
-                  <p style={{ fontSize: "13px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Searching people..." : "Buscando personas..."}</p>
-                </div>
-              ) : searchResults.length === 0 ? (
-                <div style={pageStyles.emptyState}>
-                  <img src="/images/lupa.svg" alt="" style={{ width: "40px", height: "40px", objectFit: "contain", filter: "brightness(0)", marginBottom: "12px" }} />
-                  <h3 style={{ margin: "0 0 6px", fontSize: "18px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
-                    {lang === "en" ? "No people found" : "No se encontraron personas"}
-                  </h3>
-                  <p style={{ margin: 0, fontSize: "13px", color: "var(--atlan-text-secondary)" }}>
-                    {lang === "en" ? `No users matching "${searchQuery}"` : `No hay personas registradas que coincidan con "${searchQuery}"`}
-                  </p>
-                </div>
-              ) : (
-                <div style={{ background: "var(--atlan-bg-card)", borderRadius: "20px", padding: "16px", border: "1px solid rgba(20,109,158,0.10)", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
-                  {searchResults.map((user) => (
-                    <UserSuggestionCard
-                      key={user.id}
-                      user={user}
-                      session={session}
-                      lang={lang}
-                      onRequireLogin={() => setShowLoginModal(true)}
-                      onFollowChange={fetchSuggestedUsers}
-                    />
-                  ))}
-                </div>
-              )}
+          {/* Muro de Publicaciones Principal (SIEMPRE VISIBLE) */}
+          {loadingPosts ? (
+            <div style={{ textAlign: "center", padding: "60px 20px" }}>
+              <div style={{ width: "40px", height: "40px", border: "3px solid rgba(20, 109, 158, 0.12)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
+              <p style={{ fontSize: "14px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Loading posts..." : "Cargando publicaciones..."}</p>
+            </div>
+          ) : posts.length === 0 ? (
+            <div style={pageStyles.emptyState}>
+              <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}><Icon name="search" size={48} /></span>
+              <h3 style={{ margin: "0 0 8px", fontSize: "20px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
+                {lang === "en" ? "No posts yet" : "No hay publicaciones todavía"}
+              </h3>
+              <p style={{ margin: 0, fontSize: "14px", color: "var(--atlan-text-secondary)" }}>
+                {lang === "en" ? "Be the first to share something with the community!" : "¡Sé el primero en compartir algo con la comunidad!"}
+              </p>
             </div>
           ) : (
             <>
-              {loadingPosts ? (
-                <div style={{ textAlign: "center", padding: "60px 20px" }}>
-                  <div style={{ width: "40px", height: "40px", border: "3px solid rgba(20, 109, 158, 0.12)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
-                  <p style={{ fontSize: "14px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Loading posts..." : "Cargando publicaciones..."}</p>
-                </div>
-              ) : posts.length === 0 ? (
-                <div style={pageStyles.emptyState}>
-                  <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}><Icon name="search" size={48} /></span>
-                  <h3 style={{ margin: "0 0 8px", fontSize: "20px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
-                    {lang === "en" ? "No posts yet" : "No hay publicaciones todavía"}
-                  </h3>
-                  <p style={{ margin: 0, fontSize: "14px", color: "var(--atlan-text-secondary)" }}>
-                    {lang === "en" ? "Be the first to share something with the community!" : "¡Sé el primero en compartir algo con la comunidad!"}
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {posts.map((post) => (
-                    <PostCard
-                      key={post.id}
-                      post={post}
-                      session={session}
-                      perfil={perfil}
-                      lang={lang}
-                      onDelete={handleDeletePost}
-                      onRequireLogin={() => setShowLoginModal(true)}
-                      onImageClick={(p) => setViewerPost(p)}
-                      onRepost={handleRepost}
-                    />
-                  ))}
-                  <div ref={loaderRef} style={{ padding: "20px", textAlign: "center" }}>
-                    {loadingMore && (
-                      <div style={{ width: "28px", height: "28px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
-                    )}
-                  </div>
-                </>
-              )}
+              {posts.map((post) => (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  session={session}
+                  perfil={perfil}
+                  lang={lang}
+                  onDelete={handleDeletePost}
+                  onRequireLogin={() => setShowLoginModal(true)}
+                  onImageClick={(p) => setViewerPost(p)}
+                  onRepost={handleRepost}
+                />
+              ))}
+              <div ref={loaderRef} style={{ padding: "20px", textAlign: "center" }}>
+                {loadingMore && (
+                  <div style={{ width: "28px", height: "28px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
+                )}
+              </div>
             </>
           )}
         </main>
@@ -1200,14 +1144,36 @@ export default function ComunidadPage() {
             </div>
           </div>
 
-          {/* Si NO hay búsqueda activa, se muestran las "Personas sugeridas" */}
-          {!searchQuery.trim() && (
-            <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
-              <div style={sidebarStyles.cardHeaderBanner}>
-                <img src="/images/tortuga.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Suggested People" : "Personas sugeridas"}
-              </div>
-              <div style={{ padding: "0 16px" }}>
-                {suggestedUsers.length === 0 ? (
+          {/* Tarjeta dinámica: "Resultados de la Búsqueda" o "Personas sugeridas" */}
+          <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
+            <div style={sidebarStyles.cardHeaderBanner}>
+              {searchQuery.trim() ? (
+                <>
+                  <img src="/images/lupa.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Search Results" : "Resultados de la Búsqueda"}
+                </>
+              ) : (
+                <>
+                  <img src="/images/tortuga.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Suggested People" : "Personas sugeridas"}
+                </>
+              )}
+            </div>
+            <div style={{ padding: "0 16px" }}>
+              {searchQuery.trim() ? (
+                searching ? (
+                  <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
+                    {lang === "en" ? "Searching..." : "Buscando..."}
+                  </p>
+                ) : searchResults.length === 0 ? (
+                  <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
+                    {lang === "en" ? "No people found" : "No se encontraron personas"}
+                  </p>
+                ) : (
+                  searchResults.map((u) => (
+                    <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
+                  ))
+                )
+              ) : (
+                suggestedUsers.length === 0 ? (
                   <p style={{ margin: 0, padding: "10px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
                     {lang === "en" ? "No suggestions" : "Sin sugerencias"}
                   </p>
@@ -1215,34 +1181,12 @@ export default function ComunidadPage() {
                   suggestedUsers.map((u) => (
                     <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
                   ))
-                )}
-              </div>
+                )
+              )}
             </div>
-          )}
+          </div>
 
-          {/* Si SÍ hay búsqueda activa, SE OCULTA "Personas sugeridas" y se muestran únicamente los "Resultados de Búsqueda" */}
-          {searchQuery.trim() && (
-            <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
-              <div style={sidebarStyles.cardHeaderBanner}>
-                <Icon name="search" size={16} /> {lang === "en" ? "Search Results" : "Resultados de la Búsqueda"}
-              </div>
-              <div style={{ padding: "0 16px" }}>
-                {searching ? (
-                  <div style={{ padding: "12px", textAlign: "center" }}>
-                    <div style={{ width: "20px", height: "20px", border: "2px solid rgba(20, 109, 158, 0.10)", borderTopColor: "var(--atlan-gold)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
-                  </div>
-                ) : searchResults.length === 0 ? (
-                  <p style={{ margin: 0, padding: "12px 0", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
-                    {t("social.noResults")}
-                  </p>
-                ) : (
-                  searchResults.map((u) => (
-                    <UserSuggestionCard key={u.id} user={u} session={session} lang={lang} onRequireLogin={() => setShowLoginModal(true)} onFollowChange={fetchSuggestedUsers} />
-                  ))
-                )}
-              </div>
-            </div>
-          )}
+
         </aside>
       </div>
 
