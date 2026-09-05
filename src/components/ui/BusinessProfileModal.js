@@ -403,7 +403,9 @@ export default function BusinessProfileModal({
             padding: '24px 28px',
             scrollbarWidth: 'thin',
             scrollbarColor: 'rgba(20, 109, 158, 0.2) transparent'
-          }}          {/* PESTAÑA 1: INFORMACIÓN Y SECCIÓN DE INTERÉS TURÍSTICO */}
+          }}
+        >
+          {/* PESTAÑA 1: INFORMACIÓN Y SECCIÓN DE INTERÉS TURÍSTICO */}
           {activeTab === 'info' && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
               {/* COLUMNA IZQUIERDA: Descripción & Interés Turístico */}
