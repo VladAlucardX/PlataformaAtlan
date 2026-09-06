@@ -334,6 +334,38 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
   );
 }
 
+function renderFormattedContent(contenido) {
+  if (!contenido) return null;
+  if (typeof contenido === "string" && contenido.includes("🔁")) {
+    const parts = contenido.split("🔁");
+    return (
+      <span>
+        {parts.map((part, index) => (
+          <React.Fragment key={index}>
+            {index > 0 && (
+              <img
+                src="/images/repst.svg"
+                alt="Repost"
+                style={{
+                  width: "18px",
+                  height: "18px",
+                  objectFit: "contain",
+                  display: "inline-block",
+                  verticalAlign: "-3px",
+                  marginRight: "6px",
+                  filter: "brightness(0) saturate(100%) invert(34%) sepia(85%) saturate(1045%) hue-rotate(170deg)"
+                }}
+              />
+            )}
+            {part}
+          </React.Fragment>
+        ))}
+      </span>
+    );
+  }
+  return contenido;
+}
+
 // ── POST CARD ─────────────────────────────────────────────────────────────
 function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onImageClick, onRepost }) {
   const [liked, setLiked] = useState(false);
@@ -467,7 +499,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
       </div>
 
       {/* Content */}
-      <p style={cardStyles.content}>{post.contenido}</p>
+      <p style={cardStyles.content}>{renderFormattedContent(post.contenido)}</p>
 
       {/* Image */}
       {post.imagen_url && (

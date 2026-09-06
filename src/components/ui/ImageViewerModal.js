@@ -31,6 +31,38 @@ function avatarStyle(url, size) {
   };
 }
 
+function renderFormattedContent(contenido) {
+  if (!contenido) return null;
+  if (typeof contenido === "string" && contenido.includes("🔁")) {
+    const parts = contenido.split("🔁");
+    return (
+      <span>
+        {parts.map((part, index) => (
+          <React.Fragment key={index}>
+            {index > 0 && (
+              <img
+                src="/images/repst.svg"
+                alt="Repost"
+                style={{
+                  width: "18px",
+                  height: "18px",
+                  objectFit: "contain",
+                  display: "inline-block",
+                  verticalAlign: "-3px",
+                  marginRight: "6px",
+                  filter: "brightness(0) saturate(100%) invert(34%) sepia(85%) saturate(1045%) hue-rotate(170deg)"
+                }}
+              />
+            )}
+            {part}
+          </React.Fragment>
+        ))}
+      </span>
+    );
+  }
+  return contenido;
+}
+
 export default function ImageViewerModal({ post, session, perfil, lang, onClose }) {
   const [mounted, setMounted] = useState(false);
   const [comments, setComments] = useState([]);
@@ -180,7 +212,7 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
             {post.contenido && (
               <div style={styles.postContent}>
                 <p style={{ margin: 0, fontSize: "14px", lineHeight: "1.6", color: "var(--atlan-text-primary)", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-                  {post.contenido}
+                  {renderFormattedContent(post.contenido)}
                 </p>
               </div>
             )}

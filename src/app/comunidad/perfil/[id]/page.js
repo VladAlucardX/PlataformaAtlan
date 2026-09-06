@@ -92,6 +92,38 @@ const cardStyles = {
   sendBtn: { background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none", width: "36px", height: "36px", borderRadius: "50%", color: "white", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" },
 };
 
+function renderFormattedContent(contenido) {
+  if (!contenido) return null;
+  if (typeof contenido === "string" && contenido.includes("🔁")) {
+    const parts = contenido.split("🔁");
+    return (
+      <span>
+        {parts.map((part, index) => (
+          <React.Fragment key={index}>
+            {index > 0 && (
+              <img
+                src="/images/repst.svg"
+                alt="Repost"
+                style={{
+                  width: "18px",
+                  height: "18px",
+                  objectFit: "contain",
+                  display: "inline-block",
+                  verticalAlign: "-3px",
+                  marginRight: "6px",
+                  filter: "brightness(0) saturate(100%) invert(34%) sepia(85%) saturate(1045%) hue-rotate(170deg)"
+                }}
+              />
+            )}
+            {part}
+          </React.Fragment>
+        ))}
+      </span>
+    );
+  }
+  return contenido;
+}
+
 function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onImageClick }) {
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes_count || 0);
@@ -209,7 +241,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
         )}
       </div>
 
-      <p style={cardStyles.content}>{post.contenido}</p>
+      <p style={cardStyles.content}>{renderFormattedContent(post.contenido)}</p>
 
       {/* Imagen */}
       {post.imagen_url && (
