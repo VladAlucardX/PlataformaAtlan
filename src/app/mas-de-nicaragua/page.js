@@ -675,7 +675,7 @@ export default function MasDeNicaraguaPage() {
           inset: 0,
           zIndex: 9999,
           backgroundColor: "#0A192F",
-          padding: "60px 20px 20px",
+          padding: "20px 20px 16px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -721,12 +721,12 @@ export default function MasDeNicaraguaPage() {
             zIndex: 0
           }} />
 
-          {/* Tarjeta Modal General (Ancho 1160px, altura centrada 600px / 84vh) */}
+          {/* Tarjeta Modal General (Ancho 1160px, altura centrada 720px / 90vh) */}
           <div style={{
             maxWidth: "1160px",
             width: "100%",
-            height: "600px",
-            maxHeight: "84vh",
+            height: "720px",
+            maxHeight: "90vh",
             display: "flex",
             flexDirection: "column",
             position: "relative",
@@ -1335,7 +1335,7 @@ export default function MasDeNicaraguaPage() {
                           onClick={() => setLightboxIndex(-1)}
                           style={{
                             width: "100%",
-                            height: "288px",
+                            height: "340px",
                             borderRadius: "14px",
                             overflow: "hidden",
                             position: "relative",
@@ -1381,7 +1381,7 @@ export default function MasDeNicaraguaPage() {
                                 cursor: "pointer",
                                 border: "1px solid rgba(255,255,255,0.1)",
                                 boxShadow: "0 4px 14px rgba(0,0,0,0.4)",
-                                height: "139px",
+                                height: "165px",
                                 background: "#0F172A",
                                 transition: "transform 0.25s, box-shadow 0.25s"
                               }}
