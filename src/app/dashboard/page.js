@@ -1020,22 +1020,6 @@ export default function DashboardPage() {
           filter: "drop-shadow(0 4px 20px rgba(255, 215, 0, 0.4))",
         }}
       />
-      {/* Orbes de luz ambientales de fondo */}
-      <div style={{
-        position: "absolute", top: "-5%", right: "-5%", width: "650px", height: "650px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(255,215,0,0.40) 0%, rgba(255,215,0,0.12) 50%, transparent 70%)",
-        filter: "blur(40px)", pointerEvents: "none", zIndex: 0
-      }} />
-      <div style={{
-        position: "absolute", bottom: "-5%", left: "-5%", width: "550px", height: "550px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(20,109,158,0.32) 0%, rgba(20,109,158,0.08) 50%, transparent 70%)",
-        filter: "blur(40px)", pointerEvents: "none", zIndex: 0
-      }} />
-      <div style={{
-        position: "absolute", top: "35%", left: "50%", transform: "translateX(-50%)", width: "450px", height: "450px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(23,170,74,0.28) 0%, transparent 70%)",
-        filter: "blur(45px)", pointerEvents: "none", zIndex: 0
-      }} />
       <Navbar activePage="dashboard" session={session} perfil={perfil} onLogout={handleLogout} />
 
       {/* TOAST NOTIFICATION BANNER 3D CLAYMORFISMO */}
@@ -1063,7 +1047,15 @@ export default function DashboardPage() {
           border: "2px solid rgba(255, 255, 255, 0.8)",
           pointerEvents: "none"
         }} className="animate-fade-in-down">
-          <span>{toastBanner.type === "success" ? "✅" : toastBanner.type === "error" ? "❌" : "ℹ️"}</span>
+          <span>
+            {toastBanner.type === "success" ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            ) : toastBanner.type === "error" ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            )}
+          </span>
           <span>{toastBanner.message}</span>
         </div>
       )}
@@ -1103,7 +1095,8 @@ export default function DashboardPage() {
                 border: "1px solid rgba(255, 215, 0, 0.35)",
                 boxShadow: "0 2px 8px rgba(255, 215, 0, 0.1)"
               }}>
-                🏬 {lang === "en" ? "Business Management Hub" : "Panel de Gestión de Negocios"}
+                <Icon name="building" size={14} color="#FFD700" />
+                <span>{lang === "en" ? "Business Management Hub" : "Panel de Gestión de Negocios"}</span>
               </div>
               <h2 style={{
                 fontSize: "34px",
@@ -1133,9 +1126,10 @@ export default function DashboardPage() {
               <button
                 onClick={() => setViewMode("manage")}
                 className="clay-btn-gold"
-                style={{ padding: "12px 24px", fontSize: "13.5px", flexShrink: 0 }}
+                style={{ padding: "12px 24px", fontSize: "13.5px", flexShrink: 0, display: "inline-flex", alignItems: "center", gap: "8px" }}
               >
-                ⚡ {lang === "en" ? "Manage Selected Business" : "Administrar Negocio Actual"}
+                <Icon name="sliders" size={16} color="#1E293B" />
+                <span>{lang === "en" ? "Manage Selected Business" : "Administrar Negocio Actual"}</span>
               </button>
             )}
           </div>
@@ -1992,7 +1986,7 @@ export default function DashboardPage() {
                   </div>
 
                   <form onSubmit={handleSaveGeneral} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", overflow: "hidden" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "18px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "18px", flex: 1, overflowY: "auto", paddingRight: "6px" }}>
                       {/* COLUMNA IZQUIERDA: DATOS BÁSICOS */}
                       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <div style={styles.inputGroup}>
@@ -2051,11 +2045,14 @@ export default function DashboardPage() {
                         </div>
 
                         {/* Logo & Photos */}
-                        <label style={{ ...styles.label, color: "var(--atlan-gold-dark, #B8960E)", fontWeight: "800", marginTop: "2px" }}>📸 {lang === "en" ? "Logo & Gallery Photos" : "Logo y Fotos del Local"}</label>
+                        <label style={{ ...styles.label, color: "var(--atlan-gold-dark, #B8960E)", fontWeight: "800", marginTop: "2px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                          <span>{lang === "en" ? "Logo & Gallery Photos" : "Logo y Fotos del Local"}</span>
+                        </label>
                         <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "rgba(20, 109, 158, 0.03)", padding: "8px 12px", borderRadius: "12px", border: "1px solid rgba(20, 109, 158, 0.1)" }}>
                           <div style={{ textAlign: "center", flexShrink: 0 }}>
                             <div style={{ width: "46px", height: "46px", borderRadius: "50%", border: "2px solid rgba(20, 109, 158, 0.2)", background: logoUrl ? `url(${logoUrl}) center/cover no-repeat` : "#F1F5F9", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", color: "#9CA3AF" }}>
-                              {!logoUrl && "🏢"}
+                              {!logoUrl && <Icon name="building" size={20} color="#9CA3AF" />}
                             </div>
                             <label style={{ fontSize: "10px", fontWeight: "800", color: "#146D9E", cursor: "pointer", marginTop: "3px", display: "block" }}>
                               {uploadingLogo ? "..." : (lang === "en" ? "Logo" : "Subir Logo")}
@@ -2124,47 +2121,65 @@ export default function DashboardPage() {
                   <form onSubmit={(e) => { e.preventDefault(); handleSaveExcentricidades(); }} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", overflow: "hidden" }}>
                     <div style={{ flex: 1, overflowY: "auto", paddingRight: "4px", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px" }}>
                       {[
-                        { key: "hasMenu", label: lang === "en" ? "Dishes & Menu" : "Menú y Platillos", val: hasMenu, set: setHasMenu, icon: "🍲" },
-                        { key: "hasHours", label: lang === "en" ? "Opening Hours" : "Horarios de Atención", val: hasHours, set: setHasHours, icon: "⏰" },
-                        { key: "hasLodging", label: lang === "en" ? "Lodging / Hotel" : "Hospedaje / Hotel", val: hasLodging, set: setHasLodging, icon: "🏨" },
-                        { key: "hasWifi", label: lang === "en" ? "Free Wi-Fi" : "Wi-Fi Gratis", val: hasWifi, set: setHasWifi, icon: "📶" },
-                        { key: "hasParking", label: lang === "en" ? "Parking Lot" : "Estacionamiento", val: hasParking, set: setHasParking, icon: "🅿️" },
-                        { key: "hasPets", label: lang === "en" ? "Pet Friendly" : "Acepta Mascotas", val: hasPets, set: setHasPets, icon: "🐾" },
-                        { key: "hasCardPayment", label: lang === "en" ? "Card Payment" : "Pago con Tarjeta", val: hasCardPayment, set: setHasCardPayment, icon: "💳" },
-                        { key: "hasAccessibility", label: lang === "en" ? "Accessibility Ramp" : "Rampa Accesible", val: hasAccessibility, set: setHasAccessibility, icon: "♿" },
-                        { key: "hasDelivery", label: lang === "en" ? "Delivery Service" : "Servicio a Domicilio", val: hasDelivery, set: setHasDelivery, icon: "🛵" },
-                        { key: "hasOnlineBooking", label: lang === "en" ? "Online Reservations" : "Reservas en Línea", val: hasOnlineBooking, set: setHasOnlineBooking, icon: "📅" },
-                        { key: "hasAc", label: lang === "en" ? "Air Conditioning" : "Aire Acondicionado", val: hasAc, set: setHasAc, icon: "❄️" },
-                        { key: "hasKidsArea", label: lang === "en" ? "Kids Playground" : "Área de Niños", val: hasKidsArea, set: setHasKidsArea, icon: "🎈" },
-                        { key: "hasLiveMusic", label: lang === "en" ? "Live Music" : "Música en Vivo", val: hasLiveMusic, set: setHasLiveMusic, icon: "🎵" },
-                        { key: "hasTransport", label: lang === "en" ? "Shuttle / Transport" : "Transporte / Shuttle", val: hasTransport, set: setHasTransport, icon: "🚐" }
-                      ].map((item) => (
-                        <label
-                          key={item.key}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            padding: "9px 12px",
-                            borderRadius: "10px",
-                            background: item.val ? "rgba(5, 150, 105, 0.08)" : "#F8FAFC",
-                            border: item.val ? "1.5px solid #059669" : "1px solid #E2E8F0",
-                            cursor: "pointer",
-                            transition: "all 0.15s ease"
-                          }}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={item.val}
-                            onChange={(e) => item.set(e.target.checked)}
-                            style={{ width: "15px", height: "15px", accentColor: "#059669", cursor: "pointer" }}
-                          />
-                          <span style={{ fontSize: "14px" }}>{item.icon}</span>
-                          <span style={{ fontSize: "12px", fontWeight: item.val ? "800" : "600", color: item.val ? "#047857" : "#334155" }}>
-                            {item.label}
-                          </span>
-                        </label>
-                      ))}
+                        { key: "hasMenu", label: lang === "en" ? "Dishes & Menu" : "Menú y Platillos", val: hasMenu, set: setHasMenu },
+                        { key: "hasHours", label: lang === "en" ? "Opening Hours" : "Horarios de Atención", val: hasHours, set: setHasHours },
+                        { key: "hasLodging", label: lang === "en" ? "Lodging / Hotel" : "Hospedaje / Hotel", val: hasLodging, set: setHasLodging },
+                        { key: "hasWifi", label: lang === "en" ? "Free Wi-Fi" : "Wi-Fi Gratis", val: hasWifi, set: setHasWifi },
+                        { key: "hasParking", label: lang === "en" ? "Parking Lot" : "Estacionamiento", val: hasParking, set: setHasParking },
+                        { key: "hasPets", label: lang === "en" ? "Pet Friendly" : "Acepta Mascotas", val: hasPets, set: setHasPets },
+                        { key: "hasCardPayment", label: lang === "en" ? "Card Payment" : "Pago con Tarjeta", val: hasCardPayment, set: setHasCardPayment },
+                        { key: "hasAccessibility", label: lang === "en" ? "Accessibility Ramp" : "Rampa Accesible", val: hasAccessibility, set: setHasAccessibility },
+                        { key: "hasDelivery", label: lang === "en" ? "Delivery Service" : "Servicio a Domicilio", val: hasDelivery, set: setHasDelivery },
+                        { key: "hasOnlineBooking", label: lang === "en" ? "Online Reservations" : "Reservas en Línea", val: hasOnlineBooking, set: setHasOnlineBooking },
+                        { key: "hasAc", label: lang === "en" ? "Air Conditioning" : "Aire Acondicionado", val: hasAc, set: setHasAc },
+                        { key: "hasKidsArea", label: lang === "en" ? "Kids Playground" : "Área de Niños", val: hasKidsArea, set: setHasKidsArea },
+                        { key: "hasLiveMusic", label: lang === "en" ? "Live Music" : "Música en Vivo", val: hasLiveMusic, set: setHasLiveMusic },
+                        { key: "hasTransport", label: lang === "en" ? "Shuttle / Transport" : "Transporte / Shuttle", val: hasTransport, set: setHasTransport }
+                      ].map((item) => {
+                        const iconColor = item.val ? "#047857" : "#64748B";
+                        return (
+                          <label
+                            key={item.key}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                              padding: "9px 12px",
+                              borderRadius: "10px",
+                              background: item.val ? "rgba(5, 150, 105, 0.08)" : "#F8FAFC",
+                              border: item.val ? "1.5px solid #059669" : "1px solid #E2E8F0",
+                              cursor: "pointer",
+                              transition: "all 0.15s ease"
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={item.val}
+                              onChange={(e) => item.set(e.target.checked)}
+                              style={{ width: "15px", height: "15px", accentColor: "#059669", cursor: "pointer" }}
+                            />
+                            <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                              {item.key === "hasMenu" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>}
+                              {item.key === "hasHours" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>}
+                              {item.key === "hasLodging" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="8" y1="6" x2="8.01" y2="6"/><line x1="16" y1="6" x2="16.01" y2="6"/><line x1="8" y1="11" x2="8.01" y2="11"/><line x1="16" y1="11" x2="16.01" y2="11"/></svg>}
+                              {item.key === "hasWifi" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>}
+                              {item.key === "hasParking" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>}
+                              {item.key === "hasPets" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><path d="M9 10a5 5 0 0 1 5 5v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a6 6 0 0 1 7-6z"/></svg>}
+                              {item.key === "hasCardPayment" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>}
+                              {item.key === "hasAccessibility" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2"/><path d="M12 6v6m0 0l4 8m-4-8H7m9 3a5 5 0 1 1-5-5"/></svg>}
+                              {item.key === "hasDelivery" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>}
+                              {item.key === "hasOnlineBooking" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>}
+                              {item.key === "hasAc" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93"/></svg>}
+                              {item.key === "hasKidsArea" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>}
+                              {item.key === "hasLiveMusic" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>}
+                              {item.key === "hasTransport" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="6" width="18" height="11" rx="2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>}
+                            </span>
+                            <span style={{ fontSize: "12px", fontWeight: item.val ? "800" : "600", color: item.val ? "#047857" : "#334155" }}>
+                              {item.label}
+                            </span>
+                          </label>
+                        );
+                      })}
                     </div>
 
                     <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "12px", flexShrink: 0 }}>
@@ -2257,7 +2272,9 @@ export default function DashboardPage() {
                         ))}
 
                         <div style={{ marginTop: "2px", padding: "6px 10px", background: "rgba(217, 119, 6, 0.08)", borderRadius: "8px", border: "1px solid rgba(217, 119, 6, 0.2)", display: "flex", alignItems: "center", gap: "8px" }}>
-                          <span style={{ fontSize: "13px" }}>💡</span>
+                          <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1.55.59 2.97 1.5 4 .76.76 1.23 1.52 1.41 2.5z"/></svg>
+                          </span>
                           <span style={{ fontSize: "11px", color: "#92400E", fontWeight: "600" }}>
                             {lang === "en" ? "Tip: Keep hours updated so tourists know when to visit!" : "¡Mantén tus horarios actualizados para que los visitantes sepan cuándo atenderás!"}
                           </span>
@@ -2291,7 +2308,10 @@ export default function DashboardPage() {
                     {/* FORMULARIO AGREGAR PLATILLO (IZQUIERDA) */}
                     <form onSubmit={handleAddPlato} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", background: "#F8FAFC", padding: "12px", borderRadius: "12px", border: "1px solid #E2E8F0" }}>
                       <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                        <h4 style={{ margin: 0, fontSize: "13.5px", fontWeight: "800", color: "#0284C7" }}>➕ {lang === "en" ? "New Item" : "Agregar Nuevo Platillo"}</h4>
+                        <h4 style={{ margin: 0, fontSize: "13.5px", fontWeight: "800", color: "#0284C7", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                          <Icon name="plus" size={14} color="#0284C7" />
+                          <span>{lang === "en" ? "New Item" : "Agregar Nuevo Platillo"}</span>
+                        </h4>
                         
                         <div style={styles.inputGroup}>
                           <label style={{ ...styles.label, fontSize: "11px" }}>{lang === "en" ? "Dish Name" : "Nombre del Platillo"}</label>
@@ -2317,10 +2337,11 @@ export default function DashboardPage() {
                         {/* FOTO PLATILLO */}
                         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "2px" }}>
                           <div style={{ width: "40px", height: "40px", borderRadius: "8px", border: "1px dashed #0284C7", background: newPlatoFotoUrl ? `url(${newPlatoFotoUrl}) center/cover no-repeat` : "#EFF6FF", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", color: "#0284C7", flexShrink: 0 }}>
-                            {!newPlatoFotoUrl && "🍲"}
+                            {!newPlatoFotoUrl && <Icon name="utensils" size={18} color="#0284C7" />}
                           </div>
-                          <label style={{ flex: 1, padding: "6px 9px", background: "rgba(2, 132, 199, 0.08)", border: "1px solid rgba(2, 132, 199, 0.2)", borderRadius: "8px", fontSize: "11px", fontWeight: "800", color: "#0284C7", cursor: "pointer", textAlign: "center" }}>
-                            {uploadingPlatoFoto ? "..." : (lang === "en" ? "📸 Add Photo" : "📸 Cargar Foto")}
+                          <label style={{ flex: 1, padding: "6px 9px", background: "rgba(2, 132, 199, 0.08)", border: "1px solid rgba(2, 132, 199, 0.2)", borderRadius: "8px", fontSize: "11px", fontWeight: "800", color: "#0284C7", cursor: "pointer", textAlign: "center", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "5px" }}>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            <span>{uploadingPlatoFoto ? "..." : (lang === "en" ? "Add Photo" : "Cargar Foto")}</span>
                             <input type="file" accept="image/*" onChange={handlePlatoFotoUpload} style={{ display: "none" }} />
                           </label>
                         </div>
@@ -2335,7 +2356,9 @@ export default function DashboardPage() {
                     <div style={{ flex: 1, overflowY: "auto", paddingRight: "4px", display: "flex", flexDirection: "column", gap: "8px" }}>
                       {(!menuItems || menuItems.length === 0) ? (
                         <div style={{ padding: "24px", textAlign: "center", background: "#F8FAFC", borderRadius: "12px", border: "1px dashed #CBD5E1" }}>
-                          <span style={{ fontSize: "28px" }}>🍽️</span>
+                          <div style={{ display: "flex", justifyContent: "center", marginBottom: "6px" }}>
+                            <Icon name="utensils" size={28} color="#0284C7" />
+                          </div>
                           <p style={{ color: "#64748B", fontSize: "12.5px", margin: "6px 0 0 0", fontWeight: "600" }}>{lang === "en" ? "No dishes added yet. Use the form to add your first item!" : "Aún no has agregado platillos a tu menú. ¡Utiliza el formulario para añadir el primero!"}</p>
                         </div>
                       ) : (
@@ -2392,20 +2415,35 @@ export default function DashboardPage() {
                   <div style={{ flex: 1, overflowY: "auto", paddingRight: "4px", display: "flex", flexDirection: "column", gap: "10px" }}>
                     {(!reservas || reservas.length === 0) ? (
                       <div style={{ padding: "24px", textAlign: "center", background: "#F8FAFC", borderRadius: "12px", border: "1px dashed #CBD5E1" }}>
-                        <span style={{ fontSize: "28px" }}>📅</span>
+                        <div style={{ display: "flex", justifyContent: "center", marginBottom: "6px" }}>
+                          <Icon name="calendar" size={28} color="#7C3AED" />
+                        </div>
                         <p style={{ color: "#64748B", fontSize: "12.5px", margin: "6px 0 0 0", fontWeight: "600" }}>{lang === "en" ? "No bookings received yet." : "No se han recibido reservas en este momento."}</p>
                       </div>
                     ) : (
                       (reservas || []).map((res) => (
                         <div key={res.id} style={{ padding: "10px 14px", background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "10px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}>
                           <div>
-                            <div style={{ fontWeight: "800", fontSize: "13.5px", color: "#1E293B" }}>
-                              👤 {res.perfiles?.nombre_completo || (lang === "en" ? "Anonymous Traveler" : "Turista Anónimo")}
+                            <div style={{ fontWeight: "800", fontSize: "13.5px", color: "#1E293B", display: "flex", alignItems: "center", gap: "6px" }}>
+                              <Icon name="user" size={14} color="#7C3AED" />
+                              <span>{res.perfiles?.nombre_completo || (lang === "en" ? "Anonymous Traveler" : "Turista Anónimo")}</span>
                             </div>
-                            <div style={{ fontSize: "11.5px", color: "#64748B", marginTop: "1px" }}>
-                              📅 {new Date(res.fecha_hora).toLocaleString()} | 👥 {lang === "en" ? "Guests:" : "Personas:"} {res.num_personas || 1}
+                            <div style={{ fontSize: "11.5px", color: "#64748B", marginTop: "3px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                              <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                                <Icon name="calendar" size={12} color="#64748B" />
+                                <span>{new Date(res.fecha_hora).toLocaleString()}</span>
+                              </span>
+                              <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                                <Icon name="users" size={12} color="#64748B" />
+                                <span>{lang === "en" ? "Guests:" : "Personas:"} {res.num_personas || 1}</span>
+                              </span>
                             </div>
-                            {res.notas && <div style={{ fontSize: "11.5px", color: "#7C3AED", marginTop: "3px", fontStyle: "italic" }}>💬 "{res.notas}"</div>}
+                            {res.notas && (
+                              <div style={{ fontSize: "11.5px", color: "#7C3AED", marginTop: "3px", fontStyle: "italic", display: "inline-flex", alignItems: "center", gap: "5px" }}>
+                                <Icon name="messageCircle" size={12} color="#7C3AED" />
+                                <span>"{res.notas}"</span>
+                              </div>
+                            )}
                           </div>
                           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                             <span style={{ fontSize: "10.5px", fontWeight: "800", padding: "3px 8px", borderRadius: "6px", background: (res.estado_reserva === "confirmada" || res.estado_reserva === "aprobada") ? "rgba(22, 163, 74, 0.12)" : res.estado_reserva === "pendiente" ? "rgba(217, 119, 6, 0.12)" : "rgba(239, 68, 68, 0.12)", color: (res.estado_reserva === "confirmada" || res.estado_reserva === "aprobada") ? "#16A34A" : res.estado_reserva === "pendiente" ? "#D97706" : "#EF4444" }}>
@@ -2441,14 +2479,19 @@ export default function DashboardPage() {
                   <div style={{ flex: 1, overflowY: "auto", paddingRight: "4px", display: "flex", flexDirection: "column", gap: "10px" }}>
                     {(!resenas || resenas.length === 0) ? (
                       <div style={{ padding: "24px", textAlign: "center", background: "#F8FAFC", borderRadius: "12px", border: "1px dashed #CBD5E1" }}>
-                        <span style={{ fontSize: "28px" }}>⭐</span>
+                        <div style={{ display: "flex", justifyContent: "center", marginBottom: "6px" }}>
+                          <Icon name="star" size={28} color="#D97706" />
+                        </div>
                         <p style={{ color: "#64748B", fontSize: "12.5px", margin: "6px 0 0 0", fontWeight: "600" }}>{lang === "en" ? "No customer reviews yet." : "Aún no hay opiniones o reseñas registradas para este negocio."}</p>
                       </div>
                     ) : (
                       (resenas || []).map((rev) => (
                         <div key={rev.id} style={{ padding: "10px 14px", background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "10px", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}>
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "3px" }}>
-                            <span style={{ fontWeight: "800", fontSize: "13px", color: "#1E293B" }}>👤 {rev.nombre_usuario || (lang === "en" ? "Visitor" : "Visitante")}</span>
+                            <span style={{ fontWeight: "800", fontSize: "13px", color: "#1E293B", display: "inline-flex", alignItems: "center", gap: "5px" }}>
+                              <Icon name="user" size={13} color="#E11D48" />
+                              <span>{rev.nombre_usuario || (lang === "en" ? "Visitor" : "Visitante")}</span>
+                            </span>
                             <span style={{ color: "#D97706", fontWeight: "800", fontSize: "12.5px" }}>{"⭐".repeat(rev.estrellas || 5)} ({rev.estrellas})</span>
                           </div>
                           <p style={{ fontSize: "12px", color: "#475569", margin: 0, fontStyle: "italic" }}>"{rev.comentario}"</p>
@@ -3028,7 +3071,7 @@ const styles = {
     height: "100vh",
     maxHeight: "100vh",
     width: "100vw",
-    background: "linear-gradient(rgba(10, 15, 28, 0.55), rgba(10, 15, 28, 0.55)), url('/images/loginbg.jpeg') center / cover no-repeat fixed",
+    background: "linear-gradient(rgba(10, 15, 28, 0.65), rgba(10, 15, 28, 0.65)), url('/images/fondohracio.png') center / cover no-repeat fixed",
     color: "#1A1A2E",
     fontFamily: "var(--font-outfit), sans-serif",
     padding: "85px 24px 16px 24px",
@@ -3045,7 +3088,7 @@ const styles = {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    background: "linear-gradient(180deg, rgba(10, 18, 35, 0.85) 0%, rgba(5, 10, 20, 0.95) 100%), url('/images/loginbg.jpeg') center / cover no-repeat fixed",
+    background: "linear-gradient(180deg, rgba(10, 18, 35, 0.85) 0%, rgba(5, 10, 20, 0.95) 100%), url('/images/fondohracio.png') center / cover no-repeat fixed",
   },
   header: {
     position: "absolute",
