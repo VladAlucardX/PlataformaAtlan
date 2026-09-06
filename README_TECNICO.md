@@ -1,79 +1,79 @@
-# Documentación Técnica — Plataforma Atlan
+# Plataforma Atlan — Documentación Técnica del Sistema
 
-Documentación técnica del proyecto Plataforma Atlan. El repositorio contiene el código fuente de la aplicación web PWA y la aplicación móvil nativa.
+**Plataforma Atlan** es una solución tecnológica integral orientada al turismo, la promoción del comercio local y el fortalecimiento de la comunidad interactiva en Nicaragua. 
+
+El repositorio está organizado bajo un esquema de monorepo desacoplado que contiene el código fuente de la aplicación **Web PWA** (desarrollada con Next.js) y la aplicación **Móvil Nativa** (desarrollada con Flutter).
 
 ---
 
 ## 1. Descripción General
 
-Plataforma Atlan es un sistema integral enfocado en el turismo, la gestión de comercios locales y la interacción comunitaria en Nicaragua.
+El objetivo principal de la plataforma es digitalizar y gamificar la experiencia turística en los 17 departamentos de Nicaragua, conectando a visitantes, propietarios de comercios locales y residentes comunitarios a través de herramientas de geolocalización en tiempo real.
 
-El proyecto integra mapas interactivos en tiempo real, verificación geográfica de visitas, administración multi-negocio para propietarios, una enciclopedia turística departamental y una red social comunitaria con mensajería instantánea.
+### Módulos y Funcionalidades Principales
 
-### Funcionalidades Principales
-
-- **Mapa Turístico Interactivo (Mapbox GL):** Visualización de puntos de interés, rutas de navegación, categorías y estado de verificación de negocios (verificados, en revisión o sin reclamar).
-- **Verificación de Visitas GPS:** Validación geográfica mediante algoritmo Haversine (radio menor a 1 km) para registrar visitas a departamentos y actualizar el ranking de exploradores.
-- **Gestión Multi-Negocio:** Panel de administración para propietarios de establecimientos, con registro de locales, edición de información, visualización de motivos de rechazo y reenvío de solicitudes.
-- **Panel de Administración:** Módulo para administradores del sistema enfocado en la aprobación o rechazo de nuevos negocios registrados.
-- **Enciclopedia Departamental:** Sección informativa sobre los 17 departamentos de Nicaragua, categorizada en historia, economía, turismo, pasatiempos, lugares destacados y actividades.
-- **Red Social y Mensajería:** Muro comunitario para compartir publicaciones, interacción con likes y comentarios, seguimiento entre usuarios y chat privado en tiempo real con Supabase Realtime.
-- **Sistema de Perfiles y Rangos:** Clasificación de usuarios según su nivel de suscripción: Turista (usuario sin registrar), Turista Tuani (usuario registrado) y Turista Deacachimba (usuario con membresía de pago).
+*   **Mapa Turístico Interactivo (Mapbox GL):** Visualización vectorial de puntos de interés, trazado de rutas terrestres, categorización de establecimientos y distinción del estado de verificación de comercios (verificados, en revisión o no reclamados).
+*   **Verificación de Visitas por GPS:** Algoritmo de cálculo de distancia mediante la fórmula de Haversine (radio < 1 km) que valida la presencia física del usuario en un departamento o destino para desbloquear insignia y actualizar su puntuación en el ranking de exploradores.
+*   **Panel Multi-Negocio (Propietarios):** Módulo de administración para dueños de comercios donde pueden registrar establecimientos, editar horarios, gestionar imágenes, revisar motivos de rechazo en caso de revisiones administrativas y solicitar la verificación del local.
+*   **Panel de Administración del Sistema:** Módulo restringido para administradores enfocado en la moderación, aprobación y auditoría de solicitudes de nuevos negocios.
+*   **Enciclopedia Departamental:** Guía informativa estructurada de los 17 departamentos con datos sobre historia, economía, puntos turísticos, pasatiempos y eventos culturales.
+*   **Red Social Comunitaria y Chat en Tiempo Real:** Muro interactivo para publicar imágenes y experiencias, sistema de reacción/comentarios, seguimiento entre usuarios y mensajería privada directa mediante suscripciones WebSockets con Supabase Realtime.
+*   **Sistema de Perfiles y Rangos de Usuario:** Gestión de niveles y beneficios según la cuenta (Turista no registrado, Turista Tuani registrado y Turista Deacachimba con suscripción activa).
 
 ---
 
 ## 2. Arquitectura del Sistema
 
-La arquitectura del proyecto sigue el patrón de diseño **BaaS (Backend as a Service)** sobre un esquema de monorepo desacoplado para Web y Móvil.
+El sistema implementa una arquitectura basada en **Backend como Servicio (BaaS)**, apoyada en **Supabase** como núcleo central de base de datos y autenticación, sirviendo de manera desacoplada tanto al cliente Web como al cliente Móvil.
 
-### Diagrama de Arquitectura de Alto Nivel
+### Diagrama de Arquitectura
 
 ```text
-               +----------------------------------+
-               |        Clientes del Sistema      |
-               +-----------------+----------------+
-                                 |
-         +-----------------------+-----------------------+
-         |                                               |
-+--------v-------+                              +--------v-------+
-|  Aplicación    |                              |  Aplicación    |
-|  Web (PWA)     |                              |  Móvil Nativa  |
-|  Next.js 16    |                              |  Flutter 3.38  |
-+--------+-------+                              +--------+-------+
-         |                                               |
-         |         REST API / WebSockets / RPC           |
-         +-----------------------+-----------------------+
-                                 |
-               +-----------------v----------------+
-               |         Supabase BaaS            |
-               |  (Auth, Postgres, Realtime, RPC) |
-               +-----------------+----------------+
-                                 |
-                                 v
-               +----------------------------------+
-               |       Proveedores Externos       |
-               |    (Mapbox API / CDN Media)      |
-               +----------------------------------+
+               +-------------------------------------------------+
+               |              Clientes del Sistema               |
+               +-----------------------+-------------------------+
+                                       |
+          +----------------------------+----------------------------+
+          |                                                         |
++---------v---------+                                     +---------v---------+
+|   Cliente Web     |                                     |  Cliente Móvil    |
+|   Next.js 16 PWA  |                                     |  Flutter 3.38     |
++---------+---------+                                     +---------+---------+
+          |                                                         |
+          |           API REST / WebSockets / RPC (PL/pgSQL)        |
+          +----------------------------+----------------------------+
+                                       |
+                     +-----------------v-----------------+
+                     |           Supabase BaaS           |
+                     |  (PostgreSQL, Auth, Realtime, RLS)|
+                     +-----------------+-----------------+
+                                       |
+                                       v
+                     +-----------------------------------+
+                     |       Servicios Externos          |
+                     | (Mapbox GL Vector Tile Services)  |
+                     +-----------------------------------+
 ```
 
-### Componentes de la Arquitectura
+### Componentes y Decisiones de Arquitectura
 
-1. **Capa de Presentación (Frontend):**
-   - **Web PWA:** Renderizado híbrido (SSR / Cliente) mediante el App Router de Next.js 16 y React 19.
-   - **Mobile App:** Aplicación nativa compilada con Flutter 3.38 y gestión de estado reactivo mediante Riverpod.
-2. **Capa de Servicios y Negocio (Backend BaaS):**
-   - **Supabase Core:** PostgreSQL relacional para la persistencia de datos y ejecución de funciones almacenadas en PL/pgSQL (RPC).
-   - **Autenticación:** Gestión de identidades vía JWT y almacenamiento de perfiles de usuario.
-   - **Realtime Engine:** WebSockets para suscripciones en tiempo real a tablas de mensajes y notificaciones.
-   - **Storage Engine:** Almacenamiento y entrega distribuida de imágenes de perfil, publicaciones y fotos de comercios en el bucket `atlan-media`.
-3. **Capa Geoespacial:**
-   - Integración directa con los servicios de **Mapbox GL** para renderizado vectorial, centrado dinámico, polígonos GeoJSON y cálculo de rutas terrestres.
+1.  **Capa de Presentación (Frontend Web & Mobile):**
+    *   **Web (Next.js 16 + React 19):** Aprovecha el App Router para optimizar la carga inicial mediante Server Components y mantener reactividad client-side en mapas y chats interactivos. Incluye Service Worker (`public/sw.js`) y manifiesto PWA.
+    *   **Mobile (Flutter 3.38):** Construcción nativa multiplataforma. Utiliza **Riverpod** para la gestión de estado reactiva e inyección de dependencias, y **GoRouter** para el manejo de rutas profundas.
+2.  **Capa de Negocio y Datos (Supabase Core):**
+    *   **PostgreSQL Relacional:** Almacenamiento persistente con esquemas estructurados para usuarios, perfiles, comercios, publicaciones, mensajes y visitas.
+    *   **Funciones Almacenadas (RPC en PL/pgSQL):** Consultas avanzadas ejecutadas en la base de datos (por ejemplo, cálculo de distancia radial de puntos de interés respecto a coordenadas GPS).
+    *   **Seguridad por Filas (RLS - Row Level Security):** Políticas de control de acceso granulares para asegurar que solo los dueños modifiquen su información y que los chats permanezcan estrictamente privados.
+    *   **Realtime Engine:** Motor de WebSockets para notificación instantánea de nuevos mensajes e interacciones sociales.
+    *   **Storage (Bucket `atlan-media`):** Almacenamiento de archivos multimedia optimizados (fotos de negocios, avatares y publicaciones).
+3.  **Capa Geoespacial:**
+    *   Servicios de **Mapbox GL** (JS para Web y Native SDK para Móvil) para capas vectoriales, marcadores personalizados, polígonos GeoJSON de límites departamentales y ruteo.
 
 ---
 
-## 3. Stack Tecnológico y Dependencias
+## 3. Tecnologías Utilizadas y Dependencias Clave
 
-### Aplicación Web (PWA)
+### Aplicación Web (`package.json`)
 
 ```json
 {
@@ -94,7 +94,7 @@ La arquitectura del proyecto sigue el patrón de diseño **BaaS (Backend as a Se
 }
 ```
 
-### Aplicación Móvil (Flutter Monorepo)
+### Aplicación Móvil (`mobile/pubspec.yaml`)
 
 ```yaml
 dependencies:
@@ -112,42 +112,35 @@ dependencies:
   flutter_inappwebview: ^6.1.5
 ```
 
-### Backend y Servicios
-
-- **Supabase (PostgreSQL):** Base de datos relacional, Auth (JWT), Row Level Security (RLS) y RPCs de consulta geográfica.
-- **Supabase Realtime:** Canales WebSockets para chat instantáneo y notificaciones en vivo.
-- **Supabase Storage (`atlan-media`):** Almacenamiento distribuido para imágenes.
-- **Mapbox API:** Servicios de mapas vectoriales y geolocalización.
-
 ---
 
 ## 4. Variables de Entorno
 
-### Entorno Web (`.env.local`)
+### Configuración Web (`.env.local`)
 
-Crea un archivo `.env.local` en la raíz del proyecto:
+Crea un archivo `.env.local` en la raíz del proyecto web:
 
 ```env
-# URL base del proyecto en Supabase
+# URL del proyecto Supabase
 NEXT_PUBLIC_SUPABASE_URL=https://<tu-proyecto>.supabase.co
 
-# Clave pública anónima de API Supabase
+# Clave pública de acceso (Anon / Publishable Key)
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-# Token de acceso público para Mapbox GL JS
+# Token público de Mapbox GL JS
 NEXT_PUBLIC_MAPBOX_TOKEN=pk.eyJ1IjoibWFwYm94dXNlciIsImEiOiJjb...
 ```
 
-### Entorno Móvil (`mobile/.env`)
+### Configuración Móvil (`mobile/.env`)
 
-Crea un archivo `.env` dentro de la carpeta `mobile/`:
+Crea un archivo `.env` dentro del directorio `mobile/`:
 
 ```env
-# Configuración del servicio Supabase para la app móvil
+# Credenciales Supabase para el cliente móvil
 SUPABASE_URL=https://<tu-proyecto>.supabase.co
 SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-# Token de acceso para Mapbox Maps SDK Nativo
+# Access Token para Mapbox Maps SDK Nativo
 MAPBOX_ACCESS_TOKEN=pk.eyJ1IjoibWFwYm94dXNlciIsImEiOiJjb...
 ```
 
@@ -155,174 +148,186 @@ MAPBOX_ACCESS_TOKEN=pk.eyJ1IjoibWFwYm94dXNlciIsImEiOiJjb...
 
 ## 5. Estructura Modular del Proyecto
 
-La estructura del código está dividida por módulos funcionales clara y mantenible:
+La base de código está organizada modularmente para separar las responsabilidades de la plataforma Web, la App Móvil y los recursos estáticos geoespaciales:
 
 ```text
 plataforma-atlan/
-├── public/                               # Archivos estáticos y recursos PWA
-│   ├── manifest.json                     # Manifiesto de PWA para instalación
-│   ├── sw.js                             # Service Worker para estrategias de caché
-│   ├── nicaragua-departments.json        # Polígonos GeoJSON de los 17 departamentos
-│   └── nicaragua-boundary.json           # Límites territoriales nacionales
+├── public/                               # Recursos estáticos y PWA
+│   ├── manifest.json                     # Configuración e iconos PWA
+│   ├── sw.js                             # Service Worker para caché offline
+│   ├── nicaragua-departments.json        # Polígonos GeoJSON de departamentos
+│   └── nicaragua-boundary.json           # Contorno fronterizo nacional
 │
-├── src/                                  # MÓDULO WEB (NEXT.JS 16)
+├── src/                                  # APLICACIÓN WEB (NEXT.JS 16)
 │   ├── app/                              # Rutas del App Router
-│   │   ├── admin/                        # Panel administrativo de solicitudes
-│   │   ├── chat/                         # Módulo de mensajería privada en tiempo real
-│   │   ├── comunidad/                    # Red social (publicaciones, comentarios, likes)
-│   │   ├── dashboard/                    # Gestión multi-negocio para propietarios
+│   │   ├── admin/                        # Panel de aprobación de negocios
+│   │   ├── chat/                         # Mensajería directa entre usuarios
+│   │   ├── comunidad/                    # Feed social, publicaciones y comentarios
+│   │   ├── dashboard/                    # Gestión de comercios para propietarios
 │   │   ├── departamentos/                # Ranking de exploradores y validación GPS
-│   │   ├── mas-de-nicaragua/             # Enciclopedia departamental interactiva
-│   │   ├── mapa/                         # Vista dedicada del mapa geoespacial
-│   │   ├── perfil/                       # Perfil de usuario, rangos y favoritos
-│   │   ├── login/ & registro/            # Autenticación y creación de cuenta
-│   │   ├── globals.css                   # Variables CSS, diseño neón y utilidades
-│   │   └── page.js                       # Landing Page de bienvenida
+│   │   ├── mas-de-nicaragua/             # Enciclopedia turística por departamento
+│   │   ├── mapa/                         # Vista interactiva del mapa a pantalla completa
+│   │   ├── perfil/                       # Perfil de usuario, favoritos y ajustes
+│   │   ├── login/ & registro/            # Flujos de autenticación de usuarios
+│   │   ├── globals.css                   # Estilos globales y utilidades neón/glassmorphism
+│   │   └── page.js                       # Landing Page de la plataforma
 │   │
-│   ├── components/                       # Componentes de React
-│   │   ├── MapaTuristico.js              # Integración de Mapbox GL JS
-│   │   └── ui/                           # Modales, Navbar, ChatWidget, Icon.js
+│   ├── components/                       # Componentes React reutilizables
+│   │   ├── MapaTuristico.js              # Integración cliente de Mapbox GL
+│   │   └── ui/                           # Modales, Navbar, ChatWidget, controles UI
 │   │
-│   └── lib/                              # Servicios y clientes
-│       ├── AuthContext.js                # Proveedor global del estado de autenticación
-│       ├── geoUtils.js                   # Algoritmo Haversine para validación GPS
-│       └── supabase.js                   # Inicialización del cliente Supabase JS
+│   └── lib/                              # Servicios, utilidades y contexto
+│       ├── AuthContext.js                # Provider del estado global de sesión
+│       ├── geoUtils.js                   # Algoritmo de validación geográfica Haversine
+│       └── supabase.js                   # Cliente inicializado de Supabase JS
 │
-├── mobile/                               # MÓDULO MÓVIL (FLUTTER MONOREPO)
-│   ├── assets/                           # Archivos GeoJSON e imágenes nativas
-│   ├── lib/                              # Código Dart principal
-│   │   ├── config/                       # Constantes, rutas (GoRouter) y temas
+├── mobile/                               # APLICACIÓN MÓVIL (FLUTTER MONOREPO)
+│   ├── assets/                           # Recursos gráficos y GeoJSON nativos
+│   ├── lib/                              # Código en Dart
+│   │   ├── config/                       # Constantes, tema y rutas GoRouter
 │   │   ├── models/                       # Modelos de datos (Perfil, Negocio, Punto)
-│   │   ├── providers/                    # Controladores de estado con Riverpod
-│   │   ├── screens/                      # Pantallas móviles (Home, Mapa, Perfil, Chat)
-│   │   └── services/                     # Conectores a Supabase, GPS y Storage
-│   └── pubspec.yaml                      # Configuración de dependencias móviles
+│   │   ├── providers/                    # Controladores de estado Riverpod
+│   │   ├── screens/                      # Pantallas (Home, Mapa, Perfil, Chat)
+│   │   └── services/                     # Clientes de API, Supabase y ubicación GPS
+│   └── pubspec.yaml                      # Dependencias de Flutter
 │
-├── .env.local                            # Variables de entorno Web
-├── README_TECNICO.md                     # Documentación técnica completa
+├── .env.local                            # Variables de entorno local Web
+├── README_TECNICO.md                     # Documentación técnica completa del sistema
 └── package.json                          # Scripts y dependencias Web
 ```
 
 ---
 
-## 6. Requisitos Previos, Instalación y Ejecución
+## 6. Instalación Básica y Ejecución del Sistema
 
 ### 6.1. Requisitos Previos
 
-Antes de comenzar, asegúrate de tener instalado en tu entorno local:
+Asegúrate de contar con el siguiente software instalado en tu entorno de desarrollo:
 
-- **Node.js:** Versión 18.0.0 o superior (recomendado v20 LTS).
-- **npm:** Versión 9.0.0 o superior.
-- **Flutter SDK:** Versión 3.10.7 o superior (necesario únicamente para la aplicación móvil).
-- **Git:** Para control de versiones.
-
----
-
-### 6.2. Instalación y Ejecución de la Aplicación Web (Next.js)
-
-1. Clonar el repositorio:
-   ```bash
-   git clone https://github.com/VladAlucardX/PlataformaAtlan.git
-   cd plataforma-atlan
-   ```
-
-2. Instalar dependencias:
-   ```bash
-   npm install
-   ```
-
-3. Iniciar el servidor de desarrollo:
-   ```bash
-   npm run dev
-   ```
-   *La aplicación estará disponible en [http://localhost:3000](http://localhost:3000).*
-
-4. Compilar para producción (opcional):
-   ```bash
-   npm run build
-   npm run start
-   ```
+*   **Node.js:** v18.0.0 o superior (recomendado v20 LTS).
+*   **npm:** v9.0.0 o superior.
+*   **Flutter SDK:** v3.10.0 o superior (requerido únicamente si vas a ejecutar la aplicación móvil).
+*   **Git:** Para control de versiones.
 
 ---
 
-### 6.3. Instalación y Ejecución de la Aplicación Móvil (Flutter)
+### 6.2. Ejecución de la Aplicación Web (Next.js)
 
-1. Navegar a la carpeta del proyecto móvil:
-   ```bash
-   cd mobile
-   ```
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone https://github.com/VladAlucardX/PlataformaAtlan.git
+    cd plataforma-atlan
+    ```
 
-2. Instalar las dependencias de Flutter:
-   ```bash
-   flutter pub get
-   ```
+2.  **Instalar dependencias:**
+    ```bash
+    npm install
+    ```
 
-3. Verificar dispositivos conectados (emulador o dispositivo físico):
-   ```bash
-   flutter devices
-   ```
+3.  **Iniciar el servidor de desarrollo:**
+    ```bash
+    npm run dev
+    ```
+    *La aplicación estará disponible en `http://localhost:3000`.*
 
-4. Ejecutar la aplicación:
-   ```bash
-   flutter run
-   ```
+4.  **Compilar y probar la build de producción (Opcional):**
+    ```bash
+    npm run build
+    npm run start
+    ```
+
+---
+
+### 6.3. Ejecución de la Aplicación Móvil (Flutter)
+
+1.  **Navegar al directorio móvil:**
+    ```bash
+    cd mobile
+    ```
+
+2.  **Obtener dependencias:**
+    ```bash
+    flutter pub get
+    ```
+
+3.  **Verificar dispositivos o emuladores disponibles:**
+    ```bash
+    flutter devices
+    ```
+
+4.  **Ejecutar en emulador o dispositivo físico:**
+    ```bash
+    flutter run
+    ```
 
 ---
 
 ## 7. Scripts Disponibles
 
-### Comandos de la Aplicación Web (Node.js / npm)
+### Scripts Web (npm)
 
-- **`npm run dev`**: Inicia el servidor de desarrollo en `http://localhost:3000`, ejecutando primero una limpieza de la caché de `.next`.
-- **`npm run build`**: Compila y optimiza la aplicación web para despliegue en producción.
-- **`npm run start`**: Inicia el servidor Node.js en modo producción utilizando el compilado previo.
-- **`npm run lint`**: Ejecuta ESLint para analizar la calidad y estilo del código fuente.
-- **`npm run clean`**: Elimina de forma forzada la carpeta de caché `.next`.
+| Comando | Descripción |
+| :--- | :--- |
+| `npm run dev` | Inicia el entorno de desarrollo en `localhost:3000` ejecutando previamente una limpieza de caché de `.next`. |
+| `npm run build` | Compila y optimiza la aplicación Next.js para producción. |
+| `npm run start` | Inicia el servidor Node.js en modo producción utilizando el compilado generado en `npm run build`. |
+| `npm run lint` | Ejecuta ESLint para analizar la calidad y consistencia del código. |
+| `npm run clean` | Fuerza la eliminación de la carpeta de caché `.next`. |
 
-### Comandos de la Aplicación Móvil (Flutter)
+### Scripts Móviles (Flutter)
 
-- **`flutter pub get`**: Descarga e instala las dependencias declaradas en `pubspec.yaml`.
-- **`flutter run`**: Ejecuta la aplicación móvil en modo de depuración en un emulador o dispositivo físico.
-- **`flutter build apk --release`**: Genera el paquete ejecutable APK para Android en producción.
-- **`flutter build appbundle`**: Genera el paquete Android App Bundle (AAB) para Google Play Store.
-- **`flutter build ipa`**: Compila la aplicación iOS para distribución mediante TestFlight o App Store.
+| Comando | Descripción |
+| :--- | :--- |
+| `flutter pub get` | Descarga las dependencias declaradas en `pubspec.yaml`. |
+| `flutter run` | Inicia la app en modo debug en un dispositivo conectado. |
+| `flutter build apk --release` | Compila el instalador APK optimizado para Android. |
+| `flutter build appbundle` | Genera el paquete Android App Bundle (AAB) para Google Play. |
+| `flutter build ipa` | Prepara el ejecutable de iOS para distribución en TestFlight o App Store. |
 
 ---
 
 ## 8. Ejemplos de Endpoints y Consultas (Supabase & RPC)
 
-La comunicación con la base de datos se realiza mediante el cliente de Supabase JS / Flutter y funciones almacenadas (RPC). A continuación se presentan ejemplos reales de uso en el sistema:
+La comunicación con el backend se realiza mediante la librería oficial de Supabase. A continuación se presentan ejemplos reales de cómo interactúa la aplicación con la base de datos:
 
-### 8.1. Autenticación de Usuarios
+### 8.1. Autenticación de Usuarios (Auth API)
 
 ```javascript
-// Inicio de sesión mediante email y contraseña
+import { supabase } from '@/lib/supabase';
+
+// Inicio de sesión con correo y contraseña
 const { data, error } = await supabase.auth.signInWithPassword({
   email: 'turista@atlan.ni',
   password: 'Password123!',
 });
 
-if (error) console.error('Error al autenticar:', error.message);
+if (error) {
+  console.error('Error de autenticación:', error.message);
+} else {
+  console.log('Sesión iniciada:', data.user);
+}
 ```
 
-### 8.2. Búsqueda Geoespacial de Puntos Cercanos (RPC PL/pgSQL)
+### 8.2. Búsqueda Geoespacial con Función RPC (`PL/pgSQL`)
 
-Función RPC personalizada para calcular distancias dinámicas entre las coordenadas GPS del usuario y los destinos registrados:
+Consulta para calcular dinámicamente los lugares de interés dentro de un radio en kilómetros a partir de las coordenadas del dispositivo:
 
 ```javascript
-// Búsqueda de destinos en un radio de 50 km desde la ubicación actual
-const { data: puntos, error } = await supabase.rpc('buscar_puntos_cercanos', {
+// Obtener lugares turísticos en un radio de 50 km desde Managua
+const { data: puntosCercanos, error } = await supabase.rpc('buscar_puntos_cercanos', {
   lat_usuario: 12.136389,
   lng_usuario: -86.251389,
   radio_km: 50
 });
+
+if (error) console.error('Error al ejecutar RPC:', error);
 ```
 
-### 8.3. Consulta de Negocios por Categoría
+### 8.3. Filtrado de Negocios Verificados por Categoría
 
 ```javascript
-// Obtener negocios verificados en la categoría de Restaurantes
-const { data: negocios, error } = await supabase
+// Consulta de establecimientos activos y verificados en la categoría de Restaurantes
+const { data: restaurantes, error } = await supabase
   .from('negocios')
   .select('id, nombre, descripcion, departamento, estado_verificacion, latitud, longitud')
   .eq('categoria', 'Restaurantes')
@@ -333,8 +338,8 @@ const { data: negocios, error } = await supabase
 ### 8.4. Registro de Visita Validada por GPS (Check-In)
 
 ```javascript
-// Registrar check-in exitoso tras validar distancia < 1km
-const { data, error } = await supabase
+// Inserción de visita una vez validado que la distancia Haversine es < 1 km
+const { data: checkIn, error } = await supabase
   .from('visitas_puntos')
   .insert([
     {
@@ -346,12 +351,12 @@ const { data, error } = await supabase
   ]);
 ```
 
-### 8.5. Suscripción a Mensajería en Tiempo Real (WebSockets)
+### 8.5. Suscripción a Chat en Tiempo Real (WebSockets Realtime)
 
 ```javascript
-// Suscripción al canal de chat privado entre dos usuarios
+// Suscripción reactiva a la llegada de mensajes en una conversación privada
 const chatChannel = supabase
-  .channel('chat_privado')
+  .channel(`chat_${conversacionId}`)
   .on(
     'postgres_changes',
     {
@@ -361,7 +366,7 @@ const chatChannel = supabase
       filter: `conversacion_id=eq.${conversacionId}`
     },
     (payload) => {
-      console.log('Nuevo mensaje recibido:', payload.new);
+      console.log('Nuevo mensaje recibido en vivo:', payload.new);
     }
   )
   .subscribe();
@@ -369,19 +374,14 @@ const chatChannel = supabase
 
 ---
 
-## 9. Flujo de Trabajo y Commits
+## 9. Solución de Problemas Comunes (Troubleshooting) & Notas Técnicas
 
-El desarrollo del proyecto utiliza el flujo GitFlow y la convención de Conventional Commits.
+### Permisos de Geolocalización
+*   **En Web:** Asegúrate de que el navegador tenga autorizada la lectura de ubicación (`navigator.geolocation`). Si estás probando en entorno local sin HTTPS, algunos navegadores bloquean la geolocalización a menos que accedas explícitamente vía `localhost`.
+*   **En Android/iOS:** Verifica que la app móvil incluya los permisos `ACCESS_FINE_LOCATION` y `ACCESS_COARSE_LOCATION` configurados en `AndroidManifest.xml` e `Info.plist`.
 
-### Estructura de Ramas
-- `main`: Rama de producción.
-- `develop`: Rama principal de integración.
-- `feature/<nombre>`: Ramas para desarrollo de nuevas características.
-- `fix/<nombre>`: Ramas para corrección de errores.
+### Visualización del Mapa (Mapbox)
+*   Si los mapas no cargan o muestran un lienzo en blanco, confirma que la variable `NEXT_PUBLIC_MAPBOX_TOKEN` en `.env.local` (o `MAPBOX_ACCESS_TOKEN` en la app móvil) tenga un token válido activo asignado a tu cuenta de Mapbox.
 
-### Formato de Commits
-```bash
-tipo(alcance): descripción breve en imperativo
-```
-
-Tipos aceptados: `feat`, `fix`, `docs`, `style`, `refactor`, `chore`.
+### Seguridad y RLS en Supabase
+*   Todas las tablas críticas del sistema (`mensajes`, `negocios`, `visitas_puntos`, `perfiles`) cuentan con políticas de **Row Level Security (RLS)** activadas. Los intentos de modificación directa sin un token JWT válido de usuario autenticado serán rechazados por la base de datos.
