@@ -1154,11 +1154,13 @@ export default function DashboardPage() {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
-                    background: "#FFFFFF",
-                    border: isSelected ? "2.5px solid #FFD700" : "1.5px solid rgba(20, 109, 158, 0.15)",
+                    background: "rgba(10, 25, 47, 0.78)",
+                    backdropFilter: "blur(16px)",
+                    WebkitBackdropFilter: "blur(16px)",
+                    border: isSelected ? "2.5px solid #FFD700" : "1.5px solid rgba(255, 255, 255, 0.18)",
                     boxShadow: isSelected
-                      ? "0 10px 24px rgba(255, 215, 0, 0.3), inset 2px 2px 4px rgba(255, 255, 255, 0.9)"
-                      : "0 8px 20px rgba(0, 0, 0, 0.06), inset 2px 2px 4px rgba(255, 255, 255, 0.9)",
+                      ? "0 10px 24px rgba(255, 215, 0, 0.3)"
+                      : "0 8px 20px rgba(0, 0, 0, 0.35)",
                     transition: "all 0.3s ease"
                   }}
                 >
@@ -1222,14 +1224,14 @@ export default function DashboardPage() {
                   {/* Cuerpo de la tarjeta */}
                   <div style={{ padding: "16px", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "12px" }}>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "16.5px", fontWeight: "850", color: "#0F172A" }}>
+                      <h3 style={{ margin: 0, fontSize: "16.5px", fontWeight: "850", color: "#FFFFFF" }}>
                         {n.nombre}
                       </h3>
                       {n.descripcion && (
                         <p style={{
                           margin: "5px 0 0",
                           fontSize: "12px",
-                          color: "#475569",
+                          color: "#CBD5E1",
                           lineHeight: "1.4",
                           display: "-webkit-box",
                           WebkitLineClamp: 2,
@@ -1241,7 +1243,7 @@ export default function DashboardPage() {
                       )}
                     </div>
 
-                    <div style={{ fontSize: "11.5px", color: "#64748B", display: "flex", flexDirection: "column", gap: "3px" }}>
+                    <div style={{ fontSize: "11.5px", color: "#94A3B8", display: "flex", flexDirection: "column", gap: "3px" }}>
                       {n.telefono && <span>📞 Tel: {n.telefono}</span>}
                       {n.rango_precios && <span>💵 Precios: {n.rango_precios}</span>}
                     </div>
@@ -1466,13 +1468,13 @@ export default function DashboardPage() {
           {activeTab === "overview" && (
             <div
               style={{
-                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(241, 245, 249, 0.94) 100%)",
+                background: "rgba(10, 25, 47, 0.75)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
                 padding: "22px 28px",
                 borderRadius: "24px",
-                border: "1.5px solid rgba(255, 255, 255, 0.95)",
-                boxShadow: "0 18px 45px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 1)",
+                border: "1.5px solid rgba(255, 255, 255, 0.18)",
+                boxShadow: "0 18px 45px rgba(0, 0, 0, 0.35)",
                 position: "relative",
                 overflow: "hidden",
                 marginBottom: "28px",
@@ -1507,19 +1509,19 @@ export default function DashboardPage() {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <h2 style={{ fontSize: "26px", fontWeight: "900", color: "#0F172A", margin: 0, fontFamily: "'LC Mogi', var(--font-outfit), sans-serif", letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: "8px" }}>
-                      <span>{lang === "en" ? "Welcome," : "Bienvenido,"} <span style={{ color: "#146D9E" }}>{perfil?.nombre_completo || "Propietario"}</span></span>
+                    <h2 style={{ fontSize: "26px", fontWeight: "900", color: "#FFFFFF", margin: 0, fontFamily: "'LC Mogi', var(--font-outfit), sans-serif", letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span>{lang === "en" ? "Welcome," : "Bienvenido,"} <span style={{ color: "#FFD700" }}>{perfil?.nombre_completo || "Propietario"}</span></span>
                       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" style={{ display: "inline-block", flexShrink: 0 }}>
-                        <path d="M12.5 11.5V5.5C12.5 4.67 11.83 4 11 4C10.17 4 9.5 4.67 9.5 5.5V11.5M9.5 9.5V3.5C9.5 2.67 8.83 2 8 2C7.17 2 6.5 2.67 6.5 3.5V11.5M6.5 11.5V5.5C6.5 4.67 5.83 4 5 4C4.17 4 3.5 4.67 3.5 5.5V13.5M3.5 12V10.5C3.5 9.67 2.83 9 2 9C1.17 9 0.5 9.67 0.5 10.5V15.5C0.5 19.09 3.41 22 7 22H11.5C14.81 22 17.5 19.31 17.5 16V13.5C17.5 12.67 16.83 12 16 12C15.17 12 14.5 12.67 14.5 13.5V11.5C14.5 10.67 13.83 10 13 10C12.17 10 11.5 10.67 11.5 11.5" stroke="#146D9E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M12.5 11.5V5.5C12.5 4.67 11.83 4 11 4C10.17 4 9.5 4.67 9.5 5.5V11.5M9.5 9.5V3.5C9.5 2.67 8.83 2 8 2C7.17 2 6.5 2.67 6.5 3.5V11.5M6.5 11.5V5.5C6.5 4.67 5.83 4 5 4C4.17 4 3.5 4.67 3.5 5.5V13.5M3.5 12V10.5C3.5 9.67 2.83 9 2 9C1.17 9 0.5 9.67 0.5 10.5V15.5C0.5 19.09 3.41 22 7 22H11.5C14.81 22 17.5 19.31 17.5 16V13.5C17.5 12.67 16.83 12 16 12C15.17 12 14.5 12.67 14.5 13.5V11.5C14.5 10.67 13.83 10 13 10C12.17 10 11.5 10.67 11.5 11.5" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </h2>
-                    <p style={{ color: "#475569", margin: 0, fontSize: "14px", fontWeight: "500", display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+                    <p style={{ color: "#E2E8F0", margin: 0, fontSize: "14px", fontWeight: "500", display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
                       <span>{lang === "en" ? "What would you like to manage today for" : "¿Qué deseas gestionar hoy para"}</span>
                       <strong style={{
-                        color: "#0F172A",
+                        color: "#FFD700",
                         fontWeight: "800",
-                        background: "linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(255, 215, 0, 0.18) 100%)",
-                        border: "1px solid rgba(20, 109, 158, 0.25)",
+                        background: "rgba(255, 215, 0, 0.15)",
+                        border: "1px solid rgba(255, 215, 0, 0.35)",
                         padding: "4px 12px",
                         borderRadius: "10px",
                         display: "inline-flex",
@@ -1761,9 +1763,9 @@ export default function DashboardPage() {
                   className="hover-card clay-card animate-fade-in-up"
                   style={{
                     ...styles.dashboardCard,
-                    background: "linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)",
-                    border: "2px solid #C7D2FE",
-                    boxShadow: "0 12px 28px -4px rgba(79, 70, 229, 0.14)",
+                    background: "rgba(79, 70, 229, 0.18)",
+                    border: "1.5px solid rgba(129, 140, 248, 0.35)",
+                    boxShadow: "0 12px 28px -4px rgba(79, 70, 229, 0.25)",
                     opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
@@ -1782,11 +1784,11 @@ export default function DashboardPage() {
                       maskPosition: "center",
                     }} />
                   </div>
-                  <h3 style={{ ...styles.cardTitle, color: "#3730A3", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <h3 style={{ ...styles.cardTitle, color: "#A5B4FC", display: "flex", alignItems: "center", gap: "6px" }}>
                     <span>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</span>
-                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#3730A3" />}
+                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#A5B4FC" />}
                   </h3>
-                  <p style={{ ...styles.cardDesc, color: "#4338CA" }}>{lang === "en" ? "Update photos, description, logo and contact info" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
+                  <p style={{ ...styles.cardDesc, color: "#E0E7FF" }}>{lang === "en" ? "Update photos, description, logo and contact info" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
                 </button>
 
                 {/* Checklist Card: flor.svg */}
@@ -1796,9 +1798,9 @@ export default function DashboardPage() {
                   className="hover-card clay-card animate-fade-in-up"
                   style={{
                     ...styles.dashboardCard,
-                    background: "linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)",
-                    border: "2px solid #86EFAC",
-                    boxShadow: "0 12px 28px -4px rgba(22, 163, 74, 0.14)",
+                    background: "rgba(16, 185, 129, 0.18)",
+                    border: "1.5px solid rgba(52, 211, 153, 0.35)",
+                    boxShadow: "0 12px 28px -4px rgba(16, 185, 129, 0.25)",
                     opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
@@ -1817,11 +1819,11 @@ export default function DashboardPage() {
                       maskPosition: "center",
                     }} />
                   </div>
-                  <h3 style={{ ...styles.cardTitle, color: "#166534", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <h3 style={{ ...styles.cardTitle, color: "#6EE7B7", display: "flex", alignItems: "center", gap: "6px" }}>
                     <span>{lang === "en" ? "Services Checklist" : "Checklist de Servicios"}</span>
-                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#166534" />}
+                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#6EE7B7" />}
                   </h3>
-                  <p style={{ ...styles.cardDesc, color: "#15803D" }}>{lang === "en" ? "Enable menu, wifi, parking or lodging modules" : "Activa wifi, parqueo, menú, hospedaje o amenidades"}</p>
+                  <p style={{ ...styles.cardDesc, color: "#D1FAE5" }}>{lang === "en" ? "Enable menu, wifi, parking or lodging modules" : "Activa wifi, parqueo, menú, hospedaje o amenidades"}</p>
                 </button>
 
                 {/* Hours Card */}
@@ -1832,20 +1834,20 @@ export default function DashboardPage() {
                     className="hover-card clay-card animate-fade-in-up"
                     style={{
                       ...styles.dashboardCard,
-                      background: "linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)",
-                      border: "2px solid #FDE68A",
-                      boxShadow: "0 12px 28px -4px rgba(217, 119, 6, 0.14)",
+                      background: "rgba(245, 158, 11, 0.18)",
+                      border: "1.5px solid rgba(251, 191, 36, 0.35)",
+                      boxShadow: "0 12px 28px -4px rgba(245, 158, 11, 0.25)",
                       opacity: negocio && !negocio.activo ? 0.75 : 1
                     }}
                   >
                     <div style={{ ...styles.cardIcon, background: "#D97706", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(217, 119, 6, 0.35)" }}>
                       <Icon name="clock" size={22} color="#FFFFFF" />
                     </div>
-                    <h3 style={{ ...styles.cardTitle, color: "#92400E", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <h3 style={{ ...styles.cardTitle, color: "#FDE68A", display: "flex", alignItems: "center", gap: "6px" }}>
                       <span>{lang === "en" ? "Opening Hours" : "Horarios de Atención"}</span>
-                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#92400E" />}
+                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#FDE68A" />}
                     </h3>
-                    <p style={{ ...styles.cardDesc, color: "#B45309" }}>{lang === "en" ? "Manage your daily opening and closing times" : "Configura tus horarios de apertura y cierre"}</p>
+                    <p style={{ ...styles.cardDesc, color: "#FEF3C7" }}>{lang === "en" ? "Manage your daily opening and closing times" : "Configura tus horarios de apertura y cierre"}</p>
                   </button>
                 )}
 
@@ -1857,20 +1859,20 @@ export default function DashboardPage() {
                     className="hover-card clay-card animate-fade-in-up"
                     style={{
                       ...styles.dashboardCard,
-                      background: "linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)",
-                      border: "2px solid #93C5FD",
-                      boxShadow: "0 12px 28px -4px rgba(37, 99, 235, 0.14)",
+                      background: "rgba(14, 165, 233, 0.18)",
+                      border: "1.5px solid rgba(56, 189, 248, 0.35)",
+                      boxShadow: "0 12px 28px -4px rgba(14, 165, 233, 0.25)",
                       opacity: negocio && !negocio.activo ? 0.75 : 1
                     }}
                   >
                     <div style={{ ...styles.cardIcon, background: "#2563EB", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(37, 99, 235, 0.35)" }}>
                       <Icon name="utensils" size={22} color="#FFFFFF" />
                     </div>
-                    <h3 style={{ ...styles.cardTitle, color: "#1E40AF", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <h3 style={{ ...styles.cardTitle, color: "#7DD3FC", display: "flex", alignItems: "center", gap: "6px" }}>
                       <span>{lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"}</span>
-                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#1E40AF" />}
+                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#7DD3FC" />}
                     </h3>
-                    <p style={{ ...styles.cardDesc, color: "#1D4ED8" }}>{lang === "en" ? "Add or remove dishes, photos, and set prices" : "Agrega, edita o elimina platillos, fotos y precios"}</p>
+                    <p style={{ ...styles.cardDesc, color: "#E0F2FE" }}>{lang === "en" ? "Add or remove dishes, photos, and set prices" : "Agrega, edita o elimina platillos, fotos y precios"}</p>
                   </button>
                 )}
 
@@ -1882,20 +1884,20 @@ export default function DashboardPage() {
                     className="hover-card clay-card animate-fade-in-up"
                     style={{
                       ...styles.dashboardCard,
-                      background: "linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%)",
-                      border: "2px solid #D8B4FE",
-                      boxShadow: "0 12px 28px -4px rgba(147, 51, 234, 0.14)",
+                      background: "rgba(139, 92, 246, 0.18)",
+                      border: "1.5px solid rgba(167, 139, 250, 0.35)",
+                      boxShadow: "0 12px 28px -4px rgba(139, 92, 246, 0.25)",
                       opacity: negocio && !negocio.activo ? 0.75 : 1
                     }}
                   >
                     <div style={{ ...styles.cardIcon, background: "#9333EA", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(147, 51, 234, 0.35)" }}>
                       <Icon name="calendar" size={22} color="#FFFFFF" />
                     </div>
-                    <h3 style={{ ...styles.cardTitle, color: "#6B21A8", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <h3 style={{ ...styles.cardTitle, color: "#C4B5FD", display: "flex", alignItems: "center", gap: "6px" }}>
                       <span>{lang === "en" ? "Reservations Manager" : "Gestor de Reservas"}</span>
-                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#6B21A8" />}
+                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#C4B5FD" />}
                     </h3>
-                    <p style={{ ...styles.cardDesc, color: "#7E22CE" }}>{lang === "en" ? "Approve or cancel incoming booking requests" : "Aprueba o cancela solicitudes de reserva"}</p>
+                    <p style={{ ...styles.cardDesc, color: "#F3E8FF" }}>{lang === "en" ? "Approve or cancel incoming booking requests" : "Aprueba o cancela solicitudes de reserva"}</p>
                     {(reservas || []).filter(r => r.estado_reserva === "pendiente").length > 0 && (
                       <div style={styles.cardBadge}>
                         {(reservas || []).filter(r => r.estado_reserva === "pendiente").length} {lang === "en" ? "Pending" : "Pendientes"}
@@ -1911,9 +1913,9 @@ export default function DashboardPage() {
                   className="hover-card clay-card animate-fade-in-up"
                   style={{
                     ...styles.dashboardCard,
-                    background: "linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%)",
-                    border: "2px solid #FECDD3",
-                    boxShadow: "0 12px 28px -4px rgba(225, 29, 72, 0.14)",
+                    background: "rgba(244, 63, 94, 0.18)",
+                    border: "1.5px solid rgba(251, 113, 133, 0.35)",
+                    boxShadow: "0 12px 28px -4px rgba(244, 63, 94, 0.25)",
                     opacity: negocio && !negocio.activo ? 0.75 : 1
                   }}
                 >
@@ -1932,11 +1934,11 @@ export default function DashboardPage() {
                       maskPosition: "center",
                     }} />
                   </div>
-                  <h3 style={{ ...styles.cardTitle, color: "#9F1239", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <h3 style={{ ...styles.cardTitle, color: "#FDA4AF", display: "flex", alignItems: "center", gap: "6px" }}>
                     <span>{lang === "en" ? "Customer Reviews" : "Reseñas de Clientes"}</span>
-                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#9F1239" />}
+                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#FDA4AF" />}
                   </h3>
-                  <p style={{ ...styles.cardDesc, color: "#BE123C" }}>{lang === "en" ? "Read what tourists think about your business" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
+                  <p style={{ ...styles.cardDesc, color: "#FFE4E6" }}>{lang === "en" ? "Read what tourists think about your business" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
                 </button>
               </div>
           ) : (
@@ -1980,8 +1982,8 @@ export default function DashboardPage() {
                       <div style={{ width: "20px", height: "20px", backgroundColor: "#FFFFFF", WebkitMaskImage: "url('/images/edificio.svg')", WebkitMaskRepeat: "no-repeat", WebkitMaskSize: "contain", WebkitMaskPosition: "center", maskImage: "url('/images/edificio.svg')", maskRepeat: "no-repeat", maskSize: "contain", maskPosition: "center" }} />
                     </div>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#1A1A2E", letterSpacing: "-0.01em" }}>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</h3>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#64748B" }}>{lang === "en" ? "Update description, contact details and media gallery" : "Actualiza fotos, descripción, datos de contacto y redes sociales"}</p>
+                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</h3>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Update description, contact details and media gallery" : "Actualiza fotos, descripción, datos de contacto y redes sociales"}</p>
                     </div>
                   </div>
 
@@ -2113,8 +2115,8 @@ export default function DashboardPage() {
                       <div style={{ width: "20px", height: "20px", backgroundColor: "#FFFFFF", WebkitMaskImage: "url('/images/flor.svg')", WebkitMaskRepeat: "no-repeat", WebkitMaskSize: "contain", WebkitMaskPosition: "center", maskImage: "url('/images/flor.svg')", maskRepeat: "no-repeat", maskSize: "contain", maskPosition: "center" }} />
                     </div>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#1A1A2E", letterSpacing: "-0.01em" }}>{lang === "en" ? "Services & Amenities" : "Checklist de Servicios y Amenidades"}</h3>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#64748B" }}>{lang === "en" ? "Enable features offered at your establishment" : "Activa los servicios y amenidades disponibles para tus clientes"}</p>
+                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Services & Amenities" : "Checklist de Servicios y Amenidades"}</h3>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Enable features offered at your establishment" : "Activa los servicios y amenidades disponibles para tus clientes"}</p>
                     </div>
                   </div>
 
@@ -2199,8 +2201,8 @@ export default function DashboardPage() {
                       <Icon name="clock" size={20} color="#FFFFFF" />
                     </div>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#1A1A2E", letterSpacing: "-0.01em" }}>{lang === "en" ? "Opening Hours" : "Horarios de Atención"}</h3>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#64748B" }}>{lang === "en" ? "Configure open/close schedule per day" : "Configura tus horas de apertura y cierre por cada día de la semana"}</p>
+                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Opening Hours" : "Horarios de Atención"}</h3>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Configure open/close schedule per day" : "Configura tus horas de apertura y cierre por cada día de la semana"}</p>
                     </div>
                   </div>
 
@@ -2299,14 +2301,14 @@ export default function DashboardPage() {
                       <Icon name="utensils" size={20} color="#FFFFFF" />
                     </div>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#1A1A2E", letterSpacing: "-0.01em" }}>{lang === "en" ? "Menu & Catalog" : "Menú y Productos del Local"}</h3>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#64748B" }}>{lang === "en" ? "Manage dishes, services and prices offered" : "Administra tus platos, productos, precios y disponibilidades"}</p>
+                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Menu & Catalog" : "Menú y Productos del Local"}</h3>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Manage dishes, services and prices offered" : "Administra tus platos, productos, precios y disponibilidades"}</p>
                     </div>
                   </div>
 
                   <div style={{ flex: 1, display: "grid", gridTemplateColumns: "320px 1fr", gap: "16px", overflow: "hidden" }}>
                     {/* FORMULARIO AGREGAR PLATILLO (IZQUIERDA) */}
-                    <form onSubmit={handleAddPlato} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", background: "#F8FAFC", padding: "12px", borderRadius: "12px", border: "1px solid #E2E8F0" }}>
+                    <form onSubmit={handleAddPlato} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", background: "rgba(255, 255, 255, 0.05)", padding: "12px", borderRadius: "12px", border: "1px solid rgba(255, 255, 255, 0.15)" }}>
                       <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                         <h4 style={{ margin: 0, fontSize: "13.5px", fontWeight: "800", color: "#0284C7", display: "inline-flex", alignItems: "center", gap: "6px" }}>
                           <Icon name="plus" size={14} color="#0284C7" />
@@ -2407,8 +2409,8 @@ export default function DashboardPage() {
                       <Icon name="calendar" size={20} color="#FFFFFF" />
                     </div>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#1A1A2E", letterSpacing: "-0.01em" }}>{lang === "en" ? "Booking Log" : "Bitácora de Reservas"}</h3>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#64748B" }}>{lang === "en" ? "Manage incoming reservations from travelers" : "Gestiona las reservaciones recibidas de turistas"}</p>
+                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Booking Log" : "Bitácora de Reservas"}</h3>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Manage incoming reservations from travelers" : "Gestiona las reservaciones recibidas de turistas"}</p>
                     </div>
                   </div>
 
@@ -2471,8 +2473,8 @@ export default function DashboardPage() {
                       <div style={{ width: "20px", height: "20px", backgroundColor: "#FFFFFF", WebkitMaskImage: "url('/images/sombrero.svg')", WebkitMaskRepeat: "no-repeat", WebkitMaskSize: "contain", WebkitMaskPosition: "center", maskImage: "url('/images/sombrero.svg')", maskRepeat: "no-repeat", maskSize: "contain", maskPosition: "center" }} />
                     </div>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#1A1A2E", letterSpacing: "-0.01em" }}>{lang === "en" ? "Customer Feedback" : "Opiniones y Reseñas de Clientes"}</h3>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#64748B" }}>{lang === "en" ? "Ratings and comments left by visitors" : "Lee y gestiona las opiniones compartidas por tus clientes"}</p>
+                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Customer Feedback" : "Opiniones y Reseñas de Clientes"}</h3>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Ratings and comments left by visitors" : "Lee y gestiona las opiniones compartidas por tus clientes"}</p>
                     </div>
                   </div>
 
@@ -3312,11 +3314,11 @@ const styles = {
   mainContent: {
     padding: "24px 28px",
     borderRadius: "20px",
-    background: "rgba(255, 255, 255, 0.95)",
+    background: "rgba(10, 25, 47, 0.78)",
     backdropFilter: "blur(20px)",
     WebkitBackdropFilter: "blur(20px)",
-    border: "1.5px solid rgba(255, 255, 255, 0.95)",
-    boxShadow: "0 20px 50px rgba(0, 0, 0, 0.3)",
+    border: "1.5px solid rgba(255, 255, 255, 0.18)",
+    boxShadow: "0 20px 50px rgba(0, 0, 0, 0.5)",
     height: "calc(100vh - 105px)",
     maxHeight: "calc(100vh - 105px)",
     overflowY: "auto",
@@ -3330,7 +3332,7 @@ const styles = {
   tabTitle: {
     fontSize: "20px",
     fontWeight: "800",
-    color: "var(--atlan-gold-dark, #B8960E)",
+    color: "#FFD700",
     marginBottom: "16px",
     letterSpacing: "-0.01em",
   },
@@ -3347,15 +3349,15 @@ const styles = {
   label: {
     fontSize: "12.5px",
     fontWeight: "750",
-    color: "#4A5568",
+    color: "#E2E8F0",
   },
   input: {
     width: "100%",
     padding: "11px 14px",
-    background: "#F4F6F9",
-    border: "1.5px solid rgba(20, 109, 158, 0.12)",
+    background: "rgba(255, 255, 255, 0.08)",
+    border: "1.5px solid rgba(255, 255, 255, 0.2)",
     borderRadius: "12px",
-    color: "#1A1A2E",
+    color: "#FFFFFF",
     fontSize: "13.5px",
     outline: "none",
   },
