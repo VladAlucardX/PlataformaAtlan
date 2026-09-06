@@ -275,9 +275,21 @@ export default function ChatWidget({ session, perfil, lang }) {
                               fontWeight: hasUnread ? "700" : "400",
                               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1,
                             }}>
-                              {lastMsg
-                                ? (lastMsg.imagen_url ? "📷 Imagen" : (lastMsg.contenido?.slice(0, 40) + (lastMsg.contenido?.length > 40 ? "..." : "")))
-                                : (lang === "en" ? "Start chatting" : "Inicia la conversación")}
+                              {lastMsg ? (
+                                lastMsg.imagen_url ? (
+                                  <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                      <circle cx="12" cy="13" r="4"/>
+                                    </svg>
+                                    <span>{lastMsg.contenido || (lang === "en" ? "Photo" : "Imagen")}</span>
+                                  </span>
+                                ) : (
+                                  lastMsg.contenido?.slice(0, 40) + (lastMsg.contenido?.length > 40 ? "..." : "")
+                                )
+                              ) : (
+                                lang === "en" ? "Start chatting" : "Inicia la conversación"
+                              )}
                             </span>
                             {hasUnread && (
                               <span style={styles.unreadBadge}>{conv.unreadCount}</span>

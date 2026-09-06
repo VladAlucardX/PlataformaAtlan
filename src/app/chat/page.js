@@ -79,6 +79,50 @@ function renderMessageMedia(msgUrl, lang) {
   );
 }
 
+function renderLastMessagePreview(lastMessage, lang) {
+  if (!lastMessage) {
+    return lang === "en" ? "Send the first message!" : "¡Envía el primer mensaje!";
+  }
+
+  if (lastMessage.imagen_url) {
+    const url = lastMessage.imagen_url.toLowerCase();
+    const isAudio = url.endsWith(".mp3") || url.endsWith(".wav") || url.endsWith(".m4a") || url.endsWith(".ogg") || url.endsWith(".webm") || url.includes("audio");
+    const isVideo = url.endsWith(".mp4") || url.endsWith(".webm") || url.endsWith(".mov") || url.includes("video");
+
+    return (
+      <span style={{ display: "inline-flex", alignItems: "center", gap: "5px" }}>
+        {isAudio ? (
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          </svg>
+        ) : isVideo ? (
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <polygon points="23 7 16 12 23 17 23 7"/>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+          </svg>
+        ) : (
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        )}
+        <span>
+          {lastMessage.contenido || (
+            isAudio
+              ? (lang === "en" ? "Audio note" : "Nota de voz")
+              : isVideo
+              ? (lang === "en" ? "Video" : "Video")
+              : (lang === "en" ? "Photo" : "Imagen")
+          )}
+        </span>
+      </span>
+    );
+  }
+
+  return lastMessage.contenido || "";
+}
+
 function ChatContent() {
   const { t, lang } = useTranslation();
   const router = useRouter();
@@ -601,10 +645,7 @@ function ChatContent() {
                           </span>
                         </div>
                         <p style={{ margin: "2px 0 0", fontSize: "12px", color: unread > 0 ? "#FFD700" : "rgba(255, 255, 255, 0.65)", fontWeight: unread > 0 ? "700" : "400", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                          {conv.lastMessage
-                            ? (conv.lastMessage.imagen_url ? "📷 " : "") + (conv.lastMessage.contenido || (lang === "en" ? "Image" : "Imagen"))
-                            : (lang === "en" ? "Send the first message!" : "¡Envía el primer mensaje!")
-                          }
+                          {renderLastMessagePreview(conv.lastMessage, lang)}
                         </p>
                       </div>
                     </button>
