@@ -1969,30 +1969,31 @@ const styles = {
   },
   avatarWrapperWide: {
     position: "relative",
-    width: "64px",
-    height: "64px",
+    width: "84px",
+    height: "84px",
     flexShrink: 0
   },
   avatarImgWide: {
     width: "100%",
     height: "100%",
-    borderRadius: "50%",
+    borderRadius: "16px",
     objectFit: "cover",
     border: "2.5px solid #0EA5E9",
-    boxShadow: "0 0 16px rgba(14, 165, 233, 0.35)"
+    boxShadow: "0 4px 18px rgba(14, 165, 233, 0.35)"
   },
   verifiedBadgeIcon: {
     position: "absolute",
-    bottom: "1px",
-    right: "1px",
+    bottom: "-3px",
+    right: "-3px",
     background: "#10B981",
     borderRadius: "50%",
-    width: "20px",
-    height: "20px",
+    width: "22px",
+    height: "22px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.4)"
+    boxShadow: "0 3px 8px rgba(0,0,0,0.5)",
+    border: "2px solid #0F172A"
   },
   deptBadgeSlim: {
     display: "inline-flex",
