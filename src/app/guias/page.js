@@ -1116,27 +1116,24 @@ export default function GuiasPage() {
                   </div>
                 </div>
 
-                {/* Columna Derecha: Tira de Galería de Travesías (Con imágenes reales de Nicaragua) */}
+                {/* Columna Derecha: Portada Rectangular de Travesía */}
                 {guia.galeria_fotos && guia.galeria_fotos.length > 0 && (
-                  <div style={styles.travesiaStripRight}>
-                    <div style={styles.travesiaStripHeader}>
-                      <Icon name="image" size={12} color="#38BDF8" />
-                      <span>Travesías ({guia.galeria_fotos.length})</span>
-                    </div>
-                    <div style={styles.travesiaImagesGrid}>
-                      {guia.galeria_fotos.slice(0, 3).map((imgUrl, i) => (
-                        <div
-                          key={i}
-                          style={styles.travesiaThumbBox}
-                          onClick={() => {
-                            setSelectedGuiaModal(guia);
-                            setActiveModalTab("galeria");
-                          }}
-                          title="Ver foto de travesía"
-                        >
-                          <img src={imgUrl} alt={`Travesía ${i + 1}`} style={styles.travesiaThumbImg} />
-                        </div>
-                      ))}
+                  <div
+                    style={styles.coverPhotoBoxRight}
+                    onClick={() => {
+                      setSelectedGuiaModal(guia);
+                      setActiveModalTab("galeria");
+                    }}
+                    title={lang === "en" ? "View full photo gallery" : "Ver galería de fotos completa"}
+                  >
+                    <img
+                      src={guia.galeria_fotos[0]}
+                      alt={guia.nombre_completo}
+                      style={styles.coverPhotoImg}
+                    />
+                    <div style={styles.coverPhotoOverlayBadge}>
+                      <Icon name="image" size={11} color="#FFFFFF" />
+                      <span>+{guia.galeria_fotos.length}</span>
                     </div>
                   </div>
                 )}
@@ -2112,43 +2109,39 @@ const styles = {
     gap: "4px"
   },
 
-  // TIRA DE FOTOS DE TRAVESÍAS DEL GUÍA
-  travesiaStripRight: {
-    width: "100px",
+  // PORTADA RECTANGULAR DERECHA DE TRAVESÍA
+  coverPhotoBoxRight: {
+    width: "150px",
     flexShrink: 0,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    borderLeft: "1px solid rgba(255,255,255,0.08)",
-    paddingLeft: "10px"
-  },
-  travesiaStripHeader: {
-    fontSize: "10px",
-    fontWeight: "750",
-    color: "#38BDF8",
-    marginBottom: "4px",
-    display: "flex",
-    alignItems: "center",
-    gap: "3px"
-  },
-  travesiaImagesGrid: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "4px"
-  },
-  travesiaThumbBox: {
-    width: "100%",
-    height: "36px",
-    borderRadius: "6px",
+    position: "relative",
+    borderRadius: "12px",
     overflow: "hidden",
     cursor: "pointer",
-    border: "1px solid rgba(255,255,255,0.15)",
-    transition: "transform 0.2s"
+    border: "1px solid rgba(255, 255, 255, 0.12)",
+    boxShadow: "0 4px 14px rgba(0, 0, 0, 0.3)",
+    transition: "transform 0.25s ease, border-color 0.25s ease"
   },
-  travesiaThumbImg: {
+  coverPhotoImg: {
     width: "100%",
     height: "100%",
     objectFit: "cover"
+  },
+  coverPhotoOverlayBadge: {
+    position: "absolute",
+    bottom: "6px",
+    right: "6px",
+    background: "rgba(15, 23, 42, 0.85)",
+    backdropFilter: "blur(6px)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    borderRadius: "12px",
+    padding: "2px 7px",
+    display: "flex",
+    alignItems: "center",
+    gap: "3.5px",
+    fontSize: "10.5px",
+    fontWeight: "750",
+    color: "#FFFFFF",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.4)"
   },
 
   emptyStateSlim: {
