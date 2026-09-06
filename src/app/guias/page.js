@@ -2237,19 +2237,21 @@ const styles = {
     padding: "24px 16px"
   },
   modalCardWide: {
-    width: "95%",
-    maxWidth: "1050px",
-    maxHeight: "90vh",
-    overflowY: "auto",
+    width: "92%",
+    maxWidth: "1020px",
+    height: "min(670px, 90vh)",
     background: "linear-gradient(180deg, #0F172A 0%, #090E1A 100%)",
     border: "1.5px solid rgba(56, 189, 248, 0.35)",
     borderRadius: "24px",
-    padding: "0 0 28px 0",
+    padding: "0 0 16px 0",
     position: "relative",
-    boxShadow: "0 25px 65px rgba(0, 0, 0, 0.8), 0 0 35px rgba(14, 165, 233, 0.15)"
+    boxShadow: "0 25px 65px rgba(0, 0, 0, 0.85), 0 0 35px rgba(14, 165, 233, 0.15)",
+    display: "flex",
+    flexDirection: "column",
+    overflow: "hidden"
   },
   modalHeaderCard: {
-    padding: "24px 28px 20px 28px",
+    padding: "20px 28px 16px 28px",
     background: "linear-gradient(135deg, rgba(14, 165, 233, 0.22) 0%, rgba(2, 132, 199, 0.12) 40%, rgba(15, 23, 42, 0.98) 100%), url('/images/fondohracio.png')",
     backgroundSize: "cover",
     backgroundPosition: "center",
@@ -2260,7 +2262,8 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "20px",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
+    flexShrink: 0
   },
   closeModalBtn: {
     position: "absolute",
@@ -2284,12 +2287,12 @@ const styles = {
     flexShrink: 0
   },
   modalAvatarWide: {
-    width: "88px",
-    height: "88px",
-    borderRadius: "20px",
+    width: "82px",
+    height: "82px",
+    borderRadius: "18px",
     objectFit: "cover",
     border: "3.5px solid #0EA5E9",
-    boxShadow: "0 0 22px rgba(14, 165, 233, 0.45)",
+    boxShadow: "0 0 20px rgba(14, 165, 233, 0.45)",
     background: "#0F172A"
   },
   modalAvatarBadgeVerified: {
@@ -2299,8 +2302,8 @@ const styles = {
     background: "#10B981",
     border: "2px solid #0F172A",
     borderRadius: "50%",
-    width: "24px",
-    height: "24px",
+    width: "22px",
+    height: "22px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -2347,10 +2350,10 @@ const styles = {
     gap: "4px"
   },
   modalGuideNameWide: {
-    fontSize: "23px",
+    fontSize: "22px",
     fontWeight: "900",
     color: "#FFFFFF",
-    margin: "3px 0",
+    margin: "2px 0",
     letterSpacing: "-0.3px",
     textShadow: "0 2px 8px rgba(0, 0, 0, 0.7)"
   },
@@ -2372,7 +2375,8 @@ const styles = {
     gap: "4px"
   },
   modalTabsContainer: {
-    padding: "20px 28px 18px 28px"
+    padding: "16px 28px 14px 28px",
+    flexShrink: 0
   },
   modalTabsRow: {
     display: "grid",
@@ -2385,7 +2389,7 @@ const styles = {
   },
   modalTabBtn: {
     width: "100%",
-    padding: "11px 8px",
+    padding: "10px 8px",
     fontSize: "13px",
     cursor: "pointer",
     display: "flex",
@@ -2412,7 +2416,9 @@ const styles = {
     boxShadow: "none"
   },
   modalBodyContent: {
-    padding: "0 28px"
+    flex: 1,
+    padding: "0 28px 16px 28px",
+    overflowY: "auto"
   },
   modalSection: {
     marginBottom: "18px"
@@ -2611,21 +2617,21 @@ const styles = {
   },
   destinosMapaGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-    gap: "14px",
-    marginTop: "12px"
+    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+    gap: "10px",
+    marginTop: "8px"
   },
   destinoMapaCard: {
-    background: "rgba(15, 23, 42, 0.7)",
+    background: "rgba(15, 23, 42, 0.75)",
     border: "1px solid rgba(255, 255, 255, 0.12)",
-    borderRadius: "14px",
+    borderRadius: "12px",
     overflow: "hidden",
     display: "flex",
     flexDirection: "column"
   },
   destinoMapaImageWrapper: {
     width: "100%",
-    height: "120px",
+    height: "92px",
     position: "relative",
     overflow: "hidden"
   },
@@ -2636,19 +2642,19 @@ const styles = {
   },
   destinoMapaCategoryBadge: {
     position: "absolute",
-    top: "8px",
-    right: "8px",
+    top: "6px",
+    right: "6px",
     background: "rgba(15, 23, 42, 0.85)",
     backdropFilter: "blur(4px)",
     color: "#38BDF8",
-    fontSize: "10.5px",
+    fontSize: "10px",
     fontWeight: "800",
-    padding: "2px 8px",
-    borderRadius: "6px",
+    padding: "2px 7px",
+    borderRadius: "5px",
     border: "1px solid rgba(56, 189, 248, 0.3)"
   },
   destinoMapaContent: {
-    padding: "12px",
+    padding: "9px 10px",
     display: "flex",
     flexDirection: "column",
     flex: 1
