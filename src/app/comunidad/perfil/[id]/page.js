@@ -77,9 +77,9 @@ const cardStyles = {
   actionBar: { display: "flex", gap: "8px", padding: "4px 0" },
   actionBtn: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-    padding: "9px 12px", background: "#FFFFFF", border: "1px solid #94A3B8", color: "#334155",
+    padding: "9px 12px", background: "rgba(255, 255, 255, 0.65)", border: "1px solid #CBD5E1", color: "#334155",
     fontSize: "13px", fontWeight: "700", cursor: "pointer", borderRadius: "12px", transition: "all 0.2s",
-    boxShadow: "0 2px 6px rgba(15, 23, 42, 0.05)"
+    boxShadow: "0 2px 4px rgba(15, 23, 42, 0.03)"
   },
   menuBtn: { background: "none", border: "none", color: "var(--atlan-text-muted)", fontSize: "20px", cursor: "pointer", padding: "4px 8px" },
   menuDropdown: { position: "absolute", top: "100%", right: 0, zIndex: 50, background: "#FFFFFF", border: "1px solid #94A3B8", borderRadius: "12px", padding: "4px", minWidth: "140px", boxShadow: "0 8px 24px rgba(0, 0, 0, 0.10)" },
@@ -281,21 +281,21 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
           onClick={handleLike}
           style={{
             ...cardStyles.actionBtn,
-            background: liked ? "rgba(239, 68, 68, 0.12)" : "#FFFFFF",
-            borderColor: liked ? "rgba(239, 68, 68, 0.4)" : "#94A3B8",
+            background: liked ? "rgba(239, 68, 68, 0.14)" : "rgba(255, 255, 255, 0.65)",
+            borderColor: liked ? "rgba(239, 68, 68, 0.4)" : "#CBD5E1",
             color: liked ? "#EF4444" : "#334155"
           }}
           onMouseOver={(e) => {
             if (!liked) {
-              e.currentTarget.style.background = "rgba(239, 68, 68, 0.08)";
-              e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.3)";
+              e.currentTarget.style.background = "rgba(239, 68, 68, 0.1)";
+              e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.35)";
               e.currentTarget.style.color = "#EF4444";
             }
           }}
           onMouseOut={(e) => {
             if (!liked) {
-              e.currentTarget.style.background = "#FFFFFF";
-              e.currentTarget.style.borderColor = "#94A3B8";
+              e.currentTarget.style.background = "rgba(255, 255, 255, 0.65)";
+              e.currentTarget.style.borderColor = "#CBD5E1";
               e.currentTarget.style.color = "#334155";
             }
           }}
@@ -319,21 +319,21 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
           onClick={handleToggleComments}
           style={{
             ...cardStyles.actionBtn,
-            background: showComments ? "rgba(20, 109, 158, 0.12)" : "#FFFFFF",
-            borderColor: showComments ? "rgba(20, 109, 158, 0.4)" : "#94A3B8",
+            background: showComments ? "rgba(20, 109, 158, 0.14)" : "rgba(255, 255, 255, 0.65)",
+            borderColor: showComments ? "rgba(20, 109, 158, 0.4)" : "#CBD5E1",
             color: showComments ? "#146D9E" : "#334155"
           }}
           onMouseOver={(e) => {
             if (!showComments) {
-              e.currentTarget.style.background = "rgba(20, 109, 158, 0.08)";
-              e.currentTarget.style.borderColor = "rgba(20, 109, 158, 0.3)";
+              e.currentTarget.style.background = "rgba(20, 109, 158, 0.1)";
+              e.currentTarget.style.borderColor = "rgba(20, 109, 158, 0.35)";
               e.currentTarget.style.color = "#146D9E";
             }
           }}
           onMouseOut={(e) => {
             if (!showComments) {
-              e.currentTarget.style.background = "#FFFFFF";
-              e.currentTarget.style.borderColor = "#94A3B8";
+              e.currentTarget.style.background = "rgba(255, 255, 255, 0.65)";
+              e.currentTarget.style.borderColor = "#CBD5E1";
               e.currentTarget.style.color = "#334155";
             }
           }}
