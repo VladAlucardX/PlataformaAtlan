@@ -1340,9 +1340,9 @@ const pageStyles = {
     alignItems: "center",
     gap: "14px",
     padding: "16px 22px",
-    background: "#FFFFFF",
-    border: "1px solid rgba(226, 232, 240, 0.95)",
-    boxShadow: "0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)",
+    background: "linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%)",
+    border: "1.5px solid #CBD5E1",
+    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)",
     borderRadius: "22px",
     cursor: "pointer",
     transition: "all 0.2s ease",
@@ -1354,9 +1354,9 @@ const pageStyles = {
     color: "var(--atlan-text-muted)",
     fontWeight: "500",
     padding: "11px 18px",
-    background: "#F8FAFC",
+    background: "#FFFFFF",
     borderRadius: "20px",
-    border: "1px solid rgba(226, 232, 240, 0.9)"
+    border: "1px solid #CBD5E1"
   },
   createPostBtn: {
     background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
@@ -1369,8 +1369,8 @@ const pageStyles = {
   },
   emptyState: {
     textAlign: "center", padding: "80px 24px",
-    background: "#FFFFFF", border: "2px dashed rgba(20,109,158,0.15)",
-    borderRadius: "24px", boxShadow: "0 4px 20px -2px rgba(15, 23, 42, 0.04)",
+    background: "linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%)", border: "1.5px dashed #CBD5E1",
+    borderRadius: "24px", boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08)",
   },
   fab: {
     position: "fixed", bottom: "24px", right: "24px", width: "56px", height: "56px",
@@ -1384,16 +1384,16 @@ const pageStyles = {
 
 const cardStyles = {
   card: {
-    background: "#FFFFFF",
-    border: "1px solid rgba(226, 232, 240, 0.95)",
-    boxShadow: "0 4px 24px -2px rgba(15, 23, 42, 0.05), 0 2px 8px -1px rgba(15, 23, 42, 0.03)",
+    background: "linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%)",
+    border: "1.5px solid #CBD5E1",
+    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)",
     borderRadius: "24px",
     padding: "24px",
     marginBottom: "20px",
     transition: "all 0.2s ease"
   },
   publicidadCard: {
-    background: "radial-gradient(circle at top right, rgba(20, 109, 158, 0.05) 0%, #FFFFFF 70%)",
+    background: "radial-gradient(circle at top right, rgba(20, 109, 158, 0.08) 0%, #EEF2F6 80%)",
     border: "1.5px solid #146D9E",
     boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.15)",
     borderRadius: "24px", padding: "24px", marginBottom: "20px",
@@ -1428,12 +1428,12 @@ const cardStyles = {
   },
   imageContainer: {
     borderRadius: "18px", overflow: "hidden", marginBottom: "16px",
-    border: "1px solid rgba(226, 232, 240, 0.8)",
+    border: "1px solid #CBD5E1",
   },
   image: { width: "100%", maxHeight: "540px", objectFit: "cover", display: "block" },
   statsBar: {
     display: "flex", justifyContent: "space-between", padding: "8px 4px",
-    borderBottom: "1px solid rgba(226, 232, 240, 0.7)", marginBottom: "4px",
+    borderBottom: "1px solid rgba(203, 213, 225, 0.8)", marginBottom: "4px",
   },
   statText: { fontSize: "12px", color: "var(--atlan-text-muted)", fontWeight: "600" },
   actionBar: {
@@ -1441,7 +1441,7 @@ const cardStyles = {
   },
   actionBtn: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-    padding: "9px 0", background: "rgba(248, 250, 252, 0.8)", border: "1px solid rgba(226, 232, 240, 0.8)",
+    padding: "9px 0", background: "#FFFFFF", border: "1px solid #CBD5E1",
     color: "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "650",
     cursor: "pointer", borderRadius: "12px", transition: "all 0.2s ease",
   },
@@ -1451,7 +1451,7 @@ const cardStyles = {
   },
   menuDropdown: {
     position: "absolute", top: "100%", right: 0, zIndex: 50,
-    background: "var(--atlan-bg-elevated)", border: "1px solid rgba(226, 232, 240, 0.9)",
+    background: "var(--atlan-bg-elevated)", border: "1px solid #CBD5E1",
     borderRadius: "12px", padding: "4px", minWidth: "140px",
     boxShadow: "0 8px 24px rgba(15, 23, 42, 0.12)",
   },
@@ -1461,21 +1461,21 @@ const cardStyles = {
     cursor: "pointer", borderRadius: "8px", transition: "background 0.15s",
   },
   commentsSection: {
-    borderTop: "1px solid rgba(226, 232, 240, 0.7)", paddingTop: "14px", marginTop: "8px",
+    borderTop: "1px solid #CBD5E1", paddingTop: "14px", marginTop: "8px",
   },
   commentItem: {
     display: "flex", gap: "10px", marginBottom: "12px", alignItems: "flex-start",
   },
   commentBubble: {
-    background: "#F8FAFC", padding: "10px 14px", borderRadius: "0 14px 14px 14px",
-    border: "1px solid rgba(226, 232, 240, 0.8)",
+    background: "#FFFFFF", padding: "10px 14px", borderRadius: "0 14px 14px 14px",
+    border: "1px solid #CBD5E1",
   },
   commentInput: {
     display: "flex", alignItems: "center", gap: "10px", marginTop: "12px",
   },
   commentTextField: {
-    flex: 1, padding: "10px 16px", background: "#F8FAFC",
-    border: "1px solid rgba(226, 232, 240, 0.9)", borderRadius: "20px",
+    flex: 1, padding: "10px 16px", background: "#FFFFFF",
+    border: "1px solid #CBD5E1", borderRadius: "20px",
     color: "#1A1A2E", fontSize: "13px", outline: "none",
   },
   sendBtn: {
@@ -1488,21 +1488,21 @@ const cardStyles = {
 
 const sidebarStyles = {
   profileCard: {
-    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.95)",
-    boxShadow: "0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)",
+    background: "linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%)", border: "1.5px solid #CBD5E1",
+    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)",
     borderRadius: "22px", overflow: "hidden",
   },
   profileBanner: {
     height: "60px", background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)",
   },
   loginCard: {
-    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.95)",
-    boxShadow: "0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)",
+    background: "linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%)", border: "1.5px solid #CBD5E1",
+    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)",
     borderRadius: "22px", padding: "24px", textAlign: "center",
   },
   sectionCard: {
-    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.95)",
-    boxShadow: "0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)",
+    background: "linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%)", border: "1.5px solid #CBD5E1",
+    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)",
     borderRadius: "22px", overflow: "hidden", padding: "0 0 16px 0",
   },
   cardHeaderBanner: {

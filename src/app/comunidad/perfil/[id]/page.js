@@ -40,13 +40,13 @@ function avatarStyle(url, size) {
 
 const cardStyles = {
   card: {
-    background: "#FFFFFF",
-    border: "2px solid rgba(255, 255, 255, 0.95)",
-    boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.08), 0 18px 40px -6px rgba(20, 109, 158, 0.12)",
+    background: "linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%)",
+    border: "1.5px solid #CBD5E1",
+    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)",
     borderRadius: "28px", padding: "24px", marginBottom: "20px"
   },
   publicidadCard: {
-    background: "radial-gradient(circle at top right, rgba(23, 170, 74, 0.08) 0%, #FFFFFF 70%)",
+    background: "radial-gradient(circle at top right, rgba(23, 170, 74, 0.08) 0%, #EEF2F6 70%)",
     border: "2px solid #17AA4A",
     boxShadow: "0 10px 30px -4px rgba(23, 170, 74, 0.25)",
     borderRadius: "20px", padding: "24px", marginBottom: "20px",
@@ -70,24 +70,24 @@ const cardStyles = {
     background: "rgba(255,215,0,0.10)", color: "#FFD700",
   },
   content: { margin: "0 0 16px", fontSize: "15.5px", lineHeight: "1.65", color: "var(--atlan-text-primary)", whiteSpace: "pre-wrap", wordBreak: "break-word" },
-  imageContainer: { borderRadius: "18px", overflow: "hidden", marginBottom: "16px", border: "1px solid rgba(20,109,158,0.08)" },
+  imageContainer: { borderRadius: "18px", overflow: "hidden", marginBottom: "16px", border: "1px solid #CBD5E1" },
   image: { width: "100%", maxHeight: "540px", objectFit: "cover", display: "block" },
-  statsBar: { display: "flex", justifyContent: "space-between", padding: "8px 4px", borderBottom: "1px solid rgba(20,109,158,0.06)", marginBottom: "4px" },
+  statsBar: { display: "flex", justifyContent: "space-between", padding: "8px 4px", borderBottom: "1px solid rgba(203,213,225,0.8)", marginBottom: "4px" },
   statText: { fontSize: "12px", color: "var(--atlan-text-muted)", fontWeight: "600" },
-  actionBar: { display: "flex", gap: "4px", padding: "4px 0" },
+  actionBar: { display: "flex", gap: "8px", padding: "4px 0" },
   actionBtn: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-    padding: "8px 0", background: "none", border: "none", color: "var(--atlan-text-secondary)",
-    fontSize: "13px", fontWeight: "700", cursor: "pointer", borderRadius: "10px", transition: "all 0.2s"
+    padding: "9px 0", background: "#FFFFFF", border: "1px solid #CBD5E1", color: "var(--atlan-text-secondary)",
+    fontSize: "13px", fontWeight: "700", cursor: "pointer", borderRadius: "12px", transition: "all 0.2s"
   },
   menuBtn: { background: "none", border: "none", color: "var(--atlan-text-muted)", fontSize: "20px", cursor: "pointer", padding: "4px 8px" },
-  menuDropdown: { position: "absolute", top: "100%", right: 0, zIndex: 50, background: "#FFFFFF", border: "1px solid rgba(20, 109, 158, 0.12)", borderRadius: "12px", padding: "4px", minWidth: "140px", boxShadow: "0 8px 24px rgba(0, 0, 0, 0.10)" },
+  menuDropdown: { position: "absolute", top: "100%", right: 0, zIndex: 50, background: "#FFFFFF", border: "1px solid #CBD5E1", borderRadius: "12px", padding: "4px", minWidth: "140px", boxShadow: "0 8px 24px rgba(0, 0, 0, 0.10)" },
   menuItem: { display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "10px 12px", background: "none", border: "none", color: "#ef4444", fontSize: "13px", fontWeight: "700", cursor: "pointer" },
-  commentsSection: { borderTop: "1px solid rgba(20,109,158,0.06)", paddingTop: "14px", marginTop: "4px" },
+  commentsSection: { borderTop: "1px solid #CBD5E1", paddingTop: "14px", marginTop: "4px" },
   commentItem: { display: "flex", gap: "10px", marginBottom: "12px", alignItems: "flex-start" },
-  commentBubble: { background: "#F4F6F9", padding: "8px 14px", borderRadius: "0 14px 14px 14px", border: "1px solid rgba(255, 255, 255, 0.9)" },
+  commentBubble: { background: "#FFFFFF", padding: "8px 14px", borderRadius: "0 14px 14px 14px", border: "1px solid #CBD5E1" },
   commentInput: { display: "flex", alignItems: "center", gap: "10px", marginTop: "12px" },
-  commentTextField: { flex: 1, padding: "10px 16px", background: "#F4F6F9", border: "1.5px solid rgba(20,109,158,0.12)", borderRadius: "20px", color: "#1A1A2E", fontSize: "13px", outline: "none" },
+  commentTextField: { flex: 1, padding: "10px 16px", background: "#FFFFFF", border: "1px solid #CBD5E1", borderRadius: "20px", color: "#1A1A2E", fontSize: "13px", outline: "none" },
   sendBtn: { background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none", width: "36px", height: "36px", borderRadius: "50%", color: "white", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" },
 };
 
