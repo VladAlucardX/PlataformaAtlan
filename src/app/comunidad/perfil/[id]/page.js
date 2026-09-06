@@ -796,14 +796,14 @@ export default function PerfilPublico() {
 
           <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
             <div style={sidebarStyles.cardHeaderBanner}>
-              <Icon name="map" size={16} /> Explorar
+              <img src="/images/Ubicacion.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> Explorar
             </div>
             <div style={{ padding: "0 16px" }}>
               <Link href="/comunidad" style={sidebarStyles.exploreLink}>
-                <Icon name="users" size={14} /> Muro General
+                <img src="/images/comunidad.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> Muro General
               </Link>
               <Link href="/mapa" style={sidebarStyles.exploreLink}>
-                <img src="/images/mapa.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> Mapa Turístico
+                <img src="/images/croquisnicaragua.svg" alt="Mapa" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0)" }} /> Mapa Turístico
               </Link>
             </div>
           </div>
@@ -867,7 +867,7 @@ export default function PerfilPublico() {
         <aside className="hide-mobile community-sidebar">
           <div style={sidebarStyles.sectionCard}>
             <div style={sidebarStyles.cardHeaderBanner}>
-              <Icon name="search" size={16} /> Buscar
+              <img src="/images/lupa.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> Buscar
             </div>
             <div style={{ padding: "0 16px" }}>
               <input
@@ -882,7 +882,7 @@ export default function PerfilPublico() {
 
           <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
             <div style={sidebarStyles.cardHeaderBanner}>
-              <Icon name="sparkles" size={16} /> Personas sugeridas
+              <img src="/images/tortuga.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> Personas sugeridas
             </div>
             <div style={{ padding: "0 16px" }}>
               {suggestedUsers.map((u) => (
