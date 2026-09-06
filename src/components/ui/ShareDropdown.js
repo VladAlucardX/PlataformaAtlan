@@ -188,22 +188,22 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
         onClick={() => { setOpen(!open); setShowSendChat(false); }}
         style={{
           ...styles.actionBtn,
-          background: open ? "rgba(16, 185, 129, 0.1)" : "#FFFFFF",
-          borderColor: open ? "rgba(16, 185, 129, 0.35)" : "#CBD5E1",
-          color: open ? "#10B981" : "#475569"
+          background: open ? "rgba(16, 185, 129, 0.12)" : "#FFFFFF",
+          borderColor: open ? "rgba(16, 185, 129, 0.4)" : "#94A3B8",
+          color: open ? "#10B981" : "#334155"
         }}
         onMouseOver={(e) => {
           if (!open) {
-            e.currentTarget.style.background = "rgba(16, 185, 129, 0.06)";
-            e.currentTarget.style.borderColor = "rgba(16, 185, 129, 0.25)";
+            e.currentTarget.style.background = "rgba(16, 185, 129, 0.08)";
+            e.currentTarget.style.borderColor = "rgba(16, 185, 129, 0.3)";
             e.currentTarget.style.color = "#10B981";
           }
         }}
         onMouseOut={(e) => {
           if (!open) {
             e.currentTarget.style.background = "#FFFFFF";
-            e.currentTarget.style.borderColor = "#CBD5E1";
-            e.currentTarget.style.color = "#475569";
+            e.currentTarget.style.borderColor = "#94A3B8";
+            e.currentTarget.style.color = "#334155";
           }
         }}
       >
@@ -214,7 +214,7 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
             width: "20px",
             height: "20px",
             objectFit: "contain",
-            filter: open ? "brightness(0) saturate(100%) invert(58%) sepia(85%) saturate(450%) hue-rotate(113deg)" : "brightness(0) opacity(0.7)",
+            filter: open ? "brightness(0) saturate(100%) invert(58%) sepia(85%) saturate(450%) hue-rotate(113deg)" : "brightness(0) opacity(0.75)",
             transition: "all 0.2s"
           }}
         />
@@ -296,10 +296,10 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
 const styles = {
   actionBtn: {
     width: "100%", flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-    padding: "9px 12px", background: "#FFFFFF", border: "1px solid #CBD5E1",
-    color: "#475569", fontSize: "13px", fontWeight: "700",
+    padding: "9px 12px", background: "#FFFFFF", border: "1px solid #94A3B8",
+    color: "#334155", fontSize: "13px", fontWeight: "700",
     cursor: "pointer", borderRadius: "12px", transition: "all 0.2s ease",
-    boxShadow: "0 2px 6px rgba(15, 23, 42, 0.04)"
+    boxShadow: "0 2px 6px rgba(15, 23, 42, 0.05)"
   },
   dropdown: {
     position: "absolute", bottom: "100%", left: "50%", transform: "translateX(-50%)",

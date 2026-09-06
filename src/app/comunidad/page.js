@@ -543,22 +543,22 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
           onClick={handleLike}
           style={{
             ...cardStyles.actionBtn,
-            background: liked ? "rgba(239, 68, 68, 0.1)" : "#FFFFFF",
-            borderColor: liked ? "rgba(239, 68, 68, 0.35)" : "#CBD5E1",
-            color: liked ? "#EF4444" : "#475569"
+            background: liked ? "rgba(239, 68, 68, 0.12)" : "#FFFFFF",
+            borderColor: liked ? "rgba(239, 68, 68, 0.4)" : "#94A3B8",
+            color: liked ? "#EF4444" : "#334155"
           }}
           onMouseOver={(e) => {
             if (!liked) {
-              e.currentTarget.style.background = "rgba(239, 68, 68, 0.06)";
-              e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.25)";
+              e.currentTarget.style.background = "rgba(239, 68, 68, 0.08)";
+              e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.3)";
               e.currentTarget.style.color = "#EF4444";
             }
           }}
           onMouseOut={(e) => {
             if (!liked) {
               e.currentTarget.style.background = "#FFFFFF";
-              e.currentTarget.style.borderColor = "#CBD5E1";
-              e.currentTarget.style.color = "#475569";
+              e.currentTarget.style.borderColor = "#94A3B8";
+              e.currentTarget.style.color = "#334155";
             }
           }}
         >
@@ -570,7 +570,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
               height: "20px",
               objectFit: "contain",
               transform: liked ? "scale(1.1)" : "scale(1)",
-              filter: liked ? "drop-shadow(0 0 4px rgba(239, 68, 68, 0.5))" : "brightness(0) opacity(0.7)",
+              filter: liked ? "drop-shadow(0 0 4px rgba(239, 68, 68, 0.5))" : "brightness(0) opacity(0.75)",
               transition: "all 0.2s"
             }}
           />
@@ -581,22 +581,22 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
           onClick={handleToggleComments}
           style={{
             ...cardStyles.actionBtn,
-            background: showComments ? "rgba(20, 109, 158, 0.1)" : "#FFFFFF",
-            borderColor: showComments ? "rgba(20, 109, 158, 0.35)" : "#CBD5E1",
-            color: showComments ? "#146D9E" : "#475569"
+            background: showComments ? "rgba(20, 109, 158, 0.12)" : "#FFFFFF",
+            borderColor: showComments ? "rgba(20, 109, 158, 0.4)" : "#94A3B8",
+            color: showComments ? "#146D9E" : "#334155"
           }}
           onMouseOver={(e) => {
             if (!showComments) {
-              e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)";
-              e.currentTarget.style.borderColor = "rgba(20, 109, 158, 0.25)";
+              e.currentTarget.style.background = "rgba(20, 109, 158, 0.08)";
+              e.currentTarget.style.borderColor = "rgba(20, 109, 158, 0.3)";
               e.currentTarget.style.color = "#146D9E";
             }
           }}
           onMouseOut={(e) => {
             if (!showComments) {
               e.currentTarget.style.background = "#FFFFFF";
-              e.currentTarget.style.borderColor = "#CBD5E1";
-              e.currentTarget.style.color = "#475569";
+              e.currentTarget.style.borderColor = "#94A3B8";
+              e.currentTarget.style.color = "#334155";
             }
           }}
         >
@@ -607,7 +607,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
               width: "20px",
               height: "20px",
               objectFit: "contain",
-              filter: showComments ? "brightness(0) saturate(100%) invert(34%) sepia(85%) saturate(1045%) hue-rotate(170deg)" : "brightness(0) opacity(0.7)",
+              filter: showComments ? "brightness(0) saturate(100%) invert(34%) sepia(85%) saturate(1045%) hue-rotate(170deg)" : "brightness(0) opacity(0.75)",
               transition: "all 0.2s"
             }}
           />
@@ -1398,9 +1398,9 @@ const pageStyles = {
     alignItems: "center",
     gap: "14px",
     padding: "16px 22px",
-    background: "#F1F5F9",
-    border: "1.5px solid #CBD5E1",
-    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)",
+    background: "#E2E8F0",
+    border: "1.5px solid #94A3B8",
+    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.10), 0 2px 6px -1px rgba(15, 23, 42, 0.05)",
     borderRadius: "22px",
     cursor: "pointer",
     transition: "all 0.2s ease",
@@ -1414,7 +1414,7 @@ const pageStyles = {
     padding: "11px 18px",
     background: "#FFFFFF",
     borderRadius: "20px",
-    border: "1px solid #CBD5E1"
+    border: "1px solid #94A3B8"
   },
   createPostBtn: {
     background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
@@ -1427,8 +1427,8 @@ const pageStyles = {
   },
   emptyState: {
     textAlign: "center", padding: "80px 24px",
-    background: "#F1F5F9", border: "1.5px dashed #CBD5E1",
-    borderRadius: "24px", boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08)",
+    background: "#E2E8F0", border: "1.5px dashed #94A3B8",
+    borderRadius: "24px", boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.10)",
   },
   fab: {
     position: "fixed", bottom: "24px", right: "24px", width: "56px", height: "56px",
@@ -1442,18 +1442,18 @@ const pageStyles = {
 
 const cardStyles = {
   card: {
-    background: "#F1F5F9",
-    border: "1.5px solid #CBD5E1",
-    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)",
+    background: "#E2E8F0",
+    border: "1.5px solid #94A3B8",
+    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.10), 0 2px 6px -1px rgba(15, 23, 42, 0.05)",
     borderRadius: "24px",
     padding: "24px",
     marginBottom: "20px",
     transition: "all 0.2s ease"
   },
   publicidadCard: {
-    background: "#F1F5F9",
+    background: "#E2E8F0",
     border: "1.5px solid #146D9E",
-    boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.15)",
+    boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.18)",
     borderRadius: "24px", padding: "24px", marginBottom: "20px",
     transition: "all 0.2s ease",
   },
@@ -1486,12 +1486,12 @@ const cardStyles = {
   },
   imageContainer: {
     borderRadius: "18px", overflow: "hidden", marginBottom: "16px",
-    border: "1px solid #CBD5E1",
+    border: "1px solid #94A3B8",
   },
   image: { width: "100%", maxHeight: "540px", objectFit: "cover", display: "block" },
   statsBar: {
     display: "flex", justifyContent: "space-between", padding: "8px 4px",
-    borderBottom: "1px solid rgba(203, 213, 225, 0.8)", marginBottom: "4px",
+    borderBottom: "1px solid rgba(148, 163, 184, 0.6)", marginBottom: "4px",
   },
   statText: { fontSize: "12px", color: "var(--atlan-text-muted)", fontWeight: "600" },
   actionBar: {
@@ -1499,10 +1499,10 @@ const cardStyles = {
   },
   actionBtn: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-    padding: "9px 12px", background: "#FFFFFF", border: "1px solid #CBD5E1",
-    color: "#475569", fontSize: "13px", fontWeight: "700",
+    padding: "9px 12px", background: "#FFFFFF", border: "1px solid #94A3B8",
+    color: "#334155", fontSize: "13px", fontWeight: "700",
     cursor: "pointer", borderRadius: "12px", transition: "all 0.2s ease",
-    boxShadow: "0 2px 6px rgba(15, 23, 42, 0.04)"
+    boxShadow: "0 2px 6px rgba(15, 23, 42, 0.05)"
   },
   menuBtn: {
     background: "none", border: "none", color: "var(--atlan-text-muted)", fontSize: "20px",
@@ -1510,7 +1510,7 @@ const cardStyles = {
   },
   menuDropdown: {
     position: "absolute", top: "100%", right: 0, zIndex: 50,
-    background: "var(--atlan-bg-elevated)", border: "1px solid #CBD5E1",
+    background: "var(--atlan-bg-elevated)", border: "1px solid #94A3B8",
     borderRadius: "12px", padding: "4px", minWidth: "140px",
     boxShadow: "0 8px 24px rgba(15, 23, 42, 0.12)",
   },
@@ -1520,21 +1520,21 @@ const cardStyles = {
     cursor: "pointer", borderRadius: "8px", transition: "background 0.15s",
   },
   commentsSection: {
-    borderTop: "1px solid #CBD5E1", paddingTop: "14px", marginTop: "8px",
+    borderTop: "1px solid #94A3B8", paddingTop: "14px", marginTop: "8px",
   },
   commentItem: {
     display: "flex", gap: "10px", marginBottom: "12px", alignItems: "flex-start",
   },
   commentBubble: {
     background: "#FFFFFF", padding: "10px 14px", borderRadius: "0 14px 14px 14px",
-    border: "1px solid #CBD5E1",
+    border: "1px solid #94A3B8",
   },
   commentInput: {
     display: "flex", alignItems: "center", gap: "10px", marginTop: "12px",
   },
   commentTextField: {
     flex: 1, padding: "10px 16px", background: "#FFFFFF",
-    border: "1px solid #CBD5E1", borderRadius: "20px",
+    border: "1px solid #94A3B8", borderRadius: "20px",
     color: "#1A1A2E", fontSize: "13px", outline: "none",
   },
   sendBtn: {
@@ -1547,21 +1547,21 @@ const cardStyles = {
 
 const sidebarStyles = {
   profileCard: {
-    background: "#F1F5F9", border: "1.5px solid #CBD5E1",
-    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)",
+    background: "#E2E8F0", border: "1.5px solid #94A3B8",
+    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.10), 0 2px 6px -1px rgba(15, 23, 42, 0.05)",
     borderRadius: "22px", overflow: "hidden",
   },
   profileBanner: {
     height: "60px", background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)",
   },
   loginCard: {
-    background: "#F1F5F9", border: "1.5px solid #CBD5E1",
-    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)",
+    background: "#E2E8F0", border: "1.5px solid #94A3B8",
+    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.10), 0 2px 6px -1px rgba(15, 23, 42, 0.05)",
     borderRadius: "22px", padding: "24px", textAlign: "center",
   },
   sectionCard: {
-    background: "#F1F5F9", border: "1.5px solid #CBD5E1",
-    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)",
+    background: "#E2E8F0", border: "1.5px solid #94A3B8",
+    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.10), 0 2px 6px -1px rgba(15, 23, 42, 0.05)",
     borderRadius: "22px", overflow: "hidden", padding: "0 0 16px 0",
   },
   cardHeaderBanner: {
