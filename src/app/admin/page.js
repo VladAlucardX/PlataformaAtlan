@@ -350,14 +350,14 @@ export default function AdminDashboard() {
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* Fondo diagonal fijo en 3 franjas de prueba: Azul -> Verde -> Amarillo */}
+      {/* Fondo de pantalla unificado con fondohracio.png */}
       <div style={{
         position: "fixed",
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        background: "linear-gradient(135deg, #146D9E 0%, #146D9E 28%, #17AA4A 38%, #17AA4A 62%, #FFD700 72%, #FFD700 100%)",
+        background: "linear-gradient(rgba(10, 15, 28, 0.65), rgba(10, 15, 28, 0.65)), url('/images/fondohracio.png') center / cover no-repeat fixed",
         zIndex: 0,
         pointerEvents: "none"
       }} />
@@ -390,12 +390,20 @@ export default function AdminDashboard() {
           border: "2px solid rgba(255, 255, 255, 0.8)",
           pointerEvents: "none"
         }} className="animate-fade-in-down">
-          <span>{toastBanner.type === "success" ? "✅" : toastBanner.type === "error" ? "❌" : "ℹ️"}</span>
+          <span>
+            {toastBanner.type === "success" ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            ) : toastBanner.type === "error" ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            )}
+          </span>
           <span>{toastBanner.message}</span>
         </div>
       )}
 
-      {/* Grid de Estadísticas Compacto */}
+      {/* Grid de Estadísticas Compacto estilo Glassmorphism */}
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto 16px',
@@ -405,29 +413,65 @@ export default function AdminDashboard() {
         position: 'relative',
         zIndex: 1
       }}>
-        <div className="clay-stat-card" style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            ⌛ {lang === 'en' ? 'Claims in Verification' : 'Reclamos en Verificación'}
+        <div style={{
+          padding: '12px 18px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'rgba(10, 25, 47, 0.75)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          borderRadius: '16px',
+          border: '1.5px solid rgba(255, 215, 0, 0.25)',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)'
+        }}>
+          <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#E2E8F0', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>{lang === 'en' ? 'Claims in Verification' : 'Reclamos en Verificación'}</span>
           </span>
-          <span style={{ fontSize: '20px', fontWeight: '900', color: '#E6A800', background: 'rgba(230, 168, 0, 0.12)', padding: '2px 10px', borderRadius: '10px' }}>
+          <span style={{ fontSize: '20px', fontWeight: '900', color: '#FFD700', background: 'rgba(255, 215, 0, 0.18)', padding: '2px 12px', borderRadius: '10px', border: '1px solid rgba(255, 215, 0, 0.35)' }}>
             {stats.pendientes}
           </span>
         </div>
 
-        <div className="clay-stat-card" style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            ✅ {lang === 'en' ? 'Approved Points' : 'Puntos Aprobados'}
+        <div style={{
+          padding: '12px 18px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'rgba(10, 25, 47, 0.75)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          borderRadius: '16px',
+          border: '1.5px solid rgba(16, 185, 129, 0.25)',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)'
+        }}>
+          <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#E2E8F0', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>{lang === 'en' ? 'Approved Points' : 'Puntos Aprobados'}</span>
           </span>
-          <span style={{ fontSize: '20px', fontWeight: '900', color: '#17AA4A', background: 'rgba(23, 170, 74, 0.12)', padding: '2px 10px', borderRadius: '10px' }}>
+          <span style={{ fontSize: '20px', fontWeight: '900', color: '#10B981', background: 'rgba(16, 185, 129, 0.18)', padding: '2px 12px', borderRadius: '10px', border: '1px solid rgba(16, 185, 129, 0.35)' }}>
             {stats.aprobados}
           </span>
         </div>
 
-        <div className="clay-stat-card" style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#4A5568', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            🌍 {lang === 'en' ? 'Total Points' : 'Total de Puntos'}
+        <div style={{
+          padding: '12px 18px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'rgba(10, 25, 47, 0.75)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          borderRadius: '16px',
+          border: '1.5px solid rgba(56, 189, 248, 0.25)',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)'
+        }}>
+          <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#E2E8F0', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span>{lang === 'en' ? 'Total Points' : 'Total de Puntos'}</span>
           </span>
-          <span style={{ fontSize: '20px', fontWeight: '900', color: '#3b82f6', background: 'rgba(59, 130, 246, 0.12)', padding: '2px 10px', borderRadius: '10px' }}>
+          <span style={{ fontSize: '20px', fontWeight: '900', color: '#38BDF8', background: 'rgba(56, 189, 248, 0.18)', padding: '2px 12px', borderRadius: '10px', border: '1px solid rgba(56, 189, 248, 0.35)' }}>
             {stats.totalPuntos}
           </span>
         </div>
@@ -445,35 +489,82 @@ export default function AdminDashboard() {
         zIndex: 1
       }}>
         <button
-          onClick={() => setActiveTab('pending')}
-          className={`clay-tab ${activeTab === 'pending' ? 'clay-tab-active' : ''}`}
+          onClick={() => { setActiveTab('pending'); setCurrentPage(1); }}
+          style={{
+            padding: '10px 18px',
+            borderRadius: '14px',
+            fontWeight: '800',
+            fontSize: '13px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            background: activeTab === 'pending' ? 'linear-gradient(135deg, #146D9E 0%, #0D4E72 100%)' : 'rgba(10, 25, 47, 0.75)',
+            color: activeTab === 'pending' ? '#FFD700' : '#94A3B8',
+            border: activeTab === 'pending' ? '1.5px solid rgba(255, 215, 0, 0.5)' : '1.5px solid rgba(255, 255, 255, 0.12)',
+            backdropFilter: 'blur(16px)',
+            boxShadow: activeTab === 'pending' ? '0 8px 20px rgba(20, 109, 158, 0.35)' : '0 4px 12px rgba(0, 0, 0, 0.2)'
+          }}
         >
-          ⌛ {lang === 'en' ? 'Pending Claims' : 'Reclamos Pendientes'} ({reclamos.length})
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>{lang === 'en' ? 'Pending Claims' : 'Reclamos Pendientes'} ({reclamos.length})</span>
         </button>
         <button
-          onClick={() => setActiveTab('all')}
-          className={`clay-tab ${activeTab === 'all' ? 'clay-tab-active' : ''}`}
+          onClick={() => { setActiveTab('all'); setCurrentPage(1); }}
+          style={{
+            padding: '10px 18px',
+            borderRadius: '14px',
+            fontWeight: '800',
+            fontSize: '13px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            background: activeTab === 'all' ? 'linear-gradient(135deg, #146D9E 0%, #0D4E72 100%)' : 'rgba(10, 25, 47, 0.75)',
+            color: activeTab === 'all' ? '#FFD700' : '#94A3B8',
+            border: activeTab === 'all' ? '1.5px solid rgba(255, 215, 0, 0.5)' : '1.5px solid rgba(255, 255, 255, 0.12)',
+            backdropFilter: 'blur(16px)',
+            boxShadow: activeTab === 'all' ? '0 8px 20px rgba(20, 109, 158, 0.35)' : '0 4px 12px rgba(0, 0, 0, 0.2)'
+          }}
         >
-          🌍 {lang === 'en' ? 'All Points' : 'Todos los Puntos'} ({todosLosPuntos.length})
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span>{lang === 'en' ? 'All Points' : 'Todos los Puntos'} ({todosLosPuntos.length})</span>
         </button>
 
-        {/* Buscador más ancho */}
-        <div style={{ position: 'relative', minWidth: '240px', flex: '1', maxWidth: '400px', marginLeft: '50px' }}>
+        {/* Buscador estilizado estilo Glassmorphism */}
+        <div style={{ position: 'relative', minWidth: '240px', flex: '1', maxWidth: '400px', marginLeft: 'auto' }}>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#94A3B8"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
+          >
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
           <input
             type="text"
-            placeholder={lang === 'en' ? '🔍 Search point, category...' : '🔍 Buscar punto por nombre, categoría...'}
+            placeholder={lang === 'en' ? 'Search point, category...' : 'Buscar punto por nombre, categoría...'}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
               width: '100%',
-              padding: '9px 16px',
+              padding: '10px 16px 10px 40px',
               borderRadius: '14px',
-              border: '1.5px solid rgba(20, 109, 158, 0.2)',
-              background: 'rgba(255, 255, 255, 0.95)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+              border: '1.5px solid rgba(255, 255, 255, 0.15)',
+              background: 'rgba(10, 25, 47, 0.75)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.25)',
               fontSize: '13px',
               fontWeight: '600',
-              color: '#1A1A2E',
+              color: '#FFFFFF',
               outline: 'none',
             }}
           />
@@ -482,52 +573,61 @@ export default function AdminDashboard() {
               onClick={() => setSearchTerm('')}
               style={{
                 position: 'absolute',
-                right: '10px',
+                right: '12px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: '13px',
-                color: '#94A3B8'
+                color: '#94A3B8',
+                display: 'flex',
+                alignItems: 'center'
               }}
             >
-              ✖
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           )}
         </div>
 
-        {/* Paginación empujada al borde derecho de la lista */}
+        {/* Paginación empujada al borde derecho */}
         {totalPages > 1 && (
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
-            marginLeft: 'auto'
+            gap: '6px'
           }}>
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
-              className="clay-btn-blue"
               style={{
-                padding: '6px 10px',
-                fontSize: '11.5px',
+                padding: '8px 12px',
+                fontSize: '12px',
+                fontWeight: '750',
                 borderRadius: '10px',
-                opacity: currentPage === 1 ? 0.5 : 1,
-                cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
+                background: 'rgba(10, 25, 47, 0.75)',
+                border: '1.5px solid rgba(255, 255, 255, 0.15)',
+                color: '#FFFFFF',
+                backdropFilter: 'blur(16px)',
+                opacity: currentPage === 1 ? 0.4 : 1,
+                cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
               }}
             >
-              ◀ {lang === 'en' ? 'Prev' : 'Ant'}
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              <span>{lang === 'en' ? 'Prev' : 'Ant'}</span>
             </button>
 
             <span style={{
-              fontSize: '11.5px',
+              fontSize: '12px',
               fontWeight: '800',
-              color: '#1A1A2E',
-              background: 'rgba(255, 255, 255, 0.95)',
-              padding: '5px 10px',
+              color: '#FFD700',
+              background: 'rgba(10, 25, 47, 0.75)',
+              border: '1.5px solid rgba(255, 215, 0, 0.3)',
+              padding: '6px 12px',
               borderRadius: '10px',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
+              backdropFilter: 'blur(16px)'
             }}>
               {currentPage}/{totalPages}
             </span>
@@ -535,54 +635,92 @@ export default function AdminDashboard() {
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
-              className="clay-btn-blue"
               style={{
-                padding: '6px 10px',
-                fontSize: '11.5px',
+                padding: '8px 12px',
+                fontSize: '12px',
+                fontWeight: '750',
                 borderRadius: '10px',
-                opacity: currentPage === totalPages ? 0.5 : 1,
-                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+                background: 'rgba(10, 25, 47, 0.75)',
+                border: '1.5px solid rgba(255, 255, 255, 0.15)',
+                color: '#FFFFFF',
+                backdropFilter: 'blur(16px)',
+                opacity: currentPage === totalPages ? 0.4 : 1,
+                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
               }}
             >
-              {lang === 'en' ? 'Next' : 'Sig'} ▶
+              <span>{lang === 'en' ? 'Next' : 'Sig'}</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
           </div>
         )}
       </div>
 
-      {/* Contenido Principal */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      {/* Contenido Principal con Scroll Interno */}
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        position: 'relative',
+        zIndex: 1,
+        maxHeight: 'calc(100vh - 220px)',
+        overflowY: 'auto',
+        paddingRight: '6px'
+      }}>
         {loadingData ? (
-          <div style={{ padding: '60px 0', textAlign: 'center', color: '#4A5568' }}>
+          <div style={{ padding: '60px 0', textAlign: 'center', color: '#94A3B8', fontWeight: '700' }}>
             {t('common.loading')}
           </div>
         ) : filteredItems.length === 0 ? (
-          <div className="clay-card-static" style={{ padding: '60px 20px', textAlign: 'center', color: '#4A5568' }}>
-            {searchTerm
-              ? (lang === 'en' ? '🔍 No points match your search criteria.' : '🔍 No se encontraron puntos que coincidan con la búsqueda.')
-              : (lang === 'en' ? '🏖️ No items in this section.' : '🏖️ No hay registros en esta sección.')
-            }
+          <div style={{
+            padding: '60px 20px',
+            textAlign: 'center',
+            color: '#E2E8F0',
+            background: 'rgba(10, 25, 47, 0.75)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            borderRadius: '20px',
+            border: '1.5px solid rgba(255, 255, 255, 0.12)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span style={{ fontSize: '15px', fontWeight: '700' }}>
+              {searchTerm
+                ? (lang === 'en' ? 'No points match your search criteria.' : 'No se encontraron puntos que coincidan con la búsqueda.')
+                : (lang === 'en' ? 'No items in this section.' : 'No hay registros en esta sección.')
+              }
+            </span>
           </div>
         ) : activeTab === 'pending' ? (
           <div style={{ display: 'grid', gap: '20px' }}>
             {paginatedItems.map((item) => (
-              <div key={item.id} className="clay-card" style={{
+              <div key={item.id} style={{
                 padding: '24px',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '16px'
+                gap: '16px',
+                background: 'rgba(10, 25, 47, 0.78)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                borderRadius: '20px',
+                border: '1.5px solid rgba(255, 255, 255, 0.15)',
+                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.35)'
               }}>
                 {/* Fila superior */}
                 <div className="admin-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '12px' }}>
                   <div>
-                    <span style={{ fontSize: '11px', fontWeight: '800', background: 'rgba(255, 215, 0,0.15)', color: 'var(--atlan-gold)', padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase', display: 'inline-block', marginBottom: '6px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: '800', background: 'rgba(255, 215, 0,0.18)', color: '#FFD700', border: '1px solid rgba(255, 215, 0,0.3)', padding: '4px 10px', borderRadius: '8px', textTransform: 'uppercase', display: 'inline-block', marginBottom: '8px' }}>
                       {item.categoria}
                     </span>
-                    <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '850', color: '#1A1A2E' }}>
+                    <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '850', color: '#FFFFFF' }}>
                       {item.nombre}
                     </h3>
-                    <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#4A5568' }}>
-                      {lang === 'en' ? 'Point creator:' : 'Creador del punto:'} <span style={{ fontWeight: '700', color: '#4A5568' }}>{item.nombre_creador || 'Comunidad'}</span>
+                    <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#94A3B8' }}>
+                      {lang === 'en' ? 'Point creator:' : 'Creador del punto:'} <span style={{ fontWeight: '700', color: '#E2E8F0' }}>{item.nombre_creador || 'Comunidad'}</span>
                     </p>
                   </div>
 
@@ -590,10 +728,23 @@ export default function AdminDashboard() {
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button
                       onClick={() => handleAprobarReclamo(item.id, item.negocio_id)}
-                      className="clay-btn-green"
-                      style={{ padding: '10px 18px', fontSize: '12.5px' }}
+                      style={{
+                        padding: '10px 18px',
+                        background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '12px',
+                        fontWeight: '800',
+                        fontSize: '12.5px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)'
+                      }}
                     >
-                      ✅ {lang === 'en' ? 'Approve Claim' : 'Aprobar Reclamo'}
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span>{lang === 'en' ? 'Approve Claim' : 'Aprobar Reclamo'}</span>
                     </button>
                     <button
                       onClick={() => {
@@ -603,45 +754,53 @@ export default function AdminDashboard() {
                       }}
                       style={{
                         padding: '10px 18px',
-                        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                        background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
                         color: 'white',
                         border: 'none',
                         borderRadius: '12px',
                         fontWeight: '800',
                         fontSize: '12.5px',
                         cursor: 'pointer',
-                        boxShadow: '0 4px 12px rgba(239,68,68,0.2)'
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        boxShadow: '0 4px 14px rgba(239, 68, 68, 0.35)'
                       }}
                     >
-                      ❌ {lang === 'en' ? 'Reject' : 'Rechazar'}
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      <span>{lang === 'en' ? 'Reject' : 'Rechazar'}</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Detalles del Negocio comercial */}
                 {item.negocios && (
-                  <div className="clay-card-static" style={{
-                    padding: '16px',
-                    marginTop: '8px'
+                  <div style={{
+                    padding: '18px',
+                    marginTop: '4px',
+                    background: 'rgba(15, 23, 42, 0.65)',
+                    borderRadius: '16px',
+                    border: '1.5px solid rgba(255, 255, 255, 0.1)'
                   }}>
-                    <h4 style={{ margin: '0 0 10px', fontSize: '13.5px', fontWeight: '800', color: 'var(--atlan-gold)' }}>
-                      🏢 {lang === 'en' ? 'Claiming Business Info' : 'Información Comercial del Reclamante'}
+                    <h4 style={{ margin: '0 0 12px', fontSize: '13.5px', fontWeight: '800', color: '#FFD700', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                      <span>{lang === 'en' ? 'Claiming Business Info' : 'Información Comercial del Reclamante'}</span>
                     </h4>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', fontSize: '13px', color: '#4A5568' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', fontSize: '13px', color: '#CBD5E1' }}>
                       <div>
-                        <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'Owner Name:' : 'Nombre del Dueño:'}</strong> {item.negocios.perfiles?.nombre_completo || 'N/A'}</p>
-                        <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'Business Type:' : 'Tipo de Negocio:'}</strong> {item.negocios.tipo}</p>
-                        <p style={{ margin: '0' }}><strong>{lang === 'en' ? 'Price Range:' : 'Rango de Precios:'}</strong> {item.negocios.rango_precios || 'N/A'}</p>
+                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Owner Name:' : 'Nombre del Dueño:'}</strong> {item.negocios.perfiles?.nombre_completo || 'N/A'}</p>
+                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Business Type:' : 'Tipo de Negocio:'}</strong> {item.negocios.tipo}</p>
+                        <p style={{ margin: '0' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Price Range:' : 'Rango de Precios:'}</strong> {item.negocios.rango_precios || 'N/A'}</p>
                       </div>
                       <div>
-                        <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'Telephone:' : 'Teléfono:'}</strong> {item.negocios.telefono || 'N/A'}</p>
-                        <p style={{ margin: '0 0 4px' }}><strong>{lang === 'en' ? 'WhatsApp:' : 'WhatsApp:'}</strong> {item.negocios.whatsapp || 'N/A'}</p>
-                        <p style={{ margin: '0' }}><strong>{lang === 'en' ? 'Services:' : 'Servicios:'}</strong> {item.negocios.servicios ? Object.keys(item.negocios.servicios).filter(k => item.negocios.servicios[k]).join(', ') : 'N/A'}</p>
+                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Telephone:' : 'Teléfono:'}</strong> {item.negocios.telefono || 'N/A'}</p>
+                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'WhatsApp:' : 'WhatsApp:'}</strong> {item.negocios.whatsapp || 'N/A'}</p>
+                        <p style={{ margin: '0' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Services:' : 'Servicios:'}</strong> {item.negocios.servicios ? Object.keys(item.negocios.servicios).filter(k => item.negocios.servicios[k]).join(', ') : 'N/A'}</p>
                       </div>
                     </div>
                     {item.negocios.descripcion && (
-                      <p style={{ margin: '12px 0 0', fontSize: '13px', color: '#4A5568', borderTop: '1px dashed rgba(20, 109, 158, 0.08)', paddingTop: '10px' }}>
-                        <strong>{lang === 'en' ? 'Commercial Description:' : 'Descripción Comercial:'}</strong> {item.negocios.descripcion}
+                      <p style={{ margin: '14px 0 0', fontSize: '13px', color: '#CBD5E1', borderTop: '1px dashed rgba(255, 255, 255, 0.12)', paddingTop: '10px' }}>
+                        <strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Commercial Description:' : 'Descripción Comercial:'}</strong> {item.negocios.descripcion}
                       </p>
                     )}
 
@@ -650,44 +809,61 @@ export default function AdminDashboard() {
                       <div style={{
                         marginTop: '14px',
                         padding: '16px',
-                        background: 'rgba(20, 109, 158, 0.04)',
-                        border: '1.5px solid rgba(20, 109, 158, 0.15)',
+                        background: 'rgba(20, 109, 158, 0.15)',
+                        border: '1.5px solid rgba(56, 189, 248, 0.25)',
                         borderRadius: '16px'
                       }}>
-                        <h5 style={{ margin: '0 0 10px', fontSize: '13.5px', fontWeight: '850', color: '#146D9E', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          📋 Documentos de Verificación Presentados por el Solicitante
+                        <h5 style={{ margin: '0 0 12px', fontSize: '13.5px', fontWeight: '850', color: '#38BDF8', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                          <span>Documentos de Verificación Presentados por el Solicitante</span>
                         </h5>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', fontSize: '13px', color: '#1A1A2E' }}>
-                          <p style={{ margin: 0 }}><strong>Propietario Solicitante:</strong> {item.negocios.datos_verificacion.solicitante_nombre || 'N/A'}</p>
-                          <p style={{ margin: 0 }}><strong>N° Cédula / ID / RUC:</strong> {item.negocios.datos_verificacion.solicitante_cedula || 'N/A'}</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', fontSize: '13px', color: '#E2E8F0' }}>
+                          <p style={{ margin: 0 }}><strong style={{ color: '#FFFFFF' }}>Propietario Solicitante:</strong> {item.negocios.datos_verificacion.solicitante_nombre || 'N/A'}</p>
+                          <p style={{ margin: 0 }}><strong style={{ color: '#FFFFFF' }}>N° Cédula / ID / RUC:</strong> {item.negocios.datos_verificacion.solicitante_cedula || 'N/A'}</p>
                           <p style={{ margin: 0 }}>
-                            <strong>Teléfono Contacto:</strong> {item.negocios.datos_verificacion.solicitante_telefono || 'N/A'}{' '}
+                            <strong style={{ color: '#FFFFFF' }}>Teléfono Contacto:</strong> {item.negocios.datos_verificacion.solicitante_telefono || 'N/A'}{' '}
                             {item.negocios.datos_verificacion.solicitante_telefono && (
                               <a
                                 href={`https://wa.me/${item.negocios.datos_verificacion.solicitante_telefono.replace(/\D/g, '')}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                style={{ color: '#17AA4A', fontWeight: '800', textDecoration: 'none', marginLeft: '6px', fontSize: '12px' }}
+                                style={{ color: '#10B981', fontWeight: '800', textDecoration: 'none', marginLeft: '8px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                               >
-                                💬 WhatsApp
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                                <span>WhatsApp</span>
                               </a>
                             )}
                           </p>
                         </div>
 
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '12px' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '14px' }}>
                           {item.negocios.datos_verificacion.documento_cedula_url ? (
                             <a
                               href={item.negocios.datos_verificacion.documento_cedula_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="clay-btn-blue"
-                              style={{ padding: '6px 14px', fontSize: '12px', textDecoration: 'none' }}
+                              style={{
+                                padding: '8px 16px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                fontWeight: '750',
+                                color: '#FFFFFF',
+                                background: 'linear-gradient(135deg, #146D9E 0%, #0D4E72 100%)',
+                                borderRadius: '10px',
+                                border: '1px solid rgba(56, 189, 248, 0.4)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px'
+                              }}
                             >
-                              📄 Ver Cédula de Identidad (PDF/Imagen)
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                              <span>Ver Cédula de Identidad (PDF/Imagen)</span>
                             </a>
                           ) : (
-                            <span style={{ fontSize: '12px', color: '#ef4444', fontWeight: '700' }}>⚠️ Sin foto de cédula</span>
+                            <span style={{ fontSize: '12px', color: '#EF4444', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                              <span>Sin foto de cédula</span>
+                            </span>
                           )}
 
                           {item.negocios.datos_verificacion.documento_propiedad_url && (
@@ -695,17 +871,30 @@ export default function AdminDashboard() {
                               href={item.negocios.datos_verificacion.documento_propiedad_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="clay-btn-gold"
-                              style={{ padding: '6px 14px', fontSize: '12px', textDecoration: 'none' }}
+                              style={{
+                                padding: '8px 16px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                fontWeight: '750',
+                                color: '#FFD700',
+                                background: 'rgba(255, 215, 0, 0.15)',
+                                borderRadius: '10px',
+                                border: '1px solid rgba(255, 215, 0, 0.4)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px'
+                              }}
                             >
-                              📄 Ver Comprobante de Propiedad / Licencia
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                              <span>Ver Comprobante de Propiedad / Licencia</span>
                             </a>
                           )}
                         </div>
 
                         {item.negocios.datos_verificacion.solicitud_notas && (
-                          <p style={{ margin: '10px 0 0', fontSize: '12.5px', color: '#4A5568', fontStyle: 'italic', borderTop: '1px dashed rgba(20,109,158,0.1)', paddingTop: '8px' }}>
-                            📝 <strong>Notas del Solicitante:</strong> "{item.negocios.datos_verificacion.solicitud_notas}"
+                          <p style={{ margin: '12px 0 0', fontSize: '12.5px', color: '#94A3B8', fontStyle: 'italic', borderTop: '1px dashed rgba(255,255,255,0.12)', paddingTop: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            <span><strong>Notas del Solicitante:</strong> "{item.negocios.datos_verificacion.solicitud_notas}"</span>
                           </p>
                         )}
                       </div>
@@ -717,44 +906,53 @@ export default function AdminDashboard() {
           </div>
         ) : (
           /* Lista de todos los puntos */
-          <div className="clay-table-wrapper">
+          <div style={{
+            background: 'rgba(10, 25, 47, 0.78)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            borderRadius: '20px',
+            border: '1.5px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.35)',
+            overflow: 'hidden'
+          }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13.5px' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid rgba(20, 109, 158, 0.12)', color: '#4A5568' }}>
-                  <th style={{ padding: '12px' }}>{lang === 'en' ? 'Name' : 'Nombre'}</th>
-                  <th style={{ padding: '12px' }}>{lang === 'en' ? 'Category' : 'Categoría'}</th>
-                  <th style={{ padding: '12px' }}>{lang === 'en' ? 'Creator' : 'Creador'}</th>
-                  <th style={{ padding: '12px' }}>{lang === 'en' ? 'Status' : 'Estado'}</th>
-                  <th style={{ padding: '12px' }}>{lang === 'en' ? 'Created At' : 'Creado el'}</th>
+                <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.12)', color: '#94A3B8' }}>
+                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Name' : 'Nombre'}</th>
+                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Category' : 'Categoría'}</th>
+                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Creator' : 'Creador'}</th>
+                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Status' : 'Estado'}</th>
+                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Created At' : 'Creado el'}</th>
                 </tr>
               </thead>
               <tbody>
                 {paginatedItems.map((p) => {
                   const statusColors = {
-                    aprobado: '#17AA4A',
-                    en_verificacion: '#E6A800',
-                    sin_reclamar: '#9CA3AF',
-                    rechazado: '#ef4444'
+                    aprobado: '#10B981',
+                    en_verificacion: '#FFD700',
+                    sin_reclamar: '#94A3B8',
+                    rechazado: '#EF4444'
                   };
                   return (
-                    <tr key={p.id} style={{ borderBottom: '1px solid rgba(20, 109, 158, 0.04)', transition: 'background 0.2s' }}>
-                      <td style={{ padding: '14px 12px', fontWeight: '700' }}>{p.nombre}</td>
-                      <td style={{ padding: '14px 12px' }}>{p.categoria}</td>
-                      <td style={{ padding: '14px 12px', color: '#4A5568' }}>{p.nombre_creador || 'Comunidad'}</td>
-                      <td style={{ padding: '14px 12px' }}>
+                    <tr key={p.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                      <td style={{ padding: '14px 16px', fontWeight: '750', color: '#FFFFFF' }}>{p.nombre}</td>
+                      <td style={{ padding: '14px 16px', color: '#E2E8F0' }}>{p.categoria}</td>
+                      <td style={{ padding: '14px 16px', color: '#94A3B8' }}>{p.nombre_creador || 'Comunidad'}</td>
+                      <td style={{ padding: '14px 16px' }}>
                         <span style={{
                           fontSize: '11px',
                           fontWeight: '800',
                           textTransform: 'uppercase',
-                          color: statusColors[p.estado] || '#white',
-                          background: `${statusColors[p.estado]}15`,
-                          padding: '4px 8px',
-                          borderRadius: '6px'
+                          color: statusColors[p.estado] || '#FFFFFF',
+                          background: `${statusColors[p.estado]}20`,
+                          border: `1px solid ${statusColors[p.estado]}40`,
+                          padding: '4px 10px',
+                          borderRadius: '8px'
                         }}>
                           {p.estado}
                         </span>
                       </td>
-                      <td style={{ padding: '14px 12px', color: '#9CA3AF' }}>
+                      <td style={{ padding: '14px 16px', color: '#94A3B8' }}>
                         {new Date(p.created_at).toLocaleDateString()}
                       </td>
                     </tr>
@@ -764,8 +962,6 @@ export default function AdminDashboard() {
             </table>
           </div>
         )}
-
-
       </div>
 
       {/* Animación Keyframes */}
@@ -779,10 +975,36 @@ export default function AdminDashboard() {
         }
       `}</style>
 
-      {/* Modal interactivo de Rechazo */}
+      {/* Modal interactivo de Rechazo estilo Glassmorphism */}
       {rejectionTarget && (
-        <div className="clay-modal-overlay">
-          <div className="clay-modal" style={{ maxWidth: '520px' }}>
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.75)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1200,
+          padding: '20px'
+        }}>
+          <div style={{
+            maxWidth: '520px',
+            width: '100%',
+            background: 'rgba(10, 25, 47, 0.95)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            borderRadius: '24px',
+            border: '1.5px solid rgba(255, 215, 0, 0.35)',
+            padding: '28px',
+            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px'
+          }}>
             <h2 style={{
               margin: 0,
               fontSize: '22px',
@@ -793,7 +1015,7 @@ export default function AdminDashboard() {
             }}>
               {lang === 'en' ? 'Reject Business Claim' : 'Rechazar Reclamo de Negocio'}
             </h2>
-            <p style={{ margin: 0, fontSize: '13.5px', color: '#4A5568', lineHeight: 1.5 }}>
+            <p style={{ margin: 0, fontSize: '13.5px', color: '#94A3B8', lineHeight: 1.5 }}>
               {lang === 'en' 
                 ? `Specify why you are rejecting the claim for ${rejectionTarget.nombreNegocio}:`
                 : `Especifica por qué estás rechazando el reclamo para ${rejectionTarget.nombreNegocio}:`}
@@ -806,10 +1028,10 @@ export default function AdminDashboard() {
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '12px',
-                padding: '12px 14px',
-                background: rejectionType === 'correction' ? 'rgba(230, 194, 0, 0.08)' : 'rgba(20, 109, 158, 0.03)',
-                border: `1.5px solid ${rejectionType === 'correction' ? 'rgba(230, 194, 0, 0.4)' : 'rgba(20, 109, 158, 0.12)'}`,
-                borderRadius: '14px',
+                padding: '14px 16px',
+                background: rejectionType === 'correction' ? 'rgba(255, 215, 0, 0.12)' : 'rgba(255, 255, 255, 0.04)',
+                border: `1.5px solid ${rejectionType === 'correction' ? 'rgba(255, 215, 0, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
+                borderRadius: '16px',
                 cursor: 'pointer'
               }}>
                 <input
@@ -818,13 +1040,13 @@ export default function AdminDashboard() {
                   value="correction"
                   checked={rejectionType === 'correction'}
                   onChange={() => setRejectionType('correction')}
-                  style={{ marginTop: '3px', accentColor: '#E6A800' }}
+                  style={{ marginTop: '3px', accentColor: '#FFD700' }}
                 />
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: '750', color: '#1A1A2E' }}>
+                  <div style={{ fontSize: '14px', fontWeight: '750', color: '#FFFFFF' }}>
                     {lang === 'en' ? 'Request Correction (Keep pending claim)' : 'Solicitar Corrección (Mantener reclamo pendiente)'}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#4A5568', marginTop: '2px', lineHeight: 1.4 }}>
+                  <div style={{ fontSize: '12px', color: '#94A3B8', marginTop: '2px', lineHeight: 1.4 }}>
                     {lang === 'en' 
                       ? 'The owner will see your observations on their dashboard so they can fix their information.'
                       : 'El solicitante verá tus observaciones en su panel para que pueda corregir sus datos.'}
@@ -837,10 +1059,10 @@ export default function AdminDashboard() {
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '12px',
-                padding: '12px 14px',
-                background: rejectionType === 'release' ? 'rgba(239, 68, 68, 0.08)' : 'rgba(20, 109, 158, 0.03)',
-                border: `1.5px solid ${rejectionType === 'release' ? 'rgba(239, 68, 68, 0.4)' : 'rgba(20, 109, 158, 0.12)'}`,
-                borderRadius: '14px',
+                padding: '14px 16px',
+                background: rejectionType === 'release' ? 'rgba(239, 68, 68, 0.12)' : 'rgba(255, 255, 255, 0.04)',
+                border: `1.5px solid ${rejectionType === 'release' ? 'rgba(239, 68, 68, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
+                borderRadius: '16px',
                 cursor: 'pointer'
               }}>
                 <input
@@ -849,13 +1071,13 @@ export default function AdminDashboard() {
                   value="release"
                   checked={rejectionType === 'release'}
                   onChange={() => setRejectionType('release')}
-                  style={{ marginTop: '3px', accentColor: '#ef4444' }}
+                  style={{ marginTop: '3px', accentColor: '#EF4444' }}
                 />
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: '750', color: '#DC2626' }}>
+                  <div style={{ fontSize: '14px', fontWeight: '750', color: '#EF4444' }}>
                     {lang === 'en' ? 'Release point (Fraud / Delete claim)' : 'Liberar punto (Fraude / Cancelar reclamo)'}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#4A5568', marginTop: '2px', lineHeight: 1.4 }}>
+                  <div style={{ fontSize: '12px', color: '#94A3B8', marginTop: '2px', lineHeight: 1.4 }}>
                     {lang === 'en' 
                       ? 'Desassociates the point immediately, returning it to unclaimed status. The business is marked inactive.'
                       : 'Desvincula el punto de inmediato, devolviéndolo a estado "sin reclamar" en el mapa. El negocio queda inactivo.'}
@@ -865,8 +1087,8 @@ export default function AdminDashboard() {
             </div>
 
             {/* Input del motivo */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '20px' }}>
-              <label style={{ fontSize: '13px', fontWeight: '800', color: '#1A1A2E' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
+              <label style={{ fontSize: '13px', fontWeight: '800', color: '#FFFFFF' }}>
                 {lang === 'en' ? 'Reason for Rejection:' : 'Motivo del Rechazo:'}
               </label>
               <textarea
@@ -876,39 +1098,35 @@ export default function AdminDashboard() {
                 rows={4}
                 style={{
                   width: '100%',
-                  background: '#F8FAFC',
-                  border: '1.5px solid rgba(20, 109, 158, 0.2)',
+                  background: 'rgba(15, 23, 42, 0.8)',
+                  border: '1.5px solid rgba(255, 255, 255, 0.15)',
                   borderRadius: '14px',
                   padding: '14px',
-                  color: '#1A1A2E',
+                  color: '#FFFFFF',
                   fontSize: '13.5px',
                   fontWeight: '500',
                   outline: 'none',
-                  resize: 'none',
-                  boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.03)'
+                  resize: 'none'
                 }}
               />
             </div>
 
             {/* Botones de acción */}
-            <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
               <button
                 onClick={() => setRejectionTarget(null)}
                 disabled={submittingRejection}
                 style={{
                   flex: 1,
                   padding: '12px',
-                  background: 'rgba(20, 109, 158, 0.05)',
-                  border: '1px solid rgba(20, 109, 158, 0.12)',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
                   borderRadius: '14px',
-                  color: '#1A1A2E',
+                  color: '#FFFFFF',
                   fontSize: '13px',
                   fontWeight: '750',
-                  cursor: 'pointer',
-                  transition: 'background 0.2s'
+                  cursor: 'pointer'
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(20, 109, 158, 0.12)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(20, 109, 158, 0.05)'}
               >
                 {lang === 'en' ? 'Cancel' : 'Cancelar'}
               </button>
@@ -919,17 +1137,17 @@ export default function AdminDashboard() {
                   flex: 1,
                   padding: '12px',
                   background: rejectionType === 'release' 
-                    ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' 
+                    ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)' 
                     : 'linear-gradient(135deg, #FFD700 0%, #E6C200 100%)',
-                  color: rejectionType === 'release' ? 'white' : '#FFFFFF',
+                  color: rejectionType === 'release' ? 'white' : '#1A1A2E',
                   border: 'none',
                   borderRadius: '14px',
                   fontSize: '13px',
                   fontWeight: '800',
                   cursor: 'pointer',
                   boxShadow: rejectionType === 'release' 
-                    ? '0 4px 12px rgba(239,68,68,0.2)' 
-                    : '0 4px 12px rgba(255, 215, 0,0.2)'
+                    ? '0 4px 14px rgba(239, 68, 68, 0.35)' 
+                    : '0 4px 14px rgba(255, 215, 0, 0.35)'
                 }}
               >
                 {submittingRejection 
