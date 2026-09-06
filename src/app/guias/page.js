@@ -989,17 +989,24 @@ export default function GuiasPage() {
           )}
         </div>
 
-        {/* CONTADOR DE RESULTADOS Y LIMPIEZA */}
-        <div style={styles.resultsHeaderSlim}>
-          <h2 style={styles.resultsTitleSlim}>
-            <Icon name="user" size={18} color="#38BDF8" />
-            <span>{lang === "en" ? "Available Guides" : "Guías Turísticos Disponibles"}</span>
-            <span style={styles.resultsBadgeSlim}>{guiasFiltrados.length}</span>
-          </h2>
+        {/* CONTADOR DE RESULTADOS Y CABECERA DE SECCIÓN ELEGANTE GLASS */}
+        <div style={styles.resultsHeaderGlass}>
+          <div style={styles.resultsTitleLeft}>
+            <div style={styles.headerIconBox}>
+              <Icon name="compass" size={16} color="#38BDF8" />
+            </div>
+            <h2 style={styles.resultsTitleClean}>
+              {lang === "en" ? "Available Tour Guides" : "Guías Turísticos Disponibles"}
+            </h2>
+            <span style={styles.resultsBadgeSlim}>
+              {guiasFiltrados.length} {guiasFiltrados.length === 1 ? (lang === "en" ? "guide" : "guía") : (lang === "en" ? "guías" : "guías")}
+            </span>
+          </div>
+
           {hasActiveFilters && (
             <button onClick={clearAllFilters} style={styles.resetFiltersBtnSlim}>
               <Icon name="x" size={13} />
-              {lang === "en" ? "Reset All Filters" : "Limpiar Todos los Filtros"}
+              <span>{lang === "en" ? "Reset All Filters" : "Limpiar Todos los Filtros"}</span>
             </button>
           )}
         </div>
@@ -1899,42 +1906,64 @@ const styles = {
     padding: "8px 12px"
   },
 
-  resultsHeaderSlim: {
+  resultsHeaderGlass: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "14px"
+    background: "rgba(15, 23, 42, 0.78)",
+    backdropFilter: "blur(12px)",
+    border: "1px solid rgba(56, 189, 248, 0.2)",
+    borderRadius: "14px",
+    padding: "10px 16px",
+    marginBottom: "18px",
+    boxShadow: "0 6px 18px rgba(0, 0, 0, 0.25)"
   },
-  resultsTitleSlim: {
-    fontSize: "17px",
-    fontWeight: "800",
-    color: "#F8FAFC",
+  resultsTitleLeft: {
     display: "flex",
     alignItems: "center",
-    gap: "8px",
-    textShadow: "0 3px 12px rgba(0, 0, 0, 0.95), 0 1px 3px rgba(0, 0, 0, 0.95)",
-    filter: "drop-shadow(0 3px 8px rgba(0, 0, 0, 0.95))"
+    gap: "10px"
+  },
+  headerIconBox: {
+    width: "30px",
+    height: "30px",
+    borderRadius: "8px",
+    background: "rgba(14, 165, 233, 0.15)",
+    border: "1px solid rgba(14, 165, 233, 0.3)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0
+  },
+  resultsTitleClean: {
+    fontSize: "15.5px",
+    fontWeight: "800",
+    color: "#FFFFFF",
+    margin: 0,
+    letterSpacing: "-0.2px"
   },
   resultsBadgeSlim: {
-    background: "rgba(14, 165, 233, 0.2)",
+    background: "rgba(14, 165, 233, 0.15)",
     color: "#38BDF8",
-    fontSize: "12px",
-    padding: "1px 8px",
-    borderRadius: "999px",
-    border: "1px solid rgba(14, 165, 233, 0.3)"
+    fontSize: "11.5px",
+    fontWeight: "750",
+    padding: "2px 8px",
+    borderRadius: "12px",
+    border: "1px solid rgba(14, 165, 233, 0.3)",
+    whiteSpace: "nowrap"
   },
   resetFiltersBtnSlim: {
     background: "rgba(239, 68, 68, 0.12)",
     border: "1px solid rgba(239, 68, 68, 0.3)",
     color: "#EF4444",
-    padding: "4px 10px",
+    padding: "5px 12px",
     borderRadius: "8px",
-    fontSize: "12px",
-    fontWeight: "700",
+    fontSize: "11.5px",
+    fontWeight: "750",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
-    gap: "4px"
+    gap: "5px",
+    transition: "all 0.2s ease"
   },
 
   // TARJETAS GLASSMORPISM ELEGANTES SIN BORDES BLANCOS EN L
