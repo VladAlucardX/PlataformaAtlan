@@ -2041,20 +2041,22 @@ const styles = {
     display: "inline-flex",
     alignItems: "center",
     gap: "3px",
-    background: "rgba(14, 165, 233, 0.15)",
+    background: "rgba(14, 165, 233, 0.12)",
     color: "#38BDF8",
-    fontSize: "11px",
-    fontWeight: "750",
-    padding: "1px 6px",
-    borderRadius: "4px"
-  },
-  licenseBadgeSlim: {
-    background: "rgba(16, 185, 129, 0.15)",
-    color: "#10B981",
     fontSize: "10.5px",
     fontWeight: "750",
-    padding: "1px 6px",
-    borderRadius: "4px"
+    padding: "2px 8px",
+    borderRadius: "12px",
+    border: "1px solid rgba(14, 165, 233, 0.25)"
+  },
+  licenseBadgeSlim: {
+    background: "rgba(16, 185, 129, 0.12)",
+    color: "#34D399",
+    fontSize: "10px",
+    fontWeight: "750",
+    padding: "2px 6px",
+    borderRadius: "12px",
+    border: "1px solid rgba(16, 185, 129, 0.25)"
   },
   guideNameWide: {
     fontSize: "16px",
@@ -2080,19 +2082,21 @@ const styles = {
   detailsRowSlim: {
     display: "flex",
     flexWrap: "wrap",
-    gap: "6px",
-    margin: "4px 0 6px 0"
+    gap: "4px",
+    margin: "3px 0 5px 0"
   },
   tagChip: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "4px",
-    background: "rgba(30, 41, 59, 0.6)",
+    gap: "3.5px",
+    background: "rgba(255, 255, 255, 0.04)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
     color: "#CBD5E1",
-    fontSize: "11.5px",
+    fontSize: "10.5px",
     fontWeight: "600",
-    padding: "2px 8px",
-    borderRadius: "6px"
+    padding: "2px 7px",
+    borderRadius: "20px",
+    backdropFilter: "blur(4px)"
   },
   bioSnippetWide: {
     fontSize: "12.5px",
@@ -2442,48 +2446,48 @@ const styles = {
     padding: "10px"
   },
   guideDestinationsContainer: {
-    marginTop: "8px",
-    marginBottom: "10px",
+    marginTop: "4px",
+    marginBottom: "6px",
     display: "flex",
     flexDirection: "column",
-    gap: "4px"
+    gap: "3px"
   },
   guideDestinationsHeader: {
     display: "flex",
     alignItems: "center",
-    gap: "5px",
-    fontSize: "11.5px",
-    fontWeight: "750",
-    color: "#94A3B8"
+    gap: "4px",
+    fontSize: "10.5px",
+    fontWeight: "700",
+    color: "#64748B"
   },
   guideDestinationsChipsRow: {
     display: "flex",
-    gap: "6px",
+    gap: "4px",
     flexWrap: "wrap",
     alignItems: "center"
   },
   mapDestChip: {
-    background: "rgba(14, 165, 233, 0.12)",
-    border: "1px solid rgba(14, 165, 233, 0.3)",
+    background: "rgba(14, 165, 233, 0.08)",
+    border: "1px solid rgba(14, 165, 233, 0.2)",
     borderRadius: "20px",
-    padding: "3px 10px",
-    fontSize: "11.5px",
+    padding: "2px 7px",
+    fontSize: "10.5px",
     fontWeight: "600",
     color: "#38BDF8",
     display: "inline-flex",
     alignItems: "center",
-    gap: "4px",
+    gap: "3.5px",
     cursor: "pointer",
     transition: "all 0.2s ease"
   },
   mapDestMoreChip: {
-    background: "rgba(255, 255, 255, 0.08)",
-    border: "1px solid rgba(255, 255, 255, 0.15)",
+    background: "rgba(255, 255, 255, 0.05)",
+    border: "1px solid rgba(255, 255, 255, 0.12)",
     borderRadius: "20px",
-    padding: "3px 8px",
-    fontSize: "11px",
+    padding: "2px 6px",
+    fontSize: "10px",
     fontWeight: "700",
-    color: "#CBD5E1",
+    color: "#94A3B8",
     cursor: "pointer"
   },
   destinosMapaGrid: {
