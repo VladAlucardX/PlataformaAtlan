@@ -12,14 +12,16 @@ El objetivo principal de la plataforma es digitalizar y gamificar la experiencia
 
 ### Módulos y Funcionalidades Principales
 
-*   **Mapa Turístico Interactivo (Mapbox GL):** Visualización vectorial de puntos de interés, trazado de rutas terrestres, categorización de establecimientos y distinción del estado de verificación de comercios (verificados, en revisión o no reclamados).
+*   **Mapa Turístico Interactivo (Mapbox GL):** Visualización vectorial de puntos de interés, trazado de rutas terrestres, categorización de establecimientos y distinción del estado de verificación de comercios (verificados, en revisión o no reclamados). Incluye máscaras territoriales y centroides departamentales.
 *   **Verificación de Visitas por GPS:** Algoritmo de cálculo de distancia mediante la fórmula de Haversine (radio < 1 km) que valida la presencia física del usuario en un departamento o destino para desbloquear insignias y actualizar su puntuación en el ranking de exploradores.
-*   **Directorio y Gestión de Guías Turísticos:** Módulo dedicado (`/guias` y `/perfil-guia`) para la búsqueda, verificación y contacto de guías turísticos locales certificados en los distintos departamentos.
-*   **Panel Multi-Negocio (Propietarios):** Módulo de administración para dueños de comercios donde pueden registrar establecimientos, editar horarios, gestionar imágenes, revisar motivos de rechazo en caso de revisiones administrativas y solicitar la verificación del local.
-*   **Panel de Administración del Sistema:** Módulo restringido para administradores enfocado en la moderación, aprobación y auditoría de solicitudes de nuevos negocios y guías.
-*   **Enciclopedia Departamental:** Guía informativa estructurada de los 17 departamentos con datos sobre historia, economía, puntos turísticos, pasatiempos y eventos culturales.
-*   **Red Social Comunitaria y Chat en Tiempo Real:** Muro interactivo para publicar imágenes y experiencias, sistema de reacción/comentarios, seguimiento entre usuarios y mensajería privada directa mediante suscripciones WebSockets con Supabase Realtime.
+*   **Directorio y Gestión de Guías Turísticos Certificados:** Módulo dedicado (`/guias` y `/perfil-guia`) para la búsqueda, filtrado por especialidad/idioma y contacto directo (vía WhatsApp e Instagram) con guías autorizados por INTUR.
+*   **Panel Multi-Negocio (Propietarios):** Módulo de administración para dueños de comercios (`/dashboard`) donde pueden registrar establecimientos, editar horarios, gestionar imágenes, revisar motivos de rechazo en caso de revisiones administrativas y solicitar la verificación del local.
+*   **Panel de Administración del Sistema:** Módulo restringido (`/admin`) para administradores enfocado en la moderación, aprobación y auditoría de solicitudes de nuevos negocios y registros de guías.
+*   **Enciclopedia Departamental:** Guía informativa estructurada (`/mas-de-nicaragua` y `src/data/departamentos-data.js`) sobre los 17 departamentos con datos sobre historia, economía, puntos turísticos, pasatiempos y eventos culturales.
+*   **Red Social Comunitaria y Chat en Tiempo Real:** Muro interactivo (`/comunidad`), perfiles públicos, seguidores/seguidos, visor de imágenes HD y mensajería privada directa mediante suscripciones WebSockets con Supabase Realtime (`/chat` y `ChatWidget.js`).
+*   **Soporte PWA Offline y Multi-Idioma (i18n):** Service Worker (`public/sw.js`) con estrategia de caché offline para uso en movimiento y sistema de internacionalización (Español / Inglés) vía `src/lib/i18n/`.
 *   **Sistema de Perfiles y Rangos de Usuario:** Gestión de niveles, roles y beneficios del sistema: Turista no registrado, Turista Tuani (registrado), Turista Deacachimba (con membresía activa), Guía Turístico Certificado y Administrador del Sistema.
+*   **Seguridad y Autenticación:** Control de sesión con recuperación de contraseña (`/reset-password`), cierre automático por inactividad (`useInactivityLogout`) y políticas de seguridad por fila (RLS) en Supabase.
 
 ---
 
@@ -64,11 +66,11 @@ El sistema implementa una arquitectura basada en **Backend como Servicio (BaaS)*
 2.  **Capa de Negocio y Datos (Supabase Core):**
     *   **PostgreSQL Relacional:** Almacenamiento persistente con esquemas estructurados para usuarios, perfiles, guías turísticos, comercios, publicaciones, mensajes y visitas.
     *   **Funciones Almacenadas (RPC en PL/pgSQL):** Consultas avanzadas ejecutadas en la base de datos (por ejemplo, cálculo de distancia radial de puntos de interés respecto a coordenadas GPS).
-    *   **Seguridad por Filas (RLS - Row Level Security):** Políticas de control de acceso granulares para asegurar que solo los dueños modifiquen su información y que los chats permanezcan strictly privados.
+    *   **Seguridad por Filas (RLS - Row Level Security):** Políticas de control de acceso granulares para asegurar que solo los dueños modifiquen su información y que los chats permanezcan estrictamente privados.
     *   **Realtime Engine:** Motor de WebSockets para notificación instantánea de nuevos mensajes e interacciones sociales.
     *   **Storage (Bucket `atlan-media`):** Almacenamiento de archivos multimedia optimizados (fotos de negocios, avatares, guías y publicaciones).
 3.  **Capa Geoespacial:**
-    *   Servicios de **Mapbox GL** (JS para Web y Native SDK para Móvil) para capas vectoriales, marcadores personalizados, polígonos GeoJSON de límites departamentales y ruteo.
+    *   Servicios de **Mapbox GL** (JS para Web y Native SDK para Móvil) combinados con archivos GeoJSON locales para límites territoriales (`nicaragua-boundary.json`), centroides departamentales (`nicaragua-department-centroids.json`) y máscara de recorte nacional (`outside-nicaragua-mask.json`).
 
 ---
 
@@ -153,57 +155,69 @@ El código está organizado modularmente para separar las responsabilidades de l
 
 ```text
 plataforma-atlan/
-├── public/                               # Recursos estáticos y PWA
-│   ├── manifest.json                     # Configuración e iconos PWA
+├── public/                               # Recursos estáticos, GeoJSON y PWA
+│   ├── manifest.json                     # Manifiesto Web App e iconos instalables
 │   ├── sw.js                             # Service Worker para caché offline
-│   ├── nicaragua-departments.json        # Polígonos GeoJSON de departamentos
-│   └── nicaragua-boundary.json           # Contorno fronterizo nacional
+│   ├── nicaragua-departments.json        # Polígonos GeoJSON de los 17 departamentos
+│   ├── nicaragua-department-centroids.json # Centroides para centrado de cámara y etiquetas
+│   ├── nicaragua-boundary.json           # Contorno fronterizo nacional
+│   ├── outside-nicaragua-mask.json       # Máscara visual para enfocar el territorio nacional
+│   └── videos/                           # Video multimedia introductorio
 │
 ├── src/                                  # APLICACIÓN WEB (NEXT.JS 16)
-│   ├── app/                              # Rutas del App Router
+│   ├── app/                              # Rutas principales del App Router
 │   │   ├── admin/                        # Panel de aprobación de negocios y guías
-│   │   ├── chat/                         # Mensajería directa entre usuarios
-│   │   ├── comunidad/                    # Feed social, publicaciones y comentarios
-│   │   ├── dashboard/                    # Gestión de comercios para propietarios
+│   │   ├── chat/                         # Mensajería directa entre usuarios (Realtime)
+│   │   ├── comunidad/                    # Feed social, publicaciones y perfiles comunitarios
+│   │   ├── dashboard/                    # Gestión multi-negocio para propietarios
 │   │   ├── departamentos/                # Ranking de exploradores y validación GPS
-│   │   ├── guias/                        # Módulo y catálogo de Guías Turísticos
-│   │   ├── mas-de-nicaragua/             # Enciclopedia turística por departamento
+│   │   ├── guias/                        # Catálogo de Guías Turísticos certificados
+│   │   ├── mas-de-nicaragua/             # Enciclopedia turística departamental
 │   │   ├── mapa/                         # Vista interactiva del mapa a pantalla completa
 │   │   ├── perfil/                       # Perfil de usuario, favoritos y ajustes
-│   │   ├── perfil-guia/                  # Vista detallada y contacto de guía certificado
+│   │   ├── perfil-guia/                  # Vista detallada y contacto directo del guía
 │   │   ├── login/ & registro/            # Flujos de autenticación de usuarios
-│   │   ├── reset-password/               # Recuperación de credenciales
-│   │   ├── globals.css                   # Estilos globales y utilidades neón/glassmorphism
-│   │   └── page.js                       # Landing Page de la plataforma
+│   │   ├── reset-password/               # Restablecimiento seguro de credenciales
+│   │   ├── globals.css                   # Estilos globales y efectos visuales neón/glassmorphism
+│   │   └── page.js                       # Landing Page de bienvenida
 │   │
 │   ├── components/                       # Componentes React reutilizables
-│   │   ├── MapaTuristico.js              # Integración cliente de Mapbox GL
-│   │   ├── VideoIntro.js                 # Introducción multimedia de la plataforma
-│   │   ├── PWARegister.js                # Registro y Service Worker para PWA
-│   │   └── ui/                           # Modales (BusinessProfileModal, ImageViewerModal, FollowersModal), Navbar, ChatWidget, controles UI
+│   │   ├── MapaTuristico.js              # Integración cliente de Mapbox GL JS
+│   │   ├── VideoIntro.js                 # Introducción audiovisual de la plataforma
+│   │   ├── PWARegister.js                # Registro del Service Worker PWA
+│   │   ├── ClientProviders.js            # Contenedor de proveedores de contexto client-side
+│   │   └── ui/                           # Modales (BusinessProfileModal, ImageViewerModal, FollowersModal), Navbar, ChatWidget, NeonSigns, Icon.js
+│   │
+│   ├── data/                             # Datos estructurados del sistema
+│   │   └── departamentos-data.js         # Enciclopedia estática de los 17 departamentos
+│   │
+│   ├── hooks/                            # Custom Hooks de React
+│   │   ├── useInactivityLogout.js        # Cierre automático de sesión por inactividad
+│   │   └── useTranslation.js             # Hook de traducción i18n dinámico
 │   │
 │   └── lib/                              # Servicios, utilidades y contexto
-│       ├── AuthContext.js                # Provider del estado global de sesión
+│       ├── AuthContext.js                # Provider del estado global de autenticación
 │       ├── geoUtils.js                   # Algoritmo de validación geográfica Haversine
-│       ├── imageUtils.js                 # Utilidades de procesamiento y compresión de imágenes
-│       ├── profileUtils.js               # Helper de formateo de perfiles
-│       ├── storage.js                    # Conector de subida a Supabase Storage
-│       ├── supabase.js                   # Cliente inicializado de Supabase JS
-│       └── i18n/                         # Diccionarios de internacionalización (ES / EN)
+│       ├── imageUtils.js                 # Procesamiento y compresión de imágenes
+│       ├── profileUtils.js               # Utilidades de formateo de perfiles
+│       ├── storage.js                    # Conector de carga a Supabase Storage
+│       ├── supabase.js                   # Inicialización del cliente Supabase JS
+│       └── i18n/                         # Diccionarios de traducción (ES / EN)
 │
 ├── mobile/                               # APLICACIÓN MÓVIL (FLUTTER MONOREPO)
 │   ├── assets/                           # Recursos gráficos y GeoJSON nativos
-│   ├── lib/                              # Código en Dart
-│   │   ├── config/                       # Constantes, tema y rutas GoRouter
-│   │   ├── l10n/                         # Localización nativa
+│   ├── lib/                              # Código de la aplicación en Dart
+│   │   ├── config/                       # Constantes, tema visual y rutas GoRouter
+│   │   ├── l10n/                         # Archivos de localización nativa
 │   │   ├── models/                       # Modelos de datos (Perfil, Negocio, Punto, Guía)
 │   │   ├── providers/                    # Controladores de estado Riverpod
 │   │   ├── screens/                      # Pantallas (Home, Mapa, Perfil, Chat, Admin, Dashboard, WebView)
 │   │   ├── services/                     # Clientes de API, Supabase y ubicación GPS
-│   │   ├── utils/                        # Utilidades auxiliares
-│   │   └── widgets/                      # Componentes visuales reutilizables
-│   └── pubspec.yaml                      # Dependencias de Flutter
+│   │   ├── utils/                        # Utilidades y formateadores auxiliares
+│   │   └── widgets/                      # Componentes gráficos reutilizables
+│   └── pubspec.yaml                      # Configuración y dependencias de Flutter
 │
+├── supabase_guias_turisticos.sql         # Esquema SQL y políticas RLS para guías turísticos
 ├── .env.local                            # Variables de entorno local Web
 ├── README_TECNICO.md                     # Documentación técnica completa del sistema
 └── package.json                          # Scripts y dependencias Web
@@ -336,7 +350,20 @@ const { data: puntosCercanos, error } = await supabase.rpc('buscar_puntos_cercan
 if (error) console.error('Error al ejecutar RPC:', error);
 ```
 
-### 8.3. Filtrado de Negocios Verificados por Categoría
+### 8.3. Consulta y Filtrado de Guías Turísticos Certificados
+
+```javascript
+// Consultar guías activos por departamento
+const { data: guias, error } = await supabase
+  .from('guias_turisticos')
+  .select('id, nombre_completo, especialidad, idiomas, tarifa_aprox, departamento_principal, whatsapp')
+  .eq('activo', true)
+  .eq('departamento_principal', 'León');
+
+if (error) console.error('Error al consultar guías:', error);
+```
+
+### 8.4. Filtrado de Negocios Verificados por Categoría
 
 ```javascript
 // Consulta de establecimientos activos y verificados en la categoría de Restaurantes
@@ -348,7 +375,7 @@ const { data: restaurantes, error } = await supabase
   .order('nombre', { ascending: true });
 ```
 
-### 8.4. Registro de Visita Validada por GPS (Check-In)
+### 8.5. Registro de Visita Validada por GPS (Check-In)
 
 ```javascript
 // Inserción de visita una vez validado que la distancia Haversine es < 1 km
@@ -364,7 +391,7 @@ const { data: checkIn, error } = await supabase
   ]);
 ```
 
-### 8.5. Suscripción a Chat en Tiempo Real (WebSockets Realtime)
+### 8.6. Suscripción a Chat en Tiempo Real (WebSockets Realtime)
 
 ```javascript
 // Suscripción reactiva a la llegada de mensajes en una conversación privada
@@ -395,6 +422,9 @@ const chatChannel = supabase
 
 ### Visualización del Mapa (Mapbox)
 *   Si los mapas no cargan o muestran un lienzo en blanco, confirma que la variable `NEXT_PUBLIC_MAPBOX_TOKEN` en `.env.local` (o `MAPBOX_ACCESS_TOKEN` en la app móvil) tenga un token válido activo asignado a tu cuenta de Mapbox.
+
+### Caché y Service Worker en PWA
+*   Si notas cambios que no se reflejan en la PWA Web, desregistra el Service Worker desde DevTools (`Application > Service Workers`) o ejecuta `npm run clean` para forzar la recreación de los paquetes estáticos.
 
 ### Seguridad y RLS en Supabase
 *   Todas las tablas críticas del sistema (`mensajes`, `negocios`, `visitas_puntos`, `perfiles`, `guias_turisticos`) cuentan con políticas de **Row Level Security (RLS)** activadas. Los intentos de modificación directa sin un token JWT válido de usuario autenticado serán rechazados por la base de datos.
