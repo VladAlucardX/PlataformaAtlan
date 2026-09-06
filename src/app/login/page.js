@@ -130,7 +130,7 @@ export default function LoginPage() {
           setErrorMsg(
             lang === "en"
               ? "Invalid email or password. Please verify your credentials."
-              : "Correo o contraseña incorrectos. Verifica que tus datos sean correctos (ej: guia@atlan.com / password123)."
+              : "Correo o contraseña incorrectos. Verifica tus datos de acceso."
           );
         } else {
           setErrorMsg(authError.message);
@@ -402,89 +402,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Acceso Rápido Cuentas de Prueba */}
-            <div style={{
-              background: "rgba(20, 109, 158, 0.06)",
-              border: "1px solid rgba(20, 109, 158, 0.15)",
-              borderRadius: "14px",
-              padding: "10px 12px",
-              marginBottom: "16px"
-            }}>
-              <div style={{
-                fontSize: "11.5px",
-                fontWeight: "800",
-                color: "#146D9E",
-                marginBottom: "8px",
-                display: "flex",
-                alignItems: "center",
-                gap: "5px"
-              }}>
-                <Icon name="info" size={13} />
-                <span>{lang === "en" ? "Quick Test Credentials (Click to fill):" : "Cuentas de Prueba (Haz clic para llenar):"}</span>
-              </div>
-              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEmail("guia@atlan.com");
-                    setPassword("password123");
-                    setErrorMsg("");
-                  }}
-                  style={{
-                    padding: "5px 10px",
-                    borderRadius: "8px",
-                    border: "1px solid rgba(14, 165, 233, 0.3)",
-                    background: "rgba(14, 165, 233, 0.12)",
-                    color: "#0284C7",
-                    fontSize: "12px",
-                    fontWeight: "750",
-                    cursor: "pointer"
-                  }}
-                >
-                  🚩 Guía: guia@atlan.com
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEmail("turista@atlan.com");
-                    setPassword("password123");
-                    setErrorMsg("");
-                  }}
-                  style={{
-                    padding: "5px 10px",
-                    borderRadius: "8px",
-                    border: "1px solid rgba(23, 170, 74, 0.3)",
-                    background: "rgba(23, 170, 74, 0.12)",
-                    color: "#17AA4A",
-                    fontSize: "12px",
-                    fontWeight: "750",
-                    cursor: "pointer"
-                  }}
-                >
-                  🎒 Turista: turista@atlan.com
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEmail("dueno@atlan.com");
-                    setPassword("password123");
-                    setErrorMsg("");
-                  }}
-                  style={{
-                    padding: "5px 10px",
-                    borderRadius: "8px",
-                    border: "1px solid rgba(245, 158, 11, 0.3)",
-                    background: "rgba(245, 158, 11, 0.12)",
-                    color: "#D97706",
-                    fontSize: "12px",
-                    fontWeight: "750",
-                    cursor: "pointer"
-                  }}
-                >
-                  🏡 Dueño: dueno@atlan.com
-                </button>
-              </div>
-            </div>
+
 
             <form onSubmit={handleLogin} style={styles.form} autoComplete="off">
               <div style={styles.inputGroup}>
