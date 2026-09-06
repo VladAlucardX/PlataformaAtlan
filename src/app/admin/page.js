@@ -357,7 +357,7 @@ export default function AdminDashboard() {
         left: 0,
         right: 0,
         bottom: 0,
-        background: "url('/images/fondohracio.png') center / cover no-repeat fixed",
+        background: "linear-gradient(rgba(10, 15, 28, 0.25), rgba(10, 15, 28, 0.25)), url('/images/fondohracio.png') center / cover no-repeat fixed",
         zIndex: 0,
         pointerEvents: "none"
       }} />
