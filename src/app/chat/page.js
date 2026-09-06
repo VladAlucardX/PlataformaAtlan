@@ -37,6 +37,48 @@ function avatarStyle(url, size) {
   };
 }
 
+function renderMessageMedia(msgUrl, lang) {
+  if (!msgUrl) return null;
+  const lower = msgUrl.toLowerCase();
+  const isAudio = lower.endsWith(".mp3") || lower.endsWith(".wav") || lower.endsWith(".m4a") || lower.endsWith(".ogg") || lower.endsWith(".webm") || lower.includes("audio");
+  const isVideo = lower.endsWith(".mp4") || lower.endsWith(".webm") || lower.endsWith(".mov") || lower.includes("video");
+
+  if (isAudio) {
+    return (
+      <div style={{ padding: "6px 2px", display: "flex", flexDirection: "column", gap: "4px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", opacity: 0.85, fontWeight: "700" }}>
+          <span>🎤 {lang === "en" ? "Voice Note / Audio" : "Nota de Voz / Audio"}</span>
+        </div>
+        <audio
+          src={msgUrl}
+          controls
+          style={{ width: "100%", maxWidth: "260px", height: "36px", borderRadius: "10px", outline: "none" }}
+        />
+      </div>
+    );
+  }
+
+  if (isVideo) {
+    return (
+      <video
+        src={msgUrl}
+        controls
+        playsInline
+        style={{ width: "100%", maxWidth: "280px", borderRadius: "12px", marginTop: "4px", display: "block" }}
+      />
+    );
+  }
+
+  return (
+    <img
+      src={msgUrl}
+      alt="Attachment"
+      style={{ width: "100%", maxWidth: "280px", borderRadius: "12px", display: "block" }}
+      loading="lazy"
+    />
+  );
+}
+
 function ChatContent() {
   const { t, lang } = useTranslation();
   const router = useRouter();
@@ -69,10 +111,17 @@ function ChatContent() {
   // Mobile: show chat view
   const [mobileShowChat, setMobileShowChat] = useState(false);
 
-  // Image attachment in chat
+  // Image & media attachment in chat
   const [chatImageFile, setChatImageFile] = useState(null);
   const [chatImagePreview, setChatImagePreview] = useState(null);
   const chatImageRef = useRef(null);
+
+  // Live audio recording
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const timerRef = useRef(null);
 
   // Unread counts
   const [unreadCounts, setUnreadCounts] = useState({});
@@ -343,9 +392,67 @@ function ChatContent() {
     const file = e.target.files[0];
     if (!file) return;
     setChatImageFile(file);
-    const reader = new FileReader();
-    reader.onloadend = () => setChatImagePreview(reader.result);
-    reader.readAsDataURL(file);
+    if (file.type.startsWith("image/") || file.type.startsWith("video/") || file.type.startsWith("audio/")) {
+      const url = URL.createObjectURL(file);
+      setChatImagePreview(url);
+    } else {
+      const reader = new FileReader();
+      reader.onloadend = () => setChatImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioChunksRef.current = [];
+      const recorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = recorder;
+
+      recorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          audioChunksRef.current.push(e.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const audioFile = new File([audioBlob], `audio-note-${Date.now()}.webm`, { type: "audio/webm" });
+        setChatImageFile(audioFile);
+        setChatImagePreview(URL.createObjectURL(audioBlob));
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      recorder.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        setRecordingTime(t => t + 1);
+      }, 1000);
+    } catch (err) {
+      console.error("Mic access error:", err);
+      alert(lang === "en" ? "Microphone access is required to record audio" : "Se requiere acceso al micrófono para grabar notas de voz");
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      if (timerRef.current) clearInterval(timerRef.current);
+    }
+  };
+
+  const cancelRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      audioChunksRef.current = [];
+      setIsRecording(false);
+      if (timerRef.current) clearInterval(timerRef.current);
+      setChatImageFile(null);
+      setChatImagePreview(null);
+    }
   };
 
   const handleLogout = async () => {
@@ -574,14 +681,7 @@ function ChatContent() {
                             border: isMine ? "1px solid rgba(255, 255, 255, 0.25)" : "1px solid rgba(255, 255, 255, 0.18)",
                             backdropFilter: isMine ? "none" : "blur(10px)",
                           }}>
-                            {msg.imagen_url && (
-                              <img
-                                src={msg.imagen_url}
-                                alt="Attachment"
-                                style={{ width: "100%", maxWidth: "280px", borderRadius: msg.contenido ? "12px 12px 4px 4px" : "12px", display: "block", marginBottom: msg.contenido ? "6px" : 0 }}
-                                loading="lazy"
-                              />
-                            )}
+                            {msg.imagen_url && renderMessageMedia(msg.imagen_url, lang)}
                             {msg.contenido && (
                               <p style={{ margin: 0, fontSize: "14px", lineHeight: "1.5", wordBreak: "break-word", padding: msg.imagen_url ? "4px 10px 6px" : 0 }}>
                                 {msg.contenido}
@@ -605,48 +705,139 @@ function ChatContent() {
                   <div ref={mensajesEndRef} />
                 </div>
 
-                {/* Chat image preview */}
+                {/* Media preview bar (Photos, Videos, Audio) */}
                 {chatImagePreview && (
-                  <div style={{ padding: "8px 18px", borderTop: "1px solid rgba(255, 255, 255, 0.1)", background: "rgba(10, 25, 47, 0.95)", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div style={{ padding: "8px 18px", borderTop: "1px solid rgba(255, 255, 255, 0.1)", background: "rgba(10, 25, 47, 0.95)", display: "flex", alignItems: "center", gap: "12px" }}>
                     <div style={{ position: "relative" }}>
-                      <img src={chatImagePreview} alt="Preview" style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "10px", border: "1px solid rgba(255, 215, 0, 0.4)" }} />
+                      {chatImageFile?.type?.startsWith("audio/") || chatImageFile?.name?.includes("audio") ? (
+                        <div style={{ padding: "6px 10px", background: "rgba(20, 109, 158, 0.25)", borderRadius: "10px", border: "1px solid rgba(255, 215, 0, 0.4)", display: "flex", alignItems: "center", gap: "8px" }}>
+                          <span style={{ fontSize: "16px" }}>🎤</span>
+                          <audio src={chatImagePreview} controls style={{ height: "30px", width: "190px", outline: "none" }} />
+                        </div>
+                      ) : chatImageFile?.type?.startsWith("video/") ? (
+                        <video src={chatImagePreview} controls style={{ width: "70px", height: "50px", objectFit: "cover", borderRadius: "8px", border: "1px solid rgba(255, 215, 0, 0.4)" }} />
+                      ) : (
+                        <img src={chatImagePreview} alt="Preview" style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "10px", border: "1px solid rgba(255, 215, 0, 0.4)" }} />
+                      )}
                       <button
                         onClick={() => { setChatImageFile(null); setChatImagePreview(null); }}
-                        style={{ position: "absolute", top: "-6px", right: "-6px", width: "20px", height: "20px", borderRadius: "50%", background: "#EF4444", border: "none", color: "#FFFFFF", fontSize: "11px", fontWeight: "900", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                        style={{ position: "absolute", top: "-8px", right: "-8px", width: "20px", height: "20px", borderRadius: "50%", background: "#EF4444", border: "none", color: "#FFFFFF", fontSize: "11px", fontWeight: "900", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                       >✕</button>
                     </div>
-                    <span style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.7)" }}>{lang === "en" ? "Image attached" : "Imagen adjuntada"}</span>
+                    <span style={{ fontSize: "12.5px", color: "rgba(255, 255, 255, 0.8)", fontWeight: "700" }}>
+                      {chatImageFile?.type?.startsWith("audio/") || chatImageFile?.name?.includes("audio")
+                        ? (lang === "en" ? "Audio note ready to send" : "Nota de voz lista para enviar")
+                        : chatImageFile?.type?.startsWith("video/")
+                        ? (lang === "en" ? "Video attached" : "Video adjuntado")
+                        : (lang === "en" ? "Image attached" : "Imagen adjuntada")}
+                    </span>
                   </div>
                 )}
 
                 {/* Input bar */}
                 <div style={chatLayoutStyles.inputBar}>
-                  <input type="file" ref={chatImageRef} accept="image/*" onChange={handleChatImageChange} style={{ display: "none" }} />
-                  <button
-                    onClick={() => chatImageRef.current?.click()}
-                    style={{ background: "rgba(255, 255, 255, 0.08)", border: "1px solid rgba(255, 255, 255, 0.15)", borderRadius: "50%", width: "38px", height: "38px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#FFFFFF" }}
-                    title={lang === "en" ? "Attach image" : "Adjuntar imagen"}
-                  >
-                    📷
-                  </button>
-                  <input
-                    value={nuevoMensaje}
-                    onChange={(e) => setNuevoMensaje(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
-                    placeholder={t("chat.typeMessage")}
-                    disabled={enviando}
-                    style={chatLayoutStyles.messageInput}
-                  />
-                  <button
-                    onClick={handleSendMessage}
-                    disabled={enviando || (!nuevoMensaje.trim() && !chatImageFile)}
-                    style={{
-                      ...chatLayoutStyles.sendBtn,
-                      opacity: enviando || (!nuevoMensaje.trim() && !chatImageFile) ? 0.4 : 1,
-                    }}
-                  >
-                    ➤
-                  </button>
+                  <input type="file" ref={chatImageRef} accept="image/*,video/*,audio/*" onChange={handleChatImageChange} style={{ display: "none" }} />
+                  
+                  {isRecording ? (
+                    <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(239, 68, 68, 0.18)", border: "1px solid rgba(239, 68, 68, 0.5)", padding: "8px 16px", borderRadius: "24px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#EF4444", fontWeight: "800", fontSize: "13px" }}>
+                        <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#EF4444" }} />
+                        <span>{lang === "en" ? "Recording..." : "Grabando audio..."}</span>
+                        <span style={{ color: "#FFFFFF" }}>{Math.floor(recordingTime / 60)}:{(recordingTime % 60).toString().padStart(2, '0')}</span>
+                      </div>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        <button onClick={cancelRecording} style={{ background: "none", border: "none", color: "rgba(255, 255, 255, 0.7)", cursor: "pointer", fontSize: "12px", fontWeight: "700" }}>
+                          {lang === "en" ? "Cancel" : "Cancelar"}
+                        </button>
+                        <button onClick={stopRecording} style={{ background: "#EF4444", border: "none", color: "white", padding: "5px 14px", borderRadius: "12px", cursor: "pointer", fontSize: "12px", fontWeight: "800" }}>
+                          {lang === "en" ? "Stop & Attach" : "Detener y Adjuntar"}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Botón Cámara / Fotos / Videos SVG */}
+                      <button
+                        onClick={() => chatImageRef.current?.click()}
+                        style={{
+                          background: "rgba(255, 255, 255, 0.08)",
+                          border: "1px solid rgba(255, 255, 255, 0.18)",
+                          borderRadius: "50%",
+                          width: "42px",
+                          height: "42px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#FFFFFF",
+                          transition: "all 0.2s ease",
+                          flexShrink: 0
+                        }}
+                        title={lang === "en" ? "Attach photo, video or audio file" : "Adjuntar foto, video o audio"}
+                        onMouseOver={(e) => { e.currentTarget.style.background = "rgba(255, 215, 0, 0.2)"; e.currentTarget.style.borderColor = "#FFD700"; }}
+                        onMouseOut={(e) => { e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)"; e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.18)"; }}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                          <circle cx="12" cy="13" r="4"/>
+                        </svg>
+                      </button>
+
+                      {/* Botón Grabar Nota de Voz SVG */}
+                      <button
+                        onClick={startRecording}
+                        style={{
+                          background: "rgba(255, 255, 255, 0.08)",
+                          border: "1px solid rgba(255, 255, 255, 0.18)",
+                          borderRadius: "50%",
+                          width: "42px",
+                          height: "42px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#FFFFFF",
+                          transition: "all 0.2s ease",
+                          flexShrink: 0
+                        }}
+                        title={lang === "en" ? "Record voice note" : "Grabar nota de voz"}
+                        onMouseOver={(e) => { e.currentTarget.style.background = "rgba(239, 68, 68, 0.2)"; e.currentTarget.style.borderColor = "#EF4444"; }}
+                        onMouseOut={(e) => { e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)"; e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.18)"; }}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                          <line x1="12" y1="19" x2="12" y2="23"/>
+                          <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                      </button>
+
+                      <input
+                        value={nuevoMensaje}
+                        onChange={(e) => setNuevoMensaje(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
+                        placeholder={t("chat.typeMessage")}
+                        disabled={enviando}
+                        style={chatLayoutStyles.messageInput}
+                      />
+
+                      {/* Botón Enviar con SVG Paperplane */}
+                      <button
+                        onClick={handleSendMessage}
+                        disabled={enviando || (!nuevoMensaje.trim() && !chatImageFile)}
+                        style={{
+                          ...chatLayoutStyles.sendBtn,
+                          opacity: enviando || (!nuevoMensaje.trim() && !chatImageFile) ? 0.4 : 1,
+                        }}
+                        title={lang === "en" ? "Send message" : "Enviar mensaje"}
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "translateX(1px)" }}>
+                          <line x1="22" y1="2" x2="11" y2="13"/>
+                          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                      </button>
+                    </>
+                  )}
                 </div>
               </>
             ) : (
