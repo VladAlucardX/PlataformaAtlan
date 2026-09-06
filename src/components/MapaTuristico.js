@@ -3084,7 +3084,7 @@ export default function MapaTuristico() {
               {isAddingPoint ? (
                 <Icon name="x" size={16} />
               ) : (
-                <img src="/images/ubicacion.svg" alt="Levantar Punto" style={{ width: '16px', height: '16px', objectFit: 'contain', filter: 'brightness(0)' }} />
+                <Icon name="mapPin" size={16} color={isAddingPoint ? "#FFFFFF" : "#0A192F"} />
               )} {isAddingPoint ? t('common.cancel') : t('map.addPoint')}
             </button>
             <LanguageToggle variant="pill" />
