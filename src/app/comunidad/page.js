@@ -1063,7 +1063,7 @@ export default function ComunidadPage() {
             </div>
             <div style={{ padding: "0 16px" }}>
               <Link href="/comunidad" style={sidebarStyles.exploreLink}>
-                <img src="/images/comunidad.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Feed" : "Muro General"}
+                <img src="/images/comunidad.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0)" }} /> {lang === "en" ? "Feed" : "Muro General"}
               </Link>
               <Link href="/mapa" style={sidebarStyles.exploreLink}>
                 <img src="/images/croquisnicaragua.svg" alt="Mapa" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0)" }} /> {lang === "en" ? "Tourist Map" : "Mapa Turístico"}
