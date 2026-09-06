@@ -1963,13 +1963,14 @@ const styles = {
   },
   cardHeaderHorizontal: {
     display: "flex",
-    gap: "10px",
-    marginBottom: "4px"
+    gap: "14px",
+    alignItems: "center",
+    marginBottom: "6px"
   },
   avatarWrapperWide: {
     position: "relative",
-    width: "48px",
-    height: "48px",
+    width: "64px",
+    height: "64px",
     flexShrink: 0
   },
   avatarImgWide: {
@@ -1977,20 +1978,21 @@ const styles = {
     height: "100%",
     borderRadius: "50%",
     objectFit: "cover",
-    border: "2px solid #0EA5E9"
+    border: "2.5px solid #0EA5E9",
+    boxShadow: "0 0 16px rgba(14, 165, 233, 0.35)"
   },
   verifiedBadgeIcon: {
     position: "absolute",
-    bottom: "0",
-    right: "0",
+    bottom: "1px",
+    right: "1px",
     background: "#10B981",
     borderRadius: "50%",
-    width: "18px",
-    height: "18px",
+    width: "20px",
+    height: "20px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    boxShadow: "0 2px 6px rgba(0,0,0,0.3)"
+    boxShadow: "0 2px 8px rgba(0,0,0,0.4)"
   },
   deptBadgeSlim: {
     display: "inline-flex",
@@ -2014,10 +2016,10 @@ const styles = {
     border: "1px solid rgba(16, 185, 129, 0.25)"
   },
   guideNameWide: {
-    fontSize: "16px",
+    fontSize: "17px",
     fontWeight: "800",
     color: "#FFFFFF",
-    margin: "1px 0 2px 0",
+    margin: "2px 0 3px 0",
     lineHeight: "1.2"
   },
   ratingRowWide: {
