@@ -2228,9 +2228,9 @@ const styles = {
   modalOverlay: {
     position: "fixed",
     inset: 0,
-    background: "rgba(3, 10, 26, 0.82)",
-    backdropFilter: "blur(12px)",
-    zIndex: 1000,
+    background: "rgba(3, 10, 26, 0.88)",
+    backdropFilter: "blur(14px)",
+    zIndex: 99999,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
