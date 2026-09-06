@@ -1150,45 +1150,60 @@ export default function GuiasPage() {
         )}
       </main>
 
-      {/* MODAL EXTENDIDO DEL GUÍA CON PESTAÑAS (INFO, GALERÍA DE TRAVESÍAS, RESEÑAS) */}
+      {/* MODAL EXTENDIDO DEL GUÍA COMPLETO A LO ANCHO CON PESTAÑAS DISTRIBUIDAS */}
       {selectedGuiaModal && (
         <div style={styles.modalOverlay} onClick={() => setSelectedGuiaModal(null)}>
           <div
             style={styles.modalCardWide}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Botón Cerrar Modal */}
-            <button
-              onClick={() => setSelectedGuiaModal(null)}
-              style={styles.closeModalBtn}
-            >
-              <Icon name="x" size={18} />
-            </button>
+            {/* Portada / Banner de Fondo del Modal */}
+            <div style={styles.modalCoverBanner}>
+              <button
+                onClick={() => setSelectedGuiaModal(null)}
+                style={styles.closeModalBtn}
+                title={lang === "en" ? "Close Profile" : "Cerrar Perfil"}
+              >
+                <Icon name="x" size={18} />
+              </button>
+            </div>
 
-            {/* Cabecera Modal */}
-            <div style={styles.modalHeaderWide}>
-              <img
-                src={selectedGuiaModal.avatar_url}
-                alt={selectedGuiaModal.nombre_completo}
-                style={styles.modalAvatarWide}
-              />
+            {/* Cabecera del Perfil con Imagen Squircle Protagonista y Badges */}
+            <div style={styles.modalProfileHeaderRow}>
+              <div style={styles.modalAvatarContainer}>
+                <img
+                  src={selectedGuiaModal.avatar_url}
+                  alt={selectedGuiaModal.nombre_completo}
+                  style={styles.modalAvatarWide}
+                />
+                <div style={styles.modalAvatarBadgeVerified} title="Guía INTUR Certificado">
+                  <Icon name="checkCircle" size={15} color="#FFFFFF" />
+                </div>
+              </div>
 
-              <div>
+              <div style={styles.modalProfileMetaContent}>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "4px" }}>
-                  <span style={styles.modalDeptBadge}>{selectedGuiaModal.departamento_principal}</span>
+                  <span style={styles.modalDeptBadge}>
+                    <Icon name="mapPin" size={12} color="#0EA5E9" />
+                    {selectedGuiaModal.departamento_principal}
+                  </span>
                   {selectedGuiaModal.licencia_intur && (
                     <span style={styles.modalLicenseBadge}>
                       <Icon name="shield" size={12} color="#10B981" />
                       {selectedGuiaModal.licencia_intur}
                     </span>
                   )}
+                  <span style={styles.modalExpBadge}>
+                    <Icon name="clock" size={12} color="#FFD700" />
+                    {selectedGuiaModal.experiencia_anios} {lang === "en" ? "Years Experience" : "Años Experiencia"}
+                  </span>
                 </div>
 
                 <h2 style={styles.modalGuideNameWide}>{selectedGuiaModal.nombre_completo}</h2>
 
-                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "4px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "14px", flexWrap: "wrap", marginTop: "4px" }}>
                   <div style={styles.starsBox}>
-                    <span style={{ color: "#FFD700", fontWeight: "900" }}>★</span>
+                    <span style={{ color: "#FFD700", fontWeight: "900", fontSize: "16px" }}>★</span>
                     <span style={{ fontWeight: "800", color: "#F8FAFC", fontSize: "15px" }}>
                       {selectedGuiaModal.rating_promedio}
                     </span>
@@ -1196,22 +1211,28 @@ export default function GuiasPage() {
                       ({selectedGuiaModal.total_resenas} {lang === "en" ? "reviews" : "reseñas"})
                     </span>
                   </div>
+
+                  <span style={styles.modalRateHighlight}>
+                    <Icon name="dollarSign" size={13} color="#10B981" />
+                    {selectedGuiaModal.tarifa_aprox || "$30 / día"}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Pestañas del Modal */}
+            {/* Pestañas del Modal (Segmented Control 4 Columnas del mismo tamaño y bien distribuidas) */}
             <div style={styles.modalTabsRow}>
               <button
                 onClick={() => setActiveModalTab("info")}
                 style={{
                   ...styles.modalTabBtn,
-                  borderBottom: activeModalTab === "info" ? "2.5px solid #0EA5E9" : "none",
+                  background: activeModalTab === "info" ? "linear-gradient(135deg, rgba(14, 165, 233, 0.28) 0%, rgba(2, 132, 199, 0.28) 100%)" : "transparent",
+                  border: activeModalTab === "info" ? "1.5px solid #38BDF8" : "1px solid transparent",
                   color: activeModalTab === "info" ? "#38BDF8" : "#94A3B8",
-                  fontWeight: activeModalTab === "info" ? "800" : "600"
+                  boxShadow: activeModalTab === "info" ? "0 4px 14px rgba(14, 165, 233, 0.25)" : "none"
                 }}
               >
-                <Icon name="user" size={14} />
+                <Icon name="user" size={15} color={activeModalTab === "info" ? "#38BDF8" : "#64748B"} />
                 <span>{lang === "en" ? "Profile Info" : "Perfil y Datos"}</span>
               </button>
 
@@ -1219,25 +1240,27 @@ export default function GuiasPage() {
                 onClick={() => setActiveModalTab("galeria")}
                 style={{
                   ...styles.modalTabBtn,
-                  borderBottom: activeModalTab === "galeria" ? "2.5px solid #38BDF8" : "none",
+                  background: activeModalTab === "galeria" ? "linear-gradient(135deg, rgba(14, 165, 233, 0.28) 0%, rgba(2, 132, 199, 0.28) 100%)" : "transparent",
+                  border: activeModalTab === "galeria" ? "1.5px solid #38BDF8" : "1px solid transparent",
                   color: activeModalTab === "galeria" ? "#38BDF8" : "#94A3B8",
-                  fontWeight: activeModalTab === "galeria" ? "800" : "600"
+                  boxShadow: activeModalTab === "galeria" ? "0 4px 14px rgba(14, 165, 233, 0.25)" : "none"
                 }}
               >
-                <Icon name="image" size={14} />
-                <span>{lang === "en" ? "Tour Gallery" : "Galería de Travesías"} ({selectedGuiaModal.galeria_fotos?.length || 0})</span>
+                <Icon name="image" size={15} color={activeModalTab === "galeria" ? "#38BDF8" : "#64748B"} />
+                <span>{lang === "en" ? "Gallery" : "Galería"} ({selectedGuiaModal.galeria_fotos?.length || 0})</span>
               </button>
 
               <button
                 onClick={() => setActiveModalTab("resenas")}
                 style={{
                   ...styles.modalTabBtn,
-                  borderBottom: activeModalTab === "resenas" ? "2.5px solid #FFD700" : "none",
-                  color: activeModalTab === "resenas" ? "#FFD700" : "#94A3B8",
-                  fontWeight: activeModalTab === "resenas" ? "800" : "600"
+                  background: activeModalTab === "resenas" ? "linear-gradient(135deg, rgba(255, 215, 0, 0.22) 0%, rgba(217, 119, 6, 0.22) 100%)" : "transparent",
+                  border: activeModalTab === "resenas" ? "1.5px solid #FBBF24" : "1px solid transparent",
+                  color: activeModalTab === "resenas" ? "#FBBF24" : "#94A3B8",
+                  boxShadow: activeModalTab === "resenas" ? "0 4px 14px rgba(255, 215, 0, 0.2)" : "none"
                 }}
               >
-                <Icon name="star" size={14} />
+                <Icon name="star" size={15} color={activeModalTab === "resenas" ? "#FBBF24" : "#64748B"} />
                 <span>{lang === "en" ? "Reviews" : "Reseñas"} ({selectedGuiaModal.total_resenas || 0})</span>
               </button>
 
@@ -1245,240 +1268,252 @@ export default function GuiasPage() {
                 onClick={() => setActiveModalTab("mapa_destinos")}
                 style={{
                   ...styles.modalTabBtn,
-                  borderBottom: activeModalTab === "mapa_destinos" ? "2.5px solid #10B981" : "none",
+                  background: activeModalTab === "mapa_destinos" ? "linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.25) 100%)" : "transparent",
+                  border: activeModalTab === "mapa_destinos" ? "1.5px solid #34D399" : "1px solid transparent",
                   color: activeModalTab === "mapa_destinos" ? "#34D399" : "#94A3B8",
-                  fontWeight: activeModalTab === "mapa_destinos" ? "800" : "600"
+                  boxShadow: activeModalTab === "mapa_destinos" ? "0 4px 14px rgba(16, 185, 129, 0.2)" : "none"
                 }}
               >
-                <Icon name="mapPin" size={14} color={activeModalTab === "mapa_destinos" ? "#10B981" : "#94A3B8"} />
-                <span>{lang === "en" ? "Map Destinations" : "Lugares en el Mapa"} ({selectedGuiaModal.destinos_mapa?.length || 0})</span>
+                <Icon name="mapPin" size={15} color={activeModalTab === "mapa_destinos" ? "#34D399" : "#64748B"} />
+                <span>{lang === "en" ? "Map Places" : "Lugares en Mapa"} ({selectedGuiaModal.destinos_mapa?.length || 0})</span>
               </button>
             </div>
 
-            {/* PESTAÑA 1: INFORMACIÓN Y DATOS */}
-            {activeModalTab === "info" && (
-              <div style={{ marginTop: "16px" }}>
-                <div style={styles.modalSection}>
-                  <h4 style={styles.modalSectionTitle}>{lang === "en" ? "About this Guide" : "Acerca del Guía"}</h4>
-                  <p style={styles.modalBioText}>{selectedGuiaModal.biografia}</p>
-                </div>
-
-                <div style={styles.modalTechGridWide}>
-                  <div style={styles.techItem}>
-                    <span style={styles.techLabel}>{lang === "en" ? "Specialty" : "Especialidad"}</span>
-                    <span style={styles.techValue}>{selectedGuiaModal.especialidad}</span>
-                  </div>
-                  <div style={styles.techItem}>
-                    <span style={styles.techLabel}>{lang === "en" ? "Languages" : "Idiomas"}</span>
-                    <span style={styles.techValue}>{selectedGuiaModal.idiomas}</span>
-                  </div>
-                  <div style={styles.techItem}>
-                    <span style={styles.techLabel}>{lang === "en" ? "Experience" : "Experiencia"}</span>
-                    <span style={styles.techValue}>{selectedGuiaModal.experiencia_anios} {lang === "en" ? "Years" : "Años"}</span>
-                  </div>
-                  <div style={styles.techItem}>
-                    <span style={styles.techLabel}>{lang === "en" ? "Approx Rate" : "Tarifa Aprox."}</span>
-                    <span style={{ ...styles.techValue, color: "#10B981" }}>{selectedGuiaModal.tarifa_aprox || "$30 / día"}</span>
-                  </div>
-                </div>
-
-                {selectedGuiaModal.whatsapp && (
-                  <a
-                    href={`https://wa.me/${selectedGuiaModal.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${selectedGuiaModal.nombre_completo}! Te encontré en Plataforma Atlan y me gustaría consultar disponibilidad para contratar un tour.`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={styles.modalWhatsappBanner}
-                  >
-                    <Icon name="whatsapp" size={22} color="#FFFFFF" />
-                    <span>{lang === "en" ? "Contact via WhatsApp Now" : "Contactar por WhatsApp Ahora"}</span>
-                  </a>
-                )}
-              </div>
-            )}
-
-            {/* PESTAÑA 2: GALERÍA DE FOTOS DE TRAVESÍAS */}
-            {activeModalTab === "galeria" && (
-              <div style={{ marginTop: "16px" }}>
-                <h4 style={styles.modalSectionTitle}>
-                  {lang === "en" ? "Expeditions & Guided Tours Photos" : "Fotos de Travesías y Excursiones Guiadas"}
-                </h4>
-                {(!selectedGuiaModal.galeria_fotos || selectedGuiaModal.galeria_fotos.length === 0) ? (
-                  <p style={{ fontSize: "13px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", padding: "30px 0" }}>
-                    {lang === "en" ? "This guide has not uploaded tour photos yet." : "Este guía aún no ha subido fotos de sus travesías."}
-                  </p>
-                ) : (
-                  <div style={styles.fullGalleryGrid}>
-                    {selectedGuiaModal.galeria_fotos.map((photoUrl, idx) => (
-                      <div key={idx} style={styles.fullGalleryCard}>
-                        <img src={photoUrl} alt={`Travesía ${idx + 1}`} style={styles.fullGalleryImg} />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* PESTAÑA 3: RESEÑAS */}
-            {activeModalTab === "resenas" && (
-              <div style={{ marginTop: "16px" }}>
-                <h4 style={styles.modalSectionTitle}>
-                  {lang === "en" ? "Tourist Reviews" : "Reseñas de Turistas"}
-                </h4>
-
-                {session ? (
-                  <form onSubmit={handleAddReview} style={styles.reviewForm}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                      <span style={{ fontSize: "13px", fontWeight: "700", color: "#E2E8F0" }}>
-                        {lang === "en" ? "Rate your experience:" : "Califica tu experiencia:"}
-                      </span>
-                      <div style={{ display: "flex", gap: "4px" }}>
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <button
-                            key={star}
-                            type="button"
-                            onClick={() => setNewRating(star)}
-                            style={{
-                              background: "none",
-                              border: "none",
-                              cursor: "pointer",
-                              fontSize: "20px",
-                              color: star <= newRating ? "#FFD700" : "#475569",
-                              padding: "0 2px"
-                            }}
-                          >
-                            ★
-                          </button>
-                        ))}
-                      </div>
+            {/* Contenido de la Pestaña Activa con Contenedor Interno de Padding */}
+            <div style={styles.modalBodyContent}>
+              {/* PESTAÑA 1: INFORMACIÓN Y DATOS */}
+              {activeModalTab === "info" && (
+                <div>
+                  <div style={styles.modalSection}>
+                    <h4 style={styles.modalSectionTitle}>
+                      <Icon name="user" size={16} color="#0EA5E9" style={{ marginRight: "6px" }} />
+                      {lang === "en" ? "About this Guide" : "Acerca del Guía"}
+                    </h4>
+                    <div style={styles.modalBioCard}>
+                      <p style={styles.modalBioText}>{selectedGuiaModal.biografia}</p>
                     </div>
-
-                    <textarea
-                      rows={3}
-                      required
-                      placeholder={lang === "en" ? "Write a comment about this guide..." : "Escribe tu opinión o comentario sobre este guía..."}
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      style={styles.reviewTextarea}
-                    />
-
-                    {reviewSuccessMsg && (
-                      <div style={styles.reviewSuccessAlert}>
-                        <Icon name="checkCircle" size={14} color="#10B981" />
-                        <span>{reviewSuccessMsg}</span>
-                      </div>
-                    )}
-
-                    <button
-                      type="submit"
-                      disabled={submittingReview || !newComment.trim()}
-                      style={styles.submitReviewBtn}
-                    >
-                      <Icon name="send" size={14} />
-                      <span>{submittingReview ? (lang === "en" ? "Submitting..." : "Enviando...") : (lang === "en" ? "Submit Review" : "Publicar Reseña")}</span>
-                    </button>
-                  </form>
-                ) : (
-                  <div style={styles.loginToReviewAlert}>
-                    <Icon name="info" size={16} color="#38BDF8" />
-                    <span>
-                      {lang === "en" ? "Log in to leave a rating and review for this guide." : "Inicia sesión para dejar una calificación y opinión a este guía."}
-                    </span>
-                    <Link href="/login" style={{ color: "#38BDF8", fontWeight: "700", textDecoration: "underline", marginLeft: "6px" }}>
-                      {lang === "en" ? "Log In" : "Iniciar Sesión"}
-                    </Link>
                   </div>
-                )}
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "16px" }}>
-                  {(!selectedGuiaModal.resenas || selectedGuiaModal.resenas.length === 0) ? (
-                    <p style={{ fontSize: "13px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", padding: "16px 0" }}>
-                      {lang === "en" ? "No reviews yet. Be the first to leave one!" : "Aún no hay reseñas. ¡Sé el primero en dejar una!"}
+                  <div style={styles.modalTechGridWide}>
+                    <div style={styles.techItem}>
+                      <span style={styles.techLabel}>{lang === "en" ? "Specialty" : "Especialidad"}</span>
+                      <span style={styles.techValue}>{selectedGuiaModal.especialidad}</span>
+                    </div>
+                    <div style={styles.techItem}>
+                      <span style={styles.techLabel}>{lang === "en" ? "Languages" : "Idiomas"}</span>
+                      <span style={styles.techValue}>{selectedGuiaModal.idiomas}</span>
+                    </div>
+                    <div style={styles.techItem}>
+                      <span style={styles.techLabel}>{lang === "en" ? "Experience" : "Experiencia"}</span>
+                      <span style={styles.techValue}>{selectedGuiaModal.experiencia_anios} {lang === "en" ? "Years" : "Años"}</span>
+                    </div>
+                    <div style={styles.techItem}>
+                      <span style={styles.techLabel}>{lang === "en" ? "Approx Rate" : "Tarifa Aprox."}</span>
+                      <span style={{ ...styles.techValue, color: "#10B981" }}>{selectedGuiaModal.tarifa_aprox || "$30 / día"}</span>
+                    </div>
+                  </div>
+
+                  {selectedGuiaModal.whatsapp && (
+                    <a
+                      href={`https://wa.me/${selectedGuiaModal.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${selectedGuiaModal.nombre_completo}! Te encontré en Plataforma Atlan y me gustaría consultar disponibilidad para contratar un tour.`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={styles.modalWhatsappBanner}
+                    >
+                      <Icon name="whatsapp" size={22} color="#FFFFFF" />
+                      <span>{lang === "en" ? "Contact via WhatsApp Now" : "Contactar por WhatsApp Ahora"}</span>
+                    </a>
+                  )}
+                </div>
+              )}
+
+              {/* PESTAÑA 2: GALERÍA DE FOTOS DE TRAVESÍAS */}
+              {activeModalTab === "galeria" && (
+                <div>
+                  <h4 style={styles.modalSectionTitle}>
+                    <Icon name="image" size={16} color="#0EA5E9" style={{ marginRight: "6px" }} />
+                    {lang === "en" ? "Expeditions & Guided Tours Photos" : "Fotos de Travesías y Excursiones Guiadas"}
+                  </h4>
+                  {(!selectedGuiaModal.galeria_fotos || selectedGuiaModal.galeria_fotos.length === 0) ? (
+                    <p style={{ fontSize: "13px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", padding: "30px 0" }}>
+                      {lang === "en" ? "This guide has not uploaded tour photos yet." : "Este guía aún no ha subido fotos de sus travesías."}
                     </p>
                   ) : (
-                    selectedGuiaModal.resenas.map((res) => (
-                      <div key={res.id} style={styles.reviewItemCard}>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                            <img
-                              src={res.autor_avatar || "/images/perfil.svg"}
-                              alt={res.autor_nombre}
-                              style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover" }}
-                            />
-                            <div>
-                              <span style={{ fontSize: "13.5px", fontWeight: "750", color: "#F8FAFC", display: "block" }}>
-                                {res.autor_nombre}
-                              </span>
-                              <span style={{ fontSize: "11px", color: "#64748B" }}>
-                                {new Date(res.created_at).toLocaleDateString()}
-                              </span>
+                    <div style={styles.fullGalleryGrid}>
+                      {selectedGuiaModal.galeria_fotos.map((photoUrl, idx) => (
+                        <div key={idx} style={styles.fullGalleryCard}>
+                          <img src={photoUrl} alt={`Travesía ${idx + 1}`} style={styles.fullGalleryImg} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* PESTAÑA 3: RESEÑAS */}
+              {activeModalTab === "resenas" && (
+                <div>
+                  <h4 style={styles.modalSectionTitle}>
+                    <Icon name="star" size={16} color="#FFD700" style={{ marginRight: "6px" }} />
+                    {lang === "en" ? "Tourist Reviews" : "Reseñas de Turistas"}
+                  </h4>
+
+                  {session ? (
+                    <form onSubmit={handleAddReview} style={styles.reviewForm}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <span style={{ fontSize: "13px", fontWeight: "700", color: "#E2E8F0" }}>
+                          {lang === "en" ? "Rate your experience:" : "Califica tu experiencia:"}
+                        </span>
+                        <div style={{ display: "flex", gap: "4px" }}>
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setNewRating(star)}
+                              style={{
+                                background: "none",
+                                border: "none",
+                                cursor: "pointer",
+                                fontSize: "20px",
+                                color: star <= newRating ? "#FFD700" : "#475569",
+                                padding: "0 2px"
+                              }}
+                            >
+                              ★
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <textarea
+                        rows={3}
+                        required
+                        placeholder={lang === "en" ? "Write a comment about this guide..." : "Escribe tu opinión o comentario sobre este guía..."}
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        style={styles.reviewTextarea}
+                      />
+
+                      {reviewSuccessMsg && (
+                        <div style={styles.reviewSuccessAlert}>
+                          <Icon name="checkCircle" size={14} color="#10B981" />
+                          <span>{reviewSuccessMsg}</span>
+                        </div>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={submittingReview || !newComment.trim()}
+                        style={styles.submitReviewBtn}
+                      >
+                        <Icon name="send" size={14} />
+                        <span>{submittingReview ? (lang === "en" ? "Submitting..." : "Enviando...") : (lang === "en" ? "Submit Review" : "Publicar Reseña")}</span>
+                      </button>
+                    </form>
+                  ) : (
+                    <div style={styles.loginToReviewAlert}>
+                      <Icon name="info" size={16} color="#38BDF8" />
+                      <span>
+                        {lang === "en" ? "Log in to leave a rating and review for this guide." : "Inicia sesión para dejar una calificación y opinión a este guía."}
+                      </span>
+                      <Link href="/login" style={{ color: "#38BDF8", fontWeight: "700", textDecoration: "underline", marginLeft: "6px" }}>
+                        {lang === "en" ? "Log In" : "Iniciar Sesión"}
+                      </Link>
+                    </div>
+                  )}
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "16px" }}>
+                    {(!selectedGuiaModal.resenas || selectedGuiaModal.resenas.length === 0) ? (
+                      <p style={{ fontSize: "13px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", padding: "16px 0" }}>
+                        {lang === "en" ? "No reviews yet. Be the first to leave one!" : "Aún no hay reseñas. ¡Sé el primero en dejar una!"}
+                      </p>
+                    ) : (
+                      selectedGuiaModal.resenas.map((res) => (
+                        <div key={res.id} style={styles.reviewItemCard}>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                              <img
+                                src={res.autor_avatar || "/images/perfil.svg"}
+                                alt={res.autor_nombre}
+                                style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover" }}
+                              />
+                              <div>
+                                <span style={{ fontSize: "13.5px", fontWeight: "750", color: "#F8FAFC", display: "block" }}>
+                                  {res.autor_nombre}
+                                </span>
+                                <span style={{ fontSize: "11px", color: "#64748B" }}>
+                                  {new Date(res.created_at).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div style={{ color: "#FFD700", fontWeight: "800", fontSize: "14px" }}>
+                              {"★".repeat(res.puntuacion)}
                             </div>
                           </div>
 
-                          <div style={{ color: "#FFD700", fontWeight: "800", fontSize: "14px" }}>
-                            {"★".repeat(res.puntuacion)}
+                          <p style={{ fontSize: "13px", color: "#CBD5E1", margin: "8px 0 0 0", lineHeight: "1.4" }}>
+                            {res.comentario}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* PESTAÑA 4: LUGARES Y DESTINOS EN EL MAPA */}
+              {activeModalTab === "mapa_destinos" && (
+                <div>
+                  <h4 style={styles.modalSectionTitle}>
+                    <Icon name="mapPin" size={16} color="#10B981" style={{ marginRight: "6px" }} />
+                    {lang === "en" ? "Points of Interest & Map Destinations" : "Sitios de Interés y Lugares Cubiertos en el Mapa"}
+                  </h4>
+                  {(!selectedGuiaModal.destinos_mapa || selectedGuiaModal.destinos_mapa.length === 0) ? (
+                    <p style={{ fontSize: "13px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", padding: "30px 0" }}>
+                      {lang === "en" ? "No map destinations configured for this guide." : "No se han configurado destinos de mapa para este guía."}
+                    </p>
+                  ) : (
+                    <div style={styles.destinosMapaGrid}>
+                      {selectedGuiaModal.destinos_mapa.map((dest) => (
+                        <div key={dest.id} style={styles.destinoMapaCard}>
+                          {dest.imagen && (
+                            <div style={styles.destinoMapaImageWrapper}>
+                              <img src={dest.imagen} alt={dest.nombre} style={styles.destinoMapaImg} />
+                              <span style={{ ...styles.destinoMapaCategoryBadge, display: "flex", alignItems: "center", gap: "4px" }}>
+                                <img
+                                  src={getCategorySvg(dest)}
+                                  alt={dest.nombre}
+                                  style={{ width: "12px", height: "12px", objectFit: "contain", filter: "brightness(0) invert(1)" }}
+                                />
+                                <span>{dest.categoria}</span>
+                              </span>
+                            </div>
+                          )}
+                          <div style={styles.destinoMapaContent}>
+                            <div style={styles.destinoMapaHeader}>
+                              <h5 style={styles.destinoMapaTitle}>{dest.nombre}</h5>
+                              <span style={styles.destinoMapaDeptBadge}>{dest.departamento}</span>
+                            </div>
+                            <p style={styles.destinoMapaDesc}>{dest.desc}</p>
+                            <div style={{ marginTop: "12px", display: "flex", justifyContent: "flex-end" }}>
+                              <Link
+                                href={`/departamentos?dept=${dest.deptSlug}`}
+                                style={styles.destinoMapaLinkBtn}
+                              >
+                                <Icon name="mapPin" size={13} color="#0EA5E9" />
+                                <span>{lang === "en" ? "Explore in Department Map" : "Ver en Mapa Departamental"}</span>
+                                <Icon name="chevronRight" size={12} color="#0EA5E9" />
+                              </Link>
+                            </div>
                           </div>
                         </div>
-
-                        <p style={{ fontSize: "13px", color: "#CBD5E1", margin: "8px 0 0 0", lineHeight: "1.4" }}>
-                          {res.comentario}
-                        </p>
-                      </div>
-                    ))
+                      ))}
+                    </div>
                   )}
                 </div>
-              </div>
-            )}
-
-            {/* PESTAÑA 4: LUGARES Y DESTINOS EN EL MAPA */}
-            {activeModalTab === "mapa_destinos" && (
-              <div style={{ marginTop: "16px" }}>
-                <h4 style={styles.modalSectionTitle}>
-                  {lang === "en" ? "Points of Interest & Map Destinations" : "Sitios de Interés y Lugares Cubiertos en el Mapa"}
-                </h4>
-                {(!selectedGuiaModal.destinos_mapa || selectedGuiaModal.destinos_mapa.length === 0) ? (
-                  <p style={{ fontSize: "13px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", padding: "30px 0" }}>
-                    {lang === "en" ? "No map destinations configured for this guide." : "No se han configurado destinos de mapa para este guía."}
-                  </p>
-                ) : (
-                  <div style={styles.destinosMapaGrid}>
-                    {selectedGuiaModal.destinos_mapa.map((dest) => (
-                      <div key={dest.id} style={styles.destinoMapaCard}>
-                        {dest.imagen && (
-                          <div style={styles.destinoMapaImageWrapper}>
-                            <img src={dest.imagen} alt={dest.nombre} style={styles.destinoMapaImg} />
-                            <span style={{ ...styles.destinoMapaCategoryBadge, display: "flex", alignItems: "center", gap: "4px" }}>
-                              <img
-                                src={getCategorySvg(dest)}
-                                alt={dest.nombre}
-                                style={{ width: "12px", height: "12px", objectFit: "contain", filter: "brightness(0) invert(1)" }}
-                              />
-                              <span>{dest.categoria}</span>
-                            </span>
-                          </div>
-                        )}
-                        <div style={styles.destinoMapaContent}>
-                          <div style={styles.destinoMapaHeader}>
-                            <h5 style={styles.destinoMapaTitle}>{dest.nombre}</h5>
-                            <span style={styles.destinoMapaDeptBadge}>{dest.departamento}</span>
-                          </div>
-                          <p style={styles.destinoMapaDesc}>{dest.desc}</p>
-                          <div style={{ marginTop: "12px", display: "flex", justifyContent: "flex-end" }}>
-                            <Link
-                              href={`/departamentos?dept=${dest.deptSlug}`}
-                              style={styles.destinoMapaLinkBtn}
-                            >
-                              <Icon name="mapPin" size={13} color="#0EA5E9" />
-                              <span>{lang === "en" ? "Explore in Department Map" : "Ver en Mapa Departamental"}</span>
-                              <Icon name="chevronRight" size={12} color="#0EA5E9" />
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -2202,93 +2237,152 @@ const styles = {
     borderRadius: "16px",
     border: "1px dashed rgba(255, 255, 255, 0.15)"
   },
-  emptyTitleSlim: {
-    fontSize: "16px",
-    fontWeight: "800",
-    margin: "8px 0 4px 0"
-  },
-  emptySubtitleSlim: {
-    fontSize: "13px",
-    color: "#94A3B8"
-  },
 
-  // MODAL EXTENDIDO ANCHO
+  // MODAL EXTENDIDO COMPLETO A LO ANCHO Y ULTRA PROFESIONAL
   modalOverlay: {
     position: "fixed",
     inset: 0,
-    background: "rgba(0, 0, 0, 0.78)",
-    backdropFilter: "blur(8px)",
+    background: "rgba(3, 10, 26, 0.82)",
+    backdropFilter: "blur(12px)",
     zIndex: 1000,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: "20px"
+    padding: "24px 16px"
   },
   modalCardWide: {
-    width: "100%",
-    maxWidth: "680px",
+    width: "95%",
+    maxWidth: "1050px",
     maxHeight: "90vh",
     overflowY: "auto",
-    background: "#0F172A",
-    border: "1px solid rgba(56, 189, 248, 0.25)",
+    background: "linear-gradient(180deg, #0F172A 0%, #090E1A 100%)",
+    border: "1.5px solid rgba(56, 189, 248, 0.35)",
     borderRadius: "24px",
-    padding: "24px",
+    padding: "0 0 28px 0",
     position: "relative",
-    boxShadow: "0 20px 50px rgba(0, 0, 0, 0.5)"
+    boxShadow: "0 25px 65px rgba(0, 0, 0, 0.8), 0 0 35px rgba(14, 165, 233, 0.15)"
+  },
+  modalCoverBanner: {
+    height: "135px",
+    width: "100%",
+    background: "linear-gradient(135deg, rgba(14, 165, 233, 0.35) 0%, rgba(2, 132, 199, 0.2) 40%, rgba(15, 23, 42, 0.95) 100%), url('/images/fondohracio.png')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    borderTopLeftRadius: "22px",
+    borderTopRightRadius: "22px",
+    position: "relative"
   },
   closeModalBtn: {
     position: "absolute",
-    top: "16px",
-    right: "16px",
-    background: "rgba(255, 255, 255, 0.1)",
-    border: "none",
+    top: "14px",
+    right: "14px",
+    background: "rgba(15, 23, 42, 0.75)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
     color: "#F8FAFC",
-    width: "32px",
-    height: "32px",
+    width: "36px",
+    height: "36px",
     borderRadius: "50%",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    backdropFilter: "blur(6px)",
+    transition: "all 0.2s ease"
   },
-  modalHeaderWide: {
+  modalProfileHeaderRow: {
     display: "flex",
-    gap: "16px",
-    alignItems: "center",
-    marginBottom: "16px"
+    gap: "22px",
+    alignItems: "flex-end",
+    padding: "0 28px",
+    marginTop: "-48px",
+    marginBottom: "20px",
+    flexWrap: "wrap"
   },
-  modalAvatarWide: {
-    width: "72px",
-    height: "72px",
-    borderRadius: "50%",
-    objectFit: "cover",
-    border: "3px solid #0EA5E9",
+  modalAvatarContainer: {
+    position: "relative",
     flexShrink: 0
   },
+  modalAvatarWide: {
+    width: "92px",
+    height: "92px",
+    borderRadius: "20px",
+    objectFit: "cover",
+    border: "3.5px solid #0EA5E9",
+    boxShadow: "0 0 24px rgba(14, 165, 233, 0.45)",
+    background: "#0F172A"
+  },
+  modalAvatarBadgeVerified: {
+    position: "absolute",
+    bottom: "-4px",
+    right: "-4px",
+    background: "#10B981",
+    border: "2px solid #0F172A",
+    borderRadius: "50%",
+    width: "24px",
+    height: "24px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 2px 8px rgba(16, 185, 129, 0.4)"
+  },
+  modalProfileMetaContent: {
+    flex: 1,
+    minWidth: "260px"
+  },
   modalDeptBadge: {
-    background: "rgba(14, 165, 233, 0.2)",
+    background: "rgba(14, 165, 233, 0.18)",
+    border: "1px solid rgba(14, 165, 233, 0.35)",
     color: "#38BDF8",
     fontSize: "12px",
     fontWeight: "800",
-    padding: "3px 10px",
-    borderRadius: "6px"
+    padding: "3.5px 10px",
+    borderRadius: "6px",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "5px"
   },
   modalLicenseBadge: {
     background: "rgba(16, 185, 129, 0.15)",
+    border: "1px solid rgba(16, 185, 129, 0.35)",
     color: "#10B981",
     fontSize: "11.5px",
     fontWeight: "750",
-    padding: "3px 10px",
+    padding: "3.5px 10px",
+    borderRadius: "6px",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "4px"
+  },
+  modalExpBadge: {
+    background: "rgba(255, 215, 0, 0.12)",
+    border: "1px solid rgba(255, 215, 0, 0.3)",
+    color: "#FBBF24",
+    fontSize: "11.5px",
+    fontWeight: "750",
+    padding: "3.5px 10px",
     borderRadius: "6px",
     display: "inline-flex",
     alignItems: "center",
     gap: "4px"
   },
   modalGuideNameWide: {
-    fontSize: "20px",
+    fontSize: "23px",
     fontWeight: "900",
     color: "#FFFFFF",
-    margin: "2px 0"
+    margin: "4px 0 2px 0",
+    letterSpacing: "-0.3px"
+  },
+  modalRateHighlight: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "4px",
+    background: "rgba(16, 185, 129, 0.12)",
+    border: "1px solid rgba(16, 185, 129, 0.3)",
+    color: "#34D399",
+    fontSize: "12.5px",
+    fontWeight: "800",
+    padding: "3px 10px",
+    borderRadius: "6px"
   },
   starsBox: {
     display: "flex",
@@ -2296,92 +2390,119 @@ const styles = {
     gap: "4px"
   },
   modalTabsRow: {
-    display: "flex",
-    gap: "12px",
-    borderBottom: "1px solid rgba(255,255,255,0.12)",
-    paddingBottom: "4px"
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: "8px",
+    background: "rgba(15, 23, 42, 0.85)",
+    border: "1px solid rgba(255, 255, 255, 0.12)",
+    padding: "6px",
+    borderRadius: "16px",
+    margin: "0 28px 22px 28px"
   },
   modalTabBtn: {
-    background: "none",
+    width: "100%",
     border: "none",
-    padding: "8px 12px",
+    padding: "11px 8px",
     fontSize: "13px",
+    fontWeight: "800",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
-    gap: "6px"
+    justifyContent: "center",
+    gap: "7px",
+    borderRadius: "12px",
+    whiteSpace: "nowrap",
+    transition: "all 0.22s cubic-bezier(0.4, 0, 0.2, 1)"
+  },
+  modalBodyContent: {
+    padding: "0 28px"
   },
   modalSection: {
-    marginBottom: "16px"
+    marginBottom: "18px"
   },
   modalSectionTitle: {
-    fontSize: "14.5px",
+    fontSize: "15px",
     fontWeight: "800",
     color: "#F8FAFC",
-    marginBottom: "8px",
+    marginBottom: "10px",
     display: "flex",
     alignItems: "center"
+  },
+  modalBioCard: {
+    background: "rgba(30, 41, 59, 0.45)",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+    borderRadius: "14px",
+    padding: "16px"
   },
   modalBioText: {
     fontSize: "13.5px",
     color: "#CBD5E1",
-    lineHeight: "1.5"
+    lineHeight: "1.6",
+    margin: 0
   },
   modalTechGridWide: {
     display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "10px",
-    background: "rgba(30, 41, 59, 0.6)",
-    borderRadius: "12px",
-    padding: "12px",
-    marginBottom: "16px"
+    gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+    gap: "12px",
+    background: "rgba(15, 23, 42, 0.75)",
+    border: "1px solid rgba(56, 189, 248, 0.2)",
+    borderRadius: "16px",
+    padding: "16px",
+    marginBottom: "18px"
   },
   techItem: {
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    gap: "2px"
   },
   techLabel: {
     fontSize: "11px",
     color: "#64748B",
-    fontWeight: "600"
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px"
   },
   techValue: {
-    fontSize: "13px",
+    fontSize: "13.5px",
     color: "#F8FAFC",
-    fontWeight: "750"
+    fontWeight: "800"
   },
   modalWhatsappBanner: {
     width: "100%",
     background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
     color: "#FFFFFF",
-    padding: "11px",
-    borderRadius: "12px",
+    padding: "13px",
+    borderRadius: "14px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     gap: "10px",
     fontWeight: "800",
-    fontSize: "14px",
+    fontSize: "14.5px",
     textDecoration: "none",
-    boxShadow: "0 6px 18px rgba(37, 211, 102, 0.3)"
+    boxShadow: "0 6px 20px rgba(37, 211, 102, 0.35)",
+    boxSizing: "border-box",
+    transition: "all 0.2s ease"
   },
   fullGalleryGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-    gap: "12px",
+    gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))",
+    gap: "14px",
     marginTop: "12px"
   },
   fullGalleryCard: {
     width: "100%",
-    height: "140px",
-    borderRadius: "12px",
+    height: "155px",
+    borderRadius: "14px",
     overflow: "hidden",
-    border: "1px solid rgba(255,255,255,0.15)"
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
   },
   fullGalleryImg: {
     width: "100%",
     height: "100%",
-    objectFit: "cover"
+    objectFit: "cover",
+    transition: "transform 0.3s ease"
   },
   reviewForm: {
     background: "rgba(30, 41, 59, 0.5)",
