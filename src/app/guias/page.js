@@ -1150,15 +1150,15 @@ export default function GuiasPage() {
         )}
       </main>
 
-      {/* MODAL EXTENDIDO DEL GUÍA COMPLETO A LO ANCHO CON PESTAÑAS DISTRIBUIDAS */}
+      {/* MODAL EXTENDIDO DEL GUÍA COMPLETO A LO ANCHO Y 100% UNIFORME */}
       {selectedGuiaModal && (
         <div style={styles.modalOverlay} onClick={() => setSelectedGuiaModal(null)}>
           <div
             style={styles.modalCardWide}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Portada / Banner de Fondo del Modal */}
-            <div style={styles.modalCoverBanner}>
+            {/* Cabecera Unificada de Perfil con Banner Integro */}
+            <div style={styles.modalHeaderCard}>
               <button
                 onClick={() => setSelectedGuiaModal(null)}
                 style={styles.closeModalBtn}
@@ -1166,10 +1166,7 @@ export default function GuiasPage() {
               >
                 <Icon name="x" size={18} />
               </button>
-            </div>
 
-            {/* Cabecera del Perfil con Imagen Squircle Protagonista y Badges */}
-            <div style={styles.modalProfileHeaderRow}>
               <div style={styles.modalAvatarContainer}>
                 <img
                   src={selectedGuiaModal.avatar_url}
@@ -1182,7 +1179,7 @@ export default function GuiasPage() {
               </div>
 
               <div style={styles.modalProfileMetaContent}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "4px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "6px" }}>
                   <span style={styles.modalDeptBadge}>
                     <Icon name="mapPin" size={12} color="#0EA5E9" />
                     {selectedGuiaModal.departamento_principal}
@@ -1195,13 +1192,17 @@ export default function GuiasPage() {
                   )}
                   <span style={styles.modalExpBadge}>
                     <Icon name="clock" size={12} color="#FFD700" />
-                    {selectedGuiaModal.experiencia_anios} {lang === "en" ? "Years Experience" : "Años Experiencia"}
+                    {selectedGuiaModal.experiencia_anios} {lang === "en" ? "Years Exp" : "Años Exp"}
+                  </span>
+                  <span style={styles.modalRateHighlight}>
+                    <Icon name="dollarSign" size={12} color="#10B981" />
+                    {selectedGuiaModal.tarifa_aprox || "$30 / día"}
                   </span>
                 </div>
 
                 <h2 style={styles.modalGuideNameWide}>{selectedGuiaModal.nombre_completo}</h2>
 
-                <div style={{ display: "flex", alignItems: "center", gap: "14px", flexWrap: "wrap", marginTop: "4px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
                   <div style={styles.starsBox}>
                     <span style={{ color: "#FFD700", fontWeight: "900", fontSize: "16px" }}>★</span>
                     <span style={{ fontWeight: "800", color: "#F8FAFC", fontSize: "15px" }}>
@@ -1211,72 +1212,57 @@ export default function GuiasPage() {
                       ({selectedGuiaModal.total_resenas} {lang === "en" ? "reviews" : "reseñas"})
                     </span>
                   </div>
-
-                  <span style={styles.modalRateHighlight}>
-                    <Icon name="dollarSign" size={13} color="#10B981" />
-                    {selectedGuiaModal.tarifa_aprox || "$30 / día"}
-                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Pestañas del Modal (Segmented Control 4 Columnas del mismo tamaño y bien distribuidas) */}
-            <div style={styles.modalTabsRow}>
-              <button
-                onClick={() => setActiveModalTab("info")}
-                style={{
-                  ...styles.modalTabBtn,
-                  background: activeModalTab === "info" ? "linear-gradient(135deg, rgba(14, 165, 233, 0.28) 0%, rgba(2, 132, 199, 0.28) 100%)" : "transparent",
-                  border: activeModalTab === "info" ? "1.5px solid #38BDF8" : "1px solid transparent",
-                  color: activeModalTab === "info" ? "#38BDF8" : "#94A3B8",
-                  boxShadow: activeModalTab === "info" ? "0 4px 14px rgba(14, 165, 233, 0.25)" : "none"
-                }}
-              >
-                <Icon name="user" size={15} color={activeModalTab === "info" ? "#38BDF8" : "#64748B"} />
-                <span>{lang === "en" ? "Profile Info" : "Perfil y Datos"}</span>
-              </button>
+            {/* Pestañas del Modal (Segmented Control 4 Columnas 100% Idénticas) */}
+            <div style={styles.modalTabsContainer}>
+              <div style={styles.modalTabsRow}>
+                <button
+                  onClick={() => setActiveModalTab("info")}
+                  style={{
+                    ...styles.modalTabBtn,
+                    ...(activeModalTab === "info" ? styles.modalTabBtnActive : styles.modalTabBtnInactive)
+                  }}
+                >
+                  <Icon name="user" size={15} color={activeModalTab === "info" ? "#38BDF8" : "#94A3B8"} />
+                  <span>{lang === "en" ? "Profile Info" : "Perfil y Datos"}</span>
+                </button>
 
-              <button
-                onClick={() => setActiveModalTab("galeria")}
-                style={{
-                  ...styles.modalTabBtn,
-                  background: activeModalTab === "galeria" ? "linear-gradient(135deg, rgba(14, 165, 233, 0.28) 0%, rgba(2, 132, 199, 0.28) 100%)" : "transparent",
-                  border: activeModalTab === "galeria" ? "1.5px solid #38BDF8" : "1px solid transparent",
-                  color: activeModalTab === "galeria" ? "#38BDF8" : "#94A3B8",
-                  boxShadow: activeModalTab === "galeria" ? "0 4px 14px rgba(14, 165, 233, 0.25)" : "none"
-                }}
-              >
-                <Icon name="image" size={15} color={activeModalTab === "galeria" ? "#38BDF8" : "#64748B"} />
-                <span>{lang === "en" ? "Gallery" : "Galería"} ({selectedGuiaModal.galeria_fotos?.length || 0})</span>
-              </button>
+                <button
+                  onClick={() => setActiveModalTab("galeria")}
+                  style={{
+                    ...styles.modalTabBtn,
+                    ...(activeModalTab === "galeria" ? styles.modalTabBtnActive : styles.modalTabBtnInactive)
+                  }}
+                >
+                  <Icon name="image" size={15} color={activeModalTab === "galeria" ? "#38BDF8" : "#94A3B8"} />
+                  <span>{lang === "en" ? "Gallery" : "Galería"} ({selectedGuiaModal.galeria_fotos?.length || 0})</span>
+                </button>
 
-              <button
-                onClick={() => setActiveModalTab("resenas")}
-                style={{
-                  ...styles.modalTabBtn,
-                  background: activeModalTab === "resenas" ? "linear-gradient(135deg, rgba(255, 215, 0, 0.22) 0%, rgba(217, 119, 6, 0.22) 100%)" : "transparent",
-                  border: activeModalTab === "resenas" ? "1.5px solid #FBBF24" : "1px solid transparent",
-                  color: activeModalTab === "resenas" ? "#FBBF24" : "#94A3B8",
-                  boxShadow: activeModalTab === "resenas" ? "0 4px 14px rgba(255, 215, 0, 0.2)" : "none"
-                }}
-              >
-                <Icon name="star" size={15} color={activeModalTab === "resenas" ? "#FBBF24" : "#64748B"} />
-                <span>{lang === "en" ? "Reviews" : "Reseñas"} ({selectedGuiaModal.total_resenas || 0})</span>
-              </button>
+                <button
+                  onClick={() => setActiveModalTab("resenas")}
+                  style={{
+                    ...styles.modalTabBtn,
+                    ...(activeModalTab === "resenas" ? styles.modalTabBtnActive : styles.modalTabBtnInactive)
+                  }}
+                >
+                  <Icon name="star" size={15} color={activeModalTab === "resenas" ? "#38BDF8" : "#94A3B8"} />
+                  <span>{lang === "en" ? "Reviews" : "Reseñas"} ({selectedGuiaModal.total_resenas || 0})</span>
+                </button>
 
-              <button
-                onClick={() => setActiveModalTab("mapa_destinos")}
-                style={{
-                  ...styles.modalTabBtn,
-                  background: activeModalTab === "mapa_destinos" ? "linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.25) 100%)" : "transparent",
-                  border: activeModalTab === "mapa_destinos" ? "1.5px solid #34D399" : "1px solid transparent",
-                  color: activeModalTab === "mapa_destinos" ? "#34D399" : "#94A3B8",
-                  boxShadow: activeModalTab === "mapa_destinos" ? "0 4px 14px rgba(16, 185, 129, 0.2)" : "none"
-                }}
-              >
-                <Icon name="mapPin" size={15} color={activeModalTab === "mapa_destinos" ? "#34D399" : "#64748B"} />
-                <span>{lang === "en" ? "Map Places" : "Lugares en Mapa"} ({selectedGuiaModal.destinos_mapa?.length || 0})</span>
-              </button>
+                <button
+                  onClick={() => setActiveModalTab("mapa_destinos")}
+                  style={{
+                    ...styles.modalTabBtn,
+                    ...(activeModalTab === "mapa_destinos" ? styles.modalTabBtnActive : styles.modalTabBtnInactive)
+                  }}
+                >
+                  <Icon name="mapPin" size={15} color={activeModalTab === "mapa_destinos" ? "#38BDF8" : "#94A3B8"} />
+                  <span>{lang === "en" ? "Map Places" : "Lugares en Mapa"} ({selectedGuiaModal.destinos_mapa?.length || 0})</span>
+                </button>
+              </div>
             </div>
 
             {/* Contenido de la Pestaña Activa con Contenedor Interno de Padding */}
@@ -2262,20 +2248,24 @@ const styles = {
     position: "relative",
     boxShadow: "0 25px 65px rgba(0, 0, 0, 0.8), 0 0 35px rgba(14, 165, 233, 0.15)"
   },
-  modalCoverBanner: {
-    height: "135px",
-    width: "100%",
-    background: "linear-gradient(135deg, rgba(14, 165, 233, 0.35) 0%, rgba(2, 132, 199, 0.2) 40%, rgba(15, 23, 42, 0.95) 100%), url('/images/fondohracio.png')",
+  modalHeaderCard: {
+    padding: "24px 28px 20px 28px",
+    background: "linear-gradient(135deg, rgba(14, 165, 233, 0.22) 0%, rgba(2, 132, 199, 0.12) 40%, rgba(15, 23, 42, 0.98) 100%), url('/images/fondohracio.png')",
     backgroundSize: "cover",
     backgroundPosition: "center",
     borderTopLeftRadius: "22px",
     borderTopRightRadius: "22px",
-    position: "relative"
+    borderBottom: "1px solid rgba(56, 189, 248, 0.25)",
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    gap: "20px",
+    flexWrap: "wrap"
   },
   closeModalBtn: {
     position: "absolute",
-    top: "14px",
-    right: "14px",
+    top: "16px",
+    right: "16px",
     background: "rgba(15, 23, 42, 0.75)",
     border: "1px solid rgba(255, 255, 255, 0.2)",
     color: "#F8FAFC",
@@ -2289,32 +2279,23 @@ const styles = {
     backdropFilter: "blur(6px)",
     transition: "all 0.2s ease"
   },
-  modalProfileHeaderRow: {
-    display: "flex",
-    gap: "22px",
-    alignItems: "flex-end",
-    padding: "0 28px",
-    marginTop: "-48px",
-    marginBottom: "20px",
-    flexWrap: "wrap"
-  },
   modalAvatarContainer: {
     position: "relative",
     flexShrink: 0
   },
   modalAvatarWide: {
-    width: "92px",
-    height: "92px",
+    width: "88px",
+    height: "88px",
     borderRadius: "20px",
     objectFit: "cover",
     border: "3.5px solid #0EA5E9",
-    boxShadow: "0 0 24px rgba(14, 165, 233, 0.45)",
+    boxShadow: "0 0 22px rgba(14, 165, 233, 0.45)",
     background: "#0F172A"
   },
   modalAvatarBadgeVerified: {
     position: "absolute",
-    bottom: "-4px",
-    right: "-4px",
+    bottom: "-2px",
+    right: "-2px",
     background: "#10B981",
     border: "2px solid #0F172A",
     borderRadius: "50%",
@@ -2369,8 +2350,9 @@ const styles = {
     fontSize: "23px",
     fontWeight: "900",
     color: "#FFFFFF",
-    margin: "4px 0 2px 0",
-    letterSpacing: "-0.3px"
+    margin: "3px 0",
+    letterSpacing: "-0.3px",
+    textShadow: "0 2px 8px rgba(0, 0, 0, 0.7)"
   },
   modalRateHighlight: {
     display: "inline-flex",
@@ -2379,9 +2361,9 @@ const styles = {
     background: "rgba(16, 185, 129, 0.12)",
     border: "1px solid rgba(16, 185, 129, 0.3)",
     color: "#34D399",
-    fontSize: "12.5px",
+    fontSize: "12px",
     fontWeight: "800",
-    padding: "3px 10px",
+    padding: "3.5px 10px",
     borderRadius: "6px"
   },
   starsBox: {
@@ -2389,22 +2371,22 @@ const styles = {
     alignItems: "center",
     gap: "4px"
   },
+  modalTabsContainer: {
+    padding: "20px 28px 18px 28px"
+  },
   modalTabsRow: {
     display: "grid",
     gridTemplateColumns: "repeat(4, 1fr)",
     gap: "8px",
-    background: "rgba(15, 23, 42, 0.85)",
+    background: "rgba(15, 23, 42, 0.9)",
     border: "1px solid rgba(255, 255, 255, 0.12)",
     padding: "6px",
-    borderRadius: "16px",
-    margin: "0 28px 22px 28px"
+    borderRadius: "16px"
   },
   modalTabBtn: {
     width: "100%",
-    border: "none",
     padding: "11px 8px",
     fontSize: "13px",
-    fontWeight: "800",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
@@ -2412,7 +2394,22 @@ const styles = {
     gap: "7px",
     borderRadius: "12px",
     whiteSpace: "nowrap",
+    boxSizing: "border-box",
     transition: "all 0.22s cubic-bezier(0.4, 0, 0.2, 1)"
+  },
+  modalTabBtnActive: {
+    background: "linear-gradient(135deg, rgba(14, 165, 233, 0.28) 0%, rgba(2, 132, 199, 0.28) 100%)",
+    border: "1.5px solid #38BDF8",
+    color: "#FFFFFF",
+    fontWeight: "850",
+    boxShadow: "0 4px 14px rgba(14, 165, 233, 0.28)"
+  },
+  modalTabBtnInactive: {
+    background: "rgba(30, 41, 59, 0.55)",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+    color: "#CBD5E1",
+    fontWeight: "750",
+    boxShadow: "none"
   },
   modalBodyContent: {
     padding: "0 28px"
