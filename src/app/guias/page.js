@@ -1082,10 +1082,10 @@ export default function GuiasPage() {
                       : guia.biografia}
                   </p>
 
-                  {/* Footer de Tarjeta: Tarifa Organizada y Botones Estandarizados */}
+                  {/* Footer de Tarjeta: Tarifa y Botones Alineados */}
                   <div style={styles.cardFooterWide}>
                     <div style={styles.pricePillBadge}>
-                      <span style={styles.priceLabelSlim}>{lang === "en" ? "Rate:" : "Tarifa:"}</span>
+                      <Icon name="dollarSign" size={12} color="#10B981" />
                       <span style={styles.priceValueSlim}>{guia.tarifa_aprox || "$25/día"}</span>
                     </div>
 
@@ -1098,8 +1098,7 @@ export default function GuiasPage() {
                           style={styles.whatsappBtnSlim}
                           title="Contactar por WhatsApp"
                         >
-                          <Icon name="whatsapp" size={15} color="#FFFFFF" />
-                          <span style={styles.btnTextSlim}>WhatsApp</span>
+                          <Icon name="whatsapp" size={16} color="#FFFFFF" />
                         </a>
                       )}
 
@@ -1941,16 +1940,16 @@ const styles = {
   // TARJETAS GLASSMORPISM ELEGANTES SIN BORDES BLANCOS EN L
   guidesGridWide: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(430px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fill, minmax(480px, 1fr))",
     gap: "18px"
   },
   guideCardGlass: {
     background: "rgba(15, 23, 42, 0.88)",
     border: "1px solid rgba(56, 189, 248, 0.15)",
     borderRadius: "16px",
-    padding: "12px 14px",
+    padding: "14px",
     display: "flex",
-    gap: "12px",
+    gap: "14px",
     backdropFilter: "blur(16px)",
     boxShadow: "0 8px 20px rgba(0, 0, 0, 0.25)",
     transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
@@ -1959,7 +1958,8 @@ const styles = {
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    minWidth: 0
   },
   cardHeaderHorizontal: {
     display: "flex",
@@ -2038,7 +2038,7 @@ const styles = {
     display: "flex",
     flexWrap: "wrap",
     gap: "4px",
-    margin: "3px 0 5px 0"
+    margin: "4px 0 6px 0"
   },
   tagChip: {
     display: "inline-flex",
@@ -2057,23 +2057,25 @@ const styles = {
     fontSize: "12.5px",
     color: "#94A3B8",
     lineHeight: "1.4",
-    margin: "0 0 10px 0"
+    margin: "0 0 8px 0"
   },
   cardFooterWide: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
     paddingTop: "8px",
-    borderTop: "1px solid rgba(255, 255, 255, 0.08)"
+    borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+    gap: "8px"
   },
   pricePillBadge: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "5px",
+    gap: "4px",
     background: "rgba(16, 185, 129, 0.12)",
     border: "1px solid rgba(16, 185, 129, 0.25)",
-    padding: "4px 10px",
-    borderRadius: "8px"
+    padding: "4px 9px",
+    borderRadius: "8px",
+    whiteSpace: "nowrap"
   },
   priceLabelSlim: {
     fontSize: "11px",
@@ -2083,7 +2085,8 @@ const styles = {
   priceValueSlim: {
     fontSize: "12.5px",
     fontWeight: "800",
-    color: "#34D399"
+    color: "#34D399",
+    whiteSpace: "nowrap"
   },
   actionButtonsGroupSlim: {
     display: "flex",
@@ -2093,16 +2096,15 @@ const styles = {
   whatsappBtnSlim: {
     background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
     color: "#FFFFFF",
-    padding: "0 10px",
+    width: "32px",
     height: "32px",
     borderRadius: "8px",
     display: "inline-flex",
     alignItems: "center",
-    gap: "5px",
+    justifyContent: "center",
     textDecoration: "none",
-    fontSize: "11.5px",
-    fontWeight: "750",
-    boxShadow: "0 3px 8px rgba(37, 211, 102, 0.25)"
+    boxShadow: "0 3px 8px rgba(37, 211, 102, 0.25)",
+    flexShrink: 0
   },
   detailsBtnSlim: {
     background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
@@ -2117,7 +2119,9 @@ const styles = {
     display: "inline-flex",
     alignItems: "center",
     gap: "4px",
-    boxShadow: "0 3px 8px rgba(14, 165, 233, 0.25)"
+    whiteSpace: "nowrap",
+    boxShadow: "0 3px 8px rgba(14, 165, 233, 0.25)",
+    flexShrink: 0
   },
   btnTextSlim: {
     fontSize: "11.5px",
