@@ -1082,10 +1082,10 @@ export default function GuiasPage() {
                       : guia.biografia}
                   </p>
 
-                  {/* Footer de Tarjeta: Tarifa y Botones de Acción */}
+                  {/* Footer de Tarjeta: Tarifa Organizada y Botones Estandarizados */}
                   <div style={styles.cardFooterWide}>
-                    <div style={styles.priceBoxSlim}>
-                      <span style={styles.priceLabelSlim}>{lang === "en" ? "Rate" : "Tarifa aprox."}</span>
+                    <div style={styles.pricePillBadge}>
+                      <span style={styles.priceLabelSlim}>{lang === "en" ? "Rate:" : "Tarifa:"}</span>
                       <span style={styles.priceValueSlim}>{guia.tarifa_aprox || "$25/día"}</span>
                     </div>
 
@@ -1098,7 +1098,8 @@ export default function GuiasPage() {
                           style={styles.whatsappBtnSlim}
                           title="Contactar por WhatsApp"
                         >
-                          <Icon name="whatsapp" size={17} color="#FFFFFF" />
+                          <Icon name="whatsapp" size={15} color="#FFFFFF" />
+                          <span style={styles.btnTextSlim}>WhatsApp</span>
                         </a>
                       )}
 
@@ -1109,7 +1110,7 @@ export default function GuiasPage() {
                         }}
                         style={styles.detailsBtnSlim}
                       >
-                        <span>{lang === "en" ? "Details & Photos" : "Ver Detalle y Fotos"}</span>
+                        <span>{lang === "en" ? "View Profile" : "Ver Perfil"}</span>
                         <Icon name="chevronRight" size={13} />
                       </button>
                     </div>
@@ -2065,19 +2066,24 @@ const styles = {
     paddingTop: "8px",
     borderTop: "1px solid rgba(255, 255, 255, 0.08)"
   },
-  priceBoxSlim: {
-    display: "flex",
-    flexDirection: "column"
+  pricePillBadge: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "5px",
+    background: "rgba(16, 185, 129, 0.12)",
+    border: "1px solid rgba(16, 185, 129, 0.25)",
+    padding: "4px 10px",
+    borderRadius: "8px"
   },
   priceLabelSlim: {
-    fontSize: "10.5px",
-    color: "#64748B",
+    fontSize: "11px",
+    color: "#94A3B8",
     fontWeight: "600"
   },
   priceValueSlim: {
-    fontSize: "13.5px",
+    fontSize: "12.5px",
     fontWeight: "800",
-    color: "#10B981"
+    color: "#34D399"
   },
   actionButtonsGroupSlim: {
     display: "flex",
@@ -2086,27 +2092,36 @@ const styles = {
   },
   whatsappBtnSlim: {
     background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
-    width: "32px",
+    color: "#FFFFFF",
+    padding: "0 10px",
     height: "32px",
     borderRadius: "8px",
-    display: "flex",
+    display: "inline-flex",
     alignItems: "center",
-    justifyContent: "center",
+    gap: "5px",
     textDecoration: "none",
-    boxShadow: "0 4px 10px rgba(37, 211, 102, 0.25)"
+    fontSize: "11.5px",
+    fontWeight: "750",
+    boxShadow: "0 3px 8px rgba(37, 211, 102, 0.25)"
   },
   detailsBtnSlim: {
     background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
     color: "#FFFFFF",
     border: "none",
-    padding: "6px 12px",
+    padding: "0 12px",
+    height: "32px",
     borderRadius: "8px",
     fontSize: "12px",
     fontWeight: "750",
     cursor: "pointer",
-    display: "flex",
+    display: "inline-flex",
     alignItems: "center",
-    gap: "4px"
+    gap: "4px",
+    boxShadow: "0 3px 8px rgba(14, 165, 233, 0.25)"
+  },
+  btnTextSlim: {
+    fontSize: "11.5px",
+    fontWeight: "750"
   },
 
   // PORTADA RECTANGULAR DERECHA DE TRAVESÍA
