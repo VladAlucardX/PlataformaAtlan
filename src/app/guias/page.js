@@ -1077,53 +1077,10 @@ export default function GuiasPage() {
                   </div>
 
                   <p style={styles.bioSnippetWide}>
-                    {guia.biografia?.length > 110
-                      ? guia.biografia.substring(0, 110) + "..."
+                    {guia.biografia?.length > 90
+                      ? guia.biografia.substring(0, 90) + "..."
                       : guia.biografia}
                   </p>
-
-                  {/* Destinos en el Mapa cubiertos por el Guía */}
-                  {guia.destinos_mapa && guia.destinos_mapa.length > 0 && (
-                    <div style={styles.guideDestinationsContainer}>
-                      <div style={styles.guideDestinationsHeader}>
-                        <Icon name="mapPin" size={12} color="#38BDF8" />
-                        <span>{lang === "en" ? "Map Destinations:" : "Lugares en el Mapa:"}</span>
-                      </div>
-                      <div style={styles.guideDestinationsChipsRow}>
-                        {guia.destinos_mapa.slice(0, 3).map((dest) => (
-                          <span
-                            key={dest.id}
-                            style={styles.mapDestChip}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedGuiaModal(guia);
-                              setActiveModalTab("mapa_destinos");
-                            }}
-                            title={lang === "en" ? `View ${dest.nombre} in detail` : `Ver ${dest.nombre} en el mapa`}
-                          >
-                            <img
-                              src={getCategorySvg(dest)}
-                              alt={dest.nombre}
-                              style={{ width: "13px", height: "13px", objectFit: "contain" }}
-                            />
-                            <span>{dest.nombre}</span>
-                          </span>
-                        ))}
-                        {guia.destinos_mapa.length > 3 && (
-                          <span
-                            style={styles.mapDestMoreChip}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedGuiaModal(guia);
-                              setActiveModalTab("mapa_destinos");
-                            }}
-                          >
-                            +{guia.destinos_mapa.length - 3} {lang === "en" ? "more" : "más"}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
 
                   {/* Footer de Tarjeta: Tarifa y Botones de Acción */}
                   <div style={styles.cardFooterWide}>
@@ -1992,12 +1949,12 @@ const styles = {
   guideCardGlass: {
     background: "rgba(15, 23, 42, 0.88)",
     border: "1px solid rgba(56, 189, 248, 0.15)",
-    borderRadius: "18px",
-    padding: "16px",
+    borderRadius: "16px",
+    padding: "12px 14px",
     display: "flex",
-    gap: "14px",
+    gap: "12px",
     backdropFilter: "blur(16px)",
-    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.25)",
+    boxShadow: "0 8px 20px rgba(0, 0, 0, 0.25)",
     transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
   },
   guideCardMainInfo: {
@@ -2008,13 +1965,13 @@ const styles = {
   },
   cardHeaderHorizontal: {
     display: "flex",
-    gap: "12px",
-    marginBottom: "8px"
+    gap: "10px",
+    marginBottom: "4px"
   },
   avatarWrapperWide: {
     position: "relative",
-    width: "56px",
-    height: "56px",
+    width: "48px",
+    height: "48px",
     flexShrink: 0
   },
   avatarImgWide: {
@@ -2157,32 +2114,32 @@ const styles = {
 
   // TIRA DE FOTOS DE TRAVESÍAS DEL GUÍA
   travesiaStripRight: {
-    width: "115px",
+    width: "100px",
     flexShrink: 0,
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     borderLeft: "1px solid rgba(255,255,255,0.08)",
-    paddingLeft: "12px"
+    paddingLeft: "10px"
   },
   travesiaStripHeader: {
-    fontSize: "10.5px",
+    fontSize: "10px",
     fontWeight: "750",
     color: "#38BDF8",
-    marginBottom: "6px",
+    marginBottom: "4px",
     display: "flex",
     alignItems: "center",
-    gap: "4px"
+    gap: "3px"
   },
   travesiaImagesGrid: {
     display: "flex",
     flexDirection: "column",
-    gap: "6px"
+    gap: "4px"
   },
   travesiaThumbBox: {
     width: "100%",
-    height: "46px",
-    borderRadius: "8px",
+    height: "36px",
+    borderRadius: "6px",
     overflow: "hidden",
     cursor: "pointer",
     border: "1px solid rgba(255,255,255,0.15)",
