@@ -945,7 +945,9 @@ const chatLayoutStyles = {
   container: {
     maxWidth: "1160px",
     margin: "84px auto 24px",
-    height: "calc(100vh - 110px)",
+    height: "calc(100vh - 120px)",
+    maxHeight: "820px",
+    minHeight: "540px",
     display: "grid",
     gridTemplateColumns: "340px 1fr",
     border: "1.5px solid rgba(255, 215, 0, 0.35)",
@@ -954,6 +956,7 @@ const chatLayoutStyles = {
     backdropFilter: "blur(20px)",
     boxShadow: "0 20px 60px rgba(0, 0, 0, 0.75)",
     overflow: "hidden",
+    boxSizing: "border-box",
   },
   sidebar: {
     borderRight: "1px solid rgba(255, 255, 255, 0.10)",
@@ -961,6 +964,8 @@ const chatLayoutStyles = {
     flexDirection: "column",
     background: "rgba(15, 23, 42, 0.95)",
     overflow: "hidden",
+    height: "100%",
+    minHeight: 0,
   },
   sidebarHeader: {
     display: "flex",
@@ -969,6 +974,7 @@ const chatLayoutStyles = {
     padding: "20px 20px 16px",
     borderBottom: "1px solid rgba(255, 255, 255, 0.10)",
     background: "linear-gradient(135deg, rgba(20, 109, 158, 0.3) 0%, rgba(10, 25, 47, 0.8) 100%)",
+    flexShrink: 0,
   },
   newChatBtn: {
     padding: "8px 16px",
@@ -983,7 +989,8 @@ const chatLayoutStyles = {
     transition: "all 0.2s"
   },
   convList: {
-    flex: 1,
+    flex: "1 1 0%",
+    minHeight: 0,
     overflowY: "auto",
   },
   convItem: {
@@ -996,12 +1003,15 @@ const chatLayoutStyles = {
     cursor: "pointer",
     transition: "all 0.2s ease",
     borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+    flexShrink: 0,
   },
   chatArea: {
     display: "flex",
     flexDirection: "column",
     overflow: "hidden",
     background: "rgba(10, 25, 47, 0.88)",
+    height: "100%",
+    minHeight: 0,
   },
   chatHeader: {
     display: "flex",
@@ -1009,9 +1019,11 @@ const chatLayoutStyles = {
     padding: "14px 20px",
     borderBottom: "1px solid rgba(255, 255, 255, 0.10)",
     background: "linear-gradient(180deg, rgba(20, 109, 158, 0.35) 0%, rgba(10, 25, 47, 0.95) 100%)",
+    flexShrink: 0,
   },
   messagesContainer: {
-    flex: 1,
+    flex: "1 1 0%",
+    minHeight: 0,
     overflowY: "auto",
     padding: "20px 0",
   },
@@ -1022,6 +1034,7 @@ const chatLayoutStyles = {
     padding: "14px 18px",
     borderTop: "1px solid rgba(255, 255, 255, 0.10)",
     background: "rgba(10, 25, 47, 0.95)",
+    flexShrink: 0,
   },
   messageInput: {
     flex: 1,
