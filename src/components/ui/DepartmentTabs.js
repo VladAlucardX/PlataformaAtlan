@@ -51,17 +51,17 @@ export default function DepartmentTabs({ activeTab, onSelectTab, isModal = false
                 gap: isModal ? "6px" : "8px",
                 padding: isModal ? "7px 14px" : "10px 18px",
                 borderRadius: isModal ? "10px" : "14px",
-                border: isActive ? "1.5px solid #FFD700" : "1px solid rgba(255,255,255,0.12)",
+                border: isActive ? "1.5px solid #38BDF8" : "1px solid rgba(255,255,255,0.12)",
                 background: isActive
-                  ? "linear-gradient(135deg, rgba(255, 215, 0, 0.22) 0%, rgba(20, 109, 158, 0.4) 100%)"
+                  ? "linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(14, 116, 144, 0.4) 100%)"
                   : "rgba(255, 255, 255, 0.05)",
-                color: isActive ? "#FFD700" : "rgba(255, 255, 255, 0.75)",
+                color: isActive ? "#38BDF8" : "rgba(255, 255, 255, 0.75)",
                 fontWeight: isActive ? "800" : "600",
                 fontSize: isModal ? "12.5px" : "14px",
                 whiteSpace: "nowrap",
                 cursor: "pointer",
                 transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
-                boxShadow: isActive ? "0 4px 14px rgba(255, 215, 0, 0.25)" : "none",
+                boxShadow: isActive ? "0 4px 14px rgba(56, 189, 248, 0.3)" : "none",
                 outline: "none"
               }}
               className="dept-tab-btn"
@@ -77,7 +77,7 @@ export default function DepartmentTabs({ activeTab, onSelectTab, isModal = false
                       height: isModal ? "16px" : "18px",
                       objectFit: "contain",
                       filter: isActive
-                        ? "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)"
+                        ? "brightness(0) saturate(100%) invert(67%) sepia(85%) saturate(1450%) hue-rotate(167deg) brightness(102%) contrast(97%)"
                         : "brightness(0) invert(0.85)"
                     }}
                   />
