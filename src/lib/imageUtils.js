@@ -51,6 +51,10 @@ export const getCustomPointImage = (punto, selectedPointDetails = null) => {
   if (isRealCustomUrl(punto?.foto_url)) {
     return punto.foto_url;
   }
+  if (punto?.fotos_comunidad && Array.isArray(punto.fotos_comunidad) && punto.fotos_comunidad.length > 0) {
+    const first = punto.fotos_comunidad[0];
+    if (isRealCustomUrl(first)) return first;
+  }
   if (punto?.fotos && Array.isArray(punto.fotos) && punto.fotos.length > 0) {
     const first = punto.fotos[0];
     if (isRealCustomUrl(first)) return first;

@@ -1039,7 +1039,7 @@ export default function MapaTuristico() {
         const res = await supabase.rpc('buscar_puntos_cercanos', {
           user_lon: lon,
           user_lat: lat,
-          radio_metros: 60000,
+          radio_metros: 500000,
           filtro_categoria: categoria || null,
           filtro_estado: null // No filtramos por estado en BD para recibir 'aprobado' y 'sin_reclamar'
         });
@@ -1073,7 +1073,7 @@ export default function MapaTuristico() {
         console.log('[Atlan] RPC sin resultados, cargando puntos directamente de la tabla...');
         try {
           const { data: tableData, error: tableError } = await supabase
-            .from('puntos_turisticos')
+            .from('puntos')
             .select('*');
           if (!tableError && tableData && tableData.length > 0) {
             const rawPoints = tableData.map(normalizarPunto);
@@ -2571,7 +2571,9 @@ export default function MapaTuristico() {
                   lat,
                   negocio_id: punto.negocio_id,
                   nombre_creador: punto.nombre_creador,
-                  estado: punto.estado
+                  estado: punto.estado,
+                  fotos_comunidad: punto.fotos_comunidad,
+                  departamento: punto.departamento
                 };
                 setSelectedPoint(puntoEstructura);
               }
@@ -3969,9 +3971,9 @@ export default function MapaTuristico() {
                         background: coverGradient
                       }}
                     >
-                      {selectedPointDetails?.logo_url ? (
+                      {heroImg ? (
                         <img
-                          src={selectedPointDetails.logo_url}
+                          src={heroImg}
                           alt={selectedPoint.nombre}
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
@@ -4360,15 +4362,18 @@ export default function MapaTuristico() {
                     })()}
 
                     {/* GALERÍA DE 6 ESPACIOS (3 COLUMNAS X 2 FILAS) CON TAMAÑO COMPACTO */}
-                    <div>
-                      <h4 style={{ margin: '0 0 8px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <Icon name="image" size={13} color="#64748B" />
-                        <span>{lang === 'en' ? 'Photos & Media' : 'Galería de Fotos'} ({selectedPointDetails?.fotos?.length || 0}/6)</span>
-                      </h4>
+                    {(() => {
+                      const allPointPhotos = selectedPointDetails?.fotos || selectedPoint?.fotos_comunidad || (Array.isArray(selectedPoint?.fotos) ? selectedPoint.fotos : []);
+                      return (
+                        <div>
+                          <h4 style={{ margin: '0 0 8px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <Icon name="image" size={13} color="#64748B" />
+                            <span>{lang === 'en' ? 'Photos & Media' : 'Galería de Fotos'} ({allPointPhotos.length}/6)</span>
+                          </h4>
 
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                        {[0, 1, 2, 3, 4, 5].map((index) => {
-                          const photoUrl = selectedPointDetails?.fotos?.[index];
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                            {[0, 1, 2, 3, 4, 5].map((index) => {
+                              const photoUrl = allPointPhotos[index];
 
                           if (photoUrl) {
                             return (
@@ -4418,10 +4423,12 @@ export default function MapaTuristico() {
                                 {lang === 'en' ? 'Coming Soon' : 'Próximamente'}
                               </span>
                             </div>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
+                    );
+                  })()}
                   </div>
 
                   {/* BOTÓN RECLAMAR NEGOCIO SI APLICA */}
