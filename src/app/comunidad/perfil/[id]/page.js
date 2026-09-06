@@ -40,13 +40,13 @@ function avatarStyle(url, size) {
 
 const cardStyles = {
   card: {
-    background: "linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%)",
+    background: "#F1F5F9",
     border: "1.5px solid #CBD5E1",
     boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)",
     borderRadius: "28px", padding: "24px", marginBottom: "20px"
   },
   publicidadCard: {
-    background: "radial-gradient(circle at top right, rgba(23, 170, 74, 0.08) 0%, #EEF2F6 70%)",
+    background: "#F1F5F9",
     border: "2px solid #17AA4A",
     boxShadow: "0 10px 30px -4px rgba(23, 170, 74, 0.25)",
     borderRadius: "20px", padding: "24px", marginBottom: "20px",
@@ -77,8 +77,9 @@ const cardStyles = {
   actionBar: { display: "flex", gap: "8px", padding: "4px 0" },
   actionBtn: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-    padding: "9px 0", background: "#FFFFFF", border: "1px solid #CBD5E1", color: "var(--atlan-text-secondary)",
-    fontSize: "13px", fontWeight: "700", cursor: "pointer", borderRadius: "12px", transition: "all 0.2s"
+    padding: "9px 12px", background: "#FFFFFF", border: "1px solid #CBD5E1", color: "#475569",
+    fontSize: "13px", fontWeight: "700", cursor: "pointer", borderRadius: "12px", transition: "all 0.2s",
+    boxShadow: "0 2px 6px rgba(15, 23, 42, 0.04)"
   },
   menuBtn: { background: "none", border: "none", color: "var(--atlan-text-muted)", fontSize: "20px", cursor: "pointer", padding: "4px 8px" },
   menuDropdown: { position: "absolute", top: "100%", right: 0, zIndex: 50, background: "#FFFFFF", border: "1px solid #CBD5E1", borderRadius: "12px", padding: "4px", minWidth: "140px", boxShadow: "0 8px 24px rgba(0, 0, 0, 0.10)" },
@@ -276,25 +277,84 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
 
       {/* Action bar */}
       <div style={cardStyles.actionBar}>
-        <button onClick={handleLike} style={{ ...cardStyles.actionBtn, color: liked ? "#ef4444" : "var(--atlan-text-secondary)" }}>
+        <button
+          onClick={handleLike}
+          style={{
+            ...cardStyles.actionBtn,
+            background: liked ? "rgba(239, 68, 68, 0.1)" : "#FFFFFF",
+            borderColor: liked ? "rgba(239, 68, 68, 0.35)" : "#CBD5E1",
+            color: liked ? "#EF4444" : "#475569"
+          }}
+          onMouseOver={(e) => {
+            if (!liked) {
+              e.currentTarget.style.background = "rgba(239, 68, 68, 0.06)";
+              e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.25)";
+              e.currentTarget.style.color = "#EF4444";
+            }
+          }}
+          onMouseOut={(e) => {
+            if (!liked) {
+              e.currentTarget.style.background = "#FFFFFF";
+              e.currentTarget.style.borderColor = "#CBD5E1";
+              e.currentTarget.style.color = "#475569";
+            }
+          }}
+        >
           <img
             src="/images/Like.svg"
             alt=""
             style={{
-              width: "22px",
-              height: "22px",
+              width: "20px",
+              height: "20px",
               objectFit: "contain",
-              transform: liked ? "scale(1.15)" : "scale(1)",
-              filter: liked ? "drop-shadow(0 0 5px rgba(239, 68, 68, 0.6))" : "brightness(0)",
+              transform: liked ? "scale(1.1)" : "scale(1)",
+              filter: liked ? "drop-shadow(0 0 4px rgba(239, 68, 68, 0.5))" : "brightness(0) opacity(0.7)",
               transition: "all 0.2s"
             }}
           />
-          {liked ? "Te gusta" : "Me gusta"}
+          <span>{liked ? "Te gusta" : "Me gusta"}</span>
         </button>
-        <button onClick={handleToggleComments} style={cardStyles.actionBtn}>
-          <img src="/images/comentarios.svg" alt="" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0)" }} /> Comentar
+
+        <button
+          onClick={handleToggleComments}
+          style={{
+            ...cardStyles.actionBtn,
+            background: showComments ? "rgba(20, 109, 158, 0.1)" : "#FFFFFF",
+            borderColor: showComments ? "rgba(20, 109, 158, 0.35)" : "#CBD5E1",
+            color: showComments ? "#146D9E" : "#475569"
+          }}
+          onMouseOver={(e) => {
+            if (!showComments) {
+              e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)";
+              e.currentTarget.style.borderColor = "rgba(20, 109, 158, 0.25)";
+              e.currentTarget.style.color = "#146D9E";
+            }
+          }}
+          onMouseOut={(e) => {
+            if (!showComments) {
+              e.currentTarget.style.background = "#FFFFFF";
+              e.currentTarget.style.borderColor = "#CBD5E1";
+              e.currentTarget.style.color = "#475569";
+            }
+          }}
+        >
+          <img
+            src="/images/comentarios.svg"
+            alt=""
+            style={{
+              width: "20px",
+              height: "20px",
+              objectFit: "contain",
+              filter: showComments ? "brightness(0) saturate(100%) invert(34%) sepia(85%) saturate(1045%) hue-rotate(170deg)" : "brightness(0) opacity(0.7)",
+              transition: "all 0.2s"
+            }}
+          />
+          <span>Comentar</span>
         </button>
-        <ShareDropdown post={post} session={session} perfil={perfil} lang={lang} onRequireLogin={onRequireLogin} />
+
+        <div style={{ flex: 1, display: "flex" }}>
+          <ShareDropdown post={post} session={session} perfil={perfil} lang={lang} onRequireLogin={onRequireLogin} />
+        </div>
       </div>
 
       {/* Comments section */}
