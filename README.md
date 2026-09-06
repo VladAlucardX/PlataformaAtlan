@@ -2,23 +2,24 @@
 
 **Plataforma Atlan** es una solución tecnológica integral orientada al turismo, la promoción del comercio local y el fortalecimiento de la comunidad interactiva en Nicaragua. 
 
-El repositorio está organizado bajo un esquema de monorepo desacoplado que contiene el código fuente de la aplicación **Web PWA** (desarrollada con Next.js) y la aplicación **Móvil Nativa** (desarrollada con Flutter).
+El repositorio está organizado bajo un esquema de monorepo que contiene el código fuente de la aplicación **Web PWA** (desarrollada con Next.js) y la aplicación **Móvil Nativa** (desarrollada con Flutter).
 
 ---
 
 ## 1. Descripción General
 
-El objetivo principal de la plataforma es digitalizar y gamificar la experiencia turística en los 17 departamentos de Nicaragua, conectando a visitantes, propietarios de comercios locales y residentes comunitarios a través de herramientas de geolocalización en tiempo real.
+El objetivo principal de la plataforma es digitalizar y gamificar la experiencia turística en los 17 departamentos de Nicaragua, conectando a visitantes, propietarios de comercios locales, guías turísticos certificados y residentes comunitarios a través de herramientas de geolocalización en tiempo real.
 
 ### Módulos y Funcionalidades Principales
 
 *   **Mapa Turístico Interactivo (Mapbox GL):** Visualización vectorial de puntos de interés, trazado de rutas terrestres, categorización de establecimientos y distinción del estado de verificación de comercios (verificados, en revisión o no reclamados).
-*   **Verificación de Visitas por GPS:** Algoritmo de cálculo de distancia mediante la fórmula de Haversine (radio < 1 km) que valida la presencia física del usuario en un departamento o destino para desbloquear insignia y actualizar su puntuación en el ranking de exploradores.
+*   **Verificación de Visitas por GPS:** Algoritmo de cálculo de distancia mediante la fórmula de Haversine (radio < 1 km) que valida la presencia física del usuario en un departamento o destino para desbloquear insignias y actualizar su puntuación en el ranking de exploradores.
+*   **Directorio y Gestión de Guías Turísticos:** Módulo dedicado (`/guias` y `/perfil-guia`) para la búsqueda, verificación y contacto de guías turísticos locales certificados en los distintos departamentos.
 *   **Panel Multi-Negocio (Propietarios):** Módulo de administración para dueños de comercios donde pueden registrar establecimientos, editar horarios, gestionar imágenes, revisar motivos de rechazo en caso de revisiones administrativas y solicitar la verificación del local.
-*   **Panel de Administración del Sistema:** Módulo restringido para administradores enfocado en la moderación, aprobación y auditoría de solicitudes de nuevos negocios.
+*   **Panel de Administración del Sistema:** Módulo restringido para administradores enfocado en la moderación, aprobación y auditoría de solicitudes de nuevos negocios y guías.
 *   **Enciclopedia Departamental:** Guía informativa estructurada de los 17 departamentos con datos sobre historia, economía, puntos turísticos, pasatiempos y eventos culturales.
 *   **Red Social Comunitaria y Chat en Tiempo Real:** Muro interactivo para publicar imágenes y experiencias, sistema de reacción/comentarios, seguimiento entre usuarios y mensajería privada directa mediante suscripciones WebSockets con Supabase Realtime.
-*   **Sistema de Perfiles y Rangos de Usuario:** Gestión de niveles y beneficios según la cuenta (Turista no registrado, Turista Tuani registrado y Turista Deacachimba con suscripción activa).
+*   **Sistema de Perfiles y Rangos de Usuario:** Gestión de niveles, roles y beneficios del sistema: Turista no registrado, Turista Tuani (registrado), Turista Deacachimba (con membresía activa), Guía Turístico Certificado y Administrador del Sistema.
 
 ---
 
@@ -58,14 +59,14 @@ El sistema implementa una arquitectura basada en **Backend como Servicio (BaaS)*
 ### Componentes y Decisiones de Arquitectura
 
 1.  **Capa de Presentación (Frontend Web & Mobile):**
-    *   **Web (Next.js 16 + React 19):** Aprovecha el App Router para optimizar la carga inicial mediante Server Components y mantener reactividad client-side en mapas y chats interactivos. Incluye Service Worker (`public/sw.js`) y manifiesto PWA.
+    *   **Web (Next.js 16 + React 19):** Aprovecha el App Router para optimizar la carga inicial mediante Server Components y mantener reactividad client-side en mapas, chats y perfiles de guías. Incluye Service Worker (`public/sw.js`), manifiesto PWA y soporte multi-idioma (i18n ES/EN).
     *   **Mobile (Flutter 3.38):** Construcción nativa multiplataforma. Utiliza **Riverpod** para la gestión de estado reactiva e inyección de dependencias, y **GoRouter** para el manejo de rutas profundas.
 2.  **Capa de Negocio y Datos (Supabase Core):**
-    *   **PostgreSQL Relacional:** Almacenamiento persistente con esquemas estructurados para usuarios, perfiles, comercios, publicaciones, mensajes y visitas.
+    *   **PostgreSQL Relacional:** Almacenamiento persistente con esquemas estructurados para usuarios, perfiles, guías turísticos, comercios, publicaciones, mensajes y visitas.
     *   **Funciones Almacenadas (RPC en PL/pgSQL):** Consultas avanzadas ejecutadas en la base de datos (por ejemplo, cálculo de distancia radial de puntos de interés respecto a coordenadas GPS).
     *   **Seguridad por Filas (RLS - Row Level Security):** Políticas de control de acceso granulares para asegurar que solo los dueños modifiquen su información y que los chats permanezcan estrictamente privados.
     *   **Realtime Engine:** Motor de WebSockets para notificación instantánea de nuevos mensajes e interacciones sociales.
-    *   **Storage (Bucket `atlan-media`):** Almacenamiento de archivos multimedia optimizados (fotos de negocios, avatares y publicaciones).
+    *   **Storage (Bucket `atlan-media`):** Almacenamiento de archivos multimedia optimizados (fotos de negocios, avatares, guías y publicaciones).
 3.  **Capa Geoespacial:**
     *   Servicios de **Mapbox GL** (JS para Web y Native SDK para Móvil) para capas vectoriales, marcadores personalizados, polígonos GeoJSON de límites departamentales y ruteo.
 
@@ -148,7 +149,7 @@ MAPBOX_ACCESS_TOKEN=pk.eyJ1IjoibWFwYm94dXNlciIsImEiOiJjb...
 
 ## 5. Estructura Modular del Proyecto
 
-La base de código está organizada modularmente para separar las responsabilidades de la plataforma Web, la App Móvil y los recursos estáticos geoespaciales:
+El código está organizado modularmente para separar las responsabilidades de la plataforma Web, la App Móvil y los recursos estáticos geoespaciales:
 
 ```text
 plataforma-atlan/
@@ -160,35 +161,47 @@ plataforma-atlan/
 │
 ├── src/                                  # APLICACIÓN WEB (NEXT.JS 16)
 │   ├── app/                              # Rutas del App Router
-│   │   ├── admin/                        # Panel de aprobación de negocios
+│   │   ├── admin/                        # Panel de aprobación de negocios y guías
 │   │   ├── chat/                         # Mensajería directa entre usuarios
 │   │   ├── comunidad/                    # Feed social, publicaciones y comentarios
 │   │   ├── dashboard/                    # Gestión de comercios para propietarios
 │   │   ├── departamentos/                # Ranking de exploradores y validación GPS
+│   │   ├── guias/                        # Módulo y catálogo de Guías Turísticos
 │   │   ├── mas-de-nicaragua/             # Enciclopedia turística por departamento
 │   │   ├── mapa/                         # Vista interactiva del mapa a pantalla completa
 │   │   ├── perfil/                       # Perfil de usuario, favoritos y ajustes
+│   │   ├── perfil-guia/                  # Vista detallada y contacto de guía certificado
 │   │   ├── login/ & registro/            # Flujos de autenticación de usuarios
+│   │   ├── reset-password/               # Recuperación de credenciales
 │   │   ├── globals.css                   # Estilos globales y utilidades neón/glassmorphism
 │   │   └── page.js                       # Landing Page de la plataforma
 │   │
 │   ├── components/                       # Componentes React reutilizables
 │   │   ├── MapaTuristico.js              # Integración cliente de Mapbox GL
-│   │   └── ui/                           # Modales, Navbar, ChatWidget, controles UI
+│   │   ├── VideoIntro.js                 # Introducción multimedia de la plataforma
+│   │   ├── PWARegister.js                # Registro y Service Worker para PWA
+│   │   └── ui/                           # Modales (BusinessProfileModal, ImageViewerModal, FollowersModal), Navbar, ChatWidget, controles UI
 │   │
 │   └── lib/                              # Servicios, utilidades y contexto
 │       ├── AuthContext.js                # Provider del estado global de sesión
 │       ├── geoUtils.js                   # Algoritmo de validación geográfica Haversine
-│       └── supabase.js                   # Cliente inicializado de Supabase JS
+│       ├── imageUtils.js                 # Utilidades de procesamiento y compresión de imágenes
+│       ├── profileUtils.js               # Helper de formateo de perfiles
+│       ├── storage.js                    # Conector de subida a Supabase Storage
+│       ├── supabase.js                   # Cliente inicializado de Supabase JS
+│       └── i18n/                         # Diccionarios de internacionalización (ES / EN)
 │
 ├── mobile/                               # APLICACIÓN MÓVIL (FLUTTER MONOREPO)
 │   ├── assets/                           # Recursos gráficos y GeoJSON nativos
 │   ├── lib/                              # Código en Dart
 │   │   ├── config/                       # Constantes, tema y rutas GoRouter
-│   │   ├── models/                       # Modelos de datos (Perfil, Negocio, Punto)
+│   │   ├── l10n/                         # Localización nativa
+│   │   ├── models/                       # Modelos de datos (Perfil, Negocio, Punto, Guía)
 │   │   ├── providers/                    # Controladores de estado Riverpod
-│   │   ├── screens/                      # Pantallas (Home, Mapa, Perfil, Chat)
-│   │   └── services/                     # Clientes de API, Supabase y ubicación GPS
+│   │   ├── screens/                      # Pantallas (Home, Mapa, Perfil, Chat, Admin, Dashboard, WebView)
+│   │   ├── services/                     # Clientes de API, Supabase y ubicación GPS
+│   │   ├── utils/                        # Utilidades auxiliares
+│   │   └── widgets/                      # Componentes visuales reutilizables
 │   └── pubspec.yaml                      # Dependencias de Flutter
 │
 ├── .env.local                            # Variables de entorno local Web
@@ -384,4 +397,4 @@ const chatChannel = supabase
 *   Si los mapas no cargan o muestran un lienzo en blanco, confirma que la variable `NEXT_PUBLIC_MAPBOX_TOKEN` en `.env.local` (o `MAPBOX_ACCESS_TOKEN` en la app móvil) tenga un token válido activo asignado a tu cuenta de Mapbox.
 
 ### Seguridad y RLS en Supabase
-*   Todas las tablas críticas del sistema (`mensajes`, `negocios`, `visitas_puntos`, `perfiles`) cuentan con políticas de **Row Level Security (RLS)** activadas. Los intentos de modificación directa sin un token JWT válido de usuario autenticado serán rechazados por la base de datos.
+*   Todas las tablas críticas del sistema (`mensajes`, `negocios`, `visitas_puntos`, `perfiles`, `guias_turisticos`) cuentan con políticas de **Row Level Security (RLS)** activadas. Los intentos de modificación directa sin un token JWT válido de usuario autenticado serán rechazados por la base de datos.
