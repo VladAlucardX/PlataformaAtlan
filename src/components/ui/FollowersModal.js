@@ -306,7 +306,7 @@ const styles = {
     boxSizing: "border-box"
   },
   container: {
-    width: "100%", maxWidth: "480px", height: "auto", maxHeight: "80vh",
+    width: "100%", maxWidth: "480px", height: "520px", maxHeight: "80vh",
     background: "#FFFFFF",
     border: "2px solid rgba(255, 255, 255, 0.95)",
     borderRadius: "28px", overflow: "hidden",
@@ -341,7 +341,7 @@ const styles = {
     transition: "all 0.2s"
   },
   userList: {
-    overflowY: "auto", flex: 1, padding: "14px 20px", display: "flex", flexDirection: "column", gap: "10px"
+    overflowY: "auto", flex: 1, minHeight: 0, padding: "14px 20px", display: "flex", flexDirection: "column", gap: "10px"
   },
   userCard: {
     display: "flex", alignItems: "center", gap: "12px", padding: "10px 14px",
