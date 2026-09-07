@@ -3372,7 +3372,7 @@ const styles = {
     height: "100vh",
     maxHeight: "100vh",
     width: "100vw",
-    background: "linear-gradient(rgba(10, 15, 28, 0.65), rgba(10, 15, 28, 0.65)), url('/images/fondohracio.png') center / cover no-repeat fixed",
+    background: "linear-gradient(180deg, rgba(10, 18, 35, 0.72) 0%, rgba(5, 10, 20, 0.85) 100%), url('/images/loginbg.jpeg') center / cover no-repeat fixed",
     color: "#1A1A2E",
     fontFamily: "var(--font-outfit), sans-serif",
     padding: "85px 24px 16px 24px",
@@ -3389,7 +3389,7 @@ const styles = {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    background: "linear-gradient(180deg, rgba(10, 18, 35, 0.85) 0%, rgba(5, 10, 20, 0.95) 100%), url('/images/fondohracio.png') center / cover no-repeat fixed",
+    background: "linear-gradient(180deg, rgba(10, 18, 35, 0.85) 0%, rgba(5, 10, 20, 0.95) 100%), url('/images/loginbg.jpeg') center / cover no-repeat fixed",
   },
   header: {
     position: "absolute",
