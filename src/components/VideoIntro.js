@@ -133,7 +133,6 @@ export default function VideoIntro({ onComplete }) {
       {/* Video de fondo */}
       <video
         ref={videoRef}
-        src="/videos/portada2.0.mp4"
         autoPlay
         muted
         playsInline
@@ -147,7 +146,11 @@ export default function VideoIntro({ onComplete }) {
           }
         }}
         style={introStyles.video}
-      />
+      >
+        <source src="/videos/portada2.0.webm" type="video/webm" />
+        <source src="/videos/portada2.0-mobile.mp4" type="video/mp4" media="(max-width: 768px)" />
+        <source src="/videos/portada2.0-opt.mp4" type="video/mp4" />
+      </video>
 
       {/* Overlay oscuro sutil sobre el video */}
       <div style={introStyles.darkOverlay} />

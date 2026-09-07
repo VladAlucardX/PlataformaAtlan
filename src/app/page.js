@@ -63,6 +63,9 @@ function HeroSection({ session, perfil, introDone }) {
           zIndex: 0
         }}
       >
+        <source src="/videos/AtlanHero.webm" type="video/webm" />
+        <source src="/videos/AtlanHero-mobile.mp4" type="video/mp4" media="(max-width: 768px)" />
+        <source src="/videos/AtlanHero-opt.mp4" type="video/mp4" />
         <source src="/videos/AtlanHero.mp4" type="video/mp4" />
       </video>
       {/* Overlay oscuro para legibilidad del texto */}
