@@ -121,9 +121,9 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
         {/* Logo / Home */}
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: "9px", textDecoration: "none" }}>
           <img
-            src="/images/Isotipo.png"
-            alt="Logo"
-            style={{ width: "30px", height: "30px", objectFit: "contain", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }}
+            src="/mapaicono.png"
+            alt="Atlan Logo"
+            style={{ width: "32px", height: "32px", objectFit: "contain", filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.25))" }}
           />
           <span className="logoText" style={{ fontSize: "25px", fontWeight: "900", color: "#F59E0B" }}>atlan</span>
         </Link>

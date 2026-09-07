@@ -1774,189 +1774,220 @@ export default function DashboardPage() {
 
               {activeTab === "overview" ? (
                 <div style={styles.overviewGrid}>
-                {/* General Info Card: edificio.svg */}
+                {/* 1. General Info Card: edificio.svg */}
                 <button
                   type="button"
                   onClick={(e) => handleCardClick(e, "general")}
-                  className="hover-card clay-card animate-fade-in-up"
-                  style={{
-                    ...styles.dashboardCard,
-                    background: "rgba(79, 70, 229, 0.18)",
-                    border: "1.5px solid rgba(129, 140, 248, 0.35)",
-                    boxShadow: "0 12px 28px -4px rgba(79, 70, 229, 0.25)",
-                    opacity: negocio && !negocio.activo ? 0.75 : 1
-                  }}
+                  className="dashboard-module-card theme-indigo animate-fade-in-up"
+                  style={{ opacity: negocio && !negocio.activo ? 0.75 : 1 }}
                 >
-                  <div style={{ ...styles.cardIcon, background: "#4F46E5", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(79, 70, 229, 0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <div style={{
-                      width: "24px",
-                      height: "24px",
-                      backgroundColor: "#FFFFFF",
-                      WebkitMaskImage: "url('/images/edificio.svg')",
-                      WebkitMaskRepeat: "no-repeat",
-                      WebkitMaskSize: "contain",
-                      WebkitMaskPosition: "center",
-                      maskImage: "url('/images/edificio.svg')",
-                      maskRepeat: "no-repeat",
-                      maskSize: "contain",
-                      maskPosition: "center",
-                    }} />
+                  <div className="card-top-row">
+                    <div className="card-icon-wrapper">
+                      <div style={{
+                        width: "24px",
+                        height: "24px",
+                        backgroundColor: "#FFFFFF",
+                        WebkitMaskImage: "url('/images/edificio.svg')",
+                        WebkitMaskRepeat: "no-repeat",
+                        WebkitMaskSize: "contain",
+                        WebkitMaskPosition: "center",
+                        maskImage: "url('/images/edificio.svg')",
+                        maskRepeat: "no-repeat",
+                        maskSize: "contain",
+                        maskPosition: "center",
+                      }} />
+                    </div>
+                    <div className="card-arrow-badge">
+                      <Icon name="arrowRight" size={14} />
+                    </div>
                   </div>
-                  <h3 style={{ ...styles.cardTitle, color: "#A5B4FC", display: "flex", alignItems: "center", gap: "6px" }}>
-                    <span>{lang === "en" ? "Business Profile" : lang === "zh" ? "商户资料" : "Perfil del Negocio"}</span>
-                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#A5B4FC" />}
-                  </h3>
-                  <p style={{ ...styles.cardDesc, color: "#E0E7FF" }}>{lang === "en" ? "Update photos, description, logo and contact info" : lang === "zh" ? "更新照片、描述、标志和联系信息" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
+                  <div>
+                    <h3 className="card-module-title">
+                      <span>{lang === "en" ? "Business Profile" : lang === "zh" ? "商户资料" : "Perfil del Negocio"}</span>
+                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#A5B4FC" />}
+                    </h3>
+                    <p className="card-module-desc">{lang === "en" ? "Update photos, description, logo and contact info" : lang === "zh" ? "更新照片、描述、标志和联系信息" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
+                  </div>
+                  <div className="card-footer-action">
+                    <span>{lang === "en" ? "Manage Profile" : lang === "zh" ? "管理资料" : "Administrar Datos"}</span>
+                    <span>➔</span>
+                  </div>
                 </button>
 
-                {/* Checklist Card: flor.svg */}
+                {/* 2. Checklist Card: flor.svg */}
                 <button
                   type="button"
                   onClick={(e) => handleCardClick(e, "excentricidades")}
-                  className="hover-card clay-card animate-fade-in-up"
-                  style={{
-                    ...styles.dashboardCard,
-                    background: "rgba(16, 185, 129, 0.18)",
-                    border: "1.5px solid rgba(52, 211, 153, 0.35)",
-                    boxShadow: "0 12px 28px -4px rgba(16, 185, 129, 0.25)",
-                    opacity: negocio && !negocio.activo ? 0.75 : 1
-                  }}
+                  className="dashboard-module-card theme-emerald animate-fade-in-up"
+                  style={{ opacity: negocio && !negocio.activo ? 0.75 : 1 }}
                 >
-                  <div style={{ ...styles.cardIcon, background: "#16A34A", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(22, 163, 74, 0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <div style={{
-                      width: "24px",
-                      height: "24px",
-                      backgroundColor: "#FFFFFF",
-                      WebkitMaskImage: "url('/images/flor.svg')",
-                      WebkitMaskRepeat: "no-repeat",
-                      WebkitMaskSize: "contain",
-                      WebkitMaskPosition: "center",
-                      maskImage: "url('/images/flor.svg')",
-                      maskRepeat: "no-repeat",
-                      maskSize: "contain",
-                      maskPosition: "center",
-                    }} />
+                  <div className="card-top-row">
+                    <div className="card-icon-wrapper">
+                      <div style={{
+                        width: "24px",
+                        height: "24px",
+                        backgroundColor: "#FFFFFF",
+                        WebkitMaskImage: "url('/images/flor.svg')",
+                        WebkitMaskRepeat: "no-repeat",
+                        WebkitMaskSize: "contain",
+                        WebkitMaskPosition: "center",
+                        maskImage: "url('/images/flor.svg')",
+                        maskRepeat: "no-repeat",
+                        maskSize: "contain",
+                        maskPosition: "center",
+                      }} />
+                    </div>
+                    <div className="card-arrow-badge">
+                      <Icon name="arrowRight" size={14} />
+                    </div>
                   </div>
-                  <h3 style={{ ...styles.cardTitle, color: "#6EE7B7", display: "flex", alignItems: "center", gap: "6px" }}>
-                    <span>{lang === "en" ? "Services Checklist" : lang === "zh" ? "服务清单" : "Checklist de Servicios"}</span>
-                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#6EE7B7" />}
-                  </h3>
-                  <p style={{ ...styles.cardDesc, color: "#D1FAE5" }}>{lang === "en" ? "Enable menu, wifi, parking or lodging modules" : lang === "zh" ? "启用菜单、WiFi、停车场或住宿等设施" : "Activa wifi, parqueo, menú, hospedaje o amenidades"}</p>
+                  <div>
+                    <h3 className="card-module-title">
+                      <span>{lang === "en" ? "Services Checklist" : lang === "zh" ? "服务清单" : "Checklist de Servicios"}</span>
+                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#6EE7B7" />}
+                    </h3>
+                    <p className="card-module-desc">{lang === "en" ? "Enable menu, wifi, parking or lodging modules" : lang === "zh" ? "启用菜单、WiFi、停车场或住宿等设施" : "Activa wifi, parqueo, menú, hospedaje o amenidades"}</p>
+                  </div>
+                  <div className="card-footer-action">
+                    <span>{lang === "en" ? "Configure Services" : lang === "zh" ? "配置服务" : "Configurar Servicios"}</span>
+                    <span>➔</span>
+                  </div>
                 </button>
 
-                {/* Hours Card */}
+                {/* 3. Hours Card */}
                 {hasHours && (
                   <button
                     type="button"
                     onClick={(e) => handleCardClick(e, "horarios")}
-                    className="hover-card clay-card animate-fade-in-up"
-                    style={{
-                      ...styles.dashboardCard,
-                      background: "rgba(245, 158, 11, 0.18)",
-                      border: "1.5px solid rgba(251, 191, 36, 0.35)",
-                      boxShadow: "0 12px 28px -4px rgba(245, 158, 11, 0.25)",
-                      opacity: negocio && !negocio.activo ? 0.75 : 1
-                    }}
+                    className="dashboard-module-card theme-amber animate-fade-in-up"
+                    style={{ opacity: negocio && !negocio.activo ? 0.75 : 1 }}
                   >
-                    <div style={{ ...styles.cardIcon, background: "#D97706", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(217, 119, 6, 0.35)" }}>
-                      <Icon name="clock" size={22} color="#FFFFFF" />
+                    <div className="card-top-row">
+                      <div className="card-icon-wrapper">
+                        <Icon name="clock" size={24} color="#FFFFFF" />
+                      </div>
+                      <div className="card-arrow-badge">
+                        <Icon name="arrowRight" size={14} />
+                      </div>
                     </div>
-                    <h3 style={{ ...styles.cardTitle, color: "#FDE68A", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <span>{lang === "en" ? "Opening Hours" : lang === "zh" ? "营业时间" : "Horarios de Atención"}</span>
-                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#FDE68A" />}
-                    </h3>
-                    <p style={{ ...styles.cardDesc, color: "#FEF3C7" }}>{lang === "en" ? "Manage your daily opening and closing times" : lang === "zh" ? "设置您每日的营业和打烊时间" : "Configura tus horarios de apertura y cierre"}</p>
+                    <div>
+                      <h3 className="card-module-title">
+                        <span>{lang === "en" ? "Opening Hours" : lang === "zh" ? "营业时间" : "Horarios de Atención"}</span>
+                        {negocio && !negocio.activo && <Icon name="lock" size={14} color="#FDE68A" />}
+                      </h3>
+                      <p className="card-module-desc">{lang === "en" ? "Manage your daily opening and closing times" : lang === "zh" ? "设置您每日的营业和打烊时间" : "Configura tus horarios de apertura y cierre"}</p>
+                    </div>
+                    <div className="card-footer-action">
+                      <span>{lang === "en" ? "Set Schedules" : lang === "zh" ? "设置营业时间" : "Ajustar Horarios"}</span>
+                      <span>➔</span>
+                    </div>
                   </button>
                 )}
 
-                {/* Menu Card */}
+                {/* 4. Menu Card */}
                 {hasMenu && (
                   <button
                     type="button"
                     onClick={(e) => handleCardClick(e, "menu")}
-                    className="hover-card clay-card animate-fade-in-up"
-                    style={{
-                      ...styles.dashboardCard,
-                      background: "rgba(14, 165, 233, 0.18)",
-                      border: "1.5px solid rgba(56, 189, 248, 0.35)",
-                      boxShadow: "0 12px 28px -4px rgba(14, 165, 233, 0.25)",
-                      opacity: negocio && !negocio.activo ? 0.75 : 1
-                    }}
+                    className="dashboard-module-card theme-sky animate-fade-in-up"
+                    style={{ opacity: negocio && !negocio.activo ? 0.75 : 1 }}
                   >
-                    <div style={{ ...styles.cardIcon, background: "#2563EB", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(37, 99, 235, 0.35)" }}>
-                      <Icon name="utensils" size={22} color="#FFFFFF" />
+                    <div className="card-top-row">
+                      <div className="card-icon-wrapper">
+                        <Icon name="utensils" size={24} color="#FFFFFF" />
+                      </div>
+                      <div className="card-arrow-badge">
+                        <Icon name="arrowRight" size={14} />
+                      </div>
                     </div>
-                    <h3 style={{ ...styles.cardTitle, color: "#7DD3FC", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <span>{lang === "en" ? "Gastronomic Menu" : lang === "zh" ? "特色菜单" : "Menú Gastronómico"}</span>
-                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#7DD3FC" />}
-                    </h3>
-                    <p style={{ ...styles.cardDesc, color: "#E0F2FE" }}>{lang === "en" ? "Add or remove dishes, photos, and set prices" : lang === "zh" ? "添加或编辑菜品、照片并设定价格" : "Agrega, edita o elimina platillos, fotos y precios"}</p>
+                    <div>
+                      <h3 className="card-module-title">
+                        <span>{lang === "en" ? "Gastronomic Menu" : lang === "zh" ? "特色菜单" : "Menú Gastronómico"}</span>
+                        {negocio && !negocio.activo && <Icon name="lock" size={14} color="#7DD3FC" />}
+                      </h3>
+                      <p className="card-module-desc">{lang === "en" ? "Add or remove dishes, photos, and set prices" : lang === "zh" ? "添加或编辑菜品、照片并设定价格" : "Agrega, edita o elimina platillos, fotos y precios"}</p>
+                    </div>
+                    <div className="card-footer-action">
+                      <span>{lang === "en" ? "Manage Dishes" : lang === "zh" ? "管理菜品" : "Editar Platillos"}</span>
+                      <span>➔</span>
+                    </div>
                   </button>
                 )}
 
-                {/* Reservations Card */}
+                {/* 5. Reservations Card */}
                 {(hasOnlineBooking || hasLodging) && (
                   <button
                     type="button"
                     onClick={(e) => handleCardClick(e, "reservas")}
-                    className="hover-card clay-card animate-fade-in-up"
-                    style={{
-                      ...styles.dashboardCard,
-                      background: "rgba(139, 92, 246, 0.18)",
-                      border: "1.5px solid rgba(167, 139, 250, 0.35)",
-                      boxShadow: "0 12px 28px -4px rgba(139, 92, 246, 0.25)",
-                      opacity: negocio && !negocio.activo ? 0.75 : 1
-                    }}
+                    className="dashboard-module-card theme-violet animate-fade-in-up"
+                    style={{ opacity: negocio && !negocio.activo ? 0.75 : 1 }}
                   >
-                    <div style={{ ...styles.cardIcon, background: "#9333EA", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(147, 51, 234, 0.35)" }}>
-                      <Icon name="calendar" size={22} color="#FFFFFF" />
-                    </div>
-                    <h3 style={{ ...styles.cardTitle, color: "#C4B5FD", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <span>{lang === "en" ? "Reservations Manager" : lang === "zh" ? "预订管理" : "Gestor de Reservas"}</span>
-                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#C4B5FD" />}
-                    </h3>
-                    <p style={{ ...styles.cardDesc, color: "#F3E8FF" }}>{lang === "en" ? "Approve or cancel incoming booking requests" : lang === "zh" ? "批准或取消收到的预订请求" : "Aprueba o cancela solicitudes de reserva"}</p>
-                    {(reservas || []).filter(r => r.estado_reserva === "pendiente").length > 0 && (
-                      <div style={styles.cardBadge}>
-                        {(reservas || []).filter(r => r.estado_reserva === "pendiente").length} {lang === "en" ? "Pending" : lang === "zh" ? "待处理" : "Pendientes"}
+                    <div className="card-top-row">
+                      <div className="card-icon-wrapper">
+                        <Icon name="calendar" size={24} color="#FFFFFF" />
                       </div>
-                    )}
+                      <div className="card-arrow-badge">
+                        <Icon name="arrowRight" size={14} />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="card-module-title">
+                        <span>{lang === "en" ? "Reservations Manager" : lang === "zh" ? "预订管理" : "Gestor de Reservas"}</span>
+                        {negocio && !negocio.activo && <Icon name="lock" size={14} color="#C4B5FD" />}
+                      </h3>
+                      <p className="card-module-desc">{lang === "en" ? "Approve or cancel incoming booking requests" : lang === "zh" ? "批准或取消收到的预订请求" : "Aprueba o cancela solicitudes de reserva"}</p>
+                      {(reservas || []).filter(r => r.estado_reserva === "pendiente").length > 0 && (
+                        <div className="card-counter-badge" style={{ background: "linear-gradient(135deg, #EF4444 0%, #DC2626 100%)", color: "#FFFFFF" }}>
+                          <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#FFFFFF" }} />
+                          {(reservas || []).filter(r => r.estado_reserva === "pendiente").length} {lang === "en" ? "Pending" : lang === "zh" ? "待处理" : "Pendientes"}
+                        </div>
+                      )}
+                    </div>
+                    <div className="card-footer-action">
+                      <span>{lang === "en" ? "View Bookings" : lang === "zh" ? "查看预订" : "Ver Reservas"}</span>
+                      <span>➔</span>
+                    </div>
                   </button>
                 )}
 
-                {/* Reviews Card: sombrero.svg */}
+                {/* 6. Reviews Card: sombrero.svg */}
                 <button
                   type="button"
                   onClick={(e) => handleCardClick(e, "resenas")}
-                  className="hover-card clay-card animate-fade-in-up"
-                  style={{
-                    ...styles.dashboardCard,
-                    background: "rgba(244, 63, 94, 0.18)",
-                    border: "1.5px solid rgba(251, 113, 133, 0.35)",
-                    boxShadow: "0 12px 28px -4px rgba(244, 63, 94, 0.25)",
-                    opacity: negocio && !negocio.activo ? 0.75 : 1
-                  }}
+                  className="dashboard-module-card theme-rose animate-fade-in-up"
+                  style={{ opacity: negocio && !negocio.activo ? 0.75 : 1 }}
                 >
-                  <div style={{ ...styles.cardIcon, background: "#E11D48", color: "#FFFFFF", boxShadow: "0 6px 14px rgba(225, 29, 72, 0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <div style={{
-                      width: "24px",
-                      height: "24px",
-                      backgroundColor: "#FFFFFF",
-                      WebkitMaskImage: "url('/images/sombrero.svg')",
-                      WebkitMaskRepeat: "no-repeat",
-                      WebkitMaskSize: "contain",
-                      WebkitMaskPosition: "center",
-                      maskImage: "url('/images/sombrero.svg')",
-                      maskRepeat: "no-repeat",
-                      maskSize: "contain",
-                      maskPosition: "center",
-                    }} />
+                  <div className="card-top-row">
+                    <div className="card-icon-wrapper">
+                      <div style={{
+                        width: "24px",
+                        height: "24px",
+                        backgroundColor: "#FFFFFF",
+                        WebkitMaskImage: "url('/images/sombrero.svg')",
+                        WebkitMaskRepeat: "no-repeat",
+                        WebkitMaskSize: "contain",
+                        WebkitMaskPosition: "center",
+                        maskImage: "url('/images/sombrero.svg')",
+                        maskRepeat: "no-repeat",
+                        maskSize: "contain",
+                        maskPosition: "center",
+                      }} />
+                    </div>
+                    <div className="card-arrow-badge">
+                      <Icon name="arrowRight" size={14} />
+                    </div>
                   </div>
-                  <h3 style={{ ...styles.cardTitle, color: "#FDA4AF", display: "flex", alignItems: "center", gap: "6px" }}>
-                    <span>{lang === "en" ? "Customer Reviews" : lang === "zh" ? "顾客评价" : "Reseñas de Clientes"}</span>
-                    {negocio && !negocio.activo && <Icon name="lock" size={14} color="#FDA4AF" />}
-                  </h3>
-                  <p style={{ ...styles.cardDesc, color: "#FFE4E6" }}>{lang === "en" ? "Read what tourists think about your business" : lang === "zh" ? "查看游客对您商户的评价与反馈" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
+                  <div>
+                    <h3 className="card-module-title">
+                      <span>{lang === "en" ? "Customer Reviews" : lang === "zh" ? "顾客评价" : "Reseñas de Clientes"}</span>
+                      {negocio && !negocio.activo && <Icon name="lock" size={14} color="#FDA4AF" />}
+                    </h3>
+                    <p className="card-module-desc">{lang === "en" ? "Read what tourists think about your business" : lang === "zh" ? "查看游客对您商户的评价与反馈" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
+                  </div>
+                  <div className="card-footer-action">
+                    <span>{lang === "en" ? "Read Reviews" : lang === "zh" ? "查看评价" : "Ver Comentarios"}</span>
+                    <span>➔</span>
+                  </div>
                 </button>
               </div>
           ) : (
@@ -3281,8 +3312,9 @@ const styles = {
   },
   overviewGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-    gap: "22px",
+    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+    gap: "24px",
+    marginBottom: "32px",
   },
   dashboardCard: {
     background: "rgba(255, 255, 255, 0.94)",

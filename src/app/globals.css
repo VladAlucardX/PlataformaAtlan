@@ -2538,7 +2538,308 @@ html body .mapboxgl-ctrl-directions tr {
 .hover-card:hover {
   transform: translateY(-5px);
   border-color: rgba(255, 215, 0, 0.4) !important;
-  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* ── TARJETAS DE GESTIÓN DE NEGOCIO (DASHBOARD) ───────────────────────── */
+.dashboard-module-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  text-align: left;
+  cursor: pointer;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  transition: all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  outline: none;
+  min-height: 195px;
+}
+
+/* Franja superior de acento */
+.dashboard-module-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 0.8;
+  transition: opacity 0.3s ease, height 0.3s ease;
+  z-index: 2;
+}
+
+/* Desactivar cualquier destello o sheen sweep */
+.dashboard-module-card::after,
+.dashboard-module-card:hover::after {
+  display: none !important;
+  content: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+.dashboard-module-card:hover {
+  transform: translateY(-6px);
+}
+
+.dashboard-module-card:hover::before {
+  opacity: 1;
+  height: 4px;
+}
+
+/* Fila superior con ícono y flecha de acción */
+.dashboard-module-card .card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.dashboard-module-card .card-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.dashboard-module-card:hover .card-icon-wrapper {
+  transform: scale(1.08) rotate(-2deg);
+}
+
+.dashboard-module-card .card-arrow-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94A3B8;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.dashboard-module-card:hover .card-arrow-badge {
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+}
+
+/* Tipografía de títulos */
+.dashboard-module-card .card-module-title {
+  margin: 0 0 6px 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #FFFFFF !important;
+  letter-spacing: -0.01em;
+  font-family: var(--font-outfit), system-ui, -apple-system, sans-serif !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.25s ease;
+}
+
+/* Tipografía de descripción */
+.dashboard-module-card .card-module-desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #CBD5E1 !important;
+  font-weight: 450;
+  transition: color 0.25s ease;
+}
+
+/* Fila de pie con enlace de acción */
+.dashboard-module-card .card-footer-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+  margin-top: 14px;
+  opacity: 0.8;
+  transition: all 0.25s ease;
+}
+
+.dashboard-module-card:hover .card-footer-action {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+/* Badge de reservas pendientes */
+.dashboard-module-card .card-counter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-top: 10px;
+  align-self: flex-start;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Variantes temáticas de cada módulo */
+/* 1. Perfil del Negocio - Indigo */
+.dashboard-module-card.theme-indigo {
+  background: linear-gradient(145deg, rgba(30, 27, 75, 0.72) 0%, rgba(15, 23, 42, 0.88) 100%);
+  border: 1.5px solid rgba(99, 102, 241, 0.32);
+}
+.dashboard-module-card.theme-indigo::before {
+  background: linear-gradient(90deg, #6366F1, #818CF8);
+}
+.dashboard-module-card.theme-indigo .card-icon-wrapper {
+  background: linear-gradient(135deg, #4F46E5 0%, #3730A3 100%);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+}
+.dashboard-module-card.theme-indigo .card-footer-action {
+  color: #A5B4FC;
+}
+.dashboard-module-card.theme-indigo:hover {
+  background: linear-gradient(145deg, rgba(49, 46, 129, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border-color: rgba(129, 140, 248, 0.7);
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.6), 0 0 25px rgba(99, 102, 241, 0.3);
+}
+.dashboard-module-card.theme-indigo:hover .card-arrow-badge {
+  border-color: rgba(129, 140, 248, 0.5);
+  color: #A5B4FC;
+}
+
+/* 2. Checklist de Servicios - Emerald */
+.dashboard-module-card.theme-emerald {
+  background: linear-gradient(145deg, rgba(6, 44, 33, 0.72) 0%, rgba(15, 23, 42, 0.88) 100%);
+  border: 1.5px solid rgba(16, 185, 129, 0.32);
+}
+.dashboard-module-card.theme-emerald::before {
+  background: linear-gradient(90deg, #10B981, #34D399);
+}
+.dashboard-module-card.theme-emerald .card-icon-wrapper {
+  background: linear-gradient(135deg, #16A34A 0%, #065F46 100%);
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.4);
+}
+.dashboard-module-card.theme-emerald .card-footer-action {
+  color: #6EE7B7;
+}
+.dashboard-module-card.theme-emerald:hover {
+  background: linear-gradient(145deg, rgba(6, 78, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border-color: rgba(52, 211, 153, 0.7);
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.6), 0 0 25px rgba(16, 185, 129, 0.3);
+}
+.dashboard-module-card.theme-emerald:hover .card-arrow-badge {
+  border-color: rgba(52, 211, 153, 0.5);
+  color: #6EE7B7;
+}
+
+/* 3. Horarios de Atención - Amber */
+.dashboard-module-card.theme-amber {
+  background: linear-gradient(145deg, rgba(45, 28, 5, 0.72) 0%, rgba(15, 23, 42, 0.88) 100%);
+  border: 1.5px solid rgba(245, 158, 11, 0.32);
+}
+.dashboard-module-card.theme-amber::before {
+  background: linear-gradient(90deg, #F59E0B, #FBBF24);
+}
+.dashboard-module-card.theme-amber .card-icon-wrapper {
+  background: linear-gradient(135deg, #D97706 0%, #92400E 100%);
+  box-shadow: 0 6px 16px rgba(217, 119, 6, 0.4);
+}
+.dashboard-module-card.theme-amber .card-footer-action {
+  color: #FDE68A;
+}
+.dashboard-module-card.theme-amber:hover {
+  background: linear-gradient(145deg, rgba(69, 39, 4, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border-color: rgba(251, 191, 36, 0.7);
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.6), 0 0 25px rgba(245, 158, 11, 0.3);
+}
+.dashboard-module-card.theme-amber:hover .card-arrow-badge {
+  border-color: rgba(251, 191, 36, 0.5);
+  color: #FDE68A;
+}
+
+/* 4. Menú Gastronómico - Sky */
+.dashboard-module-card.theme-sky {
+  background: linear-gradient(145deg, rgba(8, 47, 73, 0.72) 0%, rgba(15, 23, 42, 0.88) 100%);
+  border: 1.5px solid rgba(14, 165, 233, 0.32);
+}
+.dashboard-module-card.theme-sky::before {
+  background: linear-gradient(90deg, #0EA5E9, #38BDF8);
+}
+.dashboard-module-card.theme-sky .card-icon-wrapper {
+  background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+.dashboard-module-card.theme-sky .card-footer-action {
+  color: #7DD3FC;
+}
+.dashboard-module-card.theme-sky:hover {
+  background: linear-gradient(145deg, rgba(12, 74, 110, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border-color: rgba(56, 189, 248, 0.7);
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.6), 0 0 25px rgba(14, 165, 233, 0.3);
+}
+.dashboard-module-card.theme-sky:hover .card-arrow-badge {
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #7DD3FC;
+}
+
+/* 5. Gestor de Reservas - Violet */
+.dashboard-module-card.theme-violet {
+  background: linear-gradient(145deg, rgba(46, 16, 101, 0.72) 0%, rgba(15, 23, 42, 0.88) 100%);
+  border: 1.5px solid rgba(139, 92, 246, 0.32);
+}
+.dashboard-module-card.theme-violet::before {
+  background: linear-gradient(90deg, #8B5CF6, #A78BFA);
+}
+.dashboard-module-card.theme-violet .card-icon-wrapper {
+  background: linear-gradient(135deg, #9333EA 0%, #6B21A8 100%);
+  box-shadow: 0 6px 16px rgba(147, 51, 234, 0.4);
+}
+.dashboard-module-card.theme-violet .card-footer-action {
+  color: #C4B5FD;
+}
+.dashboard-module-card.theme-violet:hover {
+  background: linear-gradient(145deg, rgba(67, 20, 140, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border-color: rgba(167, 139, 250, 0.7);
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.6), 0 0 25px rgba(139, 92, 246, 0.3);
+}
+.dashboard-module-card.theme-violet:hover .card-arrow-badge {
+  border-color: rgba(167, 139, 250, 0.5);
+  color: #C4B5FD;
+}
+
+/* 6. Reseñas de Clientes - Rose */
+.dashboard-module-card.theme-rose {
+  background: linear-gradient(145deg, rgba(76, 5, 25, 0.72) 0%, rgba(15, 23, 42, 0.88) 100%);
+  border: 1.5px solid rgba(244, 63, 94, 0.32);
+}
+.dashboard-module-card.theme-rose::before {
+  background: linear-gradient(90deg, #F43F5E, #FB7185);
+}
+.dashboard-module-card.theme-rose .card-icon-wrapper {
+  background: linear-gradient(135deg, #E11D48 0%, #9F1239 100%);
+  box-shadow: 0 6px 16px rgba(225, 29, 72, 0.4);
+}
+.dashboard-module-card.theme-rose .card-footer-action {
+  color: #FDA4AF;
+}
+.dashboard-module-card.theme-rose:hover {
+  background: linear-gradient(145deg, rgba(136, 19, 55, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border-color: rgba(251, 113, 133, 0.7);
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.6), 0 0 25px rgba(244, 63, 94, 0.3);
+}
+.dashboard-module-card.theme-rose:hover .card-arrow-badge {
+  border-color: rgba(251, 113, 133, 0.5);
+  color: #FDA4AF;
 }
 
 /* Pulso para marcadores pendientes de verificación */
