@@ -153,11 +153,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
               <img src="/images/comentarios.svg" alt="Mensajes" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {t("chat.title")}
             </Link>
           )}
-          {perfil?.rol === "admin" && (
-            <Link href="/admin" className={`nav-pill-link ${activePage === "admin" ? "active" : ""}`}>
-              <Icon name="shield" size={16} /> {lang === "en" ? "Management" : "Gestión"}
-            </Link>
-          )}
+
         </div>
 
         {/* Far Right Actions */}
@@ -247,6 +243,30 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                   }}
                   className="animate-fade-in-down"
                 >
+                  {/* Opción Admin: Gestión */}
+                  {perfil?.rol === "admin" && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setUserDropdownOpen(false)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: "10px 14px",
+                        borderRadius: "12px",
+                        color: "#1A1A2E",
+                        fontSize: "13px",
+                        fontWeight: "750",
+                        textDecoration: "none",
+                        transition: "background 0.15s"
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                    >
+                      <Icon name="shield" size={16} /> {lang === "en" ? "Management" : "Gestión"}
+                    </Link>
+                  )}
+
                   {/* Opción 1: Mi Perfil Comunidad */}
                   <Link
                     href={communityProfileUrl}
