@@ -829,81 +829,82 @@ export default function PerfilPublico() {
               boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.10), 0 2px 6px -1px rgba(15, 23, 42, 0.05)",
               borderRadius: "22px",
               overflow: "hidden",
-              marginBottom: "24px"
+              marginBottom: "24px",
+              position: "relative"
             }}>
-              {/* Banner superior de portada estilo sidebar */}
-              <div style={{ height: "90px", background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)", position: "relative" }} />
+              {/* Banner superior de portada compacto estilo sidebar (65px) */}
+              <div style={{ height: "65px", background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)", position: "relative" }}>
+                {/* Botón Seguir compacto posicionado sutilmente en la esquina superior derecha */}
+                <button
+                  onClick={handleFollow}
+                  disabled={followLoading}
+                  style={{
+                    position: "absolute",
+                    top: "12px",
+                    right: "14px",
+                    padding: "5px 14px",
+                    borderRadius: "16px",
+                    border: "none",
+                    background: isFollowing ? "rgba(255, 255, 255, 0.2)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
+                    color: "white",
+                    fontWeight: "800",
+                    fontSize: "12px",
+                    cursor: "pointer",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+                    backdropFilter: "blur(4px)",
+                    transition: "all 0.2s ease"
+                  }}
+                >
+                  {isFollowing ? (lang === "en" ? "✓ Following" : lang === "zh" ? "✓ 已关注" : "✓ Siguiendo") : (lang === "en" ? "+ Follow" : lang === "zh" ? "+ 关注" : "+ Seguir")}
+                </button>
+              </div>
 
-              <div style={{ padding: "0 24px 24px", marginTop: "-44px", textAlign: "center" }}>
-                {/* Avatar centrado idéntico al perfil lateral */}
+              <div style={{ padding: "0 20px 20px", marginTop: "-32px", textAlign: "center" }}>
+                {/* Avatar centrado idéntico al del perfil propio (64px) */}
                 <div style={{
-                  ...avatarStyle(targetPerfil.avatar_url, 80),
-                  margin: "0 auto 12px",
-                  border: "4px solid #E2E8F0",
-                  boxShadow: "0 6px 18px rgba(15, 23, 42, 0.15)",
+                  ...avatarStyle(targetPerfil.avatar_url, 64),
+                  margin: "0 auto 8px",
+                  border: "3px solid #E2E8F0",
+                  boxShadow: "0 4px 12px rgba(15, 23, 42, 0.15)",
                   background: targetPerfil.avatar_url ? `url(${targetPerfil.avatar_url}) center/cover` : "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)"
                 }}>
                   {!targetPerfil.avatar_url && (targetPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
                 </div>
 
-                {/* Nombre del Usuario centrado y en alta legibilidad */}
-                <h2 style={{ margin: "0 0 4px", fontSize: "22px", fontWeight: "900", color: "#0F172A", letterSpacing: "-0.3px", fontFamily: "var(--font-outfit)" }}>
+                {/* Nombre del Usuario centrado idéntico al sidebar */}
+                <h4 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: "800", color: "#1A1A2E", fontFamily: "var(--font-outfit)" }}>
                   {targetPerfil.nombre_completo || "Usuario"}
-                </h2>
+                </h4>
 
                 {/* Subtítulo de Rol centrado */}
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "12.5px", fontWeight: "700", color: "#475569" }}>
-                    {targetPerfil.rol === "dueno"
-                      ? <><Icon name="building" size={13} color="#17AA4A" /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
-                      : (targetPerfil.es_premium || targetPerfil.suscripcion_activa || targetPerfil.rol === "turista_deacachimba")
-                      ? <><Icon name="star" size={13} color="#E6C200" /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
-                      : <><Icon name="luggage" size={13} color="#17AA4A" /> {lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
-                  </span>
-                </div>
+                <p style={{ margin: "0 0 10px", fontSize: "12px", color: "#64748B", display: "flex", alignItems: "center", justifyContent: "center", gap: "5px" }}>
+                  {targetPerfil.rol === "dueno"
+                    ? <><Icon name="building" size={11} color="#17AA4A" /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
+                    : (targetPerfil.es_premium || targetPerfil.suscripcion_activa || targetPerfil.rol === "turista_deacachimba")
+                    ? <><Icon name="star" size={11} color="#E6C200" /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
+                    : <><Icon name="luggage" size={11} color="#17AA4A" /> {lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
+                </p>
 
                 {/* Biografía si existe */}
                 {targetPerfil.bio && (
-                  <p style={{ margin: "0 auto 16px", maxWidth: "520px", fontSize: "13.5px", color: "#475569", lineHeight: "1.5" }}>
+                  <p style={{ margin: "0 auto 10px", maxWidth: "460px", fontSize: "12.5px", color: "#475569", lineHeight: "1.4" }}>
                     {targetPerfil.bio}
                   </p>
                 )}
 
-                {/* Botón Seguir / Siguiendo centrado */}
-                <div style={{ marginBottom: "20px" }}>
-                  <button
-                    onClick={handleFollow}
-                    disabled={followLoading}
-                    style={{
-                      padding: "9px 28px",
-                      borderRadius: "20px",
-                      border: "none",
-                      background: isFollowing ? "rgba(20,109,158,0.12)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
-                      color: isFollowing ? "#1E293B" : "white",
-                      fontWeight: "800",
-                      fontSize: "13.5px",
-                      cursor: "pointer",
-                      boxShadow: isFollowing ? "none" : "0 4px 14px rgba(23, 170, 74, 0.3)",
-                      transition: "all 0.2s ease"
-                    }}
-                  >
-                    {isFollowing ? (lang === "en" ? "✓ Following" : lang === "zh" ? "✓ 已关注" : "✓ Siguiendo") : (lang === "en" ? "+ Follow" : lang === "zh" ? "+ 关注" : "+ Seguir")}
-                  </button>
-                </div>
-
-                {/* Contador de Estadísticas centrado idéntico al perfil propio */}
-                <div style={{ display: "flex", justifyContent: "center", gap: "36px", paddingTop: "14px", borderTop: "1px solid rgba(148, 163, 184, 0.5)" }}>
+                {/* Contador de Estadísticas idéntico al perfil lateral */}
+                <div style={{ display: "flex", justifyContent: "center", gap: "24px", paddingTop: "10px" }}>
                   <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "17px", fontWeight: "800", color: "#0F172A" }}>{posts.length}</div>
-                    <div style={{ fontSize: "11.5px", color: "#64748B", fontWeight: "600" }}>{lang === "en" ? "Posts" : lang === "zh" ? "动态" : "Posts"}</div>
+                    <div style={{ fontSize: "16px", fontWeight: "800", color: "#1A1A2E" }}>{posts.length}</div>
+                    <div style={{ fontSize: "11px", color: "#64748B" }}>{lang === "en" ? "Posts" : lang === "zh" ? "动态" : "Posts"}</div>
                   </div>
-                  <button onClick={() => { setFollowersModalTab("followers"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-                    <div style={{ fontSize: "17px", fontWeight: "800", color: "#0F172A" }}>{targetPerfil.seguidores_count || 0}</div>
-                    <div style={{ fontSize: "11.5px", color: "#64748B", fontWeight: "600" }}>{lang === "en" ? "Followers" : lang === "zh" ? "粉丝" : "Seguidores"}</div>
+                  <button onClick={() => { setFollowersModalTab("followers"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "0 4px" }}>
+                    <div style={{ fontSize: "16px", fontWeight: "800", color: "#1A1A2E" }}>{targetPerfil.seguidores_count || 0}</div>
+                    <div style={{ fontSize: "11px", color: "#64748B" }}>{lang === "en" ? "Followers" : lang === "zh" ? "粉丝" : "Seguidores"}</div>
                   </button>
-                  <button onClick={() => { setFollowersModalTab("following"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-                    <div style={{ fontSize: "17px", fontWeight: "800", color: "#0F172A" }}>{targetPerfil.siguiendo_count || 0}</div>
-                    <div style={{ fontSize: "11.5px", color: "#64748B", fontWeight: "600" }}>{lang === "en" ? "Following" : lang === "zh" ? "已关注" : "Siguiendo"}</div>
+                  <button onClick={() => { setFollowersModalTab("following"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "0 4px" }}>
+                    <div style={{ fontSize: "16px", fontWeight: "800", color: "#1A1A2E" }}>{targetPerfil.siguiendo_count || 0}</div>
+                    <div style={{ fontSize: "11px", color: "#64748B" }}>{lang === "en" ? "Following" : lang === "zh" ? "已关注" : "Siguiendo"}</div>
                   </button>
                 </div>
               </div>
