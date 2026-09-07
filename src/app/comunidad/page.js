@@ -39,20 +39,35 @@ function LoginRequiredModal({ onClose, lang }) {
   return (
     <div style={modalStyles.overlay} onClick={onClose}>
       <div style={modalStyles.modal} onClick={(e) => e.stopPropagation()} className="animate-fade-in-up">
-        <button onClick={onClose} style={modalStyles.closeBtn}>✕</button>
-        <div style={{ textAlign: "center", padding: "20px 0" }}>
-          <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}><Icon name="lock" size={48} /></span>
-          <h3 style={{ fontSize: "22px", fontWeight: "800", margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>
+        <button onClick={onClose} style={modalStyles.closeBtn} type="button">
+          <Icon name="x" size={15} color="#94A3B8" />
+        </button>
+        <div style={{ textAlign: "center", padding: "16px 0" }}>
+          <div style={{
+            width: "64px",
+            height: "64px",
+            borderRadius: "20px",
+            background: "linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%)",
+            border: "1px solid rgba(255, 215, 0, 0.4)",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "16px",
+            boxShadow: "0 4px 20px rgba(255, 215, 0, 0.25)"
+          }}>
+            <Icon name="lock" size={30} color="#FFD700" />
+          </div>
+          <h3 style={{ fontSize: "22px", fontWeight: "800", margin: "0 0 8px", color: "#FFD700", fontFamily: "var(--font-outfit)" }}>
             {lang === "en" ? "Sign in to interact" : lang === "zh" ? "请先登录" : "Inicia sesión para interactuar"}
           </h3>
-          <p style={{ fontSize: "14px", color: "var(--atlan-text-secondary)", margin: "0 0 28px", lineHeight: "1.6" }}>
+          <p style={{ fontSize: "14px", color: "#94A3B8", margin: "0 0 24px", lineHeight: "1.6" }}>
             {lang === "en" ? "Sign up or log in to like, comment, and follow other users." : lang === "zh" ? "注册或登录即可点赞、评论和关注其他用户。" : "Regístrate o inicia sesión para dar likes, comentar y seguir a otros usuarios."}
           </p>
           <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
-            <Link href="/login" className="btn-primary" style={{ padding: "12px 28px", fontSize: "14px" }}>
+            <Link href="/login" style={{ padding: "12px 28px", fontSize: "14px", fontWeight: "800", borderRadius: "12px", background: "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)", color: "#0A192F", textDecoration: "none", boxShadow: "0 4px 16px rgba(255, 215, 0, 0.3)" }}>
               {lang === "en" ? "Sign In" : lang === "zh" ? "登录" : "Iniciar Sesión"}
             </Link>
-            <Link href="/registro" className="btn-secondary" style={{ padding: "12px 28px", fontSize: "14px" }}>
+            <Link href="/registro" style={{ padding: "12px 28px", fontSize: "14px", fontWeight: "800", borderRadius: "12px", background: "rgba(255, 255, 255, 0.08)", border: "1px solid rgba(255, 255, 255, 0.2)", color: "#FFFFFF", textDecoration: "none" }}>
               {lang === "en" ? "Create Account" : lang === "zh" ? "创建账户" : "Crear Cuenta"}
             </Link>
           </div>
@@ -178,28 +193,52 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
   return (
     <div style={modalStyles.overlay} onClick={onClose}>
       <div style={{ ...modalStyles.modal, maxWidth: "560px" }} onClick={(e) => e.stopPropagation()} className="animate-fade-in-up">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-          <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
-            {lang === "en" ? "Create Post" : lang === "zh" ? "发布动态" : "Crear Publicación"}
-          </h3>
-          <button onClick={onClose} style={modalStyles.closeBtn}>✕</button>
+        {/* Header del modal */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", paddingBottom: "14px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{
+              width: "42px",
+              height: "42px",
+              borderRadius: "12px",
+              background: "linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%)",
+              border: "1px solid rgba(255, 215, 0, 0.4)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 4px 14px rgba(255, 215, 0, 0.2)",
+              color: "#FFD700"
+            }}>
+              <Icon name="edit" size={20} color="#FFD700" />
+            </div>
+            <div>
+              <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "800", color: "#FFD700", letterSpacing: "-0.3px", fontFamily: "var(--font-outfit)" }}>
+                {lang === "en" ? "Create Post" : lang === "zh" ? "发布动态" : "Crear Publicación"}
+              </h3>
+              <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#94A3B8" }}>
+                {lang === "en" ? "Share experiences, photos or videos with the community" : lang === "zh" ? "与社区分享体验、照片或视频" : "Comparte experiencias, fotos o videos con la comunidad"}
+              </p>
+            </div>
+          </div>
+          <button onClick={onClose} style={modalStyles.closeBtn} type="button">
+            <Icon name="x" size={15} color="#94A3B8" />
+          </button>
         </div>
 
         {/* Author info */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
-          <div style={avatarStyle(perfil?.avatar_url, 40)}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px", background: "rgba(255, 255, 255, 0.04)", padding: "10px 14px", borderRadius: "14px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
+          <div style={{ ...avatarStyle(perfil?.avatar_url, 42), border: "2px solid rgba(255, 215, 0, 0.4)", boxShadow: "0 0 12px rgba(255, 215, 0, 0.15)" }}>
             {!perfil?.avatar_url && (perfil?.nombre_completo?.[0]?.toUpperCase() || "U")}
           </div>
           <div>
-            <span style={{ fontWeight: "700", fontSize: "14px", color: "var(--atlan-text-primary)" }}>{perfil?.nombre_completo || "Usuario"}</span>
-            <span style={{ display: "block", fontSize: "11px", color: "var(--atlan-text-muted)" }}>
+            <span style={{ fontWeight: "700", fontSize: "14.5px", color: "#FFFFFF", display: "block" }}>{perfil?.nombre_completo || "Usuario"}</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11px", fontWeight: "700", color: "#38BDF8", background: "rgba(56, 189, 248, 0.12)", padding: "2px 8px", borderRadius: "6px", border: "1px solid rgba(56, 189, 248, 0.25)", marginTop: "2px" }}>
               {perfil?.rol === "dueno"
-                ? <><Icon name="building" size={12} /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
+                ? <><Icon name="building" size={11} color="#38BDF8" /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
                 : perfil?.rol === "admin"
-                ? <><Icon name="zap" size={12} /> {lang === "en" ? "Administrator" : lang === "zh" ? "管理员" : "Administrador"}</>
+                ? <><Icon name="zap" size={11} color="#FFD700" /> {lang === "en" ? "Administrator" : lang === "zh" ? "管理员" : "Administrador"}</>
                 : (perfil?.es_premium || perfil?.suscripcion_activa || perfil?.rol === "turista_deacachimba")
-                ? <><Icon name="star" size={12} /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
-                : <><Icon name="luggage" size={12} /> {lang === "en" ? "Tourist" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
+                ? <><Icon name="star" size={11} color="#FFD700" /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
+                : <><Icon name="luggage" size={11} color="#38BDF8" /> {lang === "en" ? "Tourist" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
             </span>
           </div>
         </div>
@@ -213,21 +252,23 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
           rows={4}
           autoFocus
         />
-        <div style={{ textAlign: "right", fontSize: "11px", color: contenido.length > 1800 ? "#ef4444" : "var(--atlan-text-muted)", marginBottom: "12px" }}>
+        <div style={{ textAlign: "right", fontSize: "11.5px", fontWeight: "600", color: contenido.length > 1800 ? "#EF4444" : "#64748B", marginTop: "6px", marginBottom: "14px" }}>
           {contenido.length}/2000
         </div>
 
         {/* Image preview */}
         {imagePreview && (
-          <div style={{ position: "relative", marginBottom: "16px", borderRadius: "16px", overflow: "hidden" }}>
+          <div style={{ position: "relative", marginBottom: "16px", borderRadius: "16px", overflow: "hidden", border: "1px solid rgba(255, 215, 0, 0.3)", boxShadow: "0 4px 16px rgba(0,0,0,0.4)" }}>
             <img src={imagePreview} alt="Preview" style={{ width: "100%", maxHeight: "300px", objectFit: "cover", borderRadius: "16px" }} />
-            <button onClick={clearImage} style={postFormStyles.removeImgBtn}>✕</button>
+            <button onClick={clearImage} style={postFormStyles.removeImgBtn} type="button">
+              <Icon name="x" size={14} color="#FFFFFF" />
+            </button>
           </div>
         )}
 
         {/* Video preview */}
         {videoPreview && (
-          <div style={{ position: "relative", marginBottom: "16px", borderRadius: "16px", overflow: "hidden", background: "#000" }}>
+          <div style={{ position: "relative", marginBottom: "16px", borderRadius: "16px", overflow: "hidden", background: "#000", border: "1px solid rgba(56, 189, 248, 0.3)", boxShadow: "0 4px 16px rgba(0,0,0,0.4)" }}>
             <video
               src={videoPreview}
               controls
@@ -235,13 +276,17 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
               preload="metadata"
               style={{ width: "100%", maxHeight: "300px", borderRadius: "16px", display: "block" }}
             />
-            <button onClick={clearVideo} style={postFormStyles.removeImgBtn}>✕</button>
+            <button onClick={clearVideo} style={postFormStyles.removeImgBtn} type="button">
+              <Icon name="x" size={14} color="#FFFFFF" />
+            </button>
             <div style={{
               position: "absolute", bottom: "12px", left: "12px",
-              background: "rgba(0, 0, 0, 0.40)", padding: "4px 10px", borderRadius: "8px",
-              fontSize: "11px", fontWeight: "800", color: "#17AA4A"
+              background: "rgba(10, 15, 28, 0.75)", backdropFilter: "blur(8px)", padding: "4px 10px", borderRadius: "8px",
+              fontSize: "11px", fontWeight: "800", color: "#34D399", border: "1px solid rgba(52, 211, 153, 0.3)",
+              display: "flex", alignItems: "center", gap: "5px"
             }}>
-              🎬 {(videoFile.size / (1024 * 1024)).toFixed(1)}MB
+              <Icon name="video" size={12} color="#34D399" />
+              <span>{(videoFile.size / (1024 * 1024)).toFixed(1)}MB</span>
             </div>
           </div>
         )}
@@ -249,43 +294,82 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
         {/* Post Type Selector (for Owner or Admin) */}
         {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
           <div style={postFormStyles.promoSection}>
-            <span style={{ fontSize: "12px", fontWeight: "800", color: "var(--atlan-gold)", textTransform: "uppercase", display: "block", marginBottom: "8px", letterSpacing: "0.5px" }}>
-              <Icon name="megaphone" size={14} /> {lang === "en" ? "Publication type" : lang === "zh" ? "发布类型" : "Tipo de publicación"}
+            <span style={{ fontSize: "12px", fontWeight: "800", color: "#FFD700", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px", letterSpacing: "0.5px" }}>
+              <Icon name="megaphone" size={14} color="#FFD700" /> {lang === "en" ? "Publication type" : lang === "zh" ? "发布类型" : "Tipo de publicación"}
             </span>
-            <div style={{ display: "flex", gap: "16px", marginBottom: "8px", flexWrap: "wrap" }}>
-              <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "13px", color: "var(--atlan-text-secondary)" }}>
+            <div style={{ display: "flex", gap: "12px", marginBottom: "8px", flexWrap: "wrap" }}>
+              <label style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                cursor: "pointer",
+                fontSize: "13px",
+                color: (!esPromocion && !esPublicidad) ? "#FFFFFF" : "#94A3B8",
+                fontWeight: (!esPromocion && !esPublicidad) ? "700" : "500",
+                background: (!esPromocion && !esPublicidad) ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.03)",
+                padding: "6px 12px",
+                borderRadius: "10px",
+                border: (!esPromocion && !esPublicidad) ? "1px solid rgba(255, 255, 255, 0.3)" : "1px solid rgba(255, 255, 255, 0.08)",
+                transition: "all 0.2s ease"
+              }}>
                 <input 
                   type="radio" 
                   name="postType" 
                   checked={!esPromocion && !esPublicidad} 
                   onChange={() => { setEsPromocion(false); setEsPublicidad(false); }} 
-                  style={{ accentColor: "var(--atlan-gold)" }} 
+                  style={{ accentColor: "#FFD700" }} 
                 />
                 {lang === "en" ? "Standard" : lang === "zh" ? "普通" : "Normal"}
               </label>
 
               {perfil?.rol === "dueno" && (
-                <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "13px", color: "var(--atlan-gold)", fontWeight: "600" }}>
+                <label style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  cursor: "pointer",
+                  fontSize: "13px",
+                  color: esPromocion ? "#FFD700" : "#94A3B8",
+                  fontWeight: esPromocion ? "700" : "500",
+                  background: esPromocion ? "rgba(255, 215, 0, 0.15)" : "rgba(255, 255, 255, 0.03)",
+                  padding: "6px 12px",
+                  borderRadius: "10px",
+                  border: esPromocion ? "1px solid rgba(255, 215, 0, 0.5)" : "1px solid rgba(255, 255, 255, 0.08)",
+                  transition: "all 0.2s ease"
+                }}>
                   <input 
                     type="radio" 
                     name="postType" 
                     checked={esPromocion} 
                     onChange={() => { setEsPromocion(true); setEsPublicidad(false); }} 
-                    style={{ accentColor: "var(--atlan-gold)" }} 
+                    style={{ accentColor: "#FFD700" }} 
                   />
-                  <Icon name="megaphone" size={12} /> {lang === "en" ? "Promotion" : lang === "zh" ? "优惠推广" : "Promoción"}
+                  <Icon name="megaphone" size={13} color={esPromocion ? "#FFD700" : "#94A3B8"} /> {lang === "en" ? "Promotion" : lang === "zh" ? "优惠推广" : "Promoción"}
                 </label>
               )}
 
-              <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "13px", color: "#E6C200", fontWeight: "700" }}>
+              <label style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                cursor: "pointer",
+                fontSize: "13px",
+                color: esPublicidad ? "#F59E0B" : "#94A3B8",
+                fontWeight: esPublicidad ? "700" : "500",
+                background: esPublicidad ? "rgba(245, 158, 11, 0.15)" : "rgba(255, 255, 255, 0.03)",
+                padding: "6px 12px",
+                borderRadius: "10px",
+                border: esPublicidad ? "1px solid rgba(245, 158, 11, 0.5)" : "1px solid rgba(255, 255, 255, 0.08)",
+                transition: "all 0.2s ease"
+              }}>
                 <input 
                   type="radio" 
                   name="postType" 
                   checked={esPublicidad} 
                   onChange={() => { setEsPromocion(false); setEsPublicidad(true); }} 
-                  style={{ accentColor: "#E6C200" }} 
+                  style={{ accentColor: "#F59E0B" }} 
                 />
-                <Icon name="sparkles" size={12} /> {lang === "en" ? "Sponsored Ad" : lang === "zh" ? "赞助广告" : "Publicidad"}
+                <Icon name="sparkles" size={13} color={esPublicidad ? "#F59E0B" : "#94A3B8"} /> {lang === "en" ? "Sponsored Ad" : lang === "zh" ? "赞助广告" : "Publicidad"}
               </label>
             </div>
 
@@ -299,31 +383,49 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
         )}
 
         {/* Actions */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "16px" }}>
-          <div style={{ display: "flex", gap: "8px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
+          <div style={{ display: "flex", gap: "10px" }}>
             <input type="file" ref={fileInputRef} accept="image/*" onChange={handleImageChange} style={{ display: "none" }} />
             <input type="file" ref={videoInputRef} accept="video/mp4,video/webm,video/quicktime" onChange={handleVideoChange} style={{ display: "none" }} />
             <button
+              type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={!!videoFile}
-              style={{ ...postFormStyles.attachBtn, opacity: videoFile ? 0.4 : 1 }}
+              style={{
+                ...postFormStyles.attachBtn,
+                opacity: videoFile ? 0.4 : 1,
+                background: imageFile ? "rgba(16, 185, 129, 0.16)" : "linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(2, 132, 199, 0.06) 100%)",
+                color: imageFile ? "#34D399" : "#7DD3FC",
+                borderColor: imageFile ? "rgba(16, 185, 129, 0.4)" : "rgba(56, 189, 248, 0.35)",
+              }}
             >
-              📷 {lang === "en" ? "Photo" : lang === "zh" ? "照片" : "Foto"}
+              <Icon name="image" size={16} color={imageFile ? "#34D399" : "#38BDF8"} />
+              <span>{lang === "en" ? "Photo" : lang === "zh" ? "照片" : "Foto"}</span>
             </button>
             <button
+              type="button"
               onClick={() => videoInputRef.current?.click()}
               disabled={!!imageFile}
-              style={{ ...postFormStyles.attachBtn, opacity: imageFile ? 0.4 : 1, background: videoFile ? "rgba(23, 170, 74,0.15)" : "rgba(20, 109, 158, 0.04)", color: videoFile ? "#17AA4A" : "var(--atlan-text-secondary)", borderColor: videoFile ? "rgba(23, 170, 74,0.3)" : "rgba(20, 109, 158, 0.10)" }}
+              style={{
+                ...postFormStyles.attachBtn,
+                opacity: imageFile ? 0.4 : 1,
+                background: videoFile ? "rgba(16, 185, 129, 0.16)" : "linear-gradient(135deg, rgba(168, 85, 247, 0.12) 0%, rgba(147, 51, 234, 0.06) 100%)",
+                color: videoFile ? "#34D399" : "#C084FC",
+                borderColor: videoFile ? "rgba(16, 185, 129, 0.4)" : "rgba(168, 85, 247, 0.35)",
+              }}
             >
-              🎬 {lang === "en" ? "Video" : lang === "zh" ? "视频" : "Video"}
+              <Icon name="video" size={16} color={videoFile ? "#34D399" : "#C084FC"} />
+              <span>{lang === "en" ? "Video" : lang === "zh" ? "视频" : "Video"}</span>
             </button>
           </div>
           <button
+            type="button"
             onClick={handleSubmit}
             disabled={loading || (!contenido.trim() && !imageFile && !videoFile)}
             style={{
               ...postFormStyles.publishBtn,
               opacity: loading || (!contenido.trim() && !imageFile && !videoFile) ? 0.5 : 1,
+              cursor: loading || (!contenido.trim() && !imageFile && !videoFile) ? "not-allowed" : "pointer"
             }}
           >
             {loading ? (uploadProgress || (lang === "en" ? "Publishing..." : lang === "zh" ? "正在发布..." : "Publicando...")) : (lang === "en" ? "Publish" : lang === "zh" ? "立即发布" : "Publicar")}
@@ -1628,57 +1730,132 @@ const sidebarStyles = {
 
 const modalStyles = {
   overlay: {
-    position: "fixed", inset: 0, zIndex: 200,
-    background: "rgba(5, 10, 20, 0.55)", backdropFilter: "blur(12px)",
-    display: "flex", alignItems: "center", justifyContent: "center", padding: "24px",
+    position: "fixed",
+    inset: 0,
+    zIndex: 9999,
+    backgroundColor: "rgba(10, 15, 28, 0.82)",
+    backdropFilter: "blur(16px)",
+    WebkitBackdropFilter: "blur(16px)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "16px",
+    animation: "fadeIn 0.25s ease-out"
   },
   modal: {
-    width: "100%", maxWidth: "480px", maxHeight: "90vh", overflowY: "auto",
-    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.95)",
-    borderRadius: "28px", padding: "32px", position: "relative",
-    boxShadow: "0 24px 56px -8px rgba(15, 23, 42, 0.16)",
+    width: "100%",
+    maxWidth: "540px",
+    maxHeight: "90vh",
+    overflowY: "auto",
+    backgroundColor: "#0F172A",
+    backgroundImage: "linear-gradient(145deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 15, 28, 0.99) 100%)",
+    border: "1px solid rgba(255, 215, 0, 0.35)",
+    borderRadius: "24px",
+    padding: "24px 28px",
+    position: "relative",
+    boxShadow: "0 25px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(255, 215, 0, 0.15)",
+    color: "#F8FAFC",
+    fontFamily: "var(--font-outfit), sans-serif",
+    animation: "scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
   },
   closeBtn: {
-    position: "absolute", top: "16px", right: "16px", background: "rgba(20,109,158,0.06)",
-    border: "none", color: "var(--atlan-text-muted)", width: "32px", height: "32px",
-    borderRadius: "50%", fontSize: "14px", cursor: "pointer", display: "flex",
-    alignItems: "center", justifyContent: "center",
-  },
+    width: "32px",
+    height: "32px",
+    borderRadius: "50%",
+    background: "rgba(255, 255, 255, 0.08)",
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    color: "#94A3B8",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    transition: "all 0.2s ease"
+  }
 };
 
 const postFormStyles = {
   textarea: {
-    width: "100%", padding: "14px 18px", background: "#F8FAFC",
-    border: "1px solid rgba(226, 232, 240, 0.9)", borderRadius: "18px",
-    color: "var(--atlan-text-primary)", fontSize: "15px", lineHeight: "1.5",
-    outline: "none", resize: "vertical", minHeight: "100px",
+    width: "100%",
+    padding: "16px",
+    background: "rgba(15, 23, 42, 0.75)",
+    border: "1.5px solid rgba(255, 255, 255, 0.14)",
+    borderRadius: "16px",
+    color: "#FFFFFF",
+    fontSize: "15px",
+    lineHeight: "1.55",
+    outline: "none",
+    resize: "vertical",
+    minHeight: "120px",
     fontFamily: "var(--font-outfit), system-ui, sans-serif",
+    boxShadow: "inset 0 2px 6px rgba(0, 0, 0, 0.3)",
+    transition: "border-color 0.2s ease, box-shadow 0.2s ease"
   },
   removeImgBtn: {
-    position: "absolute", top: "8px", right: "8px", background: "rgba(0,0,0,0.6)",
-    border: "none", color: "white", width: "28px", height: "28px", borderRadius: "50%",
-    fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    background: "rgba(10, 15, 28, 0.8)",
+    backdropFilter: "blur(8px)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    color: "#F8FAFC",
+    width: "30px",
+    height: "30px",
+    borderRadius: "50%",
+    fontSize: "13px",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    transition: "all 0.2s ease"
   },
   promoSection: {
-    padding: "12px 16px", background: "rgba(245,158,11,0.06)",
-    border: "1px solid rgba(245,158,11,0.15)", borderRadius: "12px",
-    display: "flex", flexDirection: "column", gap: "10px",
+    padding: "14px 16px",
+    background: "linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 165, 0, 0.04) 100%)",
+    border: "1.5px solid rgba(255, 215, 0, 0.35)",
+    borderRadius: "16px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    boxShadow: "0 4px 16px rgba(255, 215, 0, 0.08)"
   },
   select: {
-    width: "100%", padding: "8px 12px", background: "#F8FAFC",
-    border: "1px solid rgba(226, 232, 240, 0.9)", borderRadius: "8px",
-    color: "var(--atlan-text-primary)", fontSize: "13px", outline: "none",
+    width: "100%",
+    padding: "10px 14px",
+    background: "#0A192F",
+    border: "1px solid rgba(255, 215, 0, 0.35)",
+    borderRadius: "12px",
+    color: "#FFFFFF",
+    fontSize: "13px",
+    fontWeight: "600",
+    outline: "none",
+    cursor: "pointer"
   },
   attachBtn: {
-    padding: "8px 14px", background: "rgba(20,109,158,0.04)",
-    border: "1px solid rgba(20,109,158,0.10)", borderRadius: "10px",
-    color: "var(--atlan-text-secondary)", fontSize: "13px", fontWeight: "700",
-    cursor: "pointer", transition: "all 0.2s ease",
+    padding: "10px 16px",
+    background: "linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(2, 132, 199, 0.06) 100%)",
+    border: "1.5px solid rgba(56, 189, 248, 0.35)",
+    borderRadius: "14px",
+    color: "#7DD3FC",
+    fontSize: "13.5px",
+    fontWeight: "700",
+    cursor: "pointer",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "8px",
+    boxShadow: "0 2px 10px rgba(56, 189, 248, 0.1)",
+    transition: "all 0.2s ease"
   },
   publishBtn: {
-    padding: "10px 28px", background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
-    border: "none", borderRadius: "12px", color: "white", fontSize: "14px",
-    fontWeight: "800", cursor: "pointer", boxShadow: "0 4px 14px rgba(20,109,158,0.25)",
-    transition: "all 0.2s ease",
-  },
+    padding: "11px 28px",
+    background: "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
+    border: "none",
+    borderRadius: "14px",
+    color: "#0A192F",
+    fontSize: "14.5px",
+    fontWeight: "900",
+    fontFamily: "var(--font-outfit), sans-serif",
+    cursor: "pointer",
+    boxShadow: "0 4px 20px rgba(255, 215, 0, 0.35)",
+    transition: "all 0.2s ease"
+  }
 };
