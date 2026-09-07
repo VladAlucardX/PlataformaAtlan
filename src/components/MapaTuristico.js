@@ -2064,30 +2064,39 @@ export default function MapaTuristico() {
   const handleUsarUbicacionActual = () => {
     setShowAddPointOptionModal(false);
 
+    // 1. Respuesta instantánea con la mejor ubicación disponible en memoria o centro actual
+    let initialCoords = currentPosRef.current;
+    if (!initialCoords && mapRef.current) {
+      const center = mapRef.current.getCenter();
+      initialCoords = [center.lng, center.lat];
+    }
+    if (!initialCoords) {
+      initialCoords = [-86.2504, 12.1364];
+    }
+
+    setTempPointCoords(initialCoords);
+    if (mapRef.current) {
+      mapRef.current.flyTo({ center: initialCoords, zoom: 16.5, pitch: 30, essential: true });
+    }
+    setShowAddModal(true);
+
+    // 2. Refinamiento en segundo plano vía GPS (hardware lock) sin bloquear la UI
     if (typeof window !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const lng = pos.coords.longitude;
           const lat = pos.coords.latitude;
           currentPosRef.current = [lng, lat];
+          setTempPointCoords([lng, lat]);
           if (mapRef.current) {
             mapRef.current.flyTo({ center: [lng, lat], zoom: 16.5, pitch: 30, essential: true });
           }
-          setTempPointCoords([lng, lat]);
-          setShowAddModal(true);
         },
         (err) => {
-          console.warn('[Atlan] Error obteniendo GPS actual para nuevo punto:', err);
-          const fallbackPos = currentPosRef.current || [-86.2504, 12.1364];
-          setTempPointCoords(fallbackPos);
-          setShowAddModal(true);
+          console.warn('[Atlan] Error obteniendo GPS actual en background:', err);
         },
         { enableHighAccuracy: true, timeout: 6000 }
       );
-    } else {
-      const fallbackPos = currentPosRef.current || [-86.2504, 12.1364];
-      setTempPointCoords(fallbackPos);
-      setShowAddModal(true);
     }
   };
 
@@ -3525,7 +3534,7 @@ export default function MapaTuristico() {
                 </div>
                 <div>
                   <div style={{ fontSize: '14.5px', fontWeight: '800', color: '#FFD700', marginBottom: '3px' }}>
-                    📍 {lang === 'en' ? 'Use My Current Location' : lang === 'zh' ? '使用我当前的位置' : 'Usar mi Ubicación Actual'}
+                    {lang === 'en' ? 'Use My Current Location' : lang === 'zh' ? '使用我当前的位置' : 'Usar mi Ubicación Actual'}
                   </div>
                   <div style={{ fontSize: '12px', color: '#CBD5E1', lineHeight: '1.3' }}>
                     {lang === 'en' ? 'Automatically uses your current GPS position.' : lang === 'zh' ? '自动定位您当前的 GPS 坐标。' : 'Toma automáticamente las coordenadas GPS donde te encuentras ahora mismo.'}
@@ -3567,7 +3576,7 @@ export default function MapaTuristico() {
                 </div>
                 <div>
                   <div style={{ fontSize: '14.5px', fontWeight: '800', color: '#7DD3FC', marginBottom: '3px' }}>
-                    🗺️ {lang === 'en' ? 'Select Location on Map' : lang === 'zh' ? '在地图上选择位置' : 'Seleccionar en el Mapa'}
+                    {lang === 'en' ? 'Select Location on Map' : lang === 'zh' ? '在地图上选择位置' : 'Seleccionar en el Mapa'}
                   </div>
                   <div style={{ fontSize: '12px', color: '#CBD5E1', lineHeight: '1.3' }}>
                     {lang === 'en' ? 'Tap anywhere on the map to place the marker.' : lang === 'zh' ? '在地图上点击以选择精确位置。' : 'Toca cualquier lugar del mapa para elegir la posición exacta del destino.'}
