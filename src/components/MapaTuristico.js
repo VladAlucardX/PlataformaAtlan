@@ -14,6 +14,8 @@ import LanguageToggle from './ui/LanguageToggle';
 import Icon from './ui/Icon';
 import BusinessProfileModal from './ui/BusinessProfileModal';
 import { getPointImage, prefetchPointImages, isRealCustomUrl } from '../lib/imageUtils';
+import { uploadMedia } from '../lib/storage';
+import { validarImagenSegura } from '../lib/imageModeration';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -103,6 +105,34 @@ export default function MapaTuristico() {
   const [newPointDesc, setNewPointDesc] = useState('');
   const [newPointCategoria, setNewPointCategoria] = useState('otro');
   const [isSubmittingPoint, setIsSubmittingPoint] = useState(false);
+  const [newPointFotoFile, setNewPointFotoFile] = useState(null);
+  const [newPointFotoPreview, setNewPointFotoPreview] = useState(null);
+  const [isAnalyzingFoto, setIsAnalyzingFoto] = useState(false);
+  const [fotoModerationError, setFotoModerationError] = useState('');
+
+  const handleSeleccionarFotoPunto = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFotoModerationError('');
+    setIsAnalyzingFoto(true);
+
+    try {
+      const validacion = await validarImagenSegura(file);
+      if (!validacion.esValida) {
+        setFotoModerationError(validacion.razon || (lang === 'en' ? 'Inappropriate photo detected.' : 'Foto no apropiada.'));
+        setNewPointFotoFile(null);
+        setNewPointFotoPreview(null);
+      } else {
+        setNewPointFotoFile(file);
+        setNewPointFotoPreview(URL.createObjectURL(file));
+      }
+    } catch (err) {
+      console.error('[Atlan Moderacion] Error al validar imagen:', err);
+    } finally {
+      setIsAnalyzingFoto(false);
+    }
+  };
 
   // --- ESTADOS PANEL DETALLES LATERAL ---
   const [selectedPoint, setSelectedPoint] = useState(null);
@@ -2037,11 +2067,26 @@ export default function MapaTuristico() {
     e.preventDefault();
     if (!newPointNombre || !newPointCategoria || !tempPointCoords) return;
 
+    if (fotoModerationError) {
+      alert(fotoModerationError);
+      return;
+    }
+
     setIsSubmittingPoint(true);
 
     try {
       const [lng, lat] = tempPointCoords;
       const deptDetectado = await obtenerDepartamentoPorCoordenadas(lng, lat);
+
+      let photoUrl = null;
+      if (newPointFotoFile) {
+        try {
+          photoUrl = await uploadMedia(newPointFotoFile, 'puntos');
+        } catch (uploadErr) {
+          console.warn('[Atlan] Error subiendo foto a Supabase Storage:', uploadErr);
+        }
+      }
+
       const { error } = await supabase.from('puntos').insert([{
         nombre: newPointNombre,
         descripcion: newPointDesc,
@@ -2049,7 +2094,9 @@ export default function MapaTuristico() {
         categoria: newPointCategoria,
         ubicacion: `POINT(${lng} ${lat})`,
         departamento: deptDetectado,
-        estado: 'sin_reclamar' // por defecto los del usuario están sin reclamar
+        estado: 'sin_reclamar', // por defecto los del usuario están sin reclamar
+        imagen_url: photoUrl || null,
+        fotos_comunidad: photoUrl ? [photoUrl] : []
       }]);
 
       if (error) {
@@ -2061,6 +2108,9 @@ export default function MapaTuristico() {
         setNewPointCreador('');
         setNewPointDesc('');
         setNewPointCategoria('otro');
+        setNewPointFotoFile(null);
+        setNewPointFotoPreview(null);
+        setFotoModerationError('');
         setTempPointCoords(null);
 
         speakInstruction(t('addPoint.success'), true);
@@ -3563,10 +3613,142 @@ export default function MapaTuristico() {
                 />
               </div>
 
+              {/* Sección de Adjuntar Foto del Lugar (Cámara o Galería) con Filtro de Seguridad */}
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                  <Icon name="camera" size={14} color="#FFD700" />
+                  {lang === 'en' ? 'Place Photo (Camera / Gallery)' : lang === 'zh' ? '地点照片（相机 / 相册）' : 'Fotografía del Lugar (Cámara o Galería)'}
+                </label>
+
+                <div style={{ fontSize: '11.5px', color: '#94A3B8', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span style={{ color: '#10B981' }}>🛡️</span>
+                  <span>{lang === 'en' ? 'Active security filter: Upload clean & appropriate place photos.' : lang === 'zh' ? '已启用内容安全过滤：请上传合规地点照片。' : 'Filtro de seguridad activo: Sube fotos apropiadas del destino (sin contenido explícito).'}</span>
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {/* Opción Tomar Foto con Cámara */}
+                  <label style={{
+                    flex: 1,
+                    minWidth: '130px',
+                    padding: '10px 12px',
+                    background: 'rgba(56, 189, 248, 0.12)',
+                    border: '1px dashed rgba(56, 189, 248, 0.4)',
+                    borderRadius: '12px',
+                    color: '#7DD3FC',
+                    fontWeight: '750',
+                    fontSize: '12.5px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    textAlign: 'center',
+                    transition: 'all 0.2s ease'
+                  }}>
+                    <Icon name="camera" size={16} color="#7DD3FC" />
+                    <span>{lang === 'en' ? 'Take Photo' : lang === 'zh' ? '拍摄照片' : 'Tomar Foto'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      style={{ display: 'none' }}
+                      onChange={handleSeleccionarFotoPunto}
+                    />
+                  </label>
+
+                  {/* Opción Subir desde Galería */}
+                  <label style={{
+                    flex: 1,
+                    minWidth: '130px',
+                    padding: '10px 12px',
+                    background: 'rgba(255, 215, 0, 0.12)',
+                    border: '1px dashed rgba(255, 215, 0, 0.4)',
+                    borderRadius: '12px',
+                    color: '#FFD700',
+                    fontWeight: '750',
+                    fontSize: '12.5px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    textAlign: 'center',
+                    transition: 'all 0.2s ease'
+                  }}>
+                    <Icon name="image" size={16} color="#FFD700" />
+                    <span>{lang === 'en' ? 'Upload Gallery' : lang === 'zh' ? '从相册选择' : 'Elegir de Galería'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={handleSeleccionarFotoPunto}
+                    />
+                  </label>
+                </div>
+
+                {/* Indicador de Análisis de Moderación */}
+                {isAnalyzingFoto && (
+                  <div style={{ marginTop: '8px', fontSize: '12px', color: '#38BDF8', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ width: '12px', height: '12px', border: '2px solid rgba(56,189,248,0.3)', borderTopColor: '#38BDF8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                    <span>{lang === 'en' ? 'Analyzing security filter...' : lang === 'zh' ? '正在分析内容安全...' : 'Analizando contenido y filtro de seguridad...'}</span>
+                  </div>
+                )}
+
+                {/* Alerta de Rechazo por Moderación de Seguridad */}
+                {fotoModerationError && (
+                  <div style={{ marginTop: '8px', padding: '9px 12px', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '10px', color: '#FCA5A5', fontSize: '12px', lineHeight: '1.4' }}>
+                    ⚠️ {fotoModerationError}
+                  </div>
+                )}
+
+                {/* Vista previa de la foto aprobada */}
+                {newPointFotoPreview && !isAnalyzingFoto && !fotoModerationError && (
+                  <div style={{ marginTop: '10px', position: 'relative', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(16, 185, 129, 0.5)', background: '#000000' }}>
+                    <img src={newPointFotoPreview} alt="Vista Previa Punto" style={{ width: '100%', maxHeight: '160px', objectFit: 'cover', display: 'block' }} />
+                    
+                    <div style={{ position: 'absolute', top: '8px', left: '8px', background: 'rgba(6, 78, 59, 0.85)', backdropFilter: 'blur(6px)', border: '1px solid #10B981', padding: '3px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: '800', color: '#6EE7B7', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span>✓ {lang === 'en' ? 'Safe Photo Verified 🛡️' : lang === 'zh' ? '照片安全已验证 🛡️' : 'Foto Aprobada y Segura 🛡️'}</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewPointFotoFile(null);
+                        setNewPointFotoPreview(null);
+                        setFotoModerationError('');
+                      }}
+                      style={{
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        background: 'rgba(0, 0, 0, 0.7)',
+                        border: '1px solid rgba(255,255,255,0.3)',
+                        borderRadius: '50%',
+                        color: '#FFFFFF',
+                        width: '26px',
+                        height: '26px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Icon name="x" size={14} />
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                 <button
                   type="button"
-                  onClick={() => { setShowAddModal(false); setTempPointCoords(null); }}
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setTempPointCoords(null);
+                    setNewPointFotoFile(null);
+                    setNewPointFotoPreview(null);
+                    setFotoModerationError('');
+                  }}
                   style={{
                     flex: 1,
                     padding: '12px 16px',
