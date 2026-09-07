@@ -1427,11 +1427,12 @@ export default function MasDeNicaraguaPage() {
                   const dept = selectedDeptForDetails;
                   setSelectedDeptForDetails(null);
                   setSelectedDeptForPreview(dept);
+                  setSelectedRegion("Todos");
                   if (mapContainerRef.current) {
                     mapContainerRef.current.scrollIntoView({ behavior: "smooth" });
                   }
-                  if (mapRef.current && dept.coordenadas) {
-                    mapRef.current.flyTo({ center: dept.coordenadas, zoom: 8, duration: 1000 });
+                  if (mapRef.current) {
+                    mapRef.current.flyTo({ center: [-85.10, 12.90], zoom: 4.40, pitch: 0, bearing: 0, duration: 1000 });
                   }
                 }}
                 style={{
