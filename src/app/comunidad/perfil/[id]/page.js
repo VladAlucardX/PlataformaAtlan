@@ -40,56 +40,61 @@ function avatarStyle(url, size) {
 
 const cardStyles = {
   card: {
-    background: "#FFFFFF",
-    border: "1px solid rgba(226, 232, 240, 0.9)",
-    boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)",
-    borderRadius: "24px", padding: "24px", marginBottom: "20px"
+    background: "#E2E8F0",
+    border: "1.5px solid #94A3B8",
+    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.10), 0 2px 6px -1px rgba(15, 23, 42, 0.05)",
+    borderRadius: "24px", padding: "24px", marginBottom: "20px",
+    transition: "all 0.2s ease"
   },
   publicidadCard: {
-    background: "#FFFFFF",
-    border: "2px solid #17AA4A",
-    boxShadow: "0 10px 30px -4px rgba(23, 170, 74, 0.25)",
-    borderRadius: "20px", padding: "24px", marginBottom: "20px",
+    background: "#E2E8F0",
+    border: "1.5px solid #146D9E",
+    boxShadow: "0 8px 24px -4px rgba(20, 109, 158, 0.18)",
+    borderRadius: "24px", padding: "24px", marginBottom: "20px",
+    transition: "all 0.2s ease",
   },
   promoBadge: {
     display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "12px",
     padding: "4px 12px", borderRadius: "20px", fontSize: "11px", fontWeight: "800",
-    background: "linear-gradient(135deg, rgba(255,215,0,0.10) 0%, rgba(230,194,0,0.10) 100%)",
-    border: "1px solid rgba(255,215,0,0.25)", color: "#E6C200", textTransform: "uppercase",
+    background: "rgba(245, 158, 11, 0.1)",
+    border: "1px solid rgba(245, 158, 11, 0.25)", color: "#D97706",
+    textTransform: "uppercase", letterSpacing: "0.5px",
   },
   publicidadBadge: {
     display: "inline-flex", alignItems: "center", gap: "4px", marginBottom: "12px",
-    padding: "5px 14px", borderRadius: "20px", fontSize: "11px", fontWeight: "900",
-    background: "linear-gradient(135deg, #FFD700 0%, #E6A800 100%)",
-    color: "#1A1A2E", textTransform: "uppercase", boxShadow: "0 2px 8px rgba(255, 215, 0, 0.3)",
+    padding: "5px 14px", borderRadius: "20px", fontSize: "11px", fontWeight: "800",
+    background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
+    border: "none", color: "#FFFFFF",
+    textTransform: "uppercase", letterSpacing: "0.8px",
+    boxShadow: "0 2px 8px rgba(20, 109, 158, 0.25)",
   },
   header: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" },
   roleBadge: {
     display: "inline-flex", alignItems: "center", justifyContent: "center",
     width: "20px", height: "20px", borderRadius: "6px", fontSize: "10px",
-    background: "rgba(255,215,0,0.10)", color: "#FFD700",
+    background: "rgba(245, 158, 11, 0.12)", color: "#D97706",
   },
-  content: { margin: "0 0 16px", fontSize: "15.5px", lineHeight: "1.65", color: "var(--atlan-text-primary)", whiteSpace: "pre-wrap", wordBreak: "break-word" },
-  imageContainer: { borderRadius: "18px", overflow: "hidden", marginBottom: "16px", border: "1px solid #CBD5E1" },
+  content: { margin: "0 0 16px", fontSize: "15px", lineHeight: "1.65", color: "var(--atlan-text-primary)", whiteSpace: "pre-wrap", wordBreak: "break-word" },
+  imageContainer: { borderRadius: "18px", overflow: "hidden", marginBottom: "16px", border: "1px solid #94A3B8" },
   image: { width: "100%", maxHeight: "540px", objectFit: "cover", display: "block" },
-  statsBar: { display: "flex", justifyContent: "space-between", padding: "8px 4px", borderBottom: "1px solid rgba(226, 232, 240, 0.8)", marginBottom: "4px" },
+  statsBar: { display: "flex", justifyContent: "space-between", padding: "8px 4px", borderBottom: "1px solid rgba(148, 163, 184, 0.6)", marginBottom: "4px" },
   statText: { fontSize: "12px", color: "var(--atlan-text-muted)", fontWeight: "600" },
-  actionBar: { display: "flex", gap: "8px", padding: "4px 0" },
+  actionBar: { display: "flex", gap: "8px", padding: "6px 0 0 0" },
   actionBtn: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-    padding: "9px 12px", background: "rgba(241, 245, 249, 0.8)", border: "1px solid #CBD5E1", color: "#334155",
-    fontSize: "13px", fontWeight: "700", cursor: "pointer", borderRadius: "12px", transition: "all 0.2s",
+    padding: "9px 12px", background: "rgba(255, 255, 255, 0.65)", border: "1px solid #CBD5E1", color: "#334155",
+    fontSize: "13px", fontWeight: "700", cursor: "pointer", borderRadius: "12px", transition: "all 0.2s ease",
     boxShadow: "0 2px 4px rgba(15, 23, 42, 0.03)"
   },
-  menuBtn: { background: "none", border: "none", color: "var(--atlan-text-muted)", fontSize: "20px", cursor: "pointer", padding: "4px 8px" },
-  menuDropdown: { position: "absolute", top: "100%", right: 0, zIndex: 50, background: "#FFFFFF", border: "1px solid #CBD5E1", borderRadius: "12px", padding: "4px", minWidth: "140px", boxShadow: "0 8px 24px rgba(0, 0, 0, 0.10)" },
-  menuItem: { display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "10px 12px", background: "none", border: "none", color: "#ef4444", fontSize: "13px", fontWeight: "700", cursor: "pointer" },
-  commentsSection: { borderTop: "1px solid rgba(226, 232, 240, 0.8)", paddingTop: "14px", marginTop: "4px" },
+  menuBtn: { background: "none", border: "none", color: "var(--atlan-text-muted)", fontSize: "20px", cursor: "pointer", padding: "4px 8px", borderRadius: "8px", lineHeight: 1 },
+  menuDropdown: { position: "absolute", top: "100%", right: 0, zIndex: 50, background: "var(--atlan-bg-elevated)", border: "1px solid #94A3B8", borderRadius: "12px", padding: "4px", minWidth: "140px", boxShadow: "0 8px 24px rgba(15, 23, 42, 0.12)" },
+  menuItem: { display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "10px 12px", background: "none", border: "none", color: "#EF4444", fontSize: "13px", fontWeight: "700", cursor: "pointer", borderRadius: "8px" },
+  commentsSection: { borderTop: "1px solid #94A3B8", paddingTop: "14px", marginTop: "8px" },
   commentItem: { display: "flex", gap: "10px", marginBottom: "12px", alignItems: "flex-start" },
-  commentBubble: { background: "#F8FAFC", padding: "8px 14px", borderRadius: "0 14px 14px 14px", border: "1px solid #E2E8F0" },
+  commentBubble: { background: "#FFFFFF", padding: "10px 14px", borderRadius: "0 14px 14px 14px", border: "1px solid #94A3B8" },
   commentInput: { display: "flex", alignItems: "center", gap: "10px", marginTop: "12px" },
-  commentTextField: { flex: 1, padding: "10px 16px", background: "#FFFFFF", border: "1px solid #CBD5E1", borderRadius: "20px", color: "#1A1A2E", fontSize: "13px", outline: "none" },
-  sendBtn: { background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none", width: "36px", height: "36px", borderRadius: "50%", color: "white", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" },
+  commentTextField: { flex: 1, padding: "10px 16px", background: "#FFFFFF", border: "1px solid #94A3B8", borderRadius: "20px", color: "#1A1A2E", fontSize: "13px", outline: "none" },
+  sendBtn: { background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)", border: "none", width: "36px", height: "36px", borderRadius: "50%", color: "white", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(20, 109, 158, 0.25)" },
 };
 
 function renderFormattedContent(contenido) {
@@ -824,17 +829,17 @@ export default function PerfilPublico() {
           {/* Target Profile Card (Solo si ves el perfil de OTRA persona) */}
           {!isOwnProfile && (
             <div style={{
-              background: "#FFFFFF",
-              border: "1px solid rgba(226, 232, 240, 0.9)",
-              boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)",
-              borderRadius: "24px",
+              background: "#E2E8F0",
+              border: "1.5px solid #94A3B8",
+              boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.10), 0 2px 6px -1px rgba(15, 23, 42, 0.05)",
+              borderRadius: "22px",
               overflow: "hidden",
               marginBottom: "24px",
               position: "relative"
             }}>
-              {/* Banner superior de portada compacto (65px) */}
-              <div style={{ height: "65px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)", position: "relative", zIndex: 1 }}>
-                {/* Botón Seguir compacto posicionado en la esquina superior derecha */}
+              {/* Banner superior de portada (60px) */}
+              <div style={{ height: "60px", background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)", position: "relative", zIndex: 1 }}>
+                {/* Botón Seguir estilo Ocean Blue compacto */}
                 <button
                   onClick={handleFollow}
                   disabled={followLoading}
@@ -845,12 +850,12 @@ export default function PerfilPublico() {
                     padding: "6px 16px",
                     borderRadius: "20px",
                     border: "none",
-                    background: isFollowing ? "rgba(255, 255, 255, 0.2)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
+                    background: isFollowing ? "rgba(20, 109, 158, 0.08)" : "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
                     color: "white",
                     fontWeight: "800",
                     fontSize: "12px",
                     cursor: "pointer",
-                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.25)",
+                    boxShadow: "0 2px 8px rgba(20, 109, 158, 0.3)",
                     backdropFilter: "blur(4px)",
                     transition: "all 0.2s ease",
                     zIndex: 10
@@ -861,31 +866,31 @@ export default function PerfilPublico() {
               </div>
 
               <div style={{ padding: "0 20px 20px", marginTop: "-32px", textAlign: "center", position: "relative", zIndex: 2 }}>
-                {/* Avatar centrado (64px) SOBRE la portada azul con zIndex: 5 y borde blanco 3px */}
+                {/* Avatar centrado (64px) SOBRE la portada con borde 3px #E2E8F0 */}
                 <div style={{
                   ...avatarStyle(targetPerfil.avatar_url, 64),
                   margin: "0 auto 8px",
-                  border: "3px solid #FFFFFF",
-                  boxShadow: "0 6px 18px rgba(0, 0, 0, 0.15)",
+                  border: "3px solid #E2E8F0",
+                  boxShadow: "0 4px 12px rgba(15, 23, 42, 0.15)",
                   position: "relative",
                   zIndex: 5,
-                  background: targetPerfil.avatar_url ? `url(${targetPerfil.avatar_url}) center/cover` : "linear-gradient(135deg, #17AA4A 0%, #0A192F 100%)"
+                  background: targetPerfil.avatar_url ? `url(${targetPerfil.avatar_url}) center/cover` : "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)"
                 }}>
                   {!targetPerfil.avatar_url && (targetPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
                 </div>
 
-                {/* Nombre del Usuario centrado */}
-                <h4 style={{ margin: "0 0 2px", fontSize: "17px", fontWeight: "800", color: "#1A1A2E", fontFamily: "var(--font-outfit)" }}>
+                {/* Nombre del Usuario centrado idéntico al muro general */}
+                <h4 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: "800", color: "#1A1A2E", fontFamily: "var(--font-outfit)" }}>
                   {targetPerfil.nombre_completo || "Usuario"}
                 </h4>
 
                 {/* Subtítulo de Rol centrado */}
                 <p style={{ margin: "0 0 10px", fontSize: "12px", color: "#64748B", display: "flex", alignItems: "center", justifyContent: "center", gap: "5px" }}>
                   {targetPerfil.rol === "dueno"
-                    ? <><Icon name="building" size={11} color="#17AA4A" /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
+                    ? <><Icon name="building" size={11} color="#146D9E" /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
                     : (targetPerfil.es_premium || targetPerfil.suscripcion_activa || targetPerfil.rol === "turista_deacachimba")
-                    ? <><Icon name="star" size={11} color="#E6C200" /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
-                    : <><Icon name="luggage" size={11} color="#17AA4A" /> {lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
+                    ? <><Icon name="star" size={11} color="#D97706" /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
+                    : <><Icon name="luggage" size={11} color="#146D9E" /> {lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
                 </p>
 
                 {/* Biografía si existe */}
@@ -896,7 +901,7 @@ export default function PerfilPublico() {
                 )}
 
                 {/* Contador de Estadísticas */}
-                <div style={{ display: "flex", justifyContent: "center", gap: "24px", paddingTop: "10px", borderTop: "1px solid rgba(226, 232, 240, 0.8)" }}>
+                <div style={{ display: "flex", justifyContent: "center", gap: "24px", paddingTop: "10px", borderTop: "1px solid rgba(148, 163, 184, 0.6)" }}>
                   <div style={{ textAlign: "center" }}>
                     <div style={{ fontSize: "16px", fontWeight: "800", color: "#1A1A2E" }}>{posts.length}</div>
                     <div style={{ fontSize: "11px", color: "#64748B" }}>{lang === "en" ? "Posts" : lang === "zh" ? "动态" : "Posts"}</div>
