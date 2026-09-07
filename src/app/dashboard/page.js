@@ -1778,11 +1778,47 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={(e) => handleCardClick(e, "general")}
-                  className="dashboard-module-card theme-indigo animate-fade-in-up"
-                  style={{ opacity: negocio && !negocio.activo ? 0.75 : 1 }}
+                  className="animate-fade-in-up"
+                  style={{
+                    background: "rgba(10, 25, 47, 0.85)",
+                    backdropFilter: "blur(18px)",
+                    WebkitBackdropFilter: "blur(18px)",
+                    border: "1.5px solid rgba(99, 102, 241, 0.35)",
+                    borderRadius: "22px",
+                    padding: "22px 24px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    alignItems: "stretch",
+                    textAlign: "left",
+                    cursor: "pointer",
+                    transition: "all 0.28s cubic-bezier(0.4, 0, 0.2, 1)",
+                    position: "relative",
+                    overflow: "hidden",
+                    boxShadow: "0 12px 28px -6px rgba(0, 0, 0, 0.45)",
+                    outline: "none",
+                    minHeight: "185px",
+                    width: "100%",
+                    boxSizing: "border-box",
+                    opacity: negocio && !negocio.activo ? 0.75 : 1
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-5px)";
+                    e.currentTarget.style.background = "rgba(18, 30, 60, 0.95)";
+                    e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.75)";
+                    e.currentTarget.style.boxShadow = "0 20px 40px -6px rgba(0, 0, 0, 0.55), 0 0 25px rgba(99, 102, 241, 0.28)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.background = "rgba(10, 25, 47, 0.85)";
+                    e.currentTarget.style.borderColor = "rgba(99, 102, 241, 0.35)";
+                    e.currentTarget.style.boxShadow = "0 12px 28px -6px rgba(0, 0, 0, 0.45)";
+                  }}
                 >
-                  <div className="card-top-row">
-                    <div className="card-icon-wrapper">
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3.5px", background: "linear-gradient(90deg, #6366F1, #818CF8)" }} />
+
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", marginBottom: "14px" }}>
+                    <div style={{ width: "46px", height: "46px", borderRadius: "14px", background: "linear-gradient(135deg, #4F46E5 0%, #3730A3 100%)", boxShadow: "0 6px 16px rgba(79, 70, 229, 0.4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <div style={{
                         width: "24px",
                         height: "24px",
@@ -1797,18 +1833,22 @@ export default function DashboardPage() {
                         maskPosition: "center",
                       }} />
                     </div>
-                    <div className="card-arrow-badge">
+                    <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255, 255, 255, 0.08)", border: "1px solid rgba(255, 255, 255, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#A5B4FC", flexShrink: 0 }}>
                       <Icon name="arrowRight" size={14} />
                     </div>
                   </div>
-                  <div>
-                    <h3 className="card-module-title">
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px", textAlign: "left", alignItems: "flex-start", width: "100%" }}>
+                    <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "-0.01em", display: "flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
                       <span>{lang === "en" ? "Business Profile" : lang === "zh" ? "商户资料" : "Perfil del Negocio"}</span>
                       {negocio && !negocio.activo && <Icon name="lock" size={14} color="#A5B4FC" />}
                     </h3>
-                    <p className="card-module-desc">{lang === "en" ? "Update photos, description, logo and contact info" : lang === "zh" ? "更新照片、描述、标志和联系信息" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
+                    <p style={{ margin: 0, fontSize: "13px", color: "#CBD5E1", lineHeight: "1.5", fontWeight: "400", textAlign: "left" }}>
+                      {lang === "en" ? "Update photos, description, logo and contact info" : lang === "zh" ? "更新照片、描述、标志和联系信息" : "Actualiza fotos, descripción, logo y datos de contacto"}
+                    </p>
                   </div>
-                  <div className="card-footer-action">
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: "800", color: "#A5B4FC", marginTop: "16px" }}>
                     <span>{lang === "en" ? "Manage Profile" : lang === "zh" ? "管理资料" : "Administrar Datos"}</span>
                     <span>➔</span>
                   </div>
@@ -1818,11 +1858,47 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={(e) => handleCardClick(e, "excentricidades")}
-                  className="dashboard-module-card theme-emerald animate-fade-in-up"
-                  style={{ opacity: negocio && !negocio.activo ? 0.75 : 1 }}
+                  className="animate-fade-in-up"
+                  style={{
+                    background: "rgba(10, 25, 47, 0.85)",
+                    backdropFilter: "blur(18px)",
+                    WebkitBackdropFilter: "blur(18px)",
+                    border: "1.5px solid rgba(16, 185, 129, 0.35)",
+                    borderRadius: "22px",
+                    padding: "22px 24px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    alignItems: "stretch",
+                    textAlign: "left",
+                    cursor: "pointer",
+                    transition: "all 0.28s cubic-bezier(0.4, 0, 0.2, 1)",
+                    position: "relative",
+                    overflow: "hidden",
+                    boxShadow: "0 12px 28px -6px rgba(0, 0, 0, 0.45)",
+                    outline: "none",
+                    minHeight: "185px",
+                    width: "100%",
+                    boxSizing: "border-box",
+                    opacity: negocio && !negocio.activo ? 0.75 : 1
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-5px)";
+                    e.currentTarget.style.background = "rgba(10, 40, 32, 0.95)";
+                    e.currentTarget.style.borderColor = "rgba(52, 211, 153, 0.75)";
+                    e.currentTarget.style.boxShadow = "0 20px 40px -6px rgba(0, 0, 0, 0.55), 0 0 25px rgba(16, 185, 129, 0.28)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.background = "rgba(10, 25, 47, 0.85)";
+                    e.currentTarget.style.borderColor = "rgba(16, 185, 129, 0.35)";
+                    e.currentTarget.style.boxShadow = "0 12px 28px -6px rgba(0, 0, 0, 0.45)";
+                  }}
                 >
-                  <div className="card-top-row">
-                    <div className="card-icon-wrapper">
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3.5px", background: "linear-gradient(90deg, #10B981, #34D399)" }} />
+
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", marginBottom: "14px" }}>
+                    <div style={{ width: "46px", height: "46px", borderRadius: "14px", background: "linear-gradient(135deg, #16A34A 0%, #065F46 100%)", boxShadow: "0 6px 16px rgba(22, 163, 74, 0.4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <div style={{
                         width: "24px",
                         height: "24px",
@@ -1837,18 +1913,22 @@ export default function DashboardPage() {
                         maskPosition: "center",
                       }} />
                     </div>
-                    <div className="card-arrow-badge">
+                    <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255, 255, 255, 0.08)", border: "1px solid rgba(255, 255, 255, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#6EE7B7", flexShrink: 0 }}>
                       <Icon name="arrowRight" size={14} />
                     </div>
                   </div>
-                  <div>
-                    <h3 className="card-module-title">
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px", textAlign: "left", alignItems: "flex-start", width: "100%" }}>
+                    <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "-0.01em", display: "flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
                       <span>{lang === "en" ? "Services Checklist" : lang === "zh" ? "服务清单" : "Checklist de Servicios"}</span>
                       {negocio && !negocio.activo && <Icon name="lock" size={14} color="#6EE7B7" />}
                     </h3>
-                    <p className="card-module-desc">{lang === "en" ? "Enable menu, wifi, parking or lodging modules" : lang === "zh" ? "启用菜单、WiFi、停车场或住宿等设施" : "Activa wifi, parqueo, menú, hospedaje o amenidades"}</p>
+                    <p style={{ margin: 0, fontSize: "13px", color: "#CBD5E1", lineHeight: "1.5", fontWeight: "400", textAlign: "left" }}>
+                      {lang === "en" ? "Enable menu, wifi, parking or lodging modules" : lang === "zh" ? "启用菜单、WiFi、停车场或住宿等设施" : "Activa wifi, parqueo, menú, hospedaje o amenidades"}
+                    </p>
                   </div>
-                  <div className="card-footer-action">
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: "800", color: "#6EE7B7", marginTop: "16px" }}>
                     <span>{lang === "en" ? "Configure Services" : lang === "zh" ? "配置服务" : "Configurar Servicios"}</span>
                     <span>➔</span>
                   </div>
@@ -1859,25 +1939,65 @@ export default function DashboardPage() {
                   <button
                     type="button"
                     onClick={(e) => handleCardClick(e, "horarios")}
-                    className="dashboard-module-card theme-amber animate-fade-in-up"
-                    style={{ opacity: negocio && !negocio.activo ? 0.75 : 1 }}
+                    className="animate-fade-in-up"
+                    style={{
+                      background: "rgba(10, 25, 47, 0.85)",
+                      backdropFilter: "blur(18px)",
+                      WebkitBackdropFilter: "blur(18px)",
+                      border: "1.5px solid rgba(245, 158, 11, 0.35)",
+                      borderRadius: "22px",
+                      padding: "22px 24px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      alignItems: "stretch",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      transition: "all 0.28s cubic-bezier(0.4, 0, 0.2, 1)",
+                      position: "relative",
+                      overflow: "hidden",
+                      boxShadow: "0 12px 28px -6px rgba(0, 0, 0, 0.45)",
+                      outline: "none",
+                      minHeight: "185px",
+                      width: "100%",
+                      boxSizing: "border-box",
+                      opacity: negocio && !negocio.activo ? 0.75 : 1
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-5px)";
+                      e.currentTarget.style.background = "rgba(40, 25, 10, 0.95)";
+                      e.currentTarget.style.borderColor = "rgba(251, 191, 36, 0.75)";
+                      e.currentTarget.style.boxShadow = "0 20px 40px -6px rgba(0, 0, 0, 0.55), 0 0 25px rgba(245, 158, 11, 0.28)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.background = "rgba(10, 25, 47, 0.85)";
+                      e.currentTarget.style.borderColor = "rgba(245, 158, 11, 0.35)";
+                      e.currentTarget.style.boxShadow = "0 12px 28px -6px rgba(0, 0, 0, 0.45)";
+                    }}
                   >
-                    <div className="card-top-row">
-                      <div className="card-icon-wrapper">
+                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3.5px", background: "linear-gradient(90deg, #F59E0B, #FBBF24)" }} />
+
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", marginBottom: "14px" }}>
+                      <div style={{ width: "46px", height: "46px", borderRadius: "14px", background: "linear-gradient(135deg, #D97706 0%, #92400E 100%)", boxShadow: "0 6px 16px rgba(217, 119, 6, 0.4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                         <Icon name="clock" size={24} color="#FFFFFF" />
                       </div>
-                      <div className="card-arrow-badge">
+                      <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255, 255, 255, 0.08)", border: "1px solid rgba(255, 255, 255, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#FDE68A", flexShrink: 0 }}>
                         <Icon name="arrowRight" size={14} />
                       </div>
                     </div>
-                    <div>
-                      <h3 className="card-module-title">
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px", textAlign: "left", alignItems: "flex-start", width: "100%" }}>
+                      <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "-0.01em", display: "flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
                         <span>{lang === "en" ? "Opening Hours" : lang === "zh" ? "营业时间" : "Horarios de Atención"}</span>
                         {negocio && !negocio.activo && <Icon name="lock" size={14} color="#FDE68A" />}
                       </h3>
-                      <p className="card-module-desc">{lang === "en" ? "Manage your daily opening and closing times" : lang === "zh" ? "设置您每日的营业和打烊时间" : "Configura tus horarios de apertura y cierre"}</p>
+                      <p style={{ margin: 0, fontSize: "13px", color: "#CBD5E1", lineHeight: "1.5", fontWeight: "400", textAlign: "left" }}>
+                        {lang === "en" ? "Manage your daily opening and closing times" : lang === "zh" ? "设置您每日的营业和打烊时间" : "Configura tus horarios de apertura y cierre"}
+                      </p>
                     </div>
-                    <div className="card-footer-action">
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: "800", color: "#FDE68A", marginTop: "16px" }}>
                       <span>{lang === "en" ? "Set Schedules" : lang === "zh" ? "设置营业时间" : "Ajustar Horarios"}</span>
                       <span>➔</span>
                     </div>
@@ -1889,25 +2009,65 @@ export default function DashboardPage() {
                   <button
                     type="button"
                     onClick={(e) => handleCardClick(e, "menu")}
-                    className="dashboard-module-card theme-sky animate-fade-in-up"
-                    style={{ opacity: negocio && !negocio.activo ? 0.75 : 1 }}
+                    className="animate-fade-in-up"
+                    style={{
+                      background: "rgba(10, 25, 47, 0.85)",
+                      backdropFilter: "blur(18px)",
+                      WebkitBackdropFilter: "blur(18px)",
+                      border: "1.5px solid rgba(14, 165, 233, 0.35)",
+                      borderRadius: "22px",
+                      padding: "22px 24px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      alignItems: "stretch",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      transition: "all 0.28s cubic-bezier(0.4, 0, 0.2, 1)",
+                      position: "relative",
+                      overflow: "hidden",
+                      boxShadow: "0 12px 28px -6px rgba(0, 0, 0, 0.45)",
+                      outline: "none",
+                      minHeight: "185px",
+                      width: "100%",
+                      boxSizing: "border-box",
+                      opacity: negocio && !negocio.activo ? 0.75 : 1
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-5px)";
+                      e.currentTarget.style.background = "rgba(10, 32, 50, 0.95)";
+                      e.currentTarget.style.borderColor = "rgba(56, 189, 248, 0.75)";
+                      e.currentTarget.style.boxShadow = "0 20px 40px -6px rgba(0, 0, 0, 0.55), 0 0 25px rgba(14, 165, 233, 0.28)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.background = "rgba(10, 25, 47, 0.85)";
+                      e.currentTarget.style.borderColor = "rgba(14, 165, 233, 0.35)";
+                      e.currentTarget.style.boxShadow = "0 12px 28px -6px rgba(0, 0, 0, 0.45)";
+                    }}
                   >
-                    <div className="card-top-row">
-                      <div className="card-icon-wrapper">
+                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3.5px", background: "linear-gradient(90deg, #0EA5E9, #38BDF8)" }} />
+
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", marginBottom: "14px" }}>
+                      <div style={{ width: "46px", height: "46px", borderRadius: "14px", background: "linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)", boxShadow: "0 6px 16px rgba(37, 99, 235, 0.4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                         <Icon name="utensils" size={24} color="#FFFFFF" />
                       </div>
-                      <div className="card-arrow-badge">
+                      <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255, 255, 255, 0.08)", border: "1px solid rgba(255, 255, 255, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#7DD3FC", flexShrink: 0 }}>
                         <Icon name="arrowRight" size={14} />
                       </div>
                     </div>
-                    <div>
-                      <h3 className="card-module-title">
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px", textAlign: "left", alignItems: "flex-start", width: "100%" }}>
+                      <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "-0.01em", display: "flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
                         <span>{lang === "en" ? "Gastronomic Menu" : lang === "zh" ? "特色菜单" : "Menú Gastronómico"}</span>
                         {negocio && !negocio.activo && <Icon name="lock" size={14} color="#7DD3FC" />}
                       </h3>
-                      <p className="card-module-desc">{lang === "en" ? "Add or remove dishes, photos, and set prices" : lang === "zh" ? "添加或编辑菜品、照片并设定价格" : "Agrega, edita o elimina platillos, fotos y precios"}</p>
+                      <p style={{ margin: 0, fontSize: "13px", color: "#CBD5E1", lineHeight: "1.5", fontWeight: "400", textAlign: "left" }}>
+                        {lang === "en" ? "Add or remove dishes, photos, and set prices" : lang === "zh" ? "添加或编辑菜品、照片并设定价格" : "Agrega, edita o elimina platillos, fotos y precios"}
+                      </p>
                     </div>
-                    <div className="card-footer-action">
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: "800", color: "#7DD3FC", marginTop: "16px" }}>
                       <span>{lang === "en" ? "Manage Dishes" : lang === "zh" ? "管理菜品" : "Editar Platillos"}</span>
                       <span>➔</span>
                     </div>
@@ -1919,31 +2079,71 @@ export default function DashboardPage() {
                   <button
                     type="button"
                     onClick={(e) => handleCardClick(e, "reservas")}
-                    className="dashboard-module-card theme-violet animate-fade-in-up"
-                    style={{ opacity: negocio && !negocio.activo ? 0.75 : 1 }}
+                    className="animate-fade-in-up"
+                    style={{
+                      background: "rgba(10, 25, 47, 0.85)",
+                      backdropFilter: "blur(18px)",
+                      WebkitBackdropFilter: "blur(18px)",
+                      border: "1.5px solid rgba(139, 92, 246, 0.35)",
+                      borderRadius: "22px",
+                      padding: "22px 24px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      alignItems: "stretch",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      transition: "all 0.28s cubic-bezier(0.4, 0, 0.2, 1)",
+                      position: "relative",
+                      overflow: "hidden",
+                      boxShadow: "0 12px 28px -6px rgba(0, 0, 0, 0.45)",
+                      outline: "none",
+                      minHeight: "185px",
+                      width: "100%",
+                      boxSizing: "border-box",
+                      opacity: negocio && !negocio.activo ? 0.75 : 1
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-5px)";
+                      e.currentTarget.style.background = "rgba(30, 18, 55, 0.95)";
+                      e.currentTarget.style.borderColor = "rgba(167, 139, 250, 0.75)";
+                      e.currentTarget.style.boxShadow = "0 20px 40px -6px rgba(0, 0, 0, 0.55), 0 0 25px rgba(139, 92, 246, 0.28)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.background = "rgba(10, 25, 47, 0.85)";
+                      e.currentTarget.style.borderColor = "rgba(139, 92, 246, 0.35)";
+                      e.currentTarget.style.boxShadow = "0 12px 28px -6px rgba(0, 0, 0, 0.45)";
+                    }}
                   >
-                    <div className="card-top-row">
-                      <div className="card-icon-wrapper">
+                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3.5px", background: "linear-gradient(90deg, #8B5CF6, #A78BFA)" }} />
+
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", marginBottom: "14px" }}>
+                      <div style={{ width: "46px", height: "46px", borderRadius: "14px", background: "linear-gradient(135deg, #9333EA 0%, #6B21A8 100%)", boxShadow: "0 6px 16px rgba(147, 51, 234, 0.4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                         <Icon name="calendar" size={24} color="#FFFFFF" />
                       </div>
-                      <div className="card-arrow-badge">
+                      <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255, 255, 255, 0.08)", border: "1px solid rgba(255, 255, 255, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#C4B5FD", flexShrink: 0 }}>
                         <Icon name="arrowRight" size={14} />
                       </div>
                     </div>
-                    <div>
-                      <h3 className="card-module-title">
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px", textAlign: "left", alignItems: "flex-start", width: "100%" }}>
+                      <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "-0.01em", display: "flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
                         <span>{lang === "en" ? "Reservations Manager" : lang === "zh" ? "预订管理" : "Gestor de Reservas"}</span>
                         {negocio && !negocio.activo && <Icon name="lock" size={14} color="#C4B5FD" />}
                       </h3>
-                      <p className="card-module-desc">{lang === "en" ? "Approve or cancel incoming booking requests" : lang === "zh" ? "批准或取消收到的预订请求" : "Aprueba o cancela solicitudes de reserva"}</p>
+                      <p style={{ margin: 0, fontSize: "13px", color: "#CBD5E1", lineHeight: "1.5", fontWeight: "400", textAlign: "left" }}>
+                        {lang === "en" ? "Approve or cancel incoming booking requests" : lang === "zh" ? "批准或取消收到的预订请求" : "Aprueba o cancela solicitudes de reserva"}
+                      </p>
                       {(reservas || []).filter(r => r.estado_reserva === "pendiente").length > 0 && (
-                        <div className="card-counter-badge" style={{ background: "linear-gradient(135deg, #EF4444 0%, #DC2626 100%)", color: "#FFFFFF" }}>
+                        <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "linear-gradient(135deg, #EF4444 0%, #DC2626 100%)", color: "#FFFFFF", padding: "3px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: "800", marginTop: "8px" }}>
                           <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#FFFFFF" }} />
                           {(reservas || []).filter(r => r.estado_reserva === "pendiente").length} {lang === "en" ? "Pending" : lang === "zh" ? "待处理" : "Pendientes"}
                         </div>
                       )}
                     </div>
-                    <div className="card-footer-action">
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: "800", color: "#C4B5FD", marginTop: "16px" }}>
                       <span>{lang === "en" ? "View Bookings" : lang === "zh" ? "查看预订" : "Ver Reservas"}</span>
                       <span>➔</span>
                     </div>
@@ -1954,11 +2154,47 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={(e) => handleCardClick(e, "resenas")}
-                  className="dashboard-module-card theme-rose animate-fade-in-up"
-                  style={{ opacity: negocio && !negocio.activo ? 0.75 : 1 }}
+                  className="animate-fade-in-up"
+                  style={{
+                    background: "rgba(10, 25, 47, 0.85)",
+                    backdropFilter: "blur(18px)",
+                    WebkitBackdropFilter: "blur(18px)",
+                    border: "1.5px solid rgba(244, 63, 94, 0.35)",
+                    borderRadius: "22px",
+                    padding: "22px 24px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    alignItems: "stretch",
+                    textAlign: "left",
+                    cursor: "pointer",
+                    transition: "all 0.28s cubic-bezier(0.4, 0, 0.2, 1)",
+                    position: "relative",
+                    overflow: "hidden",
+                    boxShadow: "0 12px 28px -6px rgba(0, 0, 0, 0.45)",
+                    outline: "none",
+                    minHeight: "185px",
+                    width: "100%",
+                    boxSizing: "border-box",
+                    opacity: negocio && !negocio.activo ? 0.75 : 1
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-5px)";
+                    e.currentTarget.style.background = "rgba(45, 12, 25, 0.95)";
+                    e.currentTarget.style.borderColor = "rgba(251, 113, 133, 0.75)";
+                    e.currentTarget.style.boxShadow = "0 20px 40px -6px rgba(0, 0, 0, 0.55), 0 0 25px rgba(244, 63, 94, 0.28)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.background = "rgba(10, 25, 47, 0.85)";
+                    e.currentTarget.style.borderColor = "rgba(244, 63, 94, 0.35)";
+                    e.currentTarget.style.boxShadow = "0 12px 28px -6px rgba(0, 0, 0, 0.45)";
+                  }}
                 >
-                  <div className="card-top-row">
-                    <div className="card-icon-wrapper">
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3.5px", background: "linear-gradient(90deg, #F43F5E, #FB7185)" }} />
+
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", marginBottom: "14px" }}>
+                    <div style={{ width: "46px", height: "46px", borderRadius: "14px", background: "linear-gradient(135deg, #E11D48 0%, #9F1239 100%)", boxShadow: "0 6px 16px rgba(225, 29, 72, 0.4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <div style={{
                         width: "24px",
                         height: "24px",
@@ -1973,18 +2209,22 @@ export default function DashboardPage() {
                         maskPosition: "center",
                       }} />
                     </div>
-                    <div className="card-arrow-badge">
+                    <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255, 255, 255, 0.08)", border: "1px solid rgba(255, 255, 255, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#FDA4AF", flexShrink: 0 }}>
                       <Icon name="arrowRight" size={14} />
                     </div>
                   </div>
-                  <div>
-                    <h3 className="card-module-title">
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px", textAlign: "left", alignItems: "flex-start", width: "100%" }}>
+                    <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "-0.01em", display: "flex", alignItems: "center", gap: "8px", fontFamily: "var(--font-outfit), system-ui, sans-serif" }}>
                       <span>{lang === "en" ? "Customer Reviews" : lang === "zh" ? "顾客评价" : "Reseñas de Clientes"}</span>
                       {negocio && !negocio.activo && <Icon name="lock" size={14} color="#FDA4AF" />}
                     </h3>
-                    <p className="card-module-desc">{lang === "en" ? "Read what tourists think about your business" : lang === "zh" ? "查看游客对您商户的评价与反馈" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
+                    <p style={{ margin: 0, fontSize: "13px", color: "#CBD5E1", lineHeight: "1.5", fontWeight: "400", textAlign: "left" }}>
+                      {lang === "en" ? "Read what tourists think about your business" : lang === "zh" ? "查看游客对您商户的评价与反馈" : "Lee lo que opinan los turistas sobre tu negocio"}
+                    </p>
                   </div>
-                  <div className="card-footer-action">
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: "800", color: "#FDA4AF", marginTop: "16px" }}>
                     <span>{lang === "en" ? "Read Reviews" : lang === "zh" ? "查看评价" : "Ver Comentarios"}</span>
                     <span>➔</span>
                   </div>
