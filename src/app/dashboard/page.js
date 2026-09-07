@@ -2387,7 +2387,7 @@ export default function DashboardPage() {
                           } finally {
                             setIsSaving(false);
                           }
-                        }} style={{ ...styles.saveBtn, marginTop: 0, padding: "9px 22px", fontSize: "13px", background: "#EAB308", color: "#1E293B" }}>
+                        }} style={{ ...styles.saveBtn, marginTop: 0, padding: "9px 22px", fontSize: "13px", background: "#EAB308", color: "#FFFFFF" }}>
                           {lang === "en" ? "Save & Resubmit" : lang === "zh" ? "保存并重新提交" : "Guardar y Reenviar a Verificación"}
                         </button>
                       )}
@@ -2427,27 +2427,28 @@ export default function DashboardPage() {
                         { key: "hasLiveMusic", label: lang === "en" ? "Live Music" : lang === "zh" ? "现场音乐" : "Música en Vivo", val: hasLiveMusic, set: setHasLiveMusic },
                         { key: "hasTransport", label: lang === "en" ? "Shuttle / Transport" : lang === "zh" ? "接送班车 / 交通" : "Transporte / Shuttle"}
                       ].map((item) => {
-                        const iconColor = item.val ? "#047857" : "#64748B";
+                        const iconColor = item.val ? "#34D399" : "#94A3B8";
                         return (
                           <label
                             key={item.key}
                             style={{
                               display: "flex",
                               alignItems: "center",
-                              gap: "8px",
-                              padding: "9px 12px",
+                              gap: "10px",
+                              padding: "10px 12px",
                               borderRadius: "10px",
-                              background: item.val ? "rgba(5, 150, 105, 0.08)" : "#F8FAFC",
-                              border: item.val ? "1.5px solid #059669" : "1px solid #E2E8F0",
+                              background: item.val ? "#064E3B" : "#131F33",
+                              border: item.val ? "1.5px solid #10B981" : "1px solid rgba(255, 255, 255, 0.12)",
                               cursor: "pointer",
-                              transition: "all 0.15s ease"
+                              transition: "all 0.15s ease",
+                              boxShadow: item.val ? "0 4px 12px rgba(16, 185, 129, 0.2)" : "none"
                             }}
                           >
                             <input
                               type="checkbox"
                               checked={item.val}
                               onChange={(e) => item.set(e.target.checked)}
-                              style={{ width: "15px", height: "15px", accentColor: "#059669", cursor: "pointer" }}
+                              style={{ width: "16px", height: "16px", accentColor: "#10B981", cursor: "pointer" }}
                             />
                             <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                               {item.key === "hasMenu" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>}
@@ -2465,7 +2466,7 @@ export default function DashboardPage() {
                               {item.key === "hasLiveMusic" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>}
                               {item.key === "hasTransport" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="6" width="18" height="11" rx="2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>}
                             </span>
-                            <span style={{ fontSize: "12px", fontWeight: item.val ? "800" : "600", color: item.val ? "#047857" : "#334155" }}>
+                            <span style={{ fontSize: "12.5px", fontWeight: item.val ? "800" : "600", color: item.val ? "#FFFFFF" : "#E2E8F0" }}>
                               {item.label}
                             </span>
                           </label>
@@ -2500,8 +2501,8 @@ export default function DashboardPage() {
                       {/* LUNES A JUEVES */}
                       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                         {["lunes", "martes", "miercoles", "jueves"].map((dia) => (
-                          <div key={dia} style={{ display: "flex", alignItems: "center", gap: "8px", background: "#F8FAFC", padding: "6px 10px", borderRadius: "8px", border: "1px solid #E2E8F0" }}>
-                            <span style={{ width: "75px", fontSize: "12px", fontWeight: "800", textTransform: "capitalize", color: "#1E293B" }}>
+                          <div key={dia} style={{ display: "flex", alignItems: "center", gap: "8px", background: "rgba(255, 255, 255, 0.05)", padding: "6px 10px", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+                            <span style={{ width: "75px", fontSize: "12px", fontWeight: "800", textTransform: "capitalize", color: "#FFFFFF" }}>
                               {lang === "en" ? (dia === "lunes" ? "Monday" : dia === "martes" ? "Tuesday" : dia === "miercoles" ? "Wednesday" : "Thursday") : lang === "zh" ? (dia === "lunes" ? "星期一" : dia === "martes" ? "星期二" : dia === "miercoles" ? "星期三" : "星期四") : dia}
                             </span>
                             <input
@@ -2526,7 +2527,7 @@ export default function DashboardPage() {
                                 onChange={(e) => setHorarios(prev => ({ ...prev, [dia]: { ...prev[dia], abierto: !e.target.checked } }))}
                                 style={{ accentColor: "#EF4444" }}
                               />
-                              <span style={{ color: !horarios[dia]?.abierto ? "#EF4444" : "#64748B", fontWeight: "700" }}>{lang === "en" ? "Closed" : lang === "zh" ? "休息" : "Cerrado"}</span>
+                              <span style={{ color: !horarios[dia]?.abierto ? "#EF4444" : "#94A3B8", fontWeight: "700" }}>{lang === "en" ? "Closed" : lang === "zh" ? "休息" : "Cerrado"}</span>
                             </label>
                           </div>
                         ))}
@@ -2535,8 +2536,8 @@ export default function DashboardPage() {
                       {/* VIERNES A DOMINGO + NOTA */}
                       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                         {["viernes", "sabado", "domingo"].map((dia) => (
-                          <div key={dia} style={{ display: "flex", alignItems: "center", gap: "8px", background: "#F8FAFC", padding: "6px 10px", borderRadius: "8px", border: "1px solid #E2E8F0" }}>
-                            <span style={{ width: "75px", fontSize: "12px", fontWeight: "800", textTransform: "capitalize", color: "#1E293B" }}>
+                          <div key={dia} style={{ display: "flex", alignItems: "center", gap: "8px", background: "rgba(255, 255, 255, 0.05)", padding: "6px 10px", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+                            <span style={{ width: "75px", fontSize: "12px", fontWeight: "800", textTransform: "capitalize", color: "#FFFFFF" }}>
                               {lang === "en" ? (dia === "viernes" ? "Friday" : dia === "sabado" ? "Saturday" : "Sunday") : lang === "zh" ? (dia === "viernes" ? "星期五" : dia === "sabado" ? "星期六" : "星期日") : dia}
                             </span>
                             <input
@@ -2561,16 +2562,16 @@ export default function DashboardPage() {
                                 onChange={(e) => setHorarios(prev => ({ ...prev, [dia]: { ...prev[dia], abierto: !e.target.checked } }))}
                                 style={{ accentColor: "#EF4444" }}
                               />
-                              <span style={{ color: !horarios[dia]?.abierto ? "#EF4444" : "#64748B", fontWeight: "700" }}>{lang === "en" ? "Closed" : lang === "zh" ? "休息" : "Cerrado"}</span>
+                              <span style={{ color: !horarios[dia]?.abierto ? "#EF4444" : "#94A3B8", fontWeight: "700" }}>{lang === "en" ? "Closed" : lang === "zh" ? "休息" : "Cerrado"}</span>
                             </label>
                           </div>
                         ))}
 
-                        <div style={{ marginTop: "2px", padding: "6px 10px", background: "rgba(217, 119, 6, 0.08)", borderRadius: "8px", border: "1px solid rgba(217, 119, 6, 0.2)", display: "flex", alignItems: "center", gap: "8px" }}>
+                        <div style={{ marginTop: "2px", padding: "6px 10px", background: "rgba(217, 119, 6, 0.15)", borderRadius: "8px", border: "1px solid rgba(217, 119, 6, 0.3)", display: "flex", alignItems: "center", gap: "8px" }}>
                           <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1.55.59 2.97 1.5 4 .76.76 1.23 1.52 1.41 2.5z"/></svg>
                           </span>
-                          <span style={{ fontSize: "11px", color: "#92400E", fontWeight: "600" }}>
+                          <span style={{ fontSize: "11px", color: "#FCD34D", fontWeight: "600" }}>
                             {lang === "en" ? "Tip: Keep hours updated so tourists know when to visit!" : lang === "zh" ? "提示：保持营业时间最新，方便游客了解到访时间！" : "¡Mantén tus horarios actualizados para que los visitantes sepan cuándo atenderás!"}
                           </span>
                         </div>
@@ -2650,7 +2651,7 @@ export default function DashboardPage() {
                     {/* LISTA DE PLATILLOS (DERECHA CON SCROLL INTERNO) */}
                     <div style={{ flex: 1, overflowY: "auto", paddingRight: "4px", display: "flex", flexDirection: "column", gap: "8px" }}>
                       {(!menuItems || menuItems.length === 0) ? (
-                        <div style={{ padding: "24px", textAlign: "center", background: "#F8FAFC", borderRadius: "12px", border: "1px dashed #CBD5E1" }}>
+                        <div style={{ padding: "24px", textAlign: "center", background: "rgba(255, 255, 255, 0.03)", borderRadius: "12px", border: "1px dashed rgba(255, 255, 255, 0.15)" }}>
                           <div style={{ display: "flex", justifyContent: "center", marginBottom: "6px" }}>
                             <Icon name="utensils" size={28} color="#0284C7" />
                           </div>
@@ -2658,13 +2659,13 @@ export default function DashboardPage() {
                         </div>
                       ) : (
                         (menuItems || []).map((item) => (
-                          <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 12px", background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "10px", boxShadow: "0 2px 4px rgba(0,0,0,0.02)", opacity: item.disponible === false ? 0.65 : 1 }}>
+                          <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 12px", background: "#131F33", border: "1px solid rgba(255, 255, 255, 0.12)", borderRadius: "10px", boxShadow: "0 4px 12px rgba(0,0,0,0.2)", opacity: item.disponible === false ? 0.65 : 1 }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                               <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: item.foto_url ? `url(${item.foto_url}) center/cover no-repeat` : "#F1F5F9", border: "1px solid #E2E8F0", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                                 {!item.foto_url && <Icon name="utensils" size={16} color="#0284C7" />}
                               </div>
                               <div>
-                                <div style={{ fontWeight: "800", fontSize: "13px", color: "#1E293B", display: "flex", alignItems: "center", gap: "6px" }}>
+                                <div style={{ fontWeight: "800", fontSize: "13px", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "6px" }}>
                                   <span>{item.nombre}</span>
                                   {item.disponible === false && (
                                     <span style={{ fontSize: "9px", fontWeight: "800", color: "#EF4444", background: "rgba(239,68,68,0.1)", padding: "1px 5px", borderRadius: "4px" }}>
@@ -2672,7 +2673,7 @@ export default function DashboardPage() {
                                     </span>
                                   )}
                                 </div>
-                                {item.descripcion && <div style={{ fontSize: "11px", color: "#64748B", marginTop: "1px" }}>{item.descripcion}</div>}
+                                {item.descripcion && <div style={{ fontSize: "11px", color: "#CBD5E1", marginTop: "1px" }}>{item.descripcion}</div>}
                               </div>
                             </div>
 
@@ -2709,7 +2710,7 @@ export default function DashboardPage() {
 
                   <div style={{ flex: 1, overflowY: "auto", paddingRight: "4px", display: "flex", flexDirection: "column", gap: "10px" }}>
                     {(!reservas || reservas.length === 0) ? (
-                      <div style={{ padding: "24px", textAlign: "center", background: "#F8FAFC", borderRadius: "12px", border: "1px dashed #CBD5E1" }}>
+                      <div style={{ padding: "24px", textAlign: "center", background: "rgba(255, 255, 255, 0.03)", borderRadius: "12px", border: "1px dashed rgba(255, 255, 255, 0.15)" }}>
                         <div style={{ display: "flex", justifyContent: "center", marginBottom: "6px" }}>
                           <Icon name="calendar" size={28} color="#7C3AED" />
                         </div>
@@ -2717,13 +2718,13 @@ export default function DashboardPage() {
                       </div>
                     ) : (
                       (reservas || []).map((res) => (
-                        <div key={res.id} style={{ padding: "10px 14px", background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "10px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}>
+                        <div key={res.id} style={{ padding: "10px 14px", background: "#131F33", border: "1px solid rgba(255, 255, 255, 0.12)", borderRadius: "10px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}>
                           <div>
-                            <div style={{ fontWeight: "800", fontSize: "13.5px", color: "#1E293B", display: "flex", alignItems: "center", gap: "6px" }}>
+                            <div style={{ fontWeight: "800", fontSize: "13.5px", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "6px" }}>
                               <Icon name="user" size={14} color="#7C3AED" />
                               <span>{res.perfiles?.nombre_completo || (lang === "en" ? "Anonymous Traveler" : lang === "zh" ? "匿名游客" : "Turista Anónimo")}</span>
                             </div>
-                            <div style={{ fontSize: "11.5px", color: "#64748B", marginTop: "3px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                            <div style={{ fontSize: "11.5px", color: "#CBD5E1", marginTop: "3px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
                               <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
                                 <Icon name="calendar" size={12} color="#64748B" />
                                 <span>{new Date(res.fecha_hora).toLocaleString()}</span>
@@ -2773,7 +2774,7 @@ export default function DashboardPage() {
 
                   <div style={{ flex: 1, overflowY: "auto", paddingRight: "4px", display: "flex", flexDirection: "column", gap: "10px" }}>
                     {(!resenas || resenas.length === 0) ? (
-                      <div style={{ padding: "24px", textAlign: "center", background: "#F8FAFC", borderRadius: "12px", border: "1px dashed #CBD5E1" }}>
+                      <div style={{ padding: "24px", textAlign: "center", background: "rgba(255, 255, 255, 0.03)", borderRadius: "12px", border: "1px dashed rgba(255, 255, 255, 0.15)" }}>
                         <div style={{ display: "flex", justifyContent: "center", marginBottom: "6px" }}>
                           <Icon name="star" size={28} color="#D97706" />
                         </div>
@@ -2781,15 +2782,15 @@ export default function DashboardPage() {
                       </div>
                     ) : (
                       (resenas || []).map((rev) => (
-                        <div key={rev.id} style={{ padding: "10px 14px", background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "10px", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" }}>
+                        <div key={rev.id} style={{ padding: "10px 14px", background: "#131F33", border: "1px solid rgba(255, 255, 255, 0.12)", borderRadius: "10px", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }}>
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "3px" }}>
-                            <span style={{ fontWeight: "800", fontSize: "13px", color: "#1E293B", display: "inline-flex", alignItems: "center", gap: "5px" }}>
+                            <span style={{ fontWeight: "800", fontSize: "13px", color: "#FFFFFF", display: "inline-flex", alignItems: "center", gap: "5px" }}>
                               <Icon name="user" size={13} color="#E11D48" />
                               <span>{rev.nombre_usuario || (lang === "en" ? "Visitor" : lang === "zh" ? "游客" : "Visitante")}</span>
                             </span>
                             <span style={{ color: "#D97706", fontWeight: "800", fontSize: "12.5px" }}>{"⭐".repeat(rev.estrellas || 5)} ({rev.estrellas})</span>
                           </div>
-                          <p style={{ fontSize: "12px", color: "#475569", margin: 0, fontStyle: "italic" }}>"{rev.comentario}"</p>
+                          <p style={{ fontSize: "12px", color: "#E2E8F0", margin: 0, fontStyle: "italic" }}>"{rev.comentario}"</p>
                         </div>
                       ))
                     )}
@@ -2832,7 +2833,7 @@ export default function DashboardPage() {
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(20, 109, 158, 0.1)", paddingBottom: "12px" }}>
-                      <h4 style={{ margin: 0, fontSize: "17px", fontWeight: "850", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <h4 style={{ margin: 0, fontSize: "17px", fontWeight: "850", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "8px" }}>
                         <Icon name="edit" size={18} color="#146D9E" />
                         <span>{lang === "en" ? "Edit Dish / Service" : lang === "zh" ? "编辑菜品或服务" : "Editar Platillo o Servicio"}</span>
                       </h4>
@@ -3372,7 +3373,7 @@ const styles = {
     height: "100vh",
     maxHeight: "100vh",
     width: "100vw",
-    background: "linear-gradient(180deg, rgba(10, 18, 35, 0.72) 0%, rgba(5, 10, 20, 0.85) 100%), url('/images/loginbg.jpeg') center / cover no-repeat fixed",
+    background: "url('/images/loginbg.jpeg') center / cover no-repeat fixed",
     color: "#1A1A2E",
     fontFamily: "var(--font-outfit), sans-serif",
     padding: "85px 24px 16px 24px",
@@ -3389,7 +3390,7 @@ const styles = {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    background: "linear-gradient(180deg, rgba(10, 18, 35, 0.85) 0%, rgba(5, 10, 20, 0.95) 100%), url('/images/loginbg.jpeg') center / cover no-repeat fixed",
+    background: "url('/images/loginbg.jpeg') center / cover no-repeat fixed",
   },
   header: {
     position: "absolute",

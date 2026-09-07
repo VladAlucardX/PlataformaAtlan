@@ -362,27 +362,11 @@ a:hover {
   z-index: 2;
 }
 
-/* Efecto de destello / brillo sutil al pasar el cursor (Gentle Sheen Sweep) */
+/* Efecto de destello deshabilitado por preferencia del usuario */
 .glass-card::after,
-.clay-card::after,
-.btn-primary::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -80%;
-  width: 50%;
-  height: 200%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
-  transform: rotate(25deg);
-  transition: left 0.75s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: none;
-  z-index: 3;
-}
-
-.glass-card:hover::after,
-.clay-card:hover::after,
-.btn-primary:hover::after {
-  left: 140%;
+.clay-card::after {
+  display: none !important;
+  content: none !important;
 }
 
 /* Desactivar destello/brillo al pasar el cursor */
