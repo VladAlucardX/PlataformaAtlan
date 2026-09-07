@@ -13,14 +13,23 @@ import { useTranslation } from '../../hooks/useTranslation';
 export default function LanguageToggle({ variant = 'pill', className = '' }) {
   const { lang, setLang } = useTranslation();
 
-  const toggle = () => setLang(lang === 'es' ? 'en' : 'es');
+  const toggle = () => {
+    const nextLang = lang === 'es' ? 'en' : lang === 'en' ? 'zh' : 'es';
+    setLang(nextLang);
+  };
+
+  const getFlagBadge = () => {
+    if (lang === 'es') return '🇳🇮 ES';
+    if (lang === 'en') return '🇬🇧 EN';
+    return '🇨🇳 ZH';
+  };
 
   if (variant === 'icon') {
     return (
       <button
         onClick={toggle}
         className={className}
-        title={lang === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+        title={lang === 'es' ? 'Cambiar idioma' : lang === 'en' ? 'Change language' : '切换语言'}
         aria-label="Toggle language"
         style={{
           display: 'flex',
@@ -52,7 +61,7 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
         style={{ fontSize: '13px', gap: '6px', display: 'inline-flex', alignItems: 'center' }}
       >
         <img src="/images/remolino.svg" alt="Language" style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
-        <span>{lang === 'es' ? 'EN' : 'ES'}</span>
+        <span>{getFlagBadge()}</span>
       </button>
     );
   }
@@ -94,18 +103,22 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          width: '34px',
+          padding: '2px 8px',
           height: '28px',
           borderRadius: 'var(--atlan-radius-full)',
-          background: 'linear-gradient(135deg, #146D9E 0%, #0F5579 100%)',
+          background: lang === 'zh'
+            ? 'linear-gradient(135deg, #DE2910 0%, #B22222 100%)'
+            : lang === 'en'
+            ? 'linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)'
+            : 'linear-gradient(135deg, #146D9E 0%, #0F5579 100%)',
           color: '#FFFFFF',
           fontWeight: '800',
           fontSize: '11px',
           letterSpacing: '0.05em',
-          boxShadow: '0 2px 8px rgba(20, 109, 158, 0.25)',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
         }}
       >
-        {lang.toUpperCase()}
+        {getFlagBadge()}
       </span>
     </button>
   );

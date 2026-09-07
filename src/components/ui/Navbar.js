@@ -231,11 +231,11 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                     top: "calc(100% + 8px)",
                     right: 0,
                     background: "#FFFFFF",
-                    border: "2px solid rgba(255, 255, 255, 0.95)",
-                    boxShadow: "inset 2px 2px 4px rgba(255, 255, 255, 1), inset -3px -3px 6px rgba(20, 109, 158, 0.06), 0 14px 35px rgba(0, 0, 0, 0.15)",
-                    borderRadius: "18px",
+                    border: "1.5px solid rgba(20, 109, 158, 0.12)",
+                    boxShadow: "0 20px 40px -8px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.04)",
+                    borderRadius: "20px",
                     padding: "8px",
-                    minWidth: "210px",
+                    minWidth: "230px",
                     zIndex: 100,
                     display: "flex",
                     flexDirection: "column",
@@ -251,19 +251,38 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "10px",
+                        gap: "12px",
                         padding: "10px 14px",
-                        borderRadius: "12px",
-                        color: "#1A1A2E",
-                        fontSize: "13px",
+                        borderRadius: "14px",
+                        color: "#1E1B4B",
+                        fontSize: "13.5px",
                         fontWeight: "750",
                         textDecoration: "none",
-                        transition: "background 0.15s"
+                        transition: "all 0.18s ease"
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
-                      onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "rgba(124, 58, 237, 0.08)";
+                        e.currentTarget.style.transform = "translateX(3px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "transparent";
+                        e.currentTarget.style.transform = "translateX(0)";
+                      }}
                     >
-                      <Icon name="shield" size={16} /> {lang === "en" ? "Management" : "Gestión"}
+                      <div style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "10px",
+                        background: "linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(109, 40, 217, 0.25) 100%)",
+                        border: "1px solid rgba(124, 58, 237, 0.25)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0
+                      }}>
+                        <Icon name="shield" size={16} color="#7C3AED" />
+                      </div>
+                      <span>{lang === "en" ? "Management" : lang === "zh" ? "管理控制台" : "Gestión"}</span>
                     </Link>
                   )}
 
@@ -274,19 +293,38 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "10px",
+                      gap: "12px",
                       padding: "10px 14px",
-                      borderRadius: "12px",
-                      color: "#1A1A2E",
-                      fontSize: "13px",
+                      borderRadius: "14px",
+                      color: "#064E3B",
+                      fontSize: "13.5px",
                       fontWeight: "750",
                       textDecoration: "none",
-                      transition: "background 0.15s"
+                      transition: "all 0.18s ease"
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
-                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(16, 185, 129, 0.08)";
+                      e.currentTarget.style.transform = "translateX(3px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "transparent";
+                      e.currentTarget.style.transform = "translateX(0)";
+                    }}
                   >
-                    <Icon name="users" size={16} /> {lang === "en" ? "My Community Profile" : "Mi Perfil Comunidad"}
+                    <div style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "10px",
+                      background: "linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.25) 100%)",
+                      border: "1px solid rgba(16, 185, 129, 0.25)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0
+                    }}>
+                      <Icon name="users" size={16} color="#059669" />
+                    </div>
+                    <span>{lang === "en" ? "My Community Profile" : lang === "zh" ? "我的社区资料" : "Mi Perfil Comunidad"}</span>
                   </Link>
 
                   {/* Opción 2: Mi Perfil Personal */}
@@ -296,19 +334,38 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "10px",
+                      gap: "12px",
                       padding: "10px 14px",
-                      borderRadius: "12px",
-                      color: "#1A1A2E",
-                      fontSize: "13px",
+                      borderRadius: "14px",
+                      color: "#0C4A6E",
+                      fontSize: "13.5px",
                       fontWeight: "750",
                       textDecoration: "none",
-                      transition: "background 0.15s"
+                      transition: "all 0.18s ease"
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
-                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(2, 132, 199, 0.08)";
+                      e.currentTarget.style.transform = "translateX(3px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "transparent";
+                      e.currentTarget.style.transform = "translateX(0)";
+                    }}
                   >
-                    <Icon name="user" size={16} /> {lang === "en" ? "My Personal Profile" : "Mi Perfil Personal"}
+                    <div style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "10px",
+                      background: "linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(3, 105, 161, 0.25) 100%)",
+                      border: "1px solid rgba(2, 132, 199, 0.25)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0
+                    }}>
+                      <Icon name="user" size={16} color="#0284C7" />
+                    </div>
+                    <span>{lang === "en" ? "My Personal Profile" : lang === "zh" ? "我的个人资料" : "Mi Perfil Personal"}</span>
                   </Link>
 
                   {/* Opción Guía: Mi Perfil de Guía (Solo si es guía turístico) */}
@@ -319,20 +376,38 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "10px",
+                        gap: "12px",
                         padding: "10px 14px",
-                        borderRadius: "12px",
-                        color: "#0EA5E9",
-                        fontSize: "13px",
-                        fontWeight: "800",
+                        borderRadius: "14px",
+                        color: "#0369A1",
+                        fontSize: "13.5px",
+                        fontWeight: "750",
                         textDecoration: "none",
-                        background: "rgba(14, 165, 233, 0.08)",
-                        transition: "background 0.15s"
+                        transition: "all 0.18s ease"
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(14, 165, 233, 0.16)"}
-                      onMouseLeave={(e) => e.currentTarget.style.background = "rgba(14, 165, 233, 0.08)"}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "rgba(14, 165, 233, 0.1)";
+                        e.currentTarget.style.transform = "translateX(3px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "transparent";
+                        e.currentTarget.style.transform = "translateX(0)";
+                      }}
                     >
-                      <Icon name="compass" size={16} color="#0EA5E9" /> {lang === "en" ? "My Guide Profile Section" : "Mi Perfil de Guía Turístico"}
+                      <div style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "10px",
+                        background: "linear-gradient(135deg, rgba(14, 165, 233, 0.18) 0%, rgba(56, 189, 248, 0.3) 100%)",
+                        border: "1px solid rgba(14, 165, 233, 0.3)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0
+                      }}>
+                        <Icon name="compass" size={16} color="#0EA5E9" />
+                      </div>
+                      <span>{lang === "en" ? "My Guide Profile Section" : lang === "zh" ? "我的导游资料" : "Mi Perfil de Guía Turístico"}</span>
                     </Link>
                   )}
 
@@ -344,27 +419,48 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "10px",
+                        gap: "12px",
                         padding: "10px 14px",
-                        borderRadius: "12px",
-                        color: "#1A1A2E",
-                        fontSize: "13px",
+                        borderRadius: "14px",
+                        color: "#78350F",
+                        fontSize: "13.5px",
                         fontWeight: "750",
                         textDecoration: "none",
-                        transition: "background 0.15s"
+                        transition: "all 0.18s ease"
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
-                      onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "rgba(245, 158, 11, 0.08)";
+                        e.currentTarget.style.transform = "translateX(3px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "transparent";
+                        e.currentTarget.style.transform = "translateX(0)";
+                      }}
                     >
-                      <Icon name="briefcase" size={16} /> {lang === "en" ? "My Businesses" : "Mis Negocios"}
+                      <div style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "10px",
+                        background: "linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.28) 100%)",
+                        border: "1px solid rgba(245, 158, 11, 0.3)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0
+                      }}>
+                        <Icon name="briefcase" size={16} color="#D97706" />
+                      </div>
+                      <span>{lang === "en" ? "My Businesses" : lang === "zh" ? "我的店铺" : "Mis Negocios"}</span>
                     </Link>
                   )}
-                        <div style={{ height: "1px", background: "rgba(20, 109, 158, 0.08)", margin: "4px 0" }} />
+
+                  <div style={{ height: "1px", background: "rgba(20, 109, 158, 0.08)", margin: "4px 0" }} />
 
                   {/* Opción 4: Traducir Página */}
                   <button
                     onClick={() => {
-                      setLang(lang === "es" ? "en" : "es");
+                      const nextLang = lang === "es" ? "en" : lang === "en" ? "zh" : "es";
+                      setLang(nextLang);
                     }}
                     style={{
                       display: "flex",
@@ -372,33 +468,56 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                       justifyContent: "space-between",
                       width: "100%",
                       padding: "10px 14px",
-                      borderRadius: "12px",
+                      borderRadius: "14px",
                       background: "transparent",
                       border: "none",
-                      color: "#1A1A2E",
-                      fontSize: "13px",
+                      color: "#312E81",
+                      fontSize: "13.5px",
                       fontWeight: "750",
                       cursor: "pointer",
                       textAlign: "left",
-                      transition: "background 0.15s"
+                      transition: "all 0.18s ease"
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(20, 109, 158, 0.06)"}
-                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(99, 102, 241, 0.08)";
+                      e.currentTarget.style.transform = "translateX(3px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "transparent";
+                      e.currentTarget.style.transform = "translateX(0)";
+                    }}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <img src="/images/remolino.svg" alt="Idioma" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
-                      <span>{lang === "es" ? "Traducir Página" : "Translate Page"}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                      <div style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "10px",
+                        background: "linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(79, 70, 229, 0.25) 100%)",
+                        border: "1px solid rgba(99, 102, 241, 0.25)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0
+                      }}>
+                        <img src="/images/remolino.svg" alt="Idioma" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
+                      </div>
+                      <span>{lang === "es" ? "Traducir Página" : lang === "en" ? "Translate Page" : "翻译页面"}</span>
                     </div>
                     <span style={{
                       fontSize: "11px",
                       fontWeight: "800",
-                      padding: "3px 8px",
+                      padding: "3px 9px",
                       borderRadius: "8px",
-                      background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
+                      background: lang === "zh"
+                        ? "linear-gradient(135deg, #DE2910 0%, #B22222 100%)"
+                        : lang === "en"
+                        ? "linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)"
+                        : "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
                       color: "#FFFFFF",
-                      letterSpacing: "0.5px"
+                      letterSpacing: "0.5px",
+                      boxShadow: "0 2px 6px rgba(0, 0, 0, 0.15)"
                     }}>
-                      {lang === "es" ? "🇬🇧 EN" : "🇳🇮 ES"}
+                      {lang === "es" ? "🇳🇮 ES" : lang === "en" ? "🇬🇧 EN" : "🇨🇳 ZH"}
                     </span>
                   </button>
 
@@ -413,23 +532,42 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "10px",
+                      gap: "12px",
                       padding: "10px 14px",
-                      borderRadius: "12px",
-                      color: "#ef4444",
+                      borderRadius: "14px",
+                      color: "#EF4444",
                       background: "none",
                       border: "none",
-                      fontSize: "13px",
+                      fontSize: "13.5px",
                       fontWeight: "750",
                       cursor: "pointer",
                       textAlign: "left",
                       width: "100%",
-                      transition: "background 0.15s"
+                      transition: "all 0.18s ease"
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(239, 68, 68, 0.08)"}
-                    onMouseLeave={(e) => e.currentTarget.style.background = "none"}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(239, 68, 68, 0.08)";
+                      e.currentTarget.style.transform = "translateX(3px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "none";
+                      e.currentTarget.style.transform = "translateX(0)";
+                    }}
                   >
-                    <Icon name="logOut" size={16} color="#ef4444" /> {t("nav.logout") || (lang === "en" ? "Log Out" : "Cerrar Sesión")}
+                    <div style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "10px",
+                      background: "linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.25) 100%)",
+                      border: "1px solid rgba(239, 68, 68, 0.25)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0
+                    }}>
+                      <Icon name="logOut" size={16} color="#DC2626" />
+                    </div>
+                    <span>{t("nav.logout") || (lang === "en" ? "Log Out" : lang === "zh" ? "退出登录" : "Cerrar Sesión")}</span>
                   </button>
                 </div>
               )}
@@ -559,16 +697,30 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
               )}
               <button
                 type="button"
-                onClick={() => setLang(lang === "es" ? "en" : "es")}
+                onClick={() => {
+                  const nextLang = lang === "es" ? "en" : lang === "en" ? "zh" : "es";
+                  setLang(nextLang);
+                }}
                 className="mobile-menu-item"
                 style={{ width: "100%", textAlign: "left", cursor: "pointer", justifyContent: "space-between", background: "rgba(20, 109, 158, 0.15)", borderColor: "rgba(20, 109, 158, 0.3)" }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <img src="/images/remolino.svg" alt="Idioma" style={{ width: "20px", height: "20px", objectFit: "contain" }} />
-                  <span>{lang === "es" ? "Traducir Página" : "Translate Page"}</span>
+                  <span>{lang === "es" ? "Traducir Página" : lang === "en" ? "Translate Page" : "翻译页面"}</span>
                 </div>
-                <span style={{ fontSize: "11px", fontWeight: "800", padding: "2px 8px", borderRadius: "6px", background: "#146D9E", color: "white" }}>
-                  {lang === "es" ? "🇬🇧 EN" : "🇳🇮 ES"}
+                <span style={{
+                  fontSize: "11px",
+                  fontWeight: "800",
+                  padding: "3px 9px",
+                  borderRadius: "6px",
+                  background: lang === "zh"
+                    ? "linear-gradient(135deg, #DE2910, #B22222)"
+                    : lang === "en"
+                    ? "linear-gradient(135deg, #1E40AF, #1E3A8A)"
+                    : "#146D9E",
+                  color: "white"
+                }}>
+                  {lang === "es" ? "🇳🇮 ES" : lang === "en" ? "🇬🇧 EN" : "🇨🇳 ZH"}
                 </span>
               </button>
               <button

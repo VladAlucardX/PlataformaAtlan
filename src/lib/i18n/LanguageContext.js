@@ -3,8 +3,9 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import es from './es.json';
 import en from './en.json';
+import zh from './zh.json';
 
-const translations = { es, en };
+const translations = { es, en, zh };
 
 export const LanguageContext = createContext({
   lang: 'es',
