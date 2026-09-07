@@ -92,44 +92,6 @@ const cardStyles = {
   sendBtn: { background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none", width: "36px", height: "36px", borderRadius: "50%", color: "white", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" },
 };
 
-const sidebarStyles = {
-  profileCard: {
-    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.9)",
-    boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)",
-    borderRadius: "24px", overflow: "hidden",
-  },
-  profileBanner: {
-    height: "65px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
-  },
-  loginCard: {
-    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.9)",
-    boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)",
-    borderRadius: "24px", padding: "24px", textAlign: "center",
-  },
-  sectionCard: {
-    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.9)",
-    boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)",
-    borderRadius: "24px", overflow: "hidden", padding: "0 0 16px 0",
-  },
-  cardHeaderBanner: {
-    padding: "12px 18px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
-    color: "#FFFFFF", fontSize: "13.5px", fontWeight: "750", display: "flex",
-    alignItems: "center", gap: "8px", marginBottom: "14px",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-  },
-  exploreLink: {
-    display: "flex", alignItems: "center", gap: "8px", padding: "10px 12px",
-    color: "var(--atlan-text-secondary)", textDecoration: "none", fontSize: "13px",
-    fontWeight: "600", borderRadius: "10px", transition: "all 0.2s ease",
-    marginBottom: "4px",
-  },
-  followBtn: {
-    padding: "6px 14px", border: "none", borderRadius: "20px",
-    fontSize: "12px", fontWeight: "750", cursor: "pointer", whiteSpace: "nowrap",
-    transition: "all 0.2s ease",
-  },
-};
-
 function renderFormattedContent(contenido) {
   if (!contenido) return null;
   if (typeof contenido === "string" && contenido.includes("🔁")) {
