@@ -71,6 +71,7 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
     <button
       onClick={toggle}
       className={className}
+      title={lang === 'es' ? 'Cambiar idioma' : lang === 'en' ? 'Change language' : '切换语言'}
       aria-label="Toggle language"
       id="language-toggle"
       style={{

@@ -158,6 +158,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
 
         {/* Far Right Actions */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }} className="hide-mobile">
+          <LanguageToggle />
           {session && <NotificationDropdown session={session} />}
           {session ? (
             <div style={{ position: "relative" }} ref={dropdownRef}>
@@ -587,7 +588,8 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
         </div>
 
         {/* Mobile Hamburger Button */}
-        <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <LanguageToggle />
           {session && <NotificationDropdown session={session} />}
           <button
             type="button"
@@ -697,34 +699,6 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
               )}
               <button
                 type="button"
-                onClick={() => {
-                  const nextLang = lang === "es" ? "en" : lang === "en" ? "zh" : "es";
-                  setLang(nextLang);
-                }}
-                className="mobile-menu-item"
-                style={{ width: "100%", textAlign: "left", cursor: "pointer", justifyContent: "space-between", background: "rgba(20, 109, 158, 0.15)", borderColor: "rgba(20, 109, 158, 0.3)" }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <img src="/images/remolino.svg" alt="Idioma" style={{ width: "20px", height: "20px", objectFit: "contain" }} />
-                  <span>{lang === "es" ? "Traducir Página" : lang === "en" ? "Translate Page" : "翻译页面"}</span>
-                </div>
-                <span style={{
-                  fontSize: "11px",
-                  fontWeight: "800",
-                  padding: "3px 9px",
-                  borderRadius: "6px",
-                  background: lang === "zh"
-                    ? "linear-gradient(135deg, #DE2910, #B22222)"
-                    : lang === "en"
-                    ? "linear-gradient(135deg, #1E40AF, #1E3A8A)"
-                    : "#146D9E",
-                  color: "white"
-                }}>
-                  {lang === "es" ? "🇳🇮 ES" : lang === "en" ? "🇬🇧 EN" : "🇨🇳 ZH"}
-                </span>
-              </button>
-              <button
-                type="button"
                 onClick={() => { setMenuOpen(false); handleLogout(); }}
                 className="mobile-menu-item"
                 style={{ background: "rgba(239,68,68,0.15)", borderColor: "rgba(239,68,68,0.3)", color: "#ef4444", width: "100%", textAlign: "left", cursor: "pointer" }}
@@ -747,6 +721,36 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
               </Link>
             </>
           )}
+
+          {/* Opción de cambio de idioma en menú móvil siempre visible para todos los usuarios */}
+          <button
+            type="button"
+            onClick={() => {
+              const nextLang = lang === "es" ? "en" : lang === "en" ? "zh" : "es";
+              setLang(nextLang);
+            }}
+            className="mobile-menu-item"
+            style={{ width: "100%", textAlign: "left", cursor: "pointer", justifyContent: "space-between", background: "rgba(20, 109, 158, 0.15)", borderColor: "rgba(20, 109, 158, 0.3)", marginTop: "4px" }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <img src="/images/remolino.svg" alt="Idioma" style={{ width: "20px", height: "20px", objectFit: "contain" }} />
+              <span>{lang === "es" ? "Traducir Página" : lang === "en" ? "Translate Page" : "翻译页面"}</span>
+            </div>
+            <span style={{
+              fontSize: "11px",
+              fontWeight: "800",
+              padding: "3px 9px",
+              borderRadius: "6px",
+              background: lang === "zh"
+                ? "linear-gradient(135deg, #DE2910, #B22222)"
+                : lang === "en"
+                ? "linear-gradient(135deg, #1E40AF, #1E3A8A)"
+                : "#146D9E",
+              color: "white"
+            }}>
+              {lang === "es" ? "🇳🇮 ES" : lang === "en" ? "🇬🇧 EN" : "🇨🇳 ZH"}
+            </span>
+          </button>
         </div>
       )}
     </nav>
