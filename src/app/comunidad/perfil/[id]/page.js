@@ -40,13 +40,13 @@ function avatarStyle(url, size) {
 
 const cardStyles = {
   card: {
-    background: "#E2E8F0",
-    border: "1.5px solid #94A3B8",
-    boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.10), 0 2px 6px -1px rgba(15, 23, 42, 0.05)",
-    borderRadius: "28px", padding: "24px", marginBottom: "20px"
+    background: "#FFFFFF",
+    border: "1px solid rgba(226, 232, 240, 0.9)",
+    boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)",
+    borderRadius: "24px", padding: "24px", marginBottom: "20px"
   },
   publicidadCard: {
-    background: "#E2E8F0",
+    background: "#FFFFFF",
     border: "2px solid #17AA4A",
     boxShadow: "0 10px 30px -4px rgba(23, 170, 74, 0.25)",
     borderRadius: "20px", padding: "24px", marginBottom: "20px",
@@ -70,26 +70,64 @@ const cardStyles = {
     background: "rgba(255,215,0,0.10)", color: "#FFD700",
   },
   content: { margin: "0 0 16px", fontSize: "15.5px", lineHeight: "1.65", color: "var(--atlan-text-primary)", whiteSpace: "pre-wrap", wordBreak: "break-word" },
-  imageContainer: { borderRadius: "18px", overflow: "hidden", marginBottom: "16px", border: "1px solid #94A3B8" },
+  imageContainer: { borderRadius: "18px", overflow: "hidden", marginBottom: "16px", border: "1px solid #CBD5E1" },
   image: { width: "100%", maxHeight: "540px", objectFit: "cover", display: "block" },
-  statsBar: { display: "flex", justifyContent: "space-between", padding: "8px 4px", borderBottom: "1px solid rgba(148,163,184,0.6)", marginBottom: "4px" },
+  statsBar: { display: "flex", justifyContent: "space-between", padding: "8px 4px", borderBottom: "1px solid rgba(226, 232, 240, 0.8)", marginBottom: "4px" },
   statText: { fontSize: "12px", color: "var(--atlan-text-muted)", fontWeight: "600" },
   actionBar: { display: "flex", gap: "8px", padding: "4px 0" },
   actionBtn: {
     flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-    padding: "9px 12px", background: "rgba(255, 255, 255, 0.65)", border: "1px solid #CBD5E1", color: "#334155",
+    padding: "9px 12px", background: "rgba(241, 245, 249, 0.8)", border: "1px solid #CBD5E1", color: "#334155",
     fontSize: "13px", fontWeight: "700", cursor: "pointer", borderRadius: "12px", transition: "all 0.2s",
     boxShadow: "0 2px 4px rgba(15, 23, 42, 0.03)"
   },
   menuBtn: { background: "none", border: "none", color: "var(--atlan-text-muted)", fontSize: "20px", cursor: "pointer", padding: "4px 8px" },
-  menuDropdown: { position: "absolute", top: "100%", right: 0, zIndex: 50, background: "#FFFFFF", border: "1px solid #94A3B8", borderRadius: "12px", padding: "4px", minWidth: "140px", boxShadow: "0 8px 24px rgba(0, 0, 0, 0.10)" },
+  menuDropdown: { position: "absolute", top: "100%", right: 0, zIndex: 50, background: "#FFFFFF", border: "1px solid #CBD5E1", borderRadius: "12px", padding: "4px", minWidth: "140px", boxShadow: "0 8px 24px rgba(0, 0, 0, 0.10)" },
   menuItem: { display: "flex", alignItems: "center", gap: "8px", width: "100%", padding: "10px 12px", background: "none", border: "none", color: "#ef4444", fontSize: "13px", fontWeight: "700", cursor: "pointer" },
-  commentsSection: { borderTop: "1px solid #94A3B8", paddingTop: "14px", marginTop: "4px" },
+  commentsSection: { borderTop: "1px solid rgba(226, 232, 240, 0.8)", paddingTop: "14px", marginTop: "4px" },
   commentItem: { display: "flex", gap: "10px", marginBottom: "12px", alignItems: "flex-start" },
-  commentBubble: { background: "#FFFFFF", padding: "8px 14px", borderRadius: "0 14px 14px 14px", border: "1px solid #94A3B8" },
+  commentBubble: { background: "#F8FAFC", padding: "8px 14px", borderRadius: "0 14px 14px 14px", border: "1px solid #E2E8F0" },
   commentInput: { display: "flex", alignItems: "center", gap: "10px", marginTop: "12px" },
-  commentTextField: { flex: 1, padding: "10px 16px", background: "#FFFFFF", border: "1px solid #94A3B8", borderRadius: "20px", color: "#1A1A2E", fontSize: "13px", outline: "none" },
+  commentTextField: { flex: 1, padding: "10px 16px", background: "#FFFFFF", border: "1px solid #CBD5E1", borderRadius: "20px", color: "#1A1A2E", fontSize: "13px", outline: "none" },
   sendBtn: { background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", border: "none", width: "36px", height: "36px", borderRadius: "50%", color: "white", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" },
+};
+
+const sidebarStyles = {
+  profileCard: {
+    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.9)",
+    boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)",
+    borderRadius: "24px", overflow: "hidden",
+  },
+  profileBanner: {
+    height: "65px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
+  },
+  loginCard: {
+    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.9)",
+    boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)",
+    borderRadius: "24px", padding: "24px", textAlign: "center",
+  },
+  sectionCard: {
+    background: "#FFFFFF", border: "1px solid rgba(226, 232, 240, 0.9)",
+    boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)",
+    borderRadius: "24px", overflow: "hidden", padding: "0 0 16px 0",
+  },
+  cardHeaderBanner: {
+    padding: "12px 18px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
+    color: "#FFFFFF", fontSize: "13.5px", fontWeight: "750", display: "flex",
+    alignItems: "center", gap: "8px", marginBottom: "14px",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+  },
+  exploreLink: {
+    display: "flex", alignItems: "center", gap: "8px", padding: "10px 12px",
+    color: "var(--atlan-text-secondary)", textDecoration: "none", fontSize: "13px",
+    fontWeight: "600", borderRadius: "10px", transition: "all 0.2s ease",
+    marginBottom: "4px",
+  },
+  followBtn: {
+    padding: "6px 14px", border: "none", borderRadius: "20px",
+    fontSize: "12px", fontWeight: "750", cursor: "pointer", whiteSpace: "nowrap",
+    transition: "all 0.2s ease",
+  },
 };
 
 function renderFormattedContent(contenido) {
@@ -824,17 +862,17 @@ export default function PerfilPublico() {
           {/* Target Profile Card (Solo si ves el perfil de OTRA persona) */}
           {!isOwnProfile && (
             <div style={{
-              background: "#E2E8F0",
-              border: "1.5px solid #94A3B8",
-              boxShadow: "0 8px 24px -4px rgba(15, 23, 42, 0.10), 0 2px 6px -1px rgba(15, 23, 42, 0.05)",
-              borderRadius: "22px",
+              background: "#FFFFFF",
+              border: "1px solid rgba(226, 232, 240, 0.9)",
+              boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)",
+              borderRadius: "24px",
               overflow: "hidden",
               marginBottom: "24px",
               position: "relative"
             }}>
-              {/* Banner superior de portada compacto estilo sidebar (65px) */}
-              <div style={{ height: "65px", background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)", position: "relative" }}>
-                {/* Botón Seguir compacto posicionado sutilmente en la esquina superior derecha */}
+              {/* Banner superior de portada compacto (65px) */}
+              <div style={{ height: "65px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)", position: "relative", zIndex: 1 }}>
+                {/* Botón Seguir compacto posicionado en la esquina superior derecha */}
                 <button
                   onClick={handleFollow}
                   disabled={followLoading}
@@ -842,37 +880,40 @@ export default function PerfilPublico() {
                     position: "absolute",
                     top: "12px",
                     right: "14px",
-                    padding: "5px 14px",
-                    borderRadius: "16px",
+                    padding: "6px 16px",
+                    borderRadius: "20px",
                     border: "none",
                     background: isFollowing ? "rgba(255, 255, 255, 0.2)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
                     color: "white",
                     fontWeight: "800",
                     fontSize: "12px",
                     cursor: "pointer",
-                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.25)",
                     backdropFilter: "blur(4px)",
-                    transition: "all 0.2s ease"
+                    transition: "all 0.2s ease",
+                    zIndex: 10
                   }}
                 >
                   {isFollowing ? (lang === "en" ? "✓ Following" : lang === "zh" ? "✓ 已关注" : "✓ Siguiendo") : (lang === "en" ? "+ Follow" : lang === "zh" ? "+ 关注" : "+ Seguir")}
                 </button>
               </div>
 
-              <div style={{ padding: "0 20px 20px", marginTop: "-32px", textAlign: "center" }}>
-                {/* Avatar centrado idéntico al del perfil propio (64px) */}
+              <div style={{ padding: "0 20px 20px", marginTop: "-32px", textAlign: "center", position: "relative", zIndex: 2 }}>
+                {/* Avatar centrado (64px) SOBRE la portada azul con zIndex: 5 y borde blanco 3px */}
                 <div style={{
                   ...avatarStyle(targetPerfil.avatar_url, 64),
                   margin: "0 auto 8px",
-                  border: "3px solid #E2E8F0",
-                  boxShadow: "0 4px 12px rgba(15, 23, 42, 0.15)",
-                  background: targetPerfil.avatar_url ? `url(${targetPerfil.avatar_url}) center/cover` : "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)"
+                  border: "3px solid #FFFFFF",
+                  boxShadow: "0 6px 18px rgba(0, 0, 0, 0.15)",
+                  position: "relative",
+                  zIndex: 5,
+                  background: targetPerfil.avatar_url ? `url(${targetPerfil.avatar_url}) center/cover` : "linear-gradient(135deg, #17AA4A 0%, #0A192F 100%)"
                 }}>
                   {!targetPerfil.avatar_url && (targetPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
                 </div>
 
-                {/* Nombre del Usuario centrado idéntico al sidebar */}
-                <h4 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: "800", color: "#1A1A2E", fontFamily: "var(--font-outfit)" }}>
+                {/* Nombre del Usuario centrado */}
+                <h4 style={{ margin: "0 0 2px", fontSize: "17px", fontWeight: "800", color: "#1A1A2E", fontFamily: "var(--font-outfit)" }}>
                   {targetPerfil.nombre_completo || "Usuario"}
                 </h4>
 
@@ -892,8 +933,8 @@ export default function PerfilPublico() {
                   </p>
                 )}
 
-                {/* Contador de Estadísticas idéntico al perfil lateral */}
-                <div style={{ display: "flex", justifyContent: "center", gap: "24px", paddingTop: "10px" }}>
+                {/* Contador de Estadísticas */}
+                <div style={{ display: "flex", justifyContent: "center", gap: "24px", paddingTop: "10px", borderTop: "1px solid rgba(226, 232, 240, 0.8)" }}>
                   <div style={{ textAlign: "center" }}>
                     <div style={{ fontSize: "16px", fontWeight: "800", color: "#1A1A2E" }}>{posts.length}</div>
                     <div style={{ fontSize: "11px", color: "#64748B" }}>{lang === "en" ? "Posts" : lang === "zh" ? "动态" : "Posts"}</div>
