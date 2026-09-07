@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Icon from './Icon';
+import { useTranslation } from "@/hooks/useTranslation";
 
 const formatPriceRange = (rango) => {
   if (!rango) return '';
@@ -26,6 +27,7 @@ export default function BusinessProfileModal({
   userSession,
   lang = 'es',
   t = (key) => key,
+  tr: propTr,
   isFavorite,
   onToggleFavorite,
   onIniciarViaje,
@@ -53,6 +55,8 @@ export default function BusinessProfileModal({
   reviewErrorMsg,
   handleCrearResena
 }) {
+  const { tr: hookTr } = useTranslation();
+  const tr = propTr || hookTr;
   const [activeTab, setActiveTab] = useState('info'); // 'info' | 'menu' | 'reservas' | 'reseñas'
 
   if (!isOpen || !point) return null;
