@@ -203,12 +203,12 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
     <div style={post.es_publicidad ? cardStyles.publicidadCard : cardStyles.card}>
       {post.es_publicidad && (
         <div style={cardStyles.publicidadBadge}>
-          <Icon name="sparkles" size={12} /> {lang === "en" ? "Sponsored Ad" : lang === "zh" ? "赞助广告" : "Publicidad"}
+          <img src="/images/tortuga.svg" alt="Publicidad" style={{ width: "13px", height: "13px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(75%) sepia(90%) saturate(1200%) hue-rotate(350deg)" }} /> {lang === "en" ? "Sponsored Ad" : lang === "zh" ? "赞助广告" : "Publicidad"}
         </div>
       )}
       {post.es_promocion && !post.es_publicidad && (
         <div style={cardStyles.promoBadge}>
-          <Icon name="megaphone" size={12} /> {lang === "en" ? "Promo" : lang === "zh" ? "特别推广" : "Promoción"}
+          <img src="/images/machoraton.svg" alt="Promoción" style={{ width: "13px", height: "13px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(85%) sepia(80%) saturate(1500%) hue-rotate(5deg)" }} /> {lang === "en" ? "Promo" : lang === "zh" ? "特别推广" : "Promoción"}
         </div>
       )}
 

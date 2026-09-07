@@ -344,7 +344,7 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
                     onChange={() => { setEsPromocion(true); setEsPublicidad(false); }} 
                     style={{ accentColor: "#FFD700" }} 
                   />
-                  <Icon name="megaphone" size={13} color={esPromocion ? "#FFD700" : "#94A3B8"} /> {lang === "en" ? "Promotion" : lang === "zh" ? "优惠推广" : "Promoción"}
+                  <img src="/images/machoraton.svg" alt="Promoción" style={{ width: "16px", height: "16px", objectFit: "contain", filter: esPromocion ? "brightness(0) saturate(100%) invert(80%) sepia(80%) saturate(1500%) hue-rotate(5deg)" : "brightness(0) invert(0.65)" }} /> {lang === "en" ? "Promotion" : lang === "zh" ? "优惠推广" : "Promoción"}
                 </label>
               )}
 
@@ -369,7 +369,7 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
                   onChange={() => { setEsPromocion(false); setEsPublicidad(true); }} 
                   style={{ accentColor: "#F59E0B" }} 
                 />
-                <Icon name="sparkles" size={13} color={esPublicidad ? "#F59E0B" : "#94A3B8"} /> {lang === "en" ? "Sponsored Ad" : lang === "zh" ? "赞助广告" : "Publicidad"}
+                <img src="/images/tortuga.svg" alt="Publicidad" style={{ width: "16px", height: "16px", objectFit: "contain", filter: esPublicidad ? "brightness(0) saturate(100%) invert(75%) sepia(90%) saturate(1200%) hue-rotate(350deg)" : "brightness(0) invert(0.65)" }} /> {lang === "en" ? "Sponsored Ad" : lang === "zh" ? "赞助广告" : "Publicidad"}
               </label>
             </div>
 
@@ -560,12 +560,12 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
       {/* Badges */}
       {post.es_publicidad && (
         <div style={cardStyles.publicidadBadge}>
-          <Icon name="sparkles" size={12} /> {lang === "en" ? "Sponsored Ad" : lang === "zh" ? "赞助广告" : "Publicidad"}
+          <img src="/images/tortuga.svg" alt="Publicidad" style={{ width: "13px", height: "13px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(75%) sepia(90%) saturate(1200%) hue-rotate(350deg)" }} /> {lang === "en" ? "Sponsored Ad" : lang === "zh" ? "赞助广告" : "Publicidad"}
         </div>
       )}
       {post.es_promocion && !post.es_publicidad && (
         <div style={cardStyles.promoBadge}>
-          <Icon name="megaphone" size={12} /> {lang === "en" ? "Promo" : lang === "zh" ? "特别推广" : "Promoción"}
+          <img src="/images/machoraton.svg" alt="Promoción" style={{ width: "13px", height: "13px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(85%) sepia(80%) saturate(1500%) hue-rotate(5deg)" }} /> {lang === "en" ? "Promo" : lang === "zh" ? "特别推广" : "Promoción"}
         </div>
       )}
 
