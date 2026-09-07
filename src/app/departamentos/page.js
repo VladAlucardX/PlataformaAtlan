@@ -875,14 +875,16 @@ export default function DepartamentosPage() {
                               <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "nowrap", overflow: "hidden" }}>
                                 <h3 style={{ 
                                   margin: 0, 
-                                  fontSize: "17.5px", 
-                                  fontWeight: "900", 
+                                  fontSize: "16px", 
+                                  fontWeight: "800", 
+                                  fontFamily: "var(--font-outfit), 'Inter', sans-serif !important",
+                                  textTransform: "capitalize",
                                   color: "#FFFFFF", 
                                   whiteSpace: "nowrap", 
                                   overflow: "hidden", 
                                   textOverflow: "ellipsis",
-                                  letterSpacing: "0.3px",
-                                  textShadow: "0 1.5px 5px #000000, 0 0 3px #000000"
+                                  letterSpacing: "0.2px",
+                                  textShadow: "0 1px 3px rgba(0, 0, 0, 0.7)"
                                 }}>
                                   {lugar.nombre}
                                 </h3>
