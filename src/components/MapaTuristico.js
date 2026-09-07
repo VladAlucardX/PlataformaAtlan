@@ -3590,8 +3590,8 @@ export default function MapaTuristico() {
                     {lang === 'en' ? 'Place Photo (Camera / Gallery)' : lang === 'zh' ? '地点照片（相机 / 相册）' : 'Fotografía del Lugar (Cámara o Galería)'}
                   </label>
 
-                  <div style={{ fontSize: '11px', color: '#94A3B8', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ color: '#10B981' }}>🛡️</span>
+                  <div style={{ fontSize: '11px', color: '#94A3B8', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <Icon name="shield" size={14} color="#10B981" />
                     <span>{lang === 'en' ? 'Active security filter: Upload clean place photos.' : lang === 'zh' ? '已启用内容安全过滤：请上传合规照片。' : 'Filtro activo: Sube fotos apropiadas (sin contenido explícito).'}</span>
                   </div>
 
@@ -3672,8 +3672,9 @@ export default function MapaTuristico() {
                     <div style={{ marginTop: '8px', position: 'relative', borderRadius: '10px', overflow: 'hidden', border: '1px solid rgba(16, 185, 129, 0.5)', background: '#000000' }}>
                       <img src={newPointFotoPreview} alt="Vista Previa Punto" style={{ width: '100%', maxHeight: '115px', objectFit: 'cover', display: 'block' }} />
                       
-                      <div style={{ position: 'absolute', top: '6px', left: '6px', background: 'rgba(6, 78, 59, 0.85)', backdropFilter: 'blur(6px)', border: '1px solid #10B981', padding: '2px 6px', borderRadius: '5px', fontSize: '10.5px', fontWeight: '800', color: '#6EE7B7', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                        <span>✓ {lang === 'en' ? 'Safe Photo Verified 🛡️' : lang === 'zh' ? '照片已验证 🛡️' : 'Foto Aprobada 🛡️'}</span>
+                      <div style={{ position: 'absolute', top: '6px', left: '6px', background: 'rgba(6, 78, 59, 0.85)', backdropFilter: 'blur(6px)', border: '1px solid #10B981', padding: '2px 6px', borderRadius: '5px', fontSize: '10.5px', fontWeight: '800', color: '#6EE7B7', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Icon name="shield" size={12} color="#10B981" />
+                        <span>{lang === 'en' ? 'Safe Photo Verified' : lang === 'zh' ? '照片已验证' : 'Foto Aprobada y Segura'}</span>
                       </div>
 
                       <button
