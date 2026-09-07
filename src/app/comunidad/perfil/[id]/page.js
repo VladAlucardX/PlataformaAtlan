@@ -258,7 +258,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <span style={{ fontWeight: "800", fontSize: "14px", color: "var(--atlan-text-primary)" }}>{autor.nombre_completo || "Usuario"}</span>
               {autor.rol === "dueno" && <span style={cardStyles.roleBadge}><Icon name="building" size={12} /></span>}
-              {autor.rol === "admin" && <span style={{ ...cardStyles.roleBadge, background: "rgba(239,68,68,0.15)", color="#ef4444" }}><Icon name="zap" size={12} /></span>}
+              {autor.rol === "admin" && <span style={{ ...cardStyles.roleBadge, background: "rgba(239,68,68,0.15)", color: "#ef4444" }}><Icon name="zap" size={12} /></span>}
             </div>
             <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)" }}>
               {timeAgo(post.created_at, lang)} {isEdited && <span style={{ fontStyle: "italic", marginLeft: "4px", opacity: 0.8 }}>({lang === "en" ? "edited" : lang === "zh" ? "已编辑" : "editado"})</span>}
