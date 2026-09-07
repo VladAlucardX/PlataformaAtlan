@@ -2425,7 +2425,7 @@ export default function DashboardPage() {
                         { key: "hasAc", label: lang === "en" ? "Air Conditioning" : lang === "zh" ? "空调冷气" : "Aire Acondicionado", val: hasAc, set: setHasAc },
                         { key: "hasKidsArea", label: lang === "en" ? "Kids Playground" : lang === "zh" ? "儿童游乐区" : "Área de Niños", val: hasKidsArea, set: setHasKidsArea },
                         { key: "hasLiveMusic", label: lang === "en" ? "Live Music" : lang === "zh" ? "现场音乐" : "Música en Vivo", val: hasLiveMusic, set: setHasLiveMusic },
-                        { key: "hasTransport", label: lang === "en" ? "Shuttle / Transport" : lang === "zh" ? "接送班车 / 交通" : "Transporte / Shuttle"}
+                        { key: "hasTransport", label: lang === "en" ? "Shuttle / Transport" : lang === "zh" ? "接送班车 / 交通" : "Transporte / Shuttle", val: hasTransport, set: setHasTransport }
                       ].map((item) => {
                         const iconColor = item.val ? "#34D399" : "#94A3B8";
                         return (
