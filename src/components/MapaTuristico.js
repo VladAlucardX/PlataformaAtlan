@@ -46,7 +46,7 @@ const CATEGORIAS_CONFIG = {
   transporte: { color: '#607d8b', icon: 'car', svgFile: '/images/transporte.svg', svg: svgIcon('<path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a1 1 0 0 0-.8.4L1.74 11l-1.58.86a1 1 0 0 0-.16.99V16h3"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/>') },
   tour: { color: '#009688', icon: 'mountain', svgFile: '/images/tour.svg', svg: svgIcon('<path d="M8 3l4 8 5-5 5 15H2L8 3z"/>') },
   tienda: { color: '#795548', icon: 'shoppingBag', svgFile: '/images/tienda.svg', svg: svgIcon('<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>') },
-  otro: { color: '#ffc107', icon: 'mapPin', svgFile: '/images/ubicacion.svg', svg: svgIcon('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>') }
+  otro: { color: '#ffc107', icon: 'mapPin', svgFile: '/images/Ubicacion.svg', svg: svgIcon('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>') }
 };
 
 export default function MapaTuristico() {

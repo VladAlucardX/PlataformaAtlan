@@ -117,7 +117,7 @@ function FeaturesSection() {
       textColor: "#0369A1",
     },
     {
-      icon: <img src="/images/ubicacion.svg" alt="Destinos Verificados" style={{ width: "38px", height: "38px", objectFit: "contain" }} />,
+      icon: <img src="/images/Ubicacion.svg" alt="Destinos Verificados" style={{ width: "38px", height: "38px", objectFit: "contain" }} />,
       title: t("landing.features.community.title"),
       description: t("landing.features.community.description"),
       bg: "linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)",
