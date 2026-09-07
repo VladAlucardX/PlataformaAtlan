@@ -3394,14 +3394,14 @@ export default function MapaTuristico() {
             className="add-point-modal"
             style={{
               width: '100%',
-              maxWidth: '520px',
-              maxHeight: '90vh',
+              maxWidth: '780px',
+              maxHeight: '92vh',
               backgroundColor: '#0F172A',
               backgroundImage: 'linear-gradient(145deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 15, 28, 0.99) 100%)',
               border: '1px solid rgba(255, 215, 0, 0.3)',
               borderRadius: '24px',
               boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.15)',
-              padding: '24px',
+              padding: '20px 24px',
               overflowY: 'auto',
               position: 'relative',
               animation: 'scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -3409,12 +3409,12 @@ export default function MapaTuristico() {
             }}
           >
             {/* Header del modal */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '18px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{
-                  width: '46px',
-                  height: '46px',
-                  borderRadius: '14px',
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '12px',
                   background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%)',
                   border: '1px solid rgba(255, 215, 0, 0.4)',
                   display: 'flex',
@@ -3423,13 +3423,13 @@ export default function MapaTuristico() {
                   color: '#FFD700',
                   boxShadow: '0 4px 14px rgba(255, 215, 0, 0.2)'
                 }}>
-                  <Icon name="mapPin" size={24} color="#FFD700" />
+                  <Icon name="mapPin" size={20} color="#FFD700" />
                 </div>
                 <div>
-                  <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: '#FFD700', letterSpacing: '-0.3px', fontFamily: 'var(--font-outfit)' }}>
+                  <h2 style={{ margin: 0, fontSize: '18px', fontWeight: '800', color: '#FFD700', letterSpacing: '-0.3px', fontFamily: 'var(--font-outfit)' }}>
                     {t('addPoint.title')}
                   </h2>
-                  <p style={{ margin: '3px 0 0', fontSize: '13px', color: '#94A3B8' }}>
+                  <p style={{ margin: '1px 0 0', fontSize: '12px', color: '#94A3B8' }}>
                     {t('addPoint.subtitle')}
                   </p>
                 </div>
@@ -3438,8 +3438,8 @@ export default function MapaTuristico() {
                 type="button"
                 onClick={() => { setShowAddModal(false); setTempPointCoords(null); }}
                 style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '30px',
+                  height: '30px',
                   borderRadius: '50%',
                   background: 'rgba(255, 255, 255, 0.08)',
                   border: '1px solid rgba(255, 255, 255, 0.15)',
@@ -3451,358 +3451,320 @@ export default function MapaTuristico() {
                   transition: 'all 0.2s ease'
                 }}
               >
-                <Icon name="x" size={16} />
+                <Icon name="x" size={15} />
               </button>
             </div>
 
-            <form onSubmit={handleGuardarPunto} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {/* Coordenadas informativas estilizadas */}
-              <div style={{
-                background: 'rgba(255, 215, 0, 0.06)',
-                border: '1px solid rgba(255, 215, 0, 0.2)',
-                padding: '10px 14px',
-                borderRadius: '14px',
-                fontSize: '12px',
-                color: '#E2E8F0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 8px #10B981' }}></span>
-                  <span style={{ fontWeight: '700', color: '#FFD700' }}>{lang === 'en' ? 'Selected Location' : lang === 'zh' ? '已选位置' : 'Ubicación seleccionada'}:</span>
-                </div>
-                <span style={{ fontFamily: 'monospace', fontSize: '12px', color: '#CBD5E1', background: 'rgba(0,0,0,0.35)', padding: '3px 8px', borderRadius: '6px' }}>
-                  {tempPointCoords[1].toFixed(5)}, {tempPointCoords[0].toFixed(5)}
-                </span>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                  <Icon name="tag" size={14} color="#FFD700" />
-                  {t('addPoint.placeName')} <span style={{ color: '#EF4444' }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder={t('addPoint.placeNamePlaceholder')}
-                  value={newPointNombre}
-                  onChange={(e) => setNewPointNombre(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    borderRadius: '12px',
-                    color: '#FFFFFF',
-                    outline: 'none',
-                    fontSize: '13.5px',
-                    transition: 'border-color 0.2s, box-shadow 0.2s'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#FFD700';
-                    e.target.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.25)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                  <Icon name="user" size={14} color="#FFD700" />
-                  {t('addPoint.yourName')}
-                </label>
-                <input
-                  type="text"
-                  placeholder={t('addPoint.yourNamePlaceholder')}
-                  value={newPointCreador}
-                  onChange={(e) => setNewPointCreador(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    borderRadius: '12px',
-                    color: '#FFFFFF',
-                    outline: 'none',
-                    fontSize: '13.5px',
-                    transition: 'border-color 0.2s, box-shadow 0.2s'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#FFD700';
-                    e.target.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.25)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                  <Icon name="layers" size={14} color="#FFD700" />
-                  {t('addPoint.category')} <span style={{ color: '#EF4444' }}>*</span>
-                </label>
-                <select
-                  value={newPointCategoria}
-                  onChange={(e) => setNewPointCategoria(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    background: '#0F172A',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    borderRadius: '12px',
-                    color: '#FFFFFF',
-                    outline: 'none',
-                    fontSize: '13.5px',
-                    cursor: 'pointer',
-                    transition: 'border-color 0.2s, box-shadow 0.2s'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#FFD700';
-                    e.target.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.25)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                >
-                  {Object.keys(CATEGORIAS_CONFIG).map((key) => (
-                    <option key={key} value={key} style={{ background: '#0F172A', color: '#FFFFFF', padding: '8px' }}>
-                      {t(`addPoint.categories.${key}`)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                  <Icon name="alignLeft" size={14} color="#FFD700" />
-                  {t('addPoint.description')} <span style={{ color: '#EF4444' }}>*</span>
-                </label>
-                <textarea
-                  required
-                  rows="3"
-                  placeholder={t('addPoint.descriptionPlaceholder')}
-                  value={newPointDesc}
-                  onChange={(e) => setNewPointDesc(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    borderRadius: '12px',
-                    color: '#FFFFFF',
-                    outline: 'none',
-                    fontSize: '13.5px',
-                    resize: 'none',
-                    transition: 'border-color 0.2s, box-shadow 0.2s'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#FFD700';
-                    e.target.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.25)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              {/* Sección de Adjuntar Foto del Lugar (Cámara o Galería) con Filtro de Seguridad */}
-              <div>
-                <label style={{ fontSize: '12px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                  <Icon name="camera" size={14} color="#FFD700" />
-                  {lang === 'en' ? 'Place Photo (Camera / Gallery)' : lang === 'zh' ? '地点照片（相机 / 相册）' : 'Fotografía del Lugar (Cámara o Galería)'}
-                </label>
-
-                <div style={{ fontSize: '11.5px', color: '#94A3B8', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <span style={{ color: '#10B981' }}>🛡️</span>
-                  <span>{lang === 'en' ? 'Active security filter: Upload clean & appropriate place photos.' : lang === 'zh' ? '已启用内容安全过滤：请上传合规地点照片。' : 'Filtro de seguridad activo: Sube fotos apropiadas del destino (sin contenido explícito).'}</span>
+            <form onSubmit={handleGuardarPunto} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px', alignItems: 'start' }}>
+              
+              {/* Columna Izquierda: Información del Lugar */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div>
+                  <label style={{ fontSize: '11.5px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
+                    <Icon name="tag" size={13} color="#FFD700" />
+                    {t('addPoint.placeName')} <span style={{ color: '#EF4444' }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder={t('addPoint.placeNamePlaceholder')}
+                    value={newPointNombre}
+                    onChange={(e) => setNewPointNombre(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      borderRadius: '10px',
+                      color: '#FFFFFF',
+                      outline: 'none',
+                      fontSize: '13px'
+                    }}
+                  />
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  {/* Opción Tomar Foto con Cámara */}
-                  <label style={{
-                    flex: 1,
-                    minWidth: '130px',
-                    padding: '10px 12px',
-                    background: 'rgba(56, 189, 248, 0.12)',
-                    border: '1px dashed rgba(56, 189, 248, 0.4)',
-                    borderRadius: '12px',
-                    color: '#7DD3FC',
-                    fontWeight: '750',
-                    fontSize: '12.5px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    textAlign: 'center',
-                    transition: 'all 0.2s ease'
-                  }}>
-                    <Icon name="camera" size={16} color="#7DD3FC" />
-                    <span>{lang === 'en' ? 'Take Photo' : lang === 'zh' ? '拍摄照片' : 'Tomar Foto'}</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      style={{ display: 'none' }}
-                      onChange={handleSeleccionarFotoPunto}
-                    />
+                <div>
+                  <label style={{ fontSize: '11.5px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
+                    <Icon name="user" size={13} color="#FFD700" />
+                    {t('addPoint.yourName')}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={t('addPoint.yourNamePlaceholder')}
+                    value={newPointCreador}
+                    onChange={(e) => setNewPointCreador(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      borderRadius: '10px',
+                      color: '#FFFFFF',
+                      outline: 'none',
+                      fontSize: '13px'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '11.5px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
+                    <Icon name="layers" size={13} color="#FFD700" />
+                    {t('addPoint.category')} <span style={{ color: '#EF4444' }}>*</span>
+                  </label>
+                  <select
+                    value={newPointCategoria}
+                    onChange={(e) => setNewPointCategoria(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      background: '#0F172A',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      borderRadius: '10px',
+                      color: '#FFFFFF',
+                      outline: 'none',
+                      fontSize: '13px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {Object.keys(CATEGORIAS_CONFIG).map((key) => (
+                      <option key={key} value={key} style={{ background: '#0F172A', color: '#FFFFFF', padding: '6px' }}>
+                        {t(`addPoint.categories.${key}`)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '11.5px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
+                    <Icon name="alignLeft" size={13} color="#FFD700" />
+                    {t('addPoint.description')} <span style={{ color: '#EF4444' }}>*</span>
+                  </label>
+                  <textarea
+                    required
+                    rows="2"
+                    placeholder={t('addPoint.descriptionPlaceholder')}
+                    value={newPointDesc}
+                    onChange={(e) => setNewPointDesc(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      borderRadius: '10px',
+                      color: '#FFFFFF',
+                      outline: 'none',
+                      fontSize: '13px',
+                      resize: 'none'
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Columna Derecha: Ubicación, Foto y Botones de Acción */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {/* Coordenadas informativas estilizadas */}
+                <div style={{
+                  background: 'rgba(255, 215, 0, 0.06)',
+                  border: '1px solid rgba(255, 215, 0, 0.2)',
+                  padding: '8px 12px',
+                  borderRadius: '10px',
+                  fontSize: '11.5px',
+                  color: '#E2E8F0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ display: 'inline-block', width: '7px', height: '7px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px #10B981' }}></span>
+                    <span style={{ fontWeight: '700', color: '#FFD700' }}>{lang === 'en' ? 'Selected Location' : lang === 'zh' ? '已选位置' : 'Ubicación seleccionada'}:</span>
+                  </div>
+                  <span style={{ fontFamily: 'monospace', fontSize: '11.5px', color: '#CBD5E1', background: 'rgba(0,0,0,0.35)', padding: '2px 7px', borderRadius: '5px' }}>
+                    {tempPointCoords[1].toFixed(5)}, {tempPointCoords[0].toFixed(5)}
+                  </span>
+                </div>
+
+                {/* Sección de Adjuntar Foto del Lugar con Filtro de Seguridad */}
+                <div>
+                  <label style={{ fontSize: '11.5px', fontWeight: '750', color: '#CBD5E1', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '3px' }}>
+                    <Icon name="camera" size={13} color="#FFD700" />
+                    {lang === 'en' ? 'Place Photo (Camera / Gallery)' : lang === 'zh' ? '地点照片（相机 / 相册）' : 'Fotografía del Lugar (Cámara o Galería)'}
                   </label>
 
-                  {/* Opción Subir desde Galería */}
-                  <label style={{
-                    flex: 1,
-                    minWidth: '130px',
-                    padding: '10px 12px',
-                    background: 'rgba(255, 215, 0, 0.12)',
-                    border: '1px dashed rgba(255, 215, 0, 0.4)',
-                    borderRadius: '12px',
-                    color: '#FFD700',
-                    fontWeight: '750',
-                    fontSize: '12.5px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    textAlign: 'center',
-                    transition: 'all 0.2s ease'
-                  }}>
-                    <Icon name="image" size={16} color="#FFD700" />
-                    <span>{lang === 'en' ? 'Upload Gallery' : lang === 'zh' ? '从相册选择' : 'Elegir de Galería'}</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      style={{ display: 'none' }}
-                      onChange={handleSeleccionarFotoPunto}
-                    />
-                  </label>
-                </div>
-
-                {/* Indicador de Análisis de Moderación */}
-                {isAnalyzingFoto && (
-                  <div style={{ marginTop: '8px', fontSize: '12px', color: '#38BDF8', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <div style={{ width: '12px', height: '12px', border: '2px solid rgba(56,189,248,0.3)', borderTopColor: '#38BDF8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                    <span>{lang === 'en' ? 'Analyzing security filter...' : lang === 'zh' ? '正在分析内容安全...' : 'Analizando contenido y filtro de seguridad...'}</span>
+                  <div style={{ fontSize: '11px', color: '#94A3B8', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ color: '#10B981' }}>🛡️</span>
+                    <span>{lang === 'en' ? 'Active security filter: Upload clean place photos.' : lang === 'zh' ? '已启用内容安全过滤：请上传合规照片。' : 'Filtro activo: Sube fotos apropiadas (sin contenido explícito).'}</span>
                   </div>
-                )}
 
-                {/* Alerta de Rechazo por Moderación de Seguridad */}
-                {fotoModerationError && (
-                  <div style={{ marginTop: '8px', padding: '9px 12px', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '10px', color: '#FCA5A5', fontSize: '12px', lineHeight: '1.4' }}>
-                    ⚠️ {fotoModerationError}
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {/* Tomar Foto con Cámara */}
+                    <label style={{
+                      flex: 1,
+                      padding: '8px 10px',
+                      background: 'rgba(56, 189, 248, 0.12)',
+                      border: '1px dashed rgba(56, 189, 248, 0.4)',
+                      borderRadius: '10px',
+                      color: '#7DD3FC',
+                      fontWeight: '750',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '5px',
+                      textAlign: 'center'
+                    }}>
+                      <Icon name="camera" size={14} color="#7DD3FC" />
+                      <span>{lang === 'en' ? 'Take Photo' : lang === 'zh' ? '拍摄照片' : 'Tomar Foto'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        style={{ display: 'none' }}
+                        onChange={handleSeleccionarFotoPunto}
+                      />
+                    </label>
+
+                    {/* Subir desde Galería */}
+                    <label style={{
+                      flex: 1,
+                      padding: '8px 10px',
+                      background: 'rgba(255, 215, 0, 0.12)',
+                      border: '1px dashed rgba(255, 215, 0, 0.4)',
+                      borderRadius: '10px',
+                      color: '#FFD700',
+                      fontWeight: '750',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '5px',
+                      textAlign: 'center'
+                    }}>
+                      <Icon name="image" size={14} color="#FFD700" />
+                      <span>{lang === 'en' ? 'Gallery' : lang === 'zh' ? '相册' : 'Galería'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={handleSeleccionarFotoPunto}
+                      />
+                    </label>
                   </div>
-                )}
 
-                {/* Vista previa de la foto aprobada */}
-                {newPointFotoPreview && !isAnalyzingFoto && !fotoModerationError && (
-                  <div style={{ marginTop: '10px', position: 'relative', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(16, 185, 129, 0.5)', background: '#000000' }}>
-                    <img src={newPointFotoPreview} alt="Vista Previa Punto" style={{ width: '100%', maxHeight: '160px', objectFit: 'cover', display: 'block' }} />
-                    
-                    <div style={{ position: 'absolute', top: '8px', left: '8px', background: 'rgba(6, 78, 59, 0.85)', backdropFilter: 'blur(6px)', border: '1px solid #10B981', padding: '3px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: '800', color: '#6EE7B7', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <span>✓ {lang === 'en' ? 'Safe Photo Verified 🛡️' : lang === 'zh' ? '照片安全已验证 🛡️' : 'Foto Aprobada y Segura 🛡️'}</span>
+                  {/* Indicador de Análisis de Moderación */}
+                  {isAnalyzingFoto && (
+                    <div style={{ marginTop: '6px', fontSize: '11.5px', color: '#38BDF8', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <div style={{ width: '11px', height: '11px', border: '2px solid rgba(56,189,248,0.3)', borderTopColor: '#38BDF8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                      <span>{lang === 'en' ? 'Analyzing security filter...' : lang === 'zh' ? '正在分析内容安全...' : 'Analizando filtro de seguridad...'}</span>
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setNewPointFotoFile(null);
-                        setNewPointFotoPreview(null);
-                        setFotoModerationError('');
-                      }}
-                      style={{
-                        position: 'absolute',
-                        top: '8px',
-                        right: '8px',
-                        background: 'rgba(0, 0, 0, 0.7)',
-                        border: '1px solid rgba(255,255,255,0.3)',
-                        borderRadius: '50%',
-                        color: '#FFFFFF',
-                        width: '26px',
-                        height: '26px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      <Icon name="x" size={14} />
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowAddModal(false);
-                    setTempPointCoords(null);
-                    setNewPointFotoFile(null);
-                    setNewPointFotoPreview(null);
-                    setFotoModerationError('');
-                  }}
-                  style={{
-                    flex: 1,
-                    padding: '12px 16px',
-                    background: 'rgba(255, 255, 255, 0.06)',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    borderRadius: '14px',
-                    color: '#CBD5E1',
-                    fontWeight: '700',
-                    fontSize: '13.5px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  <Icon name="x" size={15} />
-                  {t('common.cancel')}
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmittingPoint}
-                  style={{
-                    flex: 1.2,
-                    padding: '12px 16px',
-                    background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                    border: 'none',
-                    borderRadius: '14px',
-                    color: '#0A192F',
-                    fontWeight: '900',
-                    fontSize: '13.5px',
-                    cursor: isSubmittingPoint ? 'not-allowed' : 'pointer',
-                    boxShadow: '0 4px 18px rgba(255, 215, 0, 0.35)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    transition: 'all 0.25s ease',
-                    opacity: isSubmittingPoint ? 0.7 : 1
-                  }}
-                >
-                  {isSubmittingPoint ? (
-                    <>
-                      <Icon name="hourglass" size={16} /> ...
-                    </>
-                  ) : (
-                    <>
-                      <Icon name="checkCircle" size={16} />
-                      {t('addPoint.submit')}
-                    </>
                   )}
-                </button>
+
+                  {/* Alerta de Rechazo por Moderación de Seguridad */}
+                  {fotoModerationError && (
+                    <div style={{ marginTop: '6px', padding: '7px 10px', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '8px', color: '#FCA5A5', fontSize: '11.5px', lineHeight: '1.3' }}>
+                      ⚠️ {fotoModerationError}
+                    </div>
+                  )}
+
+                  {/* Vista previa de la foto aprobada */}
+                  {newPointFotoPreview && !isAnalyzingFoto && !fotoModerationError && (
+                    <div style={{ marginTop: '8px', position: 'relative', borderRadius: '10px', overflow: 'hidden', border: '1px solid rgba(16, 185, 129, 0.5)', background: '#000000' }}>
+                      <img src={newPointFotoPreview} alt="Vista Previa Punto" style={{ width: '100%', maxHeight: '115px', objectFit: 'cover', display: 'block' }} />
+                      
+                      <div style={{ position: 'absolute', top: '6px', left: '6px', background: 'rgba(6, 78, 59, 0.85)', backdropFilter: 'blur(6px)', border: '1px solid #10B981', padding: '2px 6px', borderRadius: '5px', fontSize: '10.5px', fontWeight: '800', color: '#6EE7B7', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                        <span>✓ {lang === 'en' ? 'Safe Photo Verified 🛡️' : lang === 'zh' ? '照片已验证 🛡️' : 'Foto Aprobada 🛡️'}</span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setNewPointFotoFile(null);
+                          setNewPointFotoPreview(null);
+                          setFotoModerationError('');
+                        }}
+                        style={{
+                          position: 'absolute',
+                          top: '6px',
+                          right: '6px',
+                          background: 'rgba(0, 0, 0, 0.7)',
+                          border: '1px solid rgba(255,255,255,0.3)',
+                          borderRadius: '50%',
+                          color: '#FFFFFF',
+                          width: '22px',
+                          height: '22px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <Icon name="x" size={12} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Botones de Acción */}
+                <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAddModal(false);
+                      setTempPointCoords(null);
+                      setNewPointFotoFile(null);
+                      setNewPointFotoPreview(null);
+                      setFotoModerationError('');
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '10px 14px',
+                      background: 'rgba(255, 255, 255, 0.06)',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      borderRadius: '12px',
+                      color: '#CBD5E1',
+                      fontWeight: '700',
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '5px'
+                    }}
+                  >
+                    <Icon name="x" size={14} />
+                    {t('common.cancel')}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmittingPoint}
+                    style={{
+                      flex: 1.2,
+                      padding: '10px 14px',
+                      background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                      border: 'none',
+                      borderRadius: '12px',
+                      color: '#0A192F',
+                      fontWeight: '900',
+                      fontSize: '13px',
+                      cursor: isSubmittingPoint ? 'not-allowed' : 'pointer',
+                      opacity: isSubmittingPoint ? 0.7 : 1,
+                      boxShadow: '0 4px 14px rgba(255, 215, 0, 0.3)',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '5px'
+                    }}
+                  >
+                    <Icon name="check" size={14} color="#0A192F" />
+                    {isSubmittingPoint ? (lang === 'en' ? 'Saving...' : lang === 'zh' ? '保存中...' : 'Guardando...') : t('addPoint.saveBtn')}
+                  </button>
+                </div>
+
               </div>
+
             </form>
           </div>
         </div>
