@@ -957,7 +957,7 @@ export default function DepartamentosPage() {
                               <span>{countVisits} {countVisits === 1 ? tr('visita', 'visit', '次访问') : tr('visitas', 'visits', '次访问')}</span>
                             </div>
                             <Link 
-                              href={`/?lat=${lugar.lat}&lng=${lugar.lng}&punto=${lugar.id}`}
+                              href={`/mapa?id=${lugar.id}&lat=${lugar.lat}&lng=${lugar.lng}`}
                               style={{ 
                                 fontSize: "11px", 
                                 fontWeight: "800", 

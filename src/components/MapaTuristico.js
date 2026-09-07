@@ -2484,7 +2484,7 @@ export default function MapaTuristico() {
 
       if (selectedPointRef.current) return;
       const params = new URLSearchParams(window.location.search);
-      if (params.get('id')) return;
+      if (params.get('id') || params.get('punto') || (params.get('lat') && params.get('lng'))) return;
 
       const targetPos = currentPosRef.current || [-86.2504, 12.1364];
       console.log('[Atlan Cinematic] Iniciando vuelo parabólico hacia:', targetPos);
@@ -2548,47 +2548,77 @@ export default function MapaTuristico() {
   useEffect(() => {
     if (typeof window !== 'undefined' && mapRef.current) {
       const params = new URLSearchParams(window.location.search);
-      const puntoId = params.get('id');
-      if (puntoId) {
+      const puntoId = params.get('id') || params.get('punto');
+      const paramLat = params.get('lat');
+      const paramLng = params.get('lng');
+
+      if (puntoId || (paramLat && paramLng)) {
+        setIsMapLoading(false);
+        hasFlownInitialDescentRef.current = true;
+
         const cargarPuntoDesdeURL = async () => {
           try {
-            const { data: punto, error } = await supabase
-              .from('puntos')
-              .select('*')
-              .eq('id', puntoId)
-              .single();
-            if (!error && punto) {
-              const match = punto.ubicacion.match(/POINT\(([-\d.]+) ([-\d.]+)\)/);
-              if (match) {
-                const lng = parseFloat(match[1]);
-                const lat = parseFloat(match[2]);
+            let targetLng = paramLng ? parseFloat(paramLng) : null;
+            let targetLat = paramLat ? parseFloat(paramLat) : null;
 
-                // Centrar mapa de inmediato
-                mapRef.current.flyTo({
-                  center: [lng, lat],
-                  zoom: 16.5,
-                  pitch: 45,
-                  speed: 0.85,
-                  essential: true
-                });
+            if (puntoId) {
+              const { data: punto, error } = await supabase
+                .from('puntos')
+                .select('*')
+                .eq('id', puntoId)
+                .single();
+              if (!error && punto) {
+                if (punto.ubicacion) {
+                  const match = punto.ubicacion.match(/POINT\(([-\d.]+) ([-\d.]+)\)/);
+                  if (match) {
+                    targetLng = parseFloat(match[1]);
+                    targetLat = parseFloat(match[2]);
+                  }
+                }
+                if ((targetLng == null || targetLat == null) && punto.lng != null && punto.lat != null) {
+                  targetLng = typeof punto.lng === 'string' ? parseFloat(punto.lng) : punto.lng;
+                  targetLat = typeof punto.lat === 'string' ? parseFloat(punto.lat) : punto.lat;
+                }
 
-                cargarPuntosCercanos(lng, lat, filtroCategoria);
+                if (targetLng != null && targetLat != null) {
+                  mapRef.current.flyTo({
+                    center: [targetLng, targetLat],
+                    zoom: 16.5,
+                    pitch: 45,
+                    speed: 0.85,
+                    essential: true
+                  });
 
-                const puntoEstructura = {
-                  id: punto.id,
-                  nombre: punto.nombre,
-                  descripcion: punto.descripcion,
-                  categoria: punto.categoria,
-                  lng,
-                  lat,
-                  negocio_id: punto.negocio_id,
-                  nombre_creador: punto.nombre_creador,
-                  estado: punto.estado,
-                  fotos_comunidad: punto.fotos_comunidad,
-                  departamento: punto.departamento
-                };
-                setSelectedPoint(puntoEstructura);
+                  cargarPuntosCercanos(targetLng, targetLat, filtroCategoria);
+
+                  const puntoEstructura = {
+                    id: punto.id,
+                    nombre: punto.nombre,
+                    descripcion: punto.descripcion,
+                    categoria: punto.categoria,
+                    lng: targetLng,
+                    lat: targetLat,
+                    negocio_id: punto.negocio_id,
+                    nombre_creador: punto.nombre_creador,
+                    estado: punto.estado,
+                    fotos_comunidad: punto.fotos_comunidad,
+                    departamento: punto.departamento
+                  };
+                  setSelectedPoint(puntoEstructura);
+                  return;
+                }
               }
+            }
+
+            if (targetLng != null && targetLat != null) {
+              mapRef.current.flyTo({
+                center: [targetLng, targetLat],
+                zoom: 16.5,
+                pitch: 45,
+                speed: 0.85,
+                essential: true
+              });
+              cargarPuntosCercanos(targetLng, targetLat, filtroCategoria);
             }
           } catch (err) {
             console.error("Error loading point from URL query:", err);
