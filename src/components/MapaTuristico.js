@@ -96,6 +96,7 @@ export default function MapaTuristico() {
 
   // Agregar Punto
   const [isAddingPoint, setIsAddingPoint] = useState(false);
+  const [showAddPointOptionModal, setShowAddPointOptionModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [tempPointCoords, setTempPointCoords] = useState(null);
 
@@ -2043,7 +2044,7 @@ export default function MapaTuristico() {
     }, 4000);
   };
 
-  // Activar modo agregar punto
+  // Activar modo agregar punto: abre modal selector de opciones (Ubicación actual vs Seleccionar en mapa)
   const activarLevantarPunto = () => {
     if (!userSession) {
       alert(lang === 'en' ? 'Please log in to add points to the map.' : lang === 'zh' ? '请登录以在地图上添加地点。' : 'Por favor, inicia sesión para levantar un punto en el mapa.');
@@ -2055,11 +2056,48 @@ export default function MapaTuristico() {
       isAddingPointRef.current = false;
       if (mapRef.current) mapRef.current.getCanvas().style.cursor = '';
     } else {
-      setIsAddingPoint(true);
-      isAddingPointRef.current = true;
-      if (mapRef.current) mapRef.current.getCanvas().style.cursor = 'crosshair';
-      speakInstruction(t('addPoint.tapMap'), true);
+      setShowAddPointOptionModal(true);
     }
+  };
+
+  // Opción 1: Usar Ubicación Actual (GPS)
+  const handleUsarUbicacionActual = () => {
+    setShowAddPointOptionModal(false);
+
+    if (typeof window !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lng = pos.coords.longitude;
+          const lat = pos.coords.latitude;
+          currentPosRef.current = [lng, lat];
+          if (mapRef.current) {
+            mapRef.current.flyTo({ center: [lng, lat], zoom: 16.5, pitch: 30, essential: true });
+          }
+          setTempPointCoords([lng, lat]);
+          setShowAddModal(true);
+        },
+        (err) => {
+          console.warn('[Atlan] Error obteniendo GPS actual para nuevo punto:', err);
+          const fallbackPos = currentPosRef.current || [-86.2504, 12.1364];
+          setTempPointCoords(fallbackPos);
+          setShowAddModal(true);
+        },
+        { enableHighAccuracy: true, timeout: 6000 }
+      );
+    } else {
+      const fallbackPos = currentPosRef.current || [-86.2504, 12.1364];
+      setTempPointCoords(fallbackPos);
+      setShowAddModal(true);
+    }
+  };
+
+  // Opción 2: Seleccionar en el Mapa (Crosshair cursor)
+  const handleSeleccionarEnMapa = () => {
+    setShowAddPointOptionModal(false);
+    setIsAddingPoint(true);
+    isAddingPointRef.current = true;
+    if (mapRef.current) mapRef.current.getCanvas().style.cursor = 'crosshair';
+    speakInstruction(t('addPoint.tapMap'), true);
   };
 
   // Guardar nuevo punto en Supabase
@@ -3361,6 +3399,182 @@ export default function MapaTuristico() {
                 </button>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Modal Selector de Opciones para Levantar Punto */}
+      {showAddPointOptionModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(10, 15, 28, 0.82)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+            zIndex: 9999,
+            animation: 'fadeIn 0.25s ease-out'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowAddPointOptionModal(false);
+            }
+          }}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '460px',
+              backgroundColor: '#0F172A',
+              backgroundImage: 'linear-gradient(145deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 15, 28, 0.99) 100%)',
+              border: '1px solid rgba(255, 215, 0, 0.35)',
+              borderRadius: '24px',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.2)',
+              padding: '24px',
+              position: 'relative',
+              animation: 'scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+              color: '#F8FAFC'
+            }}
+          >
+            {/* Header del modal selector */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%)',
+                  border: '1px solid rgba(255, 215, 0, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#FFD700',
+                  boxShadow: '0 4px 14px rgba(255, 215, 0, 0.2)'
+                }}>
+                  <Icon name="mapPin" size={22} color="#FFD700" />
+                </div>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: '18px', fontWeight: '800', color: '#FFD700', letterSpacing: '-0.3px', fontFamily: 'var(--font-outfit)' }}>
+                    {lang === 'en' ? 'Add New Place' : lang === 'zh' ? '添加新地点' : 'Levantar Nuevo Punto'}
+                  </h2>
+                  <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#94A3B8' }}>
+                    {lang === 'en' ? 'Choose how to define the place location' : lang === 'zh' ? '选择如何确定地点位置' : 'Elige cómo deseas definir la ubicación del destino'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddPointOptionModal(false)}
+                style={{
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#94A3B8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <Icon name="x" size={15} />
+              </button>
+            </div>
+
+            {/* Opciones de ubicación */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {/* Opción 1: Usar Ubicación Actual */}
+              <button
+                type="button"
+                onClick={handleUsarUbicacionActual}
+                style={{
+                  padding: '16px',
+                  background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(255, 165, 0, 0.06) 100%)',
+                  border: '1.5px solid rgba(255, 215, 0, 0.4)',
+                  borderRadius: '16px',
+                  color: '#FFFFFF',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '14px',
+                  boxShadow: '0 4px 16px rgba(255, 215, 0, 0.15)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <div style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#0A192F',
+                  flexShrink: 0
+                }}>
+                  <Icon name="navigation" size={20} color="#0A192F" />
+                </div>
+                <div>
+                  <div style={{ fontSize: '14.5px', fontWeight: '800', color: '#FFD700', marginBottom: '3px' }}>
+                    📍 {lang === 'en' ? 'Use My Current Location' : lang === 'zh' ? '使用我当前的位置' : 'Usar mi Ubicación Actual'}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#CBD5E1', lineHeight: '1.3' }}>
+                    {lang === 'en' ? 'Automatically uses your current GPS position.' : lang === 'zh' ? '自动定位您当前的 GPS 坐标。' : 'Toma automáticamente las coordenadas GPS donde te encuentras ahora mismo.'}
+                  </div>
+                </div>
+              </button>
+
+              {/* Opción 2: Seleccionar en el Mapa */}
+              <button
+                type="button"
+                onClick={handleSeleccionarEnMapa}
+                style={{
+                  padding: '16px',
+                  background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(2, 132, 199, 0.06) 100%)',
+                  border: '1.5px solid rgba(56, 189, 248, 0.4)',
+                  borderRadius: '16px',
+                  color: '#FFFFFF',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '14px',
+                  boxShadow: '0 4px 16px rgba(56, 189, 248, 0.15)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <div style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#FFFFFF',
+                  flexShrink: 0
+                }}>
+                  <Icon name="map" size={20} color="#FFFFFF" />
+                </div>
+                <div>
+                  <div style={{ fontSize: '14.5px', fontWeight: '800', color: '#7DD3FC', marginBottom: '3px' }}>
+                    🗺️ {lang === 'en' ? 'Select Location on Map' : lang === 'zh' ? '在地图上选择位置' : 'Seleccionar en el Mapa'}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#CBD5E1', lineHeight: '1.3' }}>
+                    {lang === 'en' ? 'Tap anywhere on the map to place the marker.' : lang === 'zh' ? '在地图上点击以选择精确位置。' : 'Toca cualquier lugar del mapa para elegir la posición exacta del destino.'}
+                  </div>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       )}
