@@ -480,6 +480,13 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
   const [submittingComment, setSubmittingComment] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
+  // Estados para edición de publicación
+  const [isEditing, setIsEditing] = useState(false);
+  const [contenido, setContenido] = useState(post.contenido || "");
+  const [editedContent, setEditedContent] = useState(post.contenido || "");
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [isEdited, setIsEdited] = useState(!!post.updated_at && post.updated_at !== post.created_at);
+
   const autor = post.perfiles || {};
   const isOwner = session?.user?.id === post.autor_id;
   const isAdmin = perfil?.rol === "admin";
@@ -555,6 +562,31 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
     setShowMenu(false);
   };
 
+  const handleSaveEdit = async () => {
+    if (!editedContent.trim()) return;
+    setSavingEdit(true);
+    try {
+      const now = new Date().toISOString();
+      const { error } = await supabase
+        .from("publicaciones")
+        .update({
+          contenido: editedContent.trim(),
+          updated_at: now
+        })
+        .eq("id", post.id);
+
+      if (error) throw error;
+      setContenido(editedContent.trim());
+      setIsEdited(true);
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Error updating post:", err);
+      alert(lang === "en" ? "Failed to save post changes" : lang === "zh" ? "保存修改失败" : "Error al guardar cambios de la publicación");
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
   return (
     <div style={post.es_publicidad ? cardStyles.publicidadCard : cardStyles.card}>
       {/* Badges */}
@@ -581,7 +613,9 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
               {autor.rol === "dueno" && <span style={cardStyles.roleBadge}><Icon name="building" size={12} /></span>}
               {autor.rol === "admin" && <span style={{ ...cardStyles.roleBadge, background: "rgba(239,68,68,0.15)", color: "#ef4444" }}><Icon name="zap" size={12} /></span>}
             </div>
-            <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)" }}>{timeAgo(post.created_at, lang)}</span>
+            <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)" }}>
+              {timeAgo(post.created_at, lang)} {isEdited && <span style={{ fontStyle: "italic", marginLeft: "4px", opacity: 0.8 }}>({lang === "en" ? "edited" : lang === "zh" ? "已编辑" : "editado"})</span>}
+            </span>
           </div>
         </Link>
 
@@ -591,6 +625,14 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
             <button onClick={() => setShowMenu(!showMenu)} style={cardStyles.menuBtn}>⋯</button>
             {showMenu && (
               <div style={cardStyles.menuDropdown}>
+                {isOwner && (
+                  <button
+                    onClick={() => { setIsEditing(true); setEditedContent(contenido); setShowMenu(false); }}
+                    style={{ ...cardStyles.menuItem, color: "#146D9E" }}
+                  >
+                    <Icon name="edit" size={12} color="#146D9E" /> {lang === "en" ? "Edit" : lang === "zh" ? "编辑" : "Editar"}
+                  </button>
+                )}
                 <button onClick={handleDeletePost} style={cardStyles.menuItem}>
                   <Icon name="trash" size={12} /> {lang === "en" ? "Delete" : lang === "zh" ? "删除" : "Eliminar"}
                 </button>
@@ -600,8 +642,69 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
         )}
       </div>
 
-      {/* Content */}
-      <p style={cardStyles.content}>{renderFormattedContent(post.contenido)}</p>
+      {/* Content / Edit Box */}
+      {isEditing ? (
+        <div style={{ marginBottom: "16px" }}>
+          <textarea
+            value={editedContent}
+            onChange={(e) => setEditedContent(e.target.value.slice(0, 2000))}
+            style={{
+              width: "100%",
+              padding: "12px 14px",
+              background: "#FFFFFF",
+              border: "1.5px solid #146D9E",
+              borderRadius: "14px",
+              fontSize: "14.5px",
+              color: "#1A1A2E",
+              fontFamily: "var(--font-outfit), system-ui, sans-serif",
+              lineHeight: "1.5",
+              outline: "none",
+              minHeight: "90px",
+              resize: "vertical",
+              boxShadow: "0 4px 12px rgba(20, 109, 158, 0.1)"
+            }}
+            disabled={savingEdit}
+          />
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "8px" }}>
+            <button
+              onClick={() => { setEditedContent(contenido); setIsEditing(false); }}
+              disabled={savingEdit}
+              style={{
+                padding: "6px 14px",
+                borderRadius: "10px",
+                border: "1px solid #CBD5E1",
+                background: "#FFFFFF",
+                color: "#475569",
+                fontSize: "12.5px",
+                fontWeight: "700",
+                cursor: "pointer"
+              }}
+            >
+              {lang === "en" ? "Cancel" : lang === "zh" ? "取消" : "Cancelar"}
+            </button>
+            <button
+              onClick={handleSaveEdit}
+              disabled={savingEdit || !editedContent.trim()}
+              style={{
+                padding: "6px 18px",
+                borderRadius: "10px",
+                border: "none",
+                background: "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
+                color: "white",
+                fontSize: "12.5px",
+                fontWeight: "800",
+                cursor: "pointer",
+                boxShadow: "0 2px 8px rgba(20, 109, 158, 0.25)",
+                opacity: !editedContent.trim() ? 0.6 : 1
+              }}
+            >
+              {savingEdit ? (lang === "en" ? "Saving..." : lang === "zh" ? "保存中..." : "Guardando...") : (lang === "en" ? "Save" : lang === "zh" ? "保存" : "Guardar")}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p style={cardStyles.content}>{renderFormattedContent(contenido)}</p>
+      )}
 
       {/* Image */}
       {post.imagen_url && (
