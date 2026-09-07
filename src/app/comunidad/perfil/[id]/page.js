@@ -823,32 +823,61 @@ export default function PerfilPublico() {
         <main style={{ minWidth: 0, width: "100%" }}>
           {/* Target Profile Card (Solo si ves el perfil de OTRA persona) */}
           {!isOwnProfile && (
-            <div style={{ background: "#FFFFFF", borderRadius: "24px", border: "2px solid rgba(255, 255, 255, 0.95)", boxShadow: "0 14px 35px rgba(0, 0, 0, 0.08)", overflow: "hidden", marginBottom: "24px" }}>
-              <div style={{ height: "100px", background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)" }} />
-              <div style={{ padding: "0 24px 24px", marginTop: "-44px" }}>
-                <div style={{ display: "flex", alignItems: "flex-end", gap: "16px", flexWrap: "wrap", marginBottom: "16px" }}>
-                  <div style={avatarStyle(targetPerfil.avatar_url, 80)}>
+            <div style={{ background: "#FFFFFF", borderRadius: "24px", border: "1px solid rgba(226, 232, 240, 0.9)", boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)", overflow: "hidden", marginBottom: "24px" }}>
+              {/* Banner superior de portada */}
+              <div style={{ height: "110px", background: "linear-gradient(135deg, #0A192F 0%, #1E293B 60%, #0F172A 100%)", position: "relative" }} />
+              
+              <div style={{ padding: "0 24px 20px" }}>
+                {/* Fila del Avatar y Botón Seguir */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "16px", marginTop: "-42px", marginBottom: "16px" }}>
+                  <div style={{ ...avatarStyle(targetPerfil.avatar_url, 84), border: "4px solid #FFFFFF", boxShadow: "0 6px 20px rgba(0,0,0,0.18)" }}>
                     {!targetPerfil.avatar_url && (targetPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
                   </div>
-                  <div style={{ flex: 1, minWidth: "180px" }}>
-                    <h2 style={{ margin: "0 0 4px", fontSize: "22px", fontWeight: "900", color: "#1A1A2E" }}>
-                      {targetPerfil.nombre_completo || "Usuario"}
-                    </h2>
-                    <span style={{ fontSize: "12px", fontWeight: "700", color: "#17AA4A" }}>
-                      {targetPerfil.rol === "dueno"
-                        ? (lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario")
-                        : (lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani")}
-                    </span>
-                  </div>
-                  <button onClick={handleFollow} disabled={followLoading} style={{ padding: "8px 20px", borderRadius: "10px", border: "none", background: isFollowing ? "rgba(20,109,158,0.08)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: isFollowing ? "#1A1A2E" : "white", fontWeight: "800", fontSize: "13px", cursor: "pointer" }}>
+
+                  <button
+                    onClick={handleFollow}
+                    disabled={followLoading}
+                    style={{
+                      padding: "9px 24px",
+                      borderRadius: "12px",
+                      border: "none",
+                      background: isFollowing ? "rgba(20,109,158,0.1)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)",
+                      color: isFollowing ? "#1E293B" : "white",
+                      fontWeight: "800",
+                      fontSize: "13.5px",
+                      cursor: "pointer",
+                      boxShadow: isFollowing ? "none" : "0 4px 14px rgba(23, 170, 74, 0.3)",
+                      transition: "all 0.2s ease"
+                    }}
+                  >
                     {isFollowing ? (lang === "en" ? "✓ Following" : lang === "zh" ? "✓ 已关注" : "✓ Siguiendo") : (lang === "en" ? "Follow" : lang === "zh" ? "关注" : "Seguir")}
                   </button>
                 </div>
 
-                <div style={{ display: "flex", gap: "24px", paddingTop: "12px", borderTop: "1px solid rgba(20,109,158,0.08)" }}>
-                  <div><strong>{posts.length}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>{lang === "en" ? "Posts" : lang === "zh" ? "动态" : "Posts"}</span></div>
-                  <div><strong>{targetPerfil.seguidores_count || 0}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>{lang === "en" ? "Followers" : lang === "zh" ? "粉丝" : "Seguidores"}</span></div>
-                  <div><strong>{targetPerfil.siguiendo_count || 0}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>{lang === "en" ? "Following" : lang === "zh" ? "已关注" : "Siguiendo"}</span></div>
+                {/* Nombre de Usuario y Rol en alta legibilidad sobre el contenedor blanco */}
+                <div style={{ marginBottom: "16px" }}>
+                  <h2 style={{ margin: "0 0 4px", fontSize: "22px", fontWeight: "900", color: "#0F172A", letterSpacing: "-0.3px", fontFamily: "var(--font-outfit)" }}>
+                    {targetPerfil.nombre_completo || "Usuario"}
+                  </h2>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontSize: "12px", fontWeight: "700", color: "#17AA4A", background: "rgba(23, 170, 74, 0.1)", padding: "3px 10px", borderRadius: "8px", border: "1px solid rgba(23, 170, 74, 0.2)" }}>
+                    {targetPerfil.rol === "dueno"
+                      ? <><Icon name="building" size={12} color="#17AA4A" /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
+                      : (targetPerfil.es_premium || targetPerfil.suscripcion_activa || targetPerfil.rol === "turista_deacachimba")
+                      ? <><Icon name="star" size={12} color="#FFD700" /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
+                      : <><Icon name="luggage" size={12} color="#17AA4A" /> {lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
+                  </span>
+                  {targetPerfil.bio && (
+                    <p style={{ margin: "8px 0 0", fontSize: "13.5px", color: "#475569", lineHeight: "1.5" }}>
+                      {targetPerfil.bio}
+                    </p>
+                  )}
+                </div>
+
+                {/* Contador de Estadísticas */}
+                <div style={{ display: "flex", gap: "24px", paddingTop: "14px", borderTop: "1px solid rgba(226, 232, 240, 0.8)" }}>
+                  <div><strong style={{ color: "#0F172A", fontSize: "16px" }}>{posts.length}</strong> <span style={{ fontSize: "12.5px", color: "#64748B", fontWeight: "600" }}>{lang === "en" ? "Posts" : lang === "zh" ? "动态" : "Posts"}</span></div>
+                  <div><strong style={{ color: "#0F172A", fontSize: "16px" }}>{targetPerfil.seguidores_count || 0}</strong> <span style={{ fontSize: "12.5px", color: "#64748B", fontWeight: "600" }}>{lang === "en" ? "Followers" : lang === "zh" ? "粉丝" : "Seguidores"}</span></div>
+                  <div><strong style={{ color: "#0F172A", fontSize: "16px" }}>{targetPerfil.siguiendo_count || 0}</strong> <span style={{ fontSize: "12.5px", color: "#64748B", fontWeight: "600" }}>{lang === "en" ? "Following" : lang === "zh" ? "已关注" : "Siguiendo"}</span></div>
                 </div>
               </div>
             </div>
