@@ -158,7 +158,6 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
 
         {/* Far Right Actions */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }} className="hide-mobile">
-          <LanguageToggle />
           {session && <NotificationDropdown session={session} />}
           {session ? (
             <div style={{ position: "relative" }} ref={dropdownRef}>
@@ -575,6 +574,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
             </div>
           ) : (
             <>
+              <LanguageToggle />
               <Link href="/login" className={`nav-pill-link ${activePage === "login" ? "active" : ""}`}>
                 <img src="/images/gueguense.svg" alt="Iniciar Sesión" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
                 <span>{t("nav.login")}</span>
@@ -589,7 +589,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
 
         {/* Mobile Hamburger Button */}
         <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <LanguageToggle />
+          {!session && <LanguageToggle />}
           {session && <NotificationDropdown session={session} />}
           <button
             type="button"
