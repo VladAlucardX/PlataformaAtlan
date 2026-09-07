@@ -2,8 +2,10 @@
 
 import React from "react";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function NeonBusinessSign({ session }) {
+  const { lang } = useTranslation();
   const targetLink = session ? "/dashboard" : "/registro";
 
   return (
@@ -35,7 +37,9 @@ export default function NeonBusinessSign({ session }) {
 
         {/* Texto Neón Blanco abajo sobre fondo Amarillo */}
         <div className="neon-sign-text-white-bg">
-          <span>¿TIENES UN NEGOCIO?</span>
+          <span>
+            {lang === "en" ? "¿DO YOU HAVE A BUSINESS?" : lang === "zh" ? "您是商家吗？" : "¿TIENES UN NEGOCIO?"}
+          </span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" className="neon-arrow-white-bg">
             <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
             <path d="M16 21V5a2 2 0 0 1-2-2h-4a2 2 0 0 0-2 2v16" />

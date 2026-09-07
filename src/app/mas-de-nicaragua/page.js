@@ -69,7 +69,7 @@ const MAP_STYLES = [
 ];
 
 export default function MasDeNicaraguaPage() {
-  const { t, lang } = useTranslation();
+  const { t, lang, tr } = useTranslation();
   const router = useRouter();
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
@@ -419,11 +419,11 @@ export default function MasDeNicaraguaPage() {
                 }}>
                   <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                   <span style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700", letterSpacing: "0.6px", textShadow: "0 0 8px rgba(255, 215, 0, 0.4)" }}>
-                    Nicaragua Viva
+                    {tr("Nicaragua Viva", "Vibrant Nicaragua", "生机勃勃的尼加拉瓜")}
                   </span>
                 </div>
                 <span style={{ fontSize: "17.5px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "0.4px" }}>
-                  Conoce más sobre los Departamentos de{" "}
+                  {tr("Conoce más sobre los Departamentos de", "Learn more about the Departments of", "深入探索省份 —")}{" "}
                   <span style={{
                     fontSize: "18.5px",
                     fontWeight: "900",
@@ -434,7 +434,7 @@ export default function MasDeNicaraguaPage() {
                     letterSpacing: "0.8px",
                     filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.9))"
                   }}>
-                    Nicaragua
+                    {tr("Nicaragua", "Nicaragua", "尼加拉瓜")}
                   </span>
                 </span>
               </div>
@@ -442,17 +442,17 @@ export default function MasDeNicaraguaPage() {
               {/* Filtros Rápidos de Regiones con Estilo Neón */}
               <div style={{ display: "flex", gap: "6px" }}>
                 {[
-                  { name: "Todos", center: [-85.10, 12.90], zoom: 4.40 },
-                  { name: "Pacífico", icon: "waves", center: [-86.3, 12.25], zoom: 5.20 },
-                  { name: "Central", icon: "mountain", center: [-85.5, 12.95], zoom: 5.20 },
-                  { name: "Caribe", icon: "island", center: [-84.0, 13.55], zoom: 4.90 }
+                  { id: "Todos", label: tr("Todos", "All", "全部"), center: [-85.10, 12.90], zoom: 4.40 },
+                  { id: "Pacífico", label: tr("Pacífico", "Pacific", "太平洋区"), icon: "waves", center: [-86.3, 12.25], zoom: 5.20 },
+                  { id: "Central", label: tr("Central", "Central", "中部区"), icon: "mountain", center: [-85.5, 12.95], zoom: 5.20 },
+                  { id: "Caribe", label: tr("Caribe", "Caribbean", "加勒比区"), icon: "island", center: [-84.0, 13.55], zoom: 4.90 }
                 ].map((reg) => {
-                  const isActive = selectedRegion === reg.name;
+                  const isActive = selectedRegion === reg.id;
                   return (
                     <button
-                      key={reg.name}
+                      key={reg.id}
                       onClick={() => {
-                        setSelectedRegion(reg.name);
+                        setSelectedRegion(reg.id);
                         if (mapRef.current) {
                           mapRef.current.flyTo({ center: reg.center, zoom: reg.zoom, duration: 800 });
                         }
@@ -474,7 +474,7 @@ export default function MasDeNicaraguaPage() {
                       }}
                     >
                       {reg.icon && <Icon name={reg.icon} size={13} color={isActive ? "#FFD700" : "rgba(255,255,255,0.75)"} />}
-                      <span>{reg.name}</span>
+                      <span>{reg.label}</span>
                     </button>
                   );
                 })}
@@ -559,7 +559,7 @@ export default function MasDeNicaraguaPage() {
                           size={13}
                           color={selectedDeptForPreview.region === "Pacífico" ? "#00F2FE" : selectedDeptForPreview.region === "Central" ? "#10B981" : "#F59E0B"}
                         />
-                        <span>Región {selectedDeptForPreview.region}</span>
+                        <span>{tr("Región", "Region", "大区")} {selectedDeptForPreview.region}</span>
                       </span>
                     </div>
 
@@ -622,11 +622,11 @@ export default function MasDeNicaraguaPage() {
                       border: "1px solid rgba(255,255,255,0.12)"
                     }}>
                       <div>
-                        <span style={{ display: "block", fontSize: "10px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", fontWeight: "800", letterSpacing: "0.5px" }}>📏 Extensión</span>
+                        <span style={{ display: "block", fontSize: "10px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", fontWeight: "800", letterSpacing: "0.5px" }}>📏 {tr("Extensión", "Area", "面积")}</span>
                         <span style={{ fontSize: "13.5px", fontWeight: "900", color: "#FFFFFF" }}>{selectedDeptForPreview.extension}</span>
                       </div>
                       <div>
-                        <span style={{ display: "block", fontSize: "10px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", fontWeight: "800", letterSpacing: "0.5px" }}>👥 Población</span>
+                        <span style={{ display: "block", fontSize: "10px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", fontWeight: "800", letterSpacing: "0.5px" }}>👥 {tr("Población", "Population", "人口")}</span>
                         <span style={{ fontSize: "13.5px", fontWeight: "900", color: "#FFFFFF" }}>{selectedDeptForPreview.poblacion}</span>
                       </div>
                     </div>
@@ -657,7 +657,7 @@ export default function MasDeNicaraguaPage() {
                       onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; }}
                       onMouseOut={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
                     >
-                      <span>Ver Historia y Pestañas ➔</span>
+                      <span>{tr("Ver Historia y Pestañas ➔", "View History & Details ➔", "查看历史与详情 ➔")}</span>
                     </button>
                   </div>
                 </div>
@@ -768,7 +768,7 @@ export default function MasDeNicaraguaPage() {
                 onMouseOver={(e) => { e.currentTarget.style.background = "rgba(236, 72, 153, 0.6)"; }}
                 onMouseOut={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
               >
-                <span>Cerrar</span>
+                <span>{tr("Cerrar", "Close", "关闭")}</span>
                 <span>✕</span>
               </button>
 
@@ -793,15 +793,15 @@ export default function MasDeNicaraguaPage() {
                       size={13}
                       color={selectedDeptForDetails.region === "Pacífico" ? "#38BDF8" : selectedDeptForDetails.region === "Central" ? "#10B981" : "#F59E0B"}
                     />
-                    <span>Región {selectedDeptForDetails.region}</span>
+                    <span>{tr("Región", "Region", "大区")} {selectedDeptForDetails.region}</span>
                   </span>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontSize: "12.5px", color: "rgba(255,255,255,0.85)", fontWeight: "600" }}>
                     <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "15px", height: "15px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                    <span>Cabecera: <strong>{selectedDeptForDetails.cabecera}</strong></span>
+                    <span>{tr("Cabecera:", "Capital:", "首府：")} <strong>{selectedDeptForDetails.cabecera}</strong></span>
                   </span>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12.5px", color: "#FFD700", fontWeight: "700" }}>
                     <Icon name="clock" size={13} color="#FFD700" />
-                    <span>Fundación / Hito: <strong>{selectedDeptForDetails.fundacion}</strong></span>
+                    <span>{tr("Fundación / Hito:", "Founded / Milestone:", "建制时间 / 里程碑：")} <strong>{selectedDeptForDetails.fundacion}</strong></span>
                   </span>
                 </div>
 
@@ -836,7 +836,7 @@ export default function MasDeNicaraguaPage() {
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px", flexWrap: "wrap", gap: "10px" }}>
                       <h3 style={{ fontSize: "18px", fontWeight: "900", color: "#FFD700", margin: 0, display: "flex", alignItems: "center", gap: "10px" }}>
                         <img src="/images/managua catedral.svg" alt="Historia" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
-                        <span>Resumen Histórico y Orígenes de {selectedDeptForDetails.nombre}</span>
+                        <span>{tr("Resumen Histórico y Orígenes de", "Historical Overview & Origins of", "历史概况与起源 —")} {selectedDeptForDetails.nombre}</span>
                       </h3>
 
                       <span style={{
@@ -852,7 +852,7 @@ export default function MasDeNicaraguaPage() {
                         gap: "6px"
                       }}>
                         <img src="/images/edificio.svg" alt="Patrimonio" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                        <span>Patrimonio Histórico Nacional</span>
+                        <span>{tr("Patrimonio Histórico Nacional", "National Historical Heritage", "国家历史文化遗产")}</span>
                       </span>
                     </div>
 
@@ -871,7 +871,7 @@ export default function MasDeNicaraguaPage() {
                       }}>
                         <span style={{ fontSize: "12px", fontWeight: "900", color: "#FFD700", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px", letterSpacing: "0.5px" }}>
                           <img src="/images/sombrero.svg" alt="Origen" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                          <span>Origen Etimológico y Raíces Indígenas</span>
+                          <span>{tr("Origen Etimológico y Raíces Indígenas", "Etymological Origin & Indigenous Roots", "词源与原住民根源")}</span>
                         </span>
                         <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.9)", lineHeight: "1.6" }}>
                           {selectedDeptForDetails.historia.origenEtimologico}
@@ -888,22 +888,22 @@ export default function MasDeNicaraguaPage() {
                       borderTop: "1px dashed rgba(255, 215, 0, 0.25)"
                     }}>
                       <div style={{ background: "rgba(255,255,255,0.03)", padding: "10px 14px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                        <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "2px" }}>Cabecera Histórica</span>
+                        <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "2px" }}>{tr("Cabecera Histórica", "Historical Capital", "历史首府")}</span>
                         <span style={{ fontSize: "14px", fontWeight: "800", color: "#FFD700" }}>{selectedDeptForDetails.cabecera}</span>
                       </div>
 
                       <div style={{ background: "rgba(255,255,255,0.03)", padding: "10px 14px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                        <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "2px" }}>Fecha de Hito / Fundación</span>
+                        <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "2px" }}>{tr("Fecha de Hito / Fundación", "Milestone / Foundation Date", "建制日期 / 纪念里程碑")}</span>
                         <span style={{ fontSize: "14px", fontWeight: "800", color: "#FFFFFF" }}>{selectedDeptForDetails.fundacion}</span>
                       </div>
 
                       <div style={{ background: "rgba(255,255,255,0.03)", padding: "10px 14px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                        <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "2px" }}>Extensión Territorial</span>
+                        <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "2px" }}>{tr("Extensión Territorial", "Territorial Area", "土地面积")}</span>
                         <span style={{ fontSize: "14px", fontWeight: "800", color: "#38BDF8" }}>{selectedDeptForDetails.extension}</span>
                       </div>
 
                       <div style={{ background: "rgba(255,255,255,0.03)", padding: "10px 14px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                        <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "2px" }}>Región Geográfica</span>
+                        <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "2px" }}>{tr("Región Geográfica", "Geographical Region", "地理大区")}</span>
                         <span style={{ fontSize: "14px", fontWeight: "800", color: "#10B981" }}>{selectedDeptForDetails.region}</span>
                       </div>
                     </div>
@@ -914,7 +914,7 @@ export default function MasDeNicaraguaPage() {
                     <div>
                       <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                         <Icon name="clock" size={18} color="#FFD700" />
-                        <span>Línea de Tiempo e Hitos Fundamentales</span>
+                        <span>{tr("Línea de Tiempo e Hitos Fundamentales", "Timeline & Major Milestones", "时间线与核心里程碑")}</span>
                       </h4>
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "14px" }}>
                         {selectedDeptForDetails.historia.hitos.map((hito, idx) => (
@@ -962,7 +962,7 @@ export default function MasDeNicaraguaPage() {
                     <div>
                       <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#FFD700", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                         <Icon name="award" size={18} color="#FFD700" />
-                        <span>Personajes Ilustres y Héroes de la Historia</span>
+                        <span>{tr("Personajes Ilustres y Héroes de la Historia", "Illustrious Figures & Historical Heroes", "历史名人与英雄人物")}</span>
                       </h4>
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "14px" }}>
                         {selectedDeptForDetails.historia.personajes.map((per, idx) => (
@@ -993,7 +993,7 @@ export default function MasDeNicaraguaPage() {
                     <div>
                       <h4 style={{ fontSize: "15px", fontWeight: "800", color: "#38BDF8", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                         <Icon name="landmark" size={18} color="#38BDF8" />
-                        <span>Patrimonio Protegido, Templos y Sitios Arqueológicos</span>
+                        <span>{tr("Patrimonio Protegido, Templos y Sitios Arqueológicos", "Protected Heritage, Temples & Archaeological Sites", "受保护遗产、宗教圣殿与考古遗址")}</span>
                       </h4>
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "14px" }}>
                         {selectedDeptForDetails.historia.patrimonio.map((pat, idx) => (
@@ -1030,7 +1030,7 @@ export default function MasDeNicaraguaPage() {
                   <div style={{ background: "linear-gradient(135deg, rgba(15, 30, 50, 0.85) 0%, rgba(10, 20, 35, 0.95) 100%)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "18px", padding: "20px" }}>
                     <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#38BDF8", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px" }}>
                       <img src="/images/cacao.svg" alt="Economía" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(73%) sepia(35%) saturate(1637%) hue-rotate(170deg) brightness(102%) contrast(97%)" }} />
-                      <span>Dinámica Económica y Motores de Desarrollo</span>
+                      <span>{tr("Dinámica Económica y Motores de Desarrollo", "Economic Dynamics & Growth Drivers", "经济动态与发展引擎")}</span>
                     </h3>
                     <p style={{ fontSize: "14px", lineHeight: "1.65", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                       {selectedDeptForDetails.economia.resumen}
@@ -1040,7 +1040,7 @@ export default function MasDeNicaraguaPage() {
                   {/* Sectores Clave */}
                   <div>
                     <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#38BDF8", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                      Sectores Productivos Clave
+                      {tr("Sectores Productivos Clave", "Key Productive Sectors", "关键生产部门")}
                     </h4>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "14px" }}>
                       {selectedDeptForDetails.economia.sectores.map((sec, idx) => (
@@ -1066,7 +1066,7 @@ export default function MasDeNicaraguaPage() {
 
                   {/* Rubros y Producción Destacada */}
                   <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "14px", padding: "14px", display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-                    <span style={{ fontSize: "12px", fontWeight: "800", color: "#FFD700", textTransform: "uppercase" }}>Rubros Principales:</span>
+                    <span style={{ fontSize: "12px", fontWeight: "800", color: "#FFD700", textTransform: "uppercase" }}>{tr("Rubros Principales:", "Main Commodities:", "主要支柱产业：")}</span>
                     <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                       {["Agroindustria", "Comercio Regional", "Ganadería y Lácteos", "Exportación y Servicios", "Turismo y Artesanía"].map((rubro, rIdx) => (
                         <span key={rIdx} style={{ background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.3)", color: "#38BDF8", padding: "3px 10px", borderRadius: "8px", fontSize: "11.5px", fontWeight: "700" }}>
@@ -1084,7 +1084,7 @@ export default function MasDeNicaraguaPage() {
                   <div style={{ background: "linear-gradient(135deg, rgba(8, 35, 28, 0.85) 0%, rgba(10, 25, 20, 0.95) 100%)", border: "1px solid rgba(16, 185, 129, 0.3)", borderRadius: "18px", padding: "20px" }}>
                     <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#10B981", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px" }}>
                       <img src="/images/playa.svg" alt="Turismo" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(67%) sepia(38%) saturate(972%) hue-rotate(113deg) brightness(97%) contrast(90%)" }} />
-                      <span>Oferta Turística y Experiencias de {selectedDeptForDetails.nombre}</span>
+                      <span>{tr("Oferta Turística y Experiencias de", "Tourism Offerings & Experiences in", "旅游特色与体验 —")} {selectedDeptForDetails.nombre}</span>
                     </h3>
                     <p style={{ fontSize: "14px", lineHeight: "1.65", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                       {selectedDeptForDetails.turismo.resumen}
@@ -1093,7 +1093,7 @@ export default function MasDeNicaraguaPage() {
 
                   <div>
                     <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#10B981", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                      Principales Atractivos e Hitos Turísticos
+                      {tr("Principales Atractivos e Hitos Turísticos", "Main Attractions & Tourism Landmarks", "核心旅游景点与地标")}
                     </h4>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "14px" }}>
                       {selectedDeptForDetails.turismo.atractivos.map((atr, idx) => (
@@ -1117,7 +1117,7 @@ export default function MasDeNicaraguaPage() {
 
                   {/* Experiencias Turísticas Sugeridas */}
                   <div style={{ background: "rgba(16, 185, 129, 0.08)", border: "1px solid rgba(16, 185, 129, 0.25)", borderRadius: "14px", padding: "14px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-                    <span style={{ fontSize: "12px", fontWeight: "800", color: "#10B981", textTransform: "uppercase" }}>Experiencias Recomendadas:</span>
+                    <span style={{ fontSize: "12px", fontWeight: "800", color: "#10B981", textTransform: "uppercase" }}>{tr("Experiencias Recomendadas:", "Recommended Experiences:", "推荐特色体验：")}</span>
                     <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                       {["Ecoturismo & Senderismo", "Rutas Históricas", "Gastronomía Autóctona", "Sol & Naturaleza", "Fotografía de Paisajes"].map((exp, eIdx) => (
                         <span key={eIdx} style={{ background: "rgba(16, 185, 129, 0.18)", border: "1px solid rgba(16, 185, 129, 0.35)", color: "#FFFFFF", padding: "3px 10px", borderRadius: "8px", fontSize: "11.5px", fontWeight: "700" }}>
@@ -1135,7 +1135,7 @@ export default function MasDeNicaraguaPage() {
                   <div style={{ background: "linear-gradient(135deg, rgba(42, 28, 10, 0.85) 0%, rgba(20, 15, 10, 0.95) 100%)", border: "1px solid rgba(245, 158, 11, 0.35)", borderRadius: "18px", padding: "20px" }}>
                     <h3 style={{ fontSize: "17px", fontWeight: "900", color: "#F59E0B", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px" }}>
                       <img src="/images/Volcan.svg" alt="Pasatiempos" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(70%) sepia(50%) saturate(1500%) hue-rotate(1deg) brightness(100%) contrast(100%)" }} />
-                      <span>Pasatiempos, Tradiciones y Estilo de Vida Local</span>
+                      <span>{tr("Pasatiempos, Tradiciones y Estilo de Vida Local", "Pastimes, Traditions & Local Lifestyle", "休闲风俗、传统与本地生活")}</span>
                     </h3>
                     <p style={{ fontSize: "14px", lineHeight: "1.65", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                       {selectedDeptForDetails.pasatiempos.resumen}
@@ -1144,7 +1144,7 @@ export default function MasDeNicaraguaPage() {
 
                   <div>
                     <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#F59E0B", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                      Costumbres y Actividades Populares
+                      {tr("Costumbres y Actividades Populares", "Customs & Popular Activities", "民俗节庆与大众活动")}
                     </h4>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
                       {selectedDeptForDetails.pasatiempos.items.map((item, idx) => (
@@ -1172,7 +1172,7 @@ export default function MasDeNicaraguaPage() {
                   <div style={{ background: "rgba(245, 158, 11, 0.08)", border: "1px solid rgba(245, 158, 11, 0.25)", borderRadius: "14px", padding: "14px" }}>
                     <h5 style={{ fontSize: "13px", fontWeight: "800", color: "#F59E0B", margin: "0 0 6px", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "6px" }}>
                       <img src="/images/flor.svg" alt="Flor" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                      <span>Sabor y Tradición Autóctona</span>
+                      <span>{tr("Sabor y Tradición Autóctona", "Authentic Flavors & Traditions", "原味风味与地道传统")}</span>
                     </h5>
                     <p style={{ margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.85)", lineHeight: 1.5 }}>
                       Cada rincón del departamento conserva recetas ancestrales en maíz, bebidas tradicionales (chicha, pinolillo) y expresiones folclóricas transmitidas por generaciones.
@@ -1189,7 +1189,7 @@ export default function MasDeNicaraguaPage() {
                     <div style={{ marginBottom: "28px" }}>
                       <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#FFD700", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                         <img src="/images/San Juan del sur.svg" alt="Lugares" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
-                        <span>Sitios Emblemáticos Imperdibles</span>
+                        <span>{tr("Sitios Emblemáticos Imperdibles", "Must-See Emblematic Sites", "不可错过的标志性地标")}</span>
                       </h4>
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" }}>
                         {selectedDeptForDetails.lugaresImportantes.map((lugar, idx) => (
@@ -1227,7 +1227,7 @@ export default function MasDeNicaraguaPage() {
                                 fontWeight: "800"
                               }}>
                                 <Icon name="mapPin" size={12} color="#FFD700" />
-                                <span>Sitio #{idx + 1}</span>
+                                <span>{tr("Sitio", "Site", "景点")} #{idx + 1}</span>
                               </span>
 
                               <img
@@ -1260,7 +1260,7 @@ export default function MasDeNicaraguaPage() {
                     <div>
                       <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#F59E0B", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                         <img src="/images/caña.svg" alt="Actividades" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(70%) sepia(50%) saturate(1500%) hue-rotate(1deg) brightness(100%) contrast(100%)" }} />
-                        <span>Fiestas Patronales, Eventos y Tradiciones</span>
+                        <span>{tr("Fiestas Patronales, Eventos y Tradiciones", "Patron Saint Festivals, Events & Traditions", "传统节日、庆典活动与民俗")}</span>
                       </h4>
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" }}>
                         {selectedDeptForDetails.actividades.map((act, idx) => (
@@ -1329,7 +1329,7 @@ export default function MasDeNicaraguaPage() {
                       <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(236, 72, 153, 0.3)", borderRadius: "18px", padding: "14px" }}>
                         <h4 style={{ fontSize: "13px", fontWeight: "800", color: "#FFD700", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                           <img src="/images/masaaya.svg" alt="Masaya" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
-                          <span>Galería Fotográfica de {selectedDeptForDetails.nombre}</span>
+                          <span>{tr("Galería Fotográfica de", "Photo Gallery of", "风光画廊 —")} {selectedDeptForDetails.nombre}</span>
                         </h4>
                         <div
                           onClick={() => setLightboxIndex(-1)}

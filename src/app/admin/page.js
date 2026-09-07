@@ -216,7 +216,7 @@ export default function AdminDashboard() {
 
   // Aprobar un negocio reclamado
   const handleAprobarReclamo = async (puntoId, negocioId) => {
-    if (!confirm(lang === 'en' ? 'Are you sure you want to approve this business claim?' : '¿Está seguro de aprobar este reclamo de negocio?')) return;
+    if (!confirm(lang === 'en' ? 'Are you sure you want to approve this business claim?' : lang === 'zh' ? '您确定要批准此商户认领申请吗？' : '¿Está seguro de aprobar este reclamo de negocio?')) return;
 
     try {
       // 1. Actualizar estado del punto a 'aprobado'
@@ -246,11 +246,11 @@ export default function AdminDashboard() {
         }
       }
 
-      showToast(lang === 'en' ? 'Claim approved successfully!' : '¡Reclamo aprobado con éxito!', 'success');
+      showToast(lang === 'en' ? 'Claim approved successfully!' : lang === 'zh' ? '认领申请批准成功！' : '¡Reclamo aprobado con éxito!', 'success');
       loadAdminData();
     } catch (err) {
       console.error('Error aprobando reclamo:', err);
-      showToast(lang === 'en' ? 'Error approving claim.' : 'Error al aprobar el reclamo.', 'error');
+      showToast(lang === 'en' ? 'Error approving claim.' : lang === 'zh' ? '批准认领时出错。' : 'Error al aprobar el reclamo.', 'error');
     }
   };
 
@@ -258,7 +258,7 @@ export default function AdminDashboard() {
   const handleConfirmarRechazo = async () => {
     if (!rejectionTarget) return;
     if (!rejectionReason.trim()) {
-      showToast(lang === 'en' ? 'Please enter a reason for the rejection.' : 'Por favor, ingrese un motivo para el rechazo.', 'error');
+      showToast(lang === 'en' ? 'Please enter a reason for the rejection.' : lang === 'zh' ? '请输入驳回原因。' : 'Por favor, ingrese un motivo para el rechazo.', 'error');
       return;
     }
 
@@ -288,7 +288,7 @@ export default function AdminDashboard() {
           if (errNegocio) throw errNegocio;
         }
 
-        showToast(lang === 'en' ? 'Claim rejected with observations successfully.' : '¡Reclamo rechazado con observaciones con éxito!', 'info');
+        showToast(lang === 'en' ? 'Claim rejected with observations successfully.' : lang === 'zh' ? '已成功附带修改意见驳回申请。' : '¡Reclamo rechazado con observaciones con éxito!', 'info');
       } else {
         // 1. Devolver el punto a estado 'sin_reclamar' y desvincular el negocio_id para liberar el reclamo
         const { error: errPunto } = await supabase
@@ -314,14 +314,14 @@ export default function AdminDashboard() {
           if (errNegocio) throw errNegocio;
         }
 
-        showToast(lang === 'en' ? 'Point released and claim rejected.' : '¡Punto liberado y reclamo rechazado con éxito!', 'success');
+        showToast(lang === 'en' ? 'Point released and claim rejected.' : lang === 'zh' ? '地点已释放并成功驳回申请！' : '¡Punto liberado y reclamo rechazado con éxito!', 'success');
       }
 
       setRejectionTarget(null);
       loadAdminData();
     } catch (err) {
       console.error('Error procesando rechazo:', err);
-      showToast(lang === 'en' ? 'Error processing rejection.' : 'Error al procesar el rechazo.', 'error');
+      showToast(lang === 'en' ? 'Error processing rejection.' : lang === 'zh' ? '处理驳回申请时出错。' : 'Error al procesar el rechazo.', 'error');
     } finally {
       setSubmittingRejection(false);
     }
@@ -427,7 +427,7 @@ export default function AdminDashboard() {
         }}>
           <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#E2E8F0', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span>{lang === 'en' ? 'Claims in Verification' : 'Reclamos en Verificación'}</span>
+            <span>{lang === 'en' ? 'Claims in Verification' : lang === 'zh' ? '审核中认领' : 'Reclamos en Verificación'}</span>
           </span>
           <span style={{ fontSize: '20px', fontWeight: '900', color: '#FFD700', background: 'rgba(255, 215, 0, 0.18)', padding: '2px 12px', borderRadius: '10px', border: '1px solid rgba(255, 215, 0, 0.35)' }}>
             {stats.pendientes}
@@ -448,7 +448,7 @@ export default function AdminDashboard() {
         }}>
           <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#E2E8F0', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>{lang === 'en' ? 'Approved Points' : 'Puntos Aprobados'}</span>
+            <span>{lang === 'en' ? 'Approved Points' : lang === 'zh' ? '已批准地点' : 'Puntos Aprobados'}</span>
           </span>
           <span style={{ fontSize: '20px', fontWeight: '900', color: '#10B981', background: 'rgba(16, 185, 129, 0.18)', padding: '2px 12px', borderRadius: '10px', border: '1px solid rgba(16, 185, 129, 0.35)' }}>
             {stats.aprobados}
@@ -469,7 +469,7 @@ export default function AdminDashboard() {
         }}>
           <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#E2E8F0', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-            <span>{lang === 'en' ? 'Total Points' : 'Total de Puntos'}</span>
+            <span>{lang === 'en' ? 'Total Points' : lang === 'zh' ? '地点总计' : 'Total de Puntos'}</span>
           </span>
           <span style={{ fontSize: '20px', fontWeight: '900', color: '#38BDF8', background: 'rgba(56, 189, 248, 0.18)', padding: '2px 12px', borderRadius: '10px', border: '1px solid rgba(56, 189, 248, 0.35)' }}>
             {stats.totalPuntos}
@@ -508,7 +508,7 @@ export default function AdminDashboard() {
           }}
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span>{lang === 'en' ? 'Pending Claims' : 'Reclamos Pendientes'} ({reclamos.length})</span>
+          <span>{lang === 'en' ? 'Pending Claims' : lang === 'zh' ? '待审核认领' : 'Reclamos Pendientes'} ({reclamos.length})</span>
         </button>
         <button
           onClick={() => { setActiveTab('all'); setCurrentPage(1); }}
@@ -530,7 +530,7 @@ export default function AdminDashboard() {
           }}
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          <span>{lang === 'en' ? 'All Points' : 'Todos los Puntos'} ({todosLosPuntos.length})</span>
+          <span>{lang === 'en' ? 'All Points' : lang === 'zh' ? '所有地点' : 'Todos los Puntos'} ({todosLosPuntos.length})</span>
         </button>
 
         {/* Buscador estilizado estilo Glassmorphism */}
@@ -550,7 +550,7 @@ export default function AdminDashboard() {
           </svg>
           <input
             type="text"
-            placeholder={lang === 'en' ? 'Search point, category...' : 'Buscar punto por nombre, categoría...'}
+            placeholder={lang === 'en' ? 'Search point, category...' : lang === 'zh' ? '按名称、分类搜索地点...' : 'Buscar punto por nombre, categoría...'}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
@@ -616,7 +616,7 @@ export default function AdminDashboard() {
               }}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-              <span>{lang === 'en' ? 'Prev' : 'Ant'}</span>
+              <span>{lang === 'en' ? 'Prev' : lang === 'zh' ? '上一页' : 'Ant'}</span>
             </button>
 
             <span style={{
@@ -651,7 +651,7 @@ export default function AdminDashboard() {
                 gap: '4px'
               }}
             >
-              <span>{lang === 'en' ? 'Next' : 'Sig'}</span>
+              <span>{lang === 'en' ? 'Next' : lang === 'zh' ? '下一页' : 'Sig'}</span>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
           </div>
@@ -690,8 +690,8 @@ export default function AdminDashboard() {
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <span style={{ fontSize: '15px', fontWeight: '700' }}>
               {searchTerm
-                ? (lang === 'en' ? 'No points match your search criteria.' : 'No se encontraron puntos que coincidan con la búsqueda.')
-                : (lang === 'en' ? 'No items in this section.' : 'No hay registros en esta sección.')
+                ? (lang === 'en' ? 'No points match your search criteria.' : lang === 'zh' ? '未找到符合搜索条件的地点。' : 'No se encontraron puntos que coincidan con la búsqueda.')
+                : (lang === 'en' ? 'No items in this section.' : lang === 'zh' ? '此栏目暂无数据。' : 'No hay registros en esta sección.')
               }
             </span>
           </div>
@@ -720,7 +720,7 @@ export default function AdminDashboard() {
                       {item.nombre}
                     </h3>
                     <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#94A3B8' }}>
-                      {lang === 'en' ? 'Point creator:' : 'Creador del punto:'} <span style={{ fontWeight: '700', color: '#E2E8F0' }}>{item.nombre_creador || 'Comunidad'}</span>
+                      {lang === 'en' ? 'Point creator:' : lang === 'zh' ? '地点创建者：' : 'Creador del punto:'} <span style={{ fontWeight: '700', color: '#E2E8F0' }}>{item.nombre_creador || (lang === 'en' ? 'Community' : lang === 'zh' ? '社区' : 'Comunidad')}</span>
                     </p>
                   </div>
 
@@ -744,7 +744,7 @@ export default function AdminDashboard() {
                       }}
                     >
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                      <span>{lang === 'en' ? 'Approve Claim' : 'Aprobar Reclamo'}</span>
+                      <span>{lang === 'en' ? 'Approve Claim' : lang === 'zh' ? '批准认领' : 'Aprobar Reclamo'}</span>
                     </button>
                     <button
                       onClick={() => {
@@ -768,7 +768,7 @@ export default function AdminDashboard() {
                       }}
                     >
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                      <span>{lang === 'en' ? 'Reject' : 'Rechazar'}</span>
+                      <span>{lang === 'en' ? 'Reject' : lang === 'zh' ? '驳回' : 'Rechazar'}</span>
                     </button>
                   </div>
                 </div>
@@ -784,23 +784,23 @@ export default function AdminDashboard() {
                   }}>
                     <h4 style={{ margin: '0 0 12px', fontSize: '13.5px', fontWeight: '800', color: '#FFD700', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                      <span>{lang === 'en' ? 'Claiming Business Info' : 'Información Comercial del Reclamante'}</span>
+                      <span>{lang === 'en' ? 'Claiming Business Info' : lang === 'zh' ? '申请认领商户信息' : 'Información Comercial del Reclamante'}</span>
                     </h4>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', fontSize: '13px', color: '#CBD5E1' }}>
                       <div>
-                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Owner Name:' : 'Nombre del Dueño:'}</strong> {item.negocios.perfiles?.nombre_completo || 'N/A'}</p>
-                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Business Type:' : 'Tipo de Negocio:'}</strong> {item.negocios.tipo}</p>
-                        <p style={{ margin: '0' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Price Range:' : 'Rango de Precios:'}</strong> {item.negocios.rango_precios || 'N/A'}</p>
+                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Owner Name:' : lang === 'zh' ? '业主姓名：' : 'Nombre del Dueño:'}</strong> {item.negocios.perfiles?.nombre_completo || 'N/A'}</p>
+                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Business Type:' : lang === 'zh' ? '商户类型：' : 'Tipo de Negocio:'}</strong> {item.negocios.tipo}</p>
+                        <p style={{ margin: '0' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Price Range:' : lang === 'zh' ? '价格区间：' : 'Rango de Precios:'}</strong> {item.negocios.rango_precios || 'N/A'}</p>
                       </div>
                       <div>
-                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Telephone:' : 'Teléfono:'}</strong> {item.negocios.telefono || 'N/A'}</p>
-                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'WhatsApp:' : 'WhatsApp:'}</strong> {item.negocios.whatsapp || 'N/A'}</p>
-                        <p style={{ margin: '0' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Services:' : 'Servicios:'}</strong> {item.negocios.servicios ? Object.keys(item.negocios.servicios).filter(k => item.negocios.servicios[k]).join(', ') : 'N/A'}</p>
+                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Telephone:' : lang === 'zh' ? '固定电话：' : 'Teléfono:'}</strong> {item.negocios.telefono || 'N/A'}</p>
+                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'WhatsApp:' : lang === 'zh' ? 'WhatsApp：' : 'WhatsApp:'}</strong> {item.negocios.whatsapp || 'N/A'}</p>
+                        <p style={{ margin: '0' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Services:' : lang === 'zh' ? '提供服务：' : 'Servicios:'}</strong> {item.negocios.servicios ? Object.keys(item.negocios.servicios).filter(k => item.negocios.servicios[k]).join(', ') : 'N/A'}</p>
                       </div>
                     </div>
                     {item.negocios.descripcion && (
                       <p style={{ margin: '14px 0 0', fontSize: '13px', color: '#CBD5E1', borderTop: '1px dashed rgba(255, 255, 255, 0.12)', paddingTop: '10px' }}>
-                        <strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Commercial Description:' : 'Descripción Comercial:'}</strong> {item.negocios.descripcion}
+                        <strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Commercial Description:' : lang === 'zh' ? '商业描述：' : 'Descripción Comercial:'}</strong> {item.negocios.descripcion}
                       </p>
                     )}
 
@@ -815,13 +815,13 @@ export default function AdminDashboard() {
                       }}>
                         <h5 style={{ margin: '0 0 12px', fontSize: '13.5px', fontWeight: '850', color: '#38BDF8', display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                          <span>Documentos de Verificación Presentados por el Solicitante</span>
+                          <span>{lang === 'en' ? 'Verification Documents Submitted by Applicant' : lang === 'zh' ? '申请人提交的验证文件' : 'Documentos de Verificación Presentados por el Solicitante'}</span>
                         </h5>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', fontSize: '13px', color: '#E2E8F0' }}>
-                          <p style={{ margin: 0 }}><strong style={{ color: '#FFFFFF' }}>Propietario Solicitante:</strong> {item.negocios.datos_verificacion.solicitante_nombre || 'N/A'}</p>
-                          <p style={{ margin: 0 }}><strong style={{ color: '#FFFFFF' }}>N° Cédula / ID / RUC:</strong> {item.negocios.datos_verificacion.solicitante_cedula || 'N/A'}</p>
+                          <p style={{ margin: 0 }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Applicant Owner:' : lang === 'zh' ? '申请业主：' : 'Propietario Solicitante:'}</strong> {item.negocios.datos_verificacion.solicitante_nombre || 'N/A'}</p>
+                          <p style={{ margin: 0 }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'ID / Cedula / RUC:' : lang === 'zh' ? '身份证/税号：' : 'N° Cédula / ID / RUC:'}</strong> {item.negocios.datos_verificacion.solicitante_cedula || 'N/A'}</p>
                           <p style={{ margin: 0 }}>
-                            <strong style={{ color: '#FFFFFF' }}>Teléfono Contacto:</strong> {item.negocios.datos_verificacion.solicitante_telefono || 'N/A'}{' '}
+                            <strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Contact Phone:' : lang === 'zh' ? '联系电话：' : 'Teléfono Contacto:'}</strong> {item.negocios.datos_verificacion.solicitante_telefono || 'N/A'}{' '}
                             {item.negocios.datos_verificacion.solicitante_telefono && (
                               <a
                                 href={`https://wa.me/${item.negocios.datos_verificacion.solicitante_telefono.replace(/\D/g, '')}`}
@@ -857,12 +857,12 @@ export default function AdminDashboard() {
                               }}
                             >
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                              <span>Ver Cédula de Identidad (PDF/Imagen)</span>
+                              <span>{lang === 'en' ? 'View ID Card (PDF/Image)' : lang === 'zh' ? '查看身份证件 (PDF/图片)' : 'Ver Cédula de Identidad (PDF/Imagen)'}</span>
                             </a>
                           ) : (
                             <span style={{ fontSize: '12px', color: '#EF4444', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                              <span>Sin foto de cédula</span>
+                              <span>{lang === 'en' ? 'No ID photo' : lang === 'zh' ? '无证件照片' : 'Sin foto de cédula'}</span>
                             </span>
                           )}
 
@@ -886,7 +886,7 @@ export default function AdminDashboard() {
                               }}
                             >
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                              <span>Ver Comprobante de Propiedad / Licencia</span>
+                              <span>{lang === 'en' ? 'View Property Proof / License' : lang === 'zh' ? '查看产权证明 / 许可证' : 'Ver Comprobante de Propiedad / Licencia'}</span>
                             </a>
                           )}
                         </div>
@@ -894,7 +894,7 @@ export default function AdminDashboard() {
                         {item.negocios.datos_verificacion.solicitud_notas && (
                           <p style={{ margin: '12px 0 0', fontSize: '12.5px', color: '#94A3B8', fontStyle: 'italic', borderTop: '1px dashed rgba(255,255,255,0.12)', paddingTop: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                            <span><strong>Notas del Solicitante:</strong> "{item.negocios.datos_verificacion.solicitud_notas}"</span>
+                            <span><strong>{lang === 'en' ? 'Applicant Notes:' : lang === 'zh' ? '申请人留言：' : 'Notas del Solicitante:'}</strong> "{item.negocios.datos_verificacion.solicitud_notas}"</span>
                           </p>
                         )}
                       </div>
@@ -918,11 +918,11 @@ export default function AdminDashboard() {
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13.5px' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.12)', color: '#94A3B8' }}>
-                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Name' : 'Nombre'}</th>
-                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Category' : 'Categoría'}</th>
-                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Creator' : 'Creador'}</th>
-                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Status' : 'Estado'}</th>
-                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Created At' : 'Creado el'}</th>
+                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Name' : lang === 'zh' ? '名称' : 'Nombre'}</th>
+                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Category' : lang === 'zh' ? '分类' : 'Categoría'}</th>
+                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Creator' : lang === 'zh' ? '创建者' : 'Creador'}</th>
+                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Status' : lang === 'zh' ? '状态' : 'Estado'}</th>
+                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Created At' : lang === 'zh' ? '创建日期' : 'Creado el'}</th>
                 </tr>
               </thead>
               <tbody>
@@ -937,7 +937,7 @@ export default function AdminDashboard() {
                     <tr key={p.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
                       <td style={{ padding: '14px 16px', fontWeight: '750', color: '#FFFFFF' }}>{p.nombre}</td>
                       <td style={{ padding: '14px 16px', color: '#E2E8F0' }}>{p.categoria}</td>
-                      <td style={{ padding: '14px 16px', color: '#94A3B8' }}>{p.nombre_creador || 'Comunidad'}</td>
+                      <td style={{ padding: '14px 16px', color: '#94A3B8' }}>{p.nombre_creador || (lang === 'en' ? 'Community' : lang === 'zh' ? '社区' : 'Comunidad')}</td>
                       <td style={{ padding: '14px 16px' }}>
                         <span style={{
                           fontSize: '11px',
@@ -949,11 +949,15 @@ export default function AdminDashboard() {
                           padding: '4px 10px',
                           borderRadius: '8px'
                         }}>
-                          {p.estado}
+                          {p.estado === 'aprobado' ? (lang === 'en' ? 'Approved' : lang === 'zh' ? '已批准' : 'Aprobado')
+                            : p.estado === 'en_verificacion' ? (lang === 'en' ? 'In Verification' : lang === 'zh' ? '审核中' : 'En Verificación')
+                            : p.estado === 'sin_reclamar' ? (lang === 'en' ? 'Unclaimed' : lang === 'zh' ? '未认领' : 'Sin Reclamar')
+                            : p.estado === 'rechazado' ? (lang === 'en' ? 'Rejected' : lang === 'zh' ? '已拒绝' : 'Rechazado')
+                            : p.estado}
                         </span>
                       </td>
                       <td style={{ padding: '14px 16px', color: '#94A3B8' }}>
-                        {new Date(p.created_at).toLocaleDateString()}
+                        {new Date(p.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : lang === 'zh' ? 'zh-CN' : 'es-ES')}
                       </td>
                     </tr>
                   );
@@ -1013,11 +1017,13 @@ export default function AdminDashboard() {
               letterSpacing: '0.04em',
               fontFamily: "'LC Mogi', var(--font-outfit), sans-serif"
             }}>
-              {lang === 'en' ? 'Reject Business Claim' : 'Rechazar Reclamo de Negocio'}
+              {lang === 'en' ? 'Reject Business Claim' : lang === 'zh' ? '驳回商户认领申请' : 'Rechazar Reclamo de Negocio'}
             </h2>
             <p style={{ margin: 0, fontSize: '13.5px', color: '#94A3B8', lineHeight: 1.5 }}>
               {lang === 'en' 
                 ? `Specify why you are rejecting the claim for ${rejectionTarget.nombreNegocio}:`
+                : lang === 'zh'
+                ? `请说明驳回 ${rejectionTarget.nombreNegocio} 认领申请的具体原因：`
                 : `Especifica por qué estás rechazando el reclamo para ${rejectionTarget.nombreNegocio}:`}
             </p>
 
@@ -1044,11 +1050,13 @@ export default function AdminDashboard() {
                 />
                 <div>
                   <div style={{ fontSize: '14px', fontWeight: '750', color: '#FFFFFF' }}>
-                    {lang === 'en' ? 'Request Correction (Keep pending claim)' : 'Solicitar Corrección (Mantener reclamo pendiente)'}
+                    {lang === 'en' ? 'Request Correction (Keep pending claim)' : lang === 'zh' ? '请求修改（保持申请处于待处理）' : 'Solicitar Corrección (Mantener reclamo pendiente)'}
                   </div>
                   <div style={{ fontSize: '12px', color: '#94A3B8', marginTop: '2px', lineHeight: 1.4 }}>
                     {lang === 'en' 
                       ? 'The owner will see your observations on their dashboard so they can fix their information.'
+                      : lang === 'zh'
+                      ? '申请业主将在控制台中查看到修改意见以便更正资料。'
                       : 'El solicitante verá tus observaciones en su panel para que pueda corregir sus datos.'}
                   </div>
                 </div>
@@ -1075,11 +1083,13 @@ export default function AdminDashboard() {
                 />
                 <div>
                   <div style={{ fontSize: '14px', fontWeight: '750', color: '#EF4444' }}>
-                    {lang === 'en' ? 'Release point (Fraud / Delete claim)' : 'Liberar punto (Fraude / Cancelar reclamo)'}
+                    {lang === 'en' ? 'Release point (Fraud / Delete claim)' : lang === 'zh' ? '释放地点（欺诈/彻底取消申请）' : 'Liberar punto (Fraude / Cancelar reclamo)'}
                   </div>
                   <div style={{ fontSize: '12px', color: '#94A3B8', marginTop: '2px', lineHeight: 1.4 }}>
                     {lang === 'en' 
                       ? 'Desassociates the point immediately, returning it to unclaimed status. The business is marked inactive.'
+                      : lang === 'zh'
+                      ? '立即解绑地点，将其恢复为地图上的“未认领”状态，商户将被标记为停用。'
                       : 'Desvincula el punto de inmediato, devolviéndolo a estado "sin reclamar" en el mapa. El negocio queda inactivo.'}
                   </div>
                 </div>
@@ -1089,12 +1099,12 @@ export default function AdminDashboard() {
             {/* Input del motivo */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
               <label style={{ fontSize: '13px', fontWeight: '800', color: '#FFFFFF' }}>
-                {lang === 'en' ? 'Reason for Rejection:' : 'Motivo del Rechazo:'}
+                {lang === 'en' ? 'Reason for Rejection:' : lang === 'zh' ? '驳回原因：' : 'Motivo del Rechazo:'}
               </label>
               <textarea
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder={lang === 'en' ? 'e.g. Please provide a clear profile photo and a valid phone number.' : 'Ej: Por favor, adjunte un documento de cédula legible y proporcione un número de WhatsApp de contacto válido.'}
+                placeholder={lang === 'en' ? 'e.g. Please provide a clear profile photo and a valid phone number.' : lang === 'zh' ? '例如：请上传清晰的身份证件照片并提供有效的联系电话。' : 'Ej: Por favor, adjunte un documento de cédula legible y proporcione un número de WhatsApp de contacto válido.'}
                 rows={4}
                 style={{
                   width: '100%',
@@ -1128,7 +1138,7 @@ export default function AdminDashboard() {
                   cursor: 'pointer'
                 }}
               >
-                {lang === 'en' ? 'Cancel' : 'Cancelar'}
+                {lang === 'en' ? 'Cancel' : lang === 'zh' ? '取消' : 'Cancelar'}
               </button>
               <button
                 onClick={handleConfirmarRechazo}
@@ -1151,8 +1161,8 @@ export default function AdminDashboard() {
                 }}
               >
                 {submittingRejection 
-                  ? (lang === 'en' ? 'Processing...' : 'Procesando...') 
-                  : (lang === 'en' ? 'Confirm Rejection' : 'Confirmar Rechazo')}
+                  ? (lang === 'en' ? 'Processing...' : lang === 'zh' ? '处理中...' : 'Procesando...') 
+                  : (lang === 'en' ? 'Confirm Rejection' : lang === 'zh' ? '确认驳回' : 'Confirmar Rechazo')}
               </button>
             </div>
           </div>

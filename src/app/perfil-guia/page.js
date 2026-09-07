@@ -365,7 +365,7 @@ export default function PerfilGuiaPage() {
       }
     } catch (err) {
       console.error("Error uploading tour photo:", err);
-      alert(lang === "en" ? "Failed to upload photo" : "Error al subir la foto de travesía");
+      alert(lang === "en" ? "Failed to upload photo" : lang === "zh" ? "上传照片失败" : "Error al subir la foto de travesía");
     } finally {
       setUploadingTravesiaFoto(false);
     }
@@ -594,7 +594,7 @@ export default function PerfilGuiaPage() {
                   opacity: activeTab === "info" ? 1 : 0.75
                 }}
               />
-              <span>1. Datos del Guía</span>
+              <span>{lang === "en" ? "1. Guide Info" : lang === "zh" ? "1. 导游信息" : "1. Datos del Guía"}</span>
             </button>
 
             <button
@@ -616,7 +616,7 @@ export default function PerfilGuiaPage() {
               }}
             >
               <Icon name="image" size={12} color={activeTab === "galeria" ? "#FFFFFF" : "rgba(255,255,255,0.75)"} />
-              <span>2. Fotos ({guiaGaleria.length})</span>
+              <span>{lang === "en" ? "2. Photos" : lang === "zh" ? "2. 相册" : "2. Fotos"} ({guiaGaleria.length})</span>
             </button>
 
             <button
@@ -648,7 +648,7 @@ export default function PerfilGuiaPage() {
                   opacity: activeTab === "mapa_destinos" ? 1 : 0.75
                 }}
               />
-              <span>3. Lugares ({guiaDestinosMapa.length})</span>
+              <span>{lang === "en" ? "3. Places" : lang === "zh" ? "3. 景点" : "3. Lugares"} ({guiaDestinosMapa.length})</span>
             </button>
           </div>
 
@@ -675,7 +675,7 @@ export default function PerfilGuiaPage() {
                 alt="Lista de Guías"
                 style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) invert(1)" }}
               />
-              <span>Lista de Guías</span>
+              <span>{lang === "en" ? "Guides Directory" : lang === "zh" ? "导游列表" : "Lista de Guías"}</span>
             </Link>
 
             <Link
@@ -699,7 +699,7 @@ export default function PerfilGuiaPage() {
                 alt="Mi Perfil"
                 style={{ width: "14px", height: "14px", objectFit: "contain", filter: "brightness(0) invert(1)" }}
               />
-              <span>Mi Perfil</span>
+              <span>{lang === "en" ? "My Profile" : lang === "zh" ? "我的个人资料" : "Mi Perfil"}</span>
             </Link>
           </div>
         </div>
@@ -720,7 +720,7 @@ export default function PerfilGuiaPage() {
             flexShrink: 0
           }}>
             <Icon name="checkCircle" size={14} color="#10B981" />
-            <span>¡Perfil de Guía Turístico guardado y actualizado con éxito!</span>
+            <span>{lang === "en" ? "Tourist guide profile saved and updated successfully!" : lang === "zh" ? "导游资料已成功保存并更新！" : "¡Perfil de Guía Turístico guardado y actualizado con éxito!"}</span>
           </div>
         )}
 
@@ -894,10 +894,10 @@ export default function PerfilGuiaPage() {
                   <div>
                     <h3 style={{ margin: 0, fontSize: "15px", fontWeight: "900", color: "#0A192F", display: "flex", alignItems: "center", gap: "6px" }}>
                       <Icon name="edit" size={16} color="#0EA5E9" />
-                      <span>Configuración del Perfil de Guía Turístico</span>
+                      <span>{lang === "en" ? "Tour Guide Profile Settings" : lang === "zh" ? "导游资料设置" : "Configuración del Perfil de Guía Turístico"}</span>
                     </h3>
                     <p style={{ margin: "1px 0 0", fontSize: "11px", color: "#64748B" }}>
-                      Información visible para los turistas en el directorio público y mapa interactivo.
+                      {lang === "en" ? "Information visible to tourists in the public directory and interactive map." : lang === "zh" ? "此信息将在公开导游列表和交互地图中对游客可见。" : "Información visible para los turistas en el directorio público y mapa interactivo."}
                     </p>
                   </div>
                 </div>
@@ -917,7 +917,7 @@ export default function PerfilGuiaPage() {
                     }}>
                       <label style={{ fontSize: "11.5px", fontWeight: "850", color: "#0F172A", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
                         <Icon name="mapPin" size={13} color="#0EA5E9" />
-                        <span>Departamento Principal</span>
+                        <span>{lang === "en" ? "Primary Department" : lang === "zh" ? "主要省份" : "Departamento Principal"}</span>
                       </label>
                       <select
                         value={guiaDeptPrincipal}
@@ -951,7 +951,7 @@ export default function PerfilGuiaPage() {
                     }}>
                       <label style={{ fontSize: "11.5px", fontWeight: "850", color: "#0F172A", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
                         <Icon name="compass" size={13} color="#0EA5E9" />
-                        <span>Especialidad Principal</span>
+                        <span>{lang === "en" ? "Primary Specialty" : lang === "zh" ? "主要专长" : "Especialidad Principal"}</span>
                       </label>
                       <select
                         value={guiaEspecialidad}
@@ -988,7 +988,7 @@ export default function PerfilGuiaPage() {
                     }}>
                       <label style={{ fontSize: "11.5px", fontWeight: "850", color: "#0F172A", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                         <Icon name="calendar" size={13} color="#0EA5E9" />
-                        <span>Años Exp.</span>
+                        <span>{lang === "en" ? "Yrs Exp." : lang === "zh" ? "从业年限" : "Años Exp."}</span>
                       </label>
                       <input
                         type="number"
@@ -1021,7 +1021,7 @@ export default function PerfilGuiaPage() {
                     }}>
                       <label style={{ fontSize: "11.5px", fontWeight: "850", color: "#065F46", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                         <Icon name="tag" size={13} color="#10B981" />
-                        <span>Rango Tarifa (/día)</span>
+                        <span>{lang === "en" ? "Rate Range (/day)" : lang === "zh" ? "参考费用（/天）" : "Rango Tarifa (/día)"}</span>
                       </label>
                       <select
                         value={guiaTarifa || "$30 - $50 / día"}
@@ -1055,7 +1055,7 @@ export default function PerfilGuiaPage() {
                     }}>
                       <label style={{ fontSize: "11.5px", fontWeight: "850", color: "#14532D", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                         <Icon name="whatsapp" size={13} color="#25D366" />
-                        <span>WhatsApp Directo</span>
+                        <span>{lang === "en" ? "Direct WhatsApp" : lang === "zh" ? "WhatsApp 直联" : "WhatsApp Directo"}</span>
                       </label>
                       <input
                         type="text"
@@ -1087,7 +1087,7 @@ export default function PerfilGuiaPage() {
                     }}>
                       <label style={{ fontSize: "11.5px", fontWeight: "850", color: "#065F46", display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
                         <Icon name="shield" size={13} color="#10B981" />
-                        <span>Licencia INTUR</span>
+                        <span>{lang === "en" ? "INTUR License" : lang === "zh" ? "INTUR 许可证" : "Licencia INTUR"}</span>
                       </label>
                       <input
                         type="text"
@@ -1122,7 +1122,7 @@ export default function PerfilGuiaPage() {
                   }}>
                     <label style={{ fontSize: "11.5px", fontWeight: "850", color: "#0F172A", display: "flex", alignItems: "center", gap: "6px", marginBottom: "5px" }}>
                       <Icon name="globe" size={13} color="#0EA5E9" />
-                      <span>Idiomas que Dominas</span>
+                      <span>{lang === "en" ? "Languages Spoken" : lang === "zh" ? "掌握语言" : "Idiomas que Dominas"}</span>
                     </label>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
                       {IDIOMAS_OPCIONES.map(langOpt => {
@@ -1171,7 +1171,7 @@ export default function PerfilGuiaPage() {
                   }}>
                     <label style={{ fontSize: "11.5px", fontWeight: "850", color: "#065F46", display: "flex", alignItems: "center", gap: "6px", marginBottom: "5px" }}>
                       <Icon name="sparkles" size={13} color="#F59E0B" />
-                      <span>Servicios Incluidos en tus Tours (Ventajas para Turistas)</span>
+                      <span>{lang === "en" ? "Included Services (Benefits for Tourists)" : lang === "zh" ? "包含的服务（游客权益）" : "Servicios Incluidos en tus Tours (Ventajas para Turistas)"}</span>
                     </label>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
                       {SERVICIOS_LIST.map(servicioOpt => {
@@ -1221,16 +1221,16 @@ export default function PerfilGuiaPage() {
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "3px", flexShrink: 0 }}>
                       <label style={{ fontSize: "11.5px", fontWeight: "850", color: "#0F172A", display: "flex", alignItems: "center", gap: "6px" }}>
                         <Icon name="fileText" size={13} color="#0EA5E9" />
-                        <span>Biografía y Presentación Profesional</span>
+                        <span>{lang === "en" ? "Professional Bio & Introduction" : lang === "zh" ? "专业简介与介绍" : "Biografía y Presentación Profesional"}</span>
                       </label>
                       <span style={{ fontSize: "10px", color: "#64748B", fontWeight: "750" }}>
-                        {guiaBiografia.length} / 400 caracteres
+                        {guiaBiografia.length} / {lang === "en" ? "400 chars" : lang === "zh" ? "400 字符" : "400 caracteres"}
                       </span>
                     </div>
                     <textarea
                       value={guiaBiografia}
                       onChange={(e) => setGuiaBiografia(e.target.value.slice(0, 400))}
-                      placeholder="Escribe un resumen atractivo sobre tu trayectoria, rutas guiadas, volcanes que dominas y equipamiento de seguridad..."
+                      placeholder={lang === "en" ? "Write an engaging summary of your background, guided routes, and safety gear..." : lang === "zh" ? "撰写一段关于您的经历、带团路线及安全装备的精彩简介..." : "Escribe un resumen atractivo sobre tu trayectoria, rutas guiadas, volcanes que dominas y equipamiento de seguridad..."}
                       style={{
                         width: "100%",
                         flex: 1,
@@ -1268,9 +1268,9 @@ export default function PerfilGuiaPage() {
                   marginTop: "4px"
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "11px", color: "#64748B", fontWeight: "700" }}>
-                    <span>Idiomas: <strong style={{ color: "#0EA5E9" }}>{guiaIdiomas || "Español"}</strong></span>
+                    <span>{lang === "en" ? "Languages:" : lang === "zh" ? "语言:" : "Idiomas:"} <strong style={{ color: "#0EA5E9" }}>{guiaIdiomas || "Español"}</strong></span>
                     <span>•</span>
-                    <span>Servicios: <strong style={{ color: "#10B981" }}>{guiaServicios.length} incluidos</strong></span>
+                    <span>{lang === "en" ? "Services:" : lang === "zh" ? "服务:" : "Servicios:"} <strong style={{ color: "#10B981" }}>{guiaServicios.length} {lang === "en" ? "included" : lang === "zh" ? "项已包含" : "incluidos"}</strong></span>
                   </div>
 
                   <button
@@ -1292,7 +1292,7 @@ export default function PerfilGuiaPage() {
                     }}
                   >
                     <Icon name="checkCircle" size={14} color="#FFFFFF" />
-                    <span>{savingGuia ? "Guardando..." : "Guardar Cambios del Perfil"}</span>
+                    <span>{savingGuia ? (lang === "en" ? "Saving..." : lang === "zh" ? "正在保存..." : "Guardando...") : (lang === "en" ? "Save Profile Changes" : lang === "zh" ? "保存资料更改" : "Guardar Cambios del Perfil")}</span>
                   </button>
                 </div>
               </form>
@@ -1304,10 +1304,10 @@ export default function PerfilGuiaPage() {
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
                   <div>
                     <h3 style={{ margin: 0, fontSize: "14px", fontWeight: "900", color: "#0A192F" }}>
-                      Galería de Fotos de Travesías y Excursiones
+                      {lang === "en" ? "Expeditions & Tours Photo Gallery" : lang === "zh" ? "带团与探险照片相册" : "Galería de Fotos de Travesías y Excursiones"}
                     </h3>
                     <p style={{ margin: 0, fontSize: "10.5px", color: "#64748B" }}>
-                      Fotos visibles para turistas en tu tarjeta y perfil.
+                      {lang === "en" ? "Photos visible to tourists on your card and profile." : lang === "zh" ? "照片将在您的卡片和资料中对游客可见。" : "Fotos visibles para turistas en tu tarjeta y perfil."}
                     </p>
                   </div>
 
@@ -1326,7 +1326,7 @@ export default function PerfilGuiaPage() {
                     style={{ background: "#0284C7", color: "#FFF", border: "none", padding: "5px 12px", borderRadius: "7px", fontSize: "11.5px", fontWeight: "800", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
                   >
                     <Icon name="plus" size={12} />
-                    <span>{uploadingTravesiaFoto ? "Subiendo..." : "Agregar Foto"}</span>
+                    <span>{uploadingTravesiaFoto ? (lang === "en" ? "Uploading..." : lang === "zh" ? "上传中..." : "Subiendo...") : (lang === "en" ? "Add Photo" : lang === "zh" ? "添加照片" : "Agregar Foto")}</span>
                   </button>
                 </div>
 
@@ -1334,7 +1334,7 @@ export default function PerfilGuiaPage() {
                   <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "20px", background: "rgba(14, 165, 233, 0.03)", border: "1.5px dashed rgba(14, 165, 233, 0.25)", borderRadius: "12px" }}>
                     <Icon name="image" size={28} color="#94A3B8" />
                     <p style={{ fontSize: "11.5px", color: "#64748B", fontWeight: "700", marginTop: "4px" }}>
-                      Aún no has subido fotos de tus travesías.
+                      {lang === "en" ? "You haven't uploaded tour photos yet." : lang === "zh" ? "您尚未上传带团照片。" : "Aún no has subido fotos de tus travesías."}
                     </p>
                   </div>
                 ) : (

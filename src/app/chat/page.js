@@ -20,10 +20,10 @@ function timeAgo(dateStr, lang) {
   const diffMin = Math.floor(diffMs / 60000);
   const diffHr = Math.floor(diffMs / 3600000);
   const diffDay = Math.floor(diffMs / 86400000);
-  if (diffMin < 1) return lang === "en" ? "Now" : "Ahora";
-  if (diffMin < 60) return lang === "en" ? `${diffMin}m ago` : `hace ${diffMin}m`;
-  if (diffHr < 24) return lang === "en" ? `${diffHr}h ago` : `hace ${diffHr}h`;
-  return lang === "en" ? `${diffDay}d ago` : `hace ${diffDay}d`;
+  if (diffMin < 1) return lang === "en" ? "Now" : lang === "zh" ? "刚刚" : "Ahora";
+  if (diffMin < 60) return lang === "en" ? `${diffMin}m ago` : lang === "zh" ? `${diffMin}分钟前` : `hace ${diffMin}m`;
+  if (diffHr < 24) return lang === "en" ? `${diffHr}h ago` : lang === "zh" ? `${diffHr}小时前` : `hace ${diffHr}h`;
+  return lang === "en" ? `${diffDay}d ago` : lang === "zh" ? `${diffDay}天前` : `hace ${diffDay}d`;
 }
 
 function avatarStyle(url, size) {
@@ -47,7 +47,7 @@ function renderMessageMedia(msgUrl, lang) {
     return (
       <div style={{ padding: "6px 2px", display: "flex", flexDirection: "column", gap: "4px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", opacity: 0.85, fontWeight: "700" }}>
-          <span>🎤 {lang === "en" ? "Voice Note / Audio" : "Nota de Voz / Audio"}</span>
+          <span>🎤 {lang === "en" ? "Voice Note / Audio" : lang === "zh" ? "语音条 / 音频" : "Nota de Voz / Audio"}</span>
         </div>
         <audio
           src={msgUrl}
@@ -81,7 +81,7 @@ function renderMessageMedia(msgUrl, lang) {
 
 function renderLastMessagePreview(lastMessage, lang) {
   if (!lastMessage) {
-    return lang === "en" ? "Send the first message!" : "¡Envía el primer mensaje!";
+    return lang === "en" ? "Send the first message!" : lang === "zh" ? "发送第一条消息！" : "¡Envía el primer mensaje!";
   }
 
   if (lastMessage.imagen_url) {
@@ -110,10 +110,10 @@ function renderLastMessagePreview(lastMessage, lang) {
         <span>
           {lastMessage.contenido || (
             isAudio
-              ? (lang === "en" ? "Audio note" : "Nota de voz")
+              ? (lang === "en" ? "Audio note" : lang === "zh" ? "语音条" : "Nota de voz")
               : isVideo
-              ? (lang === "en" ? "Video" : "Video")
-              : (lang === "en" ? "Photo" : "Imagen")
+              ? (lang === "en" ? "Video" : lang === "zh" ? "视频" : "Video")
+              : (lang === "en" ? "Photo" : lang === "zh" ? "图片" : "Imagen")
           )}
         </span>
       </span>
@@ -237,7 +237,7 @@ function ChatContent() {
       try {
         const { data: convId, error } = await supabase.rpc("obtener_o_crear_conversacion", { otro_usuario_id: targetUserId });
         if (error) {
-          alert(lang === "en" ? "Both users must follow each other to chat" : "Ambos deben seguirse para chatear");
+          alert(lang === "en" ? "Both users must follow each other to chat" : lang === "zh" ? "双方必须互相关注才能发起聊天" : "Ambos deben seguirse para chatear");
           return;
         }
         await loadConversaciones();
@@ -353,7 +353,7 @@ function ChatContent() {
       setChatImagePreview(null);
     } catch (err) {
       console.error("Send message error:", err);
-      alert(lang === "en" ? "Error sending message" : "Error al enviar mensaje");
+      alert(lang === "en" ? "Error sending message" : lang === "zh" ? "发送消息失败" : "Error al enviar mensaje");
     } finally {
       setEnviando(false);
     }
@@ -428,7 +428,7 @@ function ChatContent() {
       }
     } catch (err) {
       console.error("Start chat error:", err);
-      alert(lang === "en" ? "Error starting chat" : "Error al iniciar chat");
+      alert(lang === "en" ? "Error starting chat" : lang === "zh" ? "发起对话失败" : "Error al iniciar chat");
     }
   };
 
@@ -476,7 +476,7 @@ function ChatContent() {
       }, 1000);
     } catch (err) {
       console.error("Mic access error:", err);
-      alert(lang === "en" ? "Microphone access is required to record audio" : "Se requiere acceso al micrófono para grabar notas de voz");
+      alert(lang === "en" ? "Microphone access is required to record audio" : lang === "zh" ? "需要麦克风权限以录制语音" : "Se requiere acceso al micrófono para grabar notas de voz");
     }
   };
 
@@ -680,10 +680,10 @@ function ChatContent() {
                         <img src="/images/perfil.svg" alt="Perfil" style={{ width: "13px", height: "13px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                         <span>
                           {activeOtherUser.rol === "dueno"
-                            ? (lang === "en" ? "Business Owner" : "Propietario")
+                            ? (lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario")
                             : activeOtherUser.rol === "guia_turistico"
-                            ? (lang === "en" ? "Tour Guide" : "Guía Turístico")
-                            : (lang === "en" ? "Turista Tuani" : "Turista Tuani")}
+                            ? (lang === "en" ? "Tour Guide" : lang === "zh" ? "认证导游" : "Guía Turístico")
+                            : (lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani")}
                         </span>
                       </div>
                     </div>
@@ -767,10 +767,10 @@ function ChatContent() {
                     </div>
                     <span style={{ fontSize: "12.5px", color: "rgba(255, 255, 255, 0.8)", fontWeight: "700" }}>
                       {chatImageFile?.type?.startsWith("audio/") || chatImageFile?.name?.includes("audio")
-                        ? (lang === "en" ? "Audio note ready to send" : "Nota de voz lista para enviar")
+                        ? (lang === "en" ? "Audio note ready to send" : lang === "zh" ? "语音备好，随时发送" : "Nota de voz lista para enviar")
                         : chatImageFile?.type?.startsWith("video/")
-                        ? (lang === "en" ? "Video attached" : "Video adjuntado")
-                        : (lang === "en" ? "Image attached" : "Imagen adjuntada")}
+                        ? (lang === "en" ? "Video attached" : lang === "zh" ? "视频已添加" : "Video adjuntado")
+                        : (lang === "en" ? "Image attached" : lang === "zh" ? "图片已添加" : "Imagen adjuntada")}
                     </span>
                   </div>
                 )}
@@ -783,15 +783,15 @@ function ChatContent() {
                     <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(239, 68, 68, 0.18)", border: "1px solid rgba(239, 68, 68, 0.5)", padding: "8px 16px", borderRadius: "24px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#EF4444", fontWeight: "800", fontSize: "13px" }}>
                         <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#EF4444" }} />
-                        <span>{lang === "en" ? "Recording..." : "Grabando audio..."}</span>
+                        <span>{lang === "en" ? "Recording..." : lang === "zh" ? "正在录音..." : "Grabando audio..."}</span>
                         <span style={{ color: "#FFFFFF" }}>{Math.floor(recordingTime / 60)}:{(recordingTime % 60).toString().padStart(2, '0')}</span>
                       </div>
                       <div style={{ display: "flex", gap: "8px" }}>
                         <button onClick={cancelRecording} style={{ background: "none", border: "none", color: "rgba(255, 255, 255, 0.7)", cursor: "pointer", fontSize: "12px", fontWeight: "700" }}>
-                          {lang === "en" ? "Cancel" : "Cancelar"}
+                          {lang === "en" ? "Cancel" : lang === "zh" ? "取消" : "Cancelar"}
                         </button>
                         <button onClick={stopRecording} style={{ background: "#EF4444", border: "none", color: "white", padding: "5px 14px", borderRadius: "12px", cursor: "pointer", fontSize: "12px", fontWeight: "800" }}>
-                          {lang === "en" ? "Stop & Attach" : "Detener y Adjuntar"}
+                          {lang === "en" ? "Stop & Attach" : lang === "zh" ? "停止并添加" : "Detener y Adjuntar"}
                         </button>
                       </div>
                     </div>
@@ -814,7 +814,7 @@ function ChatContent() {
                           transition: "all 0.2s ease",
                           flexShrink: 0
                         }}
-                        title={lang === "en" ? "Attach photo, video or audio file" : "Adjuntar foto, video o audio"}
+                        title={lang === "en" ? "Attach photo, video or audio file" : lang === "zh" ? "添加照片、视频或音频" : "Adjuntar foto, video o audio"}
                         onMouseOver={(e) => { e.currentTarget.style.background = "rgba(255, 215, 0, 0.2)"; e.currentTarget.style.borderColor = "#FFD700"; }}
                         onMouseOut={(e) => { e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)"; e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.18)"; }}
                       >
@@ -841,7 +841,7 @@ function ChatContent() {
                           transition: "all 0.2s ease",
                           flexShrink: 0
                         }}
-                        title={lang === "en" ? "Record voice note" : "Grabar nota de voz"}
+                        title={lang === "en" ? "Record voice note" : lang === "zh" ? "录制语音" : "Grabar nota de voz"}
                         onMouseOver={(e) => { e.currentTarget.style.background = "rgba(239, 68, 68, 0.2)"; e.currentTarget.style.borderColor = "#EF4444"; }}
                         onMouseOut={(e) => { e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)"; e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.18)"; }}
                       >
@@ -870,7 +870,7 @@ function ChatContent() {
                           ...chatLayoutStyles.sendBtn,
                           opacity: enviando || (!nuevoMensaje.trim() && !chatImageFile) ? 0.4 : 1,
                         }}
-                        title={lang === "en" ? "Send message" : "Enviar mensaje"}
+                        title={lang === "en" ? "Send message" : lang === "zh" ? "发送消息" : "Enviar mensaje"}
                       >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "translateX(1px)" }}>
                           <line x1="22" y1="2" x2="11" y2="13"/>
@@ -910,7 +910,7 @@ function ChatContent() {
               <input
                 value={searchMutual}
                 onChange={(e) => setSearchMutual(e.target.value)}
-                placeholder={lang === "en" ? "Search..." : "Buscar..."}
+                placeholder={lang === "en" ? "Search..." : lang === "zh" ? "搜索..." : "Buscar..."}
                 style={{ width: "100%", padding: "11px 16px", background: "rgba(255, 255, 255, 0.08)", border: "1px solid rgba(255, 215, 0, 0.3)", borderRadius: "14px", color: "#FFFFFF", fontSize: "13.5px", outline: "none", marginBottom: "14px", boxSizing: "border-box" }}
               />
 
@@ -961,10 +961,10 @@ function ChatContent() {
                           <img src="/images/perfil.svg" alt="Perfil" style={{ width: "12px", height: "12px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                           <span>
                             {u.rol === "dueno"
-                              ? (lang === "en" ? "Business Owner" : "Propietario")
+                              ? (lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario")
                               : u.rol === "guia_turistico"
-                              ? (lang === "en" ? "Tour Guide" : "Guía Turístico")
-                              : (lang === "en" ? "Turista Tuani" : "Turista Tuani")}
+                              ? (lang === "en" ? "Tour Guide" : lang === "zh" ? "认证导游" : "Guía Turístico")
+                              : (lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani")}
                           </span>
                         </div>
                       </div>

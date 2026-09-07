@@ -11,6 +11,7 @@ export const LanguageContext = createContext({
   lang: 'es',
   setLang: () => {},
   t: (key) => key,
+  tr: (es, en, zh) => es,
 });
 
 /**
@@ -58,16 +59,30 @@ export function LanguageProvider({ children }) {
    */
   const t = useCallback((key, params = {}) => {
     const keys = key.split('.');
-    let value = translations[lang];
 
-    for (const k of keys) {
-      if (value && typeof value === 'object' && k in value) {
-        value = value[k];
-      } else {
-        // Key not found — return the key itself as fallback
-        console.warn(`[i18n] Missing key: "${key}" for lang "${lang}"`);
-        return key;
+    const resolve = (obj) => {
+      let current = obj;
+      for (const k of keys) {
+        if (current && typeof current === 'object' && k in current) {
+          current = current[k];
+        } else {
+          return undefined;
+        }
       }
+      return current;
+    };
+
+    let value = resolve(translations[lang]);
+    if (value === undefined && lang !== 'en') {
+      value = resolve(translations['en']);
+    }
+    if (value === undefined && lang !== 'es') {
+      value = resolve(translations['es']);
+    }
+
+    if (value === undefined) {
+      console.warn(`[i18n] Missing key: "${key}" for lang "${lang}"`);
+      return key;
     }
 
     // Replace interpolation tokens like {n}
@@ -81,8 +96,22 @@ export function LanguageProvider({ children }) {
     return value;
   }, [lang]);
 
+  /**
+   * tr('Texto en Español', 'English Text', '中文文本')
+   * Ergonomic inline helper for 3-language titles, headers, and UI strings.
+   */
+  const tr = useCallback((esText, enText, zhText) => {
+    if (lang === 'zh') {
+      return zhText !== undefined ? zhText : (enText !== undefined ? enText : esText);
+    }
+    if (lang === 'en') {
+      return enText !== undefined ? enText : esText;
+    }
+    return esText;
+  }, [lang]);
+
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t }}>
+    <LanguageContext.Provider value={{ lang, setLang, t, tr }}>
       {children}
     </LanguageContext.Provider>
   );

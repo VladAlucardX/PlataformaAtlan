@@ -14,10 +14,10 @@ function timeAgo(dateStr, lang) {
   const diffMin = Math.floor(diffMs / 60000);
   const diffHr = Math.floor(diffMs / 3600000);
   const diffDay = Math.floor(diffMs / 86400000);
-  if (diffMin < 1) return lang === "en" ? "Now" : "Ahora";
-  if (diffMin < 60) return lang === "en" ? `${diffMin}m` : `${diffMin}m`;
-  if (diffHr < 24) return lang === "en" ? `${diffHr}h` : `${diffHr}h`;
-  return lang === "en" ? `${diffDay}d` : `${diffDay}d`;
+  if (diffMin < 1) return lang === "en" ? "Now" : lang === "zh" ? "刚刚" : "Ahora";
+  if (diffMin < 60) return lang === "en" ? `${diffMin}m` : lang === "zh" ? `${diffMin}分钟` : `${diffMin}m`;
+  if (diffHr < 24) return lang === "en" ? `${diffHr}h` : lang === "zh" ? `${diffHr}小时` : `${diffHr}h`;
+  return lang === "en" ? `${diffDay}d` : lang === "zh" ? `${diffDay}天` : `${diffDay}d`;
 }
 
 function avatarStyle(url, size) {
@@ -222,10 +222,10 @@ export default function ChatWidget({ session, perfil, lang }) {
               {/* List Header */}
               <div style={styles.panelHeader}>
                 <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
-                  <Icon name="messageCircle" size={18} /> {lang === "en" ? "Messages" : "Mensajes"}
+                  <Icon name="messageCircle" size={18} /> {lang === "en" ? "Messages" : lang === "zh" ? "私信消息" : "Mensajes"}
                 </h4>
                 <div style={{ display: "flex", gap: "6px" }}>
-                  <Link href="/chat" style={styles.expandBtn} title={lang === "en" ? "Open full chat" : "Abrir chat completo"}>
+                  <Link href="/chat" style={styles.expandBtn} title={lang === "en" ? "Open full chat" : lang === "zh" ? "打开完整私信" : "Abrir chat completo"}>
                     ↗
                   </Link>
                   <button onClick={() => setIsOpen(false)} style={styles.minimizeBtn}>─</button>
@@ -242,7 +242,7 @@ export default function ChatWidget({ session, perfil, lang }) {
                   <div style={{ padding: "40px 20px", textAlign: "center" }}>
                     <span style={{ fontSize: "32px", display: "block", marginBottom: "8px" }}><Icon name="messageCircle" size={32} /></span>
                     <p style={{ margin: 0, fontSize: "13px", color: "var(--atlan-text-muted)" }}>
-                      {lang === "en" ? "No conversations yet" : "Sin conversaciones aún"}
+                      {lang === "en" ? "No conversations yet" : lang === "zh" ? "暂无私信记录" : "Sin conversaciones aún"}
                     </p>
                   </div>
                 ) : (
@@ -282,13 +282,13 @@ export default function ChatWidget({ session, perfil, lang }) {
                                       <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
                                       <circle cx="12" cy="13" r="4"/>
                                     </svg>
-                                    <span>{lastMsg.contenido || (lang === "en" ? "Photo" : "Imagen")}</span>
+                                    <span>{lastMsg.contenido || (lang === "en" ? "Photo" : lang === "zh" ? "图片" : "Imagen")}</span>
                                   </span>
                                 ) : (
                                   lastMsg.contenido?.slice(0, 40) + (lastMsg.contenido?.length > 40 ? "..." : "")
                                 )
                               ) : (
-                                lang === "en" ? "Start chatting" : "Inicia la conversación"
+                                lang === "en" ? "Start chatting" : lang === "zh" ? "发起对话" : "Inicia la conversación"
                               )}
                             </span>
                             {hasUnread && (
@@ -328,7 +328,7 @@ export default function ChatWidget({ session, perfil, lang }) {
                   <div style={{ padding: "40px 20px", textAlign: "center" }}>
                     <span style={{ fontSize: "28px", display: "block", marginBottom: "8px" }}><Icon name="hand" size={28} /></span>
                     <p style={{ margin: 0, fontSize: "12px", color: "var(--atlan-text-muted)" }}>
-                      {lang === "en" ? "Say hi!" : "¡Saluda!"}
+                      {lang === "en" ? "Say hi!" : lang === "zh" ? "打个招呼吧！" : "¡Saluda!"}
                     </p>
                   </div>
                 ) : (
@@ -367,7 +367,7 @@ export default function ChatWidget({ session, perfil, lang }) {
                   value={nuevoMensaje}
                   onChange={e => setNuevoMensaje(e.target.value.slice(0, 1000))}
                   onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-                  placeholder={lang === "en" ? "Type a message..." : "Escribe un mensaje..."}
+                  placeholder={lang === "en" ? "Type a message..." : lang === "zh" ? "输入消息..." : "Escribe un mensaje..."}
                   style={styles.textInput}
                   disabled={enviando}
                 />
@@ -375,7 +375,7 @@ export default function ChatWidget({ session, perfil, lang }) {
                   onClick={handleSend}
                   disabled={!nuevoMensaje.trim() || enviando}
                   style={{ ...styles.sendBtn, opacity: !nuevoMensaje.trim() ? 0.4 : 1 }}
-                  title={lang === "en" ? "Send message" : "Enviar mensaje"}
+                  title={lang === "en" ? "Send message" : lang === "zh" ? "发送消息" : "Enviar mensaje"}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "translateX(1px)" }}>
                     <line x1="22" y1="2" x2="11" y2="13"/>

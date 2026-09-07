@@ -664,7 +664,7 @@ export default function GuiasPage() {
 
     setSubmittingReview(false);
     setNewComment("");
-    setReviewSuccessMsg(lang === "en" ? "Review posted successfully!" : "¡Reseña publicada con éxito!");
+    setReviewSuccessMsg(lang === "en" ? "Review posted successfully!" : lang === "zh" ? "评价发布成功！" : "¡Reseña publicada con éxito!");
     setTimeout(() => setReviewSuccessMsg(""), 3000);
   };
 
@@ -735,6 +735,13 @@ export default function GuiasPage() {
                 </span>{" "}
                 <span style={styles.whiteTextWithShadow}>with Expert Local Guides</span>
               </>
+            ) : lang === "zh" ? (
+              <>
+                <span style={styles.whiteTextWithShadow}>与本地专业导游探索</span>{" "}
+                <span style={styles.flagShadowWrapper}>
+                  <span className="text-flag-nicaragua" style={styles.flagSpan}>尼加拉瓜</span>
+                </span>
+              </>
             ) : (
               <>
                 <span style={styles.whiteTextWithShadow}>Explora</span>{" "}
@@ -759,7 +766,7 @@ export default function GuiasPage() {
               <Icon name="search" size={16} color="#0EA5E9" />
               <input
                 type="text"
-                placeholder={lang === "en" ? "Search by name, city, volcano..." : "Buscar guía por nombre, volcán, ciudad..."}
+                placeholder={lang === "en" ? "Search by name, city, volcano..." : lang === "zh" ? "按导游姓名、火山、城市搜索..." : "Buscar guía por nombre, volcán, ciudad..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={styles.searchInputSlim}
@@ -779,7 +786,7 @@ export default function GuiasPage() {
                 onChange={(e) => setSelectedDept(e.target.value)}
                 style={styles.selectInputCompact}
               >
-                <option value="Todos" style={styles.selectOption}>{lang === "en" ? "All Depts" : "Todos los Deptos"}</option>
+                <option value="Todos" style={styles.selectOption}>{lang === "en" ? "All Depts" : lang === "zh" ? "所有省份" : "Todos los Deptos"}</option>
                 {DEPARTAMENTOS_LIST.filter(d => d !== "Todos").map((dept) => (
                   <option key={dept} value={dept} style={styles.selectOption}>{dept}</option>
                 ))}
@@ -794,7 +801,7 @@ export default function GuiasPage() {
                 onChange={(e) => setSelectedEspecialidad(e.target.value)}
                 style={styles.selectInputCompact}
               >
-                <option value="Todas" style={styles.selectOption}>{lang === "en" ? "All Specialties" : "Todas las Especialidades"}</option>
+                <option value="Todas" style={styles.selectOption}>{lang === "en" ? "All Specialties" : lang === "zh" ? "所有专长" : "Todas las Especialidades"}</option>
                 {ESPECIALIDADES_LIST.filter(e => e !== "Todas").map((esp) => (
                   <option key={esp} value={esp} style={styles.selectOption}>{esp}</option>
                 ))}
@@ -808,10 +815,10 @@ export default function GuiasPage() {
                 onChange={(e) => setSortBy(e.target.value)}
                 style={styles.selectInputSlim}
               >
-                <option value="rating" style={styles.selectOption}>{lang === "en" ? "Best Rating" : "Mejor Calificación"}</option>
-                <option value="experiencia" style={styles.selectOption}>{lang === "en" ? "Experience" : "Más Experiencia"}</option>
-                <option value="precio_asc" style={styles.selectOption}>{lang === "en" ? "Price: Low to High" : "Precio: Menor a Mayor"}</option>
-                <option value="precio_desc" style={styles.selectOption}>{lang === "en" ? "Price: High to Low" : "Precio: Mayor a Menor"}</option>
+                <option value="rating" style={styles.selectOption}>{lang === "en" ? "Best Rating" : lang === "zh" ? "最高评分" : "Mejor Calificación"}</option>
+                <option value="experiencia" style={styles.selectOption}>{lang === "en" ? "Experience" : lang === "zh" ? "最丰富经验" : "Más Experiencia"}</option>
+                <option value="precio_asc" style={styles.selectOption}>{lang === "en" ? "Price: Low to High" : lang === "zh" ? "价格从低到高" : "Precio: Menor a Mayor"}</option>
+                <option value="precio_desc" style={styles.selectOption}>{lang === "en" ? "Price: High to Low" : lang === "zh" ? "价格从高到低" : "Precio: Mayor a Menor"}</option>
               </select>
             </div>
 
@@ -832,7 +839,7 @@ export default function GuiasPage() {
               }}
             >
               <Icon name="filter" size={13} />
-              <span>{lang === "en" ? "Filters" : "Filtros"}</span>
+              <span>{lang === "en" ? "Filters" : lang === "zh" ? "筛选" : "Filtros"}</span>
               {(selectedIdiomas.length > 0 || selectedRangoPrecio !== "Todos" || solamenteVerificados) && (
                 <span style={styles.activeFilterDot} />
               )}
@@ -848,7 +855,7 @@ export default function GuiasPage() {
                 <div style={{ flex: 1, minWidth: "220px" }}>
                   <span style={styles.filterSectionTitleSlim}>
                     <Icon name="globe" size={13} color="#10B981" />
-                    {lang === "en" ? "Languages (Multi-select):" : "Idiomas del Guía (Selección Múltiple):"}
+                    {lang === "en" ? "Languages (Multi-select):" : lang === "zh" ? "导游语言（多选）：" : "Idiomas del Guía (Selección Múltiple):"}
                   </span>
                   <div style={{ display: "flex", gap: "5px", flexWrap: "wrap", marginTop: "4px" }}>
                     {IDIOMAS_LIST.map((langItem) => {
@@ -878,7 +885,7 @@ export default function GuiasPage() {
                 <div style={{ flex: 1, minWidth: "200px" }}>
                   <span style={styles.filterSectionTitleSlim}>
                     <Icon name="dollarSign" size={13} color="#38BDF8" />
-                    {lang === "en" ? "Rate Range:" : "Tarifa Estimada:"}
+                    {lang === "en" ? "Rate Range:" : lang === "zh" ? "参考费用：" : "Tarifa Estimada:"}
                   </span>
                   <div style={{ display: "flex", gap: "5px", flexWrap: "wrap", marginTop: "4px" }}>
                     {RANGOS_PRECIO_LIST.map((rango) => {
@@ -913,7 +920,7 @@ export default function GuiasPage() {
                     }}
                   >
                     <Icon name="checkCircle" size={14} color={solamenteVerificados ? "#10B981" : "#64748B"} />
-                    <span>{lang === "en" ? "INTUR Verified Only" : "Solo Certificados INTUR"}</span>
+                    <span>{lang === "en" ? "INTUR Verified Only" : lang === "zh" ? "仅限INTUR认证导游" : "Solo Certificados INTUR"}</span>
                   </button>
                 </div>
               </div>
@@ -923,11 +930,11 @@ export default function GuiasPage() {
           {/* CHIPS DE FILTROS ACTIVOS CON BOTÓN PARA ELIMINAR INDIVIDUALMENTE */}
           {hasActiveFilters && (
             <div style={styles.activeFiltersRow}>
-              <span style={styles.activeFiltersLabel}>{lang === "en" ? "Active Filters:" : "Filtros Activos:"}</span>
+              <span style={styles.activeFiltersLabel}>{lang === "en" ? "Active Filters:" : lang === "zh" ? "当前筛选：" : "Filtros Activos:"}</span>
 
               {selectedDept !== "Todos" && (
                 <span style={styles.activeChip}>
-                  <span>Dept: <b>{selectedDept}</b></span>
+                  <span>{lang === "en" ? "Dept:" : lang === "zh" ? "省份:" : "Dept:"} <b>{selectedDept}</b></span>
                   <button onClick={() => setSelectedDept("Todos")} style={styles.chipRemoveBtn}>
                     <Icon name="x" size={12} />
                   </button>
@@ -936,7 +943,7 @@ export default function GuiasPage() {
 
               {selectedEspecialidad !== "Todas" && (
                 <span style={styles.activeChip}>
-                  <span>Especialidad: <b>{selectedEspecialidad}</b></span>
+                  <span>{lang === "en" ? "Specialty:" : lang === "zh" ? "专长:" : "Especialidad:"} <b>{selectedEspecialidad}</b></span>
                   <button onClick={() => setSelectedEspecialidad("Todas")} style={styles.chipRemoveBtn}>
                     <Icon name="x" size={12} />
                   </button>
@@ -945,7 +952,7 @@ export default function GuiasPage() {
 
               {selectedIdiomas.map((idioma) => (
                 <span key={idioma} style={styles.activeChip}>
-                  <span>Idioma: <b>{idioma}</b></span>
+                  <span>{lang === "en" ? "Language:" : lang === "zh" ? "语言:" : "Idioma:"} <b>{idioma}</b></span>
                   <button onClick={() => handleToggleIdioma(idioma)} style={styles.chipRemoveBtn}>
                     <Icon name="x" size={12} />
                   </button>
@@ -954,18 +961,16 @@ export default function GuiasPage() {
 
               {selectedRangoPrecio !== "Todos" && (
                 <span style={styles.activeChip}>
-                  <span>Tarifa: <b>{selectedRangoPrecio}</b></span>
+                  <span>{lang === "en" ? "Rate:" : lang === "zh" ? "费用:" : "Tarifa:"} <b>{selectedRangoPrecio}</b></span>
                   <button onClick={() => setSelectedRangoPrecio("Todos")} style={styles.chipRemoveBtn}>
                     <Icon name="x" size={12} />
                   </button>
                 </span>
               )}
 
-
-
               {solamenteVerificados && (
                 <span style={styles.activeChip}>
-                  <span>Verificados INTUR</span>
+                  <span>{lang === "en" ? "INTUR Verified" : lang === "zh" ? "INTUR 认证" : "Verificados INTUR"}</span>
                   <button onClick={() => setSolamenteVerificados(false)} style={styles.chipRemoveBtn}>
                     <Icon name="x" size={12} />
                   </button>
@@ -983,7 +988,7 @@ export default function GuiasPage() {
 
               <button onClick={clearAllFilters} style={styles.clearAllFiltersBtn}>
                 <Icon name="x" size={12} />
-                <span>{lang === "en" ? "Reset All" : "Limpiar Todos"}</span>
+                <span>{lang === "en" ? "Reset All" : lang === "zh" ? "重置全部" : "Limpiar Todos"}</span>
               </button>
             </div>
           )}
@@ -996,17 +1001,17 @@ export default function GuiasPage() {
               <Icon name="compass" size={16} color="#38BDF8" />
             </div>
             <h2 style={styles.resultsTitleClean}>
-              {lang === "en" ? "Available Tour Guides" : "Guías Turísticos Disponibles"}
+              {lang === "en" ? "Available Tour Guides" : lang === "zh" ? "可选导游" : "Guías Turísticos Disponibles"}
             </h2>
             <span style={styles.resultsBadgeSlim}>
-              {guiasFiltrados.length} {guiasFiltrados.length === 1 ? (lang === "en" ? "guide" : "guía") : (lang === "en" ? "guías" : "guías")}
+              {guiasFiltrados.length} {guiasFiltrados.length === 1 ? (lang === "en" ? "guide" : lang === "zh" ? "位导游" : "guía") : (lang === "en" ? "guides" : lang === "zh" ? "位导游" : "guías")}
             </span>
           </div>
 
           {hasActiveFilters && (
             <button onClick={clearAllFilters} style={styles.resetFiltersBtnSlim}>
               <Icon name="x" size={13} />
-              <span>{lang === "en" ? "Reset All Filters" : "Limpiar Todos los Filtros"}</span>
+              <span>{lang === "en" ? "Reset All Filters" : lang === "zh" ? "重置所有筛选" : "Limpiar Todos los Filtros"}</span>
             </button>
           )}
         </div>
@@ -1016,11 +1021,13 @@ export default function GuiasPage() {
           <div style={styles.emptyStateSlim}>
             <Icon name="compass" size={42} color="#475569" />
             <h3 style={styles.emptyTitleSlim}>
-              {lang === "en" ? "No tour guides found" : "No se encontraron guías turísticos"}
+              {lang === "en" ? "No tour guides found" : lang === "zh" ? "未找到导游" : "No se encontraron guías turísticos"}
             </h3>
             <p style={styles.emptySubtitleSlim}>
               {lang === "en"
                 ? "Try selecting another department or clearing search filters."
+                : lang === "zh"
+                ? "尝试选择其他省份或清除筛选条件。"
                 : "Intenta seleccionando otro departamento o limpiando los filtros de búsqueda."}
             </p>
           </div>
@@ -1062,7 +1069,7 @@ export default function GuiasPage() {
                       <div style={styles.ratingRowWide}>
                         <span style={{ color: "#FFD700", fontWeight: "900", fontSize: "14px" }}>★</span>
                         <span style={styles.ratingValueWide}>{guia.rating_promedio}</span>
-                        <span style={styles.reviewsCountWide}>({guia.total_resenas} {lang === "en" ? "reviews" : "reseñas"})</span>
+                        <span style={styles.reviewsCountWide}>({guia.total_resenas} {lang === "en" ? "reviews" : lang === "zh" ? "条评价" : "reseñas"})</span>
                       </div>
                     </div>
                   </div>
@@ -1079,7 +1086,7 @@ export default function GuiasPage() {
                     </span>
                     <span style={styles.tagChip}>
                       <Icon name="clock" size={12} color="#10B981" />
-                      {guia.experiencia_anios} {lang === "en" ? "yrs exp" : "años exp"}
+                      {guia.experiencia_anios} {lang === "en" ? "yrs exp" : lang === "zh" ? "年经验" : "años exp"}
                     </span>
                   </div>
 
@@ -1116,7 +1123,7 @@ export default function GuiasPage() {
                         }}
                         style={styles.detailsBtnSlim}
                       >
-                        <span>{lang === "en" ? "View Profile" : "Ver Perfil"}</span>
+                        <span>{lang === "en" ? "View Profile" : lang === "zh" ? "查看资料" : "Ver Perfil"}</span>
                         <Icon name="chevronRight" size={13} />
                       </button>
                     </div>
@@ -1131,7 +1138,7 @@ export default function GuiasPage() {
                       setSelectedGuiaModal(guia);
                       setActiveModalTab("galeria");
                     }}
-                    title={lang === "en" ? "View full photo gallery" : "Ver galería de fotos completa"}
+                    title={lang === "en" ? "View full photo gallery" : lang === "zh" ? "查看完整相册" : "Ver galería de fotos completa"}
                   >
                     <img
                       src={guia.galeria_fotos[0]}
@@ -1162,7 +1169,7 @@ export default function GuiasPage() {
               <button
                 onClick={() => setSelectedGuiaModal(null)}
                 style={styles.closeModalBtn}
-                title={lang === "en" ? "Close Profile" : "Cerrar Perfil"}
+                title={lang === "en" ? "Close Profile" : lang === "zh" ? "关闭资料" : "Cerrar Perfil"}
               >
                 <Icon name="x" size={18} />
               </button>
@@ -1192,7 +1199,7 @@ export default function GuiasPage() {
                   )}
                   <span style={styles.modalExpBadge}>
                     <Icon name="clock" size={12} color="#FFD700" />
-                    {selectedGuiaModal.experiencia_anios} {lang === "en" ? "Years Exp" : "Años Exp"}
+                    {selectedGuiaModal.experiencia_anios} {lang === "en" ? "Years Exp" : lang === "zh" ? "年经验" : "Años Exp"}
                   </span>
                   <span style={styles.modalRateHighlight}>
                     <Icon name="dollarSign" size={12} color="#10B981" />
@@ -1209,7 +1216,7 @@ export default function GuiasPage() {
                       {selectedGuiaModal.rating_promedio}
                     </span>
                     <span style={{ fontSize: "13px", color: "#94A3B8", marginLeft: "4px" }}>
-                      ({selectedGuiaModal.total_resenas} {lang === "en" ? "reviews" : "reseñas"})
+                      ({selectedGuiaModal.total_resenas} {lang === "en" ? "reviews" : lang === "zh" ? "条评价" : "reseñas"})
                     </span>
                   </div>
                 </div>
@@ -1227,7 +1234,7 @@ export default function GuiasPage() {
                   }}
                 >
                   <Icon name="user" size={15} color={activeModalTab === "info" ? "#38BDF8" : "#94A3B8"} />
-                  <span>{lang === "en" ? "Profile Info" : "Perfil y Datos"}</span>
+                  <span>{lang === "en" ? "Profile Info" : lang === "zh" ? "基本信息" : "Perfil y Datos"}</span>
                 </button>
 
                 <button
@@ -1238,7 +1245,7 @@ export default function GuiasPage() {
                   }}
                 >
                   <Icon name="image" size={15} color={activeModalTab === "galeria" ? "#38BDF8" : "#94A3B8"} />
-                  <span>{lang === "en" ? "Gallery" : "Galería"} ({selectedGuiaModal.galeria_fotos?.length || 0})</span>
+                  <span>{lang === "en" ? "Gallery" : lang === "zh" ? "相册" : "Galería"} ({selectedGuiaModal.galeria_fotos?.length || 0})</span>
                 </button>
 
                 <button
@@ -1249,7 +1256,7 @@ export default function GuiasPage() {
                   }}
                 >
                   <Icon name="star" size={15} color={activeModalTab === "resenas" ? "#38BDF8" : "#94A3B8"} />
-                  <span>{lang === "en" ? "Reviews" : "Reseñas"} ({selectedGuiaModal.total_resenas || 0})</span>
+                  <span>{lang === "en" ? "Reviews" : lang === "zh" ? "评价" : "Reseñas"} ({selectedGuiaModal.total_resenas || 0})</span>
                 </button>
 
                 <button
@@ -1260,7 +1267,7 @@ export default function GuiasPage() {
                   }}
                 >
                   <Icon name="mapPin" size={15} color={activeModalTab === "mapa_destinos" ? "#38BDF8" : "#94A3B8"} />
-                  <span>{lang === "en" ? "Map Places" : "Lugares en Mapa"} ({selectedGuiaModal.destinos_mapa?.length || 0})</span>
+                  <span>{lang === "en" ? "Map Places" : lang === "zh" ? "地图足迹" : "Lugares en Mapa"} ({selectedGuiaModal.destinos_mapa?.length || 0})</span>
                 </button>
               </div>
             </div>
@@ -1273,7 +1280,7 @@ export default function GuiasPage() {
                   <div style={styles.modalSection}>
                     <h4 style={styles.modalSectionTitle}>
                       <Icon name="user" size={16} color="#0EA5E9" style={{ marginRight: "6px" }} />
-                      {lang === "en" ? "About this Guide" : "Acerca del Guía"}
+                      {lang === "en" ? "About this Guide" : lang === "zh" ? "关于导游" : "Acerca del Guía"}
                     </h4>
                     <div style={styles.modalBioCard}>
                       <p style={styles.modalBioText}>{selectedGuiaModal.biografia}</p>
@@ -1282,19 +1289,19 @@ export default function GuiasPage() {
 
                   <div style={styles.modalTechGridWide}>
                     <div style={styles.techItem}>
-                      <span style={styles.techLabel}>{lang === "en" ? "Specialty" : "Especialidad"}</span>
+                      <span style={styles.techLabel}>{lang === "en" ? "Specialty" : lang === "zh" ? "专业领域" : "Especialidad"}</span>
                       <span style={styles.techValue}>{selectedGuiaModal.especialidad}</span>
                     </div>
                     <div style={styles.techItem}>
-                      <span style={styles.techLabel}>{lang === "en" ? "Languages" : "Idiomas"}</span>
+                      <span style={styles.techLabel}>{lang === "en" ? "Languages" : lang === "zh" ? "掌握语言" : "Idiomas"}</span>
                       <span style={styles.techValue}>{selectedGuiaModal.idiomas}</span>
                     </div>
                     <div style={styles.techItem}>
-                      <span style={styles.techLabel}>{lang === "en" ? "Experience" : "Experiencia"}</span>
-                      <span style={styles.techValue}>{selectedGuiaModal.experiencia_anios} {lang === "en" ? "Years" : "Años"}</span>
+                      <span style={styles.techLabel}>{lang === "en" ? "Experience" : lang === "zh" ? "带团经验" : "Experiencia"}</span>
+                      <span style={styles.techValue}>{selectedGuiaModal.experiencia_anios} {lang === "en" ? "Years" : lang === "zh" ? "年" : "Años"}</span>
                     </div>
                     <div style={styles.techItem}>
-                      <span style={styles.techLabel}>{lang === "en" ? "Approx Rate" : "Tarifa Aprox."}</span>
+                      <span style={styles.techLabel}>{lang === "en" ? "Approx Rate" : lang === "zh" ? "参考费用" : "Tarifa Aprox."}</span>
                       <span style={{ ...styles.techValue, color: "#10B981" }}>{selectedGuiaModal.tarifa_aprox || "$30 / día"}</span>
                     </div>
                   </div>
@@ -1307,7 +1314,7 @@ export default function GuiasPage() {
                       style={styles.modalWhatsappBanner}
                     >
                       <Icon name="whatsapp" size={22} color="#FFFFFF" />
-                      <span>{lang === "en" ? "Contact via WhatsApp Now" : "Contactar por WhatsApp Ahora"}</span>
+                      <span>{lang === "en" ? "Contact via WhatsApp Now" : lang === "zh" ? "立即通过 WhatsApp 咨询" : "Contactar por WhatsApp Ahora"}</span>
                     </a>
                   )}
                 </div>
@@ -1318,11 +1325,11 @@ export default function GuiasPage() {
                 <div>
                   <h4 style={styles.modalSectionTitle}>
                     <Icon name="image" size={16} color="#0EA5E9" style={{ marginRight: "6px" }} />
-                    {lang === "en" ? "Expeditions & Guided Tours Photos" : "Fotos de Travesías y Excursiones Guiadas"}
+                    {lang === "en" ? "Expeditions & Guided Tours Photos" : lang === "zh" ? "带团与探险照片" : "Fotos de Travesías y Excursiones Guiadas"}
                   </h4>
                   {(!selectedGuiaModal.galeria_fotos || selectedGuiaModal.galeria_fotos.length === 0) ? (
                     <p style={{ fontSize: "13px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", padding: "30px 0" }}>
-                      {lang === "en" ? "This guide has not uploaded tour photos yet." : "Este guía aún no ha subido fotos de sus travesías."}
+                      {lang === "en" ? "This guide has not uploaded tour photos yet." : lang === "zh" ? "该导游暂未上传带团照片。" : "Este guía aún no ha subido fotos de sus travesías."}
                     </p>
                   ) : (
                     <div style={styles.fullGalleryGrid}>
@@ -1341,14 +1348,14 @@ export default function GuiasPage() {
                 <div>
                   <h4 style={styles.modalSectionTitle}>
                     <Icon name="star" size={16} color="#FFD700" style={{ marginRight: "6px" }} />
-                    {lang === "en" ? "Tourist Reviews" : "Reseñas de Turistas"}
+                    {lang === "en" ? "Tourist Reviews" : lang === "zh" ? "游客评价" : "Reseñas de Turistas"}
                   </h4>
 
                   {session ? (
                     <form onSubmit={handleAddReview} style={styles.reviewForm}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <span style={{ fontSize: "13px", fontWeight: "700", color: "#E2E8F0" }}>
-                          {lang === "en" ? "Rate your experience:" : "Califica tu experiencia:"}
+                          {lang === "en" ? "Rate your experience:" : lang === "zh" ? "为您的体验评分：" : "Califica tu experiencia:"}
                         </span>
                         <div style={{ display: "flex", gap: "4px" }}>
                           {[1, 2, 3, 4, 5].map((star) => (
@@ -1374,7 +1381,7 @@ export default function GuiasPage() {
                       <textarea
                         rows={3}
                         required
-                        placeholder={lang === "en" ? "Write a comment about this guide..." : "Escribe tu opinión o comentario sobre este guía..."}
+                        placeholder={lang === "en" ? "Write a comment about this guide..." : lang === "zh" ? "写下您对该导游的评价或体验..." : "Escribe tu opinión o comentario sobre este guía..."}
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         style={styles.reviewTextarea}
@@ -1393,17 +1400,17 @@ export default function GuiasPage() {
                         style={styles.submitReviewBtn}
                       >
                         <Icon name="send" size={14} />
-                        <span>{submittingReview ? (lang === "en" ? "Submitting..." : "Enviando...") : (lang === "en" ? "Submit Review" : "Publicar Reseña")}</span>
+                        <span>{submittingReview ? (lang === "en" ? "Submitting..." : lang === "zh" ? "正在提交..." : "Enviando...") : (lang === "en" ? "Submit Review" : lang === "zh" ? "发表评价" : "Publicar Reseña")}</span>
                       </button>
                     </form>
                   ) : (
                     <div style={styles.loginToReviewAlert}>
                       <Icon name="info" size={16} color="#38BDF8" />
                       <span>
-                        {lang === "en" ? "Log in to leave a rating and review for this guide." : "Inicia sesión para dejar una calificación y opinión a este guía."}
+                        {lang === "en" ? "Log in to leave a rating and review for this guide." : lang === "zh" ? "登录后可为该导游评分并发表评价。" : "Inicia sesión para dejar una calificación y opinión a este guía."}
                       </span>
                       <Link href="/login" style={{ color: "#38BDF8", fontWeight: "700", textDecoration: "underline", marginLeft: "6px" }}>
-                        {lang === "en" ? "Log In" : "Iniciar Sesión"}
+                        {lang === "en" ? "Log In" : lang === "zh" ? "登录" : "Iniciar Sesión"}
                       </Link>
                     </div>
                   )}
@@ -1411,7 +1418,7 @@ export default function GuiasPage() {
                   <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "16px" }}>
                     {(!selectedGuiaModal.resenas || selectedGuiaModal.resenas.length === 0) ? (
                       <p style={{ fontSize: "13px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", padding: "16px 0" }}>
-                        {lang === "en" ? "No reviews yet. Be the first to leave one!" : "Aún no hay reseñas. ¡Sé el primero en dejar una!"}
+                        {lang === "en" ? "No reviews yet. Be the first to leave one!" : lang === "zh" ? "暂无评价，快来抢先评价吧！" : "Aún no hay reseñas. ¡Sé el primero en dejar una!"}
                       </p>
                     ) : (
                       selectedGuiaModal.resenas.map((res) => (
@@ -1453,11 +1460,11 @@ export default function GuiasPage() {
                 <div>
                   <h4 style={styles.modalSectionTitle}>
                     <Icon name="mapPin" size={16} color="#10B981" style={{ marginRight: "6px" }} />
-                    {lang === "en" ? "Points of Interest & Map Destinations" : "Sitios de Interés y Lugares Cubiertos en el Mapa"}
+                    {lang === "en" ? "Points of Interest & Map Destinations" : lang === "zh" ? "地图覆盖景点与路线" : "Sitios de Interés y Lugares Cubiertos en el Mapa"}
                   </h4>
                   {(!selectedGuiaModal.destinos_mapa || selectedGuiaModal.destinos_mapa.length === 0) ? (
                     <p style={{ fontSize: "13px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", padding: "30px 0" }}>
-                      {lang === "en" ? "No map destinations configured for this guide." : "No se han configurado destinos de mapa para este guía."}
+                      {lang === "en" ? "No map destinations configured for this guide." : lang === "zh" ? "该导游暂未配置地图景点。" : "No se han configurado destinos de mapa para este guía."}
                     </p>
                   ) : (
                     <div style={styles.destinosMapaGrid}>
@@ -1488,7 +1495,7 @@ export default function GuiasPage() {
                                 style={styles.destinoMapaLinkBtn}
                               >
                                 <Icon name="mapPin" size={13} color="#0EA5E9" />
-                                <span>{lang === "en" ? "Explore in Department Map" : "Ver en Mapa Departamental"}</span>
+                                <span>{lang === "en" ? "Explore in Department Map" : lang === "zh" ? "在省份地图中查看" : "Ver en Mapa Departamental"}</span>
                                 <Icon name="chevronRight" size={12} color="#0EA5E9" />
                               </Link>
                             </div>

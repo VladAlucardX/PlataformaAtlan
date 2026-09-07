@@ -17,11 +17,15 @@ function formatAuthError(msg, lang) {
   ) {
     return lang === "en"
       ? "Invalid login credentials."
+      : lang === "zh"
+      ? "登录凭据无效。"
       : "Credenciales de inicio de sesión no válidas.";
   }
   if (msg.includes("Email not confirmed") || msg.includes("no verificado")) {
     return lang === "en"
       ? "Email not confirmed. Please check your inbox."
+      : lang === "zh"
+      ? "邮箱尚未验证，请检查您的收件箱。"
       : "Correo no verificado. Por favor revisa tu bandeja de entrada.";
   }
   return msg;
@@ -60,7 +64,7 @@ export default function LoginPage() {
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     if (!email) {
-      setErrorMsg(lang === "en" ? "Please enter your email" : "Por favor ingresa tu correo electrónico");
+      setErrorMsg(lang === "en" ? "Please enter your email" : lang === "zh" ? "请输入您的电子邮箱" : "Por favor ingresa tu correo electrónico");
       return;
     }
     setLoading(true);
@@ -76,7 +80,7 @@ export default function LoginPage() {
       }
     } catch (err) {
       console.error("Forgot password error:", err);
-      setErrorMsg(lang === "en" ? "Error sending reset email" : "Error al enviar el correo de recuperación");
+      setErrorMsg(lang === "en" ? "Error sending reset email" : lang === "zh" ? "发送重置密码邮件失败" : "Error al enviar el correo de recuperación");
     } finally {
       setLoading(false);
     }
@@ -130,6 +134,8 @@ export default function LoginPage() {
           setErrorMsg(
             lang === "en"
               ? "Invalid email or password. Please verify your credentials."
+              : lang === "zh"
+              ? "邮箱或密码错误，请核实您的登录信息。"
               : "Correo o contraseña incorrectos. Verifica tus datos de acceso."
           );
         } else {
@@ -163,6 +169,8 @@ export default function LoginPage() {
         setErrorMsg(
           lang === "en"
             ? "Failed to send verification code. Try again."
+            : lang === "zh"
+            ? "发送验证码失败，请重试。"
             : "Error al enviar el código de verificación. Intenta de nuevo."
         );
         setLoading(false);
@@ -179,6 +187,8 @@ export default function LoginPage() {
       setErrorMsg(
         lang === "en"
           ? "An unexpected error occurred."
+          : lang === "zh"
+          ? "发生意外错误。"
           : "Ocurrió un error inesperado."
       );
     } finally {
@@ -198,6 +208,8 @@ export default function LoginPage() {
       setErrorMsg(
         lang === "en"
           ? "Please enter the complete 6-digit code."
+          : lang === "zh"
+          ? "请输入完整的6位验证码。"
           : "Ingresa el código completo de 6 dígitos."
       );
       setLoading(false);
@@ -238,6 +250,8 @@ export default function LoginPage() {
         setErrorMsg(
           lang === "en"
             ? "Invalid or expired code. Try again."
+            : lang === "zh"
+            ? "验证码无效或已过期，请重试。"
             : "Código inválido o expirado. Intenta de nuevo."
         );
         setLoading(false);
@@ -252,6 +266,8 @@ export default function LoginPage() {
       setErrorMsg(
         lang === "en"
           ? "An unexpected error occurred."
+          : lang === "zh"
+          ? "发生意外错误。"
           : "Ocurrió un error inesperado."
       );
     } finally {
@@ -274,6 +290,8 @@ export default function LoginPage() {
         setErrorMsg(
           lang === "en"
             ? "Failed to resend code."
+            : lang === "zh"
+            ? "重新发送验证码失败。"
             : "Error al reenviar el código."
         );
       } else {
@@ -311,6 +329,8 @@ export default function LoginPage() {
       setErrorMsg(
         lang === "en"
           ? "An unexpected error occurred."
+          : lang === "zh"
+          ? "发生意外错误。"
           : "Ocurrió un error inesperado."
       );
       setLoading(false);
@@ -501,7 +521,7 @@ export default function LoginPage() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
               </svg>
-              {lang === "en" ? "Continue with Google" : "Continuar con Google"}
+              {lang === "en" ? "Continue with Google" : lang === "zh" ? "通过 Google 登录" : "Continuar con Google"}
             </button>
 
             <div style={styles.footerText}>
@@ -532,11 +552,13 @@ export default function LoginPage() {
             </div>
 
             <h2 style={styles.title}>
-              {lang === "en" ? "Verify Your Identity" : "Verifica tu Identidad"}
+              {lang === "en" ? "Verify Your Identity" : lang === "zh" ? "验证您的身份" : "Verifica tu Identidad"}
             </h2>
             <p style={{ ...styles.subtitle, marginBottom: "8px" }}>
               {lang === "en"
                 ? "We sent a 6-digit code to"
+                : lang === "zh"
+                ? "我们已向以下邮箱发送了6位验证码："
                 : "Enviamos un código de 6 dígitos a"}
             </p>
             <p style={{
@@ -631,6 +653,8 @@ export default function LoginPage() {
                   ? t("common.loading")
                   : lang === "en"
                     ? "Verify Code"
+                    : lang === "zh"
+                    ? "验证代码"
                     : "Verificar Código"}
               </button>
             </form>
@@ -644,14 +668,14 @@ export default function LoginPage() {
             }}>
               {otpCountdown > 0 ? (
                 <p style={{ margin: 0 }}>
-                  {lang === "en" ? "Code expires in " : "El código expira en "}
+                  {lang === "en" ? "Code expires in " : lang === "zh" ? "验证码有效期剩余 " : "El código expira en "}
                   <span style={{ fontWeight: "800", color: "#17AA4A" }}>
                     {formatTime(otpCountdown)}
                   </span>
                 </p>
               ) : (
                 <p style={{ margin: 0, color: "#9CA3AF" }}>
-                  {lang === "en" ? "Code expired." : "El código ha expirado."}
+                  {lang === "en" ? "Code expired." : lang === "zh" ? "验证码已过期。" : "El código ha expirado."}
                 </p>
               )}
 
@@ -670,7 +694,7 @@ export default function LoginPage() {
                   transition: "color 0.2s",
                 }}
               >
-                {lang === "en" ? "Resend code" : "Reenviar código"}
+                {lang === "en" ? "Resend code" : lang === "zh" ? "重新发送验证码" : "Reenviar código"}
               </button>
             </div>
 
@@ -697,17 +721,19 @@ export default function LoginPage() {
               }}
             >
               <Icon name="arrowLeft" size={14} />
-              {lang === "en" ? "Back to login" : "Volver al inicio de sesión"}
+              {lang === "en" ? "Back to login" : lang === "zh" ? "返回登录" : "Volver al inicio de sesión"}
             </button>
           </>
         )}
 
         {step === "forgot" && (
           <>
-            <h2 style={styles.title}>{lang === "en" ? "Reset Password" : "Recuperar Contraseña"}</h2>
+            <h2 style={styles.title}>{lang === "en" ? "Reset Password" : lang === "zh" ? "重置密码" : "Recuperar Contraseña"}</h2>
             <p style={styles.subtitle}>
               {lang === "en"
                 ? "Enter your email address and we'll send you a link to reset your password."
+                : lang === "zh"
+                ? "输入您的电子邮箱，我们将向您发送重置密码的链接。"
                 : "Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña."}
             </p>
 
@@ -727,11 +753,13 @@ export default function LoginPage() {
                 margin: "16px 0"
               }}>
                 <p style={{ margin: "0 0 8px", fontSize: "14px", fontWeight: "800", color: "#17AA4A" }}>
-                  ✉️ {lang === "en" ? "Check your email!" : "¡Revisa tu correo!"}
+                  ✉️ {lang === "en" ? "Check your email!" : lang === "zh" ? "请查收您的邮件！" : "¡Revisa tu correo!"}
                 </p>
                 <p style={{ margin: 0, fontSize: "13px", color: "#334155", lineHeight: "1.5" }}>
                   {lang === "en"
                     ? `We sent password reset instructions to ${email}. Check your inbox or spam folder.`
+                    : lang === "zh"
+                    ? `我们已将重置密码说明发送至 ${email}。请检查收件箱或垃圾邮件。`
                     : `Hemos enviado las instrucciones para restablecer tu contraseña a ${email}. Revisa tu bandeja de entrada o spam.`}
                 </p>
               </div>
@@ -772,7 +800,7 @@ export default function LoginPage() {
                   }}
                   disabled={loading}
                 >
-                  <span>{loading ? t("common.loading") : (lang === "en" ? "Send Reset Link" : "Enviar Enlace de Recuperación")}</span>
+                  <span>{loading ? t("common.loading") : (lang === "en" ? "Send Reset Link" : lang === "zh" ? "发送重置链接" : "Enviar Enlace de Recuperación")}</span>
                 </button>
               </form>
             )}
@@ -799,7 +827,7 @@ export default function LoginPage() {
               }}
             >
               <Icon name="arrowLeft" size={14} />
-              {lang === "en" ? "Back to login" : "Volver al inicio de sesión"}
+              {lang === "en" ? "Back to login" : lang === "zh" ? "返回登录" : "Volver al inicio de sesión"}
             </button>
           </>
         )}
@@ -842,7 +870,7 @@ export default function LoginPage() {
           alt=""
           style={{ width: "20px", height: "20px", objectFit: "contain" }}
         />
-        <span>{lang === "en" ? "Home" : "Inicio"}</span>
+        <span>{lang === "en" ? "Home" : lang === "zh" ? "首页" : "Inicio"}</span>
       </Link>
     </div>
   );

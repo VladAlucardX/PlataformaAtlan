@@ -15,10 +15,10 @@ function timeAgo(dateStr, lang) {
   const diffMin = Math.floor(diffMs / 60000);
   const diffHr = Math.floor(diffMs / 3600000);
   const diffDay = Math.floor(diffMs / 86400000);
-  if (diffMin < 1) return lang === "en" ? "Now" : "Ahora";
-  if (diffMin < 60) return lang === "en" ? `${diffMin}m ago` : `hace ${diffMin}m`;
-  if (diffHr < 24) return lang === "en" ? `${diffHr}h ago` : `hace ${diffHr}h`;
-  return lang === "en" ? `${diffDay}d ago` : `hace ${diffDay}d`;
+  if (diffMin < 1) return lang === "en" ? "Now" : lang === "zh" ? "刚刚" : "Ahora";
+  if (diffMin < 60) return lang === "en" ? `${diffMin}m ago` : lang === "zh" ? `${diffMin}分钟前` : `hace ${diffMin}m`;
+  if (diffHr < 24) return lang === "en" ? `${diffHr}h ago` : lang === "zh" ? `${diffHr}小时前` : `hace ${diffHr}h`;
+  return lang === "en" ? `${diffDay}d ago` : lang === "zh" ? `${diffDay}天前` : `hace ${diffDay}d`;
 }
 
 function avatarStyle(url, size) {
@@ -149,7 +149,7 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
   };
 
   const handleDeleteComment = async (commentId) => {
-    if (!confirm(lang === "en" ? "Delete this comment?" : "¿Eliminar este comentario?")) return;
+    if (!confirm(lang === "en" ? "Delete this comment?" : lang === "zh" ? "删除此评论？" : "¿Eliminar este comentario?")) return;
     try {
       await supabase.from("comentarios_social").delete().eq("id", commentId);
       setComments(prev => prev.filter(c => c.id !== commentId));
@@ -233,10 +233,10 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
                   }}
                 />
                 {likesCount > 0 && <span>{likesCount}</span>}
-                <span>{lang === "en" ? (liked ? "Liked" : "Like") : (liked ? "Te gusta" : "Me gusta")}</span>
+                <span>{lang === "en" ? (liked ? "Liked" : "Like") : lang === "zh" ? (liked ? "已赞" : "点赞") : (liked ? "Te gusta" : "Me gusta")}</span>
               </button>
               <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)", fontWeight: "600", display: "flex", alignItems: "center", gap: "5px" }}>
-                <img src="/images/comentarios.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} /> {comments.length} {comments.length === 1 ? (lang === "en" ? "comment" : "comentario") : (lang === "en" ? "comments" : "comentarios")}
+                <img src="/images/comentarios.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} /> {comments.length} {comments.length === 1 ? (lang === "en" ? "comment" : lang === "zh" ? "条评论" : "comentario") : (lang === "en" ? "comments" : lang === "zh" ? "条评论" : "comentarios")}
               </span>
             </div>
 
@@ -250,7 +250,7 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
                 <div style={{ padding: "32px 16px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
                   <img src="/images/comentarios.svg" alt="" style={{ width: "32px", height: "32px", objectFit: "contain", filter: "brightness(0)", opacity: 0.4, marginBottom: "8px" }} />
                   <p style={{ margin: 0, fontSize: "13px", color: "var(--atlan-text-muted)" }}>
-                    {lang === "en" ? "No comments yet. Be the first!" : "Sin comentarios aún. ¡Sé el primero!"}
+                    {lang === "en" ? "No comments yet. Be the first!" : lang === "zh" ? "暂无评论，快来抢沙发！" : "Sin comentarios aún. ¡Sé el primero!"}
                   </p>
                 </div>
               ) : (
@@ -277,7 +277,7 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
                           <span style={{ fontSize: "10px", color: "var(--atlan-text-muted)" }}>{timeAgo(comment.created_at, lang)}</span>
                           {canDelete && (
                             <button onClick={() => handleDeleteComment(comment.id)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: "10px", cursor: "pointer", fontWeight: "700", padding: 0 }}>
-                              {lang === "en" ? "Delete" : "Eliminar"}
+                              {lang === "en" ? "Delete" : lang === "zh" ? "删除" : "Eliminar"}
                             </button>
                           )}
                         </div>
@@ -299,7 +299,7 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
                   value={newComment}
                   onChange={e => setNewComment(e.target.value.slice(0, 500))}
                   onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmitComment(); } }}
-                  placeholder={lang === "en" ? "Write a comment..." : "Escribe un comentario..."}
+                  placeholder={lang === "en" ? "Write a comment..." : lang === "zh" ? "写下您的评论..." : "Escribe un comentario..."}
                   style={styles.commentInput}
                   disabled={submitting}
                 />
@@ -314,7 +314,7 @@ export default function ImageViewerModal({ post, session, perfil, lang, onClose 
             ) : (
               <div style={{ padding: "12px 16px", textAlign: "center", borderTop: "1px solid rgba(20, 109, 158, 0.08)" }}>
                 <Link href="/login" style={{ color: "var(--atlan-gold)", fontSize: "13px", fontWeight: "700", textDecoration: "none" }}>
-                  <Icon name="lock" size={14} /> {lang === "en" ? "Sign in to comment" : "Inicia sesión para comentar"}
+                  <Icon name="lock" size={14} /> {lang === "en" ? "Sign in to comment" : lang === "zh" ? "登录后发表评论" : "Inicia sesión para comentar"}
                 </Link>
               </div>
             )}

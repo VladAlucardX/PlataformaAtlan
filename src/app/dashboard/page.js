@@ -399,6 +399,8 @@ export default function DashboardPage() {
 
       alert(lang === "en" 
         ? "Resubmitted successfully! It is now pending verification again." 
+        : lang === "zh"
+        ? "重新提交成功！已再次进入待审核状态。"
         : "¡Reenviado con éxito! Ahora está pendiente de verificación nuevamente.");
 
       // Recargar datos
@@ -414,7 +416,7 @@ export default function DashboardPage() {
       }
     } catch (err) {
       console.error("Error resubmitting claim:", err);
-      alert(lang === "en" ? "Error resubmitting claim." : "Error al reenviar el reclamo.");
+      alert(lang === "en" ? "Error resubmitting claim." : lang === "zh" ? "重新提交认领申请时出错。" : "Error al reenviar el reclamo.");
     } finally {
       setIsResubmitting(false);
     }
@@ -459,7 +461,7 @@ export default function DashboardPage() {
       setPuntoAsociado(null);
       setMisNegocios((prev) => prev.filter((n) => n.id !== targetNegocioId));
 
-      showToast(lang === "en" ? "Claim canceled successfully." : "¡Solicitud de reclamo cancelada con éxito!", "success");
+      showToast(lang === "en" ? "Claim canceled successfully." : lang === "zh" ? "认领申请取消成功！" : "¡Solicitud de reclamo cancelada con éxito!", "success");
 
       // 5. Cargar puntos libres de nuevo para la lista de reclamos
       const { data: puntosLibres } = await supabase
@@ -471,7 +473,7 @@ export default function DashboardPage() {
 
     } catch (err) {
       console.error("Error canceling claim:", err);
-      showToast(lang === "en" ? "Error canceling claim." : "Error al cancelar el reclamo.", "error");
+      showToast(lang === "en" ? "Error canceling claim." : lang === "zh" ? "取消认领申请时出错。" : "Error al cancelar el reclamo.", "error");
     } finally {
       setIsResubmitting(false);
     }
@@ -482,6 +484,8 @@ export default function DashboardPage() {
     if (punto && punto !== "gps" && (punto.estado === "en_verificacion" || punto.negocio_id)) {
       showToast(lang === "en" 
         ? "⏳ This location already has a pending claim request under admin review." 
+        : lang === "zh"
+        ? "⏳ 该地点已有正在由管理员审核的认领申请。"
         : "⏳ Este local ya cuenta con una solicitud de reclamo en proceso de verificación por la administración.", "info");
       return;
     }
@@ -507,7 +511,7 @@ export default function DashboardPage() {
       else setDocumentoPropiedadUrl(url);
     } catch (err) {
       console.error("Error al subir documento:", err);
-      alert(lang === "en" ? "Error uploading document" : "Error al subir el documento.");
+      alert(lang === "en" ? "Error uploading document" : lang === "zh" ? "上传文件出错。" : "Error al subir el documento.");
     } finally {
       if (type === "cedula") setUploadingCedulaDoc(false);
       else setUploadingPropiedadDoc(false);
@@ -517,11 +521,11 @@ export default function DashboardPage() {
   const handleConfirmSubmitClaim = async (e) => {
     if (e) e.preventDefault();
     if (!solicitanteNombre.trim() || !solicitanteCedula.trim() || !solicitanteTelefono.trim()) {
-      showToast(lang === "en" ? "Please fill in all required fields (Name, ID, Phone)." : "Por favor completa todos los campos requeridos (Nombre, Cédula y Teléfono).", "error");
+      showToast(lang === "en" ? "Please fill in all required fields (Name, ID, Phone)." : lang === "zh" ? "请填写所有必填项（姓名、身份证件和电话）。" : "Por favor completa todos los campos requeridos (Nombre, Cédula y Teléfono).", "error");
       return;
     }
     if (!documentoCedulaUrl) {
-      showToast(lang === "en" ? "Please attach your ID document." : "Por favor adjunta la foto o PDF de tu Cédula de Identidad.", "error");
+      showToast(lang === "en" ? "Please attach your ID document." : lang === "zh" ? "请上传您的身份证件照片或 PDF。" : "Por favor adjunta la foto o PDF de tu Cédula de Identidad.", "error");
       return;
     }
 
@@ -539,7 +543,7 @@ export default function DashboardPage() {
 
       if (claimTargetPunto === "gps") {
         if (!navigator.geolocation) {
-          showToast(lang === "en" ? "GPS not supported" : "GPS no soportado en este navegador.", "error");
+          showToast(lang === "en" ? "GPS not supported" : lang === "zh" ? "此浏览器不支持 GPS 定位。" : "GPS no soportado en este navegador.", "error");
           setIsClaiming(false);
           return;
         }
@@ -583,18 +587,20 @@ export default function DashboardPage() {
               setShowClaimModal(false);
               showToast(lang === "en" 
                 ? "Verification request submitted! It is now pending admin approval." 
+                : lang === "zh"
+                ? "验证申请已提交！正在等待管理员审核。"
                 : "¡Solicitud de verificación enviada! Tu reclamo está pendiente de aprobación por la administración.", "success");
               await loadNegocioData(user.id);
             } catch (err) {
               console.error("Error creating GPS claim:", err);
-              showToast(lang === "en" ? "Error submitting claim." : "Error al enviar la solicitud.", "error");
+              showToast(lang === "en" ? "Error submitting claim." : lang === "zh" ? "提交认领申请时出错。" : "Error al enviar la solicitud.", "error");
             } finally {
               setIsClaiming(false);
             }
           },
           (geoErr) => {
             console.error("GPS error:", geoErr);
-            showToast(lang === "en" ? "Failed to get GPS location." : "No se pudo obtener la ubicación GPS.", "error");
+            showToast(lang === "en" ? "Failed to get GPS location." : lang === "zh" ? "无法获取 GPS 位置。" : "No se pudo obtener la ubicación GPS.", "error");
             setIsClaiming(false);
           },
           { timeout: 10000, enableHighAccuracy: true }
@@ -656,12 +662,14 @@ export default function DashboardPage() {
         setShowClaimModal(false);
         showToast(lang === "en" 
           ? "Verification request submitted! It is now pending admin approval." 
+          : lang === "zh"
+          ? "验证申请已提交！正在等待管理员审核。"
           : "¡Solicitud de verificación enviada! Tu reclamo está pendiente de aprobación por la administración.", "success");
         await loadNegocioData(user.id);
       }
     } catch (err) {
       console.error("Error submitting claim:", err?.message || err);
-      showToast(lang === "en" ? "Error submitting claim." : `Error al enviar la solicitud: ${err?.message || "Inténtelo de nuevo"}`, "error");
+      showToast(lang === "en" ? "Error submitting claim." : lang === "zh" ? "提交认领申请时出错。" : `Error al enviar la solicitud: ${err?.message || "Inténtelo de nuevo"}`, "error");
     } finally {
       setIsClaiming(false);
     }
@@ -680,7 +688,7 @@ export default function DashboardPage() {
   const handleSaveGeneral = async (e) => {
     if (e) e.preventDefault();
     if (!negocio || !negocio.id) {
-      showToast(lang === "en" ? "No active business selected." : "No hay un negocio activo seleccionado.", "error");
+      showToast(lang === "en" ? "No active business selected." : lang === "zh" ? "未选择活跃商户。" : "No hay un negocio activo seleccionado.", "error");
       return;
     }
 
@@ -713,12 +721,12 @@ export default function DashboardPage() {
       
       setNegocio(prev => (prev ? { ...prev, ...payload } : prev));
       setSaveSuccess(true);
-      showToast(lang === "en" ? "Profile saved successfully!" : "¡Perfil guardado exitosamente!", "success");
+      showToast(lang === "en" ? "Profile saved successfully!" : lang === "zh" ? "商户资料保存成功！" : "¡Perfil guardado exitosamente!", "success");
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
       const errMsg = err?.message || err?.details || err?.hint || err?.code || (typeof err === "object" && err !== null ? (Object.keys(err).length > 0 ? JSON.stringify(err) : String(err)) : String(err));
       console.error("Error guardando negocio:", errMsg, err);
-      showToast(`${lang === "en" ? "Error saving profile:" : "Error al guardar perfil:"} ${errMsg}`, "error");
+      showToast(`${lang === "en" ? "Error saving profile:" : lang === "zh" ? "保存商户资料时出错：" : "Error al guardar perfil:"} ${errMsg}`, "error");
     } finally {
       setIsSaving(false);
     }
@@ -756,12 +764,12 @@ export default function DashboardPage() {
       // Actualizar estado local del negocio
       setNegocio(prev => (prev ? { ...prev, servicios } : prev));
       setSaveSuccess(true);
-      showToast(lang === "en" ? "Services saved successfully!" : "¡Servicios guardados exitosamente!", "success");
+      showToast(lang === "en" ? "Services saved successfully!" : lang === "zh" ? "服务设置保存成功！" : "¡Servicios guardados exitosamente!", "success");
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
       console.error("Error guardando excentricidades:", err);
       const errMsg = err?.message || err?.details || err?.hint || String(err);
-      showToast(`${lang === "en" ? "Error saving services:" : "Error al guardar servicios:"} ${errMsg}`, "error");
+      showToast(`${lang === "en" ? "Error saving services:" : lang === "zh" ? "保存服务设置时出错：" : "Error al guardar servicios:"} ${errMsg}`, "error");
     } finally {
       setIsSaving(false);
     }
@@ -782,12 +790,12 @@ export default function DashboardPage() {
       if (error) throw error;
       setNegocio(prev => (prev ? { ...prev, horarios } : prev));
       setSaveSuccess(true);
-      showToast(lang === "en" ? "Hours saved successfully!" : "¡Horarios guardados exitosamente!", "success");
+      showToast(lang === "en" ? "Hours saved successfully!" : lang === "zh" ? "营业时间保存成功！" : "¡Horarios guardados exitosamente!", "success");
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
       console.error("Error guardando horarios:", err);
       const errMsg = err?.message || err?.details || err?.hint || String(err);
-      showToast(`${lang === "en" ? "Error saving hours:" : "Error al guardar horarios:"} ${errMsg}`, "error");
+      showToast(`${lang === "en" ? "Error saving hours:" : lang === "zh" ? "保存营业时间时出错：" : "Error al guardar horarios:"} ${errMsg}`, "error");
     } finally {
       setIsSaving(false);
     }
@@ -809,7 +817,7 @@ export default function DashboardPage() {
       }
     } catch (err) {
       console.error("Error al subir logo:", err);
-      alert(lang === "en" ? "Error uploading logo" : "Error al subir el logo");
+      alert(lang === "en" ? "Error uploading logo" : lang === "zh" ? "上传商户标志时出错" : "Error al subir el logo");
     } finally {
       setUploadingLogo(false);
     }
@@ -831,7 +839,7 @@ export default function DashboardPage() {
       }
     } catch (err) {
       console.error("Error al subir foto:", err);
-      alert(lang === "en" ? "Error uploading photo" : "Error al subir la foto");
+      alert(lang === "en" ? "Error uploading photo" : lang === "zh" ? "上传照片时出错" : "Error al subir la foto");
     } finally {
       setUploadingFoto(false);
     }
@@ -857,7 +865,7 @@ export default function DashboardPage() {
       setNewPlatoFotoUrl(url);
     } catch (err) {
       console.error("Error al subir foto del platillo:", err);
-      alert(lang === "en" ? "Error uploading menu photo" : "Error al subir la foto del platillo");
+      alert(lang === "en" ? "Error uploading menu photo" : lang === "zh" ? "上传菜品照片时出错" : "Error al subir la foto del platillo");
     } finally {
       setUploadingPlatoFoto(false);
     }
@@ -926,7 +934,7 @@ export default function DashboardPage() {
       setEditPlatoFotoUrl(url);
     } catch (err) {
       console.error("Error al subir foto de edición del platillo:", err);
-      alert(lang === "en" ? "Error uploading menu photo" : "Error al subir la foto del platillo");
+      alert(lang === "en" ? "Error uploading menu photo" : lang === "zh" ? "上传菜品照片时出错" : "Error al subir la foto del platillo");
     } finally {
       setUploadingEditPlatoFoto(false);
     }
@@ -951,12 +959,12 @@ export default function DashboardPage() {
 
       if (error) throw error;
 
-      showToast(lang === "en" ? "Dish updated successfully!" : "¡Platillo actualizado exitosamente!", "success");
+      showToast(lang === "en" ? "Dish updated successfully!" : lang === "zh" ? "菜品更新成功！" : "¡Platillo actualizado exitosamente!", "success");
       setEditingPlato(null);
       loadMenuItems(negocio.id);
     } catch (err) {
       console.error("Error al editar platillo:", err);
-      showToast(lang === "en" ? "Error updating dish" : "Error al actualizar platillo", "error");
+      showToast(lang === "en" ? "Error updating dish" : lang === "zh" ? "更新菜品时出错" : "Error al actualizar platillo", "error");
     } finally {
       setIsSavingEditPlato(false);
     }
@@ -1096,7 +1104,7 @@ export default function DashboardPage() {
                 boxShadow: "0 2px 8px rgba(255, 215, 0, 0.1)"
               }}>
                 <Icon name="building" size={14} color="#FFD700" />
-                <span>{lang === "en" ? "Business Management Hub" : "Panel de Gestión de Negocios"}</span>
+                <span>{lang === "en" ? "Business Management Hub" : lang === "zh" ? "商户管理中心" : "Panel de Gestión de Negocios"}</span>
               </div>
               <h2 style={{
                 fontSize: "34px",
@@ -1106,7 +1114,7 @@ export default function DashboardPage() {
                 letterSpacing: "-0.02em",
                 textShadow: "0 2px 12px rgba(0, 0, 0, 0.6)"
               }}>
-                {lang === "en" ? "My Businesses" : "Mis Negocios"}
+                {lang === "en" ? "My Businesses" : lang === "zh" ? "我的商户" : "Mis Negocios"}
               </h2>
               <p style={{
                 color: "#E2E8F0",
@@ -1118,6 +1126,8 @@ export default function DashboardPage() {
               }}>
                 {lang === "en"
                   ? "Manage your registered properties or claim/register new locations on the map."
+                  : lang === "zh"
+                  ? "管理您已登记的店铺或在地图上认领/登记新地点。"
                   : "Administra las fotos, menús y horarios de tus locales o reclama/registra nuevos puntos en el mapa."}
               </p>
             </div>
@@ -1129,7 +1139,7 @@ export default function DashboardPage() {
                 style={{ padding: "12px 24px", fontSize: "13.5px", flexShrink: 0, display: "inline-flex", alignItems: "center", gap: "8px" }}
               >
                 <Icon name="sliders" size={16} color="#1E293B" />
-                <span>{lang === "en" ? "Manage Selected Business" : "Administrar Negocio Actual"}</span>
+                <span>{lang === "en" ? "Manage Selected Business" : lang === "zh" ? "管理所选商户" : "Administrar Negocio Actual"}</span>
               </button>
             )}
           </div>
@@ -1196,10 +1206,10 @@ export default function DashboardPage() {
                       textTransform: "uppercase"
                     }}>
                       {n.activo
-                        ? (lang === "en" ? "✅ Active" : "✅ Activo")
+                        ? (lang === "en" ? "✅ Active" : lang === "zh" ? "✅ 已激活" : "✅ Activo")
                         : n.motivo_rechazo
-                        ? (lang === "en" ? "❌ Rejected" : "❌ Rechazado")
-                        : (lang === "en" ? "⌛ In Verification" : "⌛ En Verificación")}
+                        ? (lang === "en" ? "❌ Rejected" : lang === "zh" ? "❌ 已驳回" : "❌ Rechazado")
+                        : (lang === "en" ? "⌛ In Verification" : lang === "zh" ? "⌛ 审核中" : "⌛ En Verificación")}
                     </div>
 
                     {/* Categoría Badge */}
@@ -1264,7 +1274,7 @@ export default function DashboardPage() {
                         marginTop: "6px"
                       }}
                     >
-                      ⚙️ {lang === "en" ? "Manage This Business" : "Administrar este Negocio"}
+                      ⚙️ {lang === "en" ? "Manage This Business" : lang === "zh" ? "管理此商户" : "Administrar este Negocio"}
                     </button>
                   </div>
                 </div>
@@ -1307,11 +1317,13 @@ export default function DashboardPage() {
 
               <div>
                 <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "850", color: "#0F172A" }}>
-                  {lang === "en" ? "Claim or Register New Business" : "Reclama o Registra Otro Negocio"}
+                  {lang === "en" ? "Claim or Register New Business" : lang === "zh" ? "认领或登记新商户" : "Reclama o Registra Otro Negocio"}
                 </h3>
                 <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#475569", lineHeight: "1.35" }}>
                   {lang === "en"
                     ? "Claim an existing point or register a new location."
+                    : lang === "zh"
+                    ? "认领现有未认领地点或登记新位置。"
                     : "¿Posees otro local? Reclama un punto libre o registra uno nuevo."}
                 </p>
               </div>
@@ -1326,7 +1338,7 @@ export default function DashboardPage() {
                   className="clay-btn-gold"
                   style={{ width: "100%", height: "40px", padding: "0 14px", fontSize: "12px", justifyContent: "center", borderRadius: "12px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
                 >
-                  🔍 {lang === "en" ? "Search Unclaimed Point" : "Buscar Punto Existente a Reclamar"}
+                  🔍 {lang === "en" ? "Search Unclaimed Point" : lang === "zh" ? "搜索现有未认领地点" : "Buscar Punto Existente a Reclamar"}
                 </button>
 
                 <button
@@ -1336,7 +1348,7 @@ export default function DashboardPage() {
                   className="clay-btn-green"
                   style={{ width: "100%", height: "40px", padding: "0 14px", fontSize: "12px", justifyContent: "center", borderRadius: "12px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
                 >
-                  📍 {lang === "en" ? "Register with GPS" : "Registrar con mi ubicación GPS"}
+                  📍 {lang === "en" ? "Register with GPS" : lang === "zh" ? "使用我的 GPS 位置登记" : "Registrar con mi ubicación GPS"}
                 </button>
 
                 <button
@@ -1346,7 +1358,7 @@ export default function DashboardPage() {
                   className="clay-btn-blue"
                   style={{ width: "100%", height: "40px", padding: "0 14px", fontSize: "12px", justifyContent: "center", borderRadius: "12px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
                 >
-                  🗺️ {lang === "en" ? "Mark on Map Manually" : "Marcar punto en el mapa"}
+                  🗺️ {lang === "en" ? "Mark on Map Manually" : lang === "zh" ? "在地图上手动标注" : "Marcar punto en el mapa"}
                 </button>
               </div>
             </div>
@@ -1377,13 +1389,13 @@ export default function DashboardPage() {
               </div>
               <div>
                 <span className="clay-badge clay-badge-gold" style={{ marginBottom: "6px", display: "inline-block" }}>
-                  {lang === "en" ? "VERIFICATION IN PROGRESS" : "VERIFICACIÓN EN PROCESO"}
+                  {lang === "en" ? "VERIFICATION IN PROGRESS" : lang === "zh" ? "审核进行中" : "VERIFICACIÓN EN PROCESO"}
                 </span>
                 <h2 style={{ margin: 0, fontSize: "24px", fontWeight: "850", color: "#1A1A2E" }}>
-                  {lang === "en" ? "Business Claim Request Submitted" : "Solicitud de Reclamo Enviada"}
+                  {lang === "en" ? "Business Claim Request Submitted" : lang === "zh" ? "商户认领申请已提交" : "Solicitud de Reclamo Enviada"}
                 </h2>
                 <p style={{ margin: "4px 0 0", fontSize: "13.5px", color: "#4A5568" }}>
-                  {lang === "en" ? "Requested Business:" : "Negocio Solicitado:"} <strong style={{ color: "#146D9E" }}>{negocio.nombre}</strong>
+                  {lang === "en" ? "Requested Business:" : lang === "zh" ? "申请商户：" : "Negocio Solicitado:"} <strong style={{ color: "#146D9E" }}>{negocio.nombre}</strong>
                 </p>
               </div>
             </div>
@@ -1396,22 +1408,22 @@ export default function DashboardPage() {
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <span style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#17AA4A", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "12px" }}>✓</span>
                 <div>
-                  <div style={{ fontSize: "11.5px", fontWeight: "800", color: "#17AA4A" }}>Paso 1</div>
-                  <div style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>Solicitud Recibida</div>
+                  <div style={{ fontSize: "11.5px", fontWeight: "800", color: "#17AA4A" }}>{lang === "en" ? "Step 1" : lang === "zh" ? "步骤 1" : "Paso 1"}</div>
+                  <div style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>{lang === "en" ? "Request Received" : lang === "zh" ? "已收到申请" : "Solicitud Recibida"}</div>
                 </div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <span style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#E6A800", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "12px" }}>2</span>
                 <div>
-                  <div style={{ fontSize: "11.5px", fontWeight: "800", color: "#E6A800" }}>Paso 2 (En Curso)</div>
-                  <div style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>Revisión de Cédula/Docs</div>
+                  <div style={{ fontSize: "11.5px", fontWeight: "800", color: "#E6A800" }}>{lang === "en" ? "Step 2 (In Progress)" : lang === "zh" ? "步骤 2（进行中）" : "Paso 2 (En Curso)"}</div>
+                  <div style={{ fontSize: "13px", fontWeight: "750", color: "#1A1A2E" }}>{lang === "en" ? "ID/Docs Review" : lang === "zh" ? "审核证件/文件" : "Revisión de Cédula/Docs"}</div>
                 </div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <span style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#9CA3AF", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "12px" }}>3</span>
                 <div>
-                  <div style={{ fontSize: "11.5px", fontWeight: "800", color: "#9CA3AF" }}>Paso 3</div>
-                  <div style={{ fontSize: "13px", fontWeight: "750", color: "#6B7280" }}>Aprobación y Activación</div>
+                  <div style={{ fontSize: "11.5px", fontWeight: "800", color: "#9CA3AF" }}>{lang === "en" ? "Step 3" : lang === "zh" ? "步骤 3" : "Paso 3"}</div>
+                  <div style={{ fontSize: "13px", fontWeight: "750", color: "#6B7280" }}>{lang === "en" ? "Approval & Activation" : lang === "zh" ? "批准与激活" : "Aprobación y Activación"}</div>
                 </div>
               </div>
             </div>
@@ -1420,19 +1432,19 @@ export default function DashboardPage() {
             {negocio.datos_verificacion && (
               <div style={{ background: "#F4F6F9", padding: "18px 22px", borderRadius: "16px", border: "1px solid rgba(20, 109, 158, 0.1)" }}>
                 <h4 style={{ margin: "0 0 10px", fontSize: "14px", fontWeight: "800", color: "#1A1A2E" }}>
-                  📄 Resumen de Documentación de Propiedad Enviada
+                  📄 {lang === "en" ? "Ownership Documentation Summary" : lang === "zh" ? "已提交产权验证文件摘要" : "Resumen de Documentación de Propiedad Enviada"}
                 </h4>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "10px", fontSize: "13px", color: "#4A5568" }}>
-                  <div><strong>Solicitante:</strong> {negocio.datos_verificacion.solicitante_nombre}</div>
-                  <div><strong>N° Cédula:</strong> {negocio.datos_verificacion.solicitante_cedula}</div>
-                  <div><strong>Teléfono Contacto:</strong> {negocio.datos_verificacion.solicitante_telefono}</div>
+                  <div><strong>{lang === "en" ? "Applicant:" : lang === "zh" ? "申请人：" : "Solicitante:"}</strong> {negocio.datos_verificacion.solicitante_nombre}</div>
+                  <div><strong>{lang === "en" ? "ID Number:" : lang === "zh" ? "身份证号：" : "N° Cédula:"}</strong> {negocio.datos_verificacion.solicitante_cedula}</div>
+                  <div><strong>{lang === "en" ? "Contact Phone:" : lang === "zh" ? "联系电话：" : "Teléfono Contacto:"}</strong> {negocio.datos_verificacion.solicitante_telefono}</div>
                   <div>
-                    <strong>Cédula de Identidad:</strong>{" "}
+                    <strong>{lang === "en" ? "ID Document:" : lang === "zh" ? "身份证件：" : "Cédula de Identidad:"}</strong>{" "}
                     {negocio.datos_verificacion.documento_cedula_url ? (
                       <a href={negocio.datos_verificacion.documento_cedula_url} target="_blank" rel="noopener noreferrer" style={{ color: "#146D9E", fontWeight: "700" }}>
-                        ✓ Adjuntada (Ver)
+                        ✓ {lang === "en" ? "Attached (View)" : lang === "zh" ? "已上传（查看）" : "Adjuntada (Ver)"}
                       </a>
-                    ) : "Sin adjuntar"}
+                    ) : (lang === "en" ? "Not attached" : lang === "zh" ? "未上传" : "Sin adjuntar")}
                   </div>
                 </div>
               </div>
@@ -1441,22 +1453,22 @@ export default function DashboardPage() {
             {/* Mensaje de Observaciones del Administrador si fue rechazado */}
             {negocio.motivo_rechazo && (
               <div style={{ background: "rgba(239, 68, 68, 0.08)", borderLeft: "4px solid #ef4444", padding: "16px 20px", borderRadius: "0 12px 12px 0", fontSize: "13.5px", color: "#1A1A2E", lineHeight: "1.5" }}>
-                ⚠️ <strong>Observaciones del Administrador:</strong> {negocio.motivo_rechazo}
+                ⚠️ <strong>{lang === "en" ? "Admin Observations:" : lang === "zh" ? "管理员意见：" : "Observaciones del Administrador:"}</strong> {negocio.motivo_rechazo}
               </div>
             )}
 
             {/* Mensaje Informativo */}
             <div style={{ background: "rgba(20, 109, 158, 0.04)", borderLeft: "4px solid #146D9E", padding: "16px 20px", borderRadius: "0 12px 12px 0", fontSize: "13.5px", color: "#4A5568", lineHeight: "1.5" }}>
-              🔒 <strong>Acceso a Administración Bloqueado:</strong> Tu solicitud está en revisión por el equipo de administración de Atlan. Para proteger a los verdaderos comerciantes, el acceso a la gestión del menú, reservas, horarios y edición estará bloqueado hasta que un Administrador apruebe tus documentos.
+              🔒 <strong>{lang === "en" ? "Management Access Restricted:" : lang === "zh" ? "管理功能受限：" : "Acceso a Administración Bloqueado:"}</strong> {lang === "en" ? "Your claim is currently under review by the Atlan administration team. To protect real merchants, access to menu management, bookings, hours and details editing is locked until an administrator approves your documents." : lang === "zh" ? "您的认领申请正在由 Atlan 管理团队审核。为保护真实商户权益，在管理员审核通过您的文件之前，菜单管理、预订、营业时间及信息编辑功能将暂时锁定。" : "Tu solicitud está en revisión por el equipo de administración de Atlan. Para proteger a los verdaderos comerciantes, el acceso a la gestión del menú, reservas, horarios y edición estará bloqueado hasta que un Administrador apruebe tus documentos."}
             </div>
 
             {/* Acciones */}
             <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginTop: "8px" }}>
               <button onClick={() => router.push("/mapa")} className="clay-btn-blue" style={{ padding: "12px 24px", fontSize: "13.5px" }}>
-                🗺️ {lang === "en" ? "Explore Map" : "Volver a Explorar el Mapa"}
+                🗺️ {lang === "en" ? "Explore Map" : lang === "zh" ? "探索地图" : "Volver a Explorar el Mapa"}
               </button>
               <button onClick={() => setShowCancelConfirmModal(true)} disabled={isResubmitting} style={{ background: "rgba(239, 68, 68, 0.08)", border: "1px solid rgba(239, 68, 68, 0.2)", color: "#ef4444", padding: "12px 24px", borderRadius: "12px", fontSize: "13.5px", fontWeight: "700", cursor: "pointer" }}>
-                ❌ {lang === "en" ? "Cancel Request" : "Cancelar Solicitud"}
+                ❌ {lang === "en" ? "Cancel Request" : lang === "zh" ? "取消申请" : "Cancelar Solicitud"}
               </button>
             </div>
           </div>
@@ -1510,13 +1522,13 @@ export default function DashboardPage() {
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                     <h2 style={{ fontSize: "26px", fontWeight: "900", color: "#FFFFFF", margin: 0, fontFamily: "'LC Mogi', var(--font-outfit), sans-serif", letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: "8px" }}>
-                      <span>{lang === "en" ? "Welcome," : "Bienvenido,"} <span style={{ color: "#FFD700" }}>{perfil?.nombre_completo || "Propietario"}</span></span>
+                      <span>{lang === "en" ? "Welcome," : lang === "zh" ? "欢迎，" : "Bienvenido,"} <span style={{ color: "#FFD700" }}>{perfil?.nombre_completo || "Propietario"}</span></span>
                       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" style={{ display: "inline-block", flexShrink: 0 }}>
                         <path d="M12.5 11.5V5.5C12.5 4.67 11.83 4 11 4C10.17 4 9.5 4.67 9.5 5.5V11.5M9.5 9.5V3.5C9.5 2.67 8.83 2 8 2C7.17 2 6.5 2.67 6.5 3.5V11.5M6.5 11.5V5.5C6.5 4.67 5.83 4 5 4C4.17 4 3.5 4.67 3.5 5.5V13.5M3.5 12V10.5C3.5 9.67 2.83 9 2 9C1.17 9 0.5 9.67 0.5 10.5V15.5C0.5 19.09 3.41 22 7 22H11.5C14.81 22 17.5 19.31 17.5 16V13.5C17.5 12.67 16.83 12 16 12C15.17 12 14.5 12.67 14.5 13.5V11.5C14.5 10.67 13.83 10 13 10C12.17 10 11.5 10.67 11.5 11.5" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </h2>
                     <p style={{ color: "#E2E8F0", margin: 0, fontSize: "14px", fontWeight: "500", display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
-                      <span>{lang === "en" ? "What would you like to manage today for" : "¿Qué deseas gestionar hoy para"}</span>
+                      <span>{lang === "en" ? "What would you like to manage today for" : lang === "zh" ? "今天您想管理哪项内容：" : "¿Qué deseas gestionar hoy para"}</span>
                       <strong style={{
                         color: "#FFD700",
                         fontWeight: "800",
@@ -1552,7 +1564,7 @@ export default function DashboardPage() {
                         }}
                       >
                         <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: negocio.activo ? "#10B981" : "#D97706", boxShadow: negocio.activo ? "0 0 6px #10B981" : "0 0 6px #D97706" }} />
-                        {negocio.activo ? (lang === "en" ? "VERIFIED BUSINESS" : "NEGOCIO VERIFICADO") : (lang === "en" ? "PENDING VERIFICATION" : "PENDIENTE DE VERIFICACIÓN")}
+                        {negocio.activo ? (lang === "en" ? "VERIFIED BUSINESS" : lang === "zh" ? "已验证商户" : "NEGOCIO VERIFICADO") : (lang === "en" ? "PENDING VERIFICATION" : lang === "zh" ? "等待验证" : "PENDIENTE DE VERIFICACIÓN")}
                       </span>
                     </div>
                   </div>
@@ -1605,7 +1617,7 @@ export default function DashboardPage() {
                     }} />
                   </div>
                   <span style={{ fontSize: "14.5px", fontWeight: "850", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span>{lang === "en" ? "My Businesses" : "Mis Negocios"}</span>
+                    <span>{lang === "en" ? "My Businesses" : lang === "zh" ? "我的商户" : "Mis Negocios"}</span>
                     <span style={{ color: "#FFD700", fontSize: "16px" }}>➔</span>
                   </span>
                 </button>
@@ -1631,11 +1643,13 @@ export default function DashboardPage() {
                     <span style={{ fontSize: '28px' }}>⚠️</span>
                     <div>
                       <h4 style={{ margin: 0, fontSize: '16px', fontWeight: '850', color: '#fca5a5' }}>
-                        {lang === 'en' ? 'Claim Rejected / Pending Corrections' : 'Reclamo Rechazado / Pendiente de Correcciones'}
+                        {lang === 'en' ? 'Claim Rejected / Pending Corrections' : lang === 'zh' ? '认领被驳回 / 待修改' : 'Reclamo Rechazado / Pendiente de Correcciones'}
                       </h4>
                       <p style={{ margin: '4px 0 0', fontSize: '12.5px', color: '#1A1A2E' }}>
                         {lang === 'en' 
                           ? 'The administrator reviewed your application and rejected it with the following observations:' 
+                          : lang === 'zh'
+                          ? '管理员审核了您的申请并驳回，附带以下意见：'
                           : 'El administrador revisó tu solicitud y la rechazó con las siguientes observaciones:'}
                       </p>
                     </div>
@@ -1651,7 +1665,7 @@ export default function DashboardPage() {
                     lineHeight: 1.5,
                     fontStyle: 'italic'
                   }}>
-                    {negocio.motivo_rechazo || (lang === 'en' ? 'No detailed observations provided.' : 'No se proporcionaron observaciones detalladas.')}
+                    {negocio.motivo_rechazo || (lang === 'en' ? 'No detailed observations provided.' : lang === 'zh' ? '未提供详细审核意见。' : 'No se proporcionaron observaciones detalladas.')}
                   </div>
 
                   <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginTop: '4px' }}>
@@ -1674,8 +1688,8 @@ export default function DashboardPage() {
                       onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                     >
                       {isResubmitting 
-                        ? (lang === 'en' ? 'Processing...' : 'Procesando...') 
-                        : (lang === 'en' ? 'Save & Resubmit for Review' : 'Guardar y Reenviar para Revisión')}
+                        ? (lang === 'en' ? 'Processing...' : lang === 'zh' ? '处理中...' : 'Procesando...') 
+                        : (lang === 'en' ? 'Save & Resubmit for Review' : lang === 'zh' ? '保存并重新提交审核' : 'Guardar y Reenviar para Revisión')}
                     </button>
                     <button
                       onClick={handleCancelClaim}
@@ -1694,7 +1708,7 @@ export default function DashboardPage() {
                       onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(20, 109, 158, 0.12)'}
                       onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(20, 109, 158, 0.05)'}
                     >
-                      {lang === 'en' ? 'Cancel Claim' : 'Cancelar Reclamo'}
+                      {lang === 'en' ? 'Cancel Claim' : lang === 'zh' ? '取消认领' : 'Cancelar Reclamo'}
                     </button>
                   </div>
                 </div>
@@ -1737,11 +1751,13 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <h4 style={{ margin: 0, fontSize: '15.5px', fontWeight: '850', color: '#fcd34d' }}>
-                        {lang === 'en' ? 'Verification Pending' : 'Verificación en Proceso'}
+                        {lang === 'en' ? 'Verification Pending' : lang === 'zh' ? '审核中' : 'Verificación en Proceso'}
                       </h4>
                       <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#4A5568', lineHeight: 1.5 }}>
                         {lang === 'en' 
                           ? 'An administrator will carry out a physical/onsite verification to validate the claim of your business.' 
+                          : lang === 'zh'
+                          ? '管理员将进行现场/实地核实以验证您的商户认领。'
                           : 'Un administrador realizará una verificación física / presencial para validar la pertenencia de tu negocio.'}
                       </p>
                     </div>
@@ -1749,6 +1765,8 @@ export default function DashboardPage() {
                   <p style={{ margin: '4px 0 0 54px', fontSize: '12px', color: '#4A5568', lineHeight: 1.4 }}>
                     💡 {lang === 'en' 
                       ? 'While verification is pending, you can keep updating your profile information so it is ready for activation.'
+                      : lang === 'zh'
+                      ? '在等待审核期间，您可以继续编辑您的个人资料，以便在通过时随时就绪。'
                       : 'Mientras se realiza la verificación, puedes seguir editando la información de tu perfil para tenerlo listo.'}
                   </p>
                 </div>
@@ -1785,10 +1803,10 @@ export default function DashboardPage() {
                     }} />
                   </div>
                   <h3 style={{ ...styles.cardTitle, color: "#A5B4FC", display: "flex", alignItems: "center", gap: "6px" }}>
-                    <span>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</span>
+                    <span>{lang === "en" ? "Business Profile" : lang === "zh" ? "商户资料" : "Perfil del Negocio"}</span>
                     {negocio && !negocio.activo && <Icon name="lock" size={14} color="#A5B4FC" />}
                   </h3>
-                  <p style={{ ...styles.cardDesc, color: "#E0E7FF" }}>{lang === "en" ? "Update photos, description, logo and contact info" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
+                  <p style={{ ...styles.cardDesc, color: "#E0E7FF" }}>{lang === "en" ? "Update photos, description, logo and contact info" : lang === "zh" ? "更新照片、描述、标志和联系信息" : "Actualiza fotos, descripción, logo y datos de contacto"}</p>
                 </button>
 
                 {/* Checklist Card: flor.svg */}
@@ -1820,10 +1838,10 @@ export default function DashboardPage() {
                     }} />
                   </div>
                   <h3 style={{ ...styles.cardTitle, color: "#6EE7B7", display: "flex", alignItems: "center", gap: "6px" }}>
-                    <span>{lang === "en" ? "Services Checklist" : "Checklist de Servicios"}</span>
+                    <span>{lang === "en" ? "Services Checklist" : lang === "zh" ? "服务清单" : "Checklist de Servicios"}</span>
                     {negocio && !negocio.activo && <Icon name="lock" size={14} color="#6EE7B7" />}
                   </h3>
-                  <p style={{ ...styles.cardDesc, color: "#D1FAE5" }}>{lang === "en" ? "Enable menu, wifi, parking or lodging modules" : "Activa wifi, parqueo, menú, hospedaje o amenidades"}</p>
+                  <p style={{ ...styles.cardDesc, color: "#D1FAE5" }}>{lang === "en" ? "Enable menu, wifi, parking or lodging modules" : lang === "zh" ? "启用菜单、WiFi、停车场或住宿等设施" : "Activa wifi, parqueo, menú, hospedaje o amenidades"}</p>
                 </button>
 
                 {/* Hours Card */}
@@ -1844,10 +1862,10 @@ export default function DashboardPage() {
                       <Icon name="clock" size={22} color="#FFFFFF" />
                     </div>
                     <h3 style={{ ...styles.cardTitle, color: "#FDE68A", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <span>{lang === "en" ? "Opening Hours" : "Horarios de Atención"}</span>
+                      <span>{lang === "en" ? "Opening Hours" : lang === "zh" ? "营业时间" : "Horarios de Atención"}</span>
                       {negocio && !negocio.activo && <Icon name="lock" size={14} color="#FDE68A" />}
                     </h3>
-                    <p style={{ ...styles.cardDesc, color: "#FEF3C7" }}>{lang === "en" ? "Manage your daily opening and closing times" : "Configura tus horarios de apertura y cierre"}</p>
+                    <p style={{ ...styles.cardDesc, color: "#FEF3C7" }}>{lang === "en" ? "Manage your daily opening and closing times" : lang === "zh" ? "设置您每日的营业和打烊时间" : "Configura tus horarios de apertura y cierre"}</p>
                   </button>
                 )}
 
@@ -1869,10 +1887,10 @@ export default function DashboardPage() {
                       <Icon name="utensils" size={22} color="#FFFFFF" />
                     </div>
                     <h3 style={{ ...styles.cardTitle, color: "#7DD3FC", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <span>{lang === "en" ? "Gastronomic Menu" : "Menú Gastronómico"}</span>
+                      <span>{lang === "en" ? "Gastronomic Menu" : lang === "zh" ? "特色菜单" : "Menú Gastronómico"}</span>
                       {negocio && !negocio.activo && <Icon name="lock" size={14} color="#7DD3FC" />}
                     </h3>
-                    <p style={{ ...styles.cardDesc, color: "#E0F2FE" }}>{lang === "en" ? "Add or remove dishes, photos, and set prices" : "Agrega, edita o elimina platillos, fotos y precios"}</p>
+                    <p style={{ ...styles.cardDesc, color: "#E0F2FE" }}>{lang === "en" ? "Add or remove dishes, photos, and set prices" : lang === "zh" ? "添加或编辑菜品、照片并设定价格" : "Agrega, edita o elimina platillos, fotos y precios"}</p>
                   </button>
                 )}
 
@@ -1894,13 +1912,13 @@ export default function DashboardPage() {
                       <Icon name="calendar" size={22} color="#FFFFFF" />
                     </div>
                     <h3 style={{ ...styles.cardTitle, color: "#C4B5FD", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <span>{lang === "en" ? "Reservations Manager" : "Gestor de Reservas"}</span>
+                      <span>{lang === "en" ? "Reservations Manager" : lang === "zh" ? "预订管理" : "Gestor de Reservas"}</span>
                       {negocio && !negocio.activo && <Icon name="lock" size={14} color="#C4B5FD" />}
                     </h3>
-                    <p style={{ ...styles.cardDesc, color: "#F3E8FF" }}>{lang === "en" ? "Approve or cancel incoming booking requests" : "Aprueba o cancela solicitudes de reserva"}</p>
+                    <p style={{ ...styles.cardDesc, color: "#F3E8FF" }}>{lang === "en" ? "Approve or cancel incoming booking requests" : lang === "zh" ? "批准或取消收到的预订请求" : "Aprueba o cancela solicitudes de reserva"}</p>
                     {(reservas || []).filter(r => r.estado_reserva === "pendiente").length > 0 && (
                       <div style={styles.cardBadge}>
-                        {(reservas || []).filter(r => r.estado_reserva === "pendiente").length} {lang === "en" ? "Pending" : "Pendientes"}
+                        {(reservas || []).filter(r => r.estado_reserva === "pendiente").length} {lang === "en" ? "Pending" : lang === "zh" ? "待处理" : "Pendientes"}
                       </div>
                     )}
                   </button>
@@ -1935,10 +1953,10 @@ export default function DashboardPage() {
                     }} />
                   </div>
                   <h3 style={{ ...styles.cardTitle, color: "#FDA4AF", display: "flex", alignItems: "center", gap: "6px" }}>
-                    <span>{lang === "en" ? "Customer Reviews" : "Reseñas de Clientes"}</span>
+                    <span>{lang === "en" ? "Customer Reviews" : lang === "zh" ? "顾客评价" : "Reseñas de Clientes"}</span>
                     {negocio && !negocio.activo && <Icon name="lock" size={14} color="#FDA4AF" />}
                   </h3>
-                  <p style={{ ...styles.cardDesc, color: "#FFE4E6" }}>{lang === "en" ? "Read what tourists think about your business" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
+                  <p style={{ ...styles.cardDesc, color: "#FFE4E6" }}>{lang === "en" ? "Read what tourists think about your business" : lang === "zh" ? "查看游客对您商户的评价与反馈" : "Lee lo que opinan los turistas sobre tu negocio"}</p>
                 </button>
               </div>
           ) : (
@@ -1964,12 +1982,12 @@ export default function DashboardPage() {
                   }}
                   className="hover-card-btn"
                 >
-                  ← {lang === "en" ? "Back to Dashboard" : "Volver al Panel Principal"}
+                  ← {lang === "en" ? "Back to Dashboard" : lang === "zh" ? "返回控制面板" : "Volver al Panel Principal"}
                 </button>
 
                 {saveSuccess && (
                   <div style={{ ...styles.successBanner, margin: 0, padding: "6px 14px", fontSize: "12.5px" }}>
-                    ✅ {lang === "en" ? "Settings saved successfully!" : "¡Configuraciones guardadas exitosamente!"}
+                    ✅ {lang === "en" ? "Settings saved successfully!" : lang === "zh" ? "设置保存成功！" : "¡Configuraciones guardadas exitosamente!"}
                   </div>
                 )}
               </div>
@@ -1982,8 +2000,8 @@ export default function DashboardPage() {
                       <div style={{ width: "20px", height: "20px", backgroundColor: "#FFFFFF", WebkitMaskImage: "url('/images/edificio.svg')", WebkitMaskRepeat: "no-repeat", WebkitMaskSize: "contain", WebkitMaskPosition: "center", maskImage: "url('/images/edificio.svg')", maskRepeat: "no-repeat", maskSize: "contain", maskPosition: "center" }} />
                     </div>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Business Profile" : "Perfil del Negocio"}</h3>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Update description, contact details and media gallery" : "Actualiza fotos, descripción, datos de contacto y redes sociales"}</p>
+                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Business Profile" : lang === "zh" ? "商户资料" : "Perfil del Negocio"}</h3>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Update description, contact details and media gallery" : lang === "zh" ? "更新商户描述、联系方式和多媒体图库" : "Actualiza fotos, descripción, datos de contacto y redes sociales"}</p>
                     </div>
                   </div>
 
@@ -1992,18 +2010,18 @@ export default function DashboardPage() {
                       {/* COLUMNA IZQUIERDA: DATOS BÁSICOS */}
                       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <div style={styles.inputGroup}>
-                          <label style={styles.label}>{lang === "en" ? "Business Name" : "Nombre del Negocio"}</label>
+                          <label style={styles.label}>{lang === "en" ? "Business Name" : lang === "zh" ? "商户名称" : "Nombre del Negocio"}</label>
                           <input type="text" required value={nombre} onChange={(e) => setNombre(e.target.value)} style={styles.input} />
                         </div>
 
                         <div style={styles.inputGroup}>
-                          <label style={styles.label}>{lang === "en" ? "Description" : "Descripción"}</label>
-                          <textarea rows="2" value={descripcion} onChange={(e) => setDescripcion(e.target.value)} style={{ ...styles.input, resize: "none" }} placeholder={lang === "en" ? "Short description..." : "Descripción corta del negocio..."} />
+                          <label style={styles.label}>{lang === "en" ? "Description" : lang === "zh" ? "描述" : "Descripción"}</label>
+                          <textarea rows="2" value={descripcion} onChange={(e) => setDescripcion(e.target.value)} style={{ ...styles.input, resize: "none" }} placeholder={lang === "en" ? "Short description..." : lang === "zh" ? "商户简要介绍..." : "Descripción corta del negocio..."} />
                         </div>
 
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
                           <div style={styles.inputGroup}>
-                            <label style={styles.label}>{lang === "en" ? "Phone" : "Teléfono"}</label>
+                            <label style={styles.label}>{lang === "en" ? "Phone" : lang === "zh" ? "联系电话" : "Teléfono"}</label>
                             <input type="text" value={telefono} onChange={(e) => setTelefono(e.target.value)} placeholder="+505 8888 8888" style={styles.input} />
                           </div>
                           <div style={styles.inputGroup}>
@@ -2013,20 +2031,20 @@ export default function DashboardPage() {
                         </div>
 
                         <div style={styles.inputGroup}>
-                          <label style={styles.label}>{lang === "en" ? "Price Range" : "Rango de Precios"}</label>
+                          <label style={styles.label}>{lang === "en" ? "Price Range" : lang === "zh" ? "价格区间" : "Rango de Precios"}</label>
                           <select value={rangoPrecios || ""} onChange={(e) => setRangoPrecios(e.target.value)} style={styles.input}>
-                            <option value="">{lang === "en" ? "-- Select Price Range --" : "-- Seleccionar Rango de Precios --"}</option>
-                            <option value="$">$ ({lang === "en" ? "Economic" : "Económico"})</option>
-                            <option value="$$">$$ ({lang === "en" ? "Moderate" : "Moderado"})</option>
-                            <option value="$$$">$$$ ({lang === "en" ? "Exclusive" : "Exclusivo"})</option>
-                            <option value="$$$$">$$$$ ({lang === "en" ? "Luxury" : "Lujo"})</option>
+                            <option value="">{lang === "en" ? "-- Select Price Range --" : lang === "zh" ? "-- 选择价格区间 --" : "-- Seleccionar Rango de Precios --"}</option>
+                            <option value="$">$ ({lang === "en" ? "Economic" : lang === "zh" ? "实惠" : "Económico"})</option>
+                            <option value="$$">$$ ({lang === "en" ? "Moderate" : lang === "zh" ? "适中" : "Moderado"})</option>
+                            <option value="$$$">$$$ ({lang === "en" ? "Exclusive" : lang === "zh" ? "高端" : "Exclusivo"})</option>
+                            <option value="$$$$">$$$$ ({lang === "en" ? "Luxury" : lang === "zh" ? "奢华" : "Lujo"})</option>
                           </select>
                         </div>
                       </div>
 
                       {/* COLUMNA DERECHA: REDES SOCIALES Y GALERÍA */}
                       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                        <label style={{ ...styles.label, color: "#146D9E", fontWeight: "800" }}>{lang === "en" ? "Social Media & Website" : "Redes Sociales y Sitio Web"}</label>
+                        <label style={{ ...styles.label, color: "#146D9E", fontWeight: "800" }}>{lang === "en" ? "Social Media & Website" : lang === "zh" ? "社交媒体与官方网站" : "Redes Sociales y Sitio Web"}</label>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
                           <div style={styles.inputGroup}>
                             <label style={{ ...styles.label, fontSize: "11px" }}>Facebook</label>
@@ -2049,7 +2067,7 @@ export default function DashboardPage() {
                         {/* Logo & Photos */}
                         <label style={{ ...styles.label, color: "var(--atlan-gold-dark, #B8960E)", fontWeight: "800", marginTop: "2px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                          <span>{lang === "en" ? "Logo & Gallery Photos" : "Logo y Fotos del Local"}</span>
+                          <span>{lang === "en" ? "Logo & Gallery Photos" : lang === "zh" ? "标志与门店照片" : "Logo y Fotos del Local"}</span>
                         </label>
                         <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "rgba(20, 109, 158, 0.03)", padding: "8px 12px", borderRadius: "12px", border: "1px solid rgba(20, 109, 158, 0.1)" }}>
                           <div style={{ textAlign: "center", flexShrink: 0 }}>
@@ -2057,7 +2075,7 @@ export default function DashboardPage() {
                               {!logoUrl && <Icon name="building" size={20} color="#9CA3AF" />}
                             </div>
                             <label style={{ fontSize: "10px", fontWeight: "800", color: "#146D9E", cursor: "pointer", marginTop: "3px", display: "block" }}>
-                              {uploadingLogo ? "..." : (lang === "en" ? "Logo" : "Subir Logo")}
+                              {uploadingLogo ? "..." : (lang === "en" ? "Logo" : lang === "zh" ? "上传标志" : "Subir Logo")}
                               <input type="file" accept="image/*" onChange={handleLogoUpload} style={{ display: "none" }} />
                             </label>
                           </div>
@@ -2082,7 +2100,7 @@ export default function DashboardPage() {
                     {/* BOTONES ACCIÓN */}
                     <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "12px", flexShrink: 0 }}>
                       <button type="submit" disabled={isSaving} style={{ ...styles.saveBtn, marginTop: 0, padding: "9px 22px", fontSize: "13px" }}>
-                        {isSaving ? "..." : (lang === "en" ? "Save Profile" : "Guardar Perfil")}
+                        {isSaving ? "..." : (lang === "en" ? "Save Profile" : lang === "zh" ? "保存资料" : "Guardar Perfil")}
                       </button>
                       {puntoAsociado && puntoAsociado.estado === 'rechazado' && (
                         <button type="button" onClick={async () => {
@@ -2091,7 +2109,7 @@ export default function DashboardPage() {
                             const payload = { nombre: nombre || null, descripcion: descripcion || null, telefono: telefono || null, whatsapp: whatsapp || null, rango_precios: rangoPrecios || null, logo_url: logoUrl || null, fotos: fotos || [], motivo_rechazo: null };
                             await supabase.from("negocios").update(payload).eq("id", negocio.id);
                             await supabase.from("puntos").update({ estado: "en_verificacion" }).eq("id", puntoAsociado.id);
-                            alert(lang === "en" ? "Saved & resubmitted!" : "¡Guardado y reenviado exitosamente!");
+                            alert(lang === "en" ? "Saved & resubmitted!" : lang === "zh" ? "已保存并重新提交！" : "¡Guardado y reenviado exitosamente!");
                             await loadNegocioData(user.id);
                           } catch (err) {
                             console.error(err);
@@ -2099,7 +2117,7 @@ export default function DashboardPage() {
                             setIsSaving(false);
                           }
                         }} style={{ ...styles.saveBtn, marginTop: 0, padding: "9px 22px", fontSize: "13px", background: "#EAB308", color: "#1E293B" }}>
-                          {lang === "en" ? "Save & Resubmit" : "Guardar y Reenviar a Verificación"}
+                          {lang === "en" ? "Save & Resubmit" : lang === "zh" ? "保存并重新提交" : "Guardar y Reenviar a Verificación"}
                         </button>
                       )}
                     </div>
@@ -2115,28 +2133,28 @@ export default function DashboardPage() {
                       <div style={{ width: "20px", height: "20px", backgroundColor: "#FFFFFF", WebkitMaskImage: "url('/images/flor.svg')", WebkitMaskRepeat: "no-repeat", WebkitMaskSize: "contain", WebkitMaskPosition: "center", maskImage: "url('/images/flor.svg')", maskRepeat: "no-repeat", maskSize: "contain", maskPosition: "center" }} />
                     </div>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Services & Amenities" : "Checklist de Servicios y Amenidades"}</h3>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Enable features offered at your establishment" : "Activa los servicios y amenidades disponibles para tus clientes"}</p>
+                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Services & Amenities" : lang === "zh" ? "服务与设施清单" : "Checklist de Servicios y Amenidades"}</h3>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Enable features offered at your establishment" : lang === "zh" ? "开启您门店为客户提供的各项服务与设施" : "Activa los servicios y amenidades disponibles para tus clientes"}</p>
                     </div>
                   </div>
 
                   <form onSubmit={(e) => { e.preventDefault(); handleSaveExcentricidades(); }} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", overflow: "hidden" }}>
                     <div style={{ flex: 1, overflowY: "auto", paddingRight: "4px", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px" }}>
                       {[
-                        { key: "hasMenu", label: lang === "en" ? "Dishes & Menu" : "Menú y Platillos", val: hasMenu, set: setHasMenu },
-                        { key: "hasHours", label: lang === "en" ? "Opening Hours" : "Horarios de Atención", val: hasHours, set: setHasHours },
-                        { key: "hasLodging", label: lang === "en" ? "Lodging / Hotel" : "Hospedaje / Hotel", val: hasLodging, set: setHasLodging },
-                        { key: "hasWifi", label: lang === "en" ? "Free Wi-Fi" : "Wi-Fi Gratis", val: hasWifi, set: setHasWifi },
-                        { key: "hasParking", label: lang === "en" ? "Parking Lot" : "Estacionamiento", val: hasParking, set: setHasParking },
-                        { key: "hasPets", label: lang === "en" ? "Pet Friendly" : "Acepta Mascotas", val: hasPets, set: setHasPets },
-                        { key: "hasCardPayment", label: lang === "en" ? "Card Payment" : "Pago con Tarjeta", val: hasCardPayment, set: setHasCardPayment },
-                        { key: "hasAccessibility", label: lang === "en" ? "Accessibility Ramp" : "Rampa Accesible", val: hasAccessibility, set: setHasAccessibility },
-                        { key: "hasDelivery", label: lang === "en" ? "Delivery Service" : "Servicio a Domicilio", val: hasDelivery, set: setHasDelivery },
-                        { key: "hasOnlineBooking", label: lang === "en" ? "Online Reservations" : "Reservas en Línea", val: hasOnlineBooking, set: setHasOnlineBooking },
-                        { key: "hasAc", label: lang === "en" ? "Air Conditioning" : "Aire Acondicionado", val: hasAc, set: setHasAc },
-                        { key: "hasKidsArea", label: lang === "en" ? "Kids Playground" : "Área de Niños", val: hasKidsArea, set: setHasKidsArea },
-                        { key: "hasLiveMusic", label: lang === "en" ? "Live Music" : "Música en Vivo", val: hasLiveMusic, set: setHasLiveMusic },
-                        { key: "hasTransport", label: lang === "en" ? "Shuttle / Transport" : "Transporte / Shuttle", val: hasTransport, set: setHasTransport }
+                        { key: "hasMenu", label: lang === "en" ? "Dishes & Menu" : lang === "zh" ? "菜单与菜品" : "Menú y Platillos", val: hasMenu, set: setHasMenu },
+                        { key: "hasHours", label: lang === "en" ? "Opening Hours" : lang === "zh" ? "营业时间" : "Horarios de Atención", val: hasHours, set: setHasHours },
+                        { key: "hasLodging", label: lang === "en" ? "Lodging / Hotel" : lang === "zh" ? "住宿 / 酒店" : "Hospedaje / Hotel", val: hasLodging, set: setHasLodging },
+                        { key: "hasWifi", label: lang === "en" ? "Free Wi-Fi" : lang === "zh" ? "免费 Wi-Fi" : "Wi-Fi Gratis", val: hasWifi, set: setHasWifi },
+                        { key: "hasParking", label: lang === "en" ? "Parking Lot" : lang === "zh" ? "停车场" : "Estacionamiento", val: hasParking, set: setHasParking },
+                        { key: "hasPets", label: lang === "en" ? "Pet Friendly" : lang === "zh" ? "宠物友好" : "Acepta Mascotas", val: hasPets, set: setHasPets },
+                        { key: "hasCardPayment", label: lang === "en" ? "Card Payment" : lang === "zh" ? "刷卡支付" : "Pago con Tarjeta", val: hasCardPayment, set: setHasCardPayment },
+                        { key: "hasAccessibility", label: lang === "en" ? "Accessibility Ramp" : lang === "zh" ? "无障碍通道" : "Rampa Accesible", val: hasAccessibility, set: setHasAccessibility },
+                        { key: "hasDelivery", label: lang === "en" ? "Delivery Service" : lang === "zh" ? "外送服务" : "Servicio a Domicilio", val: hasDelivery, set: setHasDelivery },
+                        { key: "hasOnlineBooking", label: lang === "en" ? "Online Reservations" : lang === "zh" ? "在线预订" : "Reservas en Línea", val: hasOnlineBooking, set: setHasOnlineBooking },
+                        { key: "hasAc", label: lang === "en" ? "Air Conditioning" : lang === "zh" ? "空调冷气" : "Aire Acondicionado", val: hasAc, set: setHasAc },
+                        { key: "hasKidsArea", label: lang === "en" ? "Kids Playground" : lang === "zh" ? "儿童游乐区" : "Área de Niños", val: hasKidsArea, set: setHasKidsArea },
+                        { key: "hasLiveMusic", label: lang === "en" ? "Live Music" : lang === "zh" ? "现场音乐" : "Música en Vivo", val: hasLiveMusic, set: setHasLiveMusic },
+                        { key: "hasTransport", label: lang === "en" ? "Shuttle / Transport" : lang === "zh" ? "接送班车 / 交通" : "Transporte / Shuttle"}
                       ].map((item) => {
                         const iconColor = item.val ? "#047857" : "#64748B";
                         return (
@@ -2186,7 +2204,7 @@ export default function DashboardPage() {
 
                     <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "12px", flexShrink: 0 }}>
                       <button type="submit" disabled={isSaving} style={{ ...styles.saveBtn, marginTop: 0, padding: "9px 22px", fontSize: "13px", background: "#059669" }}>
-                        {isSaving ? "..." : (lang === "en" ? "Save Services" : "Guardar Servicios")}
+                        {isSaving ? "..." : (lang === "en" ? "Save Services" : lang === "zh" ? "保存服务" : "Guardar Servicios")}
                       </button>
                     </div>
                   </form>
@@ -2201,8 +2219,8 @@ export default function DashboardPage() {
                       <Icon name="clock" size={20} color="#FFFFFF" />
                     </div>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Opening Hours" : "Horarios de Atención"}</h3>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Configure open/close schedule per day" : "Configura tus horas de apertura y cierre por cada día de la semana"}</p>
+                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Opening Hours" : lang === "zh" ? "营业时间" : "Horarios de Atención"}</h3>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Configure open/close schedule per day" : lang === "zh" ? "按星期配置每日的营业和打烊时间" : "Configura tus horas de apertura y cierre por cada día de la semana"}</p>
                     </div>
                   </div>
 
@@ -2212,7 +2230,9 @@ export default function DashboardPage() {
                       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                         {["lunes", "martes", "miercoles", "jueves"].map((dia) => (
                           <div key={dia} style={{ display: "flex", alignItems: "center", gap: "8px", background: "#F8FAFC", padding: "6px 10px", borderRadius: "8px", border: "1px solid #E2E8F0" }}>
-                            <span style={{ width: "75px", fontSize: "12px", fontWeight: "800", textTransform: "capitalize", color: "#1E293B" }}>{dia}</span>
+                            <span style={{ width: "75px", fontSize: "12px", fontWeight: "800", textTransform: "capitalize", color: "#1E293B" }}>
+                              {lang === "en" ? (dia === "lunes" ? "Monday" : dia === "martes" ? "Tuesday" : dia === "miercoles" ? "Wednesday" : "Thursday") : lang === "zh" ? (dia === "lunes" ? "星期一" : dia === "martes" ? "星期二" : dia === "miercoles" ? "星期三" : "星期四") : dia}
+                            </span>
                             <input
                               type="time"
                               disabled={!horarios[dia]?.abierto}
@@ -2220,7 +2240,7 @@ export default function DashboardPage() {
                               onChange={(e) => setHorarios(prev => ({ ...prev, [dia]: { ...prev[dia], apertura: e.target.value } }))}
                               style={{ ...styles.input, padding: "3px 6px", fontSize: "11.5px", width: "92px" }}
                             />
-                            <span style={{ fontSize: "10.5px", color: "#64748B" }}>{lang === "en" ? "to" : "a"}</span>
+                            <span style={{ fontSize: "10.5px", color: "#64748B" }}>{lang === "en" ? "to" : lang === "zh" ? "至" : "a"}</span>
                             <input
                               type="time"
                               disabled={!horarios[dia]?.abierto}
@@ -2235,7 +2255,7 @@ export default function DashboardPage() {
                                 onChange={(e) => setHorarios(prev => ({ ...prev, [dia]: { ...prev[dia], abierto: !e.target.checked } }))}
                                 style={{ accentColor: "#EF4444" }}
                               />
-                              <span style={{ color: !horarios[dia]?.abierto ? "#EF4444" : "#64748B", fontWeight: "700" }}>{lang === "en" ? "Closed" : "Cerrado"}</span>
+                              <span style={{ color: !horarios[dia]?.abierto ? "#EF4444" : "#64748B", fontWeight: "700" }}>{lang === "en" ? "Closed" : lang === "zh" ? "休息" : "Cerrado"}</span>
                             </label>
                           </div>
                         ))}
@@ -2245,7 +2265,9 @@ export default function DashboardPage() {
                       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                         {["viernes", "sabado", "domingo"].map((dia) => (
                           <div key={dia} style={{ display: "flex", alignItems: "center", gap: "8px", background: "#F8FAFC", padding: "6px 10px", borderRadius: "8px", border: "1px solid #E2E8F0" }}>
-                            <span style={{ width: "75px", fontSize: "12px", fontWeight: "800", textTransform: "capitalize", color: "#1E293B" }}>{dia}</span>
+                            <span style={{ width: "75px", fontSize: "12px", fontWeight: "800", textTransform: "capitalize", color: "#1E293B" }}>
+                              {lang === "en" ? (dia === "viernes" ? "Friday" : dia === "sabado" ? "Saturday" : "Sunday") : lang === "zh" ? (dia === "viernes" ? "星期五" : dia === "sabado" ? "星期六" : "星期日") : dia}
+                            </span>
                             <input
                               type="time"
                               disabled={!horarios[dia]?.abierto}
@@ -2253,7 +2275,7 @@ export default function DashboardPage() {
                               onChange={(e) => setHorarios(prev => ({ ...prev, [dia]: { ...prev[dia], apertura: e.target.value } }))}
                               style={{ ...styles.input, padding: "3px 6px", fontSize: "11.5px", width: "92px" }}
                             />
-                            <span style={{ fontSize: "10.5px", color: "#64748B" }}>{lang === "en" ? "to" : "a"}</span>
+                            <span style={{ fontSize: "10.5px", color: "#64748B" }}>{lang === "en" ? "to" : lang === "zh" ? "至" : "a"}</span>
                             <input
                               type="time"
                               disabled={!horarios[dia]?.abierto}
@@ -2268,7 +2290,7 @@ export default function DashboardPage() {
                                 onChange={(e) => setHorarios(prev => ({ ...prev, [dia]: { ...prev[dia], abierto: !e.target.checked } }))}
                                 style={{ accentColor: "#EF4444" }}
                               />
-                              <span style={{ color: !horarios[dia]?.abierto ? "#EF4444" : "#64748B", fontWeight: "700" }}>{lang === "en" ? "Closed" : "Cerrado"}</span>
+                              <span style={{ color: !horarios[dia]?.abierto ? "#EF4444" : "#64748B", fontWeight: "700" }}>{lang === "en" ? "Closed" : lang === "zh" ? "休息" : "Cerrado"}</span>
                             </label>
                           </div>
                         ))}
@@ -2278,7 +2300,7 @@ export default function DashboardPage() {
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1.55.59 2.97 1.5 4 .76.76 1.23 1.52 1.41 2.5z"/></svg>
                           </span>
                           <span style={{ fontSize: "11px", color: "#92400E", fontWeight: "600" }}>
-                            {lang === "en" ? "Tip: Keep hours updated so tourists know when to visit!" : "¡Mantén tus horarios actualizados para que los visitantes sepan cuándo atenderás!"}
+                            {lang === "en" ? "Tip: Keep hours updated so tourists know when to visit!" : lang === "zh" ? "提示：保持营业时间最新，方便游客了解到访时间！" : "¡Mantén tus horarios actualizados para que los visitantes sepan cuándo atenderás!"}
                           </span>
                         </div>
                       </div>
@@ -2286,7 +2308,7 @@ export default function DashboardPage() {
 
                     <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "12px", flexShrink: 0 }}>
                       <button type="submit" disabled={isSaving} style={{ ...styles.saveBtn, marginTop: 0, padding: "9px 22px", fontSize: "13px", background: "#D97706" }}>
-                        {isSaving ? "..." : (lang === "en" ? "Save Hours" : "Guardar Horarios")}
+                        {isSaving ? "..." : (lang === "en" ? "Save Hours" : lang === "zh" ? "保存营业时间" : "Guardar Horarios")}
                       </button>
                     </div>
                   </form>
@@ -2301,8 +2323,8 @@ export default function DashboardPage() {
                       <Icon name="utensils" size={20} color="#FFFFFF" />
                     </div>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Menu & Catalog" : "Menú y Productos del Local"}</h3>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Manage dishes, services and prices offered" : "Administra tus platos, productos, precios y disponibilidades"}</p>
+                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Menu & Catalog" : lang === "zh" ? "菜单与商品目录" : "Menú y Productos del Local"}</h3>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Manage dishes, services and prices offered" : lang === "zh" ? "管理店内供应的菜品、服务与价格" : "Administra tus platos, productos, precios y disponibilidades"}</p>
                     </div>
                   </div>
 
@@ -2312,27 +2334,27 @@ export default function DashboardPage() {
                       <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                         <h4 style={{ margin: 0, fontSize: "13.5px", fontWeight: "800", color: "#0284C7", display: "inline-flex", alignItems: "center", gap: "6px" }}>
                           <Icon name="plus" size={14} color="#0284C7" />
-                          <span>{lang === "en" ? "New Item" : "Agregar Nuevo Platillo"}</span>
+                          <span>{lang === "en" ? "New Item" : lang === "zh" ? "新增菜品" : "Agregar Nuevo Platillo"}</span>
                         </h4>
                         
                         <div style={styles.inputGroup}>
-                          <label style={{ ...styles.label, fontSize: "11px" }}>{lang === "en" ? "Dish Name" : "Nombre del Platillo"}</label>
+                          <label style={{ ...styles.label, fontSize: "11px" }}>{lang === "en" ? "Dish Name" : lang === "zh" ? "菜品名称" : "Nombre del Platillo"}</label>
                           <input type="text" required value={newPlatoNombre} onChange={(e) => setNewPlatoNombre(e.target.value)} placeholder="Ej: Nacatamal Tradicional" style={{ ...styles.input, padding: "6px 9px", fontSize: "12px" }} />
                         </div>
 
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
                           <div style={styles.inputGroup}>
-                            <label style={{ ...styles.label, fontSize: "11px" }}>{lang === "en" ? "Price (C$)" : "Precio (C$)"}</label>
+                            <label style={{ ...styles.label, fontSize: "11px" }}>{lang === "en" ? "Price (C$)" : lang === "zh" ? "价格 (C$)" : "Precio (C$)"}</label>
                             <input type="number" required step="0.01" value={newPlatoPrecio} onChange={(e) => setNewPlatoPrecio(e.target.value)} placeholder="150" style={{ ...styles.input, padding: "6px 9px", fontSize: "12px" }} />
                           </div>
                           <div style={styles.inputGroup}>
-                            <label style={{ ...styles.label, fontSize: "11px" }}>{lang === "en" ? "Category" : "Categoría"}</label>
+                            <label style={{ ...styles.label, fontSize: "11px" }}>{lang === "en" ? "Category" : lang === "zh" ? "分类" : "Categoría"}</label>
                             <input type="text" value={newPlatoCategoria} onChange={(e) => setNewPlatoCategoria(e.target.value)} placeholder="Platos Fuertes" style={{ ...styles.input, padding: "6px 9px", fontSize: "12px" }} />
                           </div>
                         </div>
 
                         <div style={styles.inputGroup}>
-                          <label style={{ ...styles.label, fontSize: "11px" }}>{lang === "en" ? "Description" : "Descripción"}</label>
+                          <label style={{ ...styles.label, fontSize: "11px" }}>{lang === "en" ? "Description" : lang === "zh" ? "描述" : "Descripción"}</label>
                           <textarea rows="2" value={newPlatoDesc} onChange={(e) => setNewPlatoDesc(e.target.value)} placeholder="Descripción breve..." style={{ ...styles.input, padding: "6px 9px", fontSize: "12px", resize: "none" }} />
                         </div>
 
@@ -2343,14 +2365,14 @@ export default function DashboardPage() {
                           </div>
                           <label style={{ flex: 1, padding: "6px 9px", background: "rgba(2, 132, 199, 0.08)", border: "1px solid rgba(2, 132, 199, 0.2)", borderRadius: "8px", fontSize: "11px", fontWeight: "800", color: "#0284C7", cursor: "pointer", textAlign: "center", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "5px" }}>
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                            <span>{uploadingPlatoFoto ? "..." : (lang === "en" ? "Add Photo" : "Cargar Foto")}</span>
+                            <span>{uploadingPlatoFoto ? "..." : (lang === "en" ? "Add Photo" : lang === "zh" ? "上传照片" : "Cargar Foto")}</span>
                             <input type="file" accept="image/*" onChange={handlePlatoFotoUpload} style={{ display: "none" }} />
                           </label>
                         </div>
                       </div>
 
                       <button type="submit" disabled={isAddingPlato || uploadingPlatoFoto} style={{ ...styles.saveBtn, marginTop: "8px", padding: "8px 14px", fontSize: "12.5px", background: "#0284C7" }}>
-                        {isAddingPlato ? "..." : (lang === "en" ? "Add to Menu" : "Agregar al Menú")}
+                        {isAddingPlato ? "..." : (lang === "en" ? "Add to Menu" : lang === "zh" ? "添加到菜单" : "Agregar al Menú")}
                       </button>
                     </form>
 
@@ -2361,7 +2383,7 @@ export default function DashboardPage() {
                           <div style={{ display: "flex", justifyContent: "center", marginBottom: "6px" }}>
                             <Icon name="utensils" size={28} color="#0284C7" />
                           </div>
-                          <p style={{ color: "#64748B", fontSize: "12.5px", margin: "6px 0 0 0", fontWeight: "600" }}>{lang === "en" ? "No dishes added yet. Use the form to add your first item!" : "Aún no has agregado platillos a tu menú. ¡Utiliza el formulario para añadir el primero!"}</p>
+                          <p style={{ color: "#64748B", fontSize: "12.5px", margin: "6px 0 0 0", fontWeight: "600" }}>{lang === "en" ? "No dishes added yet. Use the form to add your first item!" : lang === "zh" ? "暂无菜品。使用左侧表单添加第一道菜！" : "Aún no has agregado platillos a tu menú. ¡Utiliza el formulario para añadir el primero!"}</p>
                         </div>
                       ) : (
                         (menuItems || []).map((item) => (
@@ -2375,7 +2397,7 @@ export default function DashboardPage() {
                                   <span>{item.nombre}</span>
                                   {item.disponible === false && (
                                     <span style={{ fontSize: "9px", fontWeight: "800", color: "#EF4444", background: "rgba(239,68,68,0.1)", padding: "1px 5px", borderRadius: "4px" }}>
-                                      {lang === "en" ? "Sold out" : "Agotado"}
+                                      {lang === "en" ? "Sold out" : lang === "zh" ? "已售罄" : "Agotado"}
                                     </span>
                                   )}
                                 </div>
@@ -2387,7 +2409,7 @@ export default function DashboardPage() {
                               <span style={{ fontWeight: "900", color: "#0284C7", fontSize: "13.5px" }}>C$ {item.precio}</span>
                               <button type="button" onClick={() => handleStartEditPlato(item)} style={{ background: "rgba(2, 132, 199, 0.08)", border: "1px solid rgba(2, 132, 199, 0.2)", color: "#0284C7", padding: "4px 8px", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "800", display: "inline-flex", alignItems: "center", gap: "3px" }}>
                                 <Icon name="edit" size={11} color="#0284C7" />
-                                <span>{lang === "en" ? "Edit" : "Editar"}</span>
+                                <span>{lang === "en" ? "Edit" : lang === "zh" ? "编辑" : "Editar"}</span>
                               </button>
                               <button type="button" onClick={() => handleDeletePlato(item.id)} style={{ background: "rgba(239, 68, 68, 0.08)", border: "1px solid rgba(239, 68, 68, 0.2)", color: "#EF4444", padding: "4px 7px", borderRadius: "6px", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
                                 <Icon name="trash" size={12} color="#EF4444" />
@@ -2409,8 +2431,8 @@ export default function DashboardPage() {
                       <Icon name="calendar" size={20} color="#FFFFFF" />
                     </div>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Booking Log" : "Bitácora de Reservas"}</h3>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Manage incoming reservations from travelers" : "Gestiona las reservaciones recibidas de turistas"}</p>
+                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Booking Log" : lang === "zh" ? "预订记录" : "Bitácora de Reservas"}</h3>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Manage incoming reservations from travelers" : lang === "zh" ? "管理来自游客的在线预订" : "Gestiona las reservaciones recibidas de turistas"}</p>
                     </div>
                   </div>
 
@@ -2420,7 +2442,7 @@ export default function DashboardPage() {
                         <div style={{ display: "flex", justifyContent: "center", marginBottom: "6px" }}>
                           <Icon name="calendar" size={28} color="#7C3AED" />
                         </div>
-                        <p style={{ color: "#64748B", fontSize: "12.5px", margin: "6px 0 0 0", fontWeight: "600" }}>{lang === "en" ? "No bookings received yet." : "No se han recibido reservas en este momento."}</p>
+                        <p style={{ color: "#64748B", fontSize: "12.5px", margin: "6px 0 0 0", fontWeight: "600" }}>{lang === "en" ? "No bookings received yet." : lang === "zh" ? "当前暂未收到任何预订。" : "No se han recibido reservas en este momento."}</p>
                       </div>
                     ) : (
                       (reservas || []).map((res) => (
@@ -2428,7 +2450,7 @@ export default function DashboardPage() {
                           <div>
                             <div style={{ fontWeight: "800", fontSize: "13.5px", color: "#1E293B", display: "flex", alignItems: "center", gap: "6px" }}>
                               <Icon name="user" size={14} color="#7C3AED" />
-                              <span>{res.perfiles?.nombre_completo || (lang === "en" ? "Anonymous Traveler" : "Turista Anónimo")}</span>
+                              <span>{res.perfiles?.nombre_completo || (lang === "en" ? "Anonymous Traveler" : lang === "zh" ? "匿名游客" : "Turista Anónimo")}</span>
                             </div>
                             <div style={{ fontSize: "11.5px", color: "#64748B", marginTop: "3px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
                               <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
@@ -2437,7 +2459,7 @@ export default function DashboardPage() {
                               </span>
                               <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
                                 <Icon name="users" size={12} color="#64748B" />
-                                <span>{lang === "en" ? "Guests:" : "Personas:"} {res.num_personas || 1}</span>
+                                <span>{lang === "en" ? "Guests:" : lang === "zh" ? "人数：" : "Personas:"} {res.num_personas || 1}</span>
                               </span>
                             </div>
                             {res.notas && (
@@ -2473,8 +2495,8 @@ export default function DashboardPage() {
                       <div style={{ width: "20px", height: "20px", backgroundColor: "#FFFFFF", WebkitMaskImage: "url('/images/sombrero.svg')", WebkitMaskRepeat: "no-repeat", WebkitMaskSize: "contain", WebkitMaskPosition: "center", maskImage: "url('/images/sombrero.svg')", maskRepeat: "no-repeat", maskSize: "contain", maskPosition: "center" }} />
                     </div>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Customer Feedback" : "Opiniones y Reseñas de Clientes"}</h3>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Ratings and comments left by visitors" : "Lee y gestiona las opiniones compartidas por tus clientes"}</p>
+                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Customer Feedback" : lang === "zh" ? "顾客评价与反馈" : "Opiniones y Reseñas de Clientes"}</h3>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Ratings and comments left by visitors" : lang === "zh" ? "查阅和管理顾客留下的评分与评论" : "Lee y gestiona las opiniones compartidas por tus clientes"}</p>
                     </div>
                   </div>
 
@@ -2484,7 +2506,7 @@ export default function DashboardPage() {
                         <div style={{ display: "flex", justifyContent: "center", marginBottom: "6px" }}>
                           <Icon name="star" size={28} color="#D97706" />
                         </div>
-                        <p style={{ color: "#64748B", fontSize: "12.5px", margin: "6px 0 0 0", fontWeight: "600" }}>{lang === "en" ? "No customer reviews yet." : "Aún no hay opiniones o reseñas registradas para este negocio."}</p>
+                        <p style={{ color: "#64748B", fontSize: "12.5px", margin: "6px 0 0 0", fontWeight: "600" }}>{lang === "en" ? "No customer reviews yet." : lang === "zh" ? "该商户暂无任何评价或评论记录。" : "Aún no hay opiniones o reseñas registradas para este negocio."}</p>
                       </div>
                     ) : (
                       (resenas || []).map((rev) => (
@@ -2492,7 +2514,7 @@ export default function DashboardPage() {
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "3px" }}>
                             <span style={{ fontWeight: "800", fontSize: "13px", color: "#1E293B", display: "inline-flex", alignItems: "center", gap: "5px" }}>
                               <Icon name="user" size={13} color="#E11D48" />
-                              <span>{rev.nombre_usuario || (lang === "en" ? "Visitor" : "Visitante")}</span>
+                              <span>{rev.nombre_usuario || (lang === "en" ? "Visitor" : lang === "zh" ? "游客" : "Visitante")}</span>
                             </span>
                             <span style={{ color: "#D97706", fontWeight: "800", fontSize: "12.5px" }}>{"⭐".repeat(rev.estrellas || 5)} ({rev.estrellas})</span>
                           </div>
@@ -2541,7 +2563,7 @@ export default function DashboardPage() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(20, 109, 158, 0.1)", paddingBottom: "12px" }}>
                       <h4 style={{ margin: 0, fontSize: "17px", fontWeight: "850", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "8px" }}>
                         <Icon name="edit" size={18} color="#146D9E" />
-                        <span>{lang === "en" ? "Edit Dish / Service" : "Editar Platillo o Servicio"}</span>
+                        <span>{lang === "en" ? "Edit Dish / Service" : lang === "zh" ? "编辑菜品或服务" : "Editar Platillo o Servicio"}</span>
                       </h4>
                       <button
                         type="button"
@@ -2556,7 +2578,7 @@ export default function DashboardPage() {
                       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "12px" }}>
                         <div>
                           <label style={{ fontSize: "12px", fontWeight: "800", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
-                            {lang === "en" ? "Dish Name" : "Nombre del Platillo"}
+                            {lang === "en" ? "Dish Name" : lang === "zh" ? "菜品名称" : "Nombre del Platillo"}
                           </label>
                           <input
                             type="text"
@@ -2568,7 +2590,7 @@ export default function DashboardPage() {
                         </div>
                         <div>
                           <label style={{ fontSize: "12px", fontWeight: "800", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
-                            {lang === "en" ? "Price (C$)" : "Precio (C$)"}
+                            {lang === "en" ? "Price (C$)" : lang === "zh" ? "价格 (C$)" : "Precio (C$)"}
                           </label>
                           <input
                             type="number"
@@ -2583,13 +2605,13 @@ export default function DashboardPage() {
 
                       <div>
                         <label style={{ fontSize: "12px", fontWeight: "800", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
-                          {lang === "en" ? "Description" : "Descripción"}
+                          {lang === "en" ? "Description" : lang === "zh" ? "描述" : "Descripción"}
                         </label>
                         <textarea
                           rows="3"
                           value={editPlatoDesc}
                           onChange={(e) => setEditPlatoDesc(e.target.value)}
-                          placeholder={lang === "en" ? "Short description..." : "Descripción corta..."}
+                          placeholder={lang === "en" ? "Short description..." : lang === "zh" ? "简短描述..." : "Descripción corta..."}
                           style={{ ...styles.input, resize: "none" }}
                         />
                       </div>
@@ -2597,7 +2619,7 @@ export default function DashboardPage() {
                       {/* Foto del Platillo */}
                       <div>
                         <label style={{ fontSize: "12px", fontWeight: "800", color: "#1A1A2E", display: "block", marginBottom: "6px" }}>
-                          {lang === "en" ? "Dish Photo" : "Foto del Platillo"}
+                          {lang === "en" ? "Dish Photo" : lang === "zh" ? "菜品照片" : "Foto del Platillo"}
                         </label>
                         <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
                           {editPlatoFotoUrl ? (
@@ -2641,7 +2663,7 @@ export default function DashboardPage() {
                               color: "#146D9E"
                             }}
                           >
-                            {uploadingEditPlatoFoto ? "..." : (lang === "en" ? "📷 Change Photo" : "📷 Cambiar Foto")}
+                            {uploadingEditPlatoFoto ? "..." : (lang === "en" ? "📷 Change Photo" : lang === "zh" ? "📷 更换照片" : "📷 Cambiar Foto")}
                             <input type="file" accept="image/*" onChange={handleEditPlatoFotoUpload} style={{ display: "none" }} />
                           </label>
                         </div>
@@ -2651,12 +2673,12 @@ export default function DashboardPage() {
                       <div style={{ padding: "10px 14px", background: "#F8FAFC", borderRadius: "10px", border: "1px solid #E2E8F0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <div>
                           <div style={{ fontSize: "13px", fontWeight: "800", color: "#1A1A2E" }}>
-                            {lang === "en" ? "Item Availability" : "Disponibilidad del Platillo"}
+                            {lang === "en" ? "Item Availability" : lang === "zh" ? "菜品供应状态" : "Disponibilidad del Platillo"}
                           </div>
                           <div style={{ fontSize: "11.5px", color: "#64748B" }}>
                             {editPlatoDisponible
-                              ? (lang === "en" ? "Visible and available for order" : "Disponible para los clientes")
-                              : (lang === "en" ? "Marked as sold out / unavailable" : "Marcado como agotado / no disponible")}
+                              ? (lang === "en" ? "Visible and available for order" : lang === "zh" ? "对顾客可见且可下单" : "Disponible para los clientes")
+                              : (lang === "en" ? "Marked as sold out / unavailable" : lang === "zh" ? "标记为售罄 / 暂不供应" : "Marcado como agotado / no disponible")}
                           </div>
                         </div>
                         <label style={{ display: "flex", alignItems: "center", cursor: "pointer", gap: "8px" }}>
@@ -2667,7 +2689,7 @@ export default function DashboardPage() {
                             style={{ width: "18px", height: "18px", cursor: "pointer" }}
                           />
                           <span style={{ fontSize: "12.5px", fontWeight: "750", color: editPlatoDisponible ? "#16A34A" : "#EF4444" }}>
-                            {editPlatoDisponible ? (lang === "en" ? "Available" : "Disponible") : (lang === "en" ? "Sold Out" : "Agotado")}
+                            {editPlatoDisponible ? (lang === "en" ? "Available" : lang === "zh" ? "有货" : "Disponible") : (lang === "en" ? "Sold Out" : lang === "zh" ? "已售罄" : "Agotado")}
                           </span>
                         </label>
                       </div>
@@ -2679,7 +2701,7 @@ export default function DashboardPage() {
                           className="clay-btn-blue"
                           style={{ flex: 1, padding: "11px", fontSize: "13.5px", fontWeight: "800" }}
                         >
-                          {isSavingEditPlato ? "..." : (lang === "en" ? "Save Changes" : "Guardar Cambios")}
+                          {isSavingEditPlato ? "..." : (lang === "en" ? "Save Changes" : lang === "zh" ? "保存修改" : "Guardar Cambios")}
                         </button>
                         <button
                           type="button"
@@ -2695,7 +2717,7 @@ export default function DashboardPage() {
                             fontSize: "13.5px"
                           }}
                         >
-                          {lang === "en" ? "Cancel" : "Cancelar"}
+                          {lang === "en" ? "Cancel" : lang === "zh" ? "取消" : "Cancelar"}
                         </button>
                       </div>
                     </form>
@@ -2723,7 +2745,7 @@ export default function DashboardPage() {
           }} className="clay-modal animate-scale-up">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
               <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "850", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "8px" }}>
-                📋 {lang === "en" ? "Claim Verification Request" : "Solicitud de Verificación de Propiedad"}
+                📋 {lang === "en" ? "Claim Verification Request" : lang === "zh" ? "认领产权核验申请" : "Solicitud de Verificación de Propiedad"}
               </h3>
               <button onClick={() => setShowClaimModal(false)} style={{ background: "none", border: "none", fontSize: "20px", cursor: "pointer", color: "#9CA3AF" }}>
                 ✕
@@ -2733,16 +2755,18 @@ export default function DashboardPage() {
             <p style={{ fontSize: "13px", color: "#4A5568", lineHeight: "1.5", marginBottom: "20px" }}>
               {lang === "en" 
                 ? "Please provide your identification and owner proof details so that the Atlan Admin team can verify and approve your claim." 
+                : lang === "zh"
+                ? "为了保护商户真实性，Atlan 管理团队将在向您移交完整控制权之前核实您的产权证明文件。"
                 : "Para proteger la autenticidad de los negocios, la administración de Atlan verificará tus documentos de propiedad antes de darte el control total."}
             </p>
 
             <form noValidate onSubmit={handleConfirmSubmitClaim} style={{ display: "flex", flexDirection: "column", gap: "14px", overflowY: "auto", paddingRight: "4px", paddingBottom: "16px" }}>
               <div>
-                <label style={styles.label}>{lang === "en" ? "Owner / Applicant Full Name *" : "Nombre Completo del Propietario / Representante *"}</label>
+                <label style={styles.label}>{lang === "en" ? "Owner / Applicant Full Name *" : lang === "zh" ? "店主 / 申请人真实全名 *" : "Nombre Completo del Propietario / Representante *"}</label>
                 <input
                   type="text"
                   required
-                  placeholder={lang === "en" ? "Full Legal Name" : "Ej. Juan Carlos Pérez"}
+                  placeholder={lang === "en" ? "Full Legal Name" : lang === "zh" ? "法定全名" : "Ej. Juan Carlos Pérez"}
                   value={solicitanteNombre}
                   onChange={(e) => setSolicitanteNombre(e.target.value)}
                   style={styles.input}
@@ -2751,7 +2775,7 @@ export default function DashboardPage() {
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                 <div>
-                  <label style={styles.label}>{lang === "en" ? "ID / RUC Number *" : "N° Cédula / Identificación *"}</label>
+                  <label style={styles.label}>{lang === "en" ? "ID / RUC Number *" : lang === "zh" ? "身份证 / 纳税识别号 (RUC) *" : "N° Cédula / Identificación *"}</label>
                   <input
                     type="text"
                     required
@@ -2762,7 +2786,7 @@ export default function DashboardPage() {
                   />
                 </div>
                 <div>
-                  <label style={styles.label}>{lang === "en" ? "Contact Phone / WhatsApp *" : "Teléfono de Contacto *"}</label>
+                  <label style={styles.label}>{lang === "en" ? "Contact Phone / WhatsApp *" : lang === "zh" ? "联系电话 / WhatsApp *" : "Teléfono de Contacto *"}</label>
                   <input
                     type="text"
                     required
@@ -2776,15 +2800,15 @@ export default function DashboardPage() {
 
               {/* Adjuntar Cédula */}
               <div>
-                <label style={styles.label}>{lang === "en" ? "ID Document (Photo / PDF) *" : "Foto o PDF de Cédula de Identidad *"}</label>
+                <label style={styles.label}>{lang === "en" ? "ID Document (Photo / PDF) *" : lang === "zh" ? "身份证件 (照片 / PDF) *" : "Foto o PDF de Cédula de Identidad *"}</label>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
                   <label className="clay-btn-blue" style={{ padding: "8px 14px", fontSize: "12px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}>
-                    {uploadingCedulaDoc ? "..." : (documentoCedulaUrl ? "✅ Cédula Adjuntada" : "📄 Adjuntar Cédula")}
+                    {uploadingCedulaDoc ? "..." : (documentoCedulaUrl ? (lang === "en" ? "✅ ID Attached" : lang === "zh" ? "✅ 证件已附加" : "✅ Cédula Adjuntada") : (lang === "en" ? "📄 Attach ID" : lang === "zh" ? "📄 上传证件" : "📄 Adjuntar Cédula"))}
                     <input type="file" accept="image/*,.pdf" onChange={(e) => handleDocUpload(e, "cedula")} style={{ display: "none" }} />
                   </label>
                   {documentoCedulaUrl && (
                     <a href={documentoCedulaUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "#146D9E", fontWeight: "700" }}>
-                      🔗 Ver Documento
+                      🔗 {lang === "en" ? "View Document" : lang === "zh" ? "查看文件" : "Ver Documento"}
                     </a>
                   )}
                 </div>
@@ -2792,25 +2816,25 @@ export default function DashboardPage() {
 
               {/* Adjuntar Comprobante de Propiedad */}
               <div>
-                <label style={styles.label}>{lang === "en" ? "Business Permit / Property Proof (Optional)" : "Comprobante de Propiedad / Licencia Comercial (Opcional)"}</label>
+                <label style={styles.label}>{lang === "en" ? "Business Permit / Property Proof (Optional)" : lang === "zh" ? "营业执照 / 产权证明 (选填)" : "Comprobante de Propiedad / Licencia Comercial (Opcional)"}</label>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
                   <label className="clay-btn-gold" style={{ padding: "8px 14px", fontSize: "12px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}>
-                    {uploadingPropiedadDoc ? "..." : (documentoPropiedadUrl ? "✅ Comprobante Adjuntado" : "📄 Adjuntar Comprobante")}
+                    {uploadingPropiedadDoc ? "..." : (documentoPropiedadUrl ? (lang === "en" ? "✅ Proof Attached" : lang === "zh" ? "✅ 凭证已附加" : "✅ Comprobante Adjuntado") : (lang === "en" ? "📄 Attach Proof" : lang === "zh" ? "📄 上传证明" : "📄 Adjuntar Comprobante"))}
                     <input type="file" accept="image/*,.pdf" onChange={(e) => handleDocUpload(e, "propiedad")} style={{ display: "none" }} />
                   </label>
                   {documentoPropiedadUrl && (
                     <a href={documentoPropiedadUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "#B8960E", fontWeight: "700" }}>
-                      🔗 Ver Documento
+                      🔗 {lang === "en" ? "View Document" : lang === "zh" ? "查看文件" : "Ver Documento"}
                     </a>
                   )}
                 </div>
               </div>
 
               <div>
-                <label style={styles.label}>{lang === "en" ? "Additional Notes / Observations" : "Notas Adicionales u Observaciones"}</label>
+                <label style={styles.label}>{lang === "en" ? "Additional Notes / Observations" : lang === "zh" ? "附加说明 / 备注" : "Notas Adicionales u Observaciones"}</label>
                 <textarea
                   rows="2"
-                  placeholder={lang === "en" ? "Details that help verify ownership..." : "Detalles o referencias que ayuden a verificar la propiedad..."}
+                  placeholder={lang === "en" ? "Details that help verify ownership..." : lang === "zh" ? "有助于核实产权所有者的详细信息..." : "Detalles o referencias que ayuden a verificar la propiedad..."}
                   value={solicitudNotas}
                   onChange={(e) => setSolicitudNotas(e.target.value)}
                   style={{ ...styles.input, resize: "none" }}
@@ -2823,7 +2847,7 @@ export default function DashboardPage() {
                   onClick={() => setShowClaimModal(false)}
                   style={{ padding: "10px 18px", background: "none", border: "1px solid rgba(20, 109, 158, 0.15)", borderRadius: "10px", fontSize: "13px", fontWeight: "700", cursor: "pointer", color: "#4A5568" }}
                 >
-                  {lang === "en" ? "Cancel" : "Cancelar"}
+                  {lang === "en" ? "Cancel" : lang === "zh" ? "取消" : "Cancelar"}
                 </button>
                 <button
                   type="submit"
@@ -2831,7 +2855,7 @@ export default function DashboardPage() {
                   className="clay-btn-green"
                   style={{ padding: "10px 22px", fontSize: "13px" }}
                 >
-                  {isClaiming ? "..." : `🚀 ${lang === "en" ? "Submit Verification Claim" : "Enviar Solicitud de Verificación"}`}
+                  {isClaiming ? "..." : `🚀 ${lang === "en" ? "Submit Verification Claim" : lang === "zh" ? "提交认领核验申请" : "Enviar Solicitud de Verificación"}`}
                 </button>
               </div>
             </form>
@@ -2863,12 +2887,14 @@ export default function DashboardPage() {
             </div>
 
             <h3 style={{ margin: "0 0 10px", fontSize: "20px", fontWeight: "850", color: "#1A1A2E" }}>
-              {lang === "en" ? "Cancel Claim Request?" : "¿Cancelar Solicitud de Reclamo?"}
+              {lang === "en" ? "Cancel Claim Request?" : lang === "zh" ? "确认取消认领申请？" : "¿Cancelar Solicitud de Reclamo?"}
             </h3>
 
             <p style={{ fontSize: "13.5px", color: "#4A5568", lineHeight: "1.5", margin: "0 0 24px" }}>
               {lang === "en" 
                 ? "This will release the location on the map for other users and permanently remove your pending verification submission." 
+                : lang === "zh"
+                ? "此操作将在地图上为社区释放该地点，并永久删除您提交给管理团队的核验文件。"
                 : "Esta acción liberará el local en el mapa para la comunidad y eliminará la documentación enviada a la administración."}
             </p>
 
@@ -2882,7 +2908,7 @@ export default function DashboardPage() {
                   fontSize: "13.5px", fontWeight: "750", cursor: "pointer", color: "#4A5568"
                 }}
               >
-                {lang === "en" ? "Go Back" : "Regresar / No Cancelar"}
+                {lang === "en" ? "Go Back" : lang === "zh" ? "返回 / 暂不取消" : "Regresar / No Cancelar"}
               </button>
               <button
                 type="button"
@@ -2899,7 +2925,7 @@ export default function DashboardPage() {
                   boxShadow: "0 6px 16px rgba(239, 68, 68, 0.35)"
                 }}
               >
-                {isResubmitting ? "..." : `🗑️ ${lang === "en" ? "Yes, Cancel Request" : "Sí, Cancelar Solicitud"}`}
+                {isResubmitting ? "..." : `🗑️ ${lang === "en" ? "Yes, Cancel Request" : lang === "zh" ? "是的，取消申请" : "Sí, Cancelar Solicitud"}`}
               </button>
             </div>
           </div>
@@ -2922,7 +2948,7 @@ export default function DashboardPage() {
           }} className="clay-modal animate-scale-up">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "850", color: "#1A1A2E" }}>
-                🔍 {lang === "en" ? "Search Unclaimed Business Point" : "Buscar Punto Turístico Libre"}
+                🔍 {lang === "en" ? "Search Unclaimed Business Point" : lang === "zh" ? "查找待认领商户点" : "Buscar Punto Turístico Libre"}
               </h3>
               <button
                 type="button"
@@ -2936,12 +2962,14 @@ export default function DashboardPage() {
             <p style={{ margin: 0, fontSize: "13px", color: "#4A5568" }}>
               {lang === "en"
                 ? "Enter the business name or category to find points added by tourists."
+                : lang === "zh"
+                ? "输入商户名称或分类，查找游客在地图上添加的点位："
                 : "Ingresa el nombre o categoría del negocio para encontrar puntos agregados por turistas en el mapa:"}
             </p>
 
             <input
               type="text"
-              placeholder={lang === "en" ? "🔍 Type business name or category..." : "🔍 Buscar por nombre o categoría..."}
+              placeholder={lang === "en" ? "🔍 Type business name or category..." : lang === "zh" ? "🔍 按名称或分类搜索..." : "🔍 Buscar por nombre o categoría..."}
               value={claimSearchTerm}
               onChange={(e) => {
                 setClaimSearchTerm(e.target.value);
@@ -2981,9 +3009,9 @@ export default function DashboardPage() {
               return (
                 <>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", color: "#4A5568", fontWeight: "700", padding: "0 4px" }}>
-                    <span>🏷️ {filtered.length} {lang === "en" ? "unclaimed points found" : "puntos libres encontrados"}</span>
+                    <span>🏷️ {filtered.length} {lang === "en" ? "unclaimed points found" : lang === "zh" ? "个待认领地点" : "puntos libres encontrados"}</span>
                     {totalPages > 1 && (
-                      <span>{lang === "en" ? "Page" : "Pág"} {claimSearchPage} {lang === "en" ? "of" : "de"} {totalPages}</span>
+                      <span>{lang === "en" ? "Page" : lang === "zh" ? "第" : "Pág"} {claimSearchPage} {lang === "en" ? "of" : lang === "zh" ? "/" : "de"} {totalPages}{lang === "zh" ? "页" : ""}</span>
                     )}
                   </div>
 
@@ -3021,14 +3049,14 @@ export default function DashboardPage() {
                           className="clay-btn-green"
                           style={{ padding: "6px 14px", fontSize: "12px", borderRadius: "10px" }}
                         >
-                          Reclamar
+                          {lang === "en" ? "Claim" : lang === "zh" ? "认领" : "Reclamar"}
                         </button>
                       </div>
                     ))}
 
                     {filtered.length === 0 && (
                       <div style={{ textAlign: "center", padding: "20px 0", color: "#94A3B8", fontSize: "13px" }}>
-                        {lang === "en" ? "No unclaimed points match your search." : "No se encontraron puntos sin reclamar con ese nombre."}
+                        {lang === "en" ? "No unclaimed points match your search." : lang === "zh" ? "未找到符合搜索条件的待认领地点。" : "No se encontraron puntos sin reclamar con ese nombre."}
                       </div>
                     )}
                   </div>
@@ -3042,7 +3070,7 @@ export default function DashboardPage() {
                         className="clay-btn-blue"
                         style={{ padding: "5px 12px", fontSize: "11.5px", borderRadius: "8px", opacity: claimSearchPage === 1 ? 0.5 : 1 }}
                       >
-                        ◀ {lang === "en" ? "Prev" : "Ant"}
+                        ◀ {lang === "en" ? "Prev" : lang === "zh" ? "上一页" : "Ant"}
                       </button>
                       <span style={{ fontSize: "12px", fontWeight: "800", color: "#1A1A2E" }}>
                         {claimSearchPage} / {totalPages}
@@ -3053,7 +3081,7 @@ export default function DashboardPage() {
                         className="clay-btn-blue"
                         style={{ padding: "5px 12px", fontSize: "11.5px", borderRadius: "8px", opacity: claimSearchPage === totalPages ? 0.5 : 1 }}
                       >
-                        {lang === "en" ? "Next" : "Sig"} ▶
+                        {lang === "en" ? "Next" : lang === "zh" ? "下一页" : "Sig"} ▶
                       </button>
                     </div>
                   )}

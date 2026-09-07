@@ -27,6 +27,12 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
   const [followingMap, setFollowingMap] = useState({});
   const [followLoadingId, setFollowLoadingId] = useState(null);
 
+  const tr = (es, en, zh) => {
+    if (lang === "zh") return zh !== undefined ? zh : en !== undefined ? en : es;
+    if (lang === "en") return en !== undefined ? en : es;
+    return es;
+  };
+
   // Fetch followers
   const fetchFollowers = useCallback(async () => {
     setLoadingFollowers(true);
@@ -63,46 +69,74 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
     }
   }, [userId]);
 
-  // Check which users I (current session) am following
-  const checkMyFollowing = useCallback(async () => {
-    if (!session?.user) return;
-    try {
-      const { data } = await supabase
-        .from("seguimientos")
-        .select("seguido_id")
-        .eq("seguidor_id", session.user.id);
-      const map = {};
-      (data || []).forEach(d => { map[d.seguido_id] = true; });
-      setFollowingMap(map);
-    } catch (err) {
-      console.error("Error checking following:", err);
-    }
-  }, [session]);
-
+  // Initial loads
   useEffect(() => {
     fetchFollowers();
     fetchFollowing();
-    checkMyFollowing();
-  }, [fetchFollowers, fetchFollowing, checkMyFollowing]);
+  }, [fetchFollowers, fetchFollowing]);
 
+  // Check if session user is following users in the list
+  useEffect(() => {
+    if (!session?.user?.id) return;
+
+    const allUserIds = Array.from(new Set([
+      ...followers.map(u => u.id),
+      ...following.map(u => u.id)
+    ])).filter(id => id !== session.user.id);
+
+    if (allUserIds.length === 0) return;
+
+    const checkFollowing = async () => {
+      try {
+        const { data } = await supabase
+          .from("seguimientos")
+          .select("seguido_id")
+          .eq("seguidor_id", session.user.id)
+          .in("seguido_id", allUserIds);
+
+        const map = {};
+        (data || []).forEach(row => {
+          map[row.seguido_id] = true;
+        });
+        setFollowingMap(map);
+      } catch (err) {
+        console.error("Error checking following map:", err);
+      }
+    };
+
+    checkFollowing();
+  }, [session?.user?.id, followers, following]);
+
+  // Follow / Unfollow toggle
   const handleFollow = async (targetId) => {
-    if (!session?.user) return;
+    if (!session?.user?.id) return;
     setFollowLoadingId(targetId);
+
+    const isCurrentlyFollowing = !!followingMap[targetId];
+
     try {
-      if (followingMap[targetId]) {
-        await supabase.from("seguimientos").delete()
+      if (isCurrentlyFollowing) {
+        // Unfollow
+        await supabase
+          .from("seguimientos")
+          .delete()
           .eq("seguidor_id", session.user.id)
           .eq("seguido_id", targetId);
-        setFollowingMap(prev => { const n = { ...prev }; delete n[targetId]; return n; });
+
+        setFollowingMap(prev => ({ ...prev, [targetId]: false }));
       } else {
-        await supabase.from("seguimientos").insert({
-          seguidor_id: session.user.id,
-          seguido_id: targetId,
-        });
+        // Follow
+        await supabase
+          .from("seguimientos")
+          .insert({
+            seguidor_id: session.user.id,
+            seguido_id: targetId
+          });
+
         setFollowingMap(prev => ({ ...prev, [targetId]: true }));
       }
     } catch (err) {
-      console.error("Follow error:", err);
+      console.error("Error toggling follow:", err);
     } finally {
       setFollowLoadingId(null);
     }
@@ -114,7 +148,7 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
         <div style={{ padding: "48px 24px", textAlign: "center" }}>
           <div style={{ width: "32px", height: "32px", border: "3px solid rgba(20, 109, 158, 0.12)", borderTopColor: "#146D9E", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }} />
           <p style={{ margin: "12px 0 0", fontSize: "13px", color: "var(--atlan-text-muted)", fontWeight: "600" }}>
-            {lang === "en" ? "Loading connections..." : "Cargando conexiones..."}
+            {tr("Cargando conexiones...", "Loading connections...", "正在加载关注关系...")}
           </p>
         </div>
       );
@@ -128,13 +162,13 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
           </div>
           <h4 style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
             {activeTab === "followers"
-              ? (lang === "en" ? "No followers yet" : "Sin seguidores aún")
-              : (lang === "en" ? "Not following anyone yet" : "No sigue a nadie aún")}
+              ? tr("Sin seguidores aún", "No followers yet", "暂无粉丝")
+              : tr("No sigue a nadie aún", "Not following anyone yet", "暂未关注任何人")}
           </h4>
           <p style={{ margin: 0, fontSize: "13px", color: "var(--atlan-text-muted)", maxWidth: "260px" }}>
             {activeTab === "followers"
-              ? (lang === "en" ? "When someone follows this profile, they will show up here." : "Cuando alguien siga a este perfil, aparecerá aquí.")
-              : (lang === "en" ? "Profiles followed by this user will appear here." : "Los perfiles que siga este usuario aparecerán aquí.")}
+              ? tr("Cuando alguien siga a este perfil, aparecerá aquí.", "When someone follows this profile, they will show up here.", "当有人关注此用户时，将显示在这里。")
+              : tr("Los perfiles que siga este usuario aparecerán aquí.", "Profiles followed by this user will appear here.", "此用户关注的人将显示在这里。")}
           </p>
         </div>
       );
@@ -161,12 +195,12 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
                   </div>
                   <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)", display: "flex", alignItems: "center", gap: "4px", marginTop: "2px" }}>
                     {user.rol === "dueno"
-                      ? <span style={styles.badgeDueno}><Icon name="building" size={10} /> Propietario</span>
+                      ? <span style={styles.badgeDueno}><Icon name="building" size={10} /> {tr("Propietario", "Owner", "店主")}</span>
                       : user.rol === "admin"
                       ? <span style={styles.badgeAdmin}><Icon name="zap" size={10} /> Admin</span>
                       : (user.es_premium || user.suscripcion_activa || user.rol === "turista_deacachimba")
-                      ? <span style={styles.badgePremium}><Icon name="star" size={10} /> Turista Deacachimba</span>
-                      : <span style={styles.badgeTurista}><Icon name="luggage" size={10} /> Turista Tuani</span>}
+                      ? <span style={styles.badgePremium}><Icon name="star" size={10} /> {tr("Turista Deacachimba", "Premium Tourist", "尊享游客")}</span>
+                      : <span style={styles.badgeTurista}><Icon name="luggage" size={10} /> {tr("Turista Tuani", "Cool Tourist", "酷游达人")}</span>}
                   </div>
                 </div>
               </Link>
@@ -192,8 +226,8 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
                   }}
                 >
                   {amFollowing
-                    ? (lang === "en" ? "Following" : "✓ Siguiendo")
-                    : (lang === "en" ? "Follow" : "+ Seguir")}
+                    ? tr("✓ Siguiendo", "Following", "✓ 已关注")
+                    : tr("+ Seguir", "+ Follow", "+ 关注")}
                 </button>
               )}
             </div>
@@ -211,7 +245,7 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <img src="/images/comunidad.svg" alt="" style={{ width: "22px", height: "22px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
             <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.2px" }}>
-              {lang === "en" ? "Connections" : "Conexiones"}
+              {tr("Conexiones", "Connections", "关注与粉丝")}
             </h3>
           </div>
           <button onClick={onClose} style={styles.closeBtn}>✕</button>
@@ -242,7 +276,7 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
                   transition: "all 0.2s"
                 }}
               />
-              <span>{lang === "en" ? "Followers" : "Seguidores"}</span>
+              <span>{tr("Seguidores", "Followers", "粉丝")}</span>
               <span style={{
                 ...styles.tabCount,
                 background: activeTab === "followers" ? "rgba(20, 109, 158, 0.12)" : "rgba(100, 116, 139, 0.12)",
@@ -274,7 +308,7 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
                   transition: "all 0.2s"
                 }}
               />
-              <span>{lang === "en" ? "Following" : "Siguiendo"}</span>
+              <span>{tr("Siguiendo", "Following", "已关注")}</span>
               <span style={{
                 ...styles.tabCount,
                 background: activeTab === "following" ? "rgba(20, 109, 158, 0.12)" : "rgba(100, 116, 139, 0.12)",

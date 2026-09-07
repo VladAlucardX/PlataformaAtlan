@@ -206,9 +206,11 @@ export default function MapaTuristico() {
     if (!userSession?.user) {
       showNotification(
         'warning',
-        'Inicio de Sesión Requerido 🔒',
+        lang === 'en' ? 'Sign In Required 🔒' : lang === 'zh' ? '需要登录 🔒' : 'Inicio de Sesión Requerido 🔒',
         lang === 'en' 
           ? 'Please log in as a tourist to save your visits and level up in department rankings!' 
+          : lang === 'zh'
+          ? '请以游客身份登录以记录您的访问并在省份排行榜中升级！'
           : '¡Inicia sesión como turista para guardar tus visitas y subir en el ranking por departamentos!'
       );
       setTimeout(() => router.push('/login'), 1800);
@@ -243,12 +245,12 @@ export default function MapaTuristico() {
       setShowVisitPrompt(false);
       showNotification(
         'success',
-        '¡Visita Registrada con Éxito! 🏆',
-        `Has sumado +1 visita en tu pasaporte a ${visitPromptData?.puntoNombre || 'este destino'}.`
+        lang === 'en' ? 'Visit Recorded Successfully! 🏆' : lang === 'zh' ? '成功记录打卡！ 🏆' : '¡Visita Registrada con Éxito! 🏆',
+        lang === 'en' ? `You added +1 visit in your passport to ${visitPromptData?.puntoNombre || 'this destination'}.` : lang === 'zh' ? `您的护照已增加打卡：${visitPromptData?.puntoNombre || '此目的地'}。` : `Has sumado +1 visita en tu pasaporte a ${visitPromptData?.puntoNombre || 'este destino'}.`
       );
     } catch (err) {
       console.error("Error registrando visita:", err);
-      showNotification('error', 'Error al Registrar', 'No se pudo guardar la visita.');
+      showNotification('error', lang === 'en' ? 'Registration Error' : lang === 'zh' ? '登记失败' : 'Error al Registrar', lang === 'en' ? 'Could not save the visit.' : lang === 'zh' ? '无法保存打卡记录。' : 'No se pudo guardar la visita.');
     } finally {
       setIsSubmittingVisit(false);
     }
@@ -349,7 +351,7 @@ export default function MapaTuristico() {
           <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255, 215, 0, 0.15); border-bottom: 1px solid rgba(255, 215, 0, 0.3);">
             <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13.5px; color: #FFD700;">
               <span>🧭</span>
-              <span>${lang === 'en' ? 'Plan Route (A ➔ B)' : 'Planificar Ruta (A ➔ B)'}</span>
+              <span>${lang === 'en' ? 'Plan Route (A ➔ B)' : lang === 'zh' ? '规划路线 (A ➔ B)' : 'Planificar Ruta (A ➔ B)'}</span>
             </div>
             <button id="close-directions-popup-btn" type="button" style="background: rgba(255, 255, 255, 0.2); border: none; color: #FFFFFF; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
               ✕
@@ -370,6 +372,8 @@ export default function MapaTuristico() {
       const profileLabels = directionsPanel.querySelectorAll('.mapbox-directions-profile label');
       const translations = lang === 'en'
         ? { 'Traffic': 'Traffic', 'Driving': 'Driving', 'Walking': 'Walking', 'Cycling': 'Cycling' }
+        : lang === 'zh'
+        ? { 'Traffic': '实时路况', 'Driving': '驾车', 'Walking': '步行', 'Cycling': '骑行' }
         : { 'Traffic': 'Tráfico', 'Driving': 'Auto', 'Walking': 'A Pie', 'Cycling': 'Bici' };
       profileLabels.forEach((label) => {
         const text = label.textContent.trim();
@@ -383,10 +387,10 @@ export default function MapaTuristico() {
       const destInput = directionsPanel.querySelector('.mapbox-directions-destination input');
 
       if (originInput) {
-        originInput.setAttribute('placeholder', lang === 'en' ? 'Current Location' : 'Ubicación actual');
+        originInput.setAttribute('placeholder', lang === 'en' ? 'Current Location' : lang === 'zh' ? '当前位置' : 'Ubicación actual');
       }
       if (destInput) {
-        destInput.setAttribute('placeholder', lang === 'en' ? 'Search destination…' : 'Buscar destino…');
+        destInput.setAttribute('placeholder', lang === 'en' ? 'Search destination…' : lang === 'zh' ? '搜索目的地…' : 'Buscar destino…');
       }
 
       if (showDirectionsPopup) {
@@ -403,7 +407,7 @@ export default function MapaTuristico() {
                 setTimeout(() => {
                   const oInput = directionsPanel.querySelector('.mapbox-directions-origin input');
                   if (oInput && oInput.value && oInput.value.match(/^-?\d/)) {
-                    oInput.value = lang === 'en' ? 'Current Location' : 'Ubicación actual';
+                    oInput.value = lang === 'en' ? 'Current Location' : lang === 'zh' ? '当前位置' : 'Ubicación actual';
                   }
                 }, 300);
               }
@@ -778,6 +782,8 @@ export default function MapaTuristico() {
       if (!verifResult) {
         setReviewErrorMsg(lang === 'en'
           ? 'Inappropriate language detected. Please review your comment.'
+          : lang === 'zh'
+          ? '检测到不当用语，请修改您的评价。'
           : 'Contenido inapropiado detectado (palabras prohibidas). Por favor modifique su comentario.');
         setIsSubmittingReview(false);
         return;
@@ -788,7 +794,7 @@ export default function MapaTuristico() {
         .insert([{
           punto_id: selectedPoint.id,
           negocio_id: selectedPoint.negocio_id || null,
-          autor_nombre: newReviewNombre || (lang === 'en' ? 'Anonymous' : 'Anónimo'),
+          autor_nombre: newReviewNombre || (lang === 'en' ? 'Anonymous' : lang === 'zh' ? '匿名用户' : 'Anónimo'),
           autor_id: userSession?.user?.id || null,
           estrellas: newReviewEstrellas,
           comentario: newReviewComment,
@@ -809,7 +815,7 @@ export default function MapaTuristico() {
 
     } catch (err) {
       console.error("Error al reseñar:", err);
-      setReviewErrorMsg("Error al enviar la reseña.");
+      setReviewErrorMsg(lang === 'en' ? "Error submitting review." : lang === 'zh' ? "提交评价失败。" : "Error al enviar la reseña.");
     } finally {
       setIsSubmittingReview(false);
     }
@@ -826,6 +832,8 @@ export default function MapaTuristico() {
     if (!isUserInCA) {
       alert(lang === 'en'
         ? 'You are currently outside Central America. Plan your trip and visit us to use live GPS navigation!'
+        : lang === 'zh'
+        ? '您当前不在中美洲范围内。规划好行程并欢迎光临以使用实时GPS导航！'
         : 'Te encuentras fuera de Centroamérica. ¡Planifica tu viaje y visítanos para usar la navegación GPS en vivo!');
       return;
     }
@@ -907,7 +915,7 @@ export default function MapaTuristico() {
   };
 
   const formatDurationDisplay = (seconds) => {
-    if (seconds < 60) return lang === 'en' ? '< 1 min' : '< 1 min';
+    if (seconds < 60) return lang === 'en' ? '< 1 min' : lang === 'zh' ? '< 1分钟' : '< 1 min';
     const mins = Math.round(seconds / 60);
     if (mins < 60) return `${mins} min`;
     const hrs = Math.floor(mins / 60);
@@ -1008,7 +1016,7 @@ export default function MapaTuristico() {
     setTimeout(() => {
       try {
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = lang === 'en' ? 'en-US' : 'es-ES';
+        utterance.lang = lang === 'en' ? 'en-US' : lang === 'zh' ? 'zh-CN' : 'es-ES';
         window.speechSynthesis.speak(utterance);
       } catch (err) {
         console.error('[Atlan] speakInstruction exception:', err);
@@ -1180,10 +1188,10 @@ export default function MapaTuristico() {
         let statusColor = '';
 
         if (punto.estado === 'en_verificacion') {
-          statusText = lang === 'en' ? 'Pending Confirmation' : 'Pendiente de Confirmar';
+          statusText = lang === 'en' ? 'Pending Confirmation' : lang === 'zh' ? '待审核确认' : 'Pendiente de Confirmar';
           statusColor = '#f97316'; // Naranja
         } else if (punto.estado === 'aprobado') {
-          statusText = lang === 'en' ? 'Confirmed' : 'Confirmado';
+          statusText = lang === 'en' ? 'Confirmed' : lang === 'zh' ? '已确认' : 'Confirmado';
           statusColor = '#10b981'; // Verde
         } else {
           statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
@@ -1212,7 +1220,7 @@ export default function MapaTuristico() {
                     </svg>
                   </div>
                   <span style="font-size:10.5px; font-weight:850; color:#FFD700; letter-spacing:0.5px; text-transform:uppercase; background:rgba(255,215,0,0.15); padding:2px 10px; border-radius:8px; border:0.5px solid rgba(255,215,0,0.4);">
-                    ${lang === 'en' ? 'Photos Coming Soon' : 'PRÓXIMAMENTE'}
+                    ${lang === 'en' ? 'Photos Coming Soon' : lang === 'zh' ? '照片即将上线' : 'PRÓXIMAMENTE'}
                   </span>
                 </div>
               `}
@@ -1270,8 +1278,8 @@ export default function MapaTuristico() {
                   puntoServs.has_reservas === true
                 );
                 const btnLabel = puntoCanBook 
-                  ? (lang === 'en' ? 'Details & Booking' : 'Detalles y Reservas')
-                  : (lang === 'en' ? 'View Details' : 'Ver Detalles');
+                  ? (lang === 'en' ? 'Details & Booking' : lang === 'zh' ? '详情与预订' : 'Detalles y Reservas')
+                  : (lang === 'en' ? 'View Details' : lang === 'zh' ? '查看详情' : 'Ver Detalles');
                 return `
                   <button id="${btnInfoId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:10px 14px; background:rgba(255,255,255,0.12); color:#FFFFFF; border:1px solid rgba(255,255,255,0.25); border-radius:12px; font-weight:800; font-size:12px; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
                     <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
@@ -1355,6 +1363,8 @@ export default function MapaTuristico() {
               if (!isUserInCA) {
                 alert(lang === 'en'
                   ? 'You are currently outside Central America. Plan your trip and visit us to use live GPS navigation!'
+                  : lang === 'zh'
+                  ? '您当前不在中美洲范围内。规划好行程并欢迎光临以使用实时GPS导航！'
                   : 'Te encuentras fuera de Centroamérica. ¡Planifica tu viaje y visítanos para usar la navegación GPS en vivo!');
                 return; // Detener navegación intercontinental
               }
@@ -1565,7 +1575,7 @@ export default function MapaTuristico() {
 
       if (distALaRuta > 65 && (ahora - lastRecalculateTimeRef.current) > 12000) {
         lastRecalculateTimeRef.current = ahora;
-        speakInstruction(lang === 'en' ? 'Recalculating route' : 'Recalculando ruta', true);
+        speakInstruction(lang === 'en' ? 'Recalculating route' : lang === 'zh' ? '正在重新规划路线' : 'Recalculando ruta', true);
         
         if (directionsRef.current && destinationRef.current) {
           directionsRef.current.setOrigin([longitude, latitude]);
@@ -1804,10 +1814,12 @@ export default function MapaTuristico() {
   const formatDistance = (meters) => {
     if (meters >= 1000) {
       const km = (meters / 1000).toFixed(1);
-      return km.endsWith('.0') ? `${parseInt(km)} ${lang === 'en' ? 'kilometers' : 'kilómetros'}` : `${km} ${lang === 'en' ? 'kilometers' : 'kilómetros'}`;
+      return km.endsWith('.0') 
+        ? `${parseInt(km)} ${lang === 'en' ? 'kilometers' : lang === 'zh' ? '公里' : 'kilómetros'}` 
+        : `${km} ${lang === 'en' ? 'kilometers' : lang === 'zh' ? '公里' : 'kilómetros'}`;
     }
     const rounded = Math.round(meters / 50) * 50;
-    return `${Math.max(50, rounded)} ${lang === 'en' ? 'meters' : 'metros'}`;
+    return `${Math.max(50, rounded)} ${lang === 'en' ? 'meters' : lang === 'zh' ? '米' : 'metros'}`;
   };
 
   const checkDistanceAnnouncements = (currentLng, currentLat) => {
@@ -1855,7 +1867,7 @@ export default function MapaTuristico() {
     });
     if (dist < 300 && !next.announcedClose) {
       next.announcedClose = true;
-      const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
+      const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : lang === 'zh' ? `${formatDistance(dist)}后，${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
       speakInstruction(msg, true);
       lastAnnouncementTimeRef.current = now;
       return;
@@ -1863,7 +1875,7 @@ export default function MapaTuristico() {
 
     if (dist < 600 && !next.announcedMid) {
       next.announcedMid = true;
-      const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
+      const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : lang === 'zh' ? `${formatDistance(dist)}后，${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
       speakInstruction(msg, true);
       lastAnnouncementTimeRef.current = now;
       return;
@@ -1871,14 +1883,14 @@ export default function MapaTuristico() {
 
     if (dist < 2000 && !next.announcedFar) {
       next.announcedFar = true;
-      const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
+      const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : lang === 'zh' ? `${formatDistance(dist)}后，${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
       speakInstruction(msg);
       lastAnnouncementTimeRef.current = now;
       return;
     }
 
     if (silenceSec >= 15 && dist > 500 && dist < 5000) {
-      const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
+      const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : lang === 'zh' ? `${formatDistance(dist)}后，${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
       speakInstruction(msg);
       lastAnnouncementTimeRef.current = now;
     }
@@ -1887,7 +1899,7 @@ export default function MapaTuristico() {
   const fetchRouteCoords = async (origin, destination) => {
     const [oLng, oLat] = origin;
     const [dLng, dLat] = destination;
-    const directionsLang = lang === 'en' ? 'en' : 'es';
+    const directionsLang = lang === 'en' ? 'en' : lang === 'zh' ? 'zh' : 'es';
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&steps=true&language=${directionsLang}&access_token=${mapboxgl.accessToken}`;
     const res = await fetch(url);
     const data = await res.json();
@@ -1902,7 +1914,7 @@ export default function MapaTuristico() {
         distance: route.distance,
         duration: route.duration,
         eta: calculateETA(route.duration),
-        destinationName: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : 'Destino')
+        destinationName: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : lang === 'zh' ? '目的地' : 'Destino')
       });
 
       return coords;
@@ -2004,7 +2016,7 @@ export default function MapaTuristico() {
   // Activar modo agregar punto
   const activarLevantarPunto = () => {
     if (!userSession) {
-      alert(lang === 'en' ? 'Please log in to add points to the map.' : 'Por favor, inicia sesión para levantar un punto en el mapa.');
+      alert(lang === 'en' ? 'Please log in to add points to the map.' : lang === 'zh' ? '请登录以在地图上添加地点。' : 'Por favor, inicia sesión para levantar un punto en el mapa.');
       window.location.href = '/login';
       return;
     }
@@ -2033,7 +2045,7 @@ export default function MapaTuristico() {
       const { error } = await supabase.from('puntos').insert([{
         nombre: newPointNombre,
         descripcion: newPointDesc,
-        nombre_creador: userSession?.user?.user_metadata?.nombre_completo || newPointCreador || 'Turista Registrado',
+        nombre_creador: userSession?.user?.user_metadata?.nombre_completo || newPointCreador || (lang === 'en' ? 'Registered Tourist' : lang === 'zh' ? '注册游客' : 'Turista Registrado'),
         categoria: newPointCategoria,
         ubicacion: `POINT(${lng} ${lat})`,
         departamento: deptDetectado,
@@ -2042,7 +2054,7 @@ export default function MapaTuristico() {
 
       if (error) {
         console.error('[Atlan] Error insertando punto:', error);
-        alert(lang === 'en' ? 'Could not save the place. Try again.' : 'No se pudo guardar el lugar. Reintente.');
+        alert(lang === 'en' ? 'Could not save the place. Try again.' : lang === 'zh' ? '无法保存地点，请重试。' : 'No se pudo guardar el lugar. Reintente.');
       } else {
         setShowAddModal(false);
         setNewPointNombre('');
@@ -2364,7 +2376,7 @@ export default function MapaTuristico() {
       unit: 'metric',
       profile: 'mapbox/driving-traffic',
       interactive: false, // Restringir navegación estrictamente entre puntos registrados (Punto A -> Punto B)
-      language: lang === 'en' ? 'en' : 'es',
+      language: lang === 'en' ? 'en' : lang === 'zh' ? 'zh' : 'es',
       controls: { inputs: true, instructions: true, profileSwitcher: true },
     });
     mapRef.current.addControl(directions, 'top-left');
@@ -2385,7 +2397,7 @@ export default function MapaTuristico() {
           distance: route.distance,
           duration: route.duration,
           eta: calculateETA(route.duration),
-          destinationName: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : 'Destino')
+          destinationName: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : lang === 'zh' ? '目的地' : 'Destino')
         });
 
         // Ocultar la ventana gigante de búsqueda/pasos al trazar la ruta automáticamente
@@ -2642,7 +2654,7 @@ export default function MapaTuristico() {
           animation: 'pulse 2s infinite ease-in-out'
         }}>
           <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#D4AF37', display: 'inline-block' }}></span>
-          {lang === 'en' ? 'Offline Mode (Local Cache Active)' : 'Modo Offline (Datos Locales Activos)'}
+          {lang === 'en' ? 'Offline Mode (Local Cache Active)' : lang === 'zh' ? '离线模式（本地缓存已激活）' : 'Modo Offline (Datos Locales Activos)'}
         </div>
       )}
       {/* Pantalla de Carga Premium */}
@@ -2690,7 +2702,7 @@ export default function MapaTuristico() {
             WebkitTextStroke: '0.5px rgba(0,0,0,0.5)',
             textShadow: '0 1px 4px rgba(0,0,0,0.8)'
           }}>
-            Vive y siente Nicaragua.
+            {lang === 'en' ? 'Live and feel Nicaragua.' : lang === 'zh' ? '体验并感受尼加拉瓜。' : 'Vive y siente Nicaragua.'}
           </div>
         </div>
 
@@ -2788,7 +2800,7 @@ export default function MapaTuristico() {
           textTransform: 'uppercase',
           fontFamily: "'Delight', var(--font-inter), sans-serif"
         }}>
-          {lang === 'en' ? 'Preparing your Experience inside the Map...' : 'Preparando tu Experiencia dentro del Mapa.'}
+          {lang === 'en' ? 'Preparing your Experience inside the Map...' : lang === 'zh' ? '正在准备地图体验...' : 'Preparando tu Experiencia dentro del Mapa.'}
         </div>
       </div>
 
@@ -2827,7 +2839,7 @@ export default function MapaTuristico() {
           }}>
             <div>
               <div style={{ fontSize: '9px', color: '#94a3b8', fontWeight: '750', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                {lang === 'en' ? 'Distance' : 'Distancia'}
+                {lang === 'en' ? 'Distance' : lang === 'zh' ? '距离' : 'Distancia'}
               </div>
               <div style={{ fontSize: '14px', fontWeight: '900', color: 'var(--atlan-gold)', marginTop: '2px' }}>
                 {formatDistanceDisplay(previewRouteInfo.distance)}
@@ -2836,7 +2848,7 @@ export default function MapaTuristico() {
             <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.15)' }} />
             <div>
               <div style={{ fontSize: '9px', color: '#94a3b8', fontWeight: '750', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                {lang === 'en' ? 'Est. Time' : 'Tiempo Est.'}
+                {lang === 'en' ? 'Est. Time' : lang === 'zh' ? '预估时间' : 'Tiempo Est.'}
               </div>
               <div style={{ fontSize: '14px', fontWeight: '900', color: '#10b981', marginTop: '2px' }}>
                 {formatDurationDisplay(previewRouteInfo.duration)}
@@ -2896,7 +2908,7 @@ export default function MapaTuristico() {
               </span>
               <input
                 type="text"
-                placeholder={lang === 'en' ? 'Search destinations, places, categories...' : 'Buscar destinos, lugares, categorías...'}
+                placeholder={lang === 'en' ? 'Search destinations, places, categories...' : lang === 'zh' ? '搜索目的地、景点、分类...' : 'Buscar destinos, lugares, categorías...'}
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
                 onFocus={() => {
@@ -3042,7 +3054,7 @@ export default function MapaTuristico() {
                 transition: 'all 0.25s ease'
               }}
             >
-              <img src="/images/home.svg" alt="Inicio" style={{ width: '16px', height: '16px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} /> <span className="mobile-hide-text">{lang === 'en' ? 'Home' : 'Inicio'}</span>
+              <img src="/images/home.svg" alt="Inicio" style={{ width: '16px', height: '16px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} /> <span className="mobile-hide-text">{lang === 'en' ? 'Home' : lang === 'zh' ? '首页' : 'Inicio'}</span>
             </Link>
 
             <Link
@@ -3062,7 +3074,7 @@ export default function MapaTuristico() {
                 transition: 'all 0.25s ease'
               }}
             >
-              <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: '16px', height: '16px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} /> <span className="mobile-hide-text">{lang === 'en' ? 'Community' : 'Comunidad'}</span>
+              <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: '16px', height: '16px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} /> <span className="mobile-hide-text">{lang === 'en' ? 'Community' : lang === 'zh' ? '社区' : 'Comunidad'}</span>
             </Link>
 
             <button
@@ -3134,7 +3146,7 @@ export default function MapaTuristico() {
             </div>
             <div>
               <div style={{ fontSize: '13.5px', fontWeight: '800', color: '#FFD700', letterSpacing: '0.2px' }}>
-                {lang === 'en' ? 'Add Point Mode' : 'Modo Levantar Punto'}
+                {lang === 'en' ? 'Add Point Mode' : lang === 'zh' ? '添加标记模式' : 'Modo Levantar Punto'}
               </div>
               <div style={{ fontSize: '12px', color: '#CBD5E1', fontWeight: '500' }}>
                 {t('addPoint.tapMap')}
@@ -3181,11 +3193,11 @@ export default function MapaTuristico() {
                 }
               }
             }}
-            title={lang === 'en' ? 'Explore categories' : 'Ver categorías'}
+            title={lang === 'en' ? 'Explore categories' : lang === 'zh' ? '浏览分类' : 'Ver categorías'}
           >
             <span className="web-category-btn-content">
               <Icon name="grid" size={15} color="#FFD700" />
-              <span className="web-category-btn-text">{lang === 'en' ? 'Categories' : 'Categorías'}</span>
+              <span className="web-category-btn-text">{lang === 'en' ? 'Categories' : lang === 'zh' ? '分类' : 'Categorías'}</span>
               <span className="web-category-arrow-anim">
                 <Icon name="arrowRight" size={15} color="#FFD700" />
               </span>
@@ -3378,7 +3390,7 @@ export default function MapaTuristico() {
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 8px #10B981' }}></span>
-                  <span style={{ fontWeight: '700', color: '#FFD700' }}>{lang === 'en' ? 'Selected Location' : 'Ubicación seleccionada'}:</span>
+                  <span style={{ fontWeight: '700', color: '#FFD700' }}>{lang === 'en' ? 'Selected Location' : lang === 'zh' ? '已选位置' : 'Ubicación seleccionada'}:</span>
                 </div>
                 <span style={{ fontFamily: 'monospace', fontSize: '12px', color: '#CBD5E1', background: 'rgba(0,0,0,0.35)', padding: '3px 8px', borderRadius: '6px' }}>
                   {tempPointCoords[1].toFixed(5)}, {tempPointCoords[0].toFixed(5)}
@@ -3607,10 +3619,10 @@ export default function MapaTuristico() {
             boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
             transition: 'all 0.25s ease'
           }}
-          title={showDirectionsPopup ? (lang === 'en' ? 'Close route panel' : 'Cerrar panel de ruta') : (lang === 'en' ? 'Open route planner' : 'Trazar o ver ruta')}
+          title={showDirectionsPopup ? (lang === 'en' ? 'Close route panel' : lang === 'zh' ? '关闭路线面板' : 'Cerrar panel de ruta') : (lang === 'en' ? 'Open route planner' : lang === 'zh' ? '路线规划' : 'Trazar o ver ruta')}
         >
           <span>🧭</span>
-          <span>{showDirectionsPopup ? (lang === 'en' ? 'Close Route' : 'Cerrar Ruta') : (lang === 'en' ? 'Route A-B' : 'Trazar Ruta')}</span>
+          <span>{showDirectionsPopup ? (lang === 'en' ? 'Close Route' : lang === 'zh' ? '关闭路线' : 'Cerrar Ruta') : (lang === 'en' ? 'Route A-B' : lang === 'zh' ? '规划路线' : 'Trazar Ruta')}</span>
         </div>
       )}
 
@@ -3673,7 +3685,7 @@ export default function MapaTuristico() {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polygon points="3 11 22 2 13 21 11 13 3 11" />
           </svg>
-          {lang === 'en' ? 'Re-center' : 'Volver a centrar'}
+          {lang === 'en' ? 'Re-center' : lang === 'zh' ? '重新居中' : 'Volver a centrar'}
         </button>
       )}
 
@@ -3748,13 +3760,13 @@ export default function MapaTuristico() {
             const servs = selectedPointDetails?.servicios || {};
             const activeServiceList = [
               { key: 'has_wifi', label: 'WiFi', icon: 'wifi' },
-              { key: 'has_parking', label: lang === 'en' ? 'Parking' : 'Parqueo', icon: 'parking' },
+              { key: 'has_parking', label: lang === 'en' ? 'Parking' : lang === 'zh' ? '停车场' : 'Parqueo', icon: 'parking' },
               { key: 'has_pets', label: 'Pet Friendly', icon: 'pet' },
-              { key: 'has_card_payment', label: lang === 'en' ? 'Cards' : 'Tarjetas', icon: 'creditCard' },
-              { key: 'has_accessibility', label: lang === 'en' ? 'Accessible' : 'Accesibilidad', icon: 'accessibility' },
+              { key: 'has_card_payment', label: lang === 'en' ? 'Cards' : lang === 'zh' ? '刷卡支付' : 'Tarjetas', icon: 'creditCard' },
+              { key: 'has_accessibility', label: lang === 'en' ? 'Accessible' : lang === 'zh' ? '无障碍设施' : 'Accesibilidad', icon: 'accessibility' },
               { key: 'has_delivery', label: 'Delivery', icon: 'delivery' },
               { key: 'has_ac', label: 'A/C', icon: 'ac' },
-              { key: 'has_live_music', label: lang === 'en' ? 'Live Music' : 'Música en Vivo', icon: 'music' },
+              { key: 'has_live_music', label: lang === 'en' ? 'Live Music' : lang === 'zh' ? '现场音乐' : 'Música en Vivo', icon: 'music' },
             ].filter(s => !!servs[s.key]);
 
             const avgRating = pointReviews.length > 0
@@ -3836,7 +3848,7 @@ export default function MapaTuristico() {
                     {userSession && (
                       <button
                         onClick={handleToggleFavorite}
-                        title={isFavorite ? (lang === 'en' ? 'Remove Favorite' : 'Quitar de Favoritos') : (lang === 'en' ? 'Save Favorite' : 'Guardar Favorito')}
+                        title={isFavorite ? (lang === 'en' ? 'Remove Favorite' : lang === 'zh' ? '取消收藏' : 'Quitar de Favoritos') : (lang === 'en' ? 'Save Favorite' : lang === 'zh' ? '收藏地点' : 'Guardar Favorito')}
                         style={{
                           background: 'rgba(255, 255, 255, 0.2)',
                           backdropFilter: 'blur(8px)',
@@ -3908,7 +3920,7 @@ export default function MapaTuristico() {
                         <>
                           <span style={{ color: '#CBD5E1' }}>•</span>
                           <span style={{ color: '#0F172A' }}>
-                            <strong>Precio:</strong> {formatPriceRange(selectedPointDetails.rango_precios)}
+                            <strong>{lang === 'en' ? 'Price' : lang === 'zh' ? '价格' : 'Precio'}:</strong> {formatPriceRange(selectedPointDetails.rango_precios)}
                           </span>
                         </>
                       )}
@@ -3917,21 +3929,22 @@ export default function MapaTuristico() {
                         const daysEnToEs = { 0: 'domingo', 1: 'lunes', 2: 'martes', 3: 'miercoles', 4: 'jueves', 5: 'viernes', 6: 'sabado' };
                         const dayNamesEs = { domingo: 'Domingo', lunes: 'Lunes', martes: 'Martes', miercoles: 'Miércoles', jueves: 'Jueves', viernes: 'Viernes', sabado: 'Sábado' };
                         const dayNamesEn = { domingo: 'Sunday', lunes: 'Monday', martes: 'Tuesday', miercoles: 'Wednesday', thursday: 'Thursday', viernes: 'Friday', sabado: 'Saturday' };
+                        const dayNamesZh = { domingo: '周日', lunes: '周一', martes: '周二', miercoles: '周三', jueves: '周四', viernes: '周五', sabado: '周六' };
                         const now = new Date();
                         const currentDayKey = daysEnToEs[now.getDay()];
                         const todayInfo = selectedPointDetails.horarios[currentDayKey];
 
-                        const dayLabel = lang === 'en' ? dayNamesEn[currentDayKey] : dayNamesEs[currentDayKey];
+                        const dayLabel = lang === 'en' ? dayNamesEn[currentDayKey] : lang === 'zh' ? dayNamesZh[currentDayKey] : dayNamesEs[currentDayKey];
                         const hoursStr = todayInfo?.abierto
                           ? `${todayInfo.apertura || ''} - ${todayInfo.cierre || ''}`
-                          : (lang === 'en' ? 'Closed' : 'Cerrado');
+                          : (lang === 'en' ? 'Closed' : lang === 'zh' ? '休息' : 'Cerrado');
 
                         return (
                           <>
                             <span style={{ color: '#CBD5E1' }}>•</span>
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#1E293B' }}>
                               <Icon name="clock" size={14} color="#146D9E" />
-                              <strong>Horario:</strong> {dayLabel} • ({lang === 'en' ? 'Today' : 'Hoy'}) {hoursStr}
+                              <strong>{lang === 'en' ? 'Hours' : lang === 'zh' ? '营业时间' : 'Horario'}:</strong> {dayLabel} • ({lang === 'en' ? 'Today' : lang === 'zh' ? '今日' : 'Hoy'}) {hoursStr}
                             </span>
                           </>
                         );
@@ -3952,7 +3965,7 @@ export default function MapaTuristico() {
                           flexShrink: 0
                         }}
                       >
-                        {isBusinessOpenNow(selectedPointDetails.horarios) ? (lang === 'en' ? 'Open' : 'Abierto') : (lang === 'en' ? 'Closed' : 'Cerrado')}
+                        {isBusinessOpenNow(selectedPointDetails.horarios) ? (lang === 'en' ? 'Open' : lang === 'zh' ? '营业中' : 'Abierto') : (lang === 'en' ? 'Closed' : lang === 'zh' ? '已打烊' : 'Cerrado')}
                       </span>
                     )}
                   </div>
@@ -4024,10 +4037,10 @@ export default function MapaTuristico() {
                           let statusColor = '';
 
                           if (selectedPoint.estado === 'en_verificacion') {
-                            statusText = lang === 'en' ? 'Verifying' : 'En Verificación';
+                            statusText = lang === 'en' ? 'Verifying' : lang === 'zh' ? '审核中' : 'En Verificación';
                             statusColor = '#FF9D42';
                           } else if (selectedPoint.estado === 'aprobado') {
-                            statusText = lang === 'en' ? 'Verified' : 'Verificado';
+                            statusText = lang === 'en' ? 'Verified' : lang === 'zh' ? '已认证' : 'Verificado';
                             statusColor = '#34D399';
                           } else {
                             const isClaimed = !!selectedPoint.negocio_id;
@@ -4120,7 +4133,7 @@ export default function MapaTuristico() {
                             textTransform: 'uppercase'
                           }}
                         >
-                          {lang === 'en' ? 'Start Trip' : 'Iniciar Viaje'}
+                          {lang === 'en' ? 'Start Trip' : lang === 'zh' ? '出发' : 'Iniciar Viaje'}
                         </span>
                       </button>
 
@@ -4150,7 +4163,7 @@ export default function MapaTuristico() {
                             textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)'
                           }}
                         >
-                          {lang === 'en' ? 'Show More' : 'Mostrar más'}
+                          {lang === 'en' ? 'Show More' : lang === 'zh' ? '查看更多' : 'Mostrar más'}
                         </span>
                         <img src="/images/more.svg" alt="Mostrar más" style={{ width: '22px', height: '22px', filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))' }} />
                       </button>
@@ -4203,7 +4216,7 @@ export default function MapaTuristico() {
                     <div>
                       <h4 style={{ margin: '0 0 4px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <Icon name="info" size={13} color="#64748B" />
-                        <span>{lang === 'en' ? 'About' : 'Acerca de'}</span>
+                        <span>{lang === 'en' ? 'About' : lang === 'zh' ? '简介' : 'Acerca de'}</span>
                       </h4>
                       <p style={{
                         margin: 0,
@@ -4215,7 +4228,7 @@ export default function MapaTuristico() {
                         WebkitBoxOrient: 'vertical',
                         overflow: 'hidden'
                       }}>
-                        {selectedPoint.descripcion || (lang === 'en' ? 'No description available.' : 'Sin descripción disponible.')}
+                        {selectedPoint.descripcion || (lang === 'en' ? 'No description available.' : lang === 'zh' ? '暂无简介。' : 'Sin descripción disponible.')}
                       </p>
                     </div>
 
@@ -4368,7 +4381,7 @@ export default function MapaTuristico() {
                         <div>
                           <h4 style={{ margin: '0 0 8px', fontSize: '11.5px', fontWeight: '800', color: '#64748B', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
                             <Icon name="image" size={13} color="#64748B" />
-                            <span>{lang === 'en' ? 'Photos & Media' : 'Galería de Fotos'} ({allPointPhotos.length}/6)</span>
+                            <span>{lang === 'en' ? 'Photos & Media' : lang === 'zh' ? '照片相册' : 'Galería de Fotos'} ({allPointPhotos.length}/6)</span>
                           </h4>
 
                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
@@ -4420,7 +4433,7 @@ export default function MapaTuristico() {
                             >
                               <Icon name="image" size={18} color="#94A3B8" />
                               <span style={{ fontSize: '10px', fontWeight: '750', color: '#94A3B8', lineHeight: '1.1' }}>
-                                {lang === 'en' ? 'Coming Soon' : 'Próximamente'}
+                                {lang === 'en' ? 'Coming Soon' : lang === 'zh' ? '敬请期待' : 'Próximamente'}
                               </span>
                             </div>
                             );
@@ -4452,7 +4465,7 @@ export default function MapaTuristico() {
                       }}
                     >
                       <Icon name="claim" size={14} color="#B8960E" />
-                      <span>{lang === 'en' ? 'Claim this business' : '¿Eres el dueño? Reclamar este negocio'}</span>
+                      <span>{lang === 'en' ? 'Claim this business' : lang === 'zh' ? '您是店主？认领此商户' : '¿Eres el dueño? Reclamar este negocio'}</span>
                     </Link>
                   )}
                 </div>
@@ -4648,7 +4661,7 @@ export default function MapaTuristico() {
                   borderTop: '1px solid rgba(255, 255, 255, 0.1)',
                 }}>
                   <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.5px', opacity: 0.85, fontWeight: '800' }}>
-                    {lang === 'en' ? 'Then' : 'Luego'}:
+                    {lang === 'en' ? 'Then' : lang === 'zh' ? '然后' : 'Luego'}:
                   </span>
                   <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                     {renderManeuverIcon(currentManeuver.nextNext.iconKey, 16, '#FFFFFF')}
@@ -4666,7 +4679,7 @@ export default function MapaTuristico() {
             {/* Header: label + botón cerrar */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <span style={{ fontSize: '9.5px', fontWeight: '800', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
-                🚗 {lang === 'en' ? 'Active Route' : 'Ruta Activa'}
+                🚗 {lang === 'en' ? 'Active Route' : lang === 'zh' ? '导航中路线' : 'Ruta Activa'}
               </span>
               <button
                 onClick={() => {
@@ -4689,7 +4702,7 @@ export default function MapaTuristico() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               <div style={{ background: 'rgba(16, 185, 129, 0.08)', borderRadius: '10px', padding: '6px 8px', border: '1px solid rgba(16, 185, 129, 0.15)' }}>
                 <div style={{ fontSize: '9px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', marginBottom: '2px' }}>
-                  {lang === 'en' ? 'Duration' : 'Tiempo'}
+                  {lang === 'en' ? 'Duration' : lang === 'zh' ? '时长' : 'Tiempo'}
                 </div>
                 <div style={{ fontSize: '16px', fontWeight: '900', color: '#10b981' }}>
                   {formatDurationDisplay(routeInfo.duration)}
@@ -4697,7 +4710,7 @@ export default function MapaTuristico() {
               </div>
               <div style={{ background: 'rgba(255, 215, 0, 0.06)', borderRadius: '10px', padding: '6px 8px', border: '1px solid rgba(255, 215, 0, 0.12)' }}>
                 <div style={{ fontSize: '9px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', marginBottom: '2px' }}>
-                  {lang === 'en' ? 'Distance' : 'Distancia'}
+                  {lang === 'en' ? 'Distance' : lang === 'zh' ? '距离' : 'Distancia'}
                 </div>
                 <div style={{ fontSize: '16px', fontWeight: '900', color: '#FFD700' }}>
                   {formatDistanceDisplay(routeInfo.distance)}
@@ -4707,7 +4720,7 @@ export default function MapaTuristico() {
 
             {/* ETA */}
             <div style={{ marginTop: '8px', fontSize: '11px', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '6px' }}>
-              <span>{lang === 'en' ? 'Arrival ETA:' : 'Llegada (ETA):'}</span>
+              <span>{lang === 'en' ? 'Arrival ETA:' : lang === 'zh' ? '预计到达时间：' : 'Llegada (ETA):'}</span>
               <span style={{ fontWeight: '800', color: 'white' }}>{routeInfo.eta}</span>
             </div>
           </div>
@@ -4747,10 +4760,14 @@ export default function MapaTuristico() {
               🏆
             </div>
             <h3 style={{ fontSize: "22px", fontWeight: "900", color: "#FFFFFF", margin: "0 0 10px 0" }}>
-              ¡Llegaste a tu Destino!
+              {lang === 'en' ? 'You Reached Your Destination!' : lang === 'zh' ? '您已到达目的地！' : '¡Llegaste a tu Destino!'}
             </h3>
             <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.85)", lineHeight: "1.5", margin: "0 0 20px 0" }}>
-              Has recorrido más de <strong>1 km</strong> y arribado a <strong>{visitPromptData?.puntoNombre || 'tu destino'}</strong>. ¿Deseas registrar esta visita en tu pasaporte de logros Atlan?
+              {lang === 'en' 
+                ? <>You traveled more than <strong>1 km</strong> and arrived at <strong>{visitPromptData?.puntoNombre || 'your destination'}</strong>. Would you like to record this visit in your Atlan achievements passport?</>
+                : lang === 'zh'
+                ? <>您已行驶超过 <strong>1 公里</strong> 并已到达 <strong>{visitPromptData?.puntoNombre || '您的目的地'}</strong>。是否将此次打卡记录保存到您的 Atlan 成就护照中？</>
+                : <>Has recorrido más de <strong>1 km</strong> y arribado a <strong>{visitPromptData?.puntoNombre || 'tu destino'}</strong>. ¿Deseas registrar esta visita en tu pasaporte de logros Atlan?</>}
             </p>
             <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
               <button
@@ -4761,7 +4778,7 @@ export default function MapaTuristico() {
                   color: "#FFFFFF", fontWeight: "700", cursor: "pointer"
                 }}
               >
-                Omitir
+                {lang === 'en' ? 'Skip' : lang === 'zh' ? '跳过' : 'Omitir'}
               </button>
               <button
                 onClick={handleConfirmarVisitaGPS}
@@ -4773,7 +4790,9 @@ export default function MapaTuristico() {
                   boxShadow: "0 6px 16px rgba(255,215,0,0.4)"
                 }}
               >
-                {isSubmittingVisit ? 'Registrando...' : '🎯 Marcar como Visitado (+1 Visita)'}
+                {isSubmittingVisit 
+                  ? (lang === 'en' ? 'Recording...' : lang === 'zh' ? '正在记录...' : 'Registrando...') 
+                  : (lang === 'en' ? '🎯 Mark as Visited (+1 Visit)' : lang === 'zh' ? '🎯 标记为已打卡 (+1 打卡)' : '🎯 Marcar como Visitado (+1 Visita)')}
               </button>
             </div>
           </div>

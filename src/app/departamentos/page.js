@@ -7,6 +7,7 @@ import Navbar from '../../components/ui/Navbar';
 import Icon from '../../components/ui/Icon';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/AuthContext';
+import { useTranslation } from '@/hooks/useTranslation';
 import { obtenerDepartamentoPorCoordenadas } from '../../lib/geoUtils';
 import Link from 'next/link';
 
@@ -34,6 +35,7 @@ const DEPARTAMENTOS_LISTA = [
 ];
 
 export default function DepartamentosPage() {
+  const { t, lang, tr } = useTranslation();
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const hoveredSpanRef = useRef(null);
@@ -95,11 +97,11 @@ export default function DepartamentosPage() {
 
   // Obtener nombre del rango de turista
   const getTouristBadgeLabel = () => {
-    if (!userSession) return "Turista";
+    if (!userSession) return tr("Turista", "Tourist", "游客");
     if (perfil?.es_premium || perfil?.suscripcion_activa || perfil?.rol === "turista_deacachimba" || perfil?.es_pago) {
-      return "Turista Deacachimba";
+      return tr("Turista Deacachimba", "Top Tourist", "骨灰级旅行家");
     }
-    return "Turista Tuani";
+    return tr("Turista Tuani", "Cool Tourist", "达人旅行家");
   };
 
   // Corregir departamento de cada lugar usando detección por coordenadas (GeoJSON polygons)
@@ -528,7 +530,7 @@ export default function DepartamentosPage() {
               flexWrap: "wrap"
             }}>
               <span style={{ textShadow: "0 2px 10px rgba(0,0,0,0.95), 0 0 20px rgba(0,0,0,0.8)" }}>
-                Ranking de Lugares más visitados en
+                {tr("Ranking de Lugares más visitados en", "Ranking of Most Visited Places in", "热门访问地排行榜 —")}
               </span>
               <span style={{
                 background: "linear-gradient(180deg, #0072CE 0%, #0072CE 33%, #FFFFFF 34%, #FFFFFF 66%, #0072CE 67%, #0072CE 100%)",
@@ -540,7 +542,7 @@ export default function DepartamentosPage() {
                 padding: "0 2px",
                 display: "inline-block"
               }}>
-                Nicaragua
+                {tr("Nicaragua", "Nicaragua", "尼加拉瓜")}
               </span>
             </h1>
           </div>
@@ -551,7 +553,7 @@ export default function DepartamentosPage() {
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <img src="/images/gueguense.svg" alt="Güegüense" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                 <span style={{ fontSize: "12.5px", fontWeight: "800", color: "#FFFFFF" }}>
-                  <span>{perfil?.nombre_completo || perfil?.nombre || userSession?.user?.user_metadata?.nombre_completo || 'Turista'}</span>: <span style={{ color: "#38BDF8" }}>{userVisitsCount}</span> {userVisitsCount === 1 ? 'visita' : 'visitas'}
+                  <span>{perfil?.nombre_completo || perfil?.nombre || userSession?.user?.user_metadata?.nombre_completo || tr('Turista', 'Tourist', '游客')}</span>: <span style={{ color: "#38BDF8" }}>{userVisitsCount}</span> {userVisitsCount === 1 ? tr('visita', 'visit', '次访问') : tr('visitas', 'visits', '次访问')}
                 </span>
               </div>
 
@@ -574,7 +576,7 @@ export default function DepartamentosPage() {
               <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
                 <span style={{ fontSize: "13.5px", fontWeight: "800", color: "#FFFFFF", display: "flex", alignItems: "center", gap: "6px" }}>
                   <img src="/images/Ubicacion.svg" alt="Mapa" style={{ width: "16px", height: "16px", filter: "brightness(0) invert(1)" }} />
-                  <span>Mapa de Departamentos</span>
+                  <span>{tr("Mapa de Departamentos", "Departments Map", "省份地图")}</span>
                 </span>
               </div>
 
@@ -612,7 +614,7 @@ export default function DepartamentosPage() {
                 style={{ width: "100%", padding: "9px 12px", background: "rgba(10, 25, 47, 0.85)", border: "1px solid rgba(255, 255, 255, 0.18)", borderRadius: "10px", color: "#FFFFFF", fontWeight: "700", fontSize: "13px", cursor: "pointer", outline: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.3)" }}
               >
                 {DEPARTAMENTOS_LISTA.map(d => (
-                  <option key={d} value={d} style={{ background: "#0A192F", color: "#FFFFFF" }}>{d === "Todos" ? "Todos los Departamentos" : d}</option>
+                  <option key={d} value={d} style={{ background: "#0A192F", color: "#FFFFFF" }}>{d === "Todos" ? tr("Todos los Departamentos", "All Departments", "所有省份") : d}</option>
                 ))}
               </select>
             </div>
@@ -656,11 +658,11 @@ export default function DepartamentosPage() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "8px", flexShrink: 0, position: "relative", zIndex: 1 }}>
               <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#FFFFFF", textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}>
                 {selectedDept === "Todos" 
-                  ? (rankingMode === 'global' ? 'Lugares Más Visitados' : 'Mis Lugares Más Visitados')
-                  : (rankingMode === 'global' ? `Más Visitados en ${selectedDept}` : `Mis Visitas en ${selectedDept}`)}
+                  ? (rankingMode === 'global' ? tr('Lugares Más Visitados', 'Most Visited Places', '最受欢迎目的地') : tr('Mis Lugares Más Visitados', 'My Most Visited Places', '我的足迹排行'))
+                  : (rankingMode === 'global' ? `${tr('Más Visitados en', 'Most Visited in', '热门访问 —')} ${selectedDept}` : `${tr('Mis Visitas en', 'My Visits in', '我的足迹 —')} ${selectedDept}`)}
               </h2>
               <span style={{ fontSize: "11.5px", fontWeight: "700", color: "#CBD5E1", background: "rgba(255,255,255,0.08)", padding: "2px 8px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.15)", backdropFilter: "blur(6px)" }}>
-                {rankingData.length} Destinos
+                {rankingData.length} {tr('Destinos', 'Destinations', '个目的地')}
               </span>
             </div>
 
@@ -719,7 +721,7 @@ export default function DepartamentosPage() {
                     filter: rankingMode === 'global' ? "brightness(0) invert(1) drop-shadow(0 1px 2px #000)" : "brightness(0) invert(0.95) drop-shadow(0 1px 2px #000)" 
                   }} 
                 />
-                <span>Ranking Global</span>
+                <span>{tr("Ranking Global", "Global Ranking", "全境总榜")}</span>
               </button>
 
               {/* Botón Ranking Personal */}
@@ -757,7 +759,7 @@ export default function DepartamentosPage() {
                     filter: rankingMode === 'propio' ? "brightness(0) invert(1) drop-shadow(0 1px 2px #000)" : "brightness(0) invert(0.95) drop-shadow(0 1px 2px #000)" 
                   }} 
                 />
-                <span>Ranking Personal</span>
+                <span>{tr("Ranking Personal", "My Ranking", "个人足迹榜")}</span>
               </button>
             </div>
 
@@ -766,16 +768,16 @@ export default function DepartamentosPage() {
               {loading ? (
                 <div style={{ textAlign: "center", padding: "40px 0" }}>
                   <div style={{ width: "36px", height: "36px", border: "3px solid rgba(255,255,255,0.2)", borderTopColor: "#FFFFFF", borderRadius: "50%", margin: "0 auto 12px auto", animation: "spin 1s linear infinite" }} />
-                  <p style={{ color: "#CBD5E1", fontSize: "13px" }}>Cargando ranking de destinos...</p>
+                  <p style={{ color: "#CBD5E1", fontSize: "13px" }}>{tr("Cargando ranking de destinos...", "Loading destinations ranking...", "正在加载目的地榜单...")}</p>
                 </div>
               ) : rankingMode === 'propio' && !userSession ? (
                 <div style={{ background: "rgba(10, 20, 38, 0.75)", backdropFilter: "blur(10px)", border: "1px dashed rgba(56, 189, 248, 0.5)", borderRadius: "16px", padding: "24px 16px", textAlign: "center" }}>
                   <div style={{ marginBottom: "10px", display: "flex", justifyContent: "center" }}>
                     <img src="/images/perfil.svg" alt="Perfil" style={{ width: "32px", height: "32px", filter: "brightness(0) saturate(100%) invert(67%) sepia(85%) saturate(1800%) hue-rotate(170deg)" }} />
                   </div>
-                  <h3 style={{ margin: "0 0 6px 0", fontSize: "15.5px", fontWeight: "800", color: "#FFFFFF" }}>Inicia sesión como turista</h3>
+                  <h3 style={{ margin: "0 0 6px 0", fontSize: "15.5px", fontWeight: "800", color: "#FFFFFF" }}>{tr("Inicia sesión como turista", "Log in as tourist", "以游客身份登录")}</h3>
                   <p style={{ margin: "0 0 14px 0", fontSize: "13px", color: "#E2E8F0", lineHeight: "1.4" }}>
-                    Inicia sesión para ver tu historial personalizado de los lugares que has visitado en Nicaragua.
+                    {tr("Inicia sesión para ver tu historial personalizado de los lugares que has visitado en Nicaragua.", "Log in to see your personalized history of places visited in Nicaragua.", "登录以查看您在尼加拉瓜游览过的个性化足迹历史。")}
                   </p>
                   <Link
                     href="/login"
@@ -785,7 +787,7 @@ export default function DepartamentosPage() {
                       boxShadow: "0 4px 12px rgba(56, 189, 248, 0.3)"
                     }}
                   >
-                    Iniciar Sesión
+                    {tr("Iniciar Sesión", "Log In", "登录")}
                   </Link>
                 </div>
               ) : rankingData.length === 0 ? (
@@ -794,12 +796,12 @@ export default function DepartamentosPage() {
                     <img src="/images/Ubicacion.svg" alt="Brújula" style={{ width: "30px", height: "30px", filter: "brightness(0) invert(0.9)" }} />
                   </div>
                   <h3 style={{ margin: "0 0 6px 0", fontSize: "15.5px", fontWeight: "800", color: "#FFFFFF" }}>
-                    {rankingMode === 'propio' ? 'Aún no has registrado visitas' : 'Aún no hay visitas registradas'}
+                    {rankingMode === 'propio' ? tr('Aún no has registrado visitas', 'No visits registered yet', '尚未记录任何足迹') : tr('Aún no hay visitas registradas', 'No visits recorded yet', '暂无访问记录')}
                   </h3>
                   <p style={{ margin: 0, fontSize: "13px", color: "#CBD5E1", lineHeight: "1.4" }}>
                     {rankingMode === 'propio' 
-                      ? `Visita un destino en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept} y márcalo en el mapa para sumarlo a tu ranking propio.`
-                      : `Sé el primer turista en explorar y marcar visitas en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept}.`}
+                      ? tr(`Visita un destino en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept} y márcalo en el mapa para sumarlo a tu ranking propio.`, `Visit a destination in ${selectedDept === "Todos" ? "Nicaragua" : selectedDept} and check in on the map.`, `访问 ${selectedDept === "Todos" ? "尼加拉瓜" : selectedDept} 的目的地并在地图上打卡即可计入个人排行。`)
+                      : tr(`Sé el primer turista en explorar y marcar visitas en ${selectedDept === "Todos" ? "Nicaragua" : selectedDept}.`, `Be the first tourist to explore and record visits in ${selectedDept === "Todos" ? "Nicaragua" : selectedDept}.`, `成为首位在 ${selectedDept === "Todos" ? "尼加拉瓜" : selectedDept} 探索并打卡的游客吧。`)}
                   </p>
                 </div>
               ) : (
@@ -865,7 +867,7 @@ export default function DepartamentosPage() {
                                 ? "0 2px 8px rgba(245, 158, 11, 0.35)" 
                                 : "none"
                             }}>
-                              Lugar {pos}
+                              {lang === "zh" ? `第 ${pos} 名` : `${tr("Lugar", "Rank", "第")} ${pos}`}
                             </div>
 
                             {/* Info del Lugar */}
@@ -950,7 +952,7 @@ export default function DepartamentosPage() {
                                     : "brightness(0) invert(1)" 
                                 }} 
                               />
-                              <span>{countVisits} {countVisits === 1 ? 'visita' : 'visitas'}</span>
+                              <span>{countVisits} {countVisits === 1 ? tr('visita', 'visit', '次访问') : tr('visitas', 'visits', '次访问')}</span>
                             </div>
                             <Link 
                               href={`/?lat=${lugar.lat}&lng=${lugar.lng}&punto=${lugar.id}`}
@@ -965,7 +967,7 @@ export default function DepartamentosPage() {
                                 gap: "2px"
                               }}
                             >
-                              Ir al Mapa ➔
+                              {tr("Ir al Mapa ➔", "Go to Map ➔", "前往地图 ➔")}
                             </Link>
                           </div>
                         </div>
@@ -998,7 +1000,7 @@ export default function DepartamentosPage() {
                       }}
                     >
                       <img src="/images/more.svg" alt="Más destinos" style={{ width: "16px", height: "16px", filter: "brightness(0) invert(1)" }} />
-                      <span>Cargar Más Destinos (+{Math.min(5, rankingData.length - visibleCount)})</span>
+                      <span>{tr("Cargar Más Destinos", "Load More Destinations", "加载更多目的地")} (+{Math.min(5, rankingData.length - visibleCount)})</span>
                     </button>
                   )}
                 </>

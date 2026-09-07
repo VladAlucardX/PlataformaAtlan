@@ -8,12 +8,12 @@ export default function DepartmentTabs({ activeTab, onSelectTab, isModal = false
   const { t, lang } = useTranslation();
 
   const TABS = [
-    { id: "galeria", label: lang === "en" ? "Gallery" : "Galería", svgs: ["/images/masaaya.svg"] },
-    { id: "historia", label: lang === "en" ? "History" : "Historia", svgs: ["/images/managua catedral.svg"] },
-    { id: "economia", label: lang === "en" ? "Economy" : "Economía", svgs: ["/images/cacao.svg"] },
-    { id: "turismo", label: lang === "en" ? "Tourism" : "Turismo", svgs: ["/images/playa.svg"] },
-    { id: "pasatiempos", label: lang === "en" ? "Hobbies & Culture" : "Pasatiempos", svgs: ["/images/Volcan.svg"] },
-    { id: "lugares", label: lang === "en" ? "Landmarks & Activities" : "Lugares y Actividades", svgs: ["/images/San Juan del sur.svg", "/images/caña.svg"] },
+    { id: "galeria", label: lang === "en" ? "Gallery" : lang === "zh" ? "图库" : "Galería", svgs: ["/images/masaaya.svg"] },
+    { id: "historia", label: lang === "en" ? "History" : lang === "zh" ? "历史" : "Historia", svgs: ["/images/managua catedral.svg"] },
+    { id: "economia", label: lang === "en" ? "Economy" : lang === "zh" ? "经济" : "Economía", svgs: ["/images/cacao.svg"] },
+    { id: "turismo", label: lang === "en" ? "Tourism" : lang === "zh" ? "旅游" : "Turismo", svgs: ["/images/playa.svg"] },
+    { id: "pasatiempos", label: lang === "en" ? "Hobbies & Culture" : lang === "zh" ? "休闲与文化" : "Pasatiempos", svgs: ["/images/Volcan.svg"] },
+    { id: "lugares", label: lang === "en" ? "Landmarks & Activities" : lang === "zh" ? "地标与活动" : "Lugares y Actividades", svgs: ["/images/San Juan del sur.svg", "/images/caña.svg"] },
   ];
 
   return (

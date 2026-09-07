@@ -11,7 +11,7 @@ import { DEPARTAMENTOS_DATA } from "@/data/departamentos-data";
 import { getPointImage } from "@/lib/imageUtils";
 
 export default function DepartamentoDetailPage() {
-  const { t, lang } = useTranslation();
+  const { t, tr, lang } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const slug = params?.slug;
@@ -27,10 +27,10 @@ export default function DepartamentoDetailPage() {
         <div style={{ maxWidth: "600px", margin: "140px auto 60px", padding: "40px 20px", textAlign: "center", background: "rgba(15,23,42,0.8)", border: "1.5px dashed rgba(255,215,0,0.4)", borderRadius: "24px" }}>
           <div style={{ fontSize: "48px", marginBottom: "16px" }}>🗺️</div>
           <h2 style={{ fontSize: "22px", fontWeight: "900", color: "#FFFFFF", margin: "0 0 10px" }}>
-            Departamento No Encontrado
+            {tr("Departamento No Encontrado", "Department Not Found", "未找到省份")}
           </h2>
           <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.7)", marginBottom: "24px" }}>
-            El departamento que buscas no existe o el enlace es incorrecto.
+            {tr("El departamento que buscas no existe o el enlace es incorrecto.", "The department you are looking for does not exist or the link is incorrect.", "您查找的省份不存在或链接不正确。")}
           </p>
           <Link
             href="/mas-de-nicaragua"
@@ -47,7 +47,7 @@ export default function DepartamentoDetailPage() {
             }}
           >
             <Icon name="arrowLeft" size={16} color="#1A1A2E" />
-            <span>Volver a Nicaragua Viva</span>
+            <span>{tr("Volver a Nicaragua Viva", "Back to Living Nicaragua", "返回生机勃勃的尼加拉瓜")}</span>
           </Link>
         </div>
       </div>
@@ -110,9 +110,9 @@ export default function DepartamentoDetailPage() {
           
           {/* Breadcrumb Navigation */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "rgba(255,255,255,0.6)", marginBottom: "20px", flexWrap: "wrap" }}>
-            <Link href="/" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none" }}>Inicio</Link>
+            <Link href="/" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none" }}>{tr("Inicio", "Home", "首页")}</Link>
             <span>/</span>
-            <Link href="/mas-de-nicaragua" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none" }}>Más de Nicaragua</Link>
+            <Link href="/mas-de-nicaragua" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none" }}>{tr("Más de Nicaragua", "More of Nicaragua", "探索尼加拉瓜")}</Link>
             <span>/</span>
             <span style={{ color: "#FFD700", fontWeight: "700" }}>{dept.nombre}</span>
           </div>
@@ -130,10 +130,10 @@ export default function DepartamentoDetailPage() {
                   fontWeight: "800",
                   textTransform: "uppercase"
                 }}>
-                  Región {dept.region}
+                  {tr("Región", "Region", "地区")} {dept.region === "Pacífico" ? tr("Pacífico", "Pacific", "太平洋区") : dept.region === "Central" ? tr("Central", "Central", "中部区") : tr("Caribe", "Caribbean", "加勒比区")}
                 </span>
                 <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.7)", fontWeight: "600" }}>
-                  📍 Cabecera: <strong>{dept.cabecera}</strong>
+                  📍 {tr("Cabecera:", "Capital:", "首府：")} <strong>{dept.cabecera}</strong>
                 </span>
               </div>
 
@@ -165,7 +165,7 @@ export default function DepartamentoDetailPage() {
                 }}
               >
                 <Icon name="map" size={16} color="#1A1A2E" />
-                <span>Explorar en el Mapa</span>
+                <span>{tr("Explorar en el Mapa", "Explore on Map", "在地图上探索")}</span>
               </Link>
 
               <Link
@@ -185,7 +185,7 @@ export default function DepartamentoDetailPage() {
                 }}
               >
                 <Icon name="star" size={16} color="#FFD700" />
-                <span>Ver Ranking</span>
+                <span>{tr("Ver Ranking", "View Ranking", "查看排行榜")}</span>
               </Link>
             </div>
           </div>
@@ -202,15 +202,15 @@ export default function DepartamentoDetailPage() {
             padding: "16px"
           }}>
             <div>
-              <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "700" }}>Extensión Territorial</span>
+              <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "700" }}>{tr("Extensión Territorial", "Territorial Area", "土地面积")}</span>
               <span style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF" }}>{dept.extension}</span>
             </div>
             <div>
-              <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "700" }}>Población Aprox.</span>
+              <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "700" }}>{tr("Población Aprox.", "Approx. Population", "预估人口")}</span>
               <span style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF" }}>{dept.poblacion}</span>
             </div>
             <div>
-              <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "700" }}>Fundación / Hito</span>
+              <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "700" }}>{tr("Fundación / Hito", "Foundation / Milestone", "建立 / 里程碑")}</span>
               <span style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF" }}>{dept.fundacion}</span>
             </div>
           </div>
@@ -237,7 +237,7 @@ export default function DepartamentoDetailPage() {
                 gap: "10px",
                 textShadow: "0 2px 8px rgba(0,0,0,0.8)"
               }}>
-                📸 Galería Fotográfica de {dept.nombre}
+                {tr("📸 Galería Fotográfica de", "📸 Photo Gallery of", "📸 照片画廊 —")} {dept.nombre}
               </h2>
               <span style={{
                 fontSize: "11.5px",
@@ -248,7 +248,7 @@ export default function DepartamentoDetailPage() {
                 borderRadius: "8px",
                 border: "1px solid rgba(255,255,255,0.15)"
               }}>
-                {(dept.galeria?.length || 0) + ((dept.imagenReferencia || dept.imagenCard) ? 1 : 0)} Fotos
+                {(dept.galeria?.length || 0) + ((dept.imagenReferencia || dept.imagenCard) ? 1 : 0)} {tr("Fotos", "Photos", "张照片")}
               </span>
             </div>
 
@@ -256,7 +256,7 @@ export default function DepartamentoDetailPage() {
             {(dept.imagenReferencia || dept.imagenCard) && (
               <div style={{ marginBottom: "20px" }}>
                 <h3 style={{ fontSize: "13px", fontWeight: "800", color: "#FFD700", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                  <span>📌 Imagen de Referencia</span>
+                  <span>{tr("📌 Imagen de Referencia", "📌 Reference Image", "📌 参考图片")}</span>
                 </h3>
                 <div style={{
                   position: "relative",
@@ -287,7 +287,7 @@ export default function DepartamentoDetailPage() {
                     letterSpacing: "0.5px",
                     boxShadow: "0 4px 14px rgba(236, 72, 153, 0.4)"
                   }}>
-                    📸 Imagen de Referencia
+                    {tr("📸 Imagen de Referencia", "📸 Reference Image", "📸 参考图片")}
                   </span>
                 </div>
               </div>
@@ -298,7 +298,7 @@ export default function DepartamentoDetailPage() {
               <div>
                 {(dept.imagenReferencia || dept.imagenCard) && (
                   <h3 style={{ fontSize: "13px", fontWeight: "800", color: "rgba(255,255,255,0.7)", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                    <span>🖼️ Fotografías de Galería</span>
+                    <span>{tr("🖼️ Fotografías de Galería", "🖼️ Gallery Photos", "🖼️ 画廊摄影")}</span>
                   </h3>
                 )}
                 <div style={{
@@ -376,11 +376,11 @@ export default function DepartamentoDetailPage() {
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
                 <h2 style={{ fontSize: "24px", fontWeight: "900", color: "#FFD700", margin: 0, display: "flex", alignItems: "center", gap: "10px" }}>
                   <img src="/images/managua catedral.svg" alt="Historia" style={{ width: "24px", height: "24px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                  <span>Resumen Histórico y Orígenes de {dept.nombre}</span>
+                  <span>{tr("Resumen Histórico y Orígenes de", "Historical Summary & Origins of", "历史概述与起源 —")} {dept.nombre}</span>
                 </h2>
                 <span style={{ background: "rgba(255, 215, 0, 0.15)", border: "1px solid rgba(255, 215, 0, 0.4)", color: "#FFD700", padding: "5px 14px", borderRadius: "12px", fontSize: "13px", fontWeight: "800", display: "inline-flex", alignItems: "center", gap: "6px" }}>
                   <img src="/images/edificio.svg" alt="Patrimonio" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                  <span>Patrimonio Histórico Nacional</span>
+                  <span>{tr("Patrimonio Histórico Nacional", "National Historical Heritage", "国家历史遗产")}</span>
                 </span>
               </div>
 
@@ -393,7 +393,7 @@ export default function DepartamentoDetailPage() {
                 <div style={{ background: "rgba(255, 215, 0, 0.08)", border: "1px solid rgba(255, 215, 0, 0.25)", borderRadius: "16px", padding: "16px 20px", marginBottom: "20px" }}>
                   <span style={{ fontSize: "13px", fontWeight: "900", color: "#FFD700", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px", letterSpacing: "0.5px" }}>
                     <img src="/images/sombrero.svg" alt="Origen" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                    <span>Origen Etimológico y Raíces Indígenas</span>
+                    <span>{tr("Origen Etimológico y Raíces Indígenas", "Etymological Origin & Indigenous Roots", "语源起源与原住民根基")}</span>
                   </span>
                   <p style={{ margin: 0, fontSize: "14px", color: "rgba(255,255,255,0.9)", lineHeight: "1.6" }}>
                     {dept.historia.origenEtimologico}
@@ -404,20 +404,20 @@ export default function DepartamentoDetailPage() {
               {/* Ficha de Datos Clave */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "14px", paddingTop: "18px", borderTop: "1px dashed rgba(255, 215, 0, 0.25)" }}>
                 <div style={{ background: "rgba(255,255,255,0.03)", padding: "12px 16px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "3px" }}>Cabecera Histórica</span>
+                  <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "3px" }}>{tr("Cabecera Histórica", "Historical Capital", "历史首府")}</span>
                   <span style={{ fontSize: "15px", fontWeight: "800", color: "#FFD700" }}>{dept.cabecera}</span>
                 </div>
                 <div style={{ background: "rgba(255,255,255,0.03)", padding: "12px 16px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "3px" }}>Fundación / Hito</span>
+                  <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "3px" }}>{tr("Fundación / Hito", "Foundation / Milestone", "建立 / 里程碑")}</span>
                   <span style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF" }}>{dept.fundacion}</span>
                 </div>
                 <div style={{ background: "rgba(255,255,255,0.03)", padding: "12px 16px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "3px" }}>Extensión Territorial</span>
+                  <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "3px" }}>{tr("Extensión Territorial", "Territorial Area", "土地面积")}</span>
                   <span style={{ fontSize: "15px", fontWeight: "800", color: "#38BDF8" }}>{dept.extension}</span>
                 </div>
                 <div style={{ background: "rgba(255,255,255,0.03)", padding: "12px 16px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "3px" }}>Región Geográfica</span>
-                  <span style={{ fontSize: "15px", fontWeight: "800", color: "#10B981" }}>{dept.region}</span>
+                  <span style={{ display: "block", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", fontWeight: "800", marginBottom: "3px" }}>{tr("Región Geográfica", "Geographic Region", "地理区域")}</span>
+                  <span style={{ fontSize: "15px", fontWeight: "800", color: "#10B981" }}>{dept.region === "Pacífico" ? tr("Pacífico", "Pacific", "太平洋区") : dept.region === "Central" ? tr("Central", "Central", "中部区") : tr("Caribe", "Caribbean", "加勒比区")}</span>
                 </div>
               </div>
             </div>
@@ -427,7 +427,7 @@ export default function DepartamentoDetailPage() {
               <div>
                 <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#FFFFFF", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                   <Icon name="clock" size={20} color="#FFD700" />
-                  <span>Línea de Tiempo e Hitos Fundamentales</span>
+                  <span>{tr("Línea de Tiempo e Hitos Fundamentales", "Timeline & Key Milestones", "时间轴与重大里程碑")}</span>
                 </h3>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "18px" }}>
                   {dept.historia.hitos.map((hito, idx) => (
@@ -454,7 +454,7 @@ export default function DepartamentoDetailPage() {
               <div>
                 <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#FFD700", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                   <Icon name="award" size={20} color="#FFD700" />
-                  <span>Personajes Ilustres y Héroes de la Historia</span>
+                  <span>{tr("Personajes Ilustres y Héroes de la Historia", "Illustrious Figures & Historical Heroes", "杰出人物与历史英雄")}</span>
                 </h3>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "18px" }}>
                   {dept.historia.personajes.map((per, idx) => (
@@ -480,7 +480,7 @@ export default function DepartamentoDetailPage() {
               <div>
                 <h3 style={{ fontSize: "18px", fontWeight: "800", color: "#38BDF8", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                   <Icon name="landmark" size={20} color="#38BDF8" />
-                  <span>Patrimonio Protegido, Templos y Sitios Arqueológicos</span>
+                  <span>{tr("Patrimonio Protegido, Templos y Sitios Arqueológicos", "Protected Heritage, Temples & Archaeological Sites", "受保护遗产、寺庙与考古遗址")}</span>
                 </h3>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "18px" }}>
                   {dept.historia.patrimonio.map((pat, idx) => (
@@ -511,7 +511,7 @@ export default function DepartamentoDetailPage() {
           <div className="animate-fade-in">
             <div style={{ background: "rgba(15, 23, 42, 0.75)", border: "1.5px solid rgba(255,255,255,0.12)", borderRadius: "24px", padding: "32px", marginBottom: "32px" }}>
               <h2 style={{ fontSize: "24px", fontWeight: "900", color: "#38BDF8", margin: "0 0 16px", display: "flex", alignItems: "center", gap: "10px" }}>
-                💰 Dinámica Económica y Productiva
+                {tr("💰 Dinámica Económica y Productiva", "💰 Economic & Productive Dynamics", "💰 经济与产业动态")}
               </h2>
               <p style={{ fontSize: "16px", lineHeight: "1.8", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                 {dept.economia.resumen}
@@ -547,7 +547,7 @@ export default function DepartamentoDetailPage() {
           <div className="animate-fade-in">
             <div style={{ background: "rgba(15, 23, 42, 0.75)", border: "1.5px solid rgba(255,255,255,0.12)", borderRadius: "24px", padding: "32px", marginBottom: "32px" }}>
               <h2 style={{ fontSize: "24px", fontWeight: "900", color: "#10B981", margin: "0 0 16px", display: "flex", alignItems: "center", gap: "10px" }}>
-                🏖️ Oferta Turística de {dept.nombre}
+                {tr("🏖️ Oferta Turística de", "🏖️ Tourist Highlights of", "🏖️ 旅游资源 —")} {dept.nombre}
               </h2>
               <p style={{ fontSize: "16px", lineHeight: "1.8", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                 {dept.turismo.resumen}
@@ -584,7 +584,7 @@ export default function DepartamentoDetailPage() {
           <div className="animate-fade-in">
             <div style={{ background: "rgba(15, 23, 42, 0.75)", border: "1.5px solid rgba(255,255,255,0.12)", borderRadius: "24px", padding: "32px", marginBottom: "32px" }}>
               <h2 style={{ fontSize: "24px", fontWeight: "900", color: "#F59E0B", margin: "0 0 16px", display: "flex", alignItems: "center", gap: "10px" }}>
-                🎭 Pasatiempos, Tradiciones y Estilo de Vida
+                {tr("🎭 Pasatiempos, Tradiciones y Estilo de Vida", "🎭 Hobbies, Traditions & Lifestyle", "🎭 休闲、传统与生活方式")}
               </h2>
               <p style={{ fontSize: "16px", lineHeight: "1.8", color: "rgba(255,255,255,0.9)", margin: 0 }}>
                 {dept.pasatiempos.resumen}
@@ -618,7 +618,7 @@ export default function DepartamentoDetailPage() {
         {activeTab === "lugares" && (
           <div className="animate-fade-in">
             <h2 style={{ fontSize: "22px", fontWeight: "900", color: "#FFFFFF", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
-              📍 Sitios Emblemáticos Imperdibles
+              {tr("📍 Sitios Emblemáticos Imperdibles", "📍 Must-Visit Iconic Sites", "📍 必游标志性景点")}
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
               {dept.lugaresImportantes.map((lugar, idx) => (
@@ -656,7 +656,7 @@ export default function DepartamentoDetailPage() {
                       fontWeight: "800"
                     }}>
                       <Icon name="mapPin" size={13} color="#FFD700" />
-                      <span>Sitio #{idx + 1}</span>
+                      <span>{tr("Sitio #", "Site #", "景点 #")}{idx + 1}</span>
                     </span>
 
                     <img
@@ -689,7 +689,7 @@ export default function DepartamentoDetailPage() {
           <div className="animate-fade-in">
             <h2 style={{ fontSize: "22px", fontWeight: "900", color: "#FFFFFF", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
               <Icon name="image" size={22} color="#EC4899" />
-              <span>Galería Fotográfica de {dept.nombre}</span>
+              <span>{tr("Galería Fotográfica de", "Photo Gallery of", "照片画廊 —")} {dept.nombre}</span>
             </h2>
 
             {/* Grid de Galería Principal */}
@@ -757,7 +757,7 @@ export default function DepartamentoDetailPage() {
               <div>
                 <h3 style={{ fontSize: "19px", fontWeight: "800", color: "#FFD700", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
                   <Icon name="landmark" size={20} color="#FFD700" />
-                  <span>Sitios Emblemáticos en Fotos</span>
+                  <span>{tr("Sitios Emblemáticos en Fotos", "Iconic Sites in Photos", "照片中的标志性景点")}</span>
                 </h3>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "18px" }}>
                   {dept.lugaresImportantes.map((lugar, idx) => {
@@ -809,7 +809,7 @@ export default function DepartamentoDetailPage() {
         {activeTab === "actividades" && (
           <div className="animate-fade-in">
             <h2 style={{ fontSize: "22px", fontWeight: "900", color: "#FFFFFF", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
-              🎉 Fiestas Patronales, Eventos y Tradiciones
+              {tr("🎉 Fiestas Patronales, Eventos y Tradiciones", "🎉 Patron Saint Festivals, Events & Traditions", "🎉 守护神节庆、活动与传统")}
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "20px" }}>
               {dept.actividades.map((act, idx) => (

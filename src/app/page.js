@@ -159,7 +159,7 @@ function FeaturesSection() {
           textShadow: "0 2px 8px rgba(0, 0, 0, 0.6)",
           fontFamily: "var(--font-outfit), system-ui, sans-serif"
         }}>
-          {lang === "en" ? "Scroll down to see more" : "Desplaza hacia abajo para ver más"}
+          {lang === "en" ? "Scroll down to see more" : lang === "zh" ? "向下滚动查看更多" : "Desplaza hacia abajo para ver más"}
         </span>
         <svg
           width="20"
@@ -387,7 +387,7 @@ function CTASection({ session }) {
 
 // Footer
 function Footer() {
-  const { t } = useTranslation();
+  const { t, tr, lang } = useTranslation();
 
   return (
     <footer style={styles.footer}>
@@ -407,8 +407,7 @@ function Footer() {
           </div>
           <p style={styles.footerDesc}>{t("landing.footer.description")}</p>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "16px", color: "#94A3B8", fontSize: "13px", fontWeight: "600" }}>
-
-            <span>Orgullosamente desarrollado para Nicaragua</span>
+            <span>{tr("Orgullosamente desarrollado para Nicaragua", "Proudly developed for Nicaragua", "为尼加拉瓜自豪打造")}</span>
           </div>
         </div>
 
@@ -419,9 +418,9 @@ function Footer() {
             <Link href="/comunidad" style={styles.footerLink}><Icon name="users" size={14} /> {t("nav.community")}</Link>
           </div>
           <div>
-            <h4 style={styles.footerLinkTitle}>Negocios</h4>
-            <Link href="/registro" style={styles.footerLink}><Icon name="store" size={14} /> Registrar Negocio</Link>
-            <Link href="/dashboard" style={styles.footerLink}><Icon name="barChart" size={14} /> Mi Panel</Link>
+            <h4 style={styles.footerLinkTitle}>{tr("Negocios", "Businesses", "商家合作")}</h4>
+            <Link href="/registro" style={styles.footerLink}><Icon name="store" size={14} /> {tr("Registrar Negocio", "Register Business", "注册商家")}</Link>
+            <Link href="/dashboard" style={styles.footerLink}><Icon name="barChart" size={14} /> {tr("Mi Panel", "My Dashboard", "我的控制台")}</Link>
           </div>
           <div>
             <h4 style={styles.footerLinkTitle}>{t("landing.footer.legal")}</h4>

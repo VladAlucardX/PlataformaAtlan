@@ -49,9 +49,9 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
   const handleCopyLink = () => {
     const url = `${window.location.origin}/comunidad?post=${post.id}`;
     navigator.clipboard.writeText(url).then(() => {
-      showToast(lang === "en" ? "Link copied!" : "¡Enlace copiado!");
+      showToast(lang === "en" ? "Link copied!" : lang === "zh" ? "链接已复制！" : "¡Enlace copiado!");
     }).catch(() => {
-      showToast(lang === "en" ? "Could not copy" : "No se pudo copiar");
+      showToast(lang === "en" ? "Could not copy" : lang === "zh" ? "无法复制" : "No se pudo copiar");
     });
     setOpen(false);
   };
@@ -62,7 +62,7 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
     try {
       const contenido = post.contenido
         ? `🔁 ${post.perfiles?.nombre_completo || "Usuario"}:\n\n${post.contenido}`
-        : `🔁 ${lang === "en" ? "Shared a post from" : "Compartió una publicación de"} ${post.perfiles?.nombre_completo || "Usuario"}`;
+        : `🔁 ${lang === "en" ? "Shared a post from" : lang === "zh" ? "分享了来自以下用户的动态：" : "Compartió una publicación de"} ${post.perfiles?.nombre_completo || "Usuario"}`;
 
       const { data, error } = await supabase.from("publicaciones").insert({
         autor_id: session.user.id,
@@ -76,10 +76,10 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
 
       if (error) throw error;
       if (onRepost) onRepost(data);
-      showToast(lang === "en" ? "Shared to your feed!" : "¡Compartido en tu muro!");
+      showToast(lang === "en" ? "Shared to your feed!" : lang === "zh" ? "已分享到您的动态！" : "¡Compartido en tu muro!");
     } catch (err) {
       console.error("Repost error:", err);
-      showToast(lang === "en" ? "Failed to share" : "Error al compartir");
+      showToast(lang === "en" ? "Failed to share" : lang === "zh" ? "分享失败" : "Error al compartir");
     }
     setOpen(false);
   };
@@ -158,8 +158,8 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
       // Send message with post link
       const postUrl = `${window.location.origin}/comunidad?post=${post.id}`;
       const msgContent = post.contenido
-        ? `📤 ${lang === "en" ? "Shared a post" : "Te compartió una publicación"}:\n\n"${post.contenido.slice(0, 100)}${post.contenido.length > 100 ? "..." : ""}"\n\n${postUrl}`
-        : `📤 ${lang === "en" ? "Shared a post" : "Te compartió una publicación"}: ${postUrl}`;
+        ? `📤 ${lang === "en" ? "Shared a post" : lang === "zh" ? "向您分享了一条动态" : "Te compartió una publicación"}:\n\n"${post.contenido.slice(0, 100)}${post.contenido.length > 100 ? "..." : ""}"\n\n${postUrl}`
+        : `📤 ${lang === "en" ? "Shared a post" : lang === "zh" ? "向您分享了一条动态" : "Te compartió una publicación"}: ${postUrl}`;
 
       const { error: msgError } = await supabase.from("mensajes").insert({
         conversacion_id: convId,
@@ -171,12 +171,12 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
       // Update conversation timestamp
       await supabase.from("conversaciones").update({ ultimo_mensaje_at: new Date().toISOString() }).eq("id", convId);
 
-      showToast(lang === "en" ? `Sent to ${targetUser.nombre_completo}!` : `¡Enviado a ${targetUser.nombre_completo}!`);
+      showToast(lang === "en" ? `Sent to ${targetUser.nombre_completo}!` : lang === "zh" ? `已发送给 ${targetUser.nombre_completo}！` : `¡Enviado a ${targetUser.nombre_completo}!`);
       setOpen(false);
       setShowSendChat(false);
     } catch (err) {
       console.error("Send chat error:", err);
-      showToast(lang === "en" ? "Failed to send" : "Error al enviar");
+      showToast(lang === "en" ? "Failed to send" : lang === "zh" ? "发送失败" : "Error al enviar");
     } finally {
       setSendingTo(null);
     }
@@ -218,7 +218,7 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
             transition: "all 0.2s"
           }}
         />
-        <span>{lang === "en" ? "Share" : "Compartir"}</span>
+        <span>{lang === "en" ? "Share" : lang === "zh" ? "分享" : "Compartir"}</span>
       </button>
 
       {open && (
@@ -227,16 +227,16 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
             <>
               <button onClick={handleCopyLink} style={styles.dropdownItem}>
                 <span style={styles.dropdownIcon}><Icon name="link" size={16} /></span>
-                {lang === "en" ? "Copy link" : "Copiar enlace"}
+                {lang === "en" ? "Copy link" : lang === "zh" ? "复制链接" : "Copiar enlace"}
               </button>
               <button onClick={handleRepost} style={styles.dropdownItem}>
                 <span style={styles.dropdownIcon}><img src="/images/repst.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0)" }} /></span>
-                {lang === "en" ? "Share to my feed" : "Compartir en mi muro"}
+                {lang === "en" ? "Share to my feed" : lang === "zh" ? "转发至我的动态" : "Compartir en mi muro"}
               </button>
               <div style={styles.dropdownDivider} />
               <button onClick={handleOpenSendChat} style={styles.dropdownItem}>
                 <span style={styles.dropdownIcon}><Icon name="messageCircle" size={16} /></span>
-                {lang === "en" ? "Send via chat" : "Enviar por chat"}
+                {lang === "en" ? "Send via chat" : lang === "zh" ? "通过私信发送" : "Enviar por chat"}
               </button>
             </>
           ) : (
@@ -244,7 +244,7 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
               <div style={styles.sendChatHeader}>
                 <button onClick={() => setShowSendChat(false)} style={styles.backBtn}>←</button>
                 <span style={{ fontWeight: "800", fontSize: "13px", color: "var(--atlan-text-primary)" }}>
-                  {lang === "en" ? "Send to..." : "Enviar a..."}
+                  {lang === "en" ? "Send to..." : lang === "zh" ? "发送给..." : "Enviar a..."}
                 </span>
               </div>
               <div style={styles.mutualsList}>
@@ -254,7 +254,7 @@ export default function ShareDropdown({ post, session, perfil, lang, onRequireLo
                   </div>
                 ) : mutuals.length === 0 ? (
                   <p style={{ margin: 0, padding: "16px", fontSize: "12px", color: "var(--atlan-text-muted)", textAlign: "center" }}>
-                    {lang === "en" ? "No mutual followers to send to" : "No tienes seguidores mutuos"}
+                    {lang === "en" ? "No mutual followers to send to" : lang === "zh" ? "没有互相关注的用户" : "No tienes seguidores mutuos"}
                   </p>
                 ) : (
                   mutuals.map(u => (

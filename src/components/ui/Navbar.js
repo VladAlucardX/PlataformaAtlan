@@ -18,7 +18,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
   const auth = useAuth();
   const session = sessionProp || auth.session;
   const perfil = perfilProp || auth.perfil;
-  const { t, lang, setLang } = useTranslation();
+  const { t, tr, lang, setLang } = useTranslation();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -102,7 +102,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
       const email = perfil?.email || session?.user?.email;
       return email.split("@")[0];
     }
-    return lang === "en" ? "Profile" : "Perfil";
+    return tr("Perfil", "Profile", "个人中心");
   };
 
   const communityProfileUrl = perfil ? `/comunidad/perfil/${getProfileSlug(perfil)}` : (session?.user?.id ? `/comunidad/perfil/${session.user.id}` : "/comunidad");
@@ -118,10 +118,10 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
         justifyContent: "space-between",
         gap: "12px"
       }}>
-        {/* Logo Far Left */}
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", flexShrink: 0 }}>
+        {/* Logo / Home */}
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "9px", textDecoration: "none" }}>
           <img
-            src="/mapaicono.png"
+            src="/images/Isotipo.png"
             alt="Logo"
             style={{ width: "30px", height: "30px", objectFit: "contain", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))" }}
           />
@@ -131,26 +131,26 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
         {/* Center Nav Pills */}
         <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "10px", flexWrap: "nowrap", justifyContent: "center" }} className="hide-mobile">
           <Link href="/" className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`}>
-            <img src="/images/home.svg" alt="Inicio" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {lang === "en" ? "Home" : "Inicio"}
+            <img src="/images/home.svg" alt="Inicio" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Inicio", "Home", "首页")}
           </Link>
           <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`}>
-            <img src="/images/ubic.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {t("nav.map")}
+            <img src="/images/ubic.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Mapa", "Map", "地图")}
           </Link>
           <Link href="/departamentos" className={`nav-pill-link ${activePage === "departamentos" ? "active" : ""}`}>
-            <img src="/images/flor.svg" alt="Ranking" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} /> {lang === "en" ? "Ranking" : "Ranking"}
+            <img src="/images/flor.svg" alt="Ranking" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} /> {tr("Ranking", "Ranking", "排行榜")}
           </Link>
           <Link href="/mas-de-nicaragua" className={`nav-pill-link ${activePage === "mas-de-nicaragua" ? "active" : ""}`}>
-            <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {t("nav.moreNicaragua") || (lang === "en" ? "More of Nicaragua" : "Más de Nicaragua")}
+            <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Más de Nicaragua", "More of Nicaragua", "探索尼加拉瓜")}
           </Link>
           <Link href="/comunidad" className={`nav-pill-link ${activePage === "comunidad" ? "active" : ""}`}>
-            <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {t("social.community")}
+            <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Comunidad", "Community", "社区")}
           </Link>
           <Link href="/guias" className={`nav-pill-link ${activePage === "guias" ? "active" : ""}`}>
-            <Icon name="compass" size={16} color={activePage === "guias" ? "#38BDF8" : "currentColor"} /> {lang === "en" ? "Guides" : "Guías"}
+            <Icon name="compass" size={16} color={activePage === "guias" ? "#38BDF8" : "currentColor"} /> {tr("Guías", "Guides", "导游")}
           </Link>
           {session && (
             <Link href="/chat" className={`nav-pill-link ${activePage === "chat" ? "active" : ""}`}>
-              <img src="/images/comentarios.svg" alt="Mensajes" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {t("chat.title")}
+              <img src="/images/comentarios.svg" alt="Mensajes" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Mensajes", "Messages", "消息")}
             </Link>
           )}
 
@@ -217,7 +217,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                     transition: "all 0.2s",
                     boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)"
                   }}
-                  title={lang === "en" ? "User Options" : "Opciones de Usuario"}
+                  title={tr("Opciones de Usuario", "User Options", "用户选项")}
                 >
                   <Icon name="chevronDown" size={14} />
                 </button>
@@ -655,44 +655,44 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           </div>
 
           <Link href="/" className={`mobile-menu-item ${activePage === "inicio" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <img src="/images/home.svg" alt="Inicio" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{lang === "en" ? "Home" : "Inicio"}</span>
+            <img src="/images/home.svg" alt="Inicio" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Inicio", "Home", "首页")}</span>
           </Link>
           <Link href="/mapa" className={`mobile-menu-item ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <img src="/images/ubic.svg" alt="Mapa" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{t("nav.map")}</span>
+            <img src="/images/ubic.svg" alt="Mapa" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Mapa", "Map", "地图")}</span>
           </Link>
           <Link href="/departamentos" className={`mobile-menu-item ${activePage === "departamentos" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <img src="/images/flor.svg" alt="Ranking" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{lang === "en" ? "Ranking" : "Ranking"}</span>
+            <img src="/images/flor.svg" alt="Ranking" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Ranking", "Ranking", "排行榜")}</span>
           </Link>
           <Link href="/mas-de-nicaragua" className={`mobile-menu-item ${activePage === "mas-de-nicaragua" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{t("nav.moreNicaragua") || (lang === "en" ? "More of Nicaragua" : "Más de Nicaragua")}</span>
+            <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Más de Nicaragua", "More of Nicaragua", "探索尼加拉瓜")}</span>
           </Link>
           <Link href="/comunidad" className={`mobile-menu-item ${activePage === "comunidad" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{t("social.community")}</span>
+            <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Comunidad", "Community", "社区")}</span>
           </Link>
           <Link href="/guias" className={`mobile-menu-item ${activePage === "guias" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <Icon name="compass" size={20} color={activePage === "guias" ? "#38BDF8" : "#FFD700"} /> <span>{lang === "en" ? "Tour Guides" : "Guías Turísticos"}</span>
+            <Icon name="compass" size={20} color={activePage === "guias" ? "#38BDF8" : "#FFD700"} /> <span>{tr("Guías Turísticos", "Tour Guides", "专业导游")}</span>
           </Link>
           {session && (
             <Link href="/chat" className={`mobile-menu-item ${activePage === "chat" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-              <img src="/images/comentarios.svg" alt="Mensajes" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{t("chat.title")}</span>
+              <img src="/images/comentarios.svg" alt="Mensajes" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Mensajes", "Messages", "消息")}</span>
             </Link>
           )}
           {perfil?.rol === "admin" && (
             <Link href="/admin" className={`mobile-menu-item ${activePage === "admin" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-              <Icon name="shield" size={18} /> <span>{lang === "en" ? "Management" : "Gestión"}</span>
+              <Icon name="shield" size={18} /> <span>{tr("Gestión", "Management", "管理后台")}</span>
             </Link>
           )}
           {session ? (
             <>
               <Link href={communityProfileUrl} className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                <Icon name="users" size={18} /> <span>{lang === "en" ? "My Community Profile" : "Mi Perfil Comunidad"}</span>
+                <Icon name="users" size={18} /> <span>{tr("Mi Perfil Comunidad", "My Community Profile", "我的社区主页")}</span>
               </Link>
               <Link href="/perfil" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                <Icon name="user" size={18} /> <span>{lang === "en" ? "My Personal Profile" : "Mi Perfil Personal"}</span>
+                <Icon name="user" size={18} /> <span>{tr("Mi Perfil Personal", "My Personal Profile", "我的个人资料")}</span>
               </Link>
               {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
                 <Link href="/dashboard" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                  <Icon name="briefcase" size={18} /> <span>{lang === "en" ? "My Business" : "Mi Negocio"}</span>
+                  <Icon name="briefcase" size={18} /> <span>{tr("Mi Negocio", "My Business", "我的商家")}</span>
                 </Link>
               )}
               <button

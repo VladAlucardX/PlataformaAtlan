@@ -57,7 +57,7 @@ export default function RegisterPage() {
 
     // Validar contraseñas
     if (password !== confirmPassword) {
-      setErrorMsg(lang === "en" ? "Passwords do not match" : "Las contraseñas no coinciden");
+      setErrorMsg(lang === "en" ? "Passwords do not match" : lang === "zh" ? "两次输入的密码不一致" : "Las contraseñas no coinciden");
       setLoading(false);
       return;
     }
@@ -110,6 +110,8 @@ export default function RegisterPage() {
         setSuccessMsg(
           lang === "en"
             ? "Account created successfully! Redirecting..."
+            : lang === "zh"
+            ? "账户创建成功！正在跳转..."
             : "¡Cuenta creada exitosamente! Redirigiendo..."
         );
 
@@ -120,7 +122,7 @@ export default function RegisterPage() {
       }
     } catch (err) {
       console.error("Register catch error:", err);
-      setErrorMsg("Ocurrió un error inesperado.");
+      setErrorMsg(lang === "en" ? "An unexpected error occurred." : lang === "zh" ? "发生意外错误。" : "Ocurrió un error inesperado.");
     } finally {
       setLoading(false);
     }
@@ -144,7 +146,7 @@ export default function RegisterPage() {
       }
     } catch (err) {
       console.error("Google signup error:", err);
-      setErrorMsg(lang === "en" ? "Error connecting with Google" : "Error al conectar con Google");
+      setErrorMsg(lang === "en" ? "Error connecting with Google" : lang === "zh" ? "连接 Google 出错" : "Error al conectar con Google");
       setLoading(false);
     }
   };
@@ -210,7 +212,7 @@ export default function RegisterPage() {
         <form onSubmit={handleRegister} style={styles.form} autoComplete="off">
           {/* Selector de Rol Premium Compacto (3 opciones) */}
           <div style={styles.inputGroup}>
-            <label style={styles.label}>{lang === "en" ? "Select your Role" : "Selecciona tu Rol"}</label>
+            <label style={styles.label}>{lang === "en" ? "Select your Role" : lang === "zh" ? "选择您的身份角色" : "Selecciona tu Rol"}</label>
             <div style={styles.roleSelector}>
               <button
                 type="button"
@@ -236,7 +238,7 @@ export default function RegisterPage() {
                   }}
                 />
                 <span style={{ fontWeight: "750", fontSize: "13px" }}>
-                  {lang === "en" ? "Tourist" : "Turista"}
+                  {lang === "en" ? "Tourist" : lang === "zh" ? "游客" : "Turista"}
                 </span>
               </button>
               <button
@@ -263,7 +265,7 @@ export default function RegisterPage() {
                   }}
                 />
                 <span style={{ fontWeight: "750", fontSize: "13px" }}>
-                  {lang === "en" ? "Owner" : "Propietario"}
+                  {lang === "en" ? "Owner" : lang === "zh" ? "商家店主" : "Propietario"}
                 </span>
               </button>
 
@@ -280,7 +282,7 @@ export default function RegisterPage() {
               >
                 <Icon name="compass" size={20} color={rol === "guia_turistico" ? "#0284C7" : "#64748B"} />
                 <span style={{ fontWeight: "750", fontSize: "13px" }}>
-                  {lang === "en" ? "Tour Guide" : "Guía Turístico"}
+                  {lang === "en" ? "Tour Guide" : lang === "zh" ? "导游" : "Guía Turístico"}
                 </span>
               </button>
             </div>
@@ -293,7 +295,7 @@ export default function RegisterPage() {
               <input
                 type="text"
                 required
-                placeholder={lang === "en" ? "John Doe" : "Juan Pérez"}
+                placeholder={lang === "en" ? "John Doe" : lang === "zh" ? "姓名" : "Juan Pérez"}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="clay-input"
@@ -363,12 +365,12 @@ export default function RegisterPage() {
             }}>
               <div style={{ fontSize: "12px", fontWeight: "800", color: "#0284C7", display: "flex", alignItems: "center", gap: "6px" }}>
                 <Icon name="compass" size={14} color="#0284C7" />
-                {lang === "en" ? "Guide Profile Details" : "Datos de tu Perfil de Guía"}
+                {lang === "en" ? "Guide Profile Details" : lang === "zh" ? "导游资料详情" : "Datos de tu Perfil de Guía"}
               </div>
 
               <div style={styles.grid2Col}>
                 <div style={styles.inputGroup}>
-                  <label style={styles.label}>{lang === "en" ? "Primary Department" : "Departamento Principal"}</label>
+                  <label style={styles.label}>{lang === "en" ? "Primary Department" : lang === "zh" ? "主要省份" : "Departamento Principal"}</label>
                   <select
                     value={deptGuia}
                     onChange={(e) => setDeptGuia(e.target.value)}
@@ -382,7 +384,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div style={styles.inputGroup}>
-                  <label style={styles.label}>{lang === "en" ? "Specialty" : "Especialidad"}</label>
+                  <label style={styles.label}>{lang === "en" ? "Specialty" : lang === "zh" ? "专业领域" : "Especialidad"}</label>
                   <select
                     value={especialidadGuia}
                     onChange={(e) => setEspecialidadGuia(e.target.value)}
@@ -399,7 +401,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div style={styles.inputGroup}>
-                  <label style={styles.label}>{lang === "en" ? "Languages Spoken" : "Idiomas"}</label>
+                  <label style={styles.label}>{lang === "en" ? "Languages Spoken" : lang === "zh" ? "掌握语言" : "Idiomas"}</label>
                   <input
                     type="text"
                     placeholder="Ej. Español, Inglés"
@@ -411,7 +413,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div style={styles.inputGroup}>
-                  <label style={styles.label}>{lang === "en" ? "WhatsApp / Phone" : "WhatsApp / Teléfono"}</label>
+                  <label style={styles.label}>{lang === "en" ? "WhatsApp / Phone" : lang === "zh" ? "WhatsApp / 电话" : "WhatsApp / Teléfono"}</label>
                   <input
                     type="text"
                     placeholder="+505 8888 8888"
@@ -494,7 +496,7 @@ export default function RegisterPage() {
             <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 10.8 0 12.5s.7 2.8 1.9 5.2l3.7-2.9z"/>
             <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/>
           </svg>
-          <span>{lang === "en" ? "Continue with Google" : "Continuar con Google"}</span>
+          <span>{lang === "en" ? "Continue with Google" : lang === "zh" ? "通过 Google 注册" : "Continuar con Google"}</span>
         </button>
 
         <div style={styles.footerText}>
@@ -542,7 +544,7 @@ export default function RegisterPage() {
           alt=""
           style={{ width: "20px", height: "20px", objectFit: "contain" }}
         />
-        <span>{lang === "en" ? "Home" : "Inicio"}</span>
+        <span>{lang === "en" ? "Home" : lang === "zh" ? "首页" : "Inicio"}</span>
       </Link>
     </div>
   );

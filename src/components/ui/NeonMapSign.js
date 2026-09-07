@@ -2,8 +2,10 @@
 
 import React from "react";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function NeonMapSign() {
+  const { lang } = useTranslation();
   return (
     <Link href="/mapa" style={{ textDecoration: "none", display: "inline-block" }}>
       <div className="neon-sign-box">
@@ -52,7 +54,7 @@ export default function NeonMapSign() {
 
         {/* Texto Neón abajo */}
         <div className="neon-sign-text">
-          <span>EXPLORAR MAPA</span>
+          <span>{lang === "en" ? "EXPLORE MAP" : lang === "zh" ? "探索地图" : "EXPLORAR MAPA"}</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="neon-arrow">
             <polygon points="3 11 22 2 13 21 11 13 3 11" />
           </svg>

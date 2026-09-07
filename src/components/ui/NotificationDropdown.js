@@ -13,10 +13,10 @@ function timeAgo(dateStr, lang) {
   const diffMin = Math.floor(diffMs / 60000);
   const diffHr = Math.floor(diffMs / 3600000);
   const diffDay = Math.floor(diffMs / 86400000);
-  if (diffMin < 1) return lang === "en" ? "Now" : "Ahora";
-  if (diffMin < 60) return lang === "en" ? `${diffMin}m ago` : `hace ${diffMin}m`;
-  if (diffHr < 24) return lang === "en" ? `${diffHr}h ago` : `hace ${diffHr}h`;
-  return lang === "en" ? `${diffDay}d ago` : `hace ${diffDay}d`;
+  if (diffMin < 1) return lang === "en" ? "Now" : lang === "zh" ? "刚刚" : "Ahora";
+  if (diffMin < 60) return lang === "en" ? `${diffMin}m ago` : lang === "zh" ? `${diffMin}分钟前` : `hace ${diffMin}m`;
+  if (diffHr < 24) return lang === "en" ? `${diffHr}h ago` : lang === "zh" ? `${diffHr}小时前` : `hace ${diffHr}h`;
+  return lang === "en" ? `${diffDay}d ago` : lang === "zh" ? `${diffDay}天前` : `hace ${diffDay}d`;
 }
 
 function avatarStyle(url, size) {
@@ -109,12 +109,13 @@ export default function NotificationDropdown({ session }) {
           // Mostrar notificación Push del navegador
           if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
             let bodyText = "";
+            const creatorName = creator?.nombre_completo || (lang === "en" ? "Someone" : lang === "zh" ? "有人" : "Alguien");
             if (newNotif.tipo === "follow") {
-              bodyText = `${creator?.nombre_completo || "Alguien"} ${lang === "en" ? "started following you" : "comenzó a seguirte"}`;
+              bodyText = `${creatorName} ${lang === "en" ? "started following you" : lang === "zh" ? "关注了您" : "comenzó a seguirte"}`;
             } else if (newNotif.tipo === "comment") {
-              bodyText = `${creator?.nombre_completo || "Alguien"} ${lang === "en" ? "commented on your post" : "comentó tu publicación"}`;
+              bodyText = `${creatorName} ${lang === "en" ? "commented on your post" : lang === "zh" ? "评论了您的动态" : "comentó tu publicación"}`;
             } else if (newNotif.tipo === "like") {
-              bodyText = `${creator?.nombre_completo || "Alguien"} ${lang === "en" ? "liked your post" : "le dio me gusta a tu publicación"}`;
+              bodyText = `${creatorName} ${lang === "en" ? "liked your post" : lang === "zh" ? "赞了您的动态" : "le dio me gusta a tu publicación"}`;
             }
 
             try {
@@ -207,7 +208,7 @@ export default function NotificationDropdown({ session }) {
   };
 
   const renderNotifContent = (notif) => {
-    const name = notif.creador?.nombre_completo || (lang === "en" ? "User" : "Usuario");
+    const name = notif.creador?.nombre_completo || (lang === "en" ? "User" : lang === "zh" ? "用户" : "Usuario");
     let actionText = "";
     if (notif.tipo === "follow") {
       actionText = t("notifications.followedYou");

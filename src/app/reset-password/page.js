@@ -39,6 +39,8 @@ export default function ResetPasswordPage() {
       setErrorMsg(
         lang === "en"
           ? "Password must be at least 6 characters."
+          : lang === "zh"
+          ? "密码长度至少为6个字符。"
           : "La contraseña debe tener al menos 6 caracteres."
       );
       return;
@@ -48,6 +50,8 @@ export default function ResetPasswordPage() {
       setErrorMsg(
         lang === "en"
           ? "Passwords do not match."
+          : lang === "zh"
+          ? "两次输入的密码不一致。"
           : "Las contraseñas no coinciden."
       );
       return;
@@ -64,6 +68,8 @@ export default function ResetPasswordPage() {
         setSuccessMsg(
           lang === "en"
             ? "Password updated successfully! Redirecting to login..."
+            : lang === "zh"
+            ? "密码更新成功！正在跳转至登录页面..."
             : "¡Contraseña actualizada con éxito! Redirigiendo al inicio de sesión..."
         );
         setTimeout(() => {
@@ -75,6 +81,8 @@ export default function ResetPasswordPage() {
       setErrorMsg(
         lang === "en"
           ? "An unexpected error occurred."
+          : lang === "zh"
+          ? "发生意外错误。"
           : "Ocurrió un error inesperado."
       );
     } finally {
@@ -98,11 +106,13 @@ export default function ResetPasswordPage() {
 
       <div style={styles.card} className="clay-card-static no-sheen animate-fade-in-up">
         <h2 style={styles.title}>
-          {lang === "en" ? "Set New Password" : "Nueva Contraseña"}
+          {lang === "en" ? "Set New Password" : lang === "zh" ? "设置新密码" : "Nueva Contraseña"}
         </h2>
         <p style={styles.subtitle}>
           {lang === "en"
             ? "Enter your new password below."
+            : lang === "zh"
+            ? "请在下方输入您的新密码。"
             : "Ingresa tu nueva contraseña a continuación."}
         </p>
 
@@ -121,7 +131,7 @@ export default function ResetPasswordPage() {
         <form onSubmit={handleResetPassword} style={styles.form} autoComplete="off">
           <div style={styles.inputGroup}>
             <label style={styles.label}>
-              {lang === "en" ? "New Password" : "Nueva Contraseña"}
+              {lang === "en" ? "New Password" : lang === "zh" ? "新密码" : "Nueva Contraseña"}
             </label>
             <input
               type="password"
@@ -138,7 +148,7 @@ export default function ResetPasswordPage() {
 
           <div style={styles.inputGroup}>
             <label style={styles.label}>
-              {lang === "en" ? "Confirm Password" : "Confirmar Contraseña"}
+              {lang === "en" ? "Confirm Password" : lang === "zh" ? "确认密码" : "Confirmar Contraseña"}
             </label>
             <input
               type="password"
@@ -159,7 +169,7 @@ export default function ResetPasswordPage() {
             style={styles.submitBtn}
             disabled={loading}
           >
-            <span>{loading ? (lang === "en" ? "Saving..." : "Guardando...") : (lang === "en" ? "Update Password" : "Actualizar Contraseña")}</span>
+            <span>{loading ? (lang === "en" ? "Saving..." : lang === "zh" ? "正在保存..." : "Guardando...") : (lang === "en" ? "Update Password" : lang === "zh" ? "更新密码" : "Actualizar Contraseña")}</span>
           </button>
         </form>
       </div>
@@ -170,7 +180,7 @@ export default function ResetPasswordPage() {
         className="clay-tab no-sheen"
       >
         <img src="/images/home.svg" alt="Inicio" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
-        <span>{lang === "en" ? "Home" : "Inicio"}</span>
+        <span>{lang === "en" ? "Home" : lang === "zh" ? "首页" : "Inicio"}</span>
       </Link>
     </div>
   );

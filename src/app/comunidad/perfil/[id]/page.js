@@ -22,10 +22,10 @@ function timeAgo(dateStr, lang) {
   const diffMin = Math.floor(diffMs / 60000);
   const diffHr = Math.floor(diffMs / 3600000);
   const diffDay = Math.floor(diffMs / 86400000);
-  if (diffMin < 1) return lang === "en" ? "Now" : "Ahora";
-  if (diffMin < 60) return lang === "en" ? `${diffMin}m ago` : `hace ${diffMin}m`;
-  if (diffHr < 24) return lang === "en" ? `${diffHr}h ago` : `hace ${diffHr}h`;
-  return lang === "en" ? `${diffDay}d ago` : `hace ${diffDay}d`;
+  if (diffMin < 1) return lang === "en" ? "Now" : lang === "zh" ? "刚刚" : "Ahora";
+  if (diffMin < 60) return lang === "en" ? `${diffMin}m ago` : lang === "zh" ? `${diffMin}分钟前` : `hace ${diffMin}m`;
+  if (diffHr < 24) return lang === "en" ? `${diffHr}h ago` : lang === "zh" ? `${diffHr}小时前` : `hace ${diffHr}h`;
+  return lang === "en" ? `${diffDay}d ago` : lang === "zh" ? `${diffDay}天前` : `hace ${diffDay}d`;
 }
 
 function avatarStyle(url, size) {
@@ -185,7 +185,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
   };
 
   const handleDeleteComment = async (commentId) => {
-    if (!confirm(lang === "en" ? "Delete this comment?" : "¿Eliminar este comentario?")) return;
+    if (!confirm(lang === "en" ? "Delete this comment?" : lang === "zh" ? "删除此评论？" : "¿Eliminar este comentario?")) return;
     try {
       await supabase.from("comentarios_social").delete().eq("id", commentId);
       setComments((c) => c.filter((cm) => cm.id !== commentId));
@@ -194,7 +194,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
   };
 
   const handleDeletePost = () => {
-    if (!confirm(lang === "en" ? "Delete this post?" : "¿Eliminar esta publicación?")) return;
+    if (!confirm(lang === "en" ? "Delete this post?" : lang === "zh" ? "删除此动态？" : "¿Eliminar esta publicación?")) return;
     onDelete(post.id);
     setShowMenu(false);
   };
@@ -203,12 +203,12 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
     <div style={post.es_publicidad ? cardStyles.publicidadCard : cardStyles.card}>
       {post.es_publicidad && (
         <div style={cardStyles.publicidadBadge}>
-          <Icon name="sparkles" size={12} /> {lang === "en" ? "Sponsored Ad" : "Publicidad"}
+          <Icon name="sparkles" size={12} /> {lang === "en" ? "Sponsored Ad" : lang === "zh" ? "赞助广告" : "Publicidad"}
         </div>
       )}
       {post.es_promocion && !post.es_publicidad && (
         <div style={cardStyles.promoBadge}>
-          <Icon name="megaphone" size={12} /> {lang === "en" ? "Promo" : "Promoción"}
+          <Icon name="megaphone" size={12} /> {lang === "en" ? "Promo" : lang === "zh" ? "特别推广" : "Promoción"}
         </div>
       )}
 
@@ -233,7 +233,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
             {showMenu && (
               <div style={cardStyles.menuDropdown}>
                 <button onClick={handleDeletePost} style={cardStyles.menuItem}>
-                  <Icon name="trash" size={12} /> {lang === "en" ? "Delete" : "Eliminar"}
+                  <Icon name="trash" size={12} /> {lang === "en" ? "Delete" : lang === "zh" ? "删除" : "Eliminar"}
                 </button>
               </div>
             )}
@@ -414,7 +414,9 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
                       <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "4px" }}>
                         <span style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{timeAgo(comment.created_at, lang)}</span>
                         {canDeleteComment && (
-                          <button onClick={() => handleDeleteComment(comment.id)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: "11px", cursor: "pointer", fontWeight: "700", padding: 0 }}>Eliminar</button>
+                          <button onClick={() => handleDeleteComment(comment.id)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: "11px", cursor: "pointer", fontWeight: "700", padding: 0 }}>
+                            {lang === "en" ? "Delete" : lang === "zh" ? "删除" : "Eliminar"}
+                          </button>
                         )}
                       </div>
                     </div>
@@ -431,7 +433,7 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value.slice(0, 500))}
                     onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmitComment(); } }}
-                    placeholder="Escribe un comentario..."
+                    placeholder={lang === "en" ? "Write a comment..." : lang === "zh" ? "写下您的评论..." : "Escribe un comentario..."}
                     style={cardStyles.commentTextField}
                     disabled={submittingComment}
                   />
@@ -497,12 +499,12 @@ function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChang
             {user.nombre_completo || "Usuario"}
           </div>
           <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>
-            {user.rol === "dueno" ? <><Icon name="building" size={11} /> Propietario</> : <><Icon name="luggage" size={11} /> Turista Tuani</>}
+            {user.rol === "dueno" ? <><Icon name="building" size={11} /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</> : <><Icon name="luggage" size={11} /> {lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
           </div>
         </div>
       </Link>
       <button onClick={handleFollow} disabled={loading} style={{ ...sidebarStyles.followBtn, background: isFollowing ? "rgba(20,109,158,0.06)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: isFollowing ? "var(--atlan-text-secondary)" : "white" }}>
-        {isFollowing ? "Siguiendo" : "Seguir"}
+        {isFollowing ? (lang === "en" ? "Following" : lang === "zh" ? "已关注" : "Siguiendo") : (lang === "en" ? "Follow" : lang === "zh" ? "关注" : "Seguir")}
       </button>
     </div>
   );
@@ -739,8 +741,12 @@ export default function PerfilPublico() {
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "var(--atlan-bg-primary)" }}>
         <div style={{ textAlign: "center" }}>
           <span style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}><Icon name="search" size={48} /></span>
-          <h3 style={{ margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>Usuario no encontrado</h3>
-          <Link href="/comunidad" style={{ color: "var(--atlan-gold)", fontWeight: "700" }}>← Volver a Comunidad</Link>
+          <h3 style={{ margin: "0 0 8px", color: "var(--atlan-text-primary)" }}>
+            {lang === "en" ? "User not found" : lang === "zh" ? "未找到该用户" : "Usuario no encontrado"}
+          </h3>
+          <Link href="/comunidad" style={{ color: "var(--atlan-gold)", fontWeight: "700" }}>
+            {lang === "en" ? "← Back to Community" : lang === "zh" ? "← 返回社区" : "← Volver a Comunidad"}
+          </Link>
         </div>
       </div>
     );
@@ -770,16 +776,16 @@ export default function PerfilPublico() {
                 </Link>
                 <h4 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{myPerfil.nombre_completo}</h4>
                 <p style={{ margin: "0 0 12px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>
-                  {myPerfil.rol === "dueno" ? <><Icon name="building" size={11} /> Propietario</> : <><Icon name="luggage" size={11} /> Turista Tuani</>}
+                  {myPerfil.rol === "dueno" ? <><Icon name="building" size={11} /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</> : <><Icon name="luggage" size={11} /> {lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
                 </p>
                 <div style={{ display: "flex", justifyContent: "center", gap: "24px" }}>
                   <button onClick={() => { setFollowersModalTab("followers"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px" }}>
                     <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{myPerfil.seguidores_count || 0}</div>
-                    <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>Seguidores</div>
+                    <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Followers" : lang === "zh" ? "粉丝" : "Seguidores"}</div>
                   </button>
                   <button onClick={() => { setFollowersModalTab("following"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px" }}>
                     <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{myPerfil.siguiendo_count || 0}</div>
-                    <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>Siguiendo</div>
+                    <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Following" : lang === "zh" ? "已关注" : "Siguiendo"}</div>
                   </button>
                 </div>
               </div>
@@ -789,21 +795,25 @@ export default function PerfilPublico() {
               <span style={{ display: "block", marginBottom: "12px" }}>
                 <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "42px", height: "42px", objectFit: "contain", margin: "0 auto" }} />
               </span>
-              <h4 style={{ margin: "0 0 8px", fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>Únete a la Comunidad</h4>
-              <Link href="/registro" className="btn-primary" style={{ display: "block", textAlign: "center", padding: "10px", fontSize: "13px" }}>Crear Cuenta</Link>
+              <h4 style={{ margin: "0 0 8px", fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
+                {lang === "en" ? "Join the Community" : lang === "zh" ? "加入社区" : "Únete a la Comunidad"}
+              </h4>
+              <Link href="/registro" className="btn-primary" style={{ display: "block", textAlign: "center", padding: "10px", fontSize: "13px" }}>
+                {lang === "en" ? "Create Account" : lang === "zh" ? "创建账户" : "Crear Cuenta"}
+              </Link>
             </div>
           )}
 
           <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
             <div style={sidebarStyles.cardHeaderBanner}>
-              <img src="/images/Ubicacion.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> Explorar
+              <img src="/images/Ubicacion.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Explore" : lang === "zh" ? "探索发现" : "Explorar"}
             </div>
             <div style={{ padding: "0 16px" }}>
               <Link href="/comunidad" style={sidebarStyles.exploreLink}>
-                <img src="/images/comunidad.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0)" }} /> Muro General
+                <img src="/images/comunidad.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0)" }} /> {lang === "en" ? "General Feed" : lang === "zh" ? "公共动态" : "Muro General"}
               </Link>
               <Link href="/mapa" style={sidebarStyles.exploreLink}>
-                <img src="/images/croquisnicaragua.svg" alt="Mapa" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0)" }} /> Mapa Turístico
+                <img src="/images/croquisnicaragua.svg" alt="Mapa" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0)" }} /> {lang === "en" ? "Tourist Map" : lang === "zh" ? "旅游地图" : "Mapa Turístico"}
               </Link>
             </div>
           </div>
@@ -825,18 +835,20 @@ export default function PerfilPublico() {
                       {targetPerfil.nombre_completo || "Usuario"}
                     </h2>
                     <span style={{ fontSize: "12px", fontWeight: "700", color: "#17AA4A" }}>
-                      {targetPerfil.rol === "dueno" ? "Propietario" : "Turista Tuani"}
+                      {targetPerfil.rol === "dueno"
+                        ? (lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario")
+                        : (lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani")}
                     </span>
                   </div>
                   <button onClick={handleFollow} disabled={followLoading} style={{ padding: "8px 20px", borderRadius: "10px", border: "none", background: isFollowing ? "rgba(20,109,158,0.08)" : "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: isFollowing ? "#1A1A2E" : "white", fontWeight: "800", fontSize: "13px", cursor: "pointer" }}>
-                    {isFollowing ? "✓ Siguiendo" : "Seguir"}
+                    {isFollowing ? (lang === "en" ? "✓ Following" : lang === "zh" ? "✓ 已关注" : "✓ Siguiendo") : (lang === "en" ? "Follow" : lang === "zh" ? "关注" : "Seguir")}
                   </button>
                 </div>
 
                 <div style={{ display: "flex", gap: "24px", paddingTop: "12px", borderTop: "1px solid rgba(20,109,158,0.08)" }}>
-                  <div><strong>{posts.length}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>Posts</span></div>
-                  <div><strong>{targetPerfil.seguidores_count || 0}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>Seguidores</span></div>
-                  <div><strong>{targetPerfil.siguiendo_count || 0}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>Siguiendo</span></div>
+                  <div><strong>{posts.length}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>{lang === "en" ? "Posts" : lang === "zh" ? "动态" : "Posts"}</span></div>
+                  <div><strong>{targetPerfil.seguidores_count || 0}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>{lang === "en" ? "Followers" : lang === "zh" ? "粉丝" : "Seguidores"}</span></div>
+                  <div><strong>{targetPerfil.siguiendo_count || 0}</strong> <span style={{ fontSize: "12px", color: "#64748B" }}>{lang === "en" ? "Following" : lang === "zh" ? "已关注" : "Siguiendo"}</span></div>
                 </div>
               </div>
             </div>
@@ -845,7 +857,9 @@ export default function PerfilPublico() {
           {/* Posts Feed (Con soporte completo para Videos, Fotos, Likes y Comentarios) */}
           {posts.length === 0 ? (
             <div style={{ textAlign: "center", padding: "40px", background: "#FFFFFF", borderRadius: "24px", border: "1px solid rgba(20,109,158,0.08)" }}>
-              <p style={{ margin: 0, color: "#64748B" }}>No hay publicaciones todavía.</p>
+              <p style={{ margin: 0, color: "#64748B" }}>
+                {lang === "en" ? "No posts yet." : lang === "zh" ? "暂无发布的动态。" : "No hay publicaciones todavía."}
+              </p>
             </div>
           ) : (
             posts.map(post => (
@@ -867,14 +881,14 @@ export default function PerfilPublico() {
         <aside className="hide-mobile community-sidebar">
           <div style={sidebarStyles.sectionCard}>
             <div style={sidebarStyles.cardHeaderBanner}>
-              <img src="/images/lupa.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> Buscar
+              <img src="/images/lupa.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Search" : lang === "zh" ? "搜索" : "Buscar"}
             </div>
             <div style={{ padding: "0 16px" }}>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar personas..."
+                placeholder={lang === "en" ? "Search people..." : lang === "zh" ? "搜索用户..." : "Buscar personas..."}
                 style={{ width: "100%", padding: "10px 14px", background: "rgba(20, 109, 158, 0.04)", border: "1px solid rgba(20, 109, 158, 0.10)", borderRadius: "12px", fontSize: "13px", outline: "none" }}
               />
             </div>
@@ -882,7 +896,7 @@ export default function PerfilPublico() {
 
           <div style={{ ...sidebarStyles.sectionCard, marginTop: "16px" }}>
             <div style={sidebarStyles.cardHeaderBanner}>
-              <img src="/images/tortuga.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> Personas sugeridas
+              <img src="/images/tortuga.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> {lang === "en" ? "Suggested People" : lang === "zh" ? "推荐关注" : "Personas sugeridas"}
             </div>
             <div style={{ padding: "0 16px" }}>
               {suggestedUsers.map((u) => (

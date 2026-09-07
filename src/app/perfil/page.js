@@ -71,11 +71,11 @@ export default function PerfilPage() {
 
       setPerfil((p) => ({ ...p, nombre_completo: editNombre, bio: editBio }));
       if (updatePerfil) updatePerfil({ nombre_completo: editNombre, bio: editBio });
-      alert(lang === "en" ? "Profile updated successfully!" : "¡Perfil actualizado con éxito!");
+      alert(lang === "en" ? "Profile updated successfully!" : lang === "zh" ? "个人资料更新成功！" : "¡Perfil actualizado con éxito!");
       setIsEditing(false);
     } catch (err) {
       console.error("Error updating profile:", err);
-      alert(lang === "en" ? "Failed to update profile" : "Error al actualizar perfil: " + (err.message || ""));
+      alert(lang === "en" ? "Failed to update profile" : lang === "zh" ? "更新个人资料失败：" + (err.message || "") : "Error al actualizar perfil: " + (err.message || ""));
     } finally {
       setSavingProfile(false);
     }
@@ -158,7 +158,7 @@ export default function PerfilPage() {
       }
     } catch (err) {
       console.error("Error uploading tour photo:", err);
-      alert(lang === "en" ? "Failed to upload photo" : "Error al subir la foto de travesía");
+      alert(lang === "en" ? "Failed to upload photo" : lang === "zh" ? "上传带团照片失败" : "Error al subir la foto de travesía");
     } finally {
       setUploadingTravesiaFoto(false);
     }
@@ -201,11 +201,11 @@ export default function PerfilPage() {
 
       if (error) throw error;
 
-      alert(lang === "en" ? "Guide profile updated successfully!" : "¡Perfil de Guía Turístico actualizado con éxito!");
+      alert(lang === "en" ? "Guide profile updated successfully!" : lang === "zh" ? "导游资料更新成功！" : "¡Perfil de Guía Turístico actualizado con éxito!");
       setIsEditingGuia(false);
     } catch (err) {
       console.error("Error saving guide profile:", err);
-      alert(lang === "en" ? "Error updating guide profile" : "Error al guardar el perfil de guía: " + (err.message || ""));
+      alert(lang === "en" ? "Error updating guide profile" : lang === "zh" ? "保存导游资料失败：" + (err.message || "") : "Error al guardar el perfil de guía: " + (err.message || ""));
     } finally {
       setSavingGuia(false);
     }
@@ -214,24 +214,24 @@ export default function PerfilPage() {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     if (newPassword.length < 6) {
-      alert(lang === "en" ? "Password must be at least 6 characters" : "La contraseña debe tener al menos 6 caracteres");
+      alert(lang === "en" ? "Password must be at least 6 characters" : lang === "zh" ? "密码长度至少为 6 个字符" : "La contraseña debe tener al menos 6 caracteres");
       return;
     }
     if (newPassword !== confirmNewPassword) {
-      alert(lang === "en" ? "Passwords do not match" : "Las contraseñas no coinciden");
+      alert(lang === "en" ? "Passwords do not match" : lang === "zh" ? "两次输入的密码不一致" : "Las contraseñas no coinciden");
       return;
     }
     setSavingPass(true);
     try {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
-      alert(lang === "en" ? "Password updated successfully!" : "¡Contraseña actualizada con éxito!");
+      alert(lang === "en" ? "Password updated successfully!" : lang === "zh" ? "密码更新成功！" : "¡Contraseña actualizada con éxito!");
       setNewPassword("");
       setConfirmNewPassword("");
       setIsChangingPass(false);
     } catch (err) {
       console.error("Error changing password:", err);
-      alert(lang === "en" ? "Failed to update password" : "Error al actualizar la contraseña: " + (err.message || ""));
+      alert(lang === "en" ? "Failed to update password" : lang === "zh" ? "更新密码失败：" + (err.message || "") : "Error al actualizar la contraseña: " + (err.message || ""));
     } finally {
       setSavingPass(false);
     }
@@ -253,7 +253,7 @@ export default function PerfilPage() {
       if (updatePerfil) updatePerfil({ avatar_url: publicUrl });
     } catch (err) {
       console.error("Error updating avatar:", err);
-      alert(lang === "en" ? "Failed to upload profile picture" : "Error al subir la foto de perfil");
+      alert(lang === "en" ? "Failed to upload profile picture" : lang === "zh" ? "上传头像失败" : "Error al subir la foto de perfil");
     } finally {
       setAvatarUploading(false);
     }
@@ -356,9 +356,9 @@ export default function PerfilPage() {
   const handleCancelarReserva = (reservaId) => {
     setConfirmModal({
       isOpen: true,
-      title: lang === "en" ? "Cancel Reservation" : "Cancelar Reserva",
-      message: lang === "en" ? "Are you sure you want to cancel this reservation?" : "¿Estás seguro de que deseas cancelar esta reserva?",
-      confirmText: lang === "en" ? "Yes, Cancel" : "Sí, Cancelar",
+      title: lang === "en" ? "Cancel Reservation" : lang === "zh" ? "取消预订" : "Cancelar Reserva",
+      message: lang === "en" ? "Are you sure you want to cancel this reservation?" : lang === "zh" ? "您确定要取消此预订吗？" : "¿Estás seguro de que deseas cancelar esta reserva?",
+      confirmText: lang === "en" ? "Yes, Cancel" : lang === "zh" ? "确认取消" : "Sí, Cancelar",
       loading: false,
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, loading: true }));
@@ -386,9 +386,9 @@ export default function PerfilPage() {
   const handleRemoveFavorite = (favoritoId) => {
     setConfirmModal({
       isOpen: true,
-      title: lang === "en" ? "Remove Favorite" : "Quitar de Favoritos",
-      message: lang === "en" ? "Are you sure you want to remove this place from your favorites?" : "¿Estás seguro de que deseas quitar este lugar de tus favoritos?",
-      confirmText: lang === "en" ? "Yes, Remove" : "Sí, Quitar",
+      title: lang === "en" ? "Remove Favorite" : lang === "zh" ? "移除收藏" : "Quitar de Favoritos",
+      message: lang === "en" ? "Are you sure you want to remove this place from your favorites?" : lang === "zh" ? "您确定要从收藏夹中移除此地点吗？" : "¿Estás seguro de que deseas quitar este lugar de tus favoritos?",
+      confirmText: lang === "en" ? "Yes, Remove" : lang === "zh" ? "确认移除" : "Sí, Quitar",
       loading: false,
       onConfirm: async () => {
         setConfirmModal((prev) => ({ ...prev, loading: true }));
@@ -435,7 +435,7 @@ export default function PerfilPage() {
             margin: "0 auto 16px"
           }} />
           <p style={{ fontSize: "14px", color: "var(--atlan-text-muted)" }}>
-            {lang === "en" ? "Loading profile..." : "Cargando perfil..."}
+            {lang === "en" ? "Loading profile..." : lang === "zh" ? "正在加载个人资料..." : "Cargando perfil..."}
           </p>
         </div>
       </div>
@@ -443,14 +443,14 @@ export default function PerfilPage() {
   }
 
   const rolText = perfil?.rol === "guia_turistico"
-    ? (lang === "en" ? "Tour Guide" : "Guía Turístico Certificado")
+    ? (lang === "en" ? "Tour Guide" : lang === "zh" ? "认证导游" : "Guía Turístico Certificado")
     : perfil?.rol === "dueno"
-    ? (lang === "en" ? "Business Owner" : "Propietario de Negocio")
+    ? (lang === "en" ? "Business Owner" : lang === "zh" ? "商家店主" : "Propietario de Negocio")
     : perfil?.rol === "admin"
-    ? (lang === "en" ? "Admin" : "Administrador")
+    ? (lang === "en" ? "Admin" : lang === "zh" ? "管理员" : "Administrador")
     : (perfil?.es_premium || perfil?.suscripcion_activa || perfil?.rol === "turista_deacachimba")
-    ? (lang === "en" ? "Deacachimba Tourist" : "Turista Deacachimba")
-    : (lang === "en" ? "Tuani Tourist" : "Turista Tuani");
+    ? (lang === "en" ? "Deacachimba Tourist" : lang === "zh" ? "超级游客" : "Turista Deacachimba")
+    : (lang === "en" ? "Tuani Tourist" : lang === "zh" ? "优质游客" : "Turista Tuani");
 
   // Paginación helpers (4 por página)
   const getPaginatedItems = (items, currentPage) => {
@@ -497,10 +497,10 @@ export default function PerfilPage() {
           }}
         />
         <h4 style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "800", color: "#146D9E" }}>Por descubrir</h4>
-        <p style={{ margin: "0 0 10px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>Explora el mapa para añadir nuevos destinos</p>
+        <p style={{ margin: "0 0 10px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Explore the map to add new destinations" : lang === "zh" ? "探索地图以添加新目的地" : "Explora el mapa para añadir nuevos destinos"}</p>
         <Link href="/mapa" style={{ fontSize: "12px", color: "#17AA4A", fontWeight: "800", textDecoration: "none", display: "flex", alignItems: "center", gap: "6px" }}>
           <img src="/images/ubic.svg" alt="" style={{ width: "14px", height: "14px", objectFit: "contain" }} />
-          <span>Explorar Mapa →</span>
+          <span>{lang === "en" ? "Explore Map →" : lang === "zh" ? "探索地图 →" : "Explorar Mapa →"}</span>
         </Link>
       </div>
     );
@@ -512,7 +512,7 @@ export default function PerfilPage() {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", marginTop: "22px" }}>
         <span style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)", marginRight: "4px" }}>
-          {lang === "en" ? "Page:" : "Página:"}
+          {lang === "en" ? "Page:" : lang === "zh" ? "页码:" : "Página:"}
         </span>
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
           <button
@@ -611,7 +611,7 @@ export default function PerfilPage() {
             </div>
             <div>
               <div style={{ fontSize: "22px", fontWeight: "900", color: "#0A192F" }}>{reservas.length}</div>
-              <div style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Direct Reservations" : "Reservas Activas"}</div>
+              <div style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Direct Reservations" : lang === "zh" ? "有效预订" : "Reservas Activas"}</div>
             </div>
           </div>
 
@@ -639,7 +639,7 @@ export default function PerfilPage() {
             </div>
             <div>
               <div style={{ fontSize: "22px", fontWeight: "900", color: "#17AA4A" }}>{favoritos.length}</div>
-              <div style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Saved Places" : "Destinos Guardados"}</div>
+              <div style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Saved Places" : lang === "zh" ? "已收藏目的地" : "Destinos Guardados"}</div>
             </div>
           </div>
 
@@ -667,7 +667,7 @@ export default function PerfilPage() {
             </div>
             <div>
               <div style={{ fontSize: "22px", fontWeight: "900", color: "#E6C200" }}>{resenas.length}</div>
-              <div style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Published Reviews" : "Reseñas Publicadas"}</div>
+              <div style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Published Reviews" : lang === "zh" ? "已发表评价" : "Reseñas Publicadas"}</div>
             </div>
           </div>
 
@@ -691,7 +691,7 @@ export default function PerfilPage() {
             </div>
             <div>
               <div style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700" }}>{rolText}</div>
-              <div style={{ fontSize: "11px", opacity: 0.85, color: "#FFFFFF" }}>{lang === "en" ? "Active Status" : "Estado Turístico en Atlan"}</div>
+              <div style={{ fontSize: "11px", opacity: 0.85, color: "#FFFFFF" }}>{lang === "en" ? "Active Status" : lang === "zh" ? "Atlan 旅游状态" : "Estado Turístico en Atlan"}</div>
             </div>
           </div>
         </div>
@@ -754,7 +754,7 @@ export default function PerfilPage() {
                     cursor: "pointer",
                     overflow: "hidden"
                   }}
-                  title={lang === "en" ? "Change profile picture" : "Cambiar foto de perfil"}
+                  title={lang === "en" ? "Change profile picture" : lang === "zh" ? "更换头像" : "Cambiar foto de perfil"}
                 >
                   {avatarUploading ? (
                     <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", color: "#FFFFFF", fontSize: "11px", fontWeight: "bold" }}>
@@ -842,7 +842,7 @@ export default function PerfilPage() {
                   }}
                 >
                   <img src="/images/flor.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                  <span>{lang === "en" ? "Edit Profile" : "Editar Perfil"}</span>
+                  <span>{lang === "en" ? "Edit Profile" : lang === "zh" ? "编辑资料" : "Editar Perfil"}</span>
                 </button>
 
                 {/* Botón 3: Cambiar Contraseña (Amarillo / Dorado) */}
@@ -872,7 +872,7 @@ export default function PerfilPage() {
                   }}
                 >
                   <img src="/images/tortuga.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0)" }} />
-                  <span>{lang === "en" ? "Change Password" : "Cambiar Contraseña"}</span>
+                  <span>{lang === "en" ? "Change Password" : lang === "zh" ? "修改密码" : "Cambiar Contraseña"}</span>
                 </button>
 
                 {/* Botón Guía: Ir a mi Perfil de Guía (Solo si es guía turístico) */}
@@ -897,7 +897,7 @@ export default function PerfilPage() {
                     }}
                   >
                     <Icon name="compass" size={18} color="#FFFFFF" />
-                    <span>{lang === "en" ? "My Guide Profile Section" : "Mi Perfil de Guía Turístico"}</span>
+                    <span>{lang === "en" ? "My Guide Profile Section" : lang === "zh" ? "我的导游专区" : "Mi Perfil de Guía Turístico"}</span>
                   </Link>
                 )}
 
@@ -923,8 +923,8 @@ export default function PerfilPage() {
                   <img src="/images/edificio.svg" alt="" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                   <span>
                     {(perfil?.rol === "dueno" || perfil?.rol === "admin")
-                      ? (lang === "en" ? "Manage Business" : "Gestionar mi Negocio")
-                      : (lang === "en" ? "Register Business" : "Reclamar o Registrar Negocio")}
+                      ? (lang === "en" ? "Manage Business" : lang === "zh" ? "管理我的商户" : "Gestionar mi Negocio")
+                      : (lang === "en" ? "Register Business" : lang === "zh" ? "认领或注册商户" : "Reclamar o Registrar Negocio")}
                   </span>
                 </Link>
               </div>
@@ -988,7 +988,7 @@ export default function PerfilPage() {
                     />
                     {activeTab === "destinos" && (
                       <span style={{ color: "#0A192F", fontWeight: "900", fontSize: "12.5px" }}>
-                        Destinos
+                        {lang === "en" ? "Destinations" : lang === "zh" ? "目的地" : "Destinos"}
                       </span>
                     )}
                   </button>
@@ -1008,7 +1008,7 @@ export default function PerfilPage() {
                       gap: "6px",
                       transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"
                     }}
-                    title="Mis Reservas Directas"
+                    title={lang === "en" ? "My Direct Reservations" : lang === "zh" ? "我的直接预订" : "Mis Reservas Directas"}
                   >
                     <img
                       src="/images/edificio.svg"
@@ -1022,7 +1022,7 @@ export default function PerfilPage() {
                     />
                     {activeTab === "reservas" && (
                       <span style={{ color: "#0A192F", fontWeight: "900", fontSize: "12.5px" }}>
-                        Reservas
+                        {lang === "en" ? "Reservations" : lang === "zh" ? "预订" : "Reservas"}
                       </span>
                     )}
                   </button>
@@ -1042,7 +1042,7 @@ export default function PerfilPage() {
                       gap: "6px",
                       transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"
                     }}
-                    title="Reseñas Publicadas"
+                    title={lang === "en" ? "My Published Reviews" : lang === "zh" ? "我发布的评价" : "Reseñas Publicadas"}
                   >
                     <img
                       src="/images/comentarios.svg"
@@ -1056,7 +1056,7 @@ export default function PerfilPage() {
                     />
                     {activeTab === "resenas" && (
                       <span style={{ color: "#0A192F", fontWeight: "900", fontSize: "12.5px" }}>
-                        Reseñas
+                        {lang === "en" ? "Reviews" : lang === "zh" ? "评价" : "Reseñas"}
                       </span>
                     )}
                   </button>
@@ -1064,17 +1064,17 @@ export default function PerfilPage() {
 
                 {/* Título de la Sección Activa */}
                 <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "900", color: "#FFFFFF" }}>
-                  {activeTab === "destinos" && (lang === "en" ? "My Saved Places" : "Mis Destinos Guardados")}
-                  {activeTab === "reservas" && (lang === "en" ? "My Direct Reservations" : "Mis Reservas Directas")}
-                  {activeTab === "resenas" && (lang === "en" ? "My Published Reviews" : "Reseñas Publicadas")}
+                  {activeTab === "destinos" && (lang === "en" ? "My Saved Places" : lang === "zh" ? "我的收藏目的地" : "Mis Destinos Guardados")}
+                  {activeTab === "reservas" && (lang === "en" ? "My Direct Reservations" : lang === "zh" ? "我的直接预订" : "Mis Reservas Directas")}
+                  {activeTab === "resenas" && (lang === "en" ? "My Published Reviews" : lang === "zh" ? "我发布的评价" : "Reseñas Publicadas")}
                 </h2>
               </div>
 
               {/* Insignia de conteo de la sección activa */}
               <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(255, 215, 0, 0.2)", padding: "5px 14px", borderRadius: "12px", color: "#FFD700" }}>
-                {activeTab === "destinos" && `${favoritos.length} ${favoritos.length === 1 ? "destino" : "destinos"}`}
-                {activeTab === "reservas" && `${reservas.length} ${reservas.length === 1 ? "reserva" : "reservas"}`}
-                {activeTab === "resenas" && `${resenas.length} ${resenas.length === 1 ? "reseña" : "reseñas"}`}
+                {activeTab === "destinos" && `${favoritos.length} ${lang === "en" ? (favoritos.length === 1 ? "place" : "places") : lang === "zh" ? "个目的地" : (favoritos.length === 1 ? "destino" : "destinos")}`}
+                {activeTab === "reservas" && `${reservas.length} ${lang === "en" ? (reservas.length === 1 ? "reservation" : "reservations") : lang === "zh" ? "个预订" : (reservas.length === 1 ? "reserva" : "reservas")}`}
+                {activeTab === "resenas" && `${resenas.length} ${lang === "en" ? (resenas.length === 1 ? "review" : "reviews") : lang === "zh" ? "条评价" : (resenas.length === 1 ? "reseña" : "reseñas")}`}
               </span>
             </div>
 
@@ -1083,8 +1083,8 @@ export default function PerfilPage() {
               <div className="tab-content-anim">
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
                   {paginatedReservas.map((res) => {
-                    const lugarNombre = res.negocios?.nombre || res.lugares?.nombre || (lang === "en" ? "Local Place" : "Lugar Turístico");
-                    const fechaFormatted = new Date(res.fecha_hora).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", {
+                    const lugarNombre = res.negocios?.nombre || res.lugares?.nombre || (lang === "en" ? "Local Place" : lang === "zh" ? "当地景点" : "Lugar Turístico");
+                    const fechaFormatted = new Date(res.fecha_hora).toLocaleDateString(lang === "en" ? "en-US" : lang === "zh" ? "zh-CN" : "es-ES", {
                       weekday: "short", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
                     });
 
@@ -1108,11 +1108,11 @@ export default function PerfilPage() {
                             </span>
                           </div>
                           <p style={{ margin: "0 0 8px", fontSize: "12.5px", color: "var(--atlan-text-muted)" }}>📅 {fechaFormatted}</p>
-                          <div style={{ fontSize: "12px", color: "#64748B" }}>👥 {res.num_personas} {lang === "en" ? "people" : "personas"}</div>
+                          <div style={{ fontSize: "12px", color: "#64748B" }}>👥 {res.num_personas} {lang === "en" ? "people" : lang === "zh" ? "人" : "personas"}</div>
                         </div>
                         {res.estado_reserva !== "cancelada" && res.estado_reserva !== "completada" && (
                           <button onClick={() => handleCancelarReserva(res.id)} style={{ marginTop: "14px", width: "100%", padding: "8px", background: "rgba(239, 68, 68, 0.06)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444", borderRadius: "10px", fontWeight: "800", fontSize: "12px", cursor: "pointer" }}>
-                            {lang === "en" ? "Cancel Reservation" : "Cancelar Reserva"}
+                            {lang === "en" ? "Cancel Reservation" : lang === "zh" ? "取消预订" : "Cancelar Reserva"}
                           </button>
                         )}
                       </div>
@@ -1142,7 +1142,7 @@ export default function PerfilPage() {
                         <div>
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
                             <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#1A1A2E" }}>{punto.nombre}</h4>
-                            <button onClick={() => handleRemoveFavorite(fav.id)} style={{ background: "none", border: "none", color: "#f87171", cursor: "pointer", fontSize: "14px" }} title="Quitar de favoritos">🗑️</button>
+                            <button onClick={() => handleRemoveFavorite(fav.id)} style={{ background: "none", border: "none", color: "#f87171", cursor: "pointer", fontSize: "14px" }} title={lang === "en" ? "Remove from favorites" : lang === "zh" ? "从收藏中移除" : "Quitar de favoritos"}>🗑️</button>
                           </div>
                           <span style={{ fontSize: "11px", fontWeight: "800", textTransform: "uppercase", color: "#146D9E", background: "rgba(20, 109, 158, 0.08)", padding: "3px 8px", borderRadius: "6px" }}>
                             {t(`addPoint.categories.${punto.categoria || 'otro'}`)}
@@ -1166,7 +1166,7 @@ export default function PerfilPage() {
                           }}
                         >
                           <img src="/images/ubic.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                          <span>{lang === "en" ? "View on Map" : "Ver en Mapa"}</span>
+                          <span>{lang === "en" ? "View on Map" : lang === "zh" ? "在地图上查看" : "Ver en Mapa"}</span>
                         </Link>
                       </div>
                     );
@@ -1187,7 +1187,7 @@ export default function PerfilPage() {
               <div className="tab-content-anim">
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
                   {paginatedResenas.map((rev) => {
-                    const destinoNombre = rev.negocios?.nombre || rev.puntos?.nombre || (lang === "en" ? "Local Destination" : "Destino");
+                    const destinoNombre = rev.negocios?.nombre || rev.puntos?.nombre || (lang === "en" ? "Local Destination" : lang === "zh" ? "本地目的地" : "Destino");
                     return (
                       <div key={rev.id} style={{ background: "#FFFFFF", borderRadius: "20px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 8px 24px rgba(0,0,0,0.04)", padding: "20px", minHeight: "150px" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
@@ -1223,12 +1223,12 @@ export default function PerfilPage() {
         <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }} onClick={() => setIsEditing(false)}>
           <div style={{ background: "#FFFFFF", width: "100%", maxWidth: "450px", borderRadius: "24px", padding: "28px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
             <h3 style={{ margin: "0 0 16px", fontSize: "20px", fontWeight: "900", color: "#1A1A2E" }}>
-              {lang === "en" ? "Edit Profile" : "Editar Perfil"}
+              {lang === "en" ? "Edit Profile" : lang === "zh" ? "编辑个人资料" : "Editar Perfil"}
             </h3>
             <form onSubmit={handleSaveProfile} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <div>
                 <label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#4A5568", marginBottom: "6px" }}>
-                  {lang === "en" ? "Full Name" : "Nombre Completo"}
+                  {lang === "en" ? "Full Name" : lang === "zh" ? "全名" : "Nombre Completo"}
                 </label>
                 <input
                   type="text"
@@ -1240,7 +1240,7 @@ export default function PerfilPage() {
               </div>
               <div>
                 <label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#4A5568", marginBottom: "6px" }}>
-                  {lang === "en" ? "Bio / Description" : "Biografía / Descripción"}
+                  {lang === "en" ? "Bio / Description" : lang === "zh" ? "个人简介 / 描述" : "Biografía / Descripción"}
                 </label>
                 <textarea
                   value={editBio}
@@ -1251,10 +1251,10 @@ export default function PerfilPage() {
               </div>
               <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "8px" }}>
                 <button type="button" onClick={() => setIsEditing(false)} style={{ padding: "10px 18px", borderRadius: "10px", border: "none", background: "rgba(0,0,0,0.06)", color: "#64748B", fontWeight: "700", fontSize: "13px", cursor: "pointer" }}>
-                  {lang === "en" ? "Cancel" : "Cancelar"}
+                  {lang === "en" ? "Cancel" : lang === "zh" ? "取消" : "Cancelar"}
                 </button>
                 <button type="submit" disabled={savingProfile} style={{ padding: "10px 22px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: "white", fontWeight: "800", fontSize: "13px", cursor: "pointer" }}>
-                  {savingProfile ? "..." : (lang === "en" ? "Save Changes" : "Guardar Cambios")}
+                  {savingProfile ? "..." : (lang === "en" ? "Save Changes" : lang === "zh" ? "保存更改" : "Guardar Cambios")}
                 </button>
               </div>
             </form>
@@ -1267,12 +1267,12 @@ export default function PerfilPage() {
         <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }} onClick={() => setIsChangingPass(false)}>
           <div style={{ background: "#FFFFFF", width: "100%", maxWidth: "450px", borderRadius: "24px", padding: "28px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
             <h3 style={{ margin: "0 0 16px", fontSize: "20px", fontWeight: "900", color: "#1A1A2E" }}>
-              {lang === "en" ? "Change Password" : "Cambiar Contraseña"}
+              {lang === "en" ? "Change Password" : lang === "zh" ? "修改密码" : "Cambiar Contraseña"}
             </h3>
             <form onSubmit={handleChangePassword} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <div>
                 <label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#4A5568", marginBottom: "6px" }}>
-                  {lang === "en" ? "New Password" : "Nueva Contraseña"}
+                  {lang === "en" ? "New Password" : lang === "zh" ? "新密码" : "Nueva Contraseña"}
                 </label>
                 <input
                   type="password"
@@ -1284,7 +1284,7 @@ export default function PerfilPage() {
               </div>
               <div>
                 <label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#4A5568", marginBottom: "6px" }}>
-                  {lang === "en" ? "Confirm New Password" : "Confirmar Nueva Contraseña"}
+                  {lang === "en" ? "Confirm New Password" : lang === "zh" ? "确认新密码" : "Confirmar Nueva Contraseña"}
                 </label>
                 <input
                   type="password"
@@ -1296,10 +1296,10 @@ export default function PerfilPage() {
               </div>
               <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "8px" }}>
                 <button type="button" onClick={() => setIsChangingPass(false)} style={{ padding: "10px 18px", borderRadius: "10px", border: "none", background: "rgba(0,0,0,0.06)", color: "#64748B", fontWeight: "700", fontSize: "13px", cursor: "pointer" }}>
-                  {lang === "en" ? "Cancel" : "Cancelar"}
+                  {lang === "en" ? "Cancel" : lang === "zh" ? "取消" : "Cancelar"}
                 </button>
                 <button type="submit" disabled={savingPass} style={{ padding: "10px 22px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #17AA4A 0%, #128A3C 100%)", color: "white", fontWeight: "800", fontSize: "13px", cursor: "pointer" }}>
-                  {savingPass ? "..." : (lang === "en" ? "Update Password" : "Actualizar Contraseña")}
+                  {savingPass ? "..." : (lang === "en" ? "Update Password" : lang === "zh" ? "更新密码" : "Actualizar Contraseña")}
                 </button>
               </div>
             </form>
@@ -1313,17 +1313,17 @@ export default function PerfilPage() {
           <div style={{ background: "#FFFFFF", width: "100%", maxWidth: "600px", maxHeight: "90vh", overflowY: "auto", borderRadius: "24px", padding: "28px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 25px 60px rgba(0,0,0,0.25)" }}>
             <h3 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "900", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "8px" }}>
               <Icon name="compass" size={22} color="#0EA5E9" />
-              {lang === "en" ? "Manage Guide Profile & Tour Photos" : "Configurar mi Perfil de Guía y Fotos"}
+              {lang === "en" ? "Manage Guide Profile & Tour Photos" : lang === "zh" ? "管理向导资料与行程照片" : "Configurar mi Perfil de Guía y Fotos"}
             </h3>
             <p style={{ margin: "0 0 20px", fontSize: "13px", color: "var(--atlan-text-muted)" }}>
-              {lang === "en" ? "Update your guide bio, specialty, rates and tour photo gallery visible to tourists." : "Actualiza tu presentación de guía, especialidades, tarifas y galería de travesías visible a turistas."}
+              {lang === "en" ? "Update your guide bio, specialty, rates and tour photo gallery visible to tourists." : lang === "zh" ? "更新向游客展示的向导简介、专长、价格及行程照片库。" : "Actualiza tu presentación de guía, especialidades, tarifas y galería de travesías visible a turistas."}
             </p>
 
             <form onSubmit={handleSaveGuiaProfile} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                 <div>
                   <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
-                    {lang === "en" ? "Primary Department" : "Departamento Principal"}
+                    {lang === "en" ? "Primary Department" : lang === "zh" ? "主要省份/地区" : "Departamento Principal"}
                   </label>
                   <select
                     value={guiaDeptPrincipal}
@@ -1338,19 +1338,19 @@ export default function PerfilPage() {
 
                 <div>
                   <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
-                    {lang === "en" ? "Specialty" : "Especialidad"}
+                    {lang === "en" ? "Specialty" : lang === "zh" ? "专长领域" : "Especialidad"}
                   </label>
                   <select
                     value={guiaEspecialidad}
                     onChange={(e) => setGuiaEspecialidad(e.target.value)}
                     style={{ width: "100%", padding: "9px 12px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", fontSize: "13.5px" }}
                   >
-                    <option value="Senderismo y Volcanes">Senderismo y Volcanes</option>
-                    <option value="Cultura e Historia">Cultura e Historia</option>
-                    <option value="Avistamiento de Aves">Avistamiento de Aves</option>
-                    <option value="Playa y Surf">Playa y Surf</option>
-                    <option value="Gastronomía Tradicional">Gastronomía Tradicional</option>
-                    <option value="Ecoturismo Integral">Ecoturismo Integral</option>
+                    <option value="Senderismo y Volcanes">{lang === "en" ? "Hiking & Volcanoes" : lang === "zh" ? "徒步与火山" : "Senderismo y Volcanes"}</option>
+                    <option value="Cultura e Historia">{lang === "en" ? "Culture & History" : lang === "zh" ? "文化与历史" : "Cultura e Historia"}</option>
+                    <option value="Avistamiento de Aves">{lang === "en" ? "Birdwatching" : lang === "zh" ? "观鸟" : "Avistamiento de Aves"}</option>
+                    <option value="Playa y Surf">{lang === "en" ? "Beach & Surf" : lang === "zh" ? "海滩与冲浪" : "Playa y Surf"}</option>
+                    <option value="Gastronomía Tradicional">{lang === "en" ? "Traditional Gastronomy" : lang === "zh" ? "传统美食" : "Gastronomía Tradicional"}</option>
+                    <option value="Ecoturismo Integral">{lang === "en" ? "Integral Ecotourism" : lang === "zh" ? "综合生态旅游" : "Ecoturismo Integral"}</option>
                   </select>
                 </div>
               </div>
@@ -1358,20 +1358,20 @@ export default function PerfilPage() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                 <div>
                   <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
-                    {lang === "en" ? "Languages" : "Idiomas"}
+                    {lang === "en" ? "Languages" : lang === "zh" ? "语言" : "Idiomas"}
                   </label>
                   <input
                     type="text"
                     value={guiaIdiomas}
                     onChange={(e) => setGuiaIdiomas(e.target.value)}
-                    placeholder="Ej. Español, Inglés, Francés"
+                    placeholder={lang === "en" ? "e.g. Spanish, English, French" : lang === "zh" ? "例如：西班牙语、英语、中文" : "Ej. Español, Inglés, Francés"}
                     style={{ width: "100%", padding: "9px 12px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", fontSize: "13.5px" }}
                   />
                 </div>
 
                 <div>
                   <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
-                    {lang === "en" ? "Experience (Years)" : "Años de Experiencia"}
+                    {lang === "en" ? "Experience (Years)" : lang === "zh" ? "从业经验（年）" : "Años de Experiencia"}
                   </label>
                   <input
                     type="number"
@@ -1387,20 +1387,20 @@ export default function PerfilPage() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                 <div>
                   <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
-                    {lang === "en" ? "Approx Rate" : "Tarifa Aprox. por día"}
+                    {lang === "en" ? "Approx Rate" : lang === "zh" ? "大约收费（每天）" : "Tarifa Aprox. por día"}
                   </label>
                   <input
                     type="text"
                     value={guiaTarifa}
                     onChange={(e) => setGuiaTarifa(e.target.value)}
-                    placeholder="Ej. $25 - $40 / día"
+                    placeholder={lang === "en" ? "e.g. $25 - $40 / day" : lang === "zh" ? "例如：$25 - $40 / 天" : "Ej. $25 - $40 / día"}
                     style={{ width: "100%", padding: "9px 12px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", fontSize: "13.5px" }}
                   />
                 </div>
 
                 <div>
                   <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
-                    {lang === "en" ? "WhatsApp Number" : "Número de WhatsApp"}
+                    {lang === "en" ? "WhatsApp Number" : lang === "zh" ? "WhatsApp 电话" : "Número de WhatsApp"}
                   </label>
                   <input
                     type="text"
@@ -1414,7 +1414,7 @@ export default function PerfilPage() {
 
               <div>
                 <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
-                  {lang === "en" ? "INTUR License Number" : "Número de Licencia INTUR (Opcional)"}
+                  {lang === "en" ? "INTUR License Number" : lang === "zh" ? "INTUR 许可证号（可选）" : "Número de Licencia INTUR (Opcional)"}
                 </label>
                 <input
                   type="text"
@@ -1427,13 +1427,13 @@ export default function PerfilPage() {
 
               <div>
                 <label style={{ fontSize: "12px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "4px" }}>
-                  {lang === "en" ? "Guide Biography & Route Experience" : "Biografía y Rutas de Trabajo"}
+                  {lang === "en" ? "Guide Biography & Route Experience" : lang === "zh" ? "向导简介与路线经验" : "Biografía y Rutas de Trabajo"}
                 </label>
                 <textarea
                   rows={3}
                   value={guiaBiografia}
                   onChange={(e) => setGuiaBiografia(e.target.value)}
-                  placeholder="Describe tus especialidades, volcanes que recorres, equipamiento de seguridad y lo que incluye tu guía..."
+                  placeholder={lang === "en" ? "Describe your specialties, volcanoes you cover, safety equipment and what your tours include..." : lang === "zh" ? "描述您的专长、覆盖的火山、安全装备以及包含的旅游项目..." : "Describe tus especialidades, volcanes que recorres, equipamiento de seguridad y lo que incluye tu guía..."}
                   style={{ width: "100%", padding: "10px 12px", borderRadius: "10px", border: "1px solid rgba(20,109,158,0.2)", fontSize: "13px", resize: "none" }}
                 />
               </div>
@@ -1443,10 +1443,10 @@ export default function PerfilPage() {
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
                   <div>
                     <span style={{ fontSize: "13px", fontWeight: "800", color: "#0284C7", display: "block" }}>
-                      {lang === "en" ? "Tour Photo Gallery" : "Galería de Fotos de Travesías"}
+                      {lang === "en" ? "Tour Photo Gallery" : lang === "zh" ? "行程照片库" : "Galería de Fotos de Travesías"}
                     </span>
                     <span style={{ fontSize: "11.5px", color: "#64748B" }}>
-                      {lang === "en" ? "Upload photos of your guided tours and expeditions." : "Sube fotos de tus excursiones y travesías guiadas."}
+                      {lang === "en" ? "Upload photos of your guided tours and expeditions." : lang === "zh" ? "上传您的带团探险和行程照片。" : "Sube fotos de tus excursiones y travesías guiadas."}
                     </span>
                   </div>
 
@@ -1465,13 +1465,13 @@ export default function PerfilPage() {
                     style={{ background: "#0284C7", color: "#FFF", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "750", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}
                   >
                     <Icon name="plus" size={14} />
-                    <span>{uploadingTravesiaFoto ? "Subiendo..." : "Agregar Foto"}</span>
+                    <span>{uploadingTravesiaFoto ? (lang === "en" ? "Uploading..." : lang === "zh" ? "上传中..." : "Subiendo...") : (lang === "en" ? "Add Photo" : lang === "zh" ? "添加照片" : "Agregar Foto")}</span>
                   </button>
                 </div>
 
                 {guiaGaleria.length === 0 ? (
                   <p style={{ fontSize: "12px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", margin: "8px 0" }}>
-                    {lang === "en" ? "No tour photos uploaded yet." : "Aún no has agregado fotos de tus travesías."}
+                    {lang === "en" ? "No tour photos uploaded yet." : lang === "zh" ? "暂未添加行程照片。" : "Aún no has agregado fotos de tus travesías."}
                   </p>
                 ) : (
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))", gap: "8px" }}>
@@ -1482,7 +1482,7 @@ export default function PerfilPage() {
                           type="button"
                           onClick={() => handleRemoveTravesiaFoto(idx)}
                           style={{ position: "absolute", top: "2px", right: "2px", background: "rgba(239, 68, 68, 0.85)", color: "#FFF", border: "none", width: "20px", height: "20px", borderRadius: "50%", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-                          title="Eliminar foto"
+                          title={lang === "en" ? "Delete photo" : lang === "zh" ? "删除照片" : "Eliminar foto"}
                         >
                           <Icon name="x" size={12} />
                         </button>
@@ -1498,10 +1498,10 @@ export default function PerfilPage() {
                   <div>
                     <span style={{ fontSize: "13px", fontWeight: "800", color: "#10B981", display: "flex", alignItems: "center", gap: "6px" }}>
                       <span>🗺️</span>
-                      {lang === "en" ? "Map Tour Destinations" : "Lugares y Destinos de Tours en el Mapa"}
+                      {lang === "en" ? "Map Tour Destinations" : lang === "zh" ? "地图行程景点与目的地" : "Lugares y Destinos de Tours en el Mapa"}
                     </span>
                     <span style={{ fontSize: "11.5px", color: "#64748B", display: "block" }}>
-                      {lang === "en" ? "Specify points of interest you cover so tourists can view them on Atlan map." : "Agrega los puntos de interés que cubres para que los turistas los vean en tu tarjeta y perfil de Atlan."}
+                      {lang === "en" ? "Specify points of interest you cover so tourists can view them on Atlan map." : lang === "zh" ? "添加您带队的景点与地标，便于游客在地图和您的向导卡片上查看。" : "Agrega los puntos de interés que cubres para que los turistas los vean en tu tarjeta y perfil de Atlan."}
                     </span>
                   </div>
 
@@ -1511,7 +1511,7 @@ export default function PerfilPage() {
                     style={{ background: "#10B981", color: "#FFF", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "750", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}
                   >
                     <Icon name={showAddDestForm ? "x" : "plus"} size={14} />
-                    <span>{showAddDestForm ? (lang === "en" ? "Cancel" : "Cancelar") : (lang === "en" ? "Add Place" : "Agregar Lugar")}</span>
+                    <span>{showAddDestForm ? (lang === "en" ? "Cancel" : lang === "zh" ? "取消" : "Cancelar") : (lang === "en" ? "Add Place" : lang === "zh" ? "添加地点" : "Agregar Lugar")}</span>
                   </button>
                 </div>
 
@@ -1521,12 +1521,12 @@ export default function PerfilPage() {
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "8px" }}>
                       <div>
                         <label style={{ fontSize: "11.5px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "3px" }}>
-                          {lang === "en" ? "Place/Attraction Name:" : "Nombre del Sitio o Destino:"}
+                          {lang === "en" ? "Place/Attraction Name:" : lang === "zh" ? "地点或景点名称：" : "Nombre del Sitio o Destino:"}
                         </label>
                         <input
                           type="text"
                           required
-                          placeholder="Ej. Volcán Cerro Negro"
+                          placeholder={lang === "en" ? "e.g. Cerro Negro Volcano" : lang === "zh" ? "例如：黑山火山" : "Ej. Volcán Cerro Negro"}
                           value={newDestNombre}
                           onChange={(e) => setNewDestNombre(e.target.value)}
                           style={{ width: "100%", padding: "7px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12.5px" }}
@@ -1535,7 +1535,7 @@ export default function PerfilPage() {
 
                       <div>
                         <label style={{ fontSize: "11.5px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "3px" }}>
-                          {lang === "en" ? "Department:" : "Departamento:"}
+                          {lang === "en" ? "Department:" : lang === "zh" ? "省份/地区：" : "Departamento:"}
                         </label>
                         <select
                           value={newDestDept}
@@ -1552,11 +1552,11 @@ export default function PerfilPage() {
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "8px" }}>
                       <div>
                         <label style={{ fontSize: "11.5px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "3px" }}>
-                          {lang === "en" ? "Category:" : "Categoría del Tour:"}
+                          {lang === "en" ? "Category:" : lang === "zh" ? "行程类型：" : "Categoría del Tour:"}
                         </label>
                         <input
                           type="text"
-                          placeholder="Ej. Sandboarding / Senderismo"
+                          placeholder={lang === "en" ? "e.g. Sandboarding / Hiking" : lang === "zh" ? "例如：滑沙 / 徒步" : "Ej. Sandboarding / Senderismo"}
                           value={newDestCategoria}
                           onChange={(e) => setNewDestCategoria(e.target.value)}
                           style={{ width: "100%", padding: "7px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12.5px" }}
@@ -1565,34 +1565,34 @@ export default function PerfilPage() {
 
                       <div>
                         <label style={{ fontSize: "11.5px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "3px" }}>
-                          {lang === "en" ? "Icon / Emoji:" : "Ícono o Emoji:"}
+                          {lang === "en" ? "Icon / Emoji:" : lang === "zh" ? "图标或表情符号：" : "Ícono o Emoji:"}
                         </label>
                         <select
                           value={newDestIcono}
                           onChange={(e) => setNewDestIcono(e.target.value)}
                           style={{ width: "100%", padding: "7px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12.5px" }}
                         >
-                          <option value="🌋">🌋 Volcán</option>
-                          <option value="🏛️">🏛️ Historia / Cultura</option>
-                          <option value="🏝️">🏝️ Isla / Náutica</option>
-                          <option value="⛰️">⛰️ Montañismo</option>
-                          <option value="🌿">🌿 Ecoturismo</option>
-                          <option value="🦜">🦜 Avistamiento Aves</option>
-                          <option value="🏖️">🏖️ Playa / Surf</option>
-                          <option value="💧">💧 Manantial / Cascada</option>
-                          <option value="🔥">🔥 Lava Nocturna</option>
-                          <option value="🎭">🎭 Artesanía / Gastronomía</option>
+                          <option value="🌋">🌋 {lang === "en" ? "Volcano" : lang === "zh" ? "火山" : "Volcán"}</option>
+                          <option value="🏛️">🏛️ {lang === "en" ? "History / Culture" : lang === "zh" ? "历史 / 文化" : "Historia / Cultura"}</option>
+                          <option value="🏝️">🏝️ {lang === "en" ? "Island / Nautical" : lang === "zh" ? "岛屿 / 水上" : "Isla / Náutica"}</option>
+                          <option value="⛰️">⛰️ {lang === "en" ? "Mountaineering" : lang === "zh" ? "登山" : "Montañismo"}</option>
+                          <option value="🌿">🌿 {lang === "en" ? "Ecotourism" : lang === "zh" ? "生态旅游" : "Ecoturismo"}</option>
+                          <option value="🦜">🦜 {lang === "en" ? "Birdwatching" : lang === "zh" ? "观鸟" : "Avistamiento Aves"}</option>
+                          <option value="🏖️">🏖️ {lang === "en" ? "Beach / Surf" : lang === "zh" ? "海滩 / 冲浪" : "Playa / Surf"}</option>
+                          <option value="💧">💧 {lang === "en" ? "Spring / Waterfall" : lang === "zh" ? "泉水 / 瀑布" : "Manantial / Cascada"}</option>
+                          <option value="🔥">🔥 {lang === "en" ? "Night Lava" : lang === "zh" ? "夜间熔岩" : "Lava Nocturna"}</option>
+                          <option value="🎭">🎭 {lang === "en" ? "Handicrafts / Food" : lang === "zh" ? "手工艺 / 美食" : "Artesanía / Gastronomía"}</option>
                         </select>
                       </div>
                     </div>
 
                     <div style={{ marginBottom: "10px" }}>
                       <label style={{ fontSize: "11.5px", fontWeight: "750", color: "#1A1A2E", display: "block", marginBottom: "3px" }}>
-                        {lang === "en" ? "Tour Activity Description:" : "Descripción Corta del Tour:"}
+                        {lang === "en" ? "Tour Activity Description:" : lang === "zh" ? "简短行程描述：" : "Descripción Corta del Tour:"}
                       </label>
                       <input
                         type="text"
-                        placeholder="Ej. Ascenso y vertiginoso descenso en tabla de sandboard sobre arena volcánica..."
+                        placeholder={lang === "en" ? "e.g. Ascent and thrilling descent on sandboard over volcanic ash..." : lang === "zh" ? "例如：在火山灰上进行滑沙的刺激攀登与极速下降..." : "Ej. Ascenso y vertiginoso descenso en tabla de sandboard sobre arena volcánica..."}
                         value={newDestDesc}
                         onChange={(e) => setNewDestDesc(e.target.value)}
                         style={{ width: "100%", padding: "7px 10px", borderRadius: "8px", border: "1px solid #CBD5E1", fontSize: "12.5px" }}
@@ -1606,7 +1606,7 @@ export default function PerfilPage() {
                         disabled={!newDestNombre.trim()}
                         style={{ background: "#10B981", color: "#FFF", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "800", cursor: "pointer" }}
                       >
-                        {lang === "en" ? "Save Destination" : "Guardar Destino"}
+                        {lang === "en" ? "Save Destination" : lang === "zh" ? "保存目的地" : "Guardar Destino"}
                       </button>
                     </div>
                   </div>
@@ -1615,7 +1615,7 @@ export default function PerfilPage() {
                 {/* Lista de Destinos Actualmente Agregados */}
                 {guiaDestinosMapa.length === 0 ? (
                   <p style={{ fontSize: "12px", color: "#94A3B8", fontStyle: "italic", textAlign: "center", margin: "8px 0" }}>
-                    {lang === "en" ? "No map destinations added yet." : "Aún no has agregado destinos de mapa."}
+                    {lang === "en" ? "No map destinations added yet." : lang === "zh" ? "暂未添加地图目的地。" : "Aún no has agregado destinos de mapa."}
                   </p>
                 ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -1649,10 +1649,10 @@ export default function PerfilPage() {
                           type="button"
                           onClick={() => handleRemoveDestinoMapa(dest.id)}
                           style={{ background: "rgba(239, 68, 68, 0.1)", color: "#EF4444", border: "none", padding: "4px 8px", borderRadius: "6px", fontSize: "11px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
-                          title="Eliminar lugar"
+                          title={lang === "en" ? "Delete place" : lang === "zh" ? "删除地点" : "Eliminar lugar"}
                         >
                           <Icon name="trash" size={12} />
-                          <span>{lang === "en" ? "Delete" : "Quitar"}</span>
+                          <span>{lang === "en" ? "Delete" : lang === "zh" ? "删除" : "Quitar"}</span>
                         </button>
                       </div>
                     ))}
@@ -1662,10 +1662,10 @@ export default function PerfilPage() {
 
               <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "10px" }}>
                 <button type="button" onClick={() => setIsEditingGuia(false)} style={{ padding: "10px 18px", borderRadius: "10px", border: "none", background: "rgba(0,0,0,0.06)", color: "#64748B", fontWeight: "700", fontSize: "13px", cursor: "pointer" }}>
-                  {lang === "en" ? "Cancel" : "Cancelar"}
+                  {lang === "en" ? "Cancel" : lang === "zh" ? "取消" : "Cancelar"}
                 </button>
                 <button type="submit" disabled={savingGuia} style={{ padding: "10px 22px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)", color: "white", fontWeight: "800", fontSize: "13px", cursor: "pointer", boxShadow: "0 4px 14px rgba(14, 165, 233, 0.3)" }}>
-                  {savingGuia ? "..." : (lang === "en" ? "Save Guide Profile" : "Guardar Perfil de Guía")}
+                  {savingGuia ? "..." : (lang === "en" ? "Save Guide Profile" : lang === "zh" ? "保存向导资料" : "Guardar Perfil de Guía")}
                 </button>
               </div>
             </form>
@@ -1741,7 +1741,7 @@ export default function PerfilPage() {
                   cursor: "pointer" 
                 }}
               >
-                {lang === "en" ? "Cancel" : "Cancelar"}
+                {lang === "en" ? "Cancel" : lang === "zh" ? "取消" : "Cancelar"}
               </button>
               <button 
                 type="button" 
