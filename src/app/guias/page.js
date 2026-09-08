@@ -395,7 +395,7 @@ export default function GuiasPage() {
       try {
         const { data, error } = await supabase
           .from("guias_turisticos")
-          .select("*")
+          .select("*, perfiles(*)")
           .eq("activo", true)
           .order("updated_at", { ascending: false });
 
@@ -439,14 +439,22 @@ export default function GuiasPage() {
                 ...mockG,
                 ...source,
                 id: mockG.id, // mantener id de navegación
+                nombre_completo: source.nombre_completo || mockG.nombre_completo,
+                avatar_url: source.avatar_url || mockG.avatar_url,
                 departamento_principal: source.departamento_principal || mockG.departamento_principal,
+                departamentos_secundarios: (source.departamentos_secundarios && source.departamentos_secundarios.length > 0) ? source.departamentos_secundarios : mockG.departamentos_secundarios,
                 especialidad: source.especialidad || mockG.especialidad,
                 tarifa_aprox: source.tarifa_aprox || mockG.tarifa_aprox,
                 experiencia_anios: source.experiencia_anios || mockG.experiencia_anios,
                 biografia: source.biografia || mockG.biografia,
                 whatsapp: source.whatsapp || mockG.whatsapp,
+                instagram: source.instagram || mockG.instagram,
+                telefono_contacto: source.telefono_contacto || mockG.telefono_contacto,
                 licencia_intur: source.licencia_intur || mockG.licencia_intur,
                 idiomas: source.idiomas || mockG.idiomas,
+                servicios: (source.servicios && source.servicios.length > 0) ? source.servicios : (mockG.servicios || ["Equipamiento de Seguridad", "Primeros Auxilios de Montaña", "Fotos & Videos de Travesía"]),
+                destinos_mapa: (source.destinos_mapa && source.destinos_mapa.length > 0) ? source.destinos_mapa : (mockG.destinos_mapa || []),
+                galeria_fotos: (source.galeria_fotos && source.galeria_fotos.length > 0) ? source.galeria_fotos : (mockG.galeria_fotos || []),
               });
             } else {
               merged.push(mockG);
@@ -475,8 +483,13 @@ export default function GuiasPage() {
                   experiencia_anios: rawSaved.experiencia_anios || mockG.experiencia_anios,
                   biografia: rawSaved.biografia || mockG.biografia,
                   whatsapp: rawSaved.whatsapp || mockG.whatsapp,
+                  instagram: rawSaved.instagram || mockG.instagram,
+                  telefono_contacto: rawSaved.telefono_contacto || mockG.telefono_contacto,
                   licencia_intur: rawSaved.licencia_intur || mockG.licencia_intur,
                   idiomas: rawSaved.idiomas || mockG.idiomas,
+                  servicios: (rawSaved.servicios && rawSaved.servicios.length > 0) ? rawSaved.servicios : (mockG.servicios || ["Equipamiento de Seguridad", "Primeros Auxilios de Montaña", "Fotos & Videos de Travesía"]),
+                  destinos_mapa: (rawSaved.destinos_mapa && rawSaved.destinos_mapa.length > 0) ? rawSaved.destinos_mapa : (mockG.destinos_mapa || []),
+                  galeria_fotos: (rawSaved.galeria_fotos && rawSaved.galeria_fotos.length > 0) ? rawSaved.galeria_fotos : (mockG.galeria_fotos || []),
                 };
               }
               return mockG;
@@ -1376,21 +1389,53 @@ export default function GuiasPage() {
                     </div>
                     <div style={styles.techItem}>
                       <span style={styles.techLabel}>{lang === "en" ? "Approx Rate" : lang === "zh" ? "参考费用" : "Tarifa Aprox."}</span>
-                      <span style={{ ...styles.techValue, color: "#10B981" }}>{selectedGuiaModal.tarifa_aprox || "$30 / día"}</span>
+                      <span style={{ ...styles.techValue, color: "#34D399" }}>{selectedGuiaModal.tarifa_aprox || "$30 - $50 / día"}</span>
                     </div>
                   </div>
 
-                  {selectedGuiaModal.whatsapp && (
-                    <a
-                      href={`https://wa.me/${selectedGuiaModal.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${selectedGuiaModal.nombre_completo}! Te encontré en Plataforma Atlan y me gustaría consultar disponibilidad para contratar un tour.`)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={styles.modalWhatsappBanner}
-                    >
-                      <Icon name="whatsapp" size={22} color="#FFFFFF" />
-                      <span>{lang === "en" ? "Contact via WhatsApp Now" : lang === "zh" ? "立即通过 WhatsApp 咨询" : "Contactar por WhatsApp Ahora"}</span>
-                    </a>
+                  {/* Servicios e Incluidos */}
+                  {selectedGuiaModal.servicios && selectedGuiaModal.servicios.length > 0 && (
+                    <div style={styles.modalSection}>
+                      <h4 style={styles.modalSectionTitle}>
+                        <Icon name="checkCircle" size={16} color="#10B981" style={{ marginRight: "6px" }} />
+                        {lang === "en" ? "Services & Included Equipment" : lang === "zh" ? "包含服务与装备" : "Servicios Incluidos y Equipamiento"}
+                      </h4>
+                      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "16px" }}>
+                        {selectedGuiaModal.servicios.map((srv, idx) => (
+                          <span key={idx} style={styles.serviceChipModal}>
+                            <Icon name="check" size={13} color="#34D399" />
+                            <span>{srv}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   )}
+
+                  <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                    {selectedGuiaModal.whatsapp && (
+                      <a
+                        href={`https://wa.me/${selectedGuiaModal.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${selectedGuiaModal.nombre_completo}! Te encontré en Plataforma Atlan y me gustaría consultar disponibilidad para contratar un tour.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ ...styles.modalWhatsappBanner, flex: 1, minWidth: "220px" }}
+                      >
+                        <Icon name="whatsapp" size={20} color="#FFFFFF" />
+                        <span>{lang === "en" ? "Contact via WhatsApp" : lang === "zh" ? "WhatsApp 咨询" : "Contactar por WhatsApp"}</span>
+                      </a>
+                    )}
+
+                    {selectedGuiaModal.instagram && (
+                      <a
+                        href={selectedGuiaModal.instagram.startsWith("http") ? selectedGuiaModal.instagram : `https://instagram.com/${selectedGuiaModal.instagram.replace('@', '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={styles.modalInstagramBanner}
+                      >
+                        <Icon name="instagram" size={20} color="#FFFFFF" />
+                        <span>{selectedGuiaModal.instagram}</span>
+                      </a>
+                    )}
+                  </div>
                 </div>
               )}
 
@@ -2331,7 +2376,7 @@ const styles = {
   },
   modalHeaderCard: {
     padding: "20px 28px 16px 28px",
-    background: "linear-gradient(135deg, rgba(14, 165, 233, 0.22) 0%, rgba(2, 132, 199, 0.12) 40%, rgba(15, 23, 42, 0.98) 100%), url('/images/fondohracio.png')",
+    background: "linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(10, 25, 47, 0.94) 50%, rgba(15, 23, 42, 0.98) 100%), url('/images/fondohracio.png')",
     backgroundSize: "cover",
     backgroundPosition: "center",
     borderTopLeftRadius: "22px",
@@ -2348,8 +2393,8 @@ const styles = {
     position: "absolute",
     top: "16px",
     right: "16px",
-    background: "rgba(15, 23, 42, 0.75)",
-    border: "1px solid rgba(255, 255, 255, 0.2)",
+    background: "rgba(15, 23, 42, 0.85)",
+    border: "1px solid rgba(255, 255, 255, 0.25)",
     color: "#F8FAFC",
     width: "36px",
     height: "36px",
@@ -2393,40 +2438,46 @@ const styles = {
     minWidth: "260px"
   },
   modalDeptBadge: {
-    background: "rgba(14, 165, 233, 0.18)",
-    border: "1px solid rgba(14, 165, 233, 0.35)",
+    background: "rgba(15, 23, 42, 0.85)",
+    border: "1px solid rgba(56, 189, 248, 0.45)",
     color: "#38BDF8",
     fontSize: "12px",
     fontWeight: "800",
-    padding: "3.5px 10px",
-    borderRadius: "6px",
+    padding: "4px 11px",
+    borderRadius: "8px",
     display: "inline-flex",
     alignItems: "center",
-    gap: "5px"
+    gap: "5px",
+    backdropFilter: "blur(6px)",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)"
   },
   modalLicenseBadge: {
-    background: "rgba(16, 185, 129, 0.15)",
-    border: "1px solid rgba(16, 185, 129, 0.35)",
-    color: "#10B981",
+    background: "rgba(15, 23, 42, 0.85)",
+    border: "1px solid rgba(52, 211, 153, 0.45)",
+    color: "#34D399",
     fontSize: "11.5px",
-    fontWeight: "750",
-    padding: "3.5px 10px",
-    borderRadius: "6px",
+    fontWeight: "800",
+    padding: "4px 11px",
+    borderRadius: "8px",
     display: "inline-flex",
     alignItems: "center",
-    gap: "4px"
+    gap: "4px",
+    backdropFilter: "blur(6px)",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)"
   },
   modalExpBadge: {
-    background: "rgba(255, 215, 0, 0.12)",
-    border: "1px solid rgba(255, 215, 0, 0.3)",
+    background: "rgba(15, 23, 42, 0.85)",
+    border: "1px solid rgba(251, 191, 36, 0.45)",
     color: "#FBBF24",
     fontSize: "11.5px",
-    fontWeight: "750",
-    padding: "3.5px 10px",
-    borderRadius: "6px",
+    fontWeight: "800",
+    padding: "4px 11px",
+    borderRadius: "8px",
     display: "inline-flex",
     alignItems: "center",
-    gap: "4px"
+    gap: "4px",
+    backdropFilter: "blur(6px)",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)"
   },
   modalGuideNameWide: {
     fontSize: "22px",
@@ -2440,13 +2491,15 @@ const styles = {
     display: "inline-flex",
     alignItems: "center",
     gap: "4px",
-    background: "rgba(16, 185, 129, 0.12)",
-    border: "1px solid rgba(16, 185, 129, 0.3)",
+    background: "rgba(15, 23, 42, 0.85)",
+    border: "1px solid rgba(52, 211, 153, 0.45)",
     color: "#34D399",
     fontSize: "12px",
     fontWeight: "800",
-    padding: "3.5px 10px",
-    borderRadius: "6px"
+    padding: "4px 11px",
+    borderRadius: "8px",
+    backdropFilter: "blur(6px)",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)"
   },
   starsBox: {
     display: "flex",
@@ -2549,10 +2602,50 @@ const styles = {
     color: "#F8FAFC",
     fontWeight: "800"
   },
+  serviceChipModal: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    background: "rgba(15, 23, 42, 0.8)",
+    border: "1px solid rgba(52, 211, 153, 0.35)",
+    color: "#F8FAFC",
+    fontSize: "12.5px",
+    fontWeight: "650",
+    padding: "6px 14px",
+    borderRadius: "20px"
+  },
   modalWhatsappBanner: {
     width: "100%",
     background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
     color: "#FFFFFF",
+    padding: "12px 18px",
+    borderRadius: "14px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "10px",
+    fontWeight: "800",
+    fontSize: "14px",
+    textDecoration: "none",
+    boxShadow: "0 6px 20px rgba(37, 211, 102, 0.35)",
+    boxSizing: "border-box",
+    transition: "all 0.2s ease"
+  },
+  modalInstagramBanner: {
+    background: "linear-gradient(135deg, #E1306C 0%, #C13584 50%, #833AB4 100%)",
+    color: "#FFFFFF",
+    padding: "12px 18px",
+    borderRadius: "14px",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
+    fontWeight: "800",
+    fontSize: "13.5px",
+    textDecoration: "none",
+    boxShadow: "0 6px 20px rgba(225, 48, 108, 0.3)",
+    transition: "all 0.2s ease"
+  },
     padding: "13px",
     borderRadius: "14px",
     display: "flex",
