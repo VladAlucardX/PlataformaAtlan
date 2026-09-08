@@ -235,6 +235,88 @@ const MOCK_GUIAS = [
         created_at: "2026-06-19T09:10:00Z"
       }
     ]
+  },
+  /* PERFILES DE PRUEBA TEMPORALES PARA PAGINACIÓN */
+  {
+    id: "test-guia-1",
+    nombre_completo: "Beatriz Solís (Prueba)",
+    avatar_url: "/images/art5.png",
+    departamento_principal: "Matagalpa",
+    departamentos_secundarios: ["Jinotega"],
+    especialidad: "Avistamiento de Aves",
+    idiomas: "Español, Inglés, Alemán",
+    experiencia_anios: 9,
+    tarifa_aprox: "$40 - $65 / día",
+    biografia: "[PERFIL DE PRUEBA] Guía especialista en la observación de aves en Selva Negra y reservas naturales del norte.",
+    telefono_contacto: "+505 8800 0001",
+    whatsapp: "50588000001",
+    instagram: "@beatriz_birds_test",
+    licencia_intur: "INTUR-MT-2017-819",
+    rating_promedio: 4.9,
+    total_resenas: 18,
+    activo: true,
+    destinos_mapa: [],
+    galeria_fotos: [
+      "/images/galeria-departamentos/matagalpa/1.1.jpg",
+      "/images/galeria-departamentos/matagalpa/2.jpg",
+      "/images/galeria-departamentos/matagalpa/3.jpg",
+      "/images/galeria-departamentos/matagalpa/4.jpg"
+    ],
+    resenas: []
+  },
+  {
+    id: "test-guia-2",
+    nombre_completo: "Gabriel Gutiérrez (Prueba)",
+    avatar_url: "/images/art4.png",
+    departamento_principal: "Masaya",
+    departamentos_secundarios: ["Carazo"],
+    especialidad: "Gastronomía Tradicional",
+    idiomas: "Español, Inglés",
+    experiencia_anios: 6,
+    tarifa_aprox: "$25 - $45 / día",
+    biografia: "[PERFIL DE PRUEBA] Apasionado por los recorridos artesanales y gastronómicos en los Pueblos Blancos y Masaya.",
+    telefono_contacto: "+505 8800 0002",
+    whatsapp: "50588000002",
+    instagram: "@gabriel_masaya_test",
+    licencia_intur: "INTUR-MS-2020-411",
+    rating_promedio: 4.8,
+    total_resenas: 15,
+    activo: true,
+    destinos_mapa: [],
+    galeria_fotos: [
+      "/images/galeria-departamentos/masaya/1.1.jpg",
+      "/images/galeria-departamentos/masaya/2.jpg",
+      "/images/galeria-departamentos/masaya/3.jpg",
+      "/images/galeria-departamentos/masaya/4.jpeg"
+    ],
+    resenas: []
+  },
+  {
+    id: "test-guia-3",
+    nombre_completo: "Valeria Ramos (Prueba)",
+    avatar_url: "/images/art2.jpeg",
+    departamento_principal: "Chinandega",
+    departamentos_secundarios: ["León"],
+    especialidad: "Senderismo y Volcanes",
+    idiomas: "Español, Inglés",
+    experiencia_anios: 8,
+    tarifa_aprox: "$35 - $50 / día",
+    biografia: "[PERFIL DE PRUEBA] Guía de aventuras extremas en el Volcán Cosigüina y estero Padre Ramos.",
+    telefono_contacto: "+505 8800 0003",
+    whatsapp: "50588000003",
+    instagram: "@valeria_volcano_test",
+    licencia_intur: "INTUR-CH-2019-105",
+    rating_promedio: 5.0,
+    total_resenas: 22,
+    activo: true,
+    destinos_mapa: [],
+    galeria_fotos: [
+      "/images/galeria-departamentos/leon/1.1.jpg",
+      "/images/galeria-departamentos/leon/2.jpg",
+      "/images/galeria-departamentos/leon/3.jpg",
+      "/images/galeria-departamentos/leon/4.jpg"
+    ],
+    resenas: []
   }
 ];
 
