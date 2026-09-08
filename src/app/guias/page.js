@@ -2646,19 +2646,6 @@ const styles = {
     boxShadow: "0 6px 20px rgba(225, 48, 108, 0.3)",
     transition: "all 0.2s ease"
   },
-    padding: "13px",
-    borderRadius: "14px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "10px",
-    fontWeight: "800",
-    fontSize: "14.5px",
-    textDecoration: "none",
-    boxShadow: "0 6px 20px rgba(37, 211, 102, 0.35)",
-    boxSizing: "border-box",
-    transition: "all 0.2s ease"
-  },
   fullGalleryGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))",
