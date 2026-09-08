@@ -993,11 +993,11 @@ export default function GuiasPage() {
           )}
         </div>
 
-        {/* CONTADOR DE RESULTADOS Y CABECERA DE SECCIÓN ELEGANTE GLASS */}
+        {/* CONTADOR DE RESULTADOS Y CABECERA CON PAGINACIÓN INTEGRADA */}
         <div style={styles.resultsHeaderGlass}>
           <div style={styles.resultsTitleLeft}>
             <div style={styles.headerIconBox}>
-              <Icon name="compass" size={16} color="#38BDF8" />
+              <Icon name="compass" size={15} color="#38BDF8" />
             </div>
             <h2 style={styles.resultsTitleClean}>
               {lang === "en" ? "Available Tour Guides" : lang === "zh" ? "可选导游" : "Guías Turísticos Disponibles"}
@@ -1007,12 +1007,87 @@ export default function GuiasPage() {
             </span>
           </div>
 
-          {hasActiveFilters && (
-            <button onClick={clearAllFilters} style={styles.resetFiltersBtnSlim}>
-              <Icon name="x" size={13} />
-              <span>{lang === "en" ? "Reset All Filters" : lang === "zh" ? "重置所有筛选" : "Limpiar Todos los Filtros"}</span>
-            </button>
-          )}
+          {/* CONTROLES DE PAGINACIÓN INTEGRADOS Y RESET DE FILTROS */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "nowrap" }}>
+            {hasActiveFilters && (
+              <button onClick={clearAllFilters} style={styles.resetFiltersBtnSlim}>
+                <Icon name="x" size={12} />
+                <span>{lang === "en" ? "Reset" : lang === "zh" ? "重置" : "Limpiar"}</span>
+              </button>
+            )}
+
+            {totalPages > 1 && (
+              <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                <span style={{ color: "#94A3B8", fontSize: "12px", fontWeight: "600", marginRight: "4px" }}>
+                  {lang === "en" ? `Page ${currentPage}/${totalPages}` : lang === "zh" ? `第 ${currentPage}/${totalPages} 页` : `Pág. ${currentPage}/${totalPages}`}
+                </span>
+
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "28px",
+                    height: "28px",
+                    borderRadius: "8px",
+                    background: currentPage === 1 ? "rgba(255, 255, 255, 0.04)" : "rgba(20, 109, 158, 0.3)",
+                    border: currentPage === 1 ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(56, 189, 248, 0.4)",
+                    color: currentPage === 1 ? "#64748B" : "#38BDF8",
+                    cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                    transition: "all 0.2s ease"
+                  }}
+                  title="Página anterior"
+                >
+                  <Icon name="chevronLeft" size={14} />
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    style={{
+                      width: "28px",
+                      height: "28px",
+                      borderRadius: "8px",
+                      background: currentPage === pageNum ? "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)" : "rgba(255, 255, 255, 0.05)",
+                      border: currentPage === pageNum ? "1.5px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.08)",
+                      color: currentPage === pageNum ? "#FFFFFF" : "#CBD5E1",
+                      fontSize: "12px",
+                      fontWeight: "800",
+                      cursor: "pointer",
+                      boxShadow: currentPage === pageNum ? "0 2px 8px rgba(20, 109, 158, 0.4)" : "none",
+                      transition: "all 0.2s ease"
+                    }}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "28px",
+                    height: "28px",
+                    borderRadius: "8px",
+                    background: currentPage === totalPages ? "rgba(255, 255, 255, 0.04)" : "rgba(20, 109, 158, 0.3)",
+                    border: currentPage === totalPages ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(56, 189, 248, 0.4)",
+                    color: currentPage === totalPages ? "#64748B" : "#38BDF8",
+                    cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                    transition: "all 0.2s ease"
+                  }}
+                  title="Página siguiente"
+                >
+                  <Icon name="chevronRight" size={14} />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* REJILLA DE TARJETAS HORIZONTALES DE GUÍAS (ACABADO GLASSMORPHI SINFÍN BORDES BLANCOS) */}
@@ -1090,8 +1165,8 @@ export default function GuiasPage() {
                   </div>
 
                   <p style={styles.bioSnippetWide}>
-                    {guia.biografia?.length > 90
-                      ? guia.biografia.substring(0, 90) + "..."
+                    {guia.biografia?.length > 65
+                      ? guia.biografia.substring(0, 65) + "..."
                       : guia.biografia}
                   </p>
 
@@ -1152,107 +1227,6 @@ export default function GuiasPage() {
                 )}
               </div>
             ))}
-          </div>
-        )}
-
-        {/* CONTROLES DE PAGINACIÓN */}
-        {totalPages > 1 && (
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "12px",
-            marginTop: "28px",
-            padding: "14px 20px",
-            background: "rgba(15, 23, 42, 0.75)",
-            backdropFilter: "blur(12px)",
-            border: "1.5px solid rgba(56, 189, 248, 0.25)",
-            borderRadius: "18px",
-            flexWrap: "wrap",
-            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)"
-          }}>
-            <span style={{ color: "#94A3B8", fontSize: "13.5px", fontWeight: "600" }}>
-              {lang === "en" ? `Showing ${(currentPage - 1) * ITEMS_PER_PAGE + 1}-${Math.min(currentPage * ITEMS_PER_PAGE, guiasFiltrados.length)} of ${guiasFiltrados.length} guides`
-                : lang === "zh" ? `显示 ${(currentPage - 1) * ITEMS_PER_PAGE + 1}-${Math.min(currentPage * ITEMS_PER_PAGE, guiasFiltrados.length)} / 共 ${guiasFiltrados.length} 位导游`
-                : `Mostrando ${(currentPage - 1) * ITEMS_PER_PAGE + 1}-${Math.min(currentPage * ITEMS_PER_PAGE, guiasFiltrados.length)} de ${guiasFiltrados.length} guías`}
-            </span>
-
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <button
-                onClick={() => {
-                  setCurrentPage((prev) => Math.max(prev - 1, 1));
-                  window.scrollTo({ top: 350, behavior: "smooth" });
-                }}
-                disabled={currentPage === 1}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  padding: "8px 14px",
-                  borderRadius: "10px",
-                  background: currentPage === 1 ? "rgba(255, 255, 255, 0.04)" : "rgba(20, 109, 158, 0.25)",
-                  border: currentPage === 1 ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(56, 189, 248, 0.4)",
-                  color: currentPage === 1 ? "#64748B" : "#38BDF8",
-                  fontSize: "13px",
-                  fontWeight: "700",
-                  cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                  transition: "all 0.2s ease"
-                }}
-              >
-                <Icon name="chevronLeft" size={14} />
-                <span>{lang === "en" ? "Previous" : lang === "zh" ? "上一页" : "Anterior"}</span>
-              </button>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                <button
-                  key={pageNum}
-                  onClick={() => {
-                    setCurrentPage(pageNum);
-                    window.scrollTo({ top: 350, behavior: "smooth" });
-                  }}
-                  style={{
-                    width: "36px",
-                    height: "36px",
-                    borderRadius: "10px",
-                    background: currentPage === pageNum ? "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)" : "rgba(255, 255, 255, 0.05)",
-                    border: currentPage === pageNum ? "1.5px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.08)",
-                    color: currentPage === pageNum ? "#FFFFFF" : "#CBD5E1",
-                    fontSize: "13.5px",
-                    fontWeight: "800",
-                    cursor: "pointer",
-                    boxShadow: currentPage === pageNum ? "0 4px 12px rgba(20, 109, 158, 0.35)" : "none",
-                    transition: "all 0.2s ease"
-                  }}
-                >
-                  {pageNum}
-                </button>
-              ))}
-
-              <button
-                onClick={() => {
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-                  window.scrollTo({ top: 350, behavior: "smooth" });
-                }}
-                disabled={currentPage === totalPages}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  padding: "8px 14px",
-                  borderRadius: "10px",
-                  background: currentPage === totalPages ? "rgba(255, 255, 255, 0.04)" : "rgba(20, 109, 158, 0.25)",
-                  border: currentPage === totalPages ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(56, 189, 248, 0.4)",
-                  color: currentPage === totalPages ? "#64748B" : "#38BDF8",
-                  fontSize: "13px",
-                  fontWeight: "700",
-                  cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-                  transition: "all 0.2s ease"
-                }}
-              >
-                <span>{lang === "en" ? "Next" : lang === "zh" ? "下一页" : "Siguiente"}</span>
-                <Icon name="chevronRight" size={14} />
-              </button>
-            </div>
           </div>
         )}
       </main>
@@ -1621,7 +1595,7 @@ const styles = {
     background: "#0A192F",
     color: "#F8FAFC",
     fontFamily: "var(--font-outfit), sans-serif",
-    paddingBottom: "60px",
+    paddingBottom: "16px",
     position: "relative",
     overflowX: "hidden"
   },
@@ -1662,9 +1636,9 @@ const styles = {
 
   heroSectionCompact: {
     position: "relative",
-    padding: "70px 24px 20px 24px",
+    padding: "62px 24px 4px 24px",
     background: "transparent",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
     zIndex: 2
   },
   heroGlowLeft: {
@@ -1682,12 +1656,7 @@ const styles = {
     margin: "0 auto"
   },
   topMetaHeader: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexWrap: "wrap",
-    gap: "12px",
-    marginBottom: "8px"
+    display: "none"
   },
   heroBadgesGroup: {
     display: "flex",
@@ -1738,12 +1707,12 @@ const styles = {
     fontSize: "12px"
   },
   heroTitleMain: {
-    fontSize: "clamp(26px, 3.8vw, 42px)",
+    fontSize: "clamp(18px, 2.2vw, 24px)",
     fontWeight: "900",
     color: "#FFFFFF",
-    letterSpacing: "-0.5px",
-    margin: "12px 0 6px 0",
-    lineHeight: "1.25",
+    letterSpacing: "-0.4px",
+    margin: "2px 0 2px 0",
+    lineHeight: "1.2",
     textAlign: "center"
   },
   whiteTextWithShadow: {
@@ -1768,7 +1737,7 @@ const styles = {
   mainContainerWide: {
     maxWidth: "1400px",
     margin: "0 auto",
-    padding: "20px 24px",
+    padding: "8px 24px 12px 24px",
     position: "relative",
     zIndex: 2
   },
@@ -1777,14 +1746,14 @@ const styles = {
   filterPanelProfessional: {
     background: "rgba(15, 23, 42, 0.88)",
     border: "1px solid rgba(56, 189, 248, 0.18)",
-    borderRadius: "20px",
-    padding: "16px 20px",
+    borderRadius: "14px",
+    padding: "8px 14px",
     backdropFilter: "blur(16px)",
-    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
-    marginBottom: "22px",
+    boxShadow: "0 6px 20px rgba(0, 0, 0, 0.3)",
+    marginBottom: "10px",
     display: "flex",
     flexDirection: "column",
-    gap: "14px"
+    gap: "10px"
   },
   filterRow1: {
     display: "flex",
@@ -2041,20 +2010,20 @@ const styles = {
     background: "rgba(15, 23, 42, 0.78)",
     backdropFilter: "blur(12px)",
     border: "1px solid rgba(56, 189, 248, 0.2)",
-    borderRadius: "14px",
-    padding: "10px 16px",
-    marginBottom: "18px",
-    boxShadow: "0 6px 18px rgba(0, 0, 0, 0.25)"
+    borderRadius: "12px",
+    padding: "6px 14px",
+    marginBottom: "10px",
+    boxShadow: "0 4px 14px rgba(0, 0, 0, 0.25)"
   },
   resultsTitleLeft: {
     display: "flex",
     alignItems: "center",
-    gap: "10px"
+    gap: "8px"
   },
   headerIconBox: {
-    width: "30px",
-    height: "30px",
-    borderRadius: "8px",
+    width: "28px",
+    height: "28px",
+    borderRadius: "7px",
     background: "rgba(14, 165, 233, 0.15)",
     border: "1px solid rgba(14, 165, 233, 0.3)",
     display: "flex",
@@ -2063,7 +2032,7 @@ const styles = {
     flexShrink: 0
   },
   resultsTitleClean: {
-    fontSize: "15.5px",
+    fontSize: "14.5px",
     fontWeight: "800",
     color: "#FFFFFF",
     margin: 0,
@@ -2072,9 +2041,9 @@ const styles = {
   resultsBadgeSlim: {
     background: "rgba(14, 165, 233, 0.15)",
     color: "#38BDF8",
-    fontSize: "11.5px",
+    fontSize: "11px",
     fontWeight: "750",
-    padding: "2px 8px",
+    padding: "2px 7px",
     borderRadius: "12px",
     border: "1px solid rgba(14, 165, 233, 0.3)",
     whiteSpace: "nowrap"
@@ -2083,32 +2052,32 @@ const styles = {
     background: "rgba(239, 68, 68, 0.12)",
     border: "1px solid rgba(239, 68, 68, 0.3)",
     color: "#EF4444",
-    padding: "5px 12px",
-    borderRadius: "8px",
-    fontSize: "11.5px",
+    padding: "4px 10px",
+    borderRadius: "7px",
+    fontSize: "11px",
     fontWeight: "750",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
-    gap: "5px",
+    gap: "4px",
     transition: "all 0.2s ease"
   },
 
   // TARJETAS GLASSMORPISM ELEGANTES SIN BORDES BLANCOS EN L
   guidesGridWide: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(480px, 1fr))",
-    gap: "18px"
+    gridTemplateColumns: "repeat(auto-fill, minmax(460px, 1fr))",
+    gap: "10px"
   },
   guideCardGlass: {
     background: "rgba(15, 23, 42, 0.88)",
     border: "1px solid rgba(56, 189, 248, 0.15)",
-    borderRadius: "16px",
-    padding: "14px",
+    borderRadius: "14px",
+    padding: "10px 12px",
     display: "flex",
-    gap: "14px",
+    gap: "12px",
     backdropFilter: "blur(16px)",
-    boxShadow: "0 8px 20px rgba(0, 0, 0, 0.25)",
+    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.22)",
     transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
   },
   guideCardMainInfo: {
@@ -2120,37 +2089,37 @@ const styles = {
   },
   cardHeaderHorizontal: {
     display: "flex",
-    gap: "14px",
+    gap: "10px",
     alignItems: "center",
-    marginBottom: "6px"
+    marginBottom: "4px"
   },
   avatarWrapperWide: {
     position: "relative",
-    width: "84px",
-    height: "84px",
+    width: "66px",
+    height: "66px",
     flexShrink: 0
   },
   avatarImgWide: {
     width: "100%",
     height: "100%",
-    borderRadius: "16px",
+    borderRadius: "14px",
     objectFit: "cover",
-    border: "2.5px solid #0EA5E9",
-    boxShadow: "0 4px 18px rgba(14, 165, 233, 0.35)"
+    border: "2px solid #0EA5E9",
+    boxShadow: "0 3px 14px rgba(14, 165, 233, 0.3)"
   },
   verifiedBadgeIcon: {
     position: "absolute",
-    bottom: "-3px",
-    right: "-3px",
+    bottom: "-2px",
+    right: "-2px",
     background: "#10B981",
     borderRadius: "50%",
-    width: "22px",
-    height: "22px",
+    width: "18px",
+    height: "18px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    boxShadow: "0 3px 8px rgba(0,0,0,0.5)",
-    border: "2px solid #0F172A"
+    boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
+    border: "1.5px solid #0F172A"
   },
   deptBadgeSlim: {
     display: "inline-flex",
@@ -2158,92 +2127,92 @@ const styles = {
     gap: "3px",
     background: "rgba(14, 165, 233, 0.12)",
     color: "#38BDF8",
-    fontSize: "10.5px",
+    fontSize: "10px",
     fontWeight: "750",
-    padding: "2px 8px",
-    borderRadius: "12px",
+    padding: "1.5px 7px",
+    borderRadius: "10px",
     border: "1px solid rgba(14, 165, 233, 0.25)"
   },
   licenseBadgeSlim: {
     background: "rgba(16, 185, 129, 0.12)",
     color: "#34D399",
-    fontSize: "10px",
+    fontSize: "9.5px",
     fontWeight: "750",
-    padding: "2px 6px",
-    borderRadius: "12px",
+    padding: "1.5px 5px",
+    borderRadius: "10px",
     border: "1px solid rgba(16, 185, 129, 0.25)"
   },
   guideNameWide: {
-    fontSize: "17px",
+    fontSize: "15.5px",
     fontWeight: "800",
     color: "#FFFFFF",
-    margin: "2px 0 3px 0",
-    lineHeight: "1.2"
+    margin: "1px 0 2px 0",
+    lineHeight: "1.15"
   },
   ratingRowWide: {
     display: "flex",
     alignItems: "center",
-    gap: "6px"
+    gap: "4px"
   },
   ratingValueWide: {
     fontWeight: "800",
-    fontSize: "13px",
+    fontSize: "12px",
     color: "#F8FAFC"
   },
   reviewsCountWide: {
-    fontSize: "11.5px",
+    fontSize: "11px",
     color: "#94A3B8"
   },
   detailsRowSlim: {
     display: "flex",
     flexWrap: "wrap",
     gap: "4px",
-    margin: "4px 0 6px 0"
+    margin: "2px 0 4px 0"
   },
   tagChip: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "3.5px",
+    gap: "3px",
     background: "rgba(255, 255, 255, 0.04)",
     border: "1px solid rgba(255, 255, 255, 0.1)",
     color: "#CBD5E1",
-    fontSize: "10.5px",
+    fontSize: "10px",
     fontWeight: "600",
-    padding: "2px 7px",
-    borderRadius: "20px",
+    padding: "1.5px 6px",
+    borderRadius: "16px",
     backdropFilter: "blur(4px)"
   },
   bioSnippetWide: {
-    fontSize: "12.5px",
+    fontSize: "11.5px",
     color: "#94A3B8",
-    lineHeight: "1.4",
-    margin: "0 0 8px 0"
+    lineHeight: "1.3",
+    margin: "0 0 4px 0"
   },
   cardFooterWide: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: "8px",
+    paddingTop: "6px",
     borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-    gap: "8px"
+    gap: "6px"
   },
   pricePillBadge: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "4px",
+    gap: "3px",
     background: "rgba(16, 185, 129, 0.12)",
     border: "1px solid rgba(16, 185, 129, 0.25)",
-    padding: "4px 9px",
-    borderRadius: "8px",
+    padding: "3px 7px",
+    borderRadius: "6px",
     whiteSpace: "nowrap"
   },
   priceLabelSlim: {
-    fontSize: "11px",
+    fontSize: "10.5px",
     color: "#94A3B8",
     fontWeight: "600"
   },
   priceValueSlim: {
-    fontSize: "12.5px",
+    fontSize: "11.5px",
     fontWeight: "800",
     color: "#34D399",
     whiteSpace: "nowrap"
@@ -2251,53 +2220,53 @@ const styles = {
   actionButtonsGroupSlim: {
     display: "flex",
     alignItems: "center",
-    gap: "6px"
+    gap: "5px"
   },
   whatsappBtnSlim: {
     background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
     color: "#FFFFFF",
-    width: "32px",
-    height: "32px",
-    borderRadius: "8px",
+    width: "28px",
+    height: "28px",
+    borderRadius: "7px",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
     textDecoration: "none",
-    boxShadow: "0 3px 8px rgba(37, 211, 102, 0.25)",
+    boxShadow: "0 2px 6px rgba(37, 211, 102, 0.25)",
     flexShrink: 0
   },
   detailsBtnSlim: {
     background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
     color: "#FFFFFF",
     border: "none",
-    padding: "0 12px",
-    height: "32px",
-    borderRadius: "8px",
-    fontSize: "12px",
+    padding: "0 10px",
+    height: "28px",
+    borderRadius: "7px",
+    fontSize: "11.5px",
     fontWeight: "750",
     cursor: "pointer",
     display: "inline-flex",
     alignItems: "center",
-    gap: "4px",
+    gap: "3px",
     whiteSpace: "nowrap",
-    boxShadow: "0 3px 8px rgba(14, 165, 233, 0.25)",
+    boxShadow: "0 2px 6px rgba(14, 165, 233, 0.25)",
     flexShrink: 0
   },
   btnTextSlim: {
-    fontSize: "11.5px",
+    fontSize: "11px",
     fontWeight: "750"
   },
 
   // PORTADA RECTANGULAR DERECHA DE TRAVESÍA
   coverPhotoBoxRight: {
-    width: "150px",
+    width: "130px",
     flexShrink: 0,
     position: "relative",
-    borderRadius: "12px",
+    borderRadius: "10px",
     overflow: "hidden",
     cursor: "pointer",
     border: "1px solid rgba(255, 255, 255, 0.12)",
-    boxShadow: "0 4px 14px rgba(0, 0, 0, 0.3)",
+    boxShadow: "0 3px 10px rgba(0, 0, 0, 0.3)",
     transition: "transform 0.25s ease, border-color 0.25s ease"
   },
   coverPhotoImg: {
