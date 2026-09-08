@@ -285,7 +285,16 @@ export default function GuiasPage() {
   const [solamenteVerificados, setSolamenteVerificados] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("rating");
+  const [sortBy, setSortBy] = useState("alfabetico");
+
+  // Paginación (4 perfiles por página)
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 4;
+
+  // Reset de página al cambiar filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedDept, selectedEspecialidad, selectedIdiomas, selectedRangoPrecio, solamenteVerificados, searchQuery, sortBy]);
 
   // Modal de Detalle de Guía
   const [selectedGuiaModal, setSelectedGuiaModal] = useState(null);
@@ -497,6 +506,9 @@ export default function GuiasPage() {
       matchQuery
     );
   }).sort((a, b) => {
+    if (sortBy === "alfabetico") {
+      return (a.nombre_completo || "").localeCompare(b.nombre_completo || "", "es", { sensitivity: "base" });
+    }
     if (sortBy === "rating") return b.rating_promedio - a.rating_promedio;
     if (sortBy === "experiencia") return b.experiencia_anios - a.experiencia_anios;
     if (sortBy === "precio_asc") {
@@ -509,8 +521,11 @@ export default function GuiasPage() {
       const pB = parseInt((b.tarifa_aprox || "").replace(/[^0-9]/g, "")) || 0;
       return pB - pA;
     }
-    return 0;
+    return (a.nombre_completo || "").localeCompare(b.nombre_completo || "", "es", { sensitivity: "base" });
   });
+
+  const totalPages = Math.ceil(guiasFiltrados.length / ITEMS_PER_PAGE) || 1;
+  const paginatedGuias = guiasFiltrados.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   // Enviar reseña
   const handleAddReview = async (e) => {
@@ -716,6 +731,7 @@ export default function GuiasPage() {
                 onChange={(e) => setSortBy(e.target.value)}
                 style={styles.selectInputSlim}
               >
+                <option value="alfabetico" style={styles.selectOption}>{lang === "en" ? "Alphabetical (A-Z)" : lang === "zh" ? "按字母顺序 (A-Z)" : "Orden Alfabético (A-Z)"}</option>
                 <option value="rating" style={styles.selectOption}>{lang === "en" ? "Best Rating" : lang === "zh" ? "最高评分" : "Mejor Calificación"}</option>
                 <option value="experiencia" style={styles.selectOption}>{lang === "en" ? "Experience" : lang === "zh" ? "最丰富经验" : "Más Experiencia"}</option>
                 <option value="precio_asc" style={styles.selectOption}>{lang === "en" ? "Price: Low to High" : lang === "zh" ? "价格从低到高" : "Precio: Menor a Mayor"}</option>
@@ -934,7 +950,7 @@ export default function GuiasPage() {
           </div>
         ) : (
           <div style={styles.guidesGridWide}>
-            {guiasFiltrados.map((guia) => (
+            {paginatedGuias.map((guia) => (
               <div
                 key={guia.id}
                 style={styles.guideCardGlass}
@@ -1054,6 +1070,107 @@ export default function GuiasPage() {
                 )}
               </div>
             ))}
+          </div>
+        )}
+
+        {/* CONTROLES DE PAGINACIÓN */}
+        {totalPages > 1 && (
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "12px",
+            marginTop: "28px",
+            padding: "14px 20px",
+            background: "rgba(15, 23, 42, 0.75)",
+            backdropFilter: "blur(12px)",
+            border: "1.5px solid rgba(56, 189, 248, 0.25)",
+            borderRadius: "18px",
+            flexWrap: "wrap",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)"
+          }}>
+            <span style={{ color: "#94A3B8", fontSize: "13.5px", fontWeight: "600" }}>
+              {lang === "en" ? `Showing ${(currentPage - 1) * ITEMS_PER_PAGE + 1}-${Math.min(currentPage * ITEMS_PER_PAGE, guiasFiltrados.length)} of ${guiasFiltrados.length} guides`
+                : lang === "zh" ? `显示 ${(currentPage - 1) * ITEMS_PER_PAGE + 1}-${Math.min(currentPage * ITEMS_PER_PAGE, guiasFiltrados.length)} / 共 ${guiasFiltrados.length} 位导游`
+                : `Mostrando ${(currentPage - 1) * ITEMS_PER_PAGE + 1}-${Math.min(currentPage * ITEMS_PER_PAGE, guiasFiltrados.length)} de ${guiasFiltrados.length} guías`}
+            </span>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <button
+                onClick={() => {
+                  setCurrentPage((prev) => Math.max(prev - 1, 1));
+                  window.scrollTo({ top: 350, behavior: "smooth" });
+                }}
+                disabled={currentPage === 1}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "8px 14px",
+                  borderRadius: "10px",
+                  background: currentPage === 1 ? "rgba(255, 255, 255, 0.04)" : "rgba(20, 109, 158, 0.25)",
+                  border: currentPage === 1 ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(56, 189, 248, 0.4)",
+                  color: currentPage === 1 ? "#64748B" : "#38BDF8",
+                  fontSize: "13px",
+                  fontWeight: "700",
+                  cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                <Icon name="chevronLeft" size={14} />
+                <span>{lang === "en" ? "Previous" : lang === "zh" ? "上一页" : "Anterior"}</span>
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                <button
+                  key={pageNum}
+                  onClick={() => {
+                    setCurrentPage(pageNum);
+                    window.scrollTo({ top: 350, behavior: "smooth" });
+                  }}
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "10px",
+                    background: currentPage === pageNum ? "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)" : "rgba(255, 255, 255, 0.05)",
+                    border: currentPage === pageNum ? "1.5px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.08)",
+                    color: currentPage === pageNum ? "#FFFFFF" : "#CBD5E1",
+                    fontSize: "13.5px",
+                    fontWeight: "800",
+                    cursor: "pointer",
+                    boxShadow: currentPage === pageNum ? "0 4px 12px rgba(20, 109, 158, 0.35)" : "none",
+                    transition: "all 0.2s ease"
+                  }}
+                >
+                  {pageNum}
+                </button>
+              ))}
+
+              <button
+                onClick={() => {
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+                  window.scrollTo({ top: 350, behavior: "smooth" });
+                }}
+                disabled={currentPage === totalPages}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "8px 14px",
+                  borderRadius: "10px",
+                  background: currentPage === totalPages ? "rgba(255, 255, 255, 0.04)" : "rgba(20, 109, 158, 0.25)",
+                  border: currentPage === totalPages ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(56, 189, 248, 0.4)",
+                  color: currentPage === totalPages ? "#64748B" : "#38BDF8",
+                  fontSize: "13px",
+                  fontWeight: "700",
+                  cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                <span>{lang === "en" ? "Next" : lang === "zh" ? "下一页" : "Siguiente"}</span>
+                <Icon name="chevronRight" size={14} />
+              </button>
+            </div>
           </div>
         )}
       </main>
