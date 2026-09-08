@@ -140,7 +140,7 @@ const MOCK_GUIAS = [
       "/images/galeria-departamentos/granada/1.1.jpg",
       "/images/galeria-departamentos/granada/2.jpg",
       "/images/galeria-departamentos/granada/3.jpg",
-      "/images/galeria-departamentos/granada/4.jpeg"
+      "/images/galeria-departamentos/granada/4.jpg"
     ],
     resenas: [
       {
