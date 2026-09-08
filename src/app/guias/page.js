@@ -12,7 +12,7 @@ import { getCategorySvg } from "@/lib/imageUtils";
 // Guías turísticos de demostración con imágenes REALES del proyecto
 const MOCK_GUIAS = [
   {
-    id: "guia-1",
+    id: "d377d6ef-b069-4449-98d1-c1646b2cac99",
     nombre_completo: "Carlos Mendoza Silva",
     avatar_url: "/images/art1.jpeg",
     departamento_principal: "León",
@@ -87,7 +87,7 @@ const MOCK_GUIAS = [
     ]
   },
   {
-    id: "guia-2",
+    id: "b392401c-5d4b-4d9a-9c68-cc97f7f2e673",
     nombre_completo: "María José López",
     avatar_url: "/images/art2.jpeg",
     departamento_principal: "Granada",
@@ -162,7 +162,7 @@ const MOCK_GUIAS = [
     ]
   },
   {
-    id: "guia-3",
+    id: "f4a6c46b-498a-4c04-8abf-efdac96e071d",
     nombre_completo: "Alejandro Jarquín",
     avatar_url: "/images/art3.jpeg",
     departamento_principal: "Rivas",
