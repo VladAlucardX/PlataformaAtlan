@@ -1017,8 +1017,8 @@ export default function GuiasPage() {
             )}
 
             {totalPages > 1 && (
-              <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                <span style={{ color: "#94A3B8", fontSize: "12px", fontWeight: "600", marginRight: "4px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={{ color: "#94A3B8", fontSize: "13px", fontWeight: "600", marginRight: "6px" }}>
                   {lang === "en" ? `Page ${currentPage}/${totalPages}` : lang === "zh" ? `第 ${currentPage}/${totalPages} 页` : `Pág. ${currentPage}/${totalPages}`}
                 </span>
 
@@ -1029,9 +1029,9 @@ export default function GuiasPage() {
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    width: "28px",
-                    height: "28px",
-                    borderRadius: "8px",
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "9px",
                     background: currentPage === 1 ? "rgba(255, 255, 255, 0.04)" : "rgba(20, 109, 158, 0.3)",
                     border: currentPage === 1 ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(56, 189, 248, 0.4)",
                     color: currentPage === 1 ? "#64748B" : "#38BDF8",
@@ -1040,7 +1040,7 @@ export default function GuiasPage() {
                   }}
                   title="Página anterior"
                 >
-                  <Icon name="chevronLeft" size={14} />
+                  <Icon name="chevronLeft" size={15} />
                 </button>
 
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
@@ -1048,13 +1048,13 @@ export default function GuiasPage() {
                     key={pageNum}
                     onClick={() => setCurrentPage(pageNum)}
                     style={{
-                      width: "28px",
-                      height: "28px",
-                      borderRadius: "8px",
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "9px",
                       background: currentPage === pageNum ? "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)" : "rgba(255, 255, 255, 0.05)",
                       border: currentPage === pageNum ? "1.5px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.08)",
                       color: currentPage === pageNum ? "#FFFFFF" : "#CBD5E1",
-                      fontSize: "12px",
+                      fontSize: "13px",
                       fontWeight: "800",
                       cursor: "pointer",
                       boxShadow: currentPage === pageNum ? "0 2px 8px rgba(20, 109, 158, 0.4)" : "none",
@@ -1072,9 +1072,9 @@ export default function GuiasPage() {
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    width: "28px",
-                    height: "28px",
-                    borderRadius: "8px",
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "9px",
                     background: currentPage === totalPages ? "rgba(255, 255, 255, 0.04)" : "rgba(20, 109, 158, 0.3)",
                     border: currentPage === totalPages ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(56, 189, 248, 0.4)",
                     color: currentPage === totalPages ? "#64748B" : "#38BDF8",
@@ -1083,7 +1083,7 @@ export default function GuiasPage() {
                   }}
                   title="Página siguiente"
                 >
-                  <Icon name="chevronRight" size={14} />
+                  <Icon name="chevronRight" size={15} />
                 </button>
               </div>
             )}
@@ -1165,8 +1165,8 @@ export default function GuiasPage() {
                   </div>
 
                   <p style={styles.bioSnippetWide}>
-                    {guia.biografia?.length > 65
-                      ? guia.biografia.substring(0, 65) + "..."
+                    {guia.biografia?.length > 115
+                      ? guia.biografia.substring(0, 115) + "..."
                       : guia.biografia}
                   </p>
 
@@ -1707,11 +1707,11 @@ const styles = {
     fontSize: "12px"
   },
   heroTitleMain: {
-    fontSize: "clamp(18px, 2.2vw, 24px)",
+    fontSize: "clamp(22px, 2.8vw, 30px)",
     fontWeight: "900",
     color: "#FFFFFF",
     letterSpacing: "-0.4px",
-    margin: "2px 0 2px 0",
+    margin: "4px 0 4px 0",
     lineHeight: "1.2",
     textAlign: "center"
   },
@@ -1737,7 +1737,7 @@ const styles = {
   mainContainerWide: {
     maxWidth: "1400px",
     margin: "0 auto",
-    padding: "8px 24px 12px 24px",
+    padding: "10px 24px 16px 24px",
     position: "relative",
     zIndex: 2
   },
@@ -1747,10 +1747,10 @@ const styles = {
     background: "rgba(15, 23, 42, 0.88)",
     border: "1px solid rgba(56, 189, 248, 0.18)",
     borderRadius: "14px",
-    padding: "8px 14px",
+    padding: "10px 16px",
     backdropFilter: "blur(16px)",
     boxShadow: "0 6px 20px rgba(0, 0, 0, 0.3)",
-    marginBottom: "10px",
+    marginBottom: "12px",
     display: "flex",
     flexDirection: "column",
     gap: "10px"
@@ -1758,7 +1758,7 @@ const styles = {
   filterRow1: {
     display: "flex",
     alignItems: "center",
-    gap: "14px",
+    gap: "12px",
     flexWrap: "wrap"
   },
   searchBoxSlim: {
@@ -1770,7 +1770,7 @@ const styles = {
     background: "rgba(30, 41, 59, 0.85)",
     border: "1px solid rgba(255, 255, 255, 0.12)",
     borderRadius: "10px",
-    padding: "8px 12px"
+    padding: "8px 14px"
   },
   searchInputSlim: {
     width: "100%",
@@ -1801,9 +1801,9 @@ const styles = {
     background: "rgba(30, 41, 59, 0.9)",
     border: "1px solid rgba(255, 255, 255, 0.15)",
     color: "#F8FAFC",
-    padding: "6px 10px",
-    borderRadius: "8px",
-    fontSize: "12.5px",
+    padding: "7px 12px",
+    borderRadius: "9px",
+    fontSize: "13px",
     outline: "none",
     cursor: "pointer"
   },
@@ -1814,25 +1814,25 @@ const styles = {
     background: "rgba(30, 41, 59, 0.85)",
     border: "1px solid rgba(255, 255, 255, 0.12)",
     borderRadius: "10px",
-    padding: "6px 10px"
+    padding: "7px 12px"
   },
   selectInputCompact: {
     background: "none",
     border: "none",
     color: "#F8FAFC",
-    fontSize: "12.5px",
+    fontSize: "13px",
     fontWeight: "600",
     outline: "none",
     cursor: "pointer",
-    maxWidth: "160px"
+    maxWidth: "180px"
   },
   advancedToggleBtn: {
     display: "inline-flex",
     alignItems: "center",
     gap: "6px",
-    padding: "7px 12px",
+    padding: "7.5px 14px",
     borderRadius: "10px",
-    fontSize: "12px",
+    fontSize: "12.5px",
     fontWeight: "750",
     cursor: "pointer",
     transition: "all 0.2s",
@@ -1854,7 +1854,7 @@ const styles = {
     gap: "10px"
   },
   filterSectionTitleSlim: {
-    fontSize: "11.5px",
+    fontSize: "12px",
     fontWeight: "750",
     color: "#CBD5E1",
     display: "flex",
@@ -1873,9 +1873,9 @@ const styles = {
     display: "inline-flex",
     alignItems: "center",
     gap: "6px",
-    padding: "6px 12px",
-    borderRadius: "8px",
-    fontSize: "12px",
+    padding: "7px 13px",
+    borderRadius: "9px",
+    fontSize: "12.5px",
     fontWeight: "750",
     cursor: "pointer",
     transition: "all 0.2s"
@@ -1937,10 +1937,10 @@ const styles = {
     background: "rgba(14, 165, 233, 0.18)",
     border: "1px solid rgba(14, 165, 233, 0.35)",
     color: "#38BDF8",
-    fontSize: "11.5px",
+    fontSize: "12px",
     fontWeight: "600",
-    padding: "3px 9px",
-    borderRadius: "6px"
+    padding: "3.5px 10px",
+    borderRadius: "7px"
   },
   chipRemoveBtn: {
     background: "none",
@@ -1955,10 +1955,10 @@ const styles = {
     background: "rgba(239, 68, 68, 0.15)",
     border: "1px solid rgba(239, 68, 68, 0.35)",
     color: "#F87171",
-    fontSize: "11.5px",
+    fontSize: "12px",
     fontWeight: "750",
-    padding: "3px 10px",
-    borderRadius: "6px",
+    padding: "3.5px 11px",
+    borderRadius: "7px",
     cursor: "pointer",
     display: "inline-flex",
     alignItems: "center",
@@ -1989,9 +1989,9 @@ const styles = {
     scrollbarWidth: "none"
   },
   pillBtnSlim: {
-    padding: "5px 13px",
+    padding: "5.5px 14px",
     borderRadius: "999px",
-    fontSize: "12px",
+    fontSize: "12.5px",
     cursor: "pointer",
     whiteSpace: "nowrap",
     transition: "all 0.2s"
@@ -2010,20 +2010,20 @@ const styles = {
     background: "rgba(15, 23, 42, 0.78)",
     backdropFilter: "blur(12px)",
     border: "1px solid rgba(56, 189, 248, 0.2)",
-    borderRadius: "12px",
-    padding: "6px 14px",
-    marginBottom: "10px",
+    borderRadius: "14px",
+    padding: "8px 16px",
+    marginBottom: "12px",
     boxShadow: "0 4px 14px rgba(0, 0, 0, 0.25)"
   },
   resultsTitleLeft: {
     display: "flex",
     alignItems: "center",
-    gap: "8px"
+    gap: "10px"
   },
   headerIconBox: {
-    width: "28px",
-    height: "28px",
-    borderRadius: "7px",
+    width: "32px",
+    height: "32px",
+    borderRadius: "8px",
     background: "rgba(14, 165, 233, 0.15)",
     border: "1px solid rgba(14, 165, 233, 0.3)",
     display: "flex",
@@ -2032,7 +2032,7 @@ const styles = {
     flexShrink: 0
   },
   resultsTitleClean: {
-    fontSize: "14.5px",
+    fontSize: "15.5px",
     fontWeight: "800",
     color: "#FFFFFF",
     margin: 0,
@@ -2041,9 +2041,9 @@ const styles = {
   resultsBadgeSlim: {
     background: "rgba(14, 165, 233, 0.15)",
     color: "#38BDF8",
-    fontSize: "11px",
+    fontSize: "12px",
     fontWeight: "750",
-    padding: "2px 7px",
+    padding: "2.5px 9px",
     borderRadius: "12px",
     border: "1px solid rgba(14, 165, 233, 0.3)",
     whiteSpace: "nowrap"
@@ -2052,9 +2052,9 @@ const styles = {
     background: "rgba(239, 68, 68, 0.12)",
     border: "1px solid rgba(239, 68, 68, 0.3)",
     color: "#EF4444",
-    padding: "4px 10px",
-    borderRadius: "7px",
-    fontSize: "11px",
+    padding: "5px 11px",
+    borderRadius: "8px",
+    fontSize: "12px",
     fontWeight: "750",
     cursor: "pointer",
     display: "flex",
@@ -2066,16 +2066,16 @@ const styles = {
   // TARJETAS GLASSMORPISM ELEGANTES SIN BORDES BLANCOS EN L
   guidesGridWide: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(460px, 1fr))",
-    gap: "10px"
+    gridTemplateColumns: "repeat(auto-fill, minmax(480px, 1fr))",
+    gap: "14px"
   },
   guideCardGlass: {
     background: "rgba(15, 23, 42, 0.88)",
     border: "1px solid rgba(56, 189, 248, 0.15)",
-    borderRadius: "14px",
-    padding: "10px 12px",
+    borderRadius: "16px",
+    padding: "14px 16px",
     display: "flex",
-    gap: "12px",
+    gap: "14px",
     backdropFilter: "blur(16px)",
     boxShadow: "0 6px 16px rgba(0, 0, 0, 0.22)",
     transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
@@ -2089,20 +2089,20 @@ const styles = {
   },
   cardHeaderHorizontal: {
     display: "flex",
-    gap: "10px",
+    gap: "12px",
     alignItems: "center",
     marginBottom: "4px"
   },
   avatarWrapperWide: {
     position: "relative",
-    width: "66px",
-    height: "66px",
+    width: "78px",
+    height: "78px",
     flexShrink: 0
   },
   avatarImgWide: {
     width: "100%",
     height: "100%",
-    borderRadius: "14px",
+    borderRadius: "16px",
     objectFit: "cover",
     border: "2px solid #0EA5E9",
     boxShadow: "0 3px 14px rgba(14, 165, 233, 0.3)"
@@ -2113,8 +2113,8 @@ const styles = {
     right: "-2px",
     background: "#10B981",
     borderRadius: "50%",
-    width: "18px",
-    height: "18px",
+    width: "20px",
+    height: "20px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -2124,95 +2124,95 @@ const styles = {
   deptBadgeSlim: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "3px",
+    gap: "3.5px",
     background: "rgba(14, 165, 233, 0.12)",
     color: "#38BDF8",
-    fontSize: "10px",
+    fontSize: "11px",
     fontWeight: "750",
-    padding: "1.5px 7px",
+    padding: "2px 8px",
     borderRadius: "10px",
     border: "1px solid rgba(14, 165, 233, 0.25)"
   },
   licenseBadgeSlim: {
     background: "rgba(16, 185, 129, 0.12)",
     color: "#34D399",
-    fontSize: "9.5px",
+    fontSize: "10.5px",
     fontWeight: "750",
-    padding: "1.5px 5px",
+    padding: "2px 6px",
     borderRadius: "10px",
     border: "1px solid rgba(16, 185, 129, 0.25)"
   },
   guideNameWide: {
-    fontSize: "15.5px",
+    fontSize: "17.5px",
     fontWeight: "800",
     color: "#FFFFFF",
-    margin: "1px 0 2px 0",
-    lineHeight: "1.15"
+    margin: "2px 0 3px 0",
+    lineHeight: "1.2"
   },
   ratingRowWide: {
     display: "flex",
     alignItems: "center",
-    gap: "4px"
+    gap: "5px"
   },
   ratingValueWide: {
     fontWeight: "800",
-    fontSize: "12px",
+    fontSize: "13px",
     color: "#F8FAFC"
   },
   reviewsCountWide: {
-    fontSize: "11px",
+    fontSize: "11.5px",
     color: "#94A3B8"
   },
   detailsRowSlim: {
     display: "flex",
     flexWrap: "wrap",
-    gap: "4px",
-    margin: "2px 0 4px 0"
+    gap: "5px",
+    margin: "4px 0 6px 0"
   },
   tagChip: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "3px",
+    gap: "3.5px",
     background: "rgba(255, 255, 255, 0.04)",
     border: "1px solid rgba(255, 255, 255, 0.1)",
     color: "#CBD5E1",
-    fontSize: "10px",
+    fontSize: "11px",
     fontWeight: "600",
-    padding: "1.5px 6px",
+    padding: "2.5px 8px",
     borderRadius: "16px",
     backdropFilter: "blur(4px)"
   },
   bioSnippetWide: {
-    fontSize: "11.5px",
-    color: "#94A3B8",
-    lineHeight: "1.3",
-    margin: "0 0 4px 0"
+    fontSize: "12.5px",
+    color: "#CBD5E1",
+    lineHeight: "1.4",
+    margin: "0 0 6px 0"
   },
   cardFooterWide: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: "6px",
+    paddingTop: "8px",
     borderTop: "1px solid rgba(255, 255, 255, 0.08)",
     gap: "6px"
   },
   pricePillBadge: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "3px",
+    gap: "4px",
     background: "rgba(16, 185, 129, 0.12)",
     border: "1px solid rgba(16, 185, 129, 0.25)",
-    padding: "3px 7px",
-    borderRadius: "6px",
+    padding: "4px 9px",
+    borderRadius: "7px",
     whiteSpace: "nowrap"
   },
   priceLabelSlim: {
-    fontSize: "10.5px",
+    fontSize: "11px",
     color: "#94A3B8",
     fontWeight: "600"
   },
   priceValueSlim: {
-    fontSize: "11.5px",
+    fontSize: "12.5px",
     fontWeight: "800",
     color: "#34D399",
     whiteSpace: "nowrap"
@@ -2220,14 +2220,14 @@ const styles = {
   actionButtonsGroupSlim: {
     display: "flex",
     alignItems: "center",
-    gap: "5px"
+    gap: "6px"
   },
   whatsappBtnSlim: {
     background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
     color: "#FFFFFF",
-    width: "28px",
-    height: "28px",
-    borderRadius: "7px",
+    width: "32px",
+    height: "32px",
+    borderRadius: "8px",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
@@ -2239,30 +2239,30 @@ const styles = {
     background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
     color: "#FFFFFF",
     border: "none",
-    padding: "0 10px",
-    height: "28px",
-    borderRadius: "7px",
-    fontSize: "11.5px",
+    padding: "0 12px",
+    height: "32px",
+    borderRadius: "8px",
+    fontSize: "12px",
     fontWeight: "750",
     cursor: "pointer",
     display: "inline-flex",
     alignItems: "center",
-    gap: "3px",
+    gap: "4px",
     whiteSpace: "nowrap",
     boxShadow: "0 2px 6px rgba(14, 165, 233, 0.25)",
     flexShrink: 0
   },
   btnTextSlim: {
-    fontSize: "11px",
+    fontSize: "12px",
     fontWeight: "750"
   },
 
   // PORTADA RECTANGULAR DERECHA DE TRAVESÍA
   coverPhotoBoxRight: {
-    width: "130px",
+    width: "145px",
     flexShrink: 0,
     position: "relative",
-    borderRadius: "10px",
+    borderRadius: "12px",
     overflow: "hidden",
     cursor: "pointer",
     border: "1px solid rgba(255, 255, 255, 0.12)",
@@ -2276,17 +2276,17 @@ const styles = {
   },
   coverPhotoOverlayBadge: {
     position: "absolute",
-    bottom: "6px",
-    right: "6px",
+    bottom: "8px",
+    right: "8px",
     background: "rgba(15, 23, 42, 0.85)",
     backdropFilter: "blur(6px)",
     border: "1px solid rgba(255, 255, 255, 0.2)",
     borderRadius: "12px",
-    padding: "2px 7px",
+    padding: "3px 8px",
     display: "flex",
     alignItems: "center",
-    gap: "3.5px",
-    fontSize: "10.5px",
+    gap: "4px",
+    fontSize: "11px",
     fontWeight: "750",
     color: "#FFFFFF",
     boxShadow: "0 2px 6px rgba(0,0,0,0.4)"
