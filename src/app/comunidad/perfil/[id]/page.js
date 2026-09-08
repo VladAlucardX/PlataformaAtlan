@@ -807,9 +807,7 @@ export default function PerfilPublico() {
           const MOCK_GUIAS_FALLBACK = [
             { id: "guia-1", nombre_completo: "Carlos Mendoza Silva", avatar_url: "/images/art1.jpeg", departamento_principal: "León", especialidad: "Senderismo y Volcanes", biografia: "Guía nativo de León con más de 8 años guiando excursiones al Cerro Negro..." },
             { id: "guia-2", nombre_completo: "María José López", avatar_url: "/images/art2.jpeg", departamento_principal: "Granada", especialidad: "Cultura e Historia", biografia: "Historiadora y guía certificada..." },
-            { id: "guia-3", nombre_completo: "Alejandro Jarquín", avatar_url: "/images/art3.jpeg", departamento_principal: "Rivas", especialidad: "Ecoturismo Integral", biografia: "Especialista en la mística Isla de Ometepe..." },
-            { id: "guia-4", nombre_completo: "Brenda Castillo", avatar_url: "/images/art5.png", departamento_principal: "Matagalpa", especialidad: "Avistamiento de Aves", biografia: "Ornitóloga y guía de ecoturismo..." },
-            { id: "guia-5", nombre_completo: "Nestor Moncada", avatar_url: "/images/art4.png", departamento_principal: "Masaya", especialidad: "Gastronomía Tradicional", biografia: "Apasionado por el folclore de Masaya..." }
+            { id: "guia-3", nombre_completo: "Alejandro Jarquín", avatar_url: "/images/art3.jpeg", departamento_principal: "Rivas", especialidad: "Ecoturismo Integral", biografia: "Especialista en la mística Isla de Ometepe..." }
           ];
 
           const foundMock = MOCK_GUIAS_FALLBACK.find(g => {

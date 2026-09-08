@@ -150,6 +150,14 @@ const MOCK_GUIAS = [
         puntuacion: 5,
         comentario: "Un recorrido cultural inolvidable por los templos y el Convento San Francisco. María transmite un amor contagioso por la historia.",
         created_at: "2026-08-20T11:00:00Z"
+      },
+      {
+        id: "r3_b",
+        autor_nombre: "Jean-Pierre Dubois",
+        autor_avatar: "/images/art4.png",
+        puntuacion: 5,
+        comentario: "Visite guidée fantastique des Isletas de Granada. María habla un francés impecable y conoce perfectamente la ecología del lago.",
+        created_at: "2026-07-14T15:30:00Z"
       }
     ]
   },
@@ -161,15 +169,15 @@ const MOCK_GUIAS = [
     departamentos_secundarios: ["Isla de Ometepe", "San Juan del Sur"],
     especialidad: "Ecoturismo Integral",
     idiomas: "Español, Inglés",
-    experiencia_anios: 6,
-    tarifa_aprox: "$25 - $45 / día",
+    experiencia_anios: 7,
+    tarifa_aprox: "$30 - $55 / día",
     biografia: "Especialista en la mística Isla de Ometepe. Guiado de ascenso a los volcanes Concepción y Maderas, cascada San Ramón, petroglifos precolombinos y tours de pesca artesanal.",
     telefono_contacto: "+505 8812 3456",
     whatsapp: "50588123456",
     instagram: "@ometepe_ecotours",
     licencia_intur: "INTUR-RI-2020-304",
-    rating_promedio: 4.8,
-    total_resenas: 27,
+    rating_promedio: 4.9,
+    total_resenas: 29,
     activo: true,
     destinos_mapa: [
       {
@@ -217,123 +225,16 @@ const MOCK_GUIAS = [
         puntuacion: 5,
         comentario: "The trek to Volcán Maderas lagoon was challenging but Alejandro kept our spirits high. Truly awesome experience!",
         created_at: "2026-08-02T16:45:00Z"
-      }
-    ]
-  },
-  {
-    id: "guia-4",
-    nombre_completo: "Brenda Castillo",
-    avatar_url: "/images/art5.png",
-    departamento_principal: "Matagalpa",
-    departamentos_secundarios: ["Jinotega", "Estelí"],
-    especialidad: "Avistamiento de Aves",
-    idiomas: "Español, Inglés, Alemán",
-    experiencia_anios: 12,
-    tarifa_aprox: "$40 - $70 / día",
-    biografia: "Ornitóloga y guía de ecoturismo en las reservas montañosas del norte. Recorridos fotográficos de aves en Selva Negra, Macizo Peñas Blancas y fincas cafetaleras orgánicas.",
-    telefono_contacto: "+505 8944 5566",
-    whatsapp: "50589445566",
-    instagram: "@brenda_birds_nicaragua",
-    licencia_intur: "INTUR-MT-2015-118",
-    rating_promedio: 4.9,
-    total_resenas: 39,
-    activo: true,
-    destinos_mapa: [
-      {
-        id: "dest-10",
-        nombre: "Reserva Selva Negra",
-        categoria: "Avistamiento & Café",
-        icono: "🦜",
-        deptSlug: "matagalpa",
-        departamento: "Matagalpa",
-        imagen: "/images/galeria-departamentos/matagalpa/1.1.jpg",
-        desc: "Observación de aves exóticas (Quetzales) y tours por plantaciones de café orgánico en la montaña."
       },
       {
-        id: "dest-11",
-        nombre: "Macizo Peñas Blancas",
-        categoria: "Senderismo Neotropical",
-        icono: "🏔️",
-        deptSlug: "matagalpa",
-        departamento: "Matagalpa",
-        imagen: "/images/galeria-departamentos/matagalpa/2.jpg",
-        desc: "Expediciones a farallones rocosos cubiertos de bosque nuboso y cascadas monumentales."
-      }
-    ],
-    galeria_fotos: [
-      "/images/galeria-departamentos/matagalpa/1.1.jpg",
-      "/images/galeria-departamentos/matagalpa/2.jpg",
-      "/images/galeria-departamentos/matagalpa/3.jpg",
-      "/images/galeria-departamentos/matagalpa/4.jpg"
-    ],
-    resenas: [
-      {
-        id: "r5",
-        autor_nombre: "Hans Weber",
-        autor_avatar: "/images/art4.png",
+        id: "r4_b",
+        autor_nombre: "Camila Rivas",
+        autor_avatar: "/images/art2.jpeg",
         puntuacion: 5,
-        comentario: "Sehr gut! Brenda hat uns das bezaubernde Quetzal im Nebelwald gezeigt. Unglaubliche Erfahrung.",
-        created_at: "2026-07-12T09:20:00Z"
+        comentario: "Excelente atención y guianza en Ojo de Agua y ascenso a San Ramón. Nos dio recomendaciones locales fantásticas.",
+        created_at: "2026-06-19T09:10:00Z"
       }
     ]
-  },
-  {
-    id: "guia-5",
-    nombre_completo: "Nestor Moncada",
-    avatar_url: "/images/art4.png",
-    departamento_principal: "Masaya",
-    departamentos_secundarios: ["Carazo", "Granada"],
-    especialidad: "Gastronomía Tradicional",
-    idiomas: "Español, Inglés",
-    experiencia_anios: 7,
-    tarifa_aprox: "$25 - $40 / día",
-    biografia: "Apasionado por el folclore y los sabores auténticos de Masaya y los Pueblos Blancos. Experto en recorridos artesanales por Monimbó, Catarina, San Juan de Oriente y avistamiento del lago de lava en el Volcán Masaya.",
-    telefono_contacto: "+505 8633 2211",
-    whatsapp: "50586332211",
-    instagram: "@nestor_masaya_tradicion",
-    licencia_intur: "INTUR-MS-2019-722",
-    rating_promedio: 4.7,
-    total_resenas: 19,
-    activo: true,
-    destinos_mapa: [
-      {
-        id: "dest-12",
-        nombre: "Volcán Masaya (Lago de Lava)",
-        categoria: "Vulcanología",
-        icono: "🌋",
-        deptSlug: "masaya",
-        departamento: "Masaya",
-        imagen: "/images/galeria-departamentos/masaya/1.1.jpg",
-        desc: "Mirador directo al cráter activo Santiago y su impresionante caldera magma incandescente."
-      },
-      {
-        id: "dest-13",
-        nombre: "Mercado de Artesanías",
-        categoria: "Folclore & Compras",
-        icono: "🎭",
-        deptSlug: "masaya",
-        departamento: "Masaya",
-        imagen: "/images/galeria-departamentos/masaya/2.jpg",
-        desc: "Templo del arte folclórico nicaragüense, marimbas, cuero, madera tallada y hamacas."
-      },
-      {
-        id: "dest-14",
-        nombre: "Mirador de Catarina & Apoyo",
-        categoria: "Vistas Panorámicas",
-        icono: "🌅",
-        deptSlug: "masaya",
-        departamento: "Masaya",
-        imagen: "/images/galeria-departamentos/masaya/3.jpg",
-        desc: "Espectacular vista panorámica hacia la laguna de cráter volcánico de Apoyo."
-      }
-    ],
-    galeria_fotos: [
-      "/images/galeria-departamentos/masaya/1.1.jpg",
-      "/images/galeria-departamentos/masaya/2.jpg",
-      "/images/galeria-departamentos/masaya/3.jpg",
-      "/images/galeria-departamentos/masaya/4.jpeg"
-    ],
-    resenas: []
   }
 ];
 
