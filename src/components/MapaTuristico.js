@@ -1032,6 +1032,19 @@ export default function MapaTuristico() {
     }
   };
 
+  // Auto-selección y búsqueda al ingresar desde enlace externo con ?spot= o ?lugar=
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const spotParam = params.get('spot') || params.get('lugar') || params.get('punto');
+    if (spotParam) {
+      const timer = setTimeout(() => {
+        handleSearch(spotParam);
+      }, 1200);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   // Utilidades de voz
   const speakInstruction = (text, interrupt = false) => {
     if (!('speechSynthesis' in window)) return;

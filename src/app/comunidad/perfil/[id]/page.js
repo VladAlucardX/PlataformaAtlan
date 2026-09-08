@@ -805,11 +805,9 @@ export default function PerfilPublico() {
         // 4. Fallback con guías de demostración (MOCK_GUIAS)
         if (!pData) {
           const MOCK_GUIAS_FALLBACK = [
-            { id: "guia-1", nombre_completo: "Carlos Mendoza Silva", avatar_url: "/images/art1.jpeg", departamento_principal: "León", especialidad: "Senderismo y Volcanes", biografia: "Guía nativo de León con más de 8 años guiando excursiones al Cerro Negro..." },
-            { id: "guia-2", nombre_completo: "María José López", avatar_url: "/images/art2.jpeg", departamento_principal: "Granada", especialidad: "Cultura e Historia", biografia: "Historiadora y guía certificada..." },
-            { id: "guia-3", nombre_completo: "Alejandro Jarquín", avatar_url: "/images/art3.jpeg", departamento_principal: "Rivas", especialidad: "Ecoturismo Integral", biografia: "Especialista en la mística Isla de Ometepe..." },
-            { id: "guia-4", nombre_completo: "Brenda Castillo", avatar_url: "/images/art5.png", departamento_principal: "Matagalpa", especialidad: "Avistamiento de Aves", biografia: "Ornitóloga y guía de ecoturismo..." },
-            { id: "guia-5", nombre_completo: "Nestor Moncada", avatar_url: "/images/art4.png", departamento_principal: "Masaya", especialidad: "Gastronomía Tradicional", biografia: "Apasionado por el folclore de Masaya..." }
+            { id: "d377d6ef-b069-4449-98d1-c1646b2cac99", nombre_completo: "Carlos Mendoza Silva", avatar_url: "/images/art1.jpeg", departamento_principal: "León", especialidad: "Senderismo y Volcanes", biografia: "Guía nativo de León con más de 8 años guiando excursiones al Cerro Negro..." },
+            { id: "b392401c-5d4b-4d9a-9c68-cc97f7f2e673", nombre_completo: "María José López", avatar_url: "/images/art2.jpeg", departamento_principal: "Granada", especialidad: "Cultura e Historia", biografia: "Historiadora y guía certificada..." },
+            { id: "f4a6c46b-498a-4c04-8abf-efdac96e071d", nombre_completo: "Alejandro Jarquín", avatar_url: "/images/art3.jpeg", departamento_principal: "Rivas", especialidad: "Ecoturismo Integral", biografia: "Especialista en la mística Isla de Ometepe..." }
           ];
 
           const foundMock = MOCK_GUIAS_FALLBACK.find(g => {

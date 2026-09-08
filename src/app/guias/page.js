@@ -12,7 +12,7 @@ import { getCategorySvg } from "@/lib/imageUtils";
 // Guías turísticos de demostración con imágenes REALES del proyecto
 const MOCK_GUIAS = [
   {
-    id: "guia-1",
+    id: "d377d6ef-b069-4449-98d1-c1646b2cac99",
     nombre_completo: "Carlos Mendoza Silva",
     avatar_url: "/images/art1.jpeg",
     departamento_principal: "León",
@@ -87,7 +87,7 @@ const MOCK_GUIAS = [
     ]
   },
   {
-    id: "guia-2",
+    id: "b392401c-5d4b-4d9a-9c68-cc97f7f2e673",
     nombre_completo: "María José López",
     avatar_url: "/images/art2.jpeg",
     departamento_principal: "Granada",
@@ -140,7 +140,7 @@ const MOCK_GUIAS = [
       "/images/galeria-departamentos/granada/1.1.jpg",
       "/images/galeria-departamentos/granada/2.jpg",
       "/images/galeria-departamentos/granada/3.jpg",
-      "/images/galeria-departamentos/granada/4.jpeg"
+      "/images/galeria-departamentos/granada/4.jpg"
     ],
     resenas: [
       {
@@ -150,26 +150,34 @@ const MOCK_GUIAS = [
         puntuacion: 5,
         comentario: "Un recorrido cultural inolvidable por los templos y el Convento San Francisco. María transmite un amor contagioso por la historia.",
         created_at: "2026-08-20T11:00:00Z"
+      },
+      {
+        id: "r3_b",
+        autor_nombre: "Jean-Pierre Dubois",
+        autor_avatar: "/images/art4.png",
+        puntuacion: 5,
+        comentario: "Visite guidée fantastique des Isletas de Granada. María habla un francés impecable y conoce perfectamente la ecología del lago.",
+        created_at: "2026-07-14T15:30:00Z"
       }
     ]
   },
   {
-    id: "guia-3",
+    id: "f4a6c46b-498a-4c04-8abf-efdac96e071d",
     nombre_completo: "Alejandro Jarquín",
     avatar_url: "/images/art3.jpeg",
     departamento_principal: "Rivas",
     departamentos_secundarios: ["Isla de Ometepe", "San Juan del Sur"],
     especialidad: "Ecoturismo Integral",
     idiomas: "Español, Inglés",
-    experiencia_anios: 6,
-    tarifa_aprox: "$25 - $45 / día",
+    experiencia_anios: 7,
+    tarifa_aprox: "$30 - $55 / día",
     biografia: "Especialista en la mística Isla de Ometepe. Guiado de ascenso a los volcanes Concepción y Maderas, cascada San Ramón, petroglifos precolombinos y tours de pesca artesanal.",
     telefono_contacto: "+505 8812 3456",
     whatsapp: "50588123456",
     instagram: "@ometepe_ecotours",
     licencia_intur: "INTUR-RI-2020-304",
-    rating_promedio: 4.8,
-    total_resenas: 27,
+    rating_promedio: 4.9,
+    total_resenas: 29,
     activo: true,
     destinos_mapa: [
       {
@@ -217,121 +225,96 @@ const MOCK_GUIAS = [
         puntuacion: 5,
         comentario: "The trek to Volcán Maderas lagoon was challenging but Alejandro kept our spirits high. Truly awesome experience!",
         created_at: "2026-08-02T16:45:00Z"
+      },
+      {
+        id: "r4_b",
+        autor_nombre: "Camila Rivas",
+        autor_avatar: "/images/art2.jpeg",
+        puntuacion: 5,
+        comentario: "Excelente atención y guianza en Ojo de Agua y ascenso a San Ramón. Nos dio recomendaciones locales fantásticas.",
+        created_at: "2026-06-19T09:10:00Z"
       }
     ]
   },
+  /* PERFILES DE PRUEBA TEMPORALES PARA PAGINACIÓN */
   {
-    id: "guia-4",
-    nombre_completo: "Brenda Castillo",
+    id: "test-guia-1",
+    nombre_completo: "Beatriz Solís (Prueba)",
     avatar_url: "/images/art5.png",
     departamento_principal: "Matagalpa",
-    departamentos_secundarios: ["Jinotega", "Estelí"],
+    departamentos_secundarios: ["Jinotega"],
     especialidad: "Avistamiento de Aves",
     idiomas: "Español, Inglés, Alemán",
-    experiencia_anios: 12,
-    tarifa_aprox: "$40 - $70 / día",
-    biografia: "Ornitóloga y guía de ecoturismo en las reservas montañosas del norte. Recorridos fotográficos de aves en Selva Negra, Macizo Peñas Blancas y fincas cafetaleras orgánicas.",
-    telefono_contacto: "+505 8944 5566",
-    whatsapp: "50589445566",
-    instagram: "@brenda_birds_nicaragua",
-    licencia_intur: "INTUR-MT-2015-118",
+    experiencia_anios: 9,
+    tarifa_aprox: "$40 - $65 / día",
+    biografia: "[PERFIL DE PRUEBA] Guía especialista en la observación de aves en Selva Negra y reservas naturales del norte.",
+    telefono_contacto: "+505 8800 0001",
+    whatsapp: "50588000001",
+    instagram: "@beatriz_birds_test",
+    licencia_intur: "INTUR-MT-2017-819",
     rating_promedio: 4.9,
-    total_resenas: 39,
+    total_resenas: 18,
     activo: true,
-    destinos_mapa: [
-      {
-        id: "dest-10",
-        nombre: "Reserva Selva Negra",
-        categoria: "Avistamiento & Café",
-        icono: "🦜",
-        deptSlug: "matagalpa",
-        departamento: "Matagalpa",
-        imagen: "/images/galeria-departamentos/matagalpa/1.1.jpg",
-        desc: "Observación de aves exóticas (Quetzales) y tours por plantaciones de café orgánico en la montaña."
-      },
-      {
-        id: "dest-11",
-        nombre: "Macizo Peñas Blancas",
-        categoria: "Senderismo Neotropical",
-        icono: "🏔️",
-        deptSlug: "matagalpa",
-        departamento: "Matagalpa",
-        imagen: "/images/galeria-departamentos/matagalpa/2.jpg",
-        desc: "Expediciones a farallones rocosos cubiertos de bosque nuboso y cascadas monumentales."
-      }
-    ],
+    destinos_mapa: [],
     galeria_fotos: [
       "/images/galeria-departamentos/matagalpa/1.1.jpg",
       "/images/galeria-departamentos/matagalpa/2.jpg",
       "/images/galeria-departamentos/matagalpa/3.jpg",
       "/images/galeria-departamentos/matagalpa/4.jpg"
     ],
-    resenas: [
-      {
-        id: "r5",
-        autor_nombre: "Hans Weber",
-        autor_avatar: "/images/art4.png",
-        puntuacion: 5,
-        comentario: "Sehr gut! Brenda hat uns das bezaubernde Quetzal im Nebelwald gezeigt. Unglaubliche Erfahrung.",
-        created_at: "2026-07-12T09:20:00Z"
-      }
-    ]
+    resenas: []
   },
   {
-    id: "guia-5",
-    nombre_completo: "Nestor Moncada",
+    id: "test-guia-2",
+    nombre_completo: "Gabriel Gutiérrez (Prueba)",
     avatar_url: "/images/art4.png",
     departamento_principal: "Masaya",
-    departamentos_secundarios: ["Carazo", "Granada"],
+    departamentos_secundarios: ["Carazo"],
     especialidad: "Gastronomía Tradicional",
     idiomas: "Español, Inglés",
-    experiencia_anios: 7,
-    tarifa_aprox: "$25 - $40 / día",
-    biografia: "Apasionado por el folclore y los sabores auténticos de Masaya y los Pueblos Blancos. Experto en recorridos artesanales por Monimbó, Catarina, San Juan de Oriente y avistamiento del lago de lava en el Volcán Masaya.",
-    telefono_contacto: "+505 8633 2211",
-    whatsapp: "50586332211",
-    instagram: "@nestor_masaya_tradicion",
-    licencia_intur: "INTUR-MS-2019-722",
-    rating_promedio: 4.7,
-    total_resenas: 19,
+    experiencia_anios: 6,
+    tarifa_aprox: "$25 - $45 / día",
+    biografia: "[PERFIL DE PRUEBA] Apasionado por los recorridos artesanales y gastronómicos en los Pueblos Blancos y Masaya.",
+    telefono_contacto: "+505 8800 0002",
+    whatsapp: "50588000002",
+    instagram: "@gabriel_masaya_test",
+    licencia_intur: "INTUR-MS-2020-411",
+    rating_promedio: 4.8,
+    total_resenas: 15,
     activo: true,
-    destinos_mapa: [
-      {
-        id: "dest-12",
-        nombre: "Volcán Masaya (Lago de Lava)",
-        categoria: "Vulcanología",
-        icono: "🌋",
-        deptSlug: "masaya",
-        departamento: "Masaya",
-        imagen: "/images/galeria-departamentos/masaya/1.1.jpg",
-        desc: "Mirador directo al cráter activo Santiago y su impresionante caldera magma incandescente."
-      },
-      {
-        id: "dest-13",
-        nombre: "Mercado de Artesanías",
-        categoria: "Folclore & Compras",
-        icono: "🎭",
-        deptSlug: "masaya",
-        departamento: "Masaya",
-        imagen: "/images/galeria-departamentos/masaya/2.jpg",
-        desc: "Templo del arte folclórico nicaragüense, marimbas, cuero, madera tallada y hamacas."
-      },
-      {
-        id: "dest-14",
-        nombre: "Mirador de Catarina & Apoyo",
-        categoria: "Vistas Panorámicas",
-        icono: "🌅",
-        deptSlug: "masaya",
-        departamento: "Masaya",
-        imagen: "/images/galeria-departamentos/masaya/3.jpg",
-        desc: "Espectacular vista panorámica hacia la laguna de cráter volcánico de Apoyo."
-      }
-    ],
+    destinos_mapa: [],
     galeria_fotos: [
       "/images/galeria-departamentos/masaya/1.1.jpg",
       "/images/galeria-departamentos/masaya/2.jpg",
       "/images/galeria-departamentos/masaya/3.jpg",
       "/images/galeria-departamentos/masaya/4.jpeg"
+    ],
+    resenas: []
+  },
+  {
+    id: "test-guia-3",
+    nombre_completo: "Valeria Ramos (Prueba)",
+    avatar_url: "/images/art2.jpeg",
+    departamento_principal: "Chinandega",
+    departamentos_secundarios: ["León"],
+    especialidad: "Senderismo y Volcanes",
+    idiomas: "Español, Inglés",
+    experiencia_anios: 8,
+    tarifa_aprox: "$35 - $50 / día",
+    biografia: "[PERFIL DE PRUEBA] Guía de aventuras extremas en el Volcán Cosigüina y estero Padre Ramos.",
+    telefono_contacto: "+505 8800 0003",
+    whatsapp: "50588000003",
+    instagram: "@valeria_volcano_test",
+    licencia_intur: "INTUR-CH-2019-105",
+    rating_promedio: 5.0,
+    total_resenas: 22,
+    activo: true,
+    destinos_mapa: [],
+    galeria_fotos: [
+      "/images/galeria-departamentos/leon/1.1.jpg",
+      "/images/galeria-departamentos/leon/2.jpg",
+      "/images/galeria-departamentos/leon/3.jpg",
+      "/images/galeria-departamentos/leon/4.jpg"
     ],
     resenas: []
   }
@@ -384,7 +367,16 @@ export default function GuiasPage() {
   const [solamenteVerificados, setSolamenteVerificados] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("rating");
+  const [sortBy, setSortBy] = useState("alfabetico");
+
+  // Paginación (4 perfiles por página)
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 4;
+
+  // Reset de página al cambiar filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedDept, selectedEspecialidad, selectedIdiomas, selectedRangoPrecio, solamenteVerificados, searchQuery, sortBy]);
 
   // Modal de Detalle de Guía
   const [selectedGuiaModal, setSelectedGuiaModal] = useState(null);
@@ -403,7 +395,7 @@ export default function GuiasPage() {
       try {
         const { data, error } = await supabase
           .from("guias_turisticos")
-          .select("*")
+          .select("*, perfiles(*)")
           .eq("activo", true)
           .order("updated_at", { ascending: false });
 
@@ -447,14 +439,22 @@ export default function GuiasPage() {
                 ...mockG,
                 ...source,
                 id: mockG.id, // mantener id de navegación
+                nombre_completo: source.nombre_completo || mockG.nombre_completo,
+                avatar_url: source.avatar_url || mockG.avatar_url,
                 departamento_principal: source.departamento_principal || mockG.departamento_principal,
+                departamentos_secundarios: (source.departamentos_secundarios && source.departamentos_secundarios.length > 0) ? source.departamentos_secundarios : mockG.departamentos_secundarios,
                 especialidad: source.especialidad || mockG.especialidad,
                 tarifa_aprox: source.tarifa_aprox || mockG.tarifa_aprox,
                 experiencia_anios: source.experiencia_anios || mockG.experiencia_anios,
                 biografia: source.biografia || mockG.biografia,
                 whatsapp: source.whatsapp || mockG.whatsapp,
+                instagram: source.instagram || mockG.instagram,
+                telefono_contacto: source.telefono_contacto || mockG.telefono_contacto,
                 licencia_intur: source.licencia_intur || mockG.licencia_intur,
                 idiomas: source.idiomas || mockG.idiomas,
+                servicios: (source.servicios && source.servicios.length > 0) ? source.servicios : (mockG.servicios || ["Equipamiento de Seguridad", "Primeros Auxilios de Montaña", "Fotos & Videos de Travesía"]),
+                destinos_mapa: (source.destinos_mapa && source.destinos_mapa.length > 0) ? source.destinos_mapa : (mockG.destinos_mapa || []),
+                galeria_fotos: (source.galeria_fotos && source.galeria_fotos.length > 0) ? source.galeria_fotos : (mockG.galeria_fotos || []),
               });
             } else {
               merged.push(mockG);
@@ -483,8 +483,13 @@ export default function GuiasPage() {
                   experiencia_anios: rawSaved.experiencia_anios || mockG.experiencia_anios,
                   biografia: rawSaved.biografia || mockG.biografia,
                   whatsapp: rawSaved.whatsapp || mockG.whatsapp,
+                  instagram: rawSaved.instagram || mockG.instagram,
+                  telefono_contacto: rawSaved.telefono_contacto || mockG.telefono_contacto,
                   licencia_intur: rawSaved.licencia_intur || mockG.licencia_intur,
                   idiomas: rawSaved.idiomas || mockG.idiomas,
+                  servicios: (rawSaved.servicios && rawSaved.servicios.length > 0) ? rawSaved.servicios : (mockG.servicios || ["Equipamiento de Seguridad", "Primeros Auxilios de Montaña", "Fotos & Videos de Travesía"]),
+                  destinos_mapa: (rawSaved.destinos_mapa && rawSaved.destinos_mapa.length > 0) ? rawSaved.destinos_mapa : (mockG.destinos_mapa || []),
+                  galeria_fotos: (rawSaved.galeria_fotos && rawSaved.galeria_fotos.length > 0) ? rawSaved.galeria_fotos : (mockG.galeria_fotos || []),
                 };
               }
               return mockG;
@@ -596,6 +601,9 @@ export default function GuiasPage() {
       matchQuery
     );
   }).sort((a, b) => {
+    if (sortBy === "alfabetico") {
+      return (a.nombre_completo || "").localeCompare(b.nombre_completo || "", "es", { sensitivity: "base" });
+    }
     if (sortBy === "rating") return b.rating_promedio - a.rating_promedio;
     if (sortBy === "experiencia") return b.experiencia_anios - a.experiencia_anios;
     if (sortBy === "precio_asc") {
@@ -608,8 +616,11 @@ export default function GuiasPage() {
       const pB = parseInt((b.tarifa_aprox || "").replace(/[^0-9]/g, "")) || 0;
       return pB - pA;
     }
-    return 0;
+    return (a.nombre_completo || "").localeCompare(b.nombre_completo || "", "es", { sensitivity: "base" });
   });
+
+  const totalPages = Math.ceil(guiasFiltrados.length / ITEMS_PER_PAGE) || 1;
+  const paginatedGuias = guiasFiltrados.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   // Enviar reseña
   const handleAddReview = async (e) => {
@@ -815,6 +826,7 @@ export default function GuiasPage() {
                 onChange={(e) => setSortBy(e.target.value)}
                 style={styles.selectInputSlim}
               >
+                <option value="alfabetico" style={styles.selectOption}>{lang === "en" ? "Alphabetical (A-Z)" : lang === "zh" ? "按字母顺序 (A-Z)" : "Orden Alfabético (A-Z)"}</option>
                 <option value="rating" style={styles.selectOption}>{lang === "en" ? "Best Rating" : lang === "zh" ? "最高评分" : "Mejor Calificación"}</option>
                 <option value="experiencia" style={styles.selectOption}>{lang === "en" ? "Experience" : lang === "zh" ? "最丰富经验" : "Más Experiencia"}</option>
                 <option value="precio_asc" style={styles.selectOption}>{lang === "en" ? "Price: Low to High" : lang === "zh" ? "价格从低到高" : "Precio: Menor a Mayor"}</option>
@@ -994,11 +1006,11 @@ export default function GuiasPage() {
           )}
         </div>
 
-        {/* CONTADOR DE RESULTADOS Y CABECERA DE SECCIÓN ELEGANTE GLASS */}
+        {/* CONTADOR DE RESULTADOS Y CABECERA CON PAGINACIÓN INTEGRADA */}
         <div style={styles.resultsHeaderGlass}>
           <div style={styles.resultsTitleLeft}>
             <div style={styles.headerIconBox}>
-              <Icon name="compass" size={16} color="#38BDF8" />
+              <Icon name="compass" size={15} color="#38BDF8" />
             </div>
             <h2 style={styles.resultsTitleClean}>
               {lang === "en" ? "Available Tour Guides" : lang === "zh" ? "可选导游" : "Guías Turísticos Disponibles"}
@@ -1008,12 +1020,87 @@ export default function GuiasPage() {
             </span>
           </div>
 
-          {hasActiveFilters && (
-            <button onClick={clearAllFilters} style={styles.resetFiltersBtnSlim}>
-              <Icon name="x" size={13} />
-              <span>{lang === "en" ? "Reset All Filters" : lang === "zh" ? "重置所有筛选" : "Limpiar Todos los Filtros"}</span>
-            </button>
-          )}
+          {/* CONTROLES DE PAGINACIÓN INTEGRADOS Y RESET DE FILTROS */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "nowrap" }}>
+            {hasActiveFilters && (
+              <button onClick={clearAllFilters} style={styles.resetFiltersBtnSlim}>
+                <Icon name="x" size={12} />
+                <span>{lang === "en" ? "Reset" : lang === "zh" ? "重置" : "Limpiar"}</span>
+              </button>
+            )}
+
+            {totalPages > 1 && (
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={{ color: "#94A3B8", fontSize: "13px", fontWeight: "600", marginRight: "6px" }}>
+                  {lang === "en" ? `Page ${currentPage}/${totalPages}` : lang === "zh" ? `第 ${currentPage}/${totalPages} 页` : `Pág. ${currentPage}/${totalPages}`}
+                </span>
+
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "9px",
+                    background: currentPage === 1 ? "rgba(255, 255, 255, 0.04)" : "rgba(20, 109, 158, 0.3)",
+                    border: currentPage === 1 ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(56, 189, 248, 0.4)",
+                    color: currentPage === 1 ? "#64748B" : "#38BDF8",
+                    cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                    transition: "all 0.2s ease"
+                  }}
+                  title="Página anterior"
+                >
+                  <Icon name="chevronLeft" size={15} />
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "9px",
+                      background: currentPage === pageNum ? "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)" : "rgba(255, 255, 255, 0.05)",
+                      border: currentPage === pageNum ? "1.5px solid #FFD700" : "1px solid rgba(255, 255, 255, 0.08)",
+                      color: currentPage === pageNum ? "#FFFFFF" : "#CBD5E1",
+                      fontSize: "13px",
+                      fontWeight: "800",
+                      cursor: "pointer",
+                      boxShadow: currentPage === pageNum ? "0 2px 8px rgba(20, 109, 158, 0.4)" : "none",
+                      transition: "all 0.2s ease"
+                    }}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "9px",
+                    background: currentPage === totalPages ? "rgba(255, 255, 255, 0.04)" : "rgba(20, 109, 158, 0.3)",
+                    border: currentPage === totalPages ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(56, 189, 248, 0.4)",
+                    color: currentPage === totalPages ? "#64748B" : "#38BDF8",
+                    cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                    transition: "all 0.2s ease"
+                  }}
+                  title="Página siguiente"
+                >
+                  <Icon name="chevronRight" size={15} />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* REJILLA DE TARJETAS HORIZONTALES DE GUÍAS (ACABADO GLASSMORPHI SINFÍN BORDES BLANCOS) */}
@@ -1033,7 +1120,7 @@ export default function GuiasPage() {
           </div>
         ) : (
           <div style={styles.guidesGridWide}>
-            {guiasFiltrados.map((guia) => (
+            {paginatedGuias.map((guia) => (
               <div
                 key={guia.id}
                 style={styles.guideCardGlass}
@@ -1091,8 +1178,8 @@ export default function GuiasPage() {
                   </div>
 
                   <p style={styles.bioSnippetWide}>
-                    {guia.biografia?.length > 90
-                      ? guia.biografia.substring(0, 90) + "..."
+                    {guia.biografia?.length > 95
+                      ? guia.biografia.substring(0, 95) + "..."
                       : guia.biografia}
                   </p>
 
@@ -1302,21 +1389,53 @@ export default function GuiasPage() {
                     </div>
                     <div style={styles.techItem}>
                       <span style={styles.techLabel}>{lang === "en" ? "Approx Rate" : lang === "zh" ? "参考费用" : "Tarifa Aprox."}</span>
-                      <span style={{ ...styles.techValue, color: "#10B981" }}>{selectedGuiaModal.tarifa_aprox || "$30 / día"}</span>
+                      <span style={{ ...styles.techValue, color: "#34D399" }}>{selectedGuiaModal.tarifa_aprox || "$30 - $50 / día"}</span>
                     </div>
                   </div>
 
-                  {selectedGuiaModal.whatsapp && (
-                    <a
-                      href={`https://wa.me/${selectedGuiaModal.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${selectedGuiaModal.nombre_completo}! Te encontré en Plataforma Atlan y me gustaría consultar disponibilidad para contratar un tour.`)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={styles.modalWhatsappBanner}
-                    >
-                      <Icon name="whatsapp" size={22} color="#FFFFFF" />
-                      <span>{lang === "en" ? "Contact via WhatsApp Now" : lang === "zh" ? "立即通过 WhatsApp 咨询" : "Contactar por WhatsApp Ahora"}</span>
-                    </a>
+                  {/* Servicios e Incluidos */}
+                  {selectedGuiaModal.servicios && selectedGuiaModal.servicios.length > 0 && (
+                    <div style={styles.modalSection}>
+                      <h4 style={styles.modalSectionTitle}>
+                        <Icon name="checkCircle" size={16} color="#10B981" style={{ marginRight: "6px" }} />
+                        {lang === "en" ? "Services & Included Equipment" : lang === "zh" ? "包含服务与装备" : "Servicios Incluidos y Equipamiento"}
+                      </h4>
+                      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "16px" }}>
+                        {selectedGuiaModal.servicios.map((srv, idx) => (
+                          <span key={idx} style={styles.serviceChipModal}>
+                            <Icon name="check" size={13} color="#34D399" />
+                            <span>{srv}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   )}
+
+                  <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                    {selectedGuiaModal.whatsapp && (
+                      <a
+                        href={`https://wa.me/${selectedGuiaModal.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${selectedGuiaModal.nombre_completo}! Te encontré en Plataforma Atlan y me gustaría consultar disponibilidad para contratar un tour.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ ...styles.modalWhatsappBanner, flex: 1, minWidth: "220px" }}
+                      >
+                        <Icon name="whatsapp" size={20} color="#FFFFFF" />
+                        <span>{lang === "en" ? "Contact via WhatsApp" : lang === "zh" ? "WhatsApp 咨询" : "Contactar por WhatsApp"}</span>
+                      </a>
+                    )}
+
+                    {selectedGuiaModal.instagram && (
+                      <a
+                        href={selectedGuiaModal.instagram.startsWith("http") ? selectedGuiaModal.instagram : `https://instagram.com/${selectedGuiaModal.instagram.replace('@', '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={styles.modalInstagramBanner}
+                      >
+                        <Icon name="instagram" size={20} color="#FFFFFF" />
+                        <span>{selectedGuiaModal.instagram}</span>
+                      </a>
+                    )}
+                  </div>
                 </div>
               )}
 
@@ -1491,11 +1610,11 @@ export default function GuiasPage() {
                             <p style={styles.destinoMapaDesc}>{dest.desc}</p>
                             <div style={{ marginTop: "12px", display: "flex", justifyContent: "flex-end" }}>
                               <Link
-                                href={`/departamentos?dept=${dest.deptSlug}`}
+                                href={`/mapa?spot=${encodeURIComponent(dest.nombre)}`}
                                 style={styles.destinoMapaLinkBtn}
                               >
-                                <Icon name="mapPin" size={13} color="#0EA5E9" />
-                                <span>{lang === "en" ? "Explore in Department Map" : lang === "zh" ? "在省份地图中查看" : "Ver en Mapa Departamental"}</span>
+                                <Icon name="compass" size={13} color="#0EA5E9" />
+                                <span>{lang === "en" ? "Explore in Interactive Map" : lang === "zh" ? "在互动地图中查看" : "Explorar en Mapa Interactivo"}</span>
                                 <Icon name="chevronRight" size={12} color="#0EA5E9" />
                               </Link>
                             </div>
@@ -1521,7 +1640,7 @@ const styles = {
     background: "#0A192F",
     color: "#F8FAFC",
     fontFamily: "var(--font-outfit), sans-serif",
-    paddingBottom: "60px",
+    paddingBottom: "16px",
     position: "relative",
     overflowX: "hidden"
   },
@@ -1562,9 +1681,9 @@ const styles = {
 
   heroSectionCompact: {
     position: "relative",
-    padding: "70px 24px 20px 24px",
+    padding: "68px 24px 8px 24px",
     background: "transparent",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
     zIndex: 2
   },
   heroGlowLeft: {
@@ -1579,15 +1698,13 @@ const styles = {
   },
   heroContentWide: {
     maxWidth: "1400px",
-    margin: "0 auto"
+    margin: "0 auto",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
   },
   topMetaHeader: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexWrap: "wrap",
-    gap: "12px",
-    marginBottom: "8px"
+    display: "none"
   },
   heroBadgesGroup: {
     display: "flex",
@@ -1638,11 +1755,11 @@ const styles = {
     fontSize: "12px"
   },
   heroTitleMain: {
-    fontSize: "clamp(26px, 3.8vw, 42px)",
+    fontSize: "clamp(26px, 3.4vw, 38px)",
     fontWeight: "900",
     color: "#FFFFFF",
-    letterSpacing: "-0.5px",
-    margin: "12px 0 6px 0",
+    letterSpacing: "-0.4px",
+    margin: "4px 0 6px 0",
     lineHeight: "1.25",
     textAlign: "center"
   },
@@ -1668,7 +1785,7 @@ const styles = {
   mainContainerWide: {
     maxWidth: "1400px",
     margin: "0 auto",
-    padding: "20px 24px",
+    padding: "8px 24px 10px 24px",
     position: "relative",
     zIndex: 2
   },
@@ -1677,38 +1794,38 @@ const styles = {
   filterPanelProfessional: {
     background: "rgba(15, 23, 42, 0.88)",
     border: "1px solid rgba(56, 189, 248, 0.18)",
-    borderRadius: "20px",
-    padding: "16px 20px",
+    borderRadius: "14px",
+    padding: "8px 14px",
     backdropFilter: "blur(16px)",
-    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
-    marginBottom: "22px",
+    boxShadow: "0 6px 20px rgba(0, 0, 0, 0.3)",
+    marginBottom: "8px",
     display: "flex",
     flexDirection: "column",
-    gap: "14px"
+    gap: "8px"
   },
   filterRow1: {
     display: "flex",
     alignItems: "center",
-    gap: "14px",
+    gap: "10px",
     flexWrap: "wrap"
   },
   searchBoxSlim: {
     flex: 1,
-    minWidth: "260px",
+    minWidth: "250px",
     display: "flex",
     alignItems: "center",
     gap: "8px",
     background: "rgba(30, 41, 59, 0.85)",
     border: "1px solid rgba(255, 255, 255, 0.12)",
     borderRadius: "10px",
-    padding: "8px 12px"
+    padding: "7px 12px"
   },
   searchInputSlim: {
     width: "100%",
     background: "none",
     border: "none",
     color: "#F8FAFC",
-    fontSize: "13.5px",
+    fontSize: "13px",
     outline: "none"
   },
   clearSearchBtn: {
@@ -1732,7 +1849,7 @@ const styles = {
     background: "rgba(30, 41, 59, 0.9)",
     border: "1px solid rgba(255, 255, 255, 0.15)",
     color: "#F8FAFC",
-    padding: "6px 10px",
+    padding: "6px 11px",
     borderRadius: "8px",
     fontSize: "12.5px",
     outline: "none",
@@ -1745,7 +1862,7 @@ const styles = {
     background: "rgba(30, 41, 59, 0.85)",
     border: "1px solid rgba(255, 255, 255, 0.12)",
     borderRadius: "10px",
-    padding: "6px 10px"
+    padding: "6px 11px"
   },
   selectInputCompact: {
     background: "none",
@@ -1755,14 +1872,14 @@ const styles = {
     fontWeight: "600",
     outline: "none",
     cursor: "pointer",
-    maxWidth: "160px"
+    maxWidth: "170px"
   },
   advancedToggleBtn: {
     display: "inline-flex",
     alignItems: "center",
     gap: "6px",
-    padding: "7px 12px",
-    borderRadius: "10px",
+    padding: "6.5px 12px",
+    borderRadius: "9px",
     fontSize: "12px",
     fontWeight: "750",
     cursor: "pointer",
@@ -1785,7 +1902,7 @@ const styles = {
     gap: "10px"
   },
   filterSectionTitleSlim: {
-    fontSize: "11.5px",
+    fontSize: "12px",
     fontWeight: "750",
     color: "#CBD5E1",
     display: "flex",
@@ -1804,9 +1921,9 @@ const styles = {
     display: "inline-flex",
     alignItems: "center",
     gap: "6px",
-    padding: "6px 12px",
-    borderRadius: "8px",
-    fontSize: "12px",
+    padding: "7px 13px",
+    borderRadius: "9px",
+    fontSize: "12.5px",
     fontWeight: "750",
     cursor: "pointer",
     transition: "all 0.2s"
@@ -1868,10 +1985,10 @@ const styles = {
     background: "rgba(14, 165, 233, 0.18)",
     border: "1px solid rgba(14, 165, 233, 0.35)",
     color: "#38BDF8",
-    fontSize: "11.5px",
+    fontSize: "12px",
     fontWeight: "600",
-    padding: "3px 9px",
-    borderRadius: "6px"
+    padding: "3.5px 10px",
+    borderRadius: "7px"
   },
   chipRemoveBtn: {
     background: "none",
@@ -1886,10 +2003,10 @@ const styles = {
     background: "rgba(239, 68, 68, 0.15)",
     border: "1px solid rgba(239, 68, 68, 0.35)",
     color: "#F87171",
-    fontSize: "11.5px",
+    fontSize: "12px",
     fontWeight: "750",
-    padding: "3px 10px",
-    borderRadius: "6px",
+    padding: "3.5px 11px",
+    borderRadius: "7px",
     cursor: "pointer",
     display: "inline-flex",
     alignItems: "center",
@@ -1920,9 +2037,9 @@ const styles = {
     scrollbarWidth: "none"
   },
   pillBtnSlim: {
-    padding: "5px 13px",
+    padding: "5.5px 14px",
     borderRadius: "999px",
-    fontSize: "12px",
+    fontSize: "12.5px",
     cursor: "pointer",
     whiteSpace: "nowrap",
     transition: "all 0.2s"
@@ -1941,15 +2058,15 @@ const styles = {
     background: "rgba(15, 23, 42, 0.78)",
     backdropFilter: "blur(12px)",
     border: "1px solid rgba(56, 189, 248, 0.2)",
-    borderRadius: "14px",
-    padding: "10px 16px",
-    marginBottom: "18px",
-    boxShadow: "0 6px 18px rgba(0, 0, 0, 0.25)"
+    borderRadius: "12px",
+    padding: "6px 14px",
+    marginBottom: "8px",
+    boxShadow: "0 4px 14px rgba(0, 0, 0, 0.25)"
   },
   resultsTitleLeft: {
     display: "flex",
     alignItems: "center",
-    gap: "10px"
+    gap: "8px"
   },
   headerIconBox: {
     width: "30px",
@@ -1963,7 +2080,7 @@ const styles = {
     flexShrink: 0
   },
   resultsTitleClean: {
-    fontSize: "15.5px",
+    fontSize: "15px",
     fontWeight: "800",
     color: "#FFFFFF",
     margin: 0,
@@ -1983,32 +2100,32 @@ const styles = {
     background: "rgba(239, 68, 68, 0.12)",
     border: "1px solid rgba(239, 68, 68, 0.3)",
     color: "#EF4444",
-    padding: "5px 12px",
-    borderRadius: "8px",
+    padding: "4.5px 10px",
+    borderRadius: "7px",
     fontSize: "11.5px",
     fontWeight: "750",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
-    gap: "5px",
+    gap: "4px",
     transition: "all 0.2s ease"
   },
 
   // TARJETAS GLASSMORPISM ELEGANTES SIN BORDES BLANCOS EN L
   guidesGridWide: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(480px, 1fr))",
-    gap: "18px"
+    gridTemplateColumns: "repeat(auto-fill, minmax(470px, 1fr))",
+    gap: "10px"
   },
   guideCardGlass: {
     background: "rgba(15, 23, 42, 0.88)",
     border: "1px solid rgba(56, 189, 248, 0.15)",
-    borderRadius: "16px",
-    padding: "14px",
+    borderRadius: "14px",
+    padding: "11px 13px",
     display: "flex",
-    gap: "14px",
+    gap: "12px",
     backdropFilter: "blur(16px)",
-    boxShadow: "0 8px 20px rgba(0, 0, 0, 0.25)",
+    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.22)",
     transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
   },
   guideCardMainInfo: {
@@ -2020,37 +2137,37 @@ const styles = {
   },
   cardHeaderHorizontal: {
     display: "flex",
-    gap: "14px",
+    gap: "10px",
     alignItems: "center",
-    marginBottom: "6px"
+    marginBottom: "3px"
   },
   avatarWrapperWide: {
     position: "relative",
-    width: "84px",
-    height: "84px",
+    width: "72px",
+    height: "72px",
     flexShrink: 0
   },
   avatarImgWide: {
     width: "100%",
     height: "100%",
-    borderRadius: "16px",
+    borderRadius: "14px",
     objectFit: "cover",
-    border: "2.5px solid #0EA5E9",
-    boxShadow: "0 4px 18px rgba(14, 165, 233, 0.35)"
+    border: "2px solid #0EA5E9",
+    boxShadow: "0 3px 14px rgba(14, 165, 233, 0.3)"
   },
   verifiedBadgeIcon: {
     position: "absolute",
-    bottom: "-3px",
-    right: "-3px",
+    bottom: "-2px",
+    right: "-2px",
     background: "#10B981",
     borderRadius: "50%",
-    width: "22px",
-    height: "22px",
+    width: "19px",
+    height: "19px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    boxShadow: "0 3px 8px rgba(0,0,0,0.5)",
-    border: "2px solid #0F172A"
+    boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
+    border: "1.5px solid #0F172A"
   },
   deptBadgeSlim: {
     display: "inline-flex",
@@ -2060,8 +2177,8 @@ const styles = {
     color: "#38BDF8",
     fontSize: "10.5px",
     fontWeight: "750",
-    padding: "2px 8px",
-    borderRadius: "12px",
+    padding: "1.5px 7.5px",
+    borderRadius: "9px",
     border: "1px solid rgba(14, 165, 233, 0.25)"
   },
   licenseBadgeSlim: {
@@ -2069,81 +2186,81 @@ const styles = {
     color: "#34D399",
     fontSize: "10px",
     fontWeight: "750",
-    padding: "2px 6px",
-    borderRadius: "12px",
+    padding: "1.5px 5.5px",
+    borderRadius: "9px",
     border: "1px solid rgba(16, 185, 129, 0.25)"
   },
   guideNameWide: {
-    fontSize: "17px",
+    fontSize: "16.5px",
     fontWeight: "800",
     color: "#FFFFFF",
-    margin: "2px 0 3px 0",
+    margin: "1px 0 2px 0",
     lineHeight: "1.2"
   },
   ratingRowWide: {
     display: "flex",
     alignItems: "center",
-    gap: "6px"
+    gap: "4px"
   },
   ratingValueWide: {
     fontWeight: "800",
-    fontSize: "13px",
+    fontSize: "12.5px",
     color: "#F8FAFC"
   },
   reviewsCountWide: {
-    fontSize: "11.5px",
+    fontSize: "11px",
     color: "#94A3B8"
   },
   detailsRowSlim: {
     display: "flex",
     flexWrap: "wrap",
     gap: "4px",
-    margin: "4px 0 6px 0"
+    margin: "3px 0 5px 0"
   },
   tagChip: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "3.5px",
+    gap: "3px",
     background: "rgba(255, 255, 255, 0.04)",
     border: "1px solid rgba(255, 255, 255, 0.1)",
     color: "#CBD5E1",
     fontSize: "10.5px",
     fontWeight: "600",
-    padding: "2px 7px",
-    borderRadius: "20px",
+    padding: "2px 7.5px",
+    borderRadius: "14px",
     backdropFilter: "blur(4px)"
   },
   bioSnippetWide: {
-    fontSize: "12.5px",
-    color: "#94A3B8",
-    lineHeight: "1.4",
-    margin: "0 0 8px 0"
+    fontSize: "12px",
+    color: "#CBD5E1",
+    lineHeight: "1.35",
+    margin: "0 0 5px 0"
   },
   cardFooterWide: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: "8px",
+    paddingTop: "6px",
     borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-    gap: "8px"
+    gap: "6px"
   },
   pricePillBadge: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "4px",
+    gap: "3.5px",
     background: "rgba(16, 185, 129, 0.12)",
     border: "1px solid rgba(16, 185, 129, 0.25)",
-    padding: "4px 9px",
-    borderRadius: "8px",
+    padding: "3.5px 8px",
+    borderRadius: "6px",
     whiteSpace: "nowrap"
   },
   priceLabelSlim: {
-    fontSize: "11px",
+    fontSize: "10.5px",
     color: "#94A3B8",
     fontWeight: "600"
   },
   priceValueSlim: {
-    fontSize: "12.5px",
+    fontSize: "12px",
     fontWeight: "800",
     color: "#34D399",
     whiteSpace: "nowrap"
@@ -2151,36 +2268,36 @@ const styles = {
   actionButtonsGroupSlim: {
     display: "flex",
     alignItems: "center",
-    gap: "6px"
+    gap: "5px"
   },
   whatsappBtnSlim: {
     background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
     color: "#FFFFFF",
-    width: "32px",
-    height: "32px",
-    borderRadius: "8px",
+    width: "30px",
+    height: "30px",
+    borderRadius: "7px",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
     textDecoration: "none",
-    boxShadow: "0 3px 8px rgba(37, 211, 102, 0.25)",
+    boxShadow: "0 2px 6px rgba(37, 211, 102, 0.25)",
     flexShrink: 0
   },
   detailsBtnSlim: {
     background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
     color: "#FFFFFF",
     border: "none",
-    padding: "0 12px",
-    height: "32px",
-    borderRadius: "8px",
-    fontSize: "12px",
+    padding: "0 11px",
+    height: "30px",
+    borderRadius: "7px",
+    fontSize: "11.5px",
     fontWeight: "750",
     cursor: "pointer",
     display: "inline-flex",
     alignItems: "center",
-    gap: "4px",
+    gap: "3.5px",
     whiteSpace: "nowrap",
-    boxShadow: "0 3px 8px rgba(14, 165, 233, 0.25)",
+    boxShadow: "0 2px 6px rgba(14, 165, 233, 0.25)",
     flexShrink: 0
   },
   btnTextSlim: {
@@ -2190,14 +2307,14 @@ const styles = {
 
   // PORTADA RECTANGULAR DERECHA DE TRAVESÍA
   coverPhotoBoxRight: {
-    width: "150px",
+    width: "138px",
     flexShrink: 0,
     position: "relative",
-    borderRadius: "12px",
+    borderRadius: "11px",
     overflow: "hidden",
     cursor: "pointer",
     border: "1px solid rgba(255, 255, 255, 0.12)",
-    boxShadow: "0 4px 14px rgba(0, 0, 0, 0.3)",
+    boxShadow: "0 3px 10px rgba(0, 0, 0, 0.3)",
     transition: "transform 0.25s ease, border-color 0.25s ease"
   },
   coverPhotoImg: {
@@ -2207,17 +2324,17 @@ const styles = {
   },
   coverPhotoOverlayBadge: {
     position: "absolute",
-    bottom: "6px",
-    right: "6px",
+    bottom: "8px",
+    right: "8px",
     background: "rgba(15, 23, 42, 0.85)",
     backdropFilter: "blur(6px)",
     border: "1px solid rgba(255, 255, 255, 0.2)",
     borderRadius: "12px",
-    padding: "2px 7px",
+    padding: "3px 8px",
     display: "flex",
     alignItems: "center",
-    gap: "3.5px",
-    fontSize: "10.5px",
+    gap: "4px",
+    fontSize: "11px",
     fontWeight: "750",
     color: "#FFFFFF",
     boxShadow: "0 2px 6px rgba(0,0,0,0.4)"
@@ -2259,7 +2376,7 @@ const styles = {
   },
   modalHeaderCard: {
     padding: "20px 28px 16px 28px",
-    background: "linear-gradient(135deg, rgba(14, 165, 233, 0.22) 0%, rgba(2, 132, 199, 0.12) 40%, rgba(15, 23, 42, 0.98) 100%), url('/images/fondohracio.png')",
+    background: "linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(10, 25, 47, 0.94) 50%, rgba(15, 23, 42, 0.98) 100%), url('/images/fondohracio.png')",
     backgroundSize: "cover",
     backgroundPosition: "center",
     borderTopLeftRadius: "22px",
@@ -2276,8 +2393,8 @@ const styles = {
     position: "absolute",
     top: "16px",
     right: "16px",
-    background: "rgba(15, 23, 42, 0.75)",
-    border: "1px solid rgba(255, 255, 255, 0.2)",
+    background: "rgba(15, 23, 42, 0.85)",
+    border: "1px solid rgba(255, 255, 255, 0.25)",
     color: "#F8FAFC",
     width: "36px",
     height: "36px",
@@ -2321,40 +2438,46 @@ const styles = {
     minWidth: "260px"
   },
   modalDeptBadge: {
-    background: "rgba(14, 165, 233, 0.18)",
-    border: "1px solid rgba(14, 165, 233, 0.35)",
+    background: "rgba(15, 23, 42, 0.85)",
+    border: "1px solid rgba(56, 189, 248, 0.45)",
     color: "#38BDF8",
     fontSize: "12px",
     fontWeight: "800",
-    padding: "3.5px 10px",
-    borderRadius: "6px",
+    padding: "4px 11px",
+    borderRadius: "8px",
     display: "inline-flex",
     alignItems: "center",
-    gap: "5px"
+    gap: "5px",
+    backdropFilter: "blur(6px)",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)"
   },
   modalLicenseBadge: {
-    background: "rgba(16, 185, 129, 0.15)",
-    border: "1px solid rgba(16, 185, 129, 0.35)",
-    color: "#10B981",
+    background: "rgba(15, 23, 42, 0.85)",
+    border: "1px solid rgba(52, 211, 153, 0.45)",
+    color: "#34D399",
     fontSize: "11.5px",
-    fontWeight: "750",
-    padding: "3.5px 10px",
-    borderRadius: "6px",
+    fontWeight: "800",
+    padding: "4px 11px",
+    borderRadius: "8px",
     display: "inline-flex",
     alignItems: "center",
-    gap: "4px"
+    gap: "4px",
+    backdropFilter: "blur(6px)",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)"
   },
   modalExpBadge: {
-    background: "rgba(255, 215, 0, 0.12)",
-    border: "1px solid rgba(255, 215, 0, 0.3)",
+    background: "rgba(15, 23, 42, 0.85)",
+    border: "1px solid rgba(251, 191, 36, 0.45)",
     color: "#FBBF24",
     fontSize: "11.5px",
-    fontWeight: "750",
-    padding: "3.5px 10px",
-    borderRadius: "6px",
+    fontWeight: "800",
+    padding: "4px 11px",
+    borderRadius: "8px",
     display: "inline-flex",
     alignItems: "center",
-    gap: "4px"
+    gap: "4px",
+    backdropFilter: "blur(6px)",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)"
   },
   modalGuideNameWide: {
     fontSize: "22px",
@@ -2368,13 +2491,15 @@ const styles = {
     display: "inline-flex",
     alignItems: "center",
     gap: "4px",
-    background: "rgba(16, 185, 129, 0.12)",
-    border: "1px solid rgba(16, 185, 129, 0.3)",
+    background: "rgba(15, 23, 42, 0.85)",
+    border: "1px solid rgba(52, 211, 153, 0.45)",
     color: "#34D399",
     fontSize: "12px",
     fontWeight: "800",
-    padding: "3.5px 10px",
-    borderRadius: "6px"
+    padding: "4px 11px",
+    borderRadius: "8px",
+    backdropFilter: "blur(6px)",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)"
   },
   starsBox: {
     display: "flex",
@@ -2477,21 +2602,48 @@ const styles = {
     color: "#F8FAFC",
     fontWeight: "800"
   },
+  serviceChipModal: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    background: "rgba(15, 23, 42, 0.8)",
+    border: "1px solid rgba(52, 211, 153, 0.35)",
+    color: "#F8FAFC",
+    fontSize: "12.5px",
+    fontWeight: "650",
+    padding: "6px 14px",
+    borderRadius: "20px"
+  },
   modalWhatsappBanner: {
     width: "100%",
     background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
     color: "#FFFFFF",
-    padding: "13px",
+    padding: "12px 18px",
     borderRadius: "14px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     gap: "10px",
     fontWeight: "800",
-    fontSize: "14.5px",
+    fontSize: "14px",
     textDecoration: "none",
     boxShadow: "0 6px 20px rgba(37, 211, 102, 0.35)",
     boxSizing: "border-box",
+    transition: "all 0.2s ease"
+  },
+  modalInstagramBanner: {
+    background: "linear-gradient(135deg, #E1306C 0%, #C13584 50%, #833AB4 100%)",
+    color: "#FFFFFF",
+    padding: "12px 18px",
+    borderRadius: "14px",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
+    fontWeight: "800",
+    fontSize: "13.5px",
+    textDecoration: "none",
+    boxShadow: "0 6px 20px rgba(225, 48, 108, 0.3)",
     transition: "all 0.2s ease"
   },
   fullGalleryGrid: {

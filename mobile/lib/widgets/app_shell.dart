@@ -79,7 +79,7 @@ class AppShell extends StatelessWidget {
                 BottomNavigationBarItem(
                   icon: Icon(Icons.map_rounded),
                   activeIcon: Icon(Icons.map_rounded, size: 28),
-                  label: 'Mapa',
+                  label: 'Explorar Mapa',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.people_rounded),
