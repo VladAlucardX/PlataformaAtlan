@@ -1610,11 +1610,11 @@ export default function GuiasPage() {
                             <p style={styles.destinoMapaDesc}>{dest.desc}</p>
                             <div style={{ marginTop: "12px", display: "flex", justifyContent: "flex-end" }}>
                               <Link
-                                href={`/departamentos?dept=${dest.deptSlug}`}
+                                href={`/mapa?spot=${encodeURIComponent(dest.nombre)}`}
                                 style={styles.destinoMapaLinkBtn}
                               >
-                                <Icon name="mapPin" size={13} color="#0EA5E9" />
-                                <span>{lang === "en" ? "Explore in Department Map" : lang === "zh" ? "在省份地图中查看" : "Ver en Mapa Departamental"}</span>
+                                <Icon name="compass" size={13} color="#0EA5E9" />
+                                <span>{lang === "en" ? "Explore in Interactive Map" : lang === "zh" ? "在互动地图中查看" : "Explorar en Mapa Interactivo"}</span>
                                 <Icon name="chevronRight" size={12} color="#0EA5E9" />
                               </Link>
                             </div>
