@@ -136,11 +136,11 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`}>
             <img src="/images/ubic.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Explorar Mapa", "Explore Map", "探索地图")}
           </Link>
-          <Link href="/departamentos" className={`nav-pill-link ${activePage === "departamentos" ? "active" : ""}`}>
-            <img src="/images/flor.svg" alt="Ranking" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} /> {tr("Ranking", "Ranking", "排行榜")}
-          </Link>
           <Link href="/mas-de-nicaragua" className={`nav-pill-link ${activePage === "mas-de-nicaragua" ? "active" : ""}`}>
             <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Más de Nicaragua", "More of Nicaragua", "探索尼加拉瓜")}
+          </Link>
+          <Link href="/departamentos" className={`nav-pill-link ${activePage === "departamentos" ? "active" : ""}`}>
+            <img src="/images/flor.svg" alt="Ranking" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} /> {tr("Ranking", "Ranking", "排行榜")}
           </Link>
           <Link href="/comunidad" className={`nav-pill-link ${activePage === "comunidad" ? "active" : ""}`}>
             <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Comunidad", "Community", "社区")}
@@ -662,11 +662,11 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           <Link href="/mapa" className={`mobile-menu-item ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
             <img src="/images/ubic.svg" alt="Mapa" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Explorar Mapa", "Explore Map", "探索地图")}</span>
           </Link>
-          <Link href="/departamentos" className={`mobile-menu-item ${activePage === "departamentos" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <img src="/images/flor.svg" alt="Ranking" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Ranking", "Ranking", "排行榜")}</span>
-          </Link>
           <Link href="/mas-de-nicaragua" className={`mobile-menu-item ${activePage === "mas-de-nicaragua" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
             <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Más de Nicaragua", "More of Nicaragua", "探索尼加拉瓜")}</span>
+          </Link>
+          <Link href="/departamentos" className={`mobile-menu-item ${activePage === "departamentos" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
+            <img src="/images/flor.svg" alt="Ranking" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Ranking", "Ranking", "排行榜")}</span>
           </Link>
           <Link href="/comunidad" className={`mobile-menu-item ${activePage === "comunidad" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
             <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Comunidad", "Community", "社区")}</span>
