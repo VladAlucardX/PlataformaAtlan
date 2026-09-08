@@ -134,7 +134,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
             <img src="/images/home.svg" alt="Inicio" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Inicio", "Home", "首页")}
           </Link>
           <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`}>
-            <img src="/images/ubic.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Mapa", "Map", "地图")}
+            <img src="/images/ubic.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Explorar Mapa", "Explore Map", "探索地图")}
           </Link>
           <Link href="/departamentos" className={`nav-pill-link ${activePage === "departamentos" ? "active" : ""}`}>
             <img src="/images/flor.svg" alt="Ranking" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} /> {tr("Ranking", "Ranking", "排行榜")}
@@ -660,7 +660,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
             <img src="/images/home.svg" alt="Inicio" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Inicio", "Home", "首页")}</span>
           </Link>
           <Link href="/mapa" className={`mobile-menu-item ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <img src="/images/ubic.svg" alt="Mapa" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Mapa", "Map", "地图")}</span>
+            <img src="/images/ubic.svg" alt="Mapa" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Explorar Mapa", "Explore Map", "探索地图")}</span>
           </Link>
           <Link href="/departamentos" className={`mobile-menu-item ${activePage === "departamentos" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
             <img src="/images/flor.svg" alt="Ranking" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Ranking", "Ranking", "排行榜")}</span>
