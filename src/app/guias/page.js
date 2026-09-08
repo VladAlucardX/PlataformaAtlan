@@ -1165,8 +1165,8 @@ export default function GuiasPage() {
                   </div>
 
                   <p style={styles.bioSnippetWide}>
-                    {guia.biografia?.length > 115
-                      ? guia.biografia.substring(0, 115) + "..."
+                    {guia.biografia?.length > 95
+                      ? guia.biografia.substring(0, 95) + "..."
                       : guia.biografia}
                   </p>
 
@@ -1636,7 +1636,7 @@ const styles = {
 
   heroSectionCompact: {
     position: "relative",
-    padding: "62px 24px 4px 24px",
+    padding: "68px 24px 8px 24px",
     background: "transparent",
     borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
     zIndex: 2
@@ -1653,7 +1653,10 @@ const styles = {
   },
   heroContentWide: {
     maxWidth: "1400px",
-    margin: "0 auto"
+    margin: "0 auto",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
   },
   topMetaHeader: {
     display: "none"
@@ -1707,12 +1710,12 @@ const styles = {
     fontSize: "12px"
   },
   heroTitleMain: {
-    fontSize: "clamp(22px, 2.8vw, 30px)",
+    fontSize: "clamp(26px, 3.4vw, 38px)",
     fontWeight: "900",
     color: "#FFFFFF",
     letterSpacing: "-0.4px",
-    margin: "4px 0 4px 0",
-    lineHeight: "1.2",
+    margin: "4px 0 6px 0",
+    lineHeight: "1.25",
     textAlign: "center"
   },
   whiteTextWithShadow: {
@@ -1737,7 +1740,7 @@ const styles = {
   mainContainerWide: {
     maxWidth: "1400px",
     margin: "0 auto",
-    padding: "10px 24px 16px 24px",
+    padding: "8px 24px 10px 24px",
     position: "relative",
     zIndex: 2
   },
@@ -1747,37 +1750,37 @@ const styles = {
     background: "rgba(15, 23, 42, 0.88)",
     border: "1px solid rgba(56, 189, 248, 0.18)",
     borderRadius: "14px",
-    padding: "10px 16px",
+    padding: "8px 14px",
     backdropFilter: "blur(16px)",
     boxShadow: "0 6px 20px rgba(0, 0, 0, 0.3)",
-    marginBottom: "12px",
+    marginBottom: "8px",
     display: "flex",
     flexDirection: "column",
-    gap: "10px"
+    gap: "8px"
   },
   filterRow1: {
     display: "flex",
     alignItems: "center",
-    gap: "12px",
+    gap: "10px",
     flexWrap: "wrap"
   },
   searchBoxSlim: {
     flex: 1,
-    minWidth: "260px",
+    minWidth: "250px",
     display: "flex",
     alignItems: "center",
     gap: "8px",
     background: "rgba(30, 41, 59, 0.85)",
     border: "1px solid rgba(255, 255, 255, 0.12)",
     borderRadius: "10px",
-    padding: "8px 14px"
+    padding: "7px 12px"
   },
   searchInputSlim: {
     width: "100%",
     background: "none",
     border: "none",
     color: "#F8FAFC",
-    fontSize: "13.5px",
+    fontSize: "13px",
     outline: "none"
   },
   clearSearchBtn: {
@@ -1801,9 +1804,9 @@ const styles = {
     background: "rgba(30, 41, 59, 0.9)",
     border: "1px solid rgba(255, 255, 255, 0.15)",
     color: "#F8FAFC",
-    padding: "7px 12px",
-    borderRadius: "9px",
-    fontSize: "13px",
+    padding: "6px 11px",
+    borderRadius: "8px",
+    fontSize: "12.5px",
     outline: "none",
     cursor: "pointer"
   },
@@ -1814,25 +1817,25 @@ const styles = {
     background: "rgba(30, 41, 59, 0.85)",
     border: "1px solid rgba(255, 255, 255, 0.12)",
     borderRadius: "10px",
-    padding: "7px 12px"
+    padding: "6px 11px"
   },
   selectInputCompact: {
     background: "none",
     border: "none",
     color: "#F8FAFC",
-    fontSize: "13px",
+    fontSize: "12.5px",
     fontWeight: "600",
     outline: "none",
     cursor: "pointer",
-    maxWidth: "180px"
+    maxWidth: "170px"
   },
   advancedToggleBtn: {
     display: "inline-flex",
     alignItems: "center",
     gap: "6px",
-    padding: "7.5px 14px",
-    borderRadius: "10px",
-    fontSize: "12.5px",
+    padding: "6.5px 12px",
+    borderRadius: "9px",
+    fontSize: "12px",
     fontWeight: "750",
     cursor: "pointer",
     transition: "all 0.2s",
@@ -2010,19 +2013,19 @@ const styles = {
     background: "rgba(15, 23, 42, 0.78)",
     backdropFilter: "blur(12px)",
     border: "1px solid rgba(56, 189, 248, 0.2)",
-    borderRadius: "14px",
-    padding: "8px 16px",
-    marginBottom: "12px",
+    borderRadius: "12px",
+    padding: "6px 14px",
+    marginBottom: "8px",
     boxShadow: "0 4px 14px rgba(0, 0, 0, 0.25)"
   },
   resultsTitleLeft: {
     display: "flex",
     alignItems: "center",
-    gap: "10px"
+    gap: "8px"
   },
   headerIconBox: {
-    width: "32px",
-    height: "32px",
+    width: "30px",
+    height: "30px",
     borderRadius: "8px",
     background: "rgba(14, 165, 233, 0.15)",
     border: "1px solid rgba(14, 165, 233, 0.3)",
@@ -2032,7 +2035,7 @@ const styles = {
     flexShrink: 0
   },
   resultsTitleClean: {
-    fontSize: "15.5px",
+    fontSize: "15px",
     fontWeight: "800",
     color: "#FFFFFF",
     margin: 0,
@@ -2041,9 +2044,9 @@ const styles = {
   resultsBadgeSlim: {
     background: "rgba(14, 165, 233, 0.15)",
     color: "#38BDF8",
-    fontSize: "12px",
+    fontSize: "11.5px",
     fontWeight: "750",
-    padding: "2.5px 9px",
+    padding: "2px 8px",
     borderRadius: "12px",
     border: "1px solid rgba(14, 165, 233, 0.3)",
     whiteSpace: "nowrap"
@@ -2052,9 +2055,9 @@ const styles = {
     background: "rgba(239, 68, 68, 0.12)",
     border: "1px solid rgba(239, 68, 68, 0.3)",
     color: "#EF4444",
-    padding: "5px 11px",
-    borderRadius: "8px",
-    fontSize: "12px",
+    padding: "4.5px 10px",
+    borderRadius: "7px",
+    fontSize: "11.5px",
     fontWeight: "750",
     cursor: "pointer",
     display: "flex",
@@ -2066,16 +2069,16 @@ const styles = {
   // TARJETAS GLASSMORPISM ELEGANTES SIN BORDES BLANCOS EN L
   guidesGridWide: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(480px, 1fr))",
-    gap: "14px"
+    gridTemplateColumns: "repeat(auto-fill, minmax(470px, 1fr))",
+    gap: "10px"
   },
   guideCardGlass: {
     background: "rgba(15, 23, 42, 0.88)",
     border: "1px solid rgba(56, 189, 248, 0.15)",
-    borderRadius: "16px",
-    padding: "14px 16px",
+    borderRadius: "14px",
+    padding: "11px 13px",
     display: "flex",
-    gap: "14px",
+    gap: "12px",
     backdropFilter: "blur(16px)",
     boxShadow: "0 6px 16px rgba(0, 0, 0, 0.22)",
     transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
@@ -2089,20 +2092,20 @@ const styles = {
   },
   cardHeaderHorizontal: {
     display: "flex",
-    gap: "12px",
+    gap: "10px",
     alignItems: "center",
-    marginBottom: "4px"
+    marginBottom: "3px"
   },
   avatarWrapperWide: {
     position: "relative",
-    width: "78px",
-    height: "78px",
+    width: "72px",
+    height: "72px",
     flexShrink: 0
   },
   avatarImgWide: {
     width: "100%",
     height: "100%",
-    borderRadius: "16px",
+    borderRadius: "14px",
     objectFit: "cover",
     border: "2px solid #0EA5E9",
     boxShadow: "0 3px 14px rgba(14, 165, 233, 0.3)"
@@ -2113,8 +2116,8 @@ const styles = {
     right: "-2px",
     background: "#10B981",
     borderRadius: "50%",
-    width: "20px",
-    height: "20px",
+    width: "19px",
+    height: "19px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -2124,95 +2127,95 @@ const styles = {
   deptBadgeSlim: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "3.5px",
+    gap: "3px",
     background: "rgba(14, 165, 233, 0.12)",
     color: "#38BDF8",
-    fontSize: "11px",
+    fontSize: "10.5px",
     fontWeight: "750",
-    padding: "2px 8px",
-    borderRadius: "10px",
+    padding: "1.5px 7.5px",
+    borderRadius: "9px",
     border: "1px solid rgba(14, 165, 233, 0.25)"
   },
   licenseBadgeSlim: {
     background: "rgba(16, 185, 129, 0.12)",
     color: "#34D399",
-    fontSize: "10.5px",
+    fontSize: "10px",
     fontWeight: "750",
-    padding: "2px 6px",
-    borderRadius: "10px",
+    padding: "1.5px 5.5px",
+    borderRadius: "9px",
     border: "1px solid rgba(16, 185, 129, 0.25)"
   },
   guideNameWide: {
-    fontSize: "17.5px",
+    fontSize: "16.5px",
     fontWeight: "800",
     color: "#FFFFFF",
-    margin: "2px 0 3px 0",
+    margin: "1px 0 2px 0",
     lineHeight: "1.2"
   },
   ratingRowWide: {
     display: "flex",
     alignItems: "center",
-    gap: "5px"
+    gap: "4px"
   },
   ratingValueWide: {
     fontWeight: "800",
-    fontSize: "13px",
+    fontSize: "12.5px",
     color: "#F8FAFC"
   },
   reviewsCountWide: {
-    fontSize: "11.5px",
+    fontSize: "11px",
     color: "#94A3B8"
   },
   detailsRowSlim: {
     display: "flex",
     flexWrap: "wrap",
-    gap: "5px",
-    margin: "4px 0 6px 0"
+    gap: "4px",
+    margin: "3px 0 5px 0"
   },
   tagChip: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "3.5px",
+    gap: "3px",
     background: "rgba(255, 255, 255, 0.04)",
     border: "1px solid rgba(255, 255, 255, 0.1)",
     color: "#CBD5E1",
-    fontSize: "11px",
+    fontSize: "10.5px",
     fontWeight: "600",
-    padding: "2.5px 8px",
-    borderRadius: "16px",
+    padding: "2px 7.5px",
+    borderRadius: "14px",
     backdropFilter: "blur(4px)"
   },
   bioSnippetWide: {
-    fontSize: "12.5px",
+    fontSize: "12px",
     color: "#CBD5E1",
-    lineHeight: "1.4",
-    margin: "0 0 6px 0"
+    lineHeight: "1.35",
+    margin: "0 0 5px 0"
   },
   cardFooterWide: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: "8px",
+    paddingTop: "6px",
     borderTop: "1px solid rgba(255, 255, 255, 0.08)",
     gap: "6px"
   },
   pricePillBadge: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "4px",
+    gap: "3.5px",
     background: "rgba(16, 185, 129, 0.12)",
     border: "1px solid rgba(16, 185, 129, 0.25)",
-    padding: "4px 9px",
-    borderRadius: "7px",
+    padding: "3.5px 8px",
+    borderRadius: "6px",
     whiteSpace: "nowrap"
   },
   priceLabelSlim: {
-    fontSize: "11px",
+    fontSize: "10.5px",
     color: "#94A3B8",
     fontWeight: "600"
   },
   priceValueSlim: {
-    fontSize: "12.5px",
+    fontSize: "12px",
     fontWeight: "800",
     color: "#34D399",
     whiteSpace: "nowrap"
@@ -2220,14 +2223,14 @@ const styles = {
   actionButtonsGroupSlim: {
     display: "flex",
     alignItems: "center",
-    gap: "6px"
+    gap: "5px"
   },
   whatsappBtnSlim: {
     background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
     color: "#FFFFFF",
-    width: "32px",
-    height: "32px",
-    borderRadius: "8px",
+    width: "30px",
+    height: "30px",
+    borderRadius: "7px",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
@@ -2239,30 +2242,30 @@ const styles = {
     background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
     color: "#FFFFFF",
     border: "none",
-    padding: "0 12px",
-    height: "32px",
-    borderRadius: "8px",
-    fontSize: "12px",
+    padding: "0 11px",
+    height: "30px",
+    borderRadius: "7px",
+    fontSize: "11.5px",
     fontWeight: "750",
     cursor: "pointer",
     display: "inline-flex",
     alignItems: "center",
-    gap: "4px",
+    gap: "3.5px",
     whiteSpace: "nowrap",
     boxShadow: "0 2px 6px rgba(14, 165, 233, 0.25)",
     flexShrink: 0
   },
   btnTextSlim: {
-    fontSize: "12px",
+    fontSize: "11.5px",
     fontWeight: "750"
   },
 
   // PORTADA RECTANGULAR DERECHA DE TRAVESÍA
   coverPhotoBoxRight: {
-    width: "145px",
+    width: "138px",
     flexShrink: 0,
     position: "relative",
-    borderRadius: "12px",
+    borderRadius: "11px",
     overflow: "hidden",
     cursor: "pointer",
     border: "1px solid rgba(255, 255, 255, 0.12)",
