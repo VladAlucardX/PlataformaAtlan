@@ -433,7 +433,9 @@ export default function GuiasPage() {
         let rawSaved = null;
         try {
           if (typeof window !== "undefined") {
-            const raw = localStorage.getItem("atlan_guia_profile_global") || localStorage.getItem("atlan_guia_profile_carlos");
+            const raw = (session?.user?.id ? localStorage.getItem("atlan_guia_profile_" + session.user.id) : null) ||
+                        localStorage.getItem("atlan_guia_profile_global") ||
+                        localStorage.getItem("atlan_guia_profile_carlos");
             if (raw) rawSaved = JSON.parse(raw);
           }
         } catch (e) {}
@@ -483,10 +485,10 @@ export default function GuiasPage() {
                 tarifa_aprox: cleanTarifa(source.tarifa_aprox, mockG.tarifa_aprox || "$30 - $50 / día"),
                 experiencia_anios: source.experiencia_anios || mockG.experiencia_anios,
                 biografia: source.biografia || mockG.biografia,
-                whatsapp: source.whatsapp ? source.whatsapp : "",
-                instagram: source.instagram ? source.instagram : "",
-                facebook: source.facebook ? source.facebook : "",
-                tiktok: source.tiktok ? source.tiktok : "",
+                whatsapp: (activeProfile && activeProfile.whatsapp !== undefined && activeProfile.whatsapp !== "") ? activeProfile.whatsapp : (dbMatch?.whatsapp || mockG.whatsapp || ""),
+                instagram: (activeProfile && activeProfile.instagram !== undefined && activeProfile.instagram !== "") ? activeProfile.instagram : (dbMatch?.instagram || mockG.instagram || ""),
+                facebook: (activeProfile && activeProfile.facebook !== undefined && activeProfile.facebook !== "") ? activeProfile.facebook : (dbMatch?.facebook || ""),
+                tiktok: (activeProfile && activeProfile.tiktok !== undefined && activeProfile.tiktok !== "") ? activeProfile.tiktok : (dbMatch?.tiktok || ""),
                 telefono_contacto: source.telefono_contacto || mockG.telefono_contacto,
                 licencia_intur: source.licencia_intur || mockG.licencia_intur,
                 idiomas: source.idiomas || mockG.idiomas,
@@ -526,10 +528,10 @@ export default function GuiasPage() {
                   tarifa_aprox: cleanTarifa(rawSaved.tarifa_aprox, mockG.tarifa_aprox || "$30 - $50 / día"),
                   experiencia_anios: rawSaved.experiencia_anios || mockG.experiencia_anios,
                   biografia: rawSaved.biografia || mockG.biografia,
-                  whatsapp: rawSaved.whatsapp ? rawSaved.whatsapp : "",
-                  instagram: rawSaved.instagram ? rawSaved.instagram : "",
-                  facebook: rawSaved.facebook ? rawSaved.facebook : "",
-                  tiktok: rawSaved.tiktok ? rawSaved.tiktok : "",
+                  whatsapp: (rawSaved.whatsapp !== undefined && rawSaved.whatsapp !== "") ? rawSaved.whatsapp : (mockG.whatsapp || ""),
+                  instagram: (rawSaved.instagram !== undefined && rawSaved.instagram !== "") ? rawSaved.instagram : (mockG.instagram || ""),
+                  facebook: (rawSaved.facebook !== undefined && rawSaved.facebook !== "") ? rawSaved.facebook : "",
+                  tiktok: (rawSaved.tiktok !== undefined && rawSaved.tiktok !== "") ? rawSaved.tiktok : "",
                   telefono_contacto: rawSaved.telefono_contacto || mockG.telefono_contacto,
                   licencia_intur: rawSaved.licencia_intur || mockG.licencia_intur,
                   idiomas: rawSaved.idiomas || mockG.idiomas,

@@ -478,15 +478,9 @@ export default function PerfilGuiaPage() {
         console.warn("Perfiles upsert notice:", pError.message);
       }
 
-      // 2. Actualizar en la tabla de guías en Supabase (con respaldo suave si faltan columnas nuevas en la BD)
       let { error } = await supabase.from("guias_turisticos").upsert(profilePayload);
       if (error) {
-        console.warn("Aviso al guardar campos extendidos en guias_turisticos, reintentando sin campos de redes opcionales:", error.message || error);
-        const { facebook, tiktok, ...corePayload } = profilePayload;
-        const { error: retryError } = await supabase.from("guias_turisticos").upsert(corePayload);
-        if (retryError) {
-          console.warn("Aviso al guardar payload base del guía:", retryError.message);
-        }
+        console.error("Error al guardar en guias_turisticos:", error.message || error);
       }
 
       setSaveSuccessAlert(true);
