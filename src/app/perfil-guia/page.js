@@ -1152,7 +1152,7 @@ export default function PerfilGuiaPage() {
 
                       {/* Facebook */}
                       <div style={{ background: "#FFFFFF", padding: "6px 9px", borderRadius: "8px", border: "1px solid #E2E8F0" }}>
-                        <span style={{ fontSize: "11px", fontWeight: "800", color="#1877F2", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
+                        <span style={{ fontSize: "11px", fontWeight: "800", color: "#1877F2", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
                           <Icon name="facebook" size={12} color="#1877F2" /> Facebook
                         </span>
                         <input
@@ -1166,7 +1166,7 @@ export default function PerfilGuiaPage() {
 
                       {/* TikTok */}
                       <div style={{ background: "#FFFFFF", padding: "6px 9px", borderRadius: "8px", border: "1px solid #E2E8F0" }}>
-                        <span style={{ fontSize: "11px", fontWeight: "800", color="#000000", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
+                        <span style={{ fontSize: "11px", fontWeight: "800", color: "#000000", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
                           <Icon name="tiktok" size={12} color="#000000" /> TikTok
                         </span>
                         <input
