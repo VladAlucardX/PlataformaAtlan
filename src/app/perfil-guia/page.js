@@ -298,7 +298,12 @@ export default function PerfilGuiaPage() {
           if (rawLocal) savedLocal = JSON.parse(rawLocal);
         } catch (e) {}
 
-        const activeData = gData || savedLocal;
+        const activeData = (gData || savedLocal) ? {
+          ...savedLocal,
+          ...gData,
+          facebook: (gData && gData.facebook) ? gData.facebook : (savedLocal && savedLocal.facebook ? savedLocal.facebook : ""),
+          tiktok: (gData && gData.tiktok) ? gData.tiktok : (savedLocal && savedLocal.tiktok ? savedLocal.tiktok : "")
+        } : null;
 
         if (activeData) {
           if (activeData.departamento_principal) setGuiaDeptPrincipal(activeData.departamento_principal);
