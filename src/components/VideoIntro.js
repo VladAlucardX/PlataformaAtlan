@@ -15,7 +15,7 @@ export default function VideoIntro({ onComplete }) {
     setPhase((prev) => (prev === "playing" ? "fading" : prev));
   }, []);
 
-  // Forzar reproducción y fallback rápido para conexiones móviles
+  // Forzar reproducción y fallback rápido para conexiones móviles / WebViews
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.muted = true;
@@ -23,6 +23,7 @@ export default function VideoIntro({ onComplete }) {
       videoRef.current.play().catch((err) => {
         console.warn("Autoplay bloqueado por el navegador:", err);
         setVideoReady(true);
+        startFadeOut();
       });
 
       if (videoRef.current.readyState >= 2) {
@@ -30,13 +31,16 @@ export default function VideoIntro({ onComplete }) {
       }
     }
 
-    // Fallback rápido: Si el video tarda más de 3s en cargar por red móvil, mostrar la interfaz de Atlan de inmediato
+    // Fallback rápido: Si el video tarda más de 3s en cargar o reproducirse en móvil, dar paso a la app
     const fallbackTimer = setTimeout(() => {
       setVideoReady(true);
+      if (!videoRef.current || videoRef.current.currentTime < 0.2) {
+        startFadeOut();
+      }
     }, 3000);
 
     return () => clearTimeout(fallbackTimer);
-  }, []);
+  }, [startFadeOut]);
 
   // Notificar al terminar fade-out
   useEffect(() => {
@@ -44,37 +48,51 @@ export default function VideoIntro({ onComplete }) {
       const timer = setTimeout(() => {
         setPhase("done");
         onComplete?.();
-      }, 600); // duración acelerada del fade-out CSS
+      }, 500); // duración acelerada del fade-out CSS
       return () => clearTimeout(timer);
     }
   }, [phase, onComplete]);
 
-  const TARGET_DURATION = 8; // Duración objetivo: 8 segundos
-
-  // Timeout de seguridad máximo (8.5s)
+  // Timeout de seguridad máximo (3.8s en móvil, 5.5s en desktop)
   useEffect(() => {
+    const isMobileDevice = typeof window !== "undefined" && window.innerWidth <= 768;
+    const maxTimeoutMs = isMobileDevice ? 3800 : 5500;
+
     const safety = setTimeout(() => {
       startFadeOut();
-    }, 8500);
+    }, maxTimeoutMs);
+
     return () => clearTimeout(safety);
   }, [startFadeOut]);
 
-  // Actualización ultra-fluida (60 FPS) de la barra de progreso sincronizada a los 8 segundos
+  // Actualización ultra-fluida de la barra de progreso con fallback si el video no avanza
   useEffect(() => {
     if (phase !== "playing") return;
 
     let animId;
-    const updateProgress = () => {
-      if (videoRef.current) {
-        const current = videoRef.current.currentTime || 0;
-        const pct = Math.min((current / TARGET_DURATION) * 100, 100);
-        setProgressPercent(pct);
+    let startTime = performance.now();
+    const isMobileDevice = typeof window !== "undefined" && window.innerWidth <= 768;
+    const targetDuration = isMobileDevice ? 3.5 : 6.0;
 
-        if (current >= TARGET_DURATION) {
-          startFadeOut();
-          return;
-        }
+    const updateProgress = (now) => {
+      const elapsed = (now - startTime) / 1000;
+      let pct = 0;
+
+      if (videoRef.current && videoRef.current.currentTime > 0.1 && !videoRef.current.paused) {
+        const current = videoRef.current.currentTime;
+        pct = Math.min((current / targetDuration) * 100, 100);
+      } else {
+        // Avance simulado si el video se tranca o no avanza en el WebView
+        pct = Math.min((elapsed / targetDuration) * 100, 100);
       }
+
+      setProgressPercent(pct);
+
+      if (pct >= 100 || elapsed >= targetDuration) {
+        startFadeOut();
+        return;
+      }
+
       animId = requestAnimationFrame(updateProgress);
     };
 
@@ -147,9 +165,10 @@ export default function VideoIntro({ onComplete }) {
         }}
         style={introStyles.video}
       >
-        <source src="/videos/portada2.0.webm" type="video/webm" />
         <source src="/videos/portada2.0-mobile.mp4" type="video/mp4" media="(max-width: 768px)" />
         <source src="/videos/portada2.0-opt.mp4" type="video/mp4" />
+        <source src="/videos/portada2.0.webm" type="video/webm" />
+        <source src="/videos/portada2.0.mp4" type="video/mp4" />
       </video>
 
       {/* Overlay oscuro sutil sobre el video */}
