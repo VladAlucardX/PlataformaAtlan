@@ -444,15 +444,19 @@ function Footer() {
 
 // Componente Principal
 export default function Home() {
-  const [introDone, setIntroDone] = React.useState(false);
+  // Por defecto true para que en móviles y WebViews cargue al instante sin quedarse bugeado en el intro
+  const [introDone, setIntroDone] = React.useState(true);
   const { session, perfil, logout } = useAuth();
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       try {
         const isMobile = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini|wv/i.test(navigator.userAgent);
-        if (isMobile || sessionStorage.getItem("introSeen") === "true") {
-          setIntroDone(true);
+        const introSeen = sessionStorage.getItem("introSeen") === "true";
+        
+        // Solo mostrar el intro en versión de escritorio si no ha sido visto aún
+        if (!isMobile && !introSeen) {
+          setIntroDone(false);
         }
       } catch (e) {
         setIntroDone(true);

@@ -111,6 +111,12 @@ export default function VideoIntro({ onComplete }) {
 
   if (phase === "done") return null;
 
+  // Evitar renderizar VideoIntro en dispositivos móviles / WebViews
+  if (typeof window !== "undefined") {
+    const isMobile = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini|wv/i.test(navigator.userAgent);
+    if (isMobile) return null;
+  }
+
   return (
     <div
       onClick={startFadeOut}
