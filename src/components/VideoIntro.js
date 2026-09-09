@@ -12,8 +12,14 @@ export default function VideoIntro({ onComplete }) {
 
   // Fade-out
   const startFadeOut = useCallback(() => {
-    setPhase((prev) => (prev === "playing" ? "fading" : prev));
-  }, []);
+    setPhase((prev) => {
+      if (prev === "playing") {
+        onComplete?.();
+        return "fading";
+      }
+      return prev;
+    });
+  }, [onComplete]);
 
   // Forzar reproducción y fallback rápido para conexiones móviles / WebViews
   useEffect(() => {

@@ -448,8 +448,15 @@ export default function Home() {
   const { session, perfil, logout } = useAuth();
 
   React.useEffect(() => {
-    if (typeof window !== "undefined" && sessionStorage.getItem("introSeen") === "true") {
-      setIntroDone(true);
+    if (typeof window !== "undefined") {
+      try {
+        const isMobile = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini|wv/i.test(navigator.userAgent);
+        if (isMobile || sessionStorage.getItem("introSeen") === "true") {
+          setIntroDone(true);
+        }
+      } catch (e) {
+        setIntroDone(true);
+      }
     }
   }, []);
 
@@ -460,7 +467,9 @@ export default function Home() {
 
   const handleIntroComplete = () => {
     if (typeof window !== "undefined") {
-      sessionStorage.setItem("introSeen", "true");
+      try {
+        sessionStorage.setItem("introSeen", "true");
+      } catch (e) {}
     }
     setIntroDone(true);
   };
