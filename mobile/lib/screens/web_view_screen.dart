@@ -20,6 +20,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   InAppWebViewController? _webViewController;
   double _progress = 0;
   bool _isLoading = true;
+  bool _hasPermission = false;
   String? _errorMessage;
   StreamSubscription<Position>? _positionStreamSubscription;
 
@@ -94,7 +95,19 @@ class _WebViewScreenState extends State<WebViewScreen> {
     }
 
     if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+      if (mounted) {
+        setState(() {
+          _hasPermission = true;
+        });
+      }
       _startNativeGpsStream();
+    } else {
+      // Continuar de todos modos si el permiso es temporal para no bloquear al usuario
+      if (mounted) {
+        setState(() {
+          _hasPermission = true;
+        });
+      }
     }
   }
 
@@ -180,6 +193,36 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Si aún no se han concedido/revisado los permisos, mostrar pantalla de carga nativa
+    if (!_hasPermission) {
+      return Scaffold(
+        backgroundColor: AtlanTheme.background,
+        body: Container(
+          decoration: const BoxDecoration(gradient: AtlanTheme.heroGradient),
+          child: const Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: 48,
+                  height: 48,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor: AlwaysStoppedAnimation<Color>(AtlanTheme.accent),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Iniciando Atlan GPS...',
+                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AtlanTheme.background,
       body: SafeArea(

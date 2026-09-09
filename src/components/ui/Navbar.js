@@ -589,15 +589,11 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
 
         {/* Mobile Hamburger Button */}
         <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          {!session && <LanguageToggle />}
+          <LanguageToggle />
           {session && <NotificationDropdown session={session} />}
           <button
             type="button"
-            onClick={() => setMenuOpen(!menuOpen)}
-            onTouchEnd={(e) => {
-              e.preventDefault();
-              setMenuOpen(!menuOpen);
-            }}
+            onClick={() => setMenuOpen((prev) => !prev)}
             aria-label="Menu"
             style={{
               background: menuOpen ? "rgba(255, 215, 0, 0.2)" : "rgba(255, 255, 255, 0.08)",
