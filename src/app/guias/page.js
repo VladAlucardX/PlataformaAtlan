@@ -359,6 +359,16 @@ const cleanTarifa = (t, defaultTarifa = "$30 - $50 / día") => {
   return t;
 };
 
+const formatSocialUrl = (type, val) => {
+  if (!val || typeof val !== "string" || val.trim() === "") return "#";
+  const clean = val.trim();
+  if (clean.startsWith("http://") || clean.startsWith("https://")) return clean;
+  if (type === "instagram") return `https://instagram.com/${clean.replace(/^@/, '')}`;
+  if (type === "facebook") return `https://facebook.com/${clean.replace(/^@/, '')}`;
+  if (type === "tiktok") return `https://tiktok.com/@${clean.replace(/^@/, '')}`;
+  return clean;
+};
+
 export default function GuiasPage() {
   const { lang } = useTranslation();
   const { session, perfil } = useAuth();
@@ -457,6 +467,8 @@ export default function GuiasPage() {
                 biografia: source.biografia || mockG.biografia,
                 whatsapp: source.whatsapp || mockG.whatsapp,
                 instagram: source.instagram || mockG.instagram,
+                facebook: source.facebook || mockG.facebook,
+                tiktok: source.tiktok || mockG.tiktok,
                 telefono_contacto: source.telefono_contacto || mockG.telefono_contacto,
                 licencia_intur: source.licencia_intur || mockG.licencia_intur,
                 idiomas: source.idiomas || mockG.idiomas,
@@ -1210,7 +1222,74 @@ export default function GuiasPage() {
                           style={styles.whatsappBtnSlim}
                           title="Contactar por WhatsApp"
                         >
-                          <Icon name="whatsapp" size={16} color="#FFFFFF" />
+                          <Icon name="whatsapp" size={15} color="#FFFFFF" />
+                        </a>
+                      )}
+
+                      {guia.instagram && (
+                        <a
+                          href={formatSocialUrl("instagram", guia.instagram)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "32px",
+                            height: "32px",
+                            borderRadius: "9px",
+                            background: "linear-gradient(135deg, #E1306C 0%, #C13584 100%)",
+                            color: "#FFFFFF",
+                            textDecoration: "none"
+                          }}
+                          title={`Instagram: ${guia.instagram}`}
+                        >
+                          <Icon name="instagram" size={15} color="#FFFFFF" />
+                        </a>
+                      )}
+
+                      {guia.facebook && (
+                        <a
+                          href={formatSocialUrl("facebook", guia.facebook)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "32px",
+                            height: "32px",
+                            borderRadius: "9px",
+                            background: "#1877F2",
+                            color: "#FFFFFF",
+                            textDecoration: "none"
+                          }}
+                          title="Facebook"
+                        >
+                          <Icon name="facebook" size={15} color="#FFFFFF" />
+                        </a>
+                      )}
+
+                      {guia.tiktok && (
+                        <a
+                          href={formatSocialUrl("tiktok", guia.tiktok)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "32px",
+                            height: "32px",
+                            borderRadius: "9px",
+                            background: "#000000",
+                            border: "1px solid rgba(255,255,255,0.2)",
+                            color: "#FFFFFF",
+                            textDecoration: "none"
+                          }}
+                          title="TikTok"
+                        >
+                          <Icon name="tiktok" size={15} color="#FFFFFF" />
                         </a>
                       )}
 
@@ -1422,28 +1501,81 @@ export default function GuiasPage() {
                     </div>
                   )}
 
-                  <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "16px" }}>
                     {selectedGuiaModal.whatsapp && (
                       <a
                         href={`https://wa.me/${selectedGuiaModal.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${selectedGuiaModal.nombre_completo}! Te encontré en Plataforma Atlan y me gustaría consultar disponibilidad para contratar un tour.`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ ...styles.modalWhatsappBanner, flex: 1, minWidth: "220px" }}
+                        style={{ ...styles.modalWhatsappBanner, flex: 1, minWidth: "200px" }}
                       >
-                        <Icon name="whatsapp" size={20} color="#FFFFFF" />
+                        <Icon name="whatsapp" size={18} color="#FFFFFF" />
                         <span>{lang === "en" ? "Contact via WhatsApp" : lang === "zh" ? "WhatsApp 咨询" : "Contactar por WhatsApp"}</span>
                       </a>
                     )}
 
                     {selectedGuiaModal.instagram && (
                       <a
-                        href={selectedGuiaModal.instagram.startsWith("http") ? selectedGuiaModal.instagram : `https://instagram.com/${selectedGuiaModal.instagram.replace('@', '')}`}
+                        href={formatSocialUrl("instagram", selectedGuiaModal.instagram)}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={styles.modalInstagramBanner}
                       >
-                        <Icon name="instagram" size={20} color="#FFFFFF" />
+                        <Icon name="instagram" size={18} color="#FFFFFF" />
                         <span>{selectedGuiaModal.instagram}</span>
+                      </a>
+                    )}
+
+                    {selectedGuiaModal.facebook && (
+                      <a
+                        href={formatSocialUrl("facebook", selectedGuiaModal.facebook)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          background: "#1877F2",
+                          color: "#FFFFFF",
+                          padding: "12px 18px",
+                          borderRadius: "14px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "8px",
+                          fontWeight: "800",
+                          fontSize: "13.5px",
+                          textDecoration: "none",
+                          boxShadow: "0 6px 20px rgba(24, 119, 242, 0.3)",
+                          transition: "all 0.2s ease"
+                        }}
+                      >
+                        <Icon name="facebook" size={18} color="#FFFFFF" />
+                        <span>Facebook</span>
+                      </a>
+                    )}
+
+                    {selectedGuiaModal.tiktok && (
+                      <a
+                        href={formatSocialUrl("tiktok", selectedGuiaModal.tiktok)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          background: "#000000",
+                          color: "#FFFFFF",
+                          padding: "12px 18px",
+                          borderRadius: "14px",
+                          border: "1px solid rgba(255,255,255,0.2)",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "8px",
+                          fontWeight: "800",
+                          fontSize: "13.5px",
+                          textDecoration: "none",
+                          boxShadow: "0 6px 20px rgba(0, 0, 0, 0.4)",
+                          transition: "all 0.2s ease"
+                        }}
+                      >
+                        <Icon name="tiktok" size={18} color="#FFFFFF" />
+                        <span>TikTok</span>
                       </a>
                     )}
                   </div>

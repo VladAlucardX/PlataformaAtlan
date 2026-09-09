@@ -231,6 +231,8 @@ export default function PerfilGuiaPage() {
   const [guiaBiografia, setGuiaBiografia] = useState("");
   const [guiaWhatsapp, setGuiaWhatsapp] = useState("");
   const [guiaInstagram, setGuiaInstagram] = useState("");
+  const [guiaFacebook, setGuiaFacebook] = useState("");
+  const [guiaTiktok, setGuiaTiktok] = useState("");
   const [guiaLicencia, setGuiaLicencia] = useState("");
   const [guiaGaleria, setGuiaGaleria] = useState([]);
   const [guiaDestinosMapa, setGuiaDestinosMapa] = useState([]);
@@ -311,6 +313,8 @@ export default function PerfilGuiaPage() {
           if (activeData.biografia !== undefined) setGuiaBiografia(activeData.biografia);
           if (activeData.whatsapp || activeData.telefono_contacto) setGuiaWhatsapp(activeData.whatsapp || activeData.telefono_contacto);
           if (activeData.instagram) setGuiaInstagram(activeData.instagram);
+          if (activeData.facebook) setGuiaFacebook(activeData.facebook);
+          if (activeData.tiktok) setGuiaTiktok(activeData.tiktok);
           if (activeData.licencia_intur) setGuiaLicencia(activeData.licencia_intur);
           if (activeData.galeria_fotos) setGuiaGaleria(activeData.galeria_fotos);
           if (activeData.destinos_mapa) setGuiaDestinosMapa(activeData.destinos_mapa);
@@ -441,6 +445,8 @@ export default function PerfilGuiaPage() {
       telefono_contacto: guiaWhatsapp,
       whatsapp: guiaWhatsapp,
       instagram: guiaInstagram,
+      facebook: guiaFacebook,
+      tiktok: guiaTiktok,
       licencia_intur: guiaLicencia,
       galeria_fotos: guiaGaleria,
       destinos_mapa: guiaDestinosMapa,
@@ -1111,6 +1117,66 @@ export default function PerfilGuiaPage() {
                           outline: "none"
                         }}
                       />
+                    </div>
+                  </div>
+
+                  {/* SECCIÓN DE REDES SOCIALES (INSTAGRAM, FACEBOOK, TIKTOK) */}
+                  <div style={{
+                    background: "linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.85) 100%)",
+                    border: "1.5px solid rgba(226, 232, 240, 0.8)",
+                    borderLeft: "3.5px solid #E1306C",
+                    borderRadius: "10px",
+                    padding: "10px 12px",
+                    marginBottom: "12px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.03)"
+                  }}>
+                    <label style={{ fontSize: "12px", fontWeight: "850", color: "#0F172A", display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                      <Icon name="globe" size={14} color="#E1306C" />
+                      <span>{lang === "en" ? "Social Media Profiles" : lang === "zh" ? "社交媒体" : "Redes Sociales (Instagram, Facebook, TikTok)"}</span>
+                    </label>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "8px" }}>
+                      {/* Instagram */}
+                      <div style={{ background: "#FFFFFF", padding: "6px 9px", borderRadius: "8px", border: "1px solid #E2E8F0" }}>
+                        <span style={{ fontSize: "11px", fontWeight: "800", color: "#E1306C", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
+                          <Icon name="instagram" size={12} color="#E1306C" /> Instagram
+                        </span>
+                        <input
+                          type="text"
+                          value={guiaInstagram}
+                          onChange={(e) => setGuiaInstagram(e.target.value)}
+                          placeholder="@mi_guia_instagram"
+                          style={{ width: "100%", border: "none", outline: "none", fontSize: "12px", color: "#1E293B", fontWeight: "600" }}
+                        />
+                      </div>
+
+                      {/* Facebook */}
+                      <div style={{ background: "#FFFFFF", padding: "6px 9px", borderRadius: "8px", border: "1px solid #E2E8F0" }}>
+                        <span style={{ fontSize: "11px", fontWeight: "800", color="#1877F2", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
+                          <Icon name="facebook" size={12} color="#1877F2" /> Facebook
+                        </span>
+                        <input
+                          type="text"
+                          value={guiaFacebook}
+                          onChange={(e) => setGuiaFacebook(e.target.value)}
+                          placeholder="facebook.com/pagina"
+                          style={{ width: "100%", border: "none", outline: "none", fontSize: "12px", color: "#1E293B", fontWeight: "600" }}
+                        />
+                      </div>
+
+                      {/* TikTok */}
+                      <div style={{ background: "#FFFFFF", padding: "6px 9px", borderRadius: "8px", border: "1px solid #E2E8F0" }}>
+                        <span style={{ fontSize: "11px", fontWeight: "800", color="#000000", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
+                          <Icon name="tiktok" size={12} color="#000000" /> TikTok
+                        </span>
+                        <input
+                          type="text"
+                          value={guiaTiktok}
+                          onChange={(e) => setGuiaTiktok(e.target.value)}
+                          placeholder="@mi_guia_tiktok"
+                          style={{ width: "100%", border: "none", outline: "none", fontSize: "12px", color: "#1E293B", fontWeight: "600" }}
+                        />
+                      </div>
                     </div>
                   </div>
 
