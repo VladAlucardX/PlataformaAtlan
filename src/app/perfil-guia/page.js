@@ -719,22 +719,23 @@ export default function PerfilGuiaPage() {
           </div>
         </div>
 
-        {/* ALERTA DE ÉXITO */}
+        {/* ALERTA DE ÉXITO CON ALTO CONTRASTE */}
         {saveSuccessAlert && (
           <div style={{
-            background: "rgba(16, 185, 129, 0.15)",
-            border: "1.5px solid #10B981",
-            color: "#10B981",
-            padding: "6px 12px",
-            borderRadius: "8px",
+            background: "linear-gradient(135deg, #064E3B 0%, #047857 100%)",
+            border: "1.5px solid #34D399",
+            color: "#FFFFFF",
+            padding: "10px 16px",
+            borderRadius: "10px",
             display: "flex",
             alignItems: "center",
-            gap: "6px",
-            fontSize: "11.5px",
-            fontWeight: "800",
+            gap: "8px",
+            fontSize: "13px",
+            fontWeight: "850",
+            boxShadow: "0 6px 20px rgba(6, 78, 59, 0.4)",
             flexShrink: 0
           }}>
-            <Icon name="checkCircle" size={14} color="#10B981" />
+            <Icon name="checkCircle" size={18} color="#34D399" />
             <span>{lang === "en" ? "Tourist guide profile saved and updated successfully!" : lang === "zh" ? "导游资料已成功保存并更新！" : "¡Perfil de Guía Turístico guardado y actualizado con éxito!"}</span>
           </div>
         )}
