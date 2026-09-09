@@ -102,8 +102,8 @@ const MOCK_GUIAS = [
     telefono_contacto: "+505 8765 4321",
     whatsapp: "50587654321",
     instagram: "@maria_granada_heritage",
-    facebook: "maria.granada.heritage",
-    tiktok: "@maria_granada_heritage",
+    facebook: "",
+    tiktok: "",
     licencia_intur: "INTUR-GR-2016-512",
     rating_promedio: 5.0,
     total_resenas: 42,
@@ -179,8 +179,8 @@ const MOCK_GUIAS = [
     telefono_contacto: "+505 8812 3456",
     whatsapp: "50588123456",
     instagram: "@ometepe_ecotours",
-    facebook: "ometepe.ecotours",
-    tiktok: "@ometepe_ecotours",
+    facebook: "",
+    tiktok: "",
     licencia_intur: "INTUR-RI-2020-304",
     rating_promedio: 4.9,
     total_resenas: 29,
@@ -257,8 +257,8 @@ const MOCK_GUIAS = [
     telefono_contacto: "+505 8800 0001",
     whatsapp: "50588000001",
     instagram: "@beatriz_birds_test",
-    facebook: "beatriz.birds.matagalpa",
-    tiktok: "@beatriz_birds_test",
+    facebook: "",
+    tiktok: "",
     licencia_intur: "INTUR-MT-2017-819",
     rating_promedio: 4.9,
     total_resenas: 18,
@@ -286,8 +286,8 @@ const MOCK_GUIAS = [
     telefono_contacto: "+505 8800 0002",
     whatsapp: "50588000002",
     instagram: "@gabriel_masaya_test",
-    facebook: "gabriel.masaya.tours",
-    tiktok: "@gabriel_masaya_test",
+    facebook: "",
+    tiktok: "",
     licencia_intur: "INTUR-MS-2020-411",
     rating_promedio: 4.8,
     total_resenas: 15,
@@ -315,8 +315,8 @@ const MOCK_GUIAS = [
     telefono_contacto: "+505 8800 0003",
     whatsapp: "50588000003",
     instagram: "@valeria_volcano_test",
-    facebook: "valeria.volcano.chinandega",
-    tiktok: "@valeria_volcano_test",
+    facebook: "",
+    tiktok: "",
     licencia_intur: "INTUR-CH-2019-105",
     rating_promedio: 5.0,
     total_resenas: 22,
@@ -375,6 +375,9 @@ const formatSocialUrl = (type, val) => {
   if (!val || typeof val !== "string" || val.trim() === "") return "#";
   const clean = val.trim();
   if (clean.startsWith("http://") || clean.startsWith("https://")) return clean;
+  if (clean.startsWith("www.") || clean.includes("facebook.com") || clean.includes("tiktok.com") || clean.includes("instagram.com") || clean.includes(".com") || clean.includes("/")) {
+    return `https://${clean.replace(/^https?:\/\//, '')}`;
+  }
   if (type === "instagram") return `https://instagram.com/${clean.replace(/^@/, '')}`;
   if (type === "facebook") return `https://facebook.com/${clean.replace(/^@/, '')}`;
   if (type === "tiktok") return `https://tiktok.com/@${clean.replace(/^@/, '')}`;
