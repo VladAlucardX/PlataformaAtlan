@@ -35,3 +35,10 @@ ON public.guias_turisticos FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Permitir a guias actualizar su propio perfil" ON public.guias_turisticos;
 CREATE POLICY "Permitir a guias actualizar su propio perfil" 
 ON public.guias_turisticos FOR ALL USING (auth.uid() = id);
+
+-- Agregar columnas de redes sociales si la tabla ya existía previamente
+ALTER TABLE public.guias_turisticos ADD COLUMN IF NOT EXISTS facebook TEXT;
+ALTER TABLE public.guias_turisticos ADD COLUMN IF NOT EXISTS tiktok TEXT;
+
+-- Recargar caché de esquema del servidor API PostgREST
+NOTIFY pgrst, 'reload schema';
