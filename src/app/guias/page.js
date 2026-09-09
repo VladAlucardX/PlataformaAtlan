@@ -381,6 +381,8 @@ const formatSocialUrl = (type, val) => {
   return clean;
 };
 
+const hasVal = (v) => v && typeof v === "string" && v.trim() !== "" && v.trim() !== "#";
+
 export default function GuiasPage() {
   const { lang } = useTranslation();
   const { session, perfil } = useAuth();
@@ -481,10 +483,10 @@ export default function GuiasPage() {
                 tarifa_aprox: cleanTarifa(source.tarifa_aprox, mockG.tarifa_aprox || "$30 - $50 / día"),
                 experiencia_anios: source.experiencia_anios || mockG.experiencia_anios,
                 biografia: source.biografia || mockG.biografia,
-                whatsapp: source.whatsapp || mockG.whatsapp,
-                instagram: source.instagram || mockG.instagram,
-                facebook: source.facebook || mockG.facebook,
-                tiktok: source.tiktok || mockG.tiktok,
+                whatsapp: source.whatsapp !== undefined && source.whatsapp !== null ? source.whatsapp : mockG.whatsapp,
+                instagram: source.instagram !== undefined && source.instagram !== null ? source.instagram : mockG.instagram,
+                facebook: source.facebook !== undefined && source.facebook !== null ? source.facebook : mockG.facebook,
+                tiktok: source.tiktok !== undefined && source.tiktok !== null ? source.tiktok : mockG.tiktok,
                 telefono_contacto: source.telefono_contacto || mockG.telefono_contacto,
                 licencia_intur: source.licencia_intur || mockG.licencia_intur,
                 idiomas: source.idiomas || mockG.idiomas,
@@ -524,10 +526,10 @@ export default function GuiasPage() {
                   tarifa_aprox: cleanTarifa(rawSaved.tarifa_aprox, mockG.tarifa_aprox || "$30 - $50 / día"),
                   experiencia_anios: rawSaved.experiencia_anios || mockG.experiencia_anios,
                   biografia: rawSaved.biografia || mockG.biografia,
-                  whatsapp: rawSaved.whatsapp || mockG.whatsapp,
-                  instagram: rawSaved.instagram || mockG.instagram,
-                  facebook: rawSaved.facebook || mockG.facebook,
-                  tiktok: rawSaved.tiktok || mockG.tiktok,
+                  whatsapp: rawSaved.whatsapp !== undefined && rawSaved.whatsapp !== null ? rawSaved.whatsapp : mockG.whatsapp,
+                  instagram: rawSaved.instagram !== undefined && rawSaved.instagram !== null ? rawSaved.instagram : mockG.instagram,
+                  facebook: rawSaved.facebook !== undefined && rawSaved.facebook !== null ? rawSaved.facebook : mockG.facebook,
+                  tiktok: rawSaved.tiktok !== undefined && rawSaved.tiktok !== null ? rawSaved.tiktok : mockG.tiktok,
                   telefono_contacto: rawSaved.telefono_contacto || mockG.telefono_contacto,
                   licencia_intur: rawSaved.licencia_intur || mockG.licencia_intur,
                   idiomas: rawSaved.idiomas || mockG.idiomas,
@@ -1235,7 +1237,7 @@ export default function GuiasPage() {
                     </div>
 
                     <div style={styles.actionButtonsGroupSlim}>
-                      {guia.whatsapp && (
+                      {hasVal(guia.whatsapp) && (
                         <a
                           href={`https://wa.me/${guia.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${guia.nombre_completo}! Te vi en Plataforma Atlan y me gustaría consultar tu disponibilidad para un tour en ${guia.departamento_principal}.`)}`}
                           target="_blank"
@@ -1247,7 +1249,7 @@ export default function GuiasPage() {
                         </a>
                       )}
 
-                      {guia.instagram && (
+                      {hasVal(guia.instagram) && (
                         <a
                           href={formatSocialUrl("instagram", guia.instagram)}
                           target="_blank"
@@ -1269,7 +1271,7 @@ export default function GuiasPage() {
                         </a>
                       )}
 
-                      {guia.facebook && (
+                      {hasVal(guia.facebook) && (
                         <a
                           href={formatSocialUrl("facebook", guia.facebook)}
                           target="_blank"
@@ -1291,7 +1293,7 @@ export default function GuiasPage() {
                         </a>
                       )}
 
-                      {guia.tiktok && (
+                      {hasVal(guia.tiktok) && (
                         <a
                           href={formatSocialUrl("tiktok", guia.tiktok)}
                           target="_blank"
@@ -1523,7 +1525,7 @@ export default function GuiasPage() {
                   )}
 
                   <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "16px" }}>
-                    {selectedGuiaModal.whatsapp && (
+                    {hasVal(selectedGuiaModal.whatsapp) && (
                       <a
                         href={`https://wa.me/${selectedGuiaModal.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${selectedGuiaModal.nombre_completo}! Te encontré en Plataforma Atlan y me gustaría consultar disponibilidad para contratar un tour.`)}`}
                         target="_blank"
@@ -1535,7 +1537,7 @@ export default function GuiasPage() {
                       </a>
                     )}
 
-                    {selectedGuiaModal.instagram && (
+                    {hasVal(selectedGuiaModal.instagram) && (
                       <a
                         href={formatSocialUrl("instagram", selectedGuiaModal.instagram)}
                         target="_blank"
@@ -1547,7 +1549,7 @@ export default function GuiasPage() {
                       </a>
                     )}
 
-                    {selectedGuiaModal.facebook && (
+                    {hasVal(selectedGuiaModal.facebook) && (
                       <a
                         href={formatSocialUrl("facebook", selectedGuiaModal.facebook)}
                         target="_blank"
@@ -1573,7 +1575,7 @@ export default function GuiasPage() {
                       </a>
                     )}
 
-                    {selectedGuiaModal.tiktok && (
+                    {hasVal(selectedGuiaModal.tiktok) && (
                       <a
                         href={formatSocialUrl("tiktok", selectedGuiaModal.tiktok)}
                         target="_blank"
