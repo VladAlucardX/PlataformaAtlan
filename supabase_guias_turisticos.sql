@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS public.guias_turisticos (
     telefono_contacto TEXT,
     whatsapp TEXT,
     instagram TEXT,
+    facebook TEXT,
+    tiktok TEXT,
     licencia_intur TEXT,
     galeria_fotos JSONB DEFAULT '[]'::jsonb,
     destinos_mapa JSONB DEFAULT '[]'::jsonb,
