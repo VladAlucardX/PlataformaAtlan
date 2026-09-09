@@ -298,13 +298,16 @@ export default function PerfilGuiaPage() {
           if (rawLocal) savedLocal = JSON.parse(rawLocal);
         } catch (e) {}
 
+        const rawDestinos = (gData && gData.destinos_mapa) ? gData.destinos_mapa : (savedLocal && savedLocal.destinos_mapa ? savedLocal.destinos_mapa : []);
+        const socialMeta = rawDestinos.find(d => d && d._atlan_type === "social_meta") || {};
+
         const activeData = (gData || savedLocal) ? {
           ...savedLocal,
           ...gData,
-          facebook: gData ? (gData.facebook || "") : (savedLocal ? (savedLocal.facebook || "") : ""),
-          tiktok: gData ? (gData.tiktok || "") : (savedLocal ? (savedLocal.tiktok || "") : ""),
-          instagram: gData ? (gData.instagram || "") : (savedLocal ? (savedLocal.instagram || "") : ""),
-          whatsapp: gData ? (gData.whatsapp || gData.telefono_contacto || "") : (savedLocal ? (savedLocal.whatsapp || savedLocal.telefono_contacto || "") : "")
+          facebook: gData ? (gData.facebook || socialMeta.facebook || "") : (savedLocal ? (savedLocal.facebook || socialMeta.facebook || "") : ""),
+          tiktok: gData ? (gData.tiktok || socialMeta.tiktok || "") : (savedLocal ? (savedLocal.tiktok || socialMeta.tiktok || "") : ""),
+          instagram: gData ? (gData.instagram || socialMeta.instagram || "") : (savedLocal ? (savedLocal.instagram || socialMeta.instagram || "") : ""),
+          whatsapp: gData ? (gData.whatsapp || gData.telefono_contacto || socialMeta.whatsapp || "") : (savedLocal ? (savedLocal.whatsapp || savedLocal.telefono_contacto || socialMeta.whatsapp || "") : "")
         } : null;
 
         if (activeData) {
@@ -324,7 +327,10 @@ export default function PerfilGuiaPage() {
           setGuiaTiktok(activeData.tiktok || "");
           if (activeData.licencia_intur) setGuiaLicencia(activeData.licencia_intur);
           if (activeData.galeria_fotos) setGuiaGaleria(activeData.galeria_fotos);
-          if (activeData.destinos_mapa) setGuiaDestinosMapa(activeData.destinos_mapa);
+          if (activeData.destinos_mapa) {
+            const cleanDestinos = (activeData.destinos_mapa || []).filter(d => d && d._atlan_type !== "social_meta");
+            setGuiaDestinosMapa(cleanDestinos);
+          }
         } else {
           // Prepopulado inicial si coincide con guía de prueba (ej: Carlos Mendoza Silva)
           const nameLower = (perfilData?.nombre_completo || currentUser.user_metadata?.nombre_completo || "").toLowerCase();
@@ -439,6 +445,19 @@ export default function PerfilGuiaPage() {
     setSavingGuia(true);
     setSaveSuccessAlert(false);
 
+    const socialMeta = {
+      _atlan_type: "social_meta",
+      facebook: guiaFacebook || "",
+      tiktok: guiaTiktok || "",
+      instagram: guiaInstagram || "",
+      whatsapp: guiaWhatsapp || ""
+    };
+
+    const updatedDestinos = [
+      ...(guiaDestinosMapa || []).filter(d => d && d._atlan_type !== "social_meta"),
+      socialMeta
+    ];
+
     const profilePayload = {
       id: user.id,
       nombre_completo: perfil?.nombre_completo || user.user_metadata?.nombre_completo || "Carlos Mendoza Silva",
@@ -452,23 +471,22 @@ export default function PerfilGuiaPage() {
       telefono_contacto: guiaWhatsapp,
       whatsapp: guiaWhatsapp,
       instagram: guiaInstagram,
-      facebook: guiaFacebook,
-      tiktok: guiaTiktok,
       licencia_intur: guiaLicencia,
       galeria_fotos: guiaGaleria,
-      destinos_mapa: guiaDestinosMapa,
+      destinos_mapa: updatedDestinos,
       activo: true,
       updated_at: new Date().toISOString()
     };
 
-    // Guardar en LocalStorage para persistencia inmediata incluso con F5
+    // Guardar en LocalStorage para redundancia inmediata
     try {
-      localStorage.setItem("atlan_guia_profile_global", JSON.stringify(profilePayload));
-      localStorage.setItem("atlan_guia_profile_" + user.id, JSON.stringify(profilePayload));
+      const localPayload = { ...profilePayload, facebook: guiaFacebook, tiktok: guiaTiktok };
+      localStorage.setItem("atlan_guia_profile_global", JSON.stringify(localPayload));
+      localStorage.setItem("atlan_guia_profile_" + user.id, JSON.stringify(localPayload));
     } catch (err) {}
 
     try {
-      // 1. Actualizar perfil principal en 'perfiles' (solo campos existentes en la tabla perfiles)
+      // 1. Actualizar perfil principal en 'perfiles'
       const { error: pError } = await supabase.from("perfiles").upsert({
         id: user.id,
         nombre_completo: perfil?.nombre_completo || user.user_metadata?.nombre_completo || "Carlos Mendoza Silva",
@@ -478,14 +496,10 @@ export default function PerfilGuiaPage() {
         console.warn("Perfiles upsert notice:", pError.message);
       }
 
+      // 2. Guardar en guias_turisticos en Supabase
       let { error } = await supabase.from("guias_turisticos").upsert(profilePayload);
       if (error) {
-        // Respaldar guardando payload base si la BD remota aún no ha refrescado las columnas extendidas
-        const { facebook, tiktok, ...corePayload } = profilePayload;
-        const { error: retryError } = await supabase.from("guias_turisticos").upsert(corePayload);
-        if (retryError) {
-          console.warn("Aviso al guardar en guias_turisticos:", retryError.message);
-        }
+        console.error("Error al guardar en guias_turisticos:", error.message || error);
       }
 
       setSaveSuccessAlert(true);
