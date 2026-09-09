@@ -381,7 +381,7 @@ export default function MasDeNicaraguaPage() {
       <div style={{ position: "relative", zIndex: 1 }}>
         <Navbar activePage="mas-de-nicaragua" />
 
-        <main style={{
+        <main className="mdn-main" style={{
         maxWidth: "1310px",
         width: "100%",
         margin: "0 auto",
@@ -405,7 +405,7 @@ export default function MasDeNicaraguaPage() {
             overflow: "hidden"
           }}>
             {/* Header Elegante y Compacto de 1 Sola Fila */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
+            <div className="mdn-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <div style={{
                   background: "rgba(10, 25, 47, 0.95)",
@@ -422,7 +422,7 @@ export default function MasDeNicaraguaPage() {
                     {tr("Nicaragua Viva", "Vibrant Nicaragua", "生机勃勃的尼加拉瓜")}
                   </span>
                 </div>
-                <span style={{ fontSize: "17.5px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "0.4px" }}>
+                <span className="mdn-header-title" style={{ fontSize: "17.5px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "0.4px" }}>
                   {tr("Conoce más sobre los Departamentos de", "Learn more about the Departments of", "深入探索省份 —")}{" "}
                   <span style={{
                     fontSize: "18.5px",
@@ -440,7 +440,7 @@ export default function MasDeNicaraguaPage() {
               </div>
 
               {/* Filtros Rápidos de Regiones con Estilo Neón */}
-              <div style={{ display: "flex", gap: "6px" }}>
+              <div className="mdn-region-filters" style={{ display: "flex", gap: "6px" }}>
                 {[
                   { id: "Todos", label: tr("Todos", "All", "全部"), center: [-85.10, 12.90], zoom: 4.40 },
                   { id: "Pacífico", label: tr("Pacífico", "Pacific", "太平洋区"), icon: "waves", center: [-86.3, 12.25], zoom: 5.20 },
@@ -482,7 +482,7 @@ export default function MasDeNicaraguaPage() {
             </div>
 
             {/* Contenedor del Mapa Protagonista Maximizado */}
-            <div style={{ position: "relative", width: "100%", height: "clamp(530px, 75vh, 670px)", borderRadius: "18px", overflow: "hidden" }}>
+            <div className="mdn-map-container" style={{ position: "relative", width: "100%", height: "clamp(530px, 75vh, 670px)", borderRadius: "18px", overflow: "hidden" }}>
               <div ref={mapContainerRef} style={{ width: "100%", height: "100%", borderRadius: "18px", overflow: "hidden" }} />
 
               {/* Insignia Flotante Estática del Departamento Bajo el Cursor (sin mover la cabecera) */}

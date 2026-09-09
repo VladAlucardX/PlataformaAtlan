@@ -505,7 +505,7 @@ export default function PerfilGuiaPage() {
   }
 
   return (
-    <div style={{
+    <div className="perfil-guia-wrapper" style={{
       height: "100vh",
       maxHeight: "100vh",
       background: "url('/images/Frame 5.png') center/cover no-repeat fixed, #F8FAFC",
@@ -519,7 +519,7 @@ export default function PerfilGuiaPage() {
       <Navbar activePage="guias" session={session} perfil={perfil} />
 
       {/* CONTENEDOR PRINCIPAL CERO SCROLL (100% SINGLE VIEWPORT) */}
-      <div style={{
+      <div className="perfil-guia-main" style={{
         flex: 1,
         maxWidth: "1400px",
         width: "100%",
@@ -533,7 +533,7 @@ export default function PerfilGuiaPage() {
       }}>
         
         {/* BANNER + PESTAÑAS INTEGRADAS EN UNA SOLA BARRA COMPACTA */}
-        <div style={{
+        <div className="perfil-guia-banner" style={{
           background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
           borderRadius: "14px",
           padding: "8px 14px",
@@ -574,7 +574,7 @@ export default function PerfilGuiaPage() {
           </div>
 
           {/* CENTRO: PESTAÑAS DENTRO DEL BANNER */}
-          <div style={{
+          <div className="perfil-guia-tabs" style={{
             display: "flex",
             alignItems: "center",
             gap: "4px",
@@ -671,7 +671,7 @@ export default function PerfilGuiaPage() {
           </div>
 
           {/* LADO DERECHO: ENLACES RÁPIDOS */}
-          <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
+          <div className="perfil-guia-links" style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
             <Link
               href="/guias"
               style={{
@@ -744,7 +744,7 @@ export default function PerfilGuiaPage() {
         )}
 
         {/* CONTENEDOR DE 2 COLUMNAS (ALTO EXACTO PARA FITEAR EN 1 SCREEN SIN SCROLL) */}
-        <div style={{
+        <div className="perfil-guia-grid" style={{
           flex: 1,
           minHeight: 0,
           display: "grid",
@@ -753,7 +753,7 @@ export default function PerfilGuiaPage() {
           alignItems: "stretch"
         }}>
           {/* COLUMNA IZQUIERDA: TARJETA RESUMEN GUÍA */}
-          <div style={{
+          <div className="perfil-guia-sidebar" style={{
             background: "rgba(255, 255, 255, 0.94)",
             backdropFilter: "blur(10px)",
             borderRadius: "14px",

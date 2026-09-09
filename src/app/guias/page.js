@@ -774,25 +774,28 @@ export default function GuiasPage() {
       <img
         src="/images/guardabarranco.svg"
         alt=""
+        className="guias-bg-svg"
         style={styles.bgSvgGuardabarranco}
       />
       <img
         src="/images/tortuga.svg"
         alt=""
+        className="guias-bg-svg"
         style={styles.bgSvgTortuga}
       />
       <img
         src="/images/gueguense.svg"
         alt=""
+        className="guias-bg-svg"
         style={styles.bgSvgGueguense}
       />
 
       {/* HERO BANNER DE DISEÑO MODERNO Y ELEGANTE */}
-      <section style={styles.heroSectionCompact}>
+      <section style={styles.heroSectionCompact} className="guias-hero">
         <div style={styles.heroGlowLeft} />
 
         <div style={styles.heroContentWide}>
-          <h1 style={styles.heroTitleMain}>
+          <h1 style={styles.heroTitleMain} className="guias-hero-title">
             {lang === "en" ? (
               <>
                 <span style={styles.whiteTextWithShadow}>Explore</span>{" "}
@@ -822,13 +825,13 @@ export default function GuiasPage() {
       </section>
 
       {/* FILTROS Y CONTENEDOR ANCHO */}
-      <main style={styles.mainContainerWide}>
+      <main style={styles.mainContainerWide} className="guias-main">
         {/* BARRA DE FILTROS ULTRA COMPACTA (1 FILA PRINCIPAL + DESPLEGABLE DE FILTROS AVANZADOS) */}
         <div style={styles.filterPanelProfessional}>
           {/* Fila Principal Unificada y Compacta */}
-          <div style={styles.filterRow1}>
+          <div style={styles.filterRow1} className="guias-filter-row">
             {/* 1. Buscador Slim */}
-            <div style={styles.searchBoxSlim}>
+            <div style={styles.searchBoxSlim} className="guias-search-box">
               <Icon name="search" size={16} color="#0EA5E9" />
               <input
                 type="text"
@@ -917,7 +920,7 @@ export default function GuiasPage() {
           {/* DESPLEGABLE DE FILTROS AVANZADOS (IDIOMAS MÚLTIPLES, PRECIO E INTUR) */}
           {showAdvancedFilters && (
             <div style={styles.advancedFiltersDropdownContainer}>
-              <div style={styles.dualFiltersRow}>
+              <div style={styles.dualFiltersRow} className="guias-adv-filters">
                 {/* Idioma Múltiple */}
                 <div style={{ flex: 1, minWidth: "220px" }}>
                   <span style={styles.filterSectionTitleSlim}>
@@ -996,7 +999,7 @@ export default function GuiasPage() {
 
           {/* CHIPS DE FILTROS ACTIVOS CON BOTÓN PARA ELIMINAR INDIVIDUALMENTE */}
           {hasActiveFilters && (
-            <div style={styles.activeFiltersRow}>
+            <div style={styles.activeFiltersRow} className="guias-active-filters">
               <span style={styles.activeFiltersLabel}>{lang === "en" ? "Active Filters:" : lang === "zh" ? "当前筛选：" : "Filtros Activos:"}</span>
 
               {selectedDept !== "Todos" && (
@@ -1062,7 +1065,7 @@ export default function GuiasPage() {
         </div>
 
         {/* CONTADOR DE RESULTADOS Y CABECERA CON PAGINACIÓN INTEGRADA */}
-        <div style={styles.resultsHeaderGlass}>
+        <div style={styles.resultsHeaderGlass} className="guias-results-header">
           <div style={styles.resultsTitleLeft}>
             <div style={styles.headerIconBox}>
               <Icon name="compass" size={15} color="#38BDF8" />
@@ -1174,12 +1177,12 @@ export default function GuiasPage() {
             </p>
           </div>
         ) : (
-          <div style={styles.guidesGridWide}>
+          <div style={styles.guidesGridWide} className="guias-grid">
             {paginatedGuias.map((guia) => (
               <div
                 key={guia.id}
                 style={styles.guideCardGlass}
-                className="guide-card-hover"
+                className="guide-card-hover guias-card"
               >
                 {/* Columna Izquierda: Información de Guía */}
                 <div style={styles.guideCardMainInfo}>
@@ -1342,6 +1345,7 @@ export default function GuiasPage() {
                 {/* Columna Derecha: Portada Rectangular de Travesía */}
                 {guia.galeria_fotos && guia.galeria_fotos.length > 0 && (
                   <div
+                    className="guias-card-cover"
                     style={styles.coverPhotoBoxRight}
                     onClick={() => {
                       setSelectedGuiaModal(guia);
@@ -1368,13 +1372,14 @@ export default function GuiasPage() {
 
       {/* MODAL EXTENDIDO DEL GUÍA COMPLETO A LO ANCHO Y 100% UNIFORME */}
       {selectedGuiaModal && (
-        <div style={styles.modalOverlay} onClick={() => setSelectedGuiaModal(null)}>
+        <div style={styles.modalOverlay} className="guias-modal-overlay" onClick={() => setSelectedGuiaModal(null)}>
           <div
+            className="guias-modal-card"
             style={styles.modalCardWide}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Cabecera Unificada de Perfil con Banner Integro */}
-            <div style={styles.modalHeaderCard}>
+            <div style={styles.modalHeaderCard} className="guias-modal-header">
               <button
                 onClick={() => setSelectedGuiaModal(null)}
                 style={styles.closeModalBtn}
@@ -1387,6 +1392,7 @@ export default function GuiasPage() {
                 <img
                   src={selectedGuiaModal.avatar_url}
                   alt={selectedGuiaModal.nombre_completo}
+                  className="guias-modal-avatar"
                   style={styles.modalAvatarWide}
                 />
                 <div style={styles.modalAvatarBadgeVerified} title="Guía INTUR Certificado">

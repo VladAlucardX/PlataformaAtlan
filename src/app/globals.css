@@ -3070,13 +3070,489 @@ html body .mapboxgl-ctrl-directions tr {
     grid-template-columns: 1fr !important;
     gap: 8px !important;
   }
-  .register-card {
-    padding: 20px 18px !important;
-    max-width: 100% !important;
-  }
 }
 
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE MÓVIL GLOBAL — ≤768px (Samsung Galaxy S24 Ultra ~412px, phones)
+   Solo override de estilos inline con !important. No se toca nada del web.
+   ═══════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── GUÍAS TURÍSTICOS ─────────────────────────────────────────────────────── */
+
+  .guias-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .guias-card {
+    flex-direction: column !important;
+    padding: 12px !important;
+  }
+
+  .guias-card-cover {
+    display: none !important;
+  }
+
+  .guias-filter-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+
+  .guias-filter-row > * {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .guias-search-box {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .guias-results-header {
+    flex-direction: column !important;
+    gap: 10px !important;
+    align-items: flex-start !important;
+  }
+
+  .guias-results-header > div:last-child {
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+  }
+
+  .guias-hero {
+    padding: 20px 16px 14px !important;
+    min-height: auto !important;
+  }
+
+  .guias-hero-title {
+    font-size: 20px !important;
+    line-height: 1.3 !important;
+    text-align: center !important;
+  }
+
+  .guias-main {
+    padding: 8px 12px 10px !important;
+  }
+
+  .guias-modal-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+  }
+
+  .guias-modal-overlay {
+    padding: 0 !important;
+  }
+
+  .guias-modal-header {
+    padding: 14px 16px 12px !important;
+    gap: 12px !important;
+  }
+
+  .guias-modal-avatar {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  .guias-adv-filters {
+    flex-direction: column !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+  }
+
+  .guias-adv-filters > div {
+    width: 100% !important;
+  }
+
+  .guias-active-filters {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  .guias-card-footer {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .guias-bg-svg {
+    display: none !important;
+  }
+
+  /* ── DEPARTAMENTOS / RANKING ──────────────────────────────────────────────── */
+
+  .ranking-page-wrapper {
+    height: auto !important;
+    max-height: none !important;
+    overflow: auto !important;
+    overflow-x: hidden !important;
+    min-height: 100vh !important;
+  }
+
+  .ranking-main {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 75px 12px 20px !important;
+    min-height: auto !important;
+  }
+
+  .ranking-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .ranking-header h1 {
+    font-size: 18px !important;
+  }
+
+  .ranking-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    max-height: none !important;
+    overflow: visible !important;
+    min-height: auto !important;
+  }
+
+  .ranking-map-panel {
+    height: 45vh !important;
+    min-height: 300px !important;
+    max-height: 45vh !important;
+    overflow: hidden !important;
+  }
+
+  .ranking-list-panel {
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .ranking-items-list {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .ranking-user-badge {
+    padding: 5px 10px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  /* ── MÁS DE NICARAGUA ─────────────────────────────────────────────────────── */
+
+  .mdn-main {
+    padding: 80px 10px 16px !important;
+  }
+
+  .mdn-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .mdn-header-title {
+    font-size: 14px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .mdn-header-badge {
+    padding: 4px 10px !important;
+    font-size: 12px !important;
+  }
+
+  .mdn-region-filters {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    padding-bottom: 4px !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+  }
+
+  .mdn-region-filters::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .mdn-region-filters button {
+    flex-shrink: 0 !important;
+  }
+
+  .mdn-map-container {
+    height: clamp(320px, 55vh, 450px) !important;
+  }
+
+  .mdn-info-panel {
+    padding: 6px 8px !important;
+  }
+
+  .mdn-dept-tabs {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    gap: 6px !important;
+    padding-bottom: 4px !important;
+  }
+
+  .mdn-dept-tabs::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .mdn-dept-tabs button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  /* ── LANDING PAGE ─────────────────────────────────────────────────────────── */
+
+  .landing-hero-content {
+    padding: 32px 16px !important;
+  }
+
+  .landing-hero-title {
+    font-size: clamp(22px, 7vw, 32px) !important;
+    line-height: 1.25 !important;
+  }
+
+  .landing-neon-container {
+    flex-direction: column !important;
+    gap: 24px !important;
+    margin-top: 20px !important;
+    align-items: center !important;
+  }
+
+  .neon-sign-box {
+    width: 240px !important;
+    padding: 20px 16px 16px !important;
+  }
+
+  .neon-sign-text,
+  .neon-sign-text-white-bg {
+    font-size: 13px !important;
+    letter-spacing: 1.2px !important;
+  }
+
+  .landing-section {
+    padding: 60px 16px !important;
+  }
+
+  .landing-section-title {
+    font-size: clamp(24px, 6vw, 34px) !important;
+  }
+
+  .landing-section-subtitle {
+    font-size: 15px !important;
+  }
+
+  .landing-features-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .landing-feature-card {
+    padding: 24px 20px !important;
+  }
+
+  .landing-cta-section {
+    padding: 60px 16px !important;
+  }
+
+  .landing-cta-benefits {
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: center !important;
+  }
+
+  .landing-footer-inner {
+    flex-direction: column !important;
+    gap: 32px !important;
+    padding: 40px 16px 32px !important;
+  }
+
+  .landing-footer-links {
+    flex-direction: column !important;
+    gap: 24px !important;
+  }
+
+  .landing-footer-bottom {
+    padding: 16px !important;
+  }
+
+  /* ── PERFIL GUÍA (PANEL) ──────────────────────────────────────────────────── */
+
+  .perfil-guia-wrapper {
+    height: auto !important;
+    max-height: none !important;
+    overflow: auto !important;
+    min-height: 100vh !important;
+  }
+
+  .perfil-guia-main {
+    overflow: visible !important;
+    margin: 0 auto !important;
+    padding: 6px 10px 16px !important;
+  }
+
+  .perfil-guia-banner {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    padding: 8px 10px !important;
+  }
+
+  .perfil-guia-tabs {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+    order: 3 !important;
+    scrollbar-width: none !important;
+    justify-content: flex-start !important;
+    gap: 3px !important;
+    padding: 3px !important;
+  }
+
+  .perfil-guia-tabs::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .perfil-guia-tabs button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .perfil-guia-links {
+    display: none !important;
+  }
+
+  .perfil-guia-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    min-height: auto !important;
+  }
+
+  .perfil-guia-sidebar {
+    width: 100% !important;
+  }
+
+  /* ── GENERAL MOBILE ───────────────────────────────────────────────────────── */
+
+  body {
+    overflow-x: hidden !important;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE TABLET — 769px - 1024px
+   ═══════════════════════════════════════════════════════════════════════════════ */
+@media (min-width: 769px) and (max-width: 1024px) {
+
+  .guias-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .guias-main {
+    padding: 8px 16px 10px !important;
+  }
+
+  .guias-filter-row {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .guias-search-box {
+    min-width: 200px !important;
+  }
+
+  .ranking-grid {
+    gap: 12px !important;
+  }
+
+  .ranking-main {
+    padding: 75px 16px 14px !important;
+  }
+
+  .mdn-header {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .mdn-header-title {
+    font-size: 15px !important;
+  }
+
+  .landing-neon-container {
+    gap: 36px !important;
+  }
+
+  .landing-section {
+    padding: 70px 20px !important;
+  }
+
+  .perfil-guia-banner {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  .perfil-guia-tabs {
+    order: 3 !important;
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .community-main-layout {
+    gap: 14px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE SMALL MOBILE — ≤400px (phones menores al S24 Ultra)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 400px) {
+
+  .neon-sign-box {
+    width: 220px !important;
+    padding: 16px 14px 14px !important;
+  }
+
+  .neon-sign-text,
+  .neon-sign-text-white-bg {
+    font-size: 12px !important;
+    letter-spacing: 1px !important;
+  }
+
+  .guias-hero-title {
+    font-size: 17px !important;
+  }
+
+  .landing-hero-title {
+    font-size: 20px !important;
+  }
+
+  .ranking-map-panel {
+    height: 40vh !important;
+    min-height: 250px !important;
+    max-height: 40vh !important;
+  }
+
+  .guias-modal-header {
+    padding: 10px 12px 10px !important;
+  }
+}
 
 
 

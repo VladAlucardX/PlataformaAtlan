@@ -78,13 +78,13 @@ function HeroSection({ session, perfil, introDone }) {
         background: 'linear-gradient(to bottom, rgba(10, 25, 47, 0.25) 0%, rgba(10, 25, 47, 0.35) 100%)',
         zIndex: 1
       }} />
-      <div style={{ ...styles.heroContent, position: 'relative', zIndex: 2 }} className="animate-fade-in-up">
-        <h1 style={{ ...styles.heroTitle, color: "#FFFFFF", marginTop: "32px" }}>
+      <div style={{ ...styles.heroContent, position: 'relative', zIndex: 2 }} className="animate-fade-in-up landing-hero-content">
+        <h1 style={{ ...styles.heroTitle, color: "#FFFFFF", marginTop: "32px" }} className="landing-hero-title">
           {t("landing.hero.title")}
         </h1>
 
         {/* Carteles Neón Interactivos: Explorar Mapa + ¿Tienes un Negocio? */}
-        <div style={{ marginTop: "32px", display: "flex", gap: "72px", justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
+        <div className="landing-neon-container" style={{ marginTop: "32px", display: "flex", gap: "72px", justifyContent: "center", flexWrap: "wrap", alignItems: "center" }}>
           <NeonMapSign />
           <NeonBusinessSign session={session} />
         </div>
@@ -138,7 +138,7 @@ function FeaturesSection() {
   ];
 
   return (
-    <section style={{ ...styles.section, background: "url('/images/Frame 6.png') center / 100% 100% no-repeat", paddingTop: "140px", position: "relative" }}>
+    <section className="landing-section" style={{ ...styles.section, background: "url('/images/Frame 6.png') center / 100% 100% no-repeat", paddingTop: "140px", position: "relative" }}>
       {/* Indicador Animado "Desplaza hacia abajo para ver más" en la cabecera superior */}
       <div style={{
         position: "absolute",
@@ -189,7 +189,7 @@ function FeaturesSection() {
           <p style={{ ...styles.sectionSubtitle, color: "rgba(255, 255, 255, 0.9)" }}>{t("landing.features.subtitle")}</p>
         </div>
 
-        <div style={styles.featuresGrid}>
+        <div style={styles.featuresGrid} className="landing-features-grid">
           {features.map((feature, i) => (
             <div
               key={i}
@@ -300,7 +300,7 @@ function CategoriesSection() {
   ];
 
   return (
-    <section style={{ ...styles.section, background: "url('/images/Frame 4.png') center / 100% 100% no-repeat", position: "relative" }}>
+    <section className="landing-section" style={{ ...styles.section, background: "url('/images/Frame 4.png') center / 100% 100% no-repeat", position: "relative" }}>
       {/* Transición leve superior con Features */}
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "70px", background: "linear-gradient(to bottom, rgba(23, 170, 74, 0.25) 0%, transparent 100%)", pointerEvents: "none", zIndex: 1 }} />
 
@@ -345,7 +345,7 @@ function CTASection({ session }) {
   const { t } = useTranslation();
 
   return (
-    <section id="cta" style={{
+    <section id="cta" className="landing-cta-section" style={{
       ...styles.ctaSection,
       background: "url('/images/Frame 5.png') center / 100% 100% no-repeat"
     }}>
@@ -360,7 +360,7 @@ function CTASection({ session }) {
         <h2 style={{ ...styles.ctaTitle, color: "#146D9E", fontWeight: "900" }}>{t("landing.cta.title")}</h2>
         <p style={{ ...styles.ctaSubtitle, color: "#4A5568", fontSize: "16px" }}>{t("landing.cta.subtitle")}</p>
 
-        <div style={styles.ctaBenefits}>
+        <div style={styles.ctaBenefits} className="landing-cta-benefits">
           {["benefit1", "benefit2", "benefit3"].map((key) => (
             <div key={key} style={{ ...styles.ctaBenefit, color: "#1A1A2E", fontWeight: "750", fontSize: "15px", display: "flex", alignItems: "center", gap: "8px" }}>
               <span style={{
@@ -394,7 +394,7 @@ function Footer() {
 
   return (
     <footer style={styles.footer}>
-      <div style={styles.footerInner}>
+      <div style={styles.footerInner} className="landing-footer-inner">
         <div style={styles.footerBrand}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
             <img
@@ -414,7 +414,7 @@ function Footer() {
           </div>
         </div>
 
-        <div style={styles.footerLinks}>
+        <div style={styles.footerLinks} className="landing-footer-links">
           <div>
             <h4 style={styles.footerLinkTitle}>{t("landing.footer.links")}</h4>
             <Link href="/mapa" style={styles.footerLink}><Icon name="map" size={14} /> {t("nav.map")}</Link>
@@ -433,7 +433,7 @@ function Footer() {
         </div>
       </div>
 
-      <div style={styles.footerBottom}>
+      <div style={styles.footerBottom} className="landing-footer-bottom">
         <p style={{ margin: 0, fontSize: "13px", color: "#94A3B8" }}>
           © {new Date().getFullYear()} Atlan. {t("landing.footer.rights")}
         </p>

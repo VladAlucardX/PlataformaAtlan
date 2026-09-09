@@ -509,14 +509,14 @@ export default function DepartamentosPage() {
   }, []);
 
   return (
-    <div style={{ height: "100vh", maxHeight: "100vh", overflow: "hidden", background: "radial-gradient(ellipse at 50% 35%, #102A45 0%, #0A192F 60%, #061120 100%)", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif", position: "relative" }}>
+    <div className="ranking-page-wrapper" style={{ height: "100vh", maxHeight: "100vh", overflow: "hidden", background: "radial-gradient(ellipse at 50% 35%, #102A45 0%, #0A192F 60%, #061120 100%)", color: "#FFFFFF", fontFamily: "var(--font-outfit), sans-serif", position: "relative" }}>
       <Navbar activePage="departamentos" session={userSession} perfil={perfil} />
 
       {/* Contenedor Principal Ajustado al 100vh Sin Scroll Vertical de Página */}
-      <main style={{ maxWidth: "1400px", margin: "0 auto", padding: "75px 20px 14px 20px", height: "100vh", maxHeight: "100vh", display: "flex", flexDirection: "column", boxSizing: "border-box", position: "relative", zIndex: 1, overflow: "hidden" }}>
+      <main className="ranking-main" style={{ maxWidth: "1400px", margin: "0 auto", padding: "75px 20px 14px 20px", height: "100vh", maxHeight: "100vh", display: "flex", flexDirection: "column", boxSizing: "border-box", position: "relative", zIndex: 1, overflow: "hidden" }}>
         
         {/* Encabezado Compacto con la palabra Nicaragua pintada con la Bandera (Azul - Blanco - Azul) */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", gap: "16px", flexWrap: "wrap", flexShrink: 0 }}>
+        <div className="ranking-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", gap: "16px", flexWrap: "wrap", flexShrink: 0 }}>
           <div>
             <h1 style={{ 
               fontSize: "clamp(18px, 2.2vw, 26px)", 
@@ -549,7 +549,7 @@ export default function DepartamentosPage() {
 
           {/* Banner Compacto de Logros del Usuario con gueguense.svg y Nivel (Turista Tuani / Turista Deacachimba / Turista) */}
           {userSession && (
-            <div style={{ background: "rgba(255, 255, 255, 0.07)", backdropFilter: "blur(12px)", border: "1px solid rgba(255, 255, 255, 0.15)", borderRadius: "12px", padding: "6px 14px", display: "flex", alignItems: "center", gap: "12px", boxShadow: "0 4px 16px rgba(0,0,0,0.3)" }}>
+            <div className="ranking-user-badge" style={{ background: "rgba(255, 255, 255, 0.07)", backdropFilter: "blur(12px)", border: "1px solid rgba(255, 255, 255, 0.15)", borderRadius: "12px", padding: "6px 14px", display: "flex", alignItems: "center", gap: "12px", boxShadow: "0 4px 16px rgba(0,0,0,0.3)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <img src="/images/gueguense.svg" alt="Güegüense" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                 <span style={{ fontSize: "12.5px", fontWeight: "800", color: "#FFFFFF" }}>
@@ -566,10 +566,10 @@ export default function DepartamentosPage() {
         </div>
 
         {/* Layout Principal Flexible en 2 Columnas Estrictas (Paneles Traslúcidos de Cristal) */}
-        <div style={{ flex: 1, minHeight: 0, maxHeight: "100%", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "18px", alignItems: "stretch", overflow: "hidden" }}>
+        <div className="ranking-grid" style={{ flex: 1, minHeight: 0, maxHeight: "100%", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "18px", alignItems: "stretch", overflow: "hidden" }}>
 
           {/* Columna Izquierda: Mapa de Departamentos Traslúcido (Azul Navbar) */}
-          <div style={{ background: "rgba(10, 25, 47, 0.72)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255, 255, 255, 0.14)", borderRadius: "20px", padding: "14px", boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)", display: "flex", flexDirection: "column", height: "100%", maxHeight: "100%", minHeight: 0, boxSizing: "border-box", overflow: "hidden" }}>
+          <div className="ranking-map-panel" style={{ background: "rgba(10, 25, 47, 0.72)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255, 255, 255, 0.14)", borderRadius: "20px", padding: "14px", boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)", display: "flex", flexDirection: "column", height: "100%", maxHeight: "100%", minHeight: 0, boxSizing: "border-box", overflow: "hidden" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", padding: "0 2px", flexShrink: 0 }}>
               
               {/* Título de la Columna */}
@@ -624,7 +624,7 @@ export default function DepartamentosPage() {
           </div>
 
           {/* Columna Derecha: Ranking Top Lugares (Panel Traslúcido Azul Navbar con Tortuga de Fondo) */}
-          <div style={{ background: "rgba(10, 25, 47, 0.72)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255, 255, 255, 0.14)", borderRadius: "20px", padding: "14px", boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)", display: "flex", flexDirection: "column", height: "100%", maxHeight: "100%", minHeight: 0, boxSizing: "border-box", overflow: "hidden", position: "relative" }}>
+          <div className="ranking-list-panel" style={{ background: "rgba(10, 25, 47, 0.72)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255, 255, 255, 0.14)", borderRadius: "20px", padding: "14px", boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)", display: "flex", flexDirection: "column", height: "100%", maxHeight: "100%", minHeight: 0, boxSizing: "border-box", overflow: "hidden", position: "relative" }}>
             
             {/* Elemento Decorativo: Tortuga SVG Agrandada al Fondo del Panel Derecho */}
             <div
