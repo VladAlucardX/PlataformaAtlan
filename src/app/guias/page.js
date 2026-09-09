@@ -454,8 +454,12 @@ export default function GuiasPage() {
           const usedDbIds = new Set();
 
           MOCK_GUIAS.forEach((mockG) => {
-            const isCarlos = mockG.nombre_completo.toLowerCase().includes("carlos");
-            const activeProfile = isCarlos && rawSaved ? rawSaved : null;
+            const isMatch = rawSaved && (
+              rawSaved.id === mockG.id ||
+              (rawSaved.nombre_completo && rawSaved.nombre_completo.toLowerCase().trim() === mockG.nombre_completo.toLowerCase().trim()) ||
+              mockG.nombre_completo.toLowerCase().includes("carlos")
+            );
+            const activeProfile = isMatch ? rawSaved : null;
 
             // Buscar coincidencia exacta en la BD ordenada por actualización reciente
             const dbMatch = formattedDbGuias.find(
@@ -505,10 +509,13 @@ export default function GuiasPage() {
 
           setGuias(merged);
         } else {
-          // Si BD no tiene registros pero hay localSaved, aplicar localSaved a Carlos Mendoza
+          // Si BD no tiene registros pero hay localSaved, aplicar localSaved al guía correspondiente
           if (rawSaved) {
             const merged = MOCK_GUIAS.map(mockG => {
-              if (mockG.nombre_completo.toLowerCase().includes("carlos")) {
+              const isMatch = (rawSaved.id === mockG.id) || 
+                              (rawSaved.nombre_completo && mockG.nombre_completo && rawSaved.nombre_completo.toLowerCase().trim() === mockG.nombre_completo.toLowerCase().trim()) || 
+                              mockG.nombre_completo.toLowerCase().includes("carlos");
+              if (isMatch) {
                 return {
                   ...mockG,
                   ...rawSaved,
@@ -519,6 +526,8 @@ export default function GuiasPage() {
                   biografia: rawSaved.biografia || mockG.biografia,
                   whatsapp: rawSaved.whatsapp || mockG.whatsapp,
                   instagram: rawSaved.instagram || mockG.instagram,
+                  facebook: rawSaved.facebook || mockG.facebook,
+                  tiktok: rawSaved.tiktok || mockG.tiktok,
                   telefono_contacto: rawSaved.telefono_contacto || mockG.telefono_contacto,
                   licencia_intur: rawSaved.licencia_intur || mockG.licencia_intur,
                   idiomas: rawSaved.idiomas || mockG.idiomas,
