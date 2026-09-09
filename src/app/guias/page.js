@@ -353,10 +353,10 @@ const RANGOS_PRECIO_LIST = [
 ];
 
 const cleanTarifa = (t, defaultTarifa = "$30 - $50 / día") => {
-  if (!t || typeof t !== "string" || t.trim() === "" || t.includes("- /") || t.trim() === "$ - / día" || t.trim() === "$-/día") {
+  if (!t || typeof t !== "string" || t.trim() === "" || !/\d/.test(t)) {
     return defaultTarifa;
   }
-  return t;
+  return t.trim();
 };
 
 const formatSocialUrl = (type, val) => {
@@ -502,7 +502,7 @@ export default function GuiasPage() {
                   ...rawSaved,
                   departamento_principal: rawSaved.departamento_principal || mockG.departamento_principal,
                   especialidad: rawSaved.especialidad || mockG.especialidad,
-                  tarifa_aprox: rawSaved.tarifa_aprox || mockG.tarifa_aprox,
+                  tarifa_aprox: cleanTarifa(rawSaved.tarifa_aprox, mockG.tarifa_aprox || "$30 - $50 / día"),
                   experiencia_anios: rawSaved.experiencia_anios || mockG.experiencia_anios,
                   biografia: rawSaved.biografia || mockG.biografia,
                   whatsapp: rawSaved.whatsapp || mockG.whatsapp,
