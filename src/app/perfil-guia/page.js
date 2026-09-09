@@ -480,7 +480,12 @@ export default function PerfilGuiaPage() {
 
       let { error } = await supabase.from("guias_turisticos").upsert(profilePayload);
       if (error) {
-        console.error("Error al guardar en guias_turisticos:", error.message || error);
+        // Respaldar guardando payload base si la BD remota aún no ha refrescado las columnas extendidas
+        const { facebook, tiktok, ...corePayload } = profilePayload;
+        const { error: retryError } = await supabase.from("guias_turisticos").upsert(corePayload);
+        if (retryError) {
+          console.warn("Aviso al guardar en guias_turisticos:", retryError.message);
+        }
       }
 
       setSaveSuccessAlert(true);
