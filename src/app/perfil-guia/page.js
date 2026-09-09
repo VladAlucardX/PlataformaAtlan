@@ -298,16 +298,13 @@ export default function PerfilGuiaPage() {
           if (rawLocal) savedLocal = JSON.parse(rawLocal);
         } catch (e) {}
 
-        const rawDestinos = (gData && gData.destinos_mapa) ? gData.destinos_mapa : (savedLocal && savedLocal.destinos_mapa ? savedLocal.destinos_mapa : []);
-        const socialMeta = rawDestinos.find(d => d && d._atlan_type === "social_meta") || {};
-
         const activeData = (gData || savedLocal) ? {
           ...savedLocal,
           ...gData,
-          facebook: gData ? (gData.facebook || socialMeta.facebook || "") : (savedLocal ? (savedLocal.facebook || socialMeta.facebook || "") : ""),
-          tiktok: gData ? (gData.tiktok || socialMeta.tiktok || "") : (savedLocal ? (savedLocal.tiktok || socialMeta.tiktok || "") : ""),
-          instagram: gData ? (gData.instagram || socialMeta.instagram || "") : (savedLocal ? (savedLocal.instagram || socialMeta.instagram || "") : ""),
-          whatsapp: gData ? (gData.whatsapp || gData.telefono_contacto || socialMeta.whatsapp || "") : (savedLocal ? (savedLocal.whatsapp || savedLocal.telefono_contacto || socialMeta.whatsapp || "") : "")
+          facebook: gData ? (gData.facebook || "") : (savedLocal ? (savedLocal.facebook || "") : ""),
+          tiktok: gData ? (gData.tiktok || "") : (savedLocal ? (savedLocal.tiktok || "") : ""),
+          instagram: gData ? (gData.instagram || "") : (savedLocal ? (savedLocal.instagram || "") : ""),
+          whatsapp: gData ? (gData.whatsapp || gData.telefono_contacto || "") : (savedLocal ? (savedLocal.whatsapp || savedLocal.telefono_contacto || "") : "")
         } : null;
 
         if (activeData) {
@@ -327,10 +324,7 @@ export default function PerfilGuiaPage() {
           setGuiaTiktok(activeData.tiktok || "");
           if (activeData.licencia_intur) setGuiaLicencia(activeData.licencia_intur);
           if (activeData.galeria_fotos) setGuiaGaleria(activeData.galeria_fotos);
-          if (activeData.destinos_mapa) {
-            const cleanDestinos = (activeData.destinos_mapa || []).filter(d => d && d._atlan_type !== "social_meta");
-            setGuiaDestinosMapa(cleanDestinos);
-          }
+          if (activeData.destinos_mapa) setGuiaDestinosMapa(activeData.destinos_mapa);
         } else {
           // Prepopulado inicial si coincide con guía de prueba (ej: Carlos Mendoza Silva)
           const nameLower = (perfilData?.nombre_completo || currentUser.user_metadata?.nombre_completo || "").toLowerCase();
@@ -445,19 +439,6 @@ export default function PerfilGuiaPage() {
     setSavingGuia(true);
     setSaveSuccessAlert(false);
 
-    const socialMeta = {
-      _atlan_type: "social_meta",
-      facebook: guiaFacebook || "",
-      tiktok: guiaTiktok || "",
-      instagram: guiaInstagram || "",
-      whatsapp: guiaWhatsapp || ""
-    };
-
-    const updatedDestinos = [
-      ...(guiaDestinosMapa || []).filter(d => d && d._atlan_type !== "social_meta"),
-      socialMeta
-    ];
-
     const profilePayload = {
       id: user.id,
       nombre_completo: perfil?.nombre_completo || user.user_metadata?.nombre_completo || "Carlos Mendoza Silva",
@@ -471,9 +452,11 @@ export default function PerfilGuiaPage() {
       telefono_contacto: guiaWhatsapp,
       whatsapp: guiaWhatsapp,
       instagram: guiaInstagram,
+      facebook: guiaFacebook,
+      tiktok: guiaTiktok,
       licencia_intur: guiaLicencia,
       galeria_fotos: guiaGaleria,
-      destinos_mapa: updatedDestinos,
+      destinos_mapa: guiaDestinosMapa,
       activo: true,
       updated_at: new Date().toISOString()
     };

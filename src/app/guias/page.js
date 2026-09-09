@@ -441,27 +441,21 @@ export default function GuiasPage() {
         } catch (e) {}
 
         if (!error && data && data.length > 0) {
-          const formattedDbGuias = data.map((g) => {
-            const rawDestinos = g.destinos_mapa || [];
-            const socialMeta = rawDestinos.find(d => d && d._atlan_type === "social_meta") || {};
-            const cleanDestinos = rawDestinos.filter(d => d && d._atlan_type !== "social_meta");
-            return {
-              ...g,
-              nombre_completo: g.nombre_completo || g.perfiles?.nombre_completo || "Guía Turístico",
-              avatar_url: g.avatar_url || g.perfiles?.avatar_url || "/images/perfil.svg",
-              tarifa_aprox: cleanTarifa(g.tarifa_aprox, "$30 - $50 / día"),
-              resenas: g.resenas || [],
-              destinos_mapa: cleanDestinos,
-              facebook: g.facebook || socialMeta.facebook || "",
-              tiktok: g.tiktok || socialMeta.tiktok || "",
-              instagram: g.instagram || socialMeta.instagram || "",
-              whatsapp: g.whatsapp || socialMeta.whatsapp || "",
-              galeria_fotos: g.galeria_fotos && g.galeria_fotos.length > 0 ? g.galeria_fotos : [
-                "/images/galeria-departamentos/leon/1.1.jpg",
-                "/images/galeria-departamentos/leon/2.jpg"
-              ]
-            };
-          });
+          const formattedDbGuias = data.map((g) => ({
+            ...g,
+            nombre_completo: g.nombre_completo || g.perfiles?.nombre_completo || "Guía Turístico",
+            avatar_url: g.avatar_url || g.perfiles?.avatar_url || "/images/perfil.svg",
+            tarifa_aprox: cleanTarifa(g.tarifa_aprox, "$30 - $50 / día"),
+            resenas: g.resenas || [],
+            facebook: g.facebook || "",
+            tiktok: g.tiktok || "",
+            instagram: g.instagram || "",
+            whatsapp: g.whatsapp || "",
+            galeria_fotos: g.galeria_fotos && g.galeria_fotos.length > 0 ? g.galeria_fotos : [
+              "/images/galeria-departamentos/leon/1.1.jpg",
+              "/images/galeria-departamentos/leon/2.jpg"
+            ]
+          }));
 
           // Combinar guías de la BD con MOCK_GUIAS (priorizando el registro de BD más reciente)
           const merged = [];
@@ -483,10 +477,6 @@ export default function GuiasPage() {
             const source = dbMatch || activeProfile;
             if (source) {
               if (dbMatch) usedDbIds.add(dbMatch.id);
-              const rawDestinos = source.destinos_mapa || [];
-              const socialMeta = rawDestinos.find(d => d && d._atlan_type === "social_meta") || {};
-              const cleanDestinos = rawDestinos.filter(d => d && d._atlan_type !== "social_meta");
-
               merged.push({
                 ...mockG,
                 ...source,
@@ -499,10 +489,10 @@ export default function GuiasPage() {
                 tarifa_aprox: cleanTarifa(source.tarifa_aprox, mockG.tarifa_aprox || "$30 - $50 / día"),
                 experiencia_anios: source.experiencia_anios || mockG.experiencia_anios,
                 biografia: source.biografia || mockG.biografia,
-                whatsapp: (activeProfile && activeProfile.whatsapp !== undefined && activeProfile.whatsapp !== "") ? activeProfile.whatsapp : (dbMatch?.whatsapp || socialMeta.whatsapp || mockG.whatsapp || ""),
-                instagram: (activeProfile && activeProfile.instagram !== undefined && activeProfile.instagram !== "") ? activeProfile.instagram : (dbMatch?.instagram || socialMeta.instagram || mockG.instagram || ""),
-                facebook: (activeProfile && activeProfile.facebook !== undefined && activeProfile.facebook !== "") ? activeProfile.facebook : (dbMatch?.facebook || socialMeta.facebook || ""),
-                tiktok: (activeProfile && activeProfile.tiktok !== undefined && activeProfile.tiktok !== "") ? activeProfile.tiktok : (dbMatch?.tiktok || socialMeta.tiktok || ""),
+                whatsapp: (activeProfile && activeProfile.whatsapp !== undefined && activeProfile.whatsapp !== "") ? activeProfile.whatsapp : (dbMatch?.whatsapp || mockG.whatsapp || ""),
+                instagram: (activeProfile && activeProfile.instagram !== undefined && activeProfile.instagram !== "") ? activeProfile.instagram : (dbMatch?.instagram || mockG.instagram || ""),
+                facebook: (activeProfile && activeProfile.facebook !== undefined && activeProfile.facebook !== "") ? activeProfile.facebook : (dbMatch?.facebook || ""),
+                tiktok: (activeProfile && activeProfile.tiktok !== undefined && activeProfile.tiktok !== "") ? activeProfile.tiktok : (dbMatch?.tiktok || ""),
                 telefono_contacto: source.telefono_contacto || mockG.telefono_contacto,
                 licencia_intur: source.licencia_intur || mockG.licencia_intur,
                 idiomas: source.idiomas || mockG.idiomas,
