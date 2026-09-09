@@ -10,16 +10,12 @@ export default function VideoIntro({ onComplete }) {
   const [videoReady, setVideoReady] = useState(false);
   const [progressPercent, setProgressPercent] = useState(0);
 
+  const notifiedRef = useRef(false);
+
   // Fade-out
   const startFadeOut = useCallback(() => {
-    setPhase((prev) => {
-      if (prev === "playing") {
-        onComplete?.();
-        return "fading";
-      }
-      return prev;
-    });
-  }, [onComplete]);
+    setPhase((prev) => (prev === "playing" ? "fading" : prev));
+  }, []);
 
   // Forzar reproducción y fallback rápido para conexiones móviles / WebViews
   useEffect(() => {
@@ -50,11 +46,12 @@ export default function VideoIntro({ onComplete }) {
 
   // Notificar al terminar fade-out
   useEffect(() => {
-    if (phase === "fading") {
+    if (phase === "fading" && !notifiedRef.current) {
+      notifiedRef.current = true;
+      onComplete?.();
       const timer = setTimeout(() => {
         setPhase("done");
-        onComplete?.();
-      }, 500); // duración acelerada del fade-out CSS
+      }, 500);
       return () => clearTimeout(timer);
     }
   }, [phase, onComplete]);
