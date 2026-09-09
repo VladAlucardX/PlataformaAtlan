@@ -303,7 +303,11 @@ export default function PerfilGuiaPage() {
           if (activeData.especialidad) setGuiaEspecialidad(activeData.especialidad);
           if (activeData.idiomas) setGuiaIdiomas(activeData.idiomas);
           if (activeData.experiencia_anios) setGuiaExperiencia(activeData.experiencia_anios);
-          if (activeData.tarifa_aprox) setGuiaTarifa(activeData.tarifa_aprox);
+          if (activeData.tarifa_aprox && !activeData.tarifa_aprox.includes("- /") && activeData.tarifa_aprox.trim() !== "$ - / día") {
+            setGuiaTarifa(activeData.tarifa_aprox);
+          } else {
+            setGuiaTarifa("$30 - $50 / día");
+          }
           if (activeData.biografia !== undefined) setGuiaBiografia(activeData.biografia);
           if (activeData.whatsapp || activeData.telefono_contacto) setGuiaWhatsapp(activeData.whatsapp || activeData.telefono_contacto);
           if (activeData.instagram) setGuiaInstagram(activeData.instagram);

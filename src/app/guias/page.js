@@ -352,6 +352,13 @@ const RANGOS_PRECIO_LIST = [
   "Premium (> $50)"
 ];
 
+const cleanTarifa = (t, defaultTarifa = "$30 - $50 / día") => {
+  if (!t || typeof t !== "string" || t.trim() === "" || t.includes("- /") || t.trim() === "$ - / día" || t.trim() === "$-/día") {
+    return defaultTarifa;
+  }
+  return t;
+};
+
 export default function GuiasPage() {
   const { lang } = useTranslation();
   const { session, perfil } = useAuth();
@@ -412,6 +419,7 @@ export default function GuiasPage() {
             ...g,
             nombre_completo: g.nombre_completo || g.perfiles?.nombre_completo || "Guía Turístico",
             avatar_url: g.avatar_url || g.perfiles?.avatar_url || "/images/perfil.svg",
+            tarifa_aprox: cleanTarifa(g.tarifa_aprox, "$30 - $50 / día"),
             resenas: g.resenas || [],
             galeria_fotos: g.galeria_fotos && g.galeria_fotos.length > 0 ? g.galeria_fotos : [
               "/images/galeria-departamentos/leon/1.1.jpg",
@@ -444,7 +452,7 @@ export default function GuiasPage() {
                 departamento_principal: source.departamento_principal || mockG.departamento_principal,
                 departamentos_secundarios: (source.departamentos_secundarios && source.departamentos_secundarios.length > 0) ? source.departamentos_secundarios : mockG.departamentos_secundarios,
                 especialidad: source.especialidad || mockG.especialidad,
-                tarifa_aprox: source.tarifa_aprox || mockG.tarifa_aprox,
+                tarifa_aprox: cleanTarifa(source.tarifa_aprox, mockG.tarifa_aprox || "$30 - $50 / día"),
                 experiencia_anios: source.experiencia_anios || mockG.experiencia_anios,
                 biografia: source.biografia || mockG.biografia,
                 whatsapp: source.whatsapp || mockG.whatsapp,
@@ -464,7 +472,10 @@ export default function GuiasPage() {
           // Agregar cualquier guía adicional de la BD que no haya sido emparejada
           formattedDbGuias.forEach((dbG) => {
             if (!usedDbIds.has(dbG.id)) {
-              merged.push(dbG);
+              merged.push({
+                ...dbG,
+                tarifa_aprox: cleanTarifa(dbG.tarifa_aprox, "$30 - $50 / día")
+              });
             }
           });
 
@@ -1187,7 +1198,7 @@ export default function GuiasPage() {
                   <div style={styles.cardFooterWide}>
                     <div style={styles.pricePillBadge}>
                       <Icon name="dollarSign" size={12} color="#10B981" />
-                      <span style={styles.priceValueSlim}>{guia.tarifa_aprox || "$25/día"}</span>
+                      <span style={styles.priceValueSlim}>{cleanTarifa(guia.tarifa_aprox, "$30 - $50 / día")}</span>
                     </div>
 
                     <div style={styles.actionButtonsGroupSlim}>
