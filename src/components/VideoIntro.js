@@ -59,26 +59,22 @@ export default function VideoIntro({ onComplete }) {
     }
   }, [phase, onComplete]);
 
-  // Timeout de seguridad máximo (3.8s en móvil, 5.5s en desktop)
+  // Timeout de seguridad máximo para versión Web (8.5s)
   useEffect(() => {
-    const isMobileDevice = typeof window !== "undefined" && window.innerWidth <= 768;
-    const maxTimeoutMs = isMobileDevice ? 3800 : 5500;
-
     const safety = setTimeout(() => {
       startFadeOut();
-    }, maxTimeoutMs);
+    }, 8500);
 
     return () => clearTimeout(safety);
   }, [startFadeOut]);
 
-  // Actualización ultra-fluida de la barra de progreso con fallback si el video no avanza
+  // Actualización ultra-fluida de la barra de progreso sincronizada a los 8 segundos en Web
   useEffect(() => {
     if (phase !== "playing") return;
 
     let animId;
     let startTime = performance.now();
-    const isMobileDevice = typeof window !== "undefined" && window.innerWidth <= 768;
-    const targetDuration = isMobileDevice ? 3.5 : 6.0;
+    const targetDuration = 8.0;
 
     const updateProgress = (now) => {
       const elapsed = (now - startTime) / 1000;
@@ -88,7 +84,6 @@ export default function VideoIntro({ onComplete }) {
         const current = videoRef.current.currentTime;
         pct = Math.min((current / targetDuration) * 100, 100);
       } else {
-        // Avance simulado si el video se tranca o no avanza en el WebView
         pct = Math.min((elapsed / targetDuration) * 100, 100);
       }
 

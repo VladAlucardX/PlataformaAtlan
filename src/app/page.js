@@ -444,8 +444,8 @@ function Footer() {
 
 // Componente Principal
 export default function Home() {
-  // Por defecto true para que en móviles y WebViews cargue al instante sin quedarse bugeado en el intro
-  const [introDone, setIntroDone] = React.useState(true);
+  // En Web de escritorio se mantiene false por defecto para reproducir el video intro completo.
+  const [introDone, setIntroDone] = React.useState(false);
   const { session, perfil, logout } = useAuth();
 
   React.useEffect(() => {
@@ -454,12 +454,12 @@ export default function Home() {
         const isMobile = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini|wv/i.test(navigator.userAgent);
         const introSeen = sessionStorage.getItem("introSeen") === "true";
         
-        // Solo mostrar el intro en versión de escritorio si no ha sido visto aún
-        if (!isMobile && !introSeen) {
-          setIntroDone(false);
+        // Omitir el intro únicamente en dispositivos móviles o si ya fue visto en la sesión
+        if (isMobile || introSeen) {
+          setIntroDone(true);
         }
       } catch (e) {
-        setIntroDone(true);
+        // Fallback
       }
     }
   }, []);
