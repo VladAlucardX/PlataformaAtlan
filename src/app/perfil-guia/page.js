@@ -301,8 +301,10 @@ export default function PerfilGuiaPage() {
         const activeData = (gData || savedLocal) ? {
           ...savedLocal,
           ...gData,
-          facebook: (gData && gData.facebook) ? gData.facebook : (savedLocal && savedLocal.facebook ? savedLocal.facebook : ""),
-          tiktok: (gData && gData.tiktok) ? gData.tiktok : (savedLocal && savedLocal.tiktok ? savedLocal.tiktok : "")
+          facebook: gData ? (gData.facebook || "") : (savedLocal ? (savedLocal.facebook || "") : ""),
+          tiktok: gData ? (gData.tiktok || "") : (savedLocal ? (savedLocal.tiktok || "") : ""),
+          instagram: gData ? (gData.instagram || "") : (savedLocal ? (savedLocal.instagram || "") : ""),
+          whatsapp: gData ? (gData.whatsapp || gData.telefono_contacto || "") : (savedLocal ? (savedLocal.whatsapp || savedLocal.telefono_contacto || "") : "")
         } : null;
 
         if (activeData) {
@@ -316,10 +318,10 @@ export default function PerfilGuiaPage() {
             setGuiaTarifa("$30 - $50 / día");
           }
           if (activeData.biografia !== undefined) setGuiaBiografia(activeData.biografia);
-          if (activeData.whatsapp || activeData.telefono_contacto) setGuiaWhatsapp(activeData.whatsapp || activeData.telefono_contacto);
-          if (activeData.instagram) setGuiaInstagram(activeData.instagram);
-          if (activeData.facebook) setGuiaFacebook(activeData.facebook);
-          if (activeData.tiktok) setGuiaTiktok(activeData.tiktok);
+          setGuiaWhatsapp(activeData.whatsapp || activeData.telefono_contacto || "");
+          setGuiaInstagram(activeData.instagram || "");
+          setGuiaFacebook(activeData.facebook || "");
+          setGuiaTiktok(activeData.tiktok || "");
           if (activeData.licencia_intur) setGuiaLicencia(activeData.licencia_intur);
           if (activeData.galeria_fotos) setGuiaGaleria(activeData.galeria_fotos);
           if (activeData.destinos_mapa) setGuiaDestinosMapa(activeData.destinos_mapa);
