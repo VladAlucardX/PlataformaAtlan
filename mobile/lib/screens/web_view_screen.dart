@@ -20,12 +20,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
   InAppWebViewController? _webViewController;
   double _progress = 0;
   bool _isLoading = true;
-  bool _hasPermission = false;
+  bool _hasPermission = true;
   String? _errorMessage;
   StreamSubscription<Position>? _positionStreamSubscription;
 
   final InAppWebViewSettings _settings = InAppWebViewSettings(
-    useShouldOverrideUrlLoading: true,
+    useShouldOverrideUrlLoading: false,
     mediaPlaybackRequiresUserGesture: false,
     allowsInlineMediaPlayback: true,
     iframeAllow: "camera; microphone; geolocation",
