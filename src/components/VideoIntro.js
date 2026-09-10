@@ -4,15 +4,18 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 
 // Pantalla de bienvenida con video de fondo
 
-// Detecta si es móvil o WebView (incluye Flutter InAppWebView)
+// Detecta si es móvil o WebView (incluye Flutter InAppWebView con useWideViewPort)
 function detectMobileOrWebView() {
   if (typeof window === "undefined") return false;
   const ua = navigator.userAgent || "";
-  const isMobileSize = window.innerWidth <= 768;
+  // NOTA: Flutter useWideViewPort:true hace innerWidth ~980px aunque sea un teléfono.
+  // Por eso usamos touch detection como señal primaria.
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const isMobileSize = window.innerWidth <= 900;
   const isMobileUA = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-  // Flutter InAppWebView usa un UA que contiene 'wv' (Android WebView) o 'Version/' con 'Mobile Safari'
+  // Flutter InAppWebView: puede tener 'wv', 'Flutter', o UA sin 'Chrome' puro
   const isWebView = /wv\b/i.test(ua) || /Flutter/i.test(ua) || (/Version\/\d/.test(ua) && /Mobile Safari/.test(ua) && !/Chrome/.test(ua));
-  return isMobileSize || isMobileUA || isWebView;
+  return isTouch || isMobileSize || isMobileUA || isWebView;
 }
 
 export default function VideoIntro({ onComplete }) {
@@ -60,13 +63,11 @@ export default function VideoIntro({ onComplete }) {
       }
     }
 
-    // Fallback rápido: Si el video tarda más de 3s en cargar o reproducirse en móvil, dar paso a la app
+    // Fallback: Si el video no arranca o se atasca en 2s, saltar siempre (red local lenta)
     const fallbackTimer = setTimeout(() => {
       setVideoReady(true);
-      if (!videoRef.current || videoRef.current.currentTime < 0.2) {
-        startFadeOut();
-      }
-    }, 3000);
+      startFadeOut(); // Siempre saltar — el video puede estar cargando/atascado
+    }, 2000);
 
     return () => clearTimeout(fallbackTimer);
   }, [startFadeOut, isMobileView]);
@@ -103,14 +104,8 @@ export default function VideoIntro({ onComplete }) {
 
     const updateProgress = (now) => {
       const elapsed = (now - startTime) / 1000;
-      let pct = 0;
-
-      if (videoRef.current && videoRef.current.currentTime > 0.1 && !videoRef.current.paused) {
-        const current = videoRef.current.currentTime;
-        pct = Math.min((current / targetDuration) * 100, 100);
-      } else {
-        pct = Math.min((elapsed / targetDuration) * 100, 100);
-      }
+      // SIEMPRE usar tiempo real transcurrido — inmune a video atascado en red lenta
+      const pct = Math.min((elapsed / targetDuration) * 100, 100);
 
       setProgressPercent(pct);
 

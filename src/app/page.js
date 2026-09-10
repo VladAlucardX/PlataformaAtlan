@@ -452,11 +452,13 @@ export default function Home() {
     if (typeof window !== "undefined") {
       try {
         const ua = navigator.userAgent || "";
-        const isMobileSize = window.innerWidth <= 768;
+        // Flutter useWideViewPort:true hace innerWidth ~980px en teléfono → usar touch detection
+        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        const isMobileSize = window.innerWidth <= 900;
         const isMobileUA = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
         // Detectar WebView de Flutter (Android WebView tiene 'wv' en el UA)
         const isWebView = /wv\b/i.test(ua) || /Flutter/i.test(ua) || (/Version\/\d/.test(ua) && /Mobile Safari/.test(ua) && !/Chrome/.test(ua));
-        const isMobile = isMobileSize || isMobileUA || isWebView;
+        const isMobile = isTouch || isMobileSize || isMobileUA || isWebView;
         const introSeen = sessionStorage.getItem("introSeen") === "true";
 
         // Omitir el intro en dispositivos móviles/WebViews o si ya fue visto en la sesión
