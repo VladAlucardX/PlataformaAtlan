@@ -475,6 +475,13 @@ export default function Home() {
     }
   }, []);
 
+  // Failsafe absoluto: si el intro no terminó en 9s por cualquier razón, forzarlo
+  React.useEffect(() => {
+    const failsafe = setTimeout(() => setIntroDone(true), 9000);
+    return () => clearTimeout(failsafe);
+  }, []);
+
+
   const handleLogout = async () => {
     await logout();
     window.location.reload();
