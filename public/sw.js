@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlan-cache-v2';
+const CACHE_NAME = 'atlan-cache-v4';
 const ASSETS_TO_CACHE = [
   '/manifest.json',
   '/icon-192.png',
@@ -20,7 +20,6 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cache) => {
-          // Eliminar cualquier versión anterior de la caché (p.ej. v1 con HTML viejo)
           if (cache !== CACHE_NAME) {
             console.log('[ServiceWorker] Eliminando caché obsoleta:', cache);
             return caches.delete(cache);
@@ -38,7 +37,11 @@ self.addEventListener('fetch', (event) => {
 
   const url = event.request.url;
 
-  // 1. NUNCA interceptar consultas a Supabase BD/Auth ni Mapbox Vector Tiles (dejar pasar directo a red)
+  // 1. NUNCA interceptar chunks de Next.js — siempre ir a la red para tener JS actualizado
+  //    Esto evita servir código viejo cacheado cuando hay hot-reload o nuevos deploys
+  if (url.includes('/_next/')) return;
+
+  // 2. NUNCA interceptar consultas a Supabase BD/Auth ni Mapbox Vector Tiles
   const isSupabaseImage = url.includes('supabase.co') && url.includes('/storage/v1/object/public/');
   const isSupabaseData = url.includes('supabase.co') && !isSupabaseImage;
 
@@ -46,15 +49,13 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. PAGINAS HTML Y CÓDIGO DE LA APLICACIÓN: ESTRATEGIA NETWORK-FIRST (Red Primero)
-  // Garantiza que la interfaz, páginas y código SIEMPRE carguen la versión más reciente del servidor
+  // 3. PÁGINAS HTML Y CÓDIGO DE LA APLICACIÓN: ESTRATEGIA NETWORK-FIRST (Red Primero)
   const isHTMLPage = event.request.mode === 'navigate' || event.request.headers.get('accept')?.includes('text/html');
 
   if (isHTMLPage) {
     event.respondWith(
       fetch(event.request)
         .then((networkResponse) => {
-          // Guardar una copia fresca en caché para modo offline
           if (networkResponse && networkResponse.status === 200) {
             const responseToCache = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
@@ -62,7 +63,6 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          // Si NO hay internet, devolver la versión en caché como respaldo offline
           return caches.match(event.request).then((cachedResponse) => {
             return cachedResponse || caches.match('/');
           });
@@ -71,8 +71,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. IMÁGENES Y RECURSOS MULTIMEDIA: ESTRATEGIA STALE-WHILE-REVALIDATE (Caché Rápida + Revalidación)
-  // Permite que las fotos carguen en 0ms y se actualicen silenciosamente si cambian
+  // 4. IMÁGENES Y RECURSOS MULTIMEDIA: ESTRATEGIA STALE-WHILE-REVALIDATE
   const isImage = isSupabaseImage || event.request.destination === 'image' || url.includes('images.unsplash.com');
 
   if (isImage) {
@@ -88,14 +87,13 @@ self.addEventListener('fetch', (event) => {
           })
           .catch(() => {});
 
-        // Devolver inmediatamente desde caché si existe, sino esperar a la red
         return cachedResponse || fetchPromise;
       })
     );
     return;
   }
 
-  // 4. OTROS RECURSOS ESTÁTICOS GENERALES: NETWORK-FIRST CON CACHÉ DE RESPALDO
+  // 5. OTROS RECURSOS ESTÁTICOS: NETWORK-FIRST CON CACHÉ DE RESPALDO
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
