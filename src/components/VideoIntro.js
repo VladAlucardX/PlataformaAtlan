@@ -25,7 +25,6 @@ export default function VideoIntro({ onComplete }) {
   const [phase, setPhase] = useState("playing"); // "playing" | "fading" | "done"
   const [videoReady, setVideoReady] = useState(false);
   const [progressPercent, setProgressPercent] = useState(0);
-  const [isMobileView, setIsMobileView] = useState(false);
 
   const notifiedRef = useRef(false);
 
@@ -34,47 +33,21 @@ export default function VideoIntro({ onComplete }) {
     setPhase((prev) => (prev === "playing" ? "fading" : prev));
   }, []);
 
-  // Detectar móvil/WebView en el cliente y saltar intro inmediatamente si aplica
+  // Forzar reproducción y manejo de video
   useEffect(() => {
-    if (detectMobileOrWebView()) {
-      setIsMobileView(true);
-      // Llamar onComplete directamente sin animar para desbloquear la app
-      if (!notifiedRef.current) {
-        notifiedRef.current = true;
-        onComplete?.();
-      }
-      setPhase("done");
-      return;
-    }
-  }, [onComplete]);
-
-  // Forzar reproducción y fallback rápido para conexiones móviles / WebViews
-  useEffect(() => {
-    if (isMobileView) return; // ya saltado
     if (videoRef.current) {
       videoRef.current.muted = true;
       videoRef.current.defaultMuted = true;
       videoRef.current.play().catch((err) => {
         console.warn("Autoplay bloqueado por el navegador:", err);
         setVideoReady(true);
-        startFadeOut();
       });
 
       if (videoRef.current.readyState >= 2) {
         setVideoReady(true);
       }
     }
-
-    // Fallback rápido: Si el video tarda más de 3s en cargar o reproducirse, dar paso a la app
-    const fallbackTimer = setTimeout(() => {
-      setVideoReady(true);
-      if (!videoRef.current || videoRef.current.currentTime < 0.2) {
-        startFadeOut();
-      }
-    }, 3000);
-
-    return () => clearTimeout(fallbackTimer);
-  }, [startFadeOut, isMobileView]);
+  }, []);
 
   // Notificar al terminar fade-out
   useEffect(() => {
@@ -88,19 +61,18 @@ export default function VideoIntro({ onComplete }) {
     }
   }, [phase, onComplete]);
 
-  // Timeout de seguridad máximo para versión Web (8.5s)
+  // Timeout de seguridad máximo de 8.5s (garantiza paso a la app)
   useEffect(() => {
-    if (isMobileView) return;
     const safety = setTimeout(() => {
       startFadeOut();
     }, 8500);
 
     return () => clearTimeout(safety);
-  }, [startFadeOut, isMobileView]);
+  }, [startFadeOut]);
 
-  // Actualización ultra-fluida de la barra de progreso sincronizada a los 8 segundos en Web
+  // Actualización ultra-fluida de la barra de progreso sincronizada a los 8 segundos exactos
   useEffect(() => {
-    if (phase !== "playing" || isMobileView) return;
+    if (phase !== "playing") return;
 
     let animId;
     let startTime = performance.now();
@@ -108,8 +80,7 @@ export default function VideoIntro({ onComplete }) {
 
     const updateProgress = (now) => {
       const elapsed = (now - startTime) / 1000;
-      // Usar tiempo real transcurrido — inmune a video atascado en red lenta (IP/WiFi)
-      // El video sigue mostrándose en el fondo, solo la barra de progreso usa el reloj real
+      // Usar tiempo real transcurrido para que siempre dure 8s exactos en cualquier dispositivo
       const pct = Math.min((elapsed / targetDuration) * 100, 100);
 
       setProgressPercent(pct);
@@ -127,7 +98,7 @@ export default function VideoIntro({ onComplete }) {
     return () => {
       if (animId) cancelAnimationFrame(animId);
     };
-  }, [phase, startFadeOut, isMobileView]);
+  }, [phase, startFadeOut]);
 
   if (phase === "done") return null;
 

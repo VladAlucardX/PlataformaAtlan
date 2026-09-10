@@ -2254,6 +2254,8 @@ html body .mapboxgl-ctrl-directions tr {
   .mobile-menu-item {
     display: flex !important;
     align-items: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
     gap: 14px !important;
     width: 100% !important;
     max-width: 100% !important;
@@ -2277,18 +2279,35 @@ html body .mapboxgl-ctrl-directions tr {
     font-weight: 700 !important;
     color: #FFFFFF !important;
     white-space: nowrap !important;
+    text-align: left !important;
   }
 
+  .mobile-menu-item img {
+    width: 20px !important;
+    height: 20px !important;
+    object-fit: contain !important;
+    filter: brightness(0) invert(1) !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mobile-menu-item svg {
+    color: #FFFFFF !important;
+    stroke: #FFFFFF !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mobile-menu-item:hover,
   .mobile-menu-item:active,
   .mobile-menu-item.active {
-    background: linear-gradient(135deg, rgba(20, 109, 158, 0.6) 0%, rgba(13, 73, 107, 0.7) 100%) !important;
-    border-color: #FFD700 !important;
-    color: #FFD700 !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+    color: #FFFFFF !important;
   }
 
+  .mobile-menu-item:hover span,
   .mobile-menu-item:active span,
   .mobile-menu-item.active span {
-    color: #FFD700 !important;
+    color: #FFFFFF !important;
   }
 
   .filter-bar {
@@ -3588,23 +3607,46 @@ html body .mapboxgl-ctrl-directions tr {
 .mobile-menu-item {
   display: flex !important;
   align-items: center !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
   gap: 14px !important;
   padding: 14px 18px !important;
   border-radius: 14px !important;
-  background: rgba(255, 255, 255, 0.05) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
   color: #FFFFFF !important;
   font-size: 15px !important;
   font-weight: 700 !important;
   text-decoration: none !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
   transition: all 0.2s ease !important;
   touch-action: manipulation !important;
 }
 
+.mobile-menu-item span {
+  color: #FFFFFF !important;
+  text-align: left !important;
+}
+
+.mobile-menu-item img {
+  width: 20px !important;
+  height: 20px !important;
+  object-fit: contain !important;
+  filter: brightness(0) invert(1) !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-menu-item svg {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+  flex-shrink: 0 !important;
+}
+
+.mobile-menu-item:hover,
+.mobile-menu-item:active,
 .mobile-menu-item.active {
-  background: rgba(255, 215, 0, 0.15) !important;
-  border-color: rgba(255, 215, 0, 0.4) !important;
-  color: #FFD700 !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  color: #FFFFFF !important;
 }
 
 @media (max-width: 768px) {

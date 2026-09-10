@@ -653,67 +653,67 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           </div>
 
           <Link href="/" className={`mobile-menu-item ${activePage === "inicio" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <img src="/images/home.svg" alt="Inicio" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Inicio", "Home", "首页")}</span>
+            <img src="/images/home.svg" alt="Inicio" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> <span>{tr("Inicio", "Home", "首页")}</span>
           </Link>
           <Link href="/mapa" className={`mobile-menu-item ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <img src="/images/ubic.svg" alt="Mapa" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Explorar Mapa", "Explore Map", "探索地图")}</span>
+            <img src="/images/ubic.svg" alt="Mapa" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> <span>{tr("Explorar Mapa", "Explore Map", "探索地图")}</span>
           </Link>
           <Link href="/mas-de-nicaragua" className={`mobile-menu-item ${activePage === "mas-de-nicaragua" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Más de Nicaragua", "More of Nicaragua", "探索尼加拉瓜")}</span>
+            <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> <span>{tr("Más de Nicaragua", "More of Nicaragua", "探索尼加拉瓜")}</span>
           </Link>
           <Link href="/departamentos" className={`mobile-menu-item ${activePage === "departamentos" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <img src="/images/flor.svg" alt="Ranking" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Ranking", "Ranking", "排行榜")}</span>
+            <img src="/images/flor.svg" alt="Ranking" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> <span>{tr("Ranking", "Ranking", "排行榜")}</span>
           </Link>
           <Link href="/comunidad" className={`mobile-menu-item ${activePage === "comunidad" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Comunidad", "Community", "社区")}</span>
+            <img src="/images/comunidad.svg" alt="Comunidad" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> <span>{tr("Comunidad", "Community", "社区")}</span>
           </Link>
           <Link href="/guias" className={`mobile-menu-item ${activePage === "guias" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-            <Icon name="compass" size={20} color={activePage === "guias" ? "#38BDF8" : "#FFD700"} /> <span>{tr("Guías Turísticos", "Tour Guides", "专业导游")}</span>
+            <Icon name="compass" size={20} color="#FFFFFF" /> <span>{tr("Guías Turísticos", "Tour Guides", "专业导游")}</span>
           </Link>
           {session && (
             <Link href="/chat" className={`mobile-menu-item ${activePage === "chat" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-              <img src="/images/comentarios.svg" alt="Mensajes" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{tr("Mensajes", "Messages", "消息")}</span>
+              <img src="/images/comentarios.svg" alt="Mensajes" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> <span>{tr("Mensajes", "Messages", "消息")}</span>
             </Link>
           )}
           {perfil?.rol === "admin" && (
             <Link href="/admin" className={`mobile-menu-item ${activePage === "admin" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
-              <Icon name="shield" size={18} /> <span>{tr("Gestión", "Management", "管理后台")}</span>
+              <Icon name="shield" size={18} color="#FFFFFF" /> <span>{tr("Gestión", "Management", "管理后台")}</span>
             </Link>
           )}
           {session ? (
             <>
               <Link href={communityProfileUrl} className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                <Icon name="users" size={18} /> <span>{tr("Mi Perfil Comunidad", "My Community Profile", "我的社区主页")}</span>
+                <Icon name="users" size={18} color="#FFFFFF" /> <span>{tr("Mi Perfil Comunidad", "My Community Profile", "我的社区主页")}</span>
               </Link>
               <Link href="/perfil" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                <Icon name="user" size={18} /> <span>{tr("Mi Perfil Personal", "My Personal Profile", "我的个人资料")}</span>
+                <Icon name="user" size={18} color="#FFFFFF" /> <span>{tr("Mi Perfil Personal", "My Personal Profile", "我的个人资料")}</span>
               </Link>
               {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
                 <Link href="/dashboard" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                  <Icon name="briefcase" size={18} /> <span>{tr("Mi Negocio", "My Business", "我的商家")}</span>
+                  <Icon name="briefcase" size={18} color="#FFFFFF" /> <span>{tr("Mi Negocio", "My Business", "我的商家")}</span>
                 </Link>
               )}
               <button
                 type="button"
                 onClick={() => { setMenuOpen(false); handleLogout(); }}
                 className="mobile-menu-item"
-                style={{ background: "rgba(239,68,68,0.15)", borderColor: "rgba(239,68,68,0.3)", color: "#ef4444", width: "100%", textAlign: "left", cursor: "pointer" }}
+                style={{ background: "rgba(239,68,68,0.15)", borderColor: "rgba(239,68,68,0.3)", color: "#FFFFFF", width: "100%", textAlign: "left", cursor: "pointer", justifyContent: "flex-start", gap: "14px" }}
               >
-                <Icon name="logOut" size={18} /> <span>{t("nav.logout") || "Cerrar Sesión"}</span>
+                <Icon name="logOut" size={18} color="#FFFFFF" /> <span>{t("nav.logout") || "Cerrar Sesión"}</span>
               </button>
             </>
           ) : (
             <>
               <Link href="/login" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
-                <img src="/images/gueguense.svg" alt="Iniciar Sesión" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{t("nav.login")}</span>
+                <img src="/images/gueguense.svg" alt="Iniciar Sesión" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> <span>{t("nav.login")}</span>
               </Link>
               <Link
                 href="/registro"
                 className="mobile-menu-item"
-                style={{ background: "linear-gradient(135deg, #146D9E 0%, #0D496B 100%)", borderColor: "#FFD700", color: "#FFFFFF", justifyContent: "center", gap: "8px" }}
+                style={{ background: "rgba(20, 109, 158, 0.4)", borderColor: "rgba(255, 255, 255, 0.2)", color: "#FFFFFF", justifyContent: "flex-start", gap: "14px" }}
                 onClick={() => setMenuOpen(false)}
               >
-                <img src="/images/tortuga.svg" alt="Registrarse" style={{ width: "20px", height: "20px", objectFit: "contain" }} /> <span>{t("nav.register")}</span>
+                <img src="/images/tortuga.svg" alt="Registrarse" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> <span>{t("nav.register")}</span>
               </Link>
             </>
           )}
@@ -726,11 +726,11 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
               setLang(nextLang);
             }}
             className="mobile-menu-item"
-            style={{ width: "100%", textAlign: "left", cursor: "pointer", justifyContent: "space-between", background: "rgba(20, 109, 158, 0.15)", borderColor: "rgba(20, 109, 158, 0.3)", marginTop: "4px" }}
+            style={{ width: "100%", textAlign: "left", cursor: "pointer", justifyContent: "space-between", background: "rgba(255, 255, 255, 0.06)", borderColor: "rgba(255, 255, 255, 0.12)", marginTop: "4px" }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <img src="/images/remolino.svg" alt="Idioma" style={{ width: "20px", height: "20px", objectFit: "contain" }} />
-              <span>{lang === "es" ? "Traducir Página" : lang === "en" ? "Translate Page" : "翻译页面"}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+              <img src="/images/remolino.svg" alt="Idioma" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+              <span style={{ color: "#FFFFFF" }}>{lang === "es" ? "Traducir Página" : lang === "en" ? "Translate Page" : "翻译页面"}</span>
             </div>
             <span style={{
               fontSize: "11px",
