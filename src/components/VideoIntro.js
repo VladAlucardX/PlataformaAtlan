@@ -108,14 +108,9 @@ export default function VideoIntro({ onComplete }) {
 
     const updateProgress = (now) => {
       const elapsed = (now - startTime) / 1000;
-      let pct = 0;
-
-      if (videoRef.current && videoRef.current.currentTime > 0.1 && !videoRef.current.paused) {
-        const current = videoRef.current.currentTime;
-        pct = Math.min((current / targetDuration) * 100, 100);
-      } else {
-        pct = Math.min((elapsed / targetDuration) * 100, 100);
-      }
+      // Usar tiempo real transcurrido — inmune a video atascado en red lenta (IP/WiFi)
+      // El video sigue mostrándose en el fondo, solo la barra de progreso usa el reloj real
+      const pct = Math.min((elapsed / targetDuration) * 100, 100);
 
       setProgressPercent(pct);
 
