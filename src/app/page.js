@@ -451,15 +451,21 @@ export default function Home() {
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        const isMobile = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini|wv/i.test(navigator.userAgent);
+        const ua = navigator.userAgent || "";
+        const isMobileSize = window.innerWidth <= 768;
+        const isMobileUA = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+        // Detectar WebView de Flutter (Android WebView tiene 'wv' en el UA)
+        const isWebView = /wv\b/i.test(ua) || /Flutter/i.test(ua) || (/Version\/\d/.test(ua) && /Mobile Safari/.test(ua) && !/Chrome/.test(ua));
+        const isMobile = isMobileSize || isMobileUA || isWebView;
         const introSeen = sessionStorage.getItem("introSeen") === "true";
-        
-        // Omitir el intro únicamente en dispositivos móviles o si ya fue visto en la sesión
+
+        // Omitir el intro en dispositivos móviles/WebViews o si ya fue visto en la sesión
         if (isMobile || introSeen) {
           setIntroDone(true);
         }
       } catch (e) {
-        // Fallback
+        // Fallback seguro: mostrar contenido
+        setIntroDone(true);
       }
     }
   }, []);
@@ -489,6 +495,7 @@ export default function Home() {
           minHeight: "100vh",
           background: "#FFFFFF",
           opacity: introDone ? 1 : 0,
+          pointerEvents: introDone ? "auto" : "none",
           transition: "opacity 0.8s ease 0.2s",
         }}
       >

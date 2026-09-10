@@ -4,11 +4,23 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 
 // Pantalla de bienvenida con video de fondo
 
+// Detecta si es móvil o WebView (incluye Flutter InAppWebView)
+function detectMobileOrWebView() {
+  if (typeof window === "undefined") return false;
+  const ua = navigator.userAgent || "";
+  const isMobileSize = window.innerWidth <= 768;
+  const isMobileUA = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+  // Flutter InAppWebView usa un UA que contiene 'wv' (Android WebView) o 'Version/' con 'Mobile Safari'
+  const isWebView = /wv\b/i.test(ua) || /Flutter/i.test(ua) || (/Version\/\d/.test(ua) && /Mobile Safari/.test(ua) && !/Chrome/.test(ua));
+  return isMobileSize || isMobileUA || isWebView;
+}
+
 export default function VideoIntro({ onComplete }) {
   const videoRef = useRef(null);
   const [phase, setPhase] = useState("playing"); // "playing" | "fading" | "done"
   const [videoReady, setVideoReady] = useState(false);
   const [progressPercent, setProgressPercent] = useState(0);
+  const [isMobileView, setIsMobileView] = useState(false);
 
   const notifiedRef = useRef(false);
 
@@ -17,8 +29,23 @@ export default function VideoIntro({ onComplete }) {
     setPhase((prev) => (prev === "playing" ? "fading" : prev));
   }, []);
 
+  // Detectar móvil/WebView en el cliente y saltar intro inmediatamente si aplica
+  useEffect(() => {
+    if (detectMobileOrWebView()) {
+      setIsMobileView(true);
+      // Llamar onComplete directamente sin animar para desbloquear la app
+      if (!notifiedRef.current) {
+        notifiedRef.current = true;
+        onComplete?.();
+      }
+      setPhase("done");
+      return;
+    }
+  }, [onComplete]);
+
   // Forzar reproducción y fallback rápido para conexiones móviles / WebViews
   useEffect(() => {
+    if (isMobileView) return; // ya saltado
     if (videoRef.current) {
       videoRef.current.muted = true;
       videoRef.current.defaultMuted = true;
@@ -42,7 +69,7 @@ export default function VideoIntro({ onComplete }) {
     }, 3000);
 
     return () => clearTimeout(fallbackTimer);
-  }, [startFadeOut]);
+  }, [startFadeOut, isMobileView]);
 
   // Notificar al terminar fade-out
   useEffect(() => {
@@ -58,16 +85,17 @@ export default function VideoIntro({ onComplete }) {
 
   // Timeout de seguridad máximo para versión Web (8.5s)
   useEffect(() => {
+    if (isMobileView) return;
     const safety = setTimeout(() => {
       startFadeOut();
     }, 8500);
 
     return () => clearTimeout(safety);
-  }, [startFadeOut]);
+  }, [startFadeOut, isMobileView]);
 
   // Actualización ultra-fluida de la barra de progreso sincronizada a los 8 segundos en Web
   useEffect(() => {
-    if (phase !== "playing") return;
+    if (phase !== "playing" || isMobileView) return;
 
     let animId;
     let startTime = performance.now();
@@ -99,15 +127,9 @@ export default function VideoIntro({ onComplete }) {
     return () => {
       if (animId) cancelAnimationFrame(animId);
     };
-  }, [phase, startFadeOut]);
+  }, [phase, startFadeOut, isMobileView]);
 
   if (phase === "done") return null;
-
-  // Evitar renderizar VideoIntro en dispositivos móviles / WebViews
-  if (typeof window !== "undefined") {
-    const isMobile = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini|wv/i.test(navigator.userAgent);
-    if (isMobile) return null;
-  }
 
   return (
     <div
