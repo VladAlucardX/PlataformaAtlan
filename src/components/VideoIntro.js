@@ -65,11 +65,13 @@ export default function VideoIntro({ onComplete }) {
       }
     }
 
-    // Fallback: Si el video no arranca o se atasca en 2s, saltar siempre (red local lenta)
+    // Fallback rápido: Si el video tarda más de 3s en cargar o reproducirse, dar paso a la app
     const fallbackTimer = setTimeout(() => {
       setVideoReady(true);
-      startFadeOut(); // Siempre saltar — el video puede estar cargando/atascado
-    }, 2000);
+      if (!videoRef.current || videoRef.current.currentTime < 0.2) {
+        startFadeOut();
+      }
+    }, 3000);
 
     return () => clearTimeout(fallbackTimer);
   }, [startFadeOut, isMobileView]);
@@ -106,8 +108,14 @@ export default function VideoIntro({ onComplete }) {
 
     const updateProgress = (now) => {
       const elapsed = (now - startTime) / 1000;
-      // SIEMPRE usar tiempo real transcurrido — inmune a video atascado en red lenta
-      const pct = Math.min((elapsed / targetDuration) * 100, 100);
+      let pct = 0;
+
+      if (videoRef.current && videoRef.current.currentTime > 0.1 && !videoRef.current.paused) {
+        const current = videoRef.current.currentTime;
+        pct = Math.min((current / targetDuration) * 100, 100);
+      } else {
+        pct = Math.min((elapsed / targetDuration) * 100, 100);
+      }
 
       setProgressPercent(pct);
 
