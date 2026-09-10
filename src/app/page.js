@@ -451,6 +451,9 @@ export default function Home() {
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       try {
+        // Método primario: parámetro URL enviado por Flutter WebView
+        const urlParams = new URLSearchParams(window.location.search);
+        const isFlutterWebView = urlParams.get('platform') === 'mobile';
         const ua = navigator.userAgent || "";
         // Flutter useWideViewPort:true hace innerWidth ~980px en teléfono → usar touch detection
         const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -458,7 +461,7 @@ export default function Home() {
         const isMobileUA = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
         // Detectar WebView de Flutter (Android WebView tiene 'wv' en el UA)
         const isWebView = /wv\b/i.test(ua) || /Flutter/i.test(ua) || (/Version\/\d/.test(ua) && /Mobile Safari/.test(ua) && !/Chrome/.test(ua));
-        const isMobile = isTouch || isMobileSize || isMobileUA || isWebView;
+        const isMobile = isFlutterWebView || isTouch || isMobileSize || isMobileUA || isWebView;
         const introSeen = sessionStorage.getItem("introSeen") === "true";
 
         // Omitir el intro en dispositivos móviles/WebViews o si ya fue visto en la sesión

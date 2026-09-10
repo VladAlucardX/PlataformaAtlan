@@ -7,13 +7,15 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 // Detecta si es móvil o WebView (incluye Flutter InAppWebView con useWideViewPort)
 function detectMobileOrWebView() {
   if (typeof window === "undefined") return false;
+  // Método primario: parámetro URL ?platform=mobile enviado por el WebView de Flutter
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('platform') === 'mobile') return true;
   const ua = navigator.userAgent || "";
-  // NOTA: Flutter useWideViewPort:true hace innerWidth ~980px aunque sea un teléfono.
-  // Por eso usamos touch detection como señal primaria.
+  // Flutter useWideViewPort:true hace innerWidth ~980px aunque sea un teléfono.
+  // Por eso usamos touch detection como señal secundaria.
   const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   const isMobileSize = window.innerWidth <= 900;
   const isMobileUA = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-  // Flutter InAppWebView: puede tener 'wv', 'Flutter', o UA sin 'Chrome' puro
   const isWebView = /wv\b/i.test(ua) || /Flutter/i.test(ua) || (/Version\/\d/.test(ua) && /Mobile Safari/.test(ua) && !/Chrome/.test(ua));
   return isTouch || isMobileSize || isMobileUA || isWebView;
 }

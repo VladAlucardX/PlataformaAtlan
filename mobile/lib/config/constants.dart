@@ -14,10 +14,12 @@ class AppConstants {
   // --- Web App URL ---
   static String get webAppUrl {
     final envUrl = dotenv.env['WEB_APP_URL'];
-    if (envUrl != null && envUrl.trim().isNotEmpty) {
-      return envUrl.trim();
-    }
-    return 'https://plataforma-atlan.vercel.app';
+    final base = (envUrl != null && envUrl.trim().isNotEmpty)
+        ? envUrl.trim()
+        : 'https://plataforma-atlan.vercel.app';
+    // Agregar ?platform=mobile para que Next.js salte el video intro siempre en Flutter
+    final separator = base.contains('?') ? '&' : '?';
+    return '$base${separator}platform=mobile';
   }
 
   // --- Mapa de Nicaragua (centro y zoom por defecto) ---
