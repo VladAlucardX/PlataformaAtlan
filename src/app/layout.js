@@ -1,6 +1,7 @@
 import "./globals.css";
 import ClientProviders from "../components/ClientProviders";
 import PWARegister from "../components/PWARegister";
+import PWAInstallBanner from "../components/PWAInstallBanner";
 import { Inter, Outfit } from "next/font/google";
 
 const outfit = Outfit({
@@ -65,14 +66,18 @@ export default function RootLayout({ children }) {
     <html lang="es" className={`${outfit.variable} ${inter.variable}`}>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#FFD700" />
+        <meta name="theme-color" content="#D4AF37" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        {/* iOS / Safari PWA */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Atlan" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
       <body suppressHydrationWarning className={`${outfit.variable} ${inter.variable}`}>
         <ClientProviders>
           <PWARegister />
+          <PWAInstallBanner />
           {children}
         </ClientProviders>
       </body>
