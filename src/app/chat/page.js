@@ -985,7 +985,7 @@ function ChatContent() {
 const chatLayoutStyles = {
   container: {
     maxWidth: "1160px",
-    margin: "84px auto 24px",
+    margin: "76px auto 20px",
     height: "calc(100vh - 120px)",
     maxHeight: "820px",
     minHeight: "540px",

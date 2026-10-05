@@ -523,7 +523,7 @@ export default function PerfilGuiaPage() {
         flex: 1,
         maxWidth: "1400px",
         width: "100%",
-        margin: "56px auto 0",
+        margin: "70px auto 0",
         padding: "6px 14px 10px",
         boxSizing: "border-box",
         display: "flex",

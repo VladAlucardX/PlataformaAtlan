@@ -1862,7 +1862,7 @@ const styles = {
 
   heroSectionCompact: {
     position: "relative",
-    padding: "68px 24px 8px 24px",
+    padding: "76px 24px 8px 24px",
     background: "transparent",
     borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
     zIndex: 2

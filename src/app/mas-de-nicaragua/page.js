@@ -390,7 +390,7 @@ export default function MasDeNicaraguaPage() {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        padding: "95px 12px 20px"
+        padding: "78px 12px 20px"
       }}>
 
         {/* Mapa Protagonista Principal */}

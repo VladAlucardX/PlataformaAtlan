@@ -416,14 +416,16 @@ a:hover {
   left: 0 !important;
   right: 0 !important;
   width: 100% !important;
-  z-index: 200 !important;
+  height: 64px !important;
+  z-index: 9999 !important;
   background: #0A192F !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 2.5px solid rgba(255, 255, 255, 0.12) !important;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.12) !important;
   box-shadow: 
     0 12px 32px -4px rgba(0, 0, 0, 0.35),
     0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  box-sizing: border-box !important;
 }
 
 /* ── BOTÓN CON DESTELLO DE LUZ BLANCA SHIMMER SWEEP ───────────────────────── */
@@ -2589,18 +2591,19 @@ html body .mapboxgl-ctrl-directions tr {
 
 /* ── RESPONSIVE UTILITIES & NAVBAR ────────────────────────── */
 .atlan-navbar-header {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 100%;
-  max-width: 100vw;
-  z-index: 1000 !important;
-  background: #0A192F;
-  background: rgba(10, 25, 47, 0.98);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(255, 215, 0, 0.25);
-  box-sizing: border-box;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  height: 64px !important;
+  z-index: 9999 !important;
+  background: #0A192F !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+  box-sizing: border-box !important;
   overflow: visible !important;
 }
 
@@ -3605,15 +3608,18 @@ html body .mapboxgl-ctrl-directions tr {
    NAVBAR Y MENÚ DESPLEGABLE MÓVIL (DRAWER)
    ═══════════════════════════════════════════════════════════════════════════════ */
 .atlan-navbar-header {
-  position: sticky !important;
+  position: fixed !important;
   top: 0 !important;
   left: 0 !important;
   right: 0 !important;
+  width: 100% !important;
+  height: 64px !important;
   z-index: 9999 !important;
   background: #0A192F !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.12) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
+  box-sizing: border-box !important;
 }
 
 .mobile-menu-drawer {

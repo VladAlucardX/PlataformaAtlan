@@ -618,7 +618,7 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
-    padding: "110px 24px 80px",
+    padding: "96px 24px 70px",
   },
   heroOrb1: {
     position: "absolute",

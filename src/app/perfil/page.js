@@ -574,7 +574,7 @@ export default function PerfilPage() {
       {/* CONTENEDOR PRINCIPAL WIDESCREEN (CERO SCROLL SINGLE VIEW) */}
       <div style={{
         maxWidth: "1380px",
-        margin: "85px auto 0",
+        margin: "78px auto 0",
         padding: "0 24px",
         position: "relative",
         zIndex: 1

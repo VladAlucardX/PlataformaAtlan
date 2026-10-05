@@ -934,7 +934,7 @@ export default function PerfilPublico() {
       <Navbar activePage="comunidad" session={session} perfil={myPerfil} />
 
       {/* Main 3-Column Layout */}
-      <div className="community-main-layout" style={{ maxWidth: "1320px", margin: "0 auto", padding: "95px 24px 40px 24px", position: "relative", zIndex: 1 }}>
+      <div className="community-main-layout" style={{ maxWidth: "1320px", margin: "0 auto", padding: "78px 24px 40px 24px", position: "relative", zIndex: 1 }}>
 
         {/* ── SIDEBAR LEFT ── */}
         <aside className="hide-mobile community-sidebar">
