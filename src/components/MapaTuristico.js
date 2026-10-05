@@ -307,7 +307,7 @@ export default function MapaTuristico() {
                 : { top: 100, bottom: 100, left: 80, right: 80 },
               maxZoom: 15.5,
               duration: 0,
-              pitch: 15,
+              pitch: 0,
               essential: true
             });
           }
@@ -715,7 +715,7 @@ export default function MapaTuristico() {
           mapRef.current.easeTo({
             center: [lastPoint.lng, lastPoint.lat],
             zoom: 12.8,
-            pitch: 25,
+            pitch: 0,
             padding: { top: 0, bottom: 0, left: 0, right: 0 },
             duration: 1800,
             essential: true
@@ -726,7 +726,7 @@ export default function MapaTuristico() {
           mapRef.current.easeTo({
             center: [center.lng, center.lat],
             zoom: 12.8,
-            pitch: 25,
+            pitch: 0,
             padding: { top: 0, bottom: 0, left: 0, right: 0 },
             duration: 1800,
             essential: true
@@ -743,7 +743,7 @@ export default function MapaTuristico() {
           mapRef.current.flyTo({
             center: currentPosRef.current,
             zoom: 16.5,
-            pitch: 60,
+            pitch: 0,
             speed: 0.85,  // Velocidad óptima para renderizado
             curve: 1.1,   // Trayectoria plana para transiciones fluidas
             essential: true
@@ -911,7 +911,7 @@ export default function MapaTuristico() {
     mapRef.current.flyTo({
       center: [currLng, currLat],
       zoom: 16.5,
-      pitch: 60,
+      pitch: 0,
       speed: 0.9,
       curve: 1.1,
       essential: true
@@ -1150,13 +1150,16 @@ export default function MapaTuristico() {
       pointsToRender.forEach((punto) => {
         const config = CATEGORIAS_CONFIG[punto.categoria] || CATEGORIAS_CONFIG.otro;
 
-        // Crear contenedor HTML para el marcador personalizado
+        // 1. Anclaje simétrico fijo en Mapbox (38px × 38px)
         const el = document.createElement('div');
         el.className = 'marker-custom-container';
+        el.style.width = '38px';
+        el.style.height = '38px';
 
         // Elemento interno visual (evita que las transiciones de CSS interfieran con el posicionamiento transform de Mapbox)
         const inner = document.createElement('div');
         inner.className = 'marker-custom';
+        inner.style.position = 'relative';
         inner.style.backgroundColor = config.color;
         inner.style.width = '38px';
         inner.style.height = '38px';
@@ -1166,7 +1169,9 @@ export default function MapaTuristico() {
         inner.style.alignItems = 'center';
         inner.style.fontSize = '18px';
         inner.style.cursor = 'pointer';
-        inner.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+        inner.style.transformOrigin = 'center center';
+        inner.style.transform = 'translateY(0) scale(var(--marker-zoom-scale, 1))';
+        inner.style.transition = 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)';
         inner.innerHTML = config.svgFile
           ? `<img src="${config.svgFile}" alt="${punto.categoria || 'categoria'}" style="width:20px;height:20px;object-fit:contain;filter:brightness(0) invert(1);" />`
           : config.svg;
@@ -1214,13 +1219,13 @@ export default function MapaTuristico() {
         inner.appendChild(badge);
         el.appendChild(inner);
 
-        // Efectos interactivos al pasar el mouse
+        // 2. Elevación vertical directa hacia arriba (translateY(-5px))
         el.addEventListener('mouseenter', () => {
-          inner.style.transform = 'scale(1.2) translateY(-2px)';
+          inner.style.transform = 'translateY(-5px) scale(calc(var(--marker-zoom-scale, 1) * 1.25))';
           el.style.zIndex = '999';
         });
         el.addEventListener('mouseleave', () => {
-          inner.style.transform = 'scale(1) translateY(0)';
+          inner.style.transform = 'translateY(0) scale(var(--marker-zoom-scale, 1))';
           el.style.zIndex = 'auto';
         });
 
@@ -1435,7 +1440,7 @@ export default function MapaTuristico() {
               mapRef.current.flyTo({
                 center: [currLng, currLat],
                 zoom: 16.5,
-                pitch: 60,
+                pitch: 0,
                 speed: 0.9,
                 curve: 1.1,
                 essential: true
@@ -1540,7 +1545,7 @@ export default function MapaTuristico() {
             : { top: 100, bottom: 100, left: 80, right: 80 },
           maxZoom: 15.5,
           duration: isInitialFit ? 1800 : 0,
-          pitch: 15,
+          pitch: 0,
           essential: true
         });
       }
@@ -1598,7 +1603,7 @@ export default function MapaTuristico() {
       const opts = {
         center: [longitude, latitude],
         zoom: 16.5,
-        pitch: 60,
+        pitch: 0,
         duration: 1800,
         essential: true,
         padding: { top: 180 },
@@ -2089,7 +2094,7 @@ export default function MapaTuristico() {
 
     setTempPointCoords(initialCoords);
     if (mapRef.current) {
-      mapRef.current.flyTo({ center: initialCoords, zoom: 16.5, pitch: 30, essential: true });
+      mapRef.current.flyTo({ center: initialCoords, zoom: 16.5, pitch: 0, essential: true });
     }
     setShowAddModal(true);
 
@@ -2102,7 +2107,7 @@ export default function MapaTuristico() {
           currentPosRef.current = [lng, lat];
           setTempPointCoords([lng, lat]);
           if (mapRef.current) {
-            mapRef.current.flyTo({ center: [lng, lat], zoom: 16.5, pitch: 30, essential: true });
+            mapRef.current.flyTo({ center: [lng, lat], zoom: 16.5, pitch: 0, essential: true });
           }
         },
         (err) => {
@@ -2204,14 +2209,40 @@ export default function MapaTuristico() {
       center: [-85.0, 13.0], // Centro de Centroamérica
       zoom: 5.5,
       pitch: 0,
+      maxPitch: 0,
+      pitchWithRotate: false,
+      touchPitch: false,
       projection: 'mercator',
       maxBounds: CENTRAL_AMERICA_BOUNDS, // Restringir memoria al área estrictamente necesaria
     });
+
+    if (mapContainerRef.current) {
+      mapContainerRef.current.style.setProperty('--marker-zoom-scale', '1');
+    }
 
     mapRef.current.on('dragstart', () => {
       if (activePopupRef.current) {
         activePopupRef.current.remove();
         activePopupRef.current = null;
+      }
+    });
+
+    // 3. Cero retraso durante el zoom del mapa (.map-zooming)
+    mapRef.current.on('zoomstart', () => {
+      if (mapContainerRef.current) {
+        mapContainerRef.current.classList.add('map-zooming');
+      }
+    });
+
+    mapRef.current.on('zoom', () => {
+      if (mapContainerRef.current && !mapContainerRef.current.classList.contains('map-zooming')) {
+        mapContainerRef.current.classList.add('map-zooming');
+      }
+    });
+
+    mapRef.current.on('zoomend', () => {
+      if (mapContainerRef.current) {
+        mapContainerRef.current.classList.remove('map-zooming');
       }
     });
 
@@ -2223,6 +2254,9 @@ export default function MapaTuristico() {
     });
 
     mapRef.current.on('moveend', () => {
+      if (mapContainerRef.current) {
+        mapContainerRef.current.classList.remove('map-zooming');
+      }
       if (typeof window !== 'undefined') {
         window.__atlanMapMoving = false;
         window.resetAtlanInactivityTimer?.();
@@ -2617,7 +2651,7 @@ export default function MapaTuristico() {
         mapRef.current.resize();
 
         // FASE 1: Vuelo descendente 100% vertical y plano (pitch: 0, bearing: 0) desde el espacio hasta la posición GPS
-        // Sin giros de picada hacia la derecha durante el zoom. Súper fluido y liviano para la GPU en móvil.
+        // Sin giros de picada ni inclinaciones. Súper fluido y liviano para la GPU en móvil.
         mapRef.current.flyTo({
           center: targetPos,
           zoom: 16.5,
@@ -2626,17 +2660,6 @@ export default function MapaTuristico() {
           duration: 5500, // 5.5 segundos de zoom descendente vertical, pausado, fluido y cristalino
           curve: 1.6,
           essential: true,
-        });
-
-        // FASE 2: Una vez que aterriza verticalmente sobre el punto GPS, inclinamos suavemente a 60°
-        mapRef.current.once('moveend', () => {
-          if (mapRef.current && !selectedPointRef.current) {
-            mapRef.current.easeTo({
-              pitch: 60,
-              duration: 2000,
-              essential: true,
-            });
-          }
         });
       }, 150);
 
@@ -2694,7 +2717,7 @@ export default function MapaTuristico() {
                   mapRef.current.flyTo({
                     center: [targetLng, targetLat],
                     zoom: 16.5,
-                    pitch: 45,
+                    pitch: 0,
                     speed: 0.85,
                     essential: true
                   });
@@ -2724,7 +2747,7 @@ export default function MapaTuristico() {
               mapRef.current.flyTo({
                 center: [targetLng, targetLat],
                 zoom: 16.5,
-                pitch: 45,
+                pitch: 0,
                 speed: 0.85,
                 essential: true
               });
@@ -2759,7 +2782,7 @@ export default function MapaTuristico() {
       mapRef.current.flyTo({
         center: currentPosRef.current,
         zoom: 16.5,
-        pitch: 60,
+        pitch: 0,
         speed: 0.9,
         curve: 1.15,
         essential: true,
