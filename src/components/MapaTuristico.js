@@ -904,8 +904,9 @@ export default function MapaTuristico() {
       essential: true
     });
 
-    // Cerrar la hoja de detalles al iniciar el viaje
+    // Cerrar la hoja de detalles al iniciar el viaje y activar vista limpia
     setSelectedPoint(null);
+    renderizarMarcadoresVisibles();
   };
 
 
@@ -1419,6 +1420,7 @@ export default function MapaTuristico() {
             essential: true
           });
 
+          renderizarMarcadoresVisibles();
           popup.remove();
         };
       }
@@ -1506,12 +1508,30 @@ export default function MapaTuristico() {
     try {
       // Verificar si hay una ruta o previsualización de viaje activa entre Punto A y Punto B
       const isRouteActive = Boolean(selectedPointRef.current || routeInfo || previewRouteInfo);
+      const isActivelyNavigating = Boolean(isNavigatingRef.current || isDemoRunningRef.current);
+      const isExploringManually = Boolean(isInteractionPausedRef.current);
 
       // Si hay un punto seleccionado / ruta, actualizar el marcador de destino (Punto B)
-      if (selectedPointRef.current) {
-        actualizarMarcadorDestino(selectedPointRef.current);
+      const destPoint = selectedPointRef.current || (destinationRef.current ? {
+        lng: destinationRef.current[0],
+        lat: destinationRef.current[1],
+        nombre: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : lang === 'zh' ? '目的地' : 'Destino'),
+        categoria: 'otro'
+      } : null);
+
+      if (destPoint) {
+        actualizarMarcadorDestino(destPoint);
       } else {
         actualizarMarcadorDestino(null);
+      }
+
+      // Si la navegación está activa y centrada en el vehículo (sin pausa de interacción manual):
+      // Ocultar los puntos para tener una vista 100% limpia de conducción
+      if (isActivelyNavigating && !isExploringManually) {
+        markersOnMapRef.current.forEach((marker) => marker.remove());
+        markersOnMapRef.current.clear();
+        markersRef.current = [];
+        return;
       }
 
       const bounds = mapRef.current.getBounds();
@@ -1534,7 +1554,7 @@ export default function MapaTuristico() {
         if (isRouteActive && isCluster) return;
 
         // Si este punto es el destino seleccionado y ya cuenta con el pin distintivo B, evitar duplicado
-        if (selectedPointRef.current && !isCluster && feature.properties?.id === selectedPointRef.current.id) {
+        if (destPoint && !isCluster && (feature.properties?.id === destPoint.id || (Number(feature.properties?.lng) === Number(destPoint.lng) && Number(feature.properties?.lat) === Number(destPoint.lat)))) {
           return;
         }
 
@@ -2189,6 +2209,7 @@ export default function MapaTuristico() {
       isNavigatingRef.current = false;
       setShowRecenterBtn(false);
       setRouteInfo(null);
+      renderizarMarcadoresVisibles();
       const panel = document.querySelector('.mapboxgl-ctrl-directions');
       if (panel) panel.style.display = '';
       speakInstruction(t('map.demoFinished'), true);
@@ -2211,6 +2232,7 @@ export default function MapaTuristico() {
     isDemoRunningRef.current = true;
     isNavigatingRef.current = true;
     isInteractionPausedRef.current = false;
+    renderizarMarcadoresVisibles();
 
     const panel = document.querySelector('.mapboxgl-ctrl-directions');
     if (panel) panel.style.display = 'none';
@@ -2239,6 +2261,7 @@ export default function MapaTuristico() {
           isNavigatingRef.current = false;
           setShowRecenterBtn(false);
           setRouteInfo(null);
+          renderizarMarcadoresVisibles();
           if (panel) panel.style.display = '';
           speakInstruction(t('map.arrived'), true);
 
@@ -2703,6 +2726,9 @@ export default function MapaTuristico() {
       if (interactionTimeoutRef.current) {
         clearTimeout(interactionTimeoutRef.current);
       }
+
+      // Al pausar para explorar manualmente, renderizar los negocios individuales
+      renderizarMarcadoresVisibles();
     };
     const handleMoveStart = (e) => {
       if (e && e.originalEvent) {
@@ -3008,7 +3034,8 @@ export default function MapaTuristico() {
         curve: 1.15,
         essential: true,
       });
-      cargarPuntosCercanos(currentPosRef.current[0], currentPosRef.current[1], filtroCategoria);
+      // Al volver a centrar en modo navegación, ocultar los puntos para reanudar la vista limpia
+      renderizarMarcadoresVisibles();
     }
   };
 
