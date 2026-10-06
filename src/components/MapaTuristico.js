@@ -71,6 +71,7 @@ export default function MapaTuristico() {
   const previewRouteBoundsRef = useRef(null);
   const loadedPointIdRef = useRef(null);
   const currentBearingRef = useRef(0);
+  const isClearingRoutesRef = useRef(false);
 
 
   // --- ESTADO DE REACT ---
@@ -326,12 +327,12 @@ export default function MapaTuristico() {
     }
   }, []);
 
-  // Animación del progreso de la pantalla de carga (0% -> 100% en 10 segundos exactos, números enteros del 0 al 100 sin decimales)
+  // Animación del progreso de la pantalla de carga (0% -> 100% en 1.8 segundos, fluido y con salvaguarda)
   useEffect(() => {
     let progress = 0;
     setLoadingProgress(0);
     const interval = setInterval(() => {
-      progress += 1;
+      progress += 2;
       if (progress >= 100) {
         progress = 100;
         setLoadingProgress(100);
@@ -339,9 +340,18 @@ export default function MapaTuristico() {
       } else {
         setLoadingProgress(progress);
       }
-    }, 100); // 100ms * 100 = 10,000ms (10 segundos exactos)
+    }, 36); // 50 ticks * 36ms = 1,800ms (1.8s)
 
-    return () => clearInterval(interval);
+    // Salvaguarda absoluta: nunca quedarse en pantalla de carga más de 2.5s
+    const fallbackTimeout = setTimeout(() => {
+      setLoadingProgress(100);
+      setIsMapLoading(false);
+    }, 2500);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(fallbackTimeout);
+    };
   }, []);
 
   // Redimensionar el mapa cuando se abra o cierre el panel de detalles (Split-Screen)
@@ -2202,69 +2212,78 @@ export default function MapaTuristico() {
 
   // ── CANCELAR RUTA ACTIVA Y RESTAURAR ESTADO NORMAL DEL MAPA ──
   const cancelarRutaActiva = () => {
-    // 1. Detener demo si estuviera corriendo
-    if (demoIntervalRef.current) {
-      clearInterval(demoIntervalRef.current);
-      demoIntervalRef.current = null;
-    }
-    setIsDemoRunning(false);
-    isDemoRunningRef.current = false;
+    if (isClearingRoutesRef.current) return;
+    isClearingRoutesRef.current = true;
 
-    // 2. Limpiar rutas de Mapbox Directions
-    if (directionsRef.current) {
-      try {
-        directionsRef.current.removeRoutes();
-      } catch (e) {}
-    }
-
-    // 3. Limpiar capa GeoJSON de previsualización de ruta
-    if (mapRef.current && mapRef.current.isStyleLoaded()) {
-      const source = mapRef.current.getSource('preview-route');
-      if (source) {
-        source.setData({
-          type: 'Feature',
-          geometry: { type: 'LineString', coordinates: [] }
-        });
+    try {
+      // 1. Detener demo si estuviera corriendo
+      if (demoIntervalRef.current) {
+        clearInterval(demoIntervalRef.current);
+        demoIntervalRef.current = null;
       }
+      setIsDemoRunning(false);
+      isDemoRunningRef.current = false;
+
+      // 2. Limpiar rutas de Mapbox Directions
+      if (directionsRef.current) {
+        try {
+          directionsRef.current.removeRoutes();
+        } catch (e) {}
+      }
+
+      // 3. Limpiar capa GeoJSON de previsualización de ruta
+      if (mapRef.current && mapRef.current.isStyleLoaded()) {
+        const source = mapRef.current.getSource('preview-route');
+        if (source) {
+          source.setData({
+            type: 'Feature',
+            geometry: { type: 'LineString', coordinates: [] }
+          });
+        }
+      }
+
+      // 4. Limpiar datos y referencias de ruta, destino y puntos seleccionados
+      rutaCoordenadasRef.current = [];
+      setRouteInfo(null);
+      setPreviewRouteInfo(null);
+      setCurrentManeuver(null);
+      setSelectedPoint(null);
+      setShowFullProfileModal(false);
+      setSelectedPointDetails(null);
+      selectedPointRef.current = null;
+      prevSelectedPointRef.current = null;
+      destinationRef.current = null;
+      lugarDestinoRef.current = '';
+      isNavigatingRef.current = false;
+      isInteractionPausedRef.current = false;
+      setShowRecenterBtn(false);
+      setShowDirectionsPopup(false);
+
+      // 5. Quitar marcador B de destino
+      actualizarMarcadorDestino(null);
+
+      // 6. Restaurar vista limpia y paneles
+      if (mapContainerRef.current) {
+        mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
+      }
+      const panel = document.querySelector('.mapboxgl-ctrl-directions');
+      if (panel) {
+        panel.classList.remove('directions-popup-active');
+        panel.style.display = 'none';
+      }
+
+      // 7. Retornar cámara a plano cenital 2D estándar
+      if (mapRef.current) {
+        mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 600 });
+      }
+
+      // 8. Re-renderizar todos los marcadores y clusters normalmente
+      renderizarMarcadoresVisibles();
+    } finally {
+      setTimeout(() => {
+        isClearingRoutesRef.current = false;
+      }, 150);
     }
-
-    // 4. Limpiar datos y referencias de ruta, destino y puntos seleccionados
-    rutaCoordenadasRef.current = [];
-    setRouteInfo(null);
-    setPreviewRouteInfo(null);
-    setCurrentManeuver(null);
-    setSelectedPoint(null);
-    setShowFullProfileModal(false);
-    setSelectedPointDetails(null);
-    selectedPointRef.current = null;
-    prevSelectedPointRef.current = null;
-    destinationRef.current = null;
-    lugarDestinoRef.current = '';
-    isNavigatingRef.current = false;
-    isInteractionPausedRef.current = false;
-    setShowRecenterBtn(false);
-    setShowDirectionsPopup(false);
-
-    // 5. Quitar marcador B de destino
-    actualizarMarcadorDestino(null);
-
-    // 6. Restaurar vista limpia y paneles
-    if (mapContainerRef.current) {
-      mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
-    }
-    const panel = document.querySelector('.mapboxgl-ctrl-directions');
-    if (panel) {
-      panel.classList.remove('directions-popup-active');
-      panel.style.display = 'none';
-    }
-
-    // 7. Retornar cámara a plano cenital 2D estándar
-    if (mapRef.current) {
-      mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 800 });
-    }
-
-    // 8. Re-renderizar todos los marcadores y clusters normalmente
-    renderizarMarcadoresVisibles();
   };
 
   // Lógica del simulador demo
@@ -2900,6 +2919,7 @@ export default function MapaTuristico() {
     });
 
     directions.on('clear', () => {
+      if (isClearingRoutesRef.current) return;
       cancelarRutaActiva();
     });
 
@@ -2927,9 +2947,9 @@ export default function MapaTuristico() {
       );
     }
 
-    // A LOS 10.0 SEGUNDOS EXACTOS (cuando el contador de la pantalla de carga llega al 100%):
+    // A LOS 1.8 SEGUNDOS (cuando el contador de la pantalla de carga llega al 100%):
     const cinematicTimer = setTimeout(() => {
-      console.log('[Atlan Cinematic] Timer 10s fired. mapRef:', !!mapRef.current, 'hasFlown:', hasFlownInitialDescentRef.current, 'pos:', currentPosRef.current);
+      console.log('[Atlan Cinematic] Timer 1.8s fired. mapRef:', !!mapRef.current, 'hasFlown:', hasFlownInitialDescentRef.current, 'pos:', currentPosRef.current);
       setIsMapLoading(false);
 
       if (hasFlownInitialDescentRef.current || !mapRef.current) {
@@ -2969,14 +2989,14 @@ export default function MapaTuristico() {
           zoom: 16.5,
           pitch: 0,
           bearing: 0,
-          duration: 5500, // 5.5 segundos de zoom descendente vertical, pausado, fluido y cristalino
+          duration: 3500, // 3.5 segundos de zoom descendente vertical, fluido y cristalino
           curve: 1.6,
           essential: true,
         });
       }, 150);
 
       cinematicTimeoutsRef.current.push(descentTimer);
-    }, 10000); // 10.0 segundos exactos — coincide con la pantalla de carga
+    }, 1800); // 1.8 segundos exactos — coincide con la pantalla de carga
 
     cinematicTimeoutsRef.current.push(cinematicTimer);
 
@@ -3156,7 +3176,13 @@ export default function MapaTuristico() {
           zIndex: 9999,
           opacity: isMapLoading ? 1 : 0,
           visibility: isMapLoading ? 'visible' : 'hidden',
-          transition: 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s',
+          transition: 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s',
+          pointerEvents: isMapLoading ? 'auto' : 'none',
+          cursor: isMapLoading ? 'pointer' : 'default',
+        }}
+        onClick={() => {
+          setIsMapLoading(false);
+          setLoadingProgress(100);
         }}
       >
         {/* Logo/Emblema Atlan */}
@@ -3194,7 +3220,7 @@ export default function MapaTuristico() {
           <svg width="170" height="150" viewBox="0 0 1000 893" style={{ filter: 'drop-shadow(0px 0px 10px rgba(212, 175, 55, 0.35))' }}>
             <defs>
               <clipPath id="nicaragua-loading-clip">
-                <rect x="0" y="0" width={loadingProgress * 10} height="893" style={{ transition: 'width 0.12s linear' }} />
+                <rect x="0" y="0" width={loadingProgress * 10} height="893" style={{ transition: 'width 0.04s linear' }} />
               </clipPath>
             </defs>
 
@@ -3271,7 +3297,7 @@ export default function MapaTuristico() {
             width: `${loadingProgress}%`,
             backgroundColor: 'var(--atlan-gold)',
             boxShadow: '0 0 8px var(--atlan-gold)',
-            transition: 'width 0.1s linear'
+            transition: 'width 0.04s linear'
           }} />
         </div>
 
