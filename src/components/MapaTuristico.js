@@ -76,6 +76,7 @@ export default function MapaTuristico() {
 
   // --- ESTADO DE REACT ---
   const [isDemoRunning, setIsDemoRunning] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [filtroCategoria, setFiltroCategoria] = useState(null);
@@ -877,6 +878,7 @@ export default function MapaTuristico() {
     speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${punto.nombre}.`, true);
 
     isNavigatingRef.current = true;
+    setIsNavigating(true);
     isInteractionPausedRef.current = false;
     setShowRecenterBtn(false);
     if (mapContainerRef.current) {
@@ -1395,6 +1397,7 @@ export default function MapaTuristico() {
           speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${punto.nombre}.`, true);
 
           isNavigatingRef.current = true;
+          setIsNavigating(true);
           isInteractionPausedRef.current = false;
           setShowRecenterBtn(false);
           if (mapContainerRef.current) {
@@ -2246,6 +2249,7 @@ export default function MapaTuristico() {
       destinationRef.current = null;
       lugarDestinoRef.current = '';
       isNavigatingRef.current = false;
+      setIsNavigating(false);
       isInteractionPausedRef.current = false;
       setShowRecenterBtn(false);
       setShowDirectionsPopup(false);
@@ -3351,7 +3355,7 @@ export default function MapaTuristico() {
         )}
 
       {/* Cabecera flotante con identidad visual Atlan ampliada */}
-      {!selectedPoint && !isDemoRunning && !routeInfo && (
+      {!selectedPoint && !isDemoRunning && !isNavigating && !routeInfo && (
         <div className="map-header" style={{
           position: 'absolute',
           top: '20px',
@@ -3670,7 +3674,7 @@ export default function MapaTuristico() {
       )}
 
       {/* Panel de filtros (se oculta si hay punto seleccionado, ruta en curso, demo activa, o si se enfoca/usa el buscador) */}
-      {!selectedPoint && !routeInfo && !isDemoRunning && !isSearchFocused && !searchQuery.trim() && !showResults && (
+      {!selectedPoint && !routeInfo && !isDemoRunning && !isNavigating && !isSearchFocused && !searchQuery.trim() && !showResults && (
         <div className="filter-bar-wrapper">
           <button
             type="button"
