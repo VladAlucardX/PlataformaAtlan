@@ -684,7 +684,9 @@ export default function MapaTuristico() {
 
     if (selectedPoint) {
       prevSelectedPointRef.current = selectedPoint;
-      isInteractionPausedRef.current = false; // Resetear siempre para permitir que la ruta se encuadre al seleccionar punto nuevo
+      if (!isNavigatingRef.current) {
+        isInteractionPausedRef.current = false; // Resetear para permitir que la ruta se encuadre al seleccionar punto nuevo solo fuera de navegación
+      }
 
       if (mapRef.current) {
         mapRef.current.stop(); // Detener de inmediato cualquier vuelo o animación activa
@@ -702,7 +704,9 @@ export default function MapaTuristico() {
       if (wasSelected) {
         const lastPoint = wasSelected;
         prevSelectedPointRef.current = null;
-        isInteractionPausedRef.current = false;
+        if (!isNavigatingRef.current) {
+          isInteractionPausedRef.current = false;
+        }
 
         if (mapRef.current && lastPoint && lastPoint.lng !== undefined && lastPoint.lat !== undefined) {
           mapRef.current.easeTo({
@@ -729,19 +733,9 @@ export default function MapaTuristico() {
       }
 
       if (isNavigatingRef.current) {
-        // Si se cierra el panel de detalles y estamos en navegación activa,
-        // reanudamos el centrado de la cámara de manera inmediata.
-        isInteractionPausedRef.current = false;
-        if (mapRef.current) {
-          mapRef.current.flyTo({
-            center: currentPosRef.current,
-            zoom: 16.5,
-            pitch: 0,
-            speed: 0.85,  // Velocidad óptima para renderizado
-            curve: 1.1,   // Trayectoria plana para transiciones fluidas
-            essential: true
-          });
-        }
+        // Al cerrar el punto en navegación, mantenemos la libertad de exploración
+        // y dejamos disponible el botón "Volver a centrar" para cuando el usuario decida reanudar
+        setShowRecenterBtn(true);
       }
     }
   }, [selectedPoint]);
@@ -1322,6 +1316,11 @@ export default function MapaTuristico() {
 
     el.addEventListener('click', () => {
       lugarDestinoRef.current = punto.nombre;
+      if (isNavigatingRef.current) {
+        if (mapRef.current) mapRef.current.stop();
+        isInteractionPausedRef.current = true;
+        setShowRecenterBtn(true);
+      }
       if (mapRef.current) {
         mapRef.current.easeTo({
           center: [punto.lng, punto.lat],
@@ -1427,6 +1426,11 @@ export default function MapaTuristico() {
       const btnInfo = document.getElementById(btnInfoId);
       if (btnInfo) {
         btnInfo.onclick = () => {
+          if (isNavigatingRef.current) {
+            if (mapRef.current) mapRef.current.stop();
+            isInteractionPausedRef.current = true;
+            setShowRecenterBtn(true);
+          }
           setSelectedPoint(punto);
           popup.remove();
         };
@@ -1510,14 +1514,6 @@ export default function MapaTuristico() {
         actualizarMarcadorDestino(null);
       }
 
-      // Si la ruta está activa (Punto A ➔ Punto B), NO mostrar clusters para evitar confusiones
-      if (isRouteActive) {
-        markersOnMapRef.current.forEach((marker) => marker.remove());
-        markersOnMapRef.current.clear();
-        markersRef.current = [];
-        return;
-      }
-
       const bounds = mapRef.current.getBounds();
       const west = Math.max(-180, bounds.getWest());
       const south = Math.max(-85, bounds.getSouth());
@@ -1532,6 +1528,16 @@ export default function MapaTuristico() {
 
       clusters.forEach((feature) => {
         const isCluster = Boolean(feature.properties && feature.properties.cluster);
+
+        // Si la ruta está activa (Punto A ➔ Punto B), omitir burbujas de cluster agrupadas,
+        // pero SÍ mantener visibles todos los negocios individuales para que el usuario pueda explorarlos libremente
+        if (isRouteActive && isCluster) return;
+
+        // Si este punto es el destino seleccionado y ya cuenta con el pin distintivo B, evitar duplicado
+        if (selectedPointRef.current && !isCluster && feature.properties?.id === selectedPointRef.current.id) {
+          return;
+        }
+
         const markerKey = isCluster
           ? `cluster_${feature.properties.cluster_id}`
           : `point_${feature.properties.id}`;
@@ -1806,7 +1812,7 @@ export default function MapaTuristico() {
         center: [longitude, latitude],
         zoom: 16.5,
         pitch: 0,
-        duration: 1800,
+        duration: 1100,
         essential: true,
         padding: { top: 180 },
       };
@@ -2687,8 +2693,9 @@ export default function MapaTuristico() {
 
       if (!isNavigatingRef.current) return;
 
-      // Si ya está pausada la interacción, no hacemos nada más
-      if (isInteractionPausedRef.current) return;
+      if (mapRef.current) {
+        mapRef.current.stop(); // Detener inmediatamente cualquier vuelo o animación activa
+      }
 
       isInteractionPausedRef.current = true;
       setShowRecenterBtn(true); // Mostrar el botón "Volver a centrar"
@@ -2698,17 +2705,22 @@ export default function MapaTuristico() {
       }
     };
     const handleMoveStart = (e) => {
-      if (e.originalEvent) {
+      if (e && e.originalEvent) {
         pauseCamera();
       }
     };
     mapRef.current.on('mousedown', () => {
       clearCinematicTimeouts();
+      if (isNavigatingRef.current) {
+        pauseCamera();
+      }
     });
     mapRef.current.on('movestart', handleMoveStart);
     mapRef.current.on('dragstart', pauseCamera);
     mapRef.current.on('touchstart', pauseCamera);
     mapRef.current.on('wheel', pauseCamera);
+    mapRef.current.on('rotatestart', pauseCamera);
+    mapRef.current.on('pitchstart', pauseCamera);
 
     // Controles nativos
     const geolocate = new mapboxgl.GeolocateControl({
@@ -3229,7 +3241,7 @@ export default function MapaTuristico() {
         )}
 
       {/* Cabecera flotante con identidad visual Atlan ampliada */}
-      {!selectedPoint && (
+      {!selectedPoint && !isDemoRunning && !routeInfo && (
         <div className="map-header" style={{
           position: 'absolute',
           top: '20px',
