@@ -2200,26 +2200,77 @@ export default function MapaTuristico() {
     return [];
   };
 
-  // Lógica del simulador demo
-  const iniciarSimulacionDemo = async () => {
+  // ── CANCELAR RUTA ACTIVA Y RESTAURAR ESTADO NORMAL DEL MAPA ──
+  const cancelarRutaActiva = () => {
+    // 1. Detener demo si estuviera corriendo
     if (demoIntervalRef.current) {
       clearInterval(demoIntervalRef.current);
       demoIntervalRef.current = null;
-      isDemoRunningRef.current = false;
-      setIsDemoRunning(false);
-      isNavigatingRef.current = false;
-      destinationRef.current = null;
-      setShowRecenterBtn(false);
-      setRouteInfo(null);
-      if (mapContainerRef.current) {
-        mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
+    }
+    setIsDemoRunning(false);
+    isDemoRunningRef.current = false;
+
+    // 2. Limpiar rutas de Mapbox Directions
+    if (directionsRef.current) {
+      try {
+        directionsRef.current.removeRoutes();
+      } catch (e) {}
+    }
+
+    // 3. Limpiar capa GeoJSON de previsualización de ruta
+    if (mapRef.current && mapRef.current.isStyleLoaded()) {
+      const source = mapRef.current.getSource('preview-route');
+      if (source) {
+        source.setData({
+          type: 'Feature',
+          geometry: { type: 'LineString', coordinates: [] }
+        });
       }
-      if (mapRef.current) {
-        mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 800 });
-      }
-      renderizarMarcadoresVisibles();
-      const panel = document.querySelector('.mapboxgl-ctrl-directions');
-      if (panel) panel.style.display = '';
+    }
+
+    // 4. Limpiar datos y referencias de ruta, destino y puntos seleccionados
+    rutaCoordenadasRef.current = [];
+    setRouteInfo(null);
+    setPreviewRouteInfo(null);
+    setCurrentManeuver(null);
+    setSelectedPoint(null);
+    setShowFullProfileModal(false);
+    setSelectedPointDetails(null);
+    selectedPointRef.current = null;
+    prevSelectedPointRef.current = null;
+    destinationRef.current = null;
+    lugarDestinoRef.current = '';
+    isNavigatingRef.current = false;
+    isInteractionPausedRef.current = false;
+    setShowRecenterBtn(false);
+    setShowDirectionsPopup(false);
+
+    // 5. Quitar marcador B de destino
+    actualizarMarcadorDestino(null);
+
+    // 6. Restaurar vista limpia y paneles
+    if (mapContainerRef.current) {
+      mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
+    }
+    const panel = document.querySelector('.mapboxgl-ctrl-directions');
+    if (panel) {
+      panel.classList.remove('directions-popup-active');
+      panel.style.display = 'none';
+    }
+
+    // 7. Retornar cámara a plano cenital 2D estándar
+    if (mapRef.current) {
+      mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 800 });
+    }
+
+    // 8. Re-renderizar todos los marcadores y clusters normalmente
+    renderizarMarcadoresVisibles();
+  };
+
+  // Lógica del simulador demo
+  const iniciarSimulacionDemo = async () => {
+    if (demoIntervalRef.current) {
+      cancelarRutaActiva();
       speakInstruction(t('map.demoFinished'), true);
       return;
     }
@@ -2284,26 +2335,10 @@ export default function MapaTuristico() {
         }
 
         if (index >= pts.length - 1) {
-          clearInterval(demoIntervalRef.current);
-          demoIntervalRef.current = null;
-          isDemoRunningRef.current = false;
-          setIsDemoRunning(false);
-          isNavigatingRef.current = false;
-          destinationRef.current = null;
-          setShowRecenterBtn(false);
-          setRouteInfo(null);
-          if (mapContainerRef.current) {
-            mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
-          }
-          if (mapRef.current) {
-            mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 800 });
-          }
-          renderizarMarcadoresVisibles();
-          if (panel) panel.style.display = '';
-          speakInstruction(t('map.arrived'), true);
-
           const destinoNombre = lugarDestinoRef.current || selectedPointRef.current?.nombre || 'su destino';
           const puntoId = selectedPointRef.current?.id || null;
+          cancelarRutaActiva();
+          speakInstruction(t('map.arrived'), true);
 
           setVisitPromptData({
             puntoId: puntoId,
@@ -2865,19 +2900,7 @@ export default function MapaTuristico() {
     });
 
     directions.on('clear', () => {
-      rutaCoordenadasRef.current = [];
-      setRouteInfo(null);
-      setCurrentManeuver(null);
-      isNavigatingRef.current = false;
-      destinationRef.current = null;
-      setShowRecenterBtn(false);
-      if (mapContainerRef.current) {
-        mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
-      }
-      if (mapRef.current) {
-        mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 800 });
-      }
-      renderizarMarcadoresVisibles();
+      cancelarRutaActiva();
     });
 
     // Geolocalización nativa + web y vuelo descendente cinematográfico a los 8.0 segundos
@@ -5412,25 +5435,7 @@ export default function MapaTuristico() {
                 🚗 {lang === 'en' ? 'Active Route' : lang === 'zh' ? '导航中路线' : 'Ruta Activa'}
               </span>
               <button
-                onClick={() => {
-                  if (directionsRef.current) {
-                    try {
-                      directionsRef.current.removeRoutes();
-                    } catch (e) {}
-                  }
-                  setRouteInfo(null);
-                  setCurrentManeuver(null);
-                  isNavigatingRef.current = false;
-                  destinationRef.current = null;
-                  setShowRecenterBtn(false);
-                  if (mapContainerRef.current) {
-                    mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
-                  }
-                  if (mapRef.current) {
-                    mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 800 });
-                  }
-                  renderizarMarcadoresVisibles();
-                }}
+                onClick={cancelarRutaActiva}
                 style={{ background: 'rgba(255,255,255,0.08)', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold', width: '22px', height: '22px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s ease' }}
               >
                 ✕
