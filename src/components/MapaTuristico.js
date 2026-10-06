@@ -704,38 +704,28 @@ export default function MapaTuristico() {
       if (wasSelected) {
         const lastPoint = wasSelected;
         prevSelectedPointRef.current = null;
-        if (!isNavigatingRef.current) {
-          isInteractionPausedRef.current = false;
-        }
 
-        if (mapRef.current && lastPoint && lastPoint.lng !== undefined && lastPoint.lat !== undefined) {
-          mapRef.current.easeTo({
-            center: [lastPoint.lng, lastPoint.lat],
-            zoom: 14.2,
-            pitch: 0,
-            padding: { top: 0, bottom: 0, left: 0, right: 0 },
-            duration: 1400,
-            essential: true
-          });
-          cargarPuntosCercanos(lastPoint.lng, lastPoint.lat, filtroCategoria);
-        } else if (mapRef.current) {
-          const center = mapRef.current.getCenter();
-          mapRef.current.easeTo({
-            center: [center.lng, center.lat],
-            zoom: 14.2,
-            pitch: 0,
-            padding: { top: 0, bottom: 0, left: 0, right: 0 },
-            duration: 1400,
-            essential: true
-          });
-          cargarPuntosCercanos(center.lng, center.lat, filtroCategoria);
+        // Solo ajustar cámara si NO estamos en navegación ni demo activo
+        if (!isNavigatingRef.current && !isDemoRunningRef.current) {
+          isInteractionPausedRef.current = false;
+          if (mapRef.current && lastPoint && lastPoint.lng !== undefined && lastPoint.lat !== undefined) {
+            mapRef.current.easeTo({
+              center: [lastPoint.lng, lastPoint.lat],
+              zoom: 14.2,
+              pitch: 0,
+              padding: { top: 0, bottom: 0, left: 0, right: 0 },
+              duration: 1200,
+              essential: true
+            });
+          }
         }
       }
 
-      if (isNavigatingRef.current) {
-        // Al cerrar el punto en navegación, mantenemos la libertad de exploración
-        // y dejamos disponible el botón "Volver a centrar" para cuando el usuario decida reanudar
+      // Solo mostrar el botón "Volver a centrar" si realmente hay una navegación o demo activa
+      if ((isDemoRunningRef.current || routeInfo) && isNavigatingRef.current) {
         setShowRecenterBtn(true);
+      } else {
+        setShowRecenterBtn(false);
       }
     }
   }, [selectedPoint]);
@@ -886,6 +876,10 @@ export default function MapaTuristico() {
 
     isNavigatingRef.current = true;
     isInteractionPausedRef.current = false;
+    setShowRecenterBtn(false);
+    if (mapContainerRef.current) {
+      mapContainerRef.current.classList.add('atlan-nav-clean-mode');
+    }
 
     destinationRef.current = [punto.lng, punto.lat];
     rutaCoordenadasRef.current = [];
@@ -897,16 +891,15 @@ export default function MapaTuristico() {
 
     mapRef.current.flyTo({
       center: [currLng, currLat],
-      zoom: 16.5,
+      zoom: 15.2,
       pitch: 0,
       speed: 0.9,
       curve: 1.1,
       essential: true
     });
 
-    // Cerrar la hoja de detalles al iniciar el viaje y activar vista limpia
+    // Cerrar la hoja de detalles al iniciar el viaje
     setSelectedPoint(null);
-    renderizarMarcadoresVisibles();
   };
 
 
@@ -1317,8 +1310,7 @@ export default function MapaTuristico() {
 
     el.addEventListener('click', () => {
       lugarDestinoRef.current = punto.nombre;
-      if (isNavigatingRef.current) {
-        if (mapRef.current) mapRef.current.stop();
+      if (isNavigatingRef.current && (isDemoRunningRef.current || routeInfo)) {
         isInteractionPausedRef.current = true;
         setShowRecenterBtn(true);
       }
@@ -1402,6 +1394,10 @@ export default function MapaTuristico() {
 
           isNavigatingRef.current = true;
           isInteractionPausedRef.current = false;
+          setShowRecenterBtn(false);
+          if (mapContainerRef.current) {
+            mapContainerRef.current.classList.add('atlan-nav-clean-mode');
+          }
 
           destinationRef.current = [punto.lng, punto.lat];
           rutaCoordenadasRef.current = [];
@@ -1413,14 +1409,13 @@ export default function MapaTuristico() {
 
           mapRef.current.flyTo({
             center: [currLng, currLat],
-            zoom: 16.5,
+            zoom: 15.2,
             pitch: 0,
             speed: 0.9,
             curve: 1.1,
             essential: true
           });
 
-          renderizarMarcadoresVisibles();
           popup.remove();
         };
       }
@@ -1428,8 +1423,7 @@ export default function MapaTuristico() {
       const btnInfo = document.getElementById(btnInfoId);
       if (btnInfo) {
         btnInfo.onclick = () => {
-          if (isNavigatingRef.current) {
-            if (mapRef.current) mapRef.current.stop();
+          if (isNavigatingRef.current && (isDemoRunningRef.current || routeInfo)) {
             isInteractionPausedRef.current = true;
             setShowRecenterBtn(true);
           }
@@ -1525,14 +1519,6 @@ export default function MapaTuristico() {
         actualizarMarcadorDestino(null);
       }
 
-      // Si la navegación está activa y centrada en el vehículo (sin pausa de interacción manual):
-      // Ocultar los puntos para tener una vista 100% limpia de conducción
-      if (isActivelyNavigating && !isExploringManually) {
-        markersOnMapRef.current.forEach((marker) => marker.remove());
-        markersOnMapRef.current.clear();
-        markersRef.current = [];
-        return;
-      }
 
       const bounds = mapRef.current.getBounds();
       const west = Math.max(-180, bounds.getWest());
@@ -1763,7 +1749,7 @@ export default function MapaTuristico() {
       coords.forEach(coord => bounds.extend(coord));
       previewRouteBoundsRef.current = bounds;
 
-      if ((isInitialFit || selectedPointRef.current) && mapRef.current) {
+      if (isInitialFit && mapRef.current) {
         mapRef.current.stop();
         if (mapRef.current.resize) mapRef.current.resize();
         const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -1823,18 +1809,17 @@ export default function MapaTuristico() {
       }
     }
 
-    if (directionsRef.current && isNavigatingRef.current) {
+    if (directionsRef.current && isNavigatingRef.current && !isDemoRunningRef.current) {
       directionsRef.current.setOrigin([longitude, latitude]);
     }
 
     if (isNavigatingRef.current && !isInteractionPausedRef.current && mapRef.current) {
       const opts = {
         center: [longitude, latitude],
-        zoom: 16.5,
+        zoom: 15.2,
         pitch: 0,
-        duration: 1100,
+        duration: 1000,
         essential: true,
-        padding: { top: 180 },
       };
       if (bearing !== null) opts.bearing = bearing;
       mapRef.current.easeTo(opts);
@@ -2207,8 +2192,12 @@ export default function MapaTuristico() {
       isDemoRunningRef.current = false;
       setIsDemoRunning(false);
       isNavigatingRef.current = false;
+      destinationRef.current = null;
       setShowRecenterBtn(false);
       setRouteInfo(null);
+      if (mapContainerRef.current) {
+        mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
+      }
       renderizarMarcadoresVisibles();
       const panel = document.querySelector('.mapboxgl-ctrl-directions');
       if (panel) panel.style.display = '';
@@ -2232,7 +2221,21 @@ export default function MapaTuristico() {
     isDemoRunningRef.current = true;
     isNavigatingRef.current = true;
     isInteractionPausedRef.current = false;
-    renderizarMarcadoresVisibles();
+    setShowRecenterBtn(false);
+    if (mapContainerRef.current) {
+      mapContainerRef.current.classList.add('atlan-nav-clean-mode');
+    }
+
+    if (coords && coords.length > 0 && mapRef.current) {
+      mapRef.current.flyTo({
+        center: coords[0],
+        zoom: 15.2,
+        pitch: 0,
+        speed: 1.0,
+        curve: 1.15,
+        essential: true,
+      });
+    }
 
     const panel = document.querySelector('.mapboxgl-ctrl-directions');
     if (panel) panel.style.display = 'none';
@@ -2259,8 +2262,12 @@ export default function MapaTuristico() {
           isDemoRunningRef.current = false;
           setIsDemoRunning(false);
           isNavigatingRef.current = false;
+          destinationRef.current = null;
           setShowRecenterBtn(false);
           setRouteInfo(null);
+          if (mapContainerRef.current) {
+            mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
+          }
           renderizarMarcadoresVisibles();
           if (panel) panel.style.display = '';
           speakInstruction(t('map.arrived'), true);
@@ -2711,36 +2718,30 @@ export default function MapaTuristico() {
     };
 
     const pauseCamera = () => {
-      // Cancelar animaciones cinematográficas si el usuario interactúa con el mapa
       clearCinematicTimeouts();
 
       if (!isNavigatingRef.current) return;
 
-      if (mapRef.current) {
-        mapRef.current.stop(); // Detener inmediatamente cualquier vuelo o animación activa
-      }
-
       isInteractionPausedRef.current = true;
       setShowRecenterBtn(true); // Mostrar el botón "Volver a centrar"
+
+      // Al explorar libremente, quitar clase de conducción limpia para mostrar marcadores al instante
+      if (mapContainerRef.current) {
+        mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
+      }
 
       if (interactionTimeoutRef.current) {
         clearTimeout(interactionTimeoutRef.current);
       }
+    };
 
-      // Al pausar para explorar manualmente, renderizar los negocios individuales
-      renderizarMarcadoresVisibles();
-    };
     const handleMoveStart = (e) => {
-      if (e && e.originalEvent) {
+      if (e && e.originalEvent && isNavigatingRef.current) {
         pauseCamera();
       }
     };
-    mapRef.current.on('mousedown', () => {
-      clearCinematicTimeouts();
-      if (isNavigatingRef.current) {
-        pauseCamera();
-      }
-    });
+
+    // Escuchar únicamente gestos reales del usuario que indican que desea mover el mapa
     mapRef.current.on('movestart', handleMoveStart);
     mapRef.current.on('dragstart', pauseCamera);
     mapRef.current.on('touchstart', pauseCamera);
@@ -2833,6 +2834,13 @@ export default function MapaTuristico() {
       rutaCoordenadasRef.current = [];
       setRouteInfo(null);
       setCurrentManeuver(null);
+      isNavigatingRef.current = false;
+      destinationRef.current = null;
+      setShowRecenterBtn(false);
+      if (mapContainerRef.current) {
+        mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
+      }
+      renderizarMarcadoresVisibles();
     });
 
     // Geolocalización nativa + web y vuelo descendente cinematográfico a los 8.0 segundos
@@ -3025,17 +3033,20 @@ export default function MapaTuristico() {
     isInteractionPausedRef.current = false;
     setShowRecenterBtn(false);
 
+    // Al volver a centrar en modo navegación/demo, reactivar vista limpia
+    if (mapContainerRef.current) {
+      mapContainerRef.current.classList.add('atlan-nav-clean-mode');
+    }
+
     if (mapRef.current) {
       mapRef.current.flyTo({
         center: currentPosRef.current,
-        zoom: 16.5,
+        zoom: 15.2,
         pitch: 0,
-        speed: 0.9,
+        speed: 1.0,
         curve: 1.15,
         essential: true,
       });
-      // Al volver a centrar en modo navegación, ocultar los puntos para reanudar la vista limpia
-      renderizarMarcadoresVisibles();
     }
   };
 
@@ -4335,7 +4346,7 @@ export default function MapaTuristico() {
       )}
 
       {/* Botón Volver a centrar (Waze-style) */}
-      {!selectedPoint && showRecenterBtn && (
+      {!selectedPoint && showRecenterBtn && (isDemoRunning || routeInfo) && (
         <button
           onClick={handleRecenter}
           style={{
@@ -5367,6 +5378,13 @@ export default function MapaTuristico() {
                   if (directionsRef.current) directionsRef.current.clean();
                   setRouteInfo(null);
                   setCurrentManeuver(null);
+                  isNavigatingRef.current = false;
+                  destinationRef.current = null;
+                  setShowRecenterBtn(false);
+                  if (mapContainerRef.current) {
+                    mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
+                  }
+                  renderizarMarcadoresVisibles();
                 }}
                 style={{ background: 'rgba(255,255,255,0.08)', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold', width: '22px', height: '22px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s ease' }}
               >

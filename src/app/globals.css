@@ -3934,5 +3934,11 @@ html body .mapboxgl-ctrl-directions tr {
   line-height: 1;
 }
 
+/* Modo de conducción limpio en navegación GPS Atlan: oculta puntos secundarios sin destruir DOM */
+.atlan-nav-clean-mode .marker-custom-container,
+.atlan-nav-clean-mode .atlan-cluster-container {
+  display: none !important;
+}
+
 
 
