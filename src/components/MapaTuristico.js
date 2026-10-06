@@ -3192,9 +3192,8 @@ export default function MapaTuristico() {
           <div style={{
             position: 'absolute',
             top: '20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: 'rgba(10, 15, 28, 0.9)',
+            left: '20px',
+            background: 'rgba(10, 15, 28, 0.92)',
             border: '1.5px solid var(--atlan-gold)',
             borderRadius: '16px',
             padding: '10px 18px',
