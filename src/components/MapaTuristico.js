@@ -327,12 +327,12 @@ export default function MapaTuristico() {
     }
   }, []);
 
-  // Animación del progreso de la pantalla de carga (0% -> 100% en 1.8 segundos, fluido y con salvaguarda)
+  // Animación del progreso de la pantalla de carga (0% -> 100% en 10 segundos exactos, números enteros del 0 al 100 sin decimales)
   useEffect(() => {
     let progress = 0;
     setLoadingProgress(0);
     const interval = setInterval(() => {
-      progress += 2;
+      progress += 1;
       if (progress >= 100) {
         progress = 100;
         setLoadingProgress(100);
@@ -340,18 +340,9 @@ export default function MapaTuristico() {
       } else {
         setLoadingProgress(progress);
       }
-    }, 36); // 50 ticks * 36ms = 1,800ms (1.8s)
+    }, 100); // 100ms * 100 = 10,000ms (10 segundos exactos)
 
-    // Salvaguarda absoluta: nunca quedarse en pantalla de carga más de 2.5s
-    const fallbackTimeout = setTimeout(() => {
-      setLoadingProgress(100);
-      setIsMapLoading(false);
-    }, 2500);
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(fallbackTimeout);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   // Redimensionar el mapa cuando se abra o cierre el panel de detalles (Split-Screen)
@@ -2274,7 +2265,7 @@ export default function MapaTuristico() {
 
       // 7. Retornar cámara a plano cenital 2D estándar
       if (mapRef.current) {
-        mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 600 });
+        mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 800 });
       }
 
       // 8. Re-renderizar todos los marcadores y clusters normalmente
@@ -2947,9 +2938,9 @@ export default function MapaTuristico() {
       );
     }
 
-    // A LOS 1.8 SEGUNDOS (cuando el contador de la pantalla de carga llega al 100%):
+    // A LOS 10.0 SEGUNDOS EXACTOS (cuando el contador de la pantalla de carga llega al 100%):
     const cinematicTimer = setTimeout(() => {
-      console.log('[Atlan Cinematic] Timer 1.8s fired. mapRef:', !!mapRef.current, 'hasFlown:', hasFlownInitialDescentRef.current, 'pos:', currentPosRef.current);
+      console.log('[Atlan Cinematic] Timer 10s fired. mapRef:', !!mapRef.current, 'hasFlown:', hasFlownInitialDescentRef.current, 'pos:', currentPosRef.current);
       setIsMapLoading(false);
 
       if (hasFlownInitialDescentRef.current || !mapRef.current) {
@@ -2989,14 +2980,14 @@ export default function MapaTuristico() {
           zoom: 16.5,
           pitch: 0,
           bearing: 0,
-          duration: 3500, // 3.5 segundos de zoom descendente vertical, fluido y cristalino
+          duration: 5500, // 5.5 segundos de zoom descendente vertical, pausado, fluido y cristalino
           curve: 1.6,
           essential: true,
         });
       }, 150);
 
       cinematicTimeoutsRef.current.push(descentTimer);
-    }, 1800); // 1.8 segundos exactos — coincide con la pantalla de carga
+    }, 10000); // 10.0 segundos exactos — coincide con la pantalla de carga
 
     cinematicTimeoutsRef.current.push(cinematicTimer);
 
@@ -3176,13 +3167,7 @@ export default function MapaTuristico() {
           zIndex: 9999,
           opacity: isMapLoading ? 1 : 0,
           visibility: isMapLoading ? 'visible' : 'hidden',
-          transition: 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s',
-          pointerEvents: isMapLoading ? 'auto' : 'none',
-          cursor: isMapLoading ? 'pointer' : 'default',
-        }}
-        onClick={() => {
-          setIsMapLoading(false);
-          setLoadingProgress(100);
+          transition: 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s',
         }}
       >
         {/* Logo/Emblema Atlan */}
@@ -3220,7 +3205,7 @@ export default function MapaTuristico() {
           <svg width="170" height="150" viewBox="0 0 1000 893" style={{ filter: 'drop-shadow(0px 0px 10px rgba(212, 175, 55, 0.35))' }}>
             <defs>
               <clipPath id="nicaragua-loading-clip">
-                <rect x="0" y="0" width={loadingProgress * 10} height="893" style={{ transition: 'width 0.04s linear' }} />
+                <rect x="0" y="0" width={loadingProgress * 10} height="893" style={{ transition: 'width 0.12s linear' }} />
               </clipPath>
             </defs>
 
@@ -3297,7 +3282,7 @@ export default function MapaTuristico() {
             width: `${loadingProgress}%`,
             backgroundColor: 'var(--atlan-gold)',
             boxShadow: '0 0 8px var(--atlan-gold)',
-            transition: 'width 0.04s linear'
+            transition: 'width 0.1s linear'
           }} />
         </div>
 
