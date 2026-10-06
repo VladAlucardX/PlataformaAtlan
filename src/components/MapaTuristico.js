@@ -70,6 +70,7 @@ export default function MapaTuristico() {
   const hasFlownInitialDescentRef = useRef(false);
   const previewRouteBoundsRef = useRef(null);
   const loadedPointIdRef = useRef(null);
+  const currentBearingRef = useRef(0);
 
 
   // --- ESTADO DE REACT ---
@@ -891,8 +892,8 @@ export default function MapaTuristico() {
 
     mapRef.current.flyTo({
       center: [currLng, currLat],
-      zoom: 15.2,
-      pitch: 0,
+      zoom: 15.6,
+      pitch: 50,
       speed: 0.9,
       curve: 1.1,
       essential: true
@@ -1409,8 +1410,8 @@ export default function MapaTuristico() {
 
           mapRef.current.flyTo({
             center: [currLng, currLat],
-            zoom: 15.2,
-            pitch: 0,
+            zoom: 15.6,
+            pitch: 50,
             speed: 0.9,
             curve: 1.1,
             essential: true
@@ -1797,16 +1798,29 @@ export default function MapaTuristico() {
         const el = document.createElement('div');
         el.className = 'nav-arrow-pulsing';
         el.innerHTML = `
-          <svg width="46" height="46" viewBox="0 0 24 24" fill="#007cbf" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 0 6px rgba(0,124,191,0.6));">
-            <path d="M12 2L4 20L12 17L20 20L12 2Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/>
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="#0284c7" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 2px 8px rgba(2, 132, 199, 0.7));">
+            <path d="M12 2L4 20L12 17L20 20L12 2Z" fill="#00a8ff" stroke="#ffffff" stroke-width="2" stroke-linejoin="round"/>
           </svg>
         `;
-        userMarkerRef.current = new mapboxgl.Marker({ element: el, rotationAlignment: 'viewport' })
+        userMarkerRef.current = new mapboxgl.Marker({
+          element: el,
+          rotationAlignment: 'map',
+          pitchAlignment: 'map'
+        })
           .setLngLat([longitude, latitude])
           .addTo(mapRef.current);
       } else {
         userMarkerRef.current.setLngLat([longitude, latitude]);
       }
+
+      // Rotar el vehículo en la dirección exacta de la carretera
+      if (userMarkerRef.current && bearing !== null && !isNaN(bearing)) {
+        userMarkerRef.current.setRotation(bearing);
+      }
+    }
+
+    if (bearing !== null && !isNaN(bearing)) {
+      currentBearingRef.current = bearing;
     }
 
     if (directionsRef.current && isNavigatingRef.current && !isDemoRunningRef.current) {
@@ -1816,12 +1830,14 @@ export default function MapaTuristico() {
     if (isNavigatingRef.current && !isInteractionPausedRef.current && mapRef.current) {
       const opts = {
         center: [longitude, latitude],
-        zoom: 15.2,
-        pitch: 0,
-        duration: 1000,
+        zoom: 15.6,
+        pitch: 50,
+        duration: 1100,
         essential: true,
       };
-      if (bearing !== null) opts.bearing = bearing;
+      if (bearing !== null && !isNaN(bearing)) {
+        opts.bearing = bearing;
+      }
       mapRef.current.easeTo(opts);
     }
 
@@ -2198,6 +2214,9 @@ export default function MapaTuristico() {
       if (mapContainerRef.current) {
         mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
       }
+      if (mapRef.current) {
+        mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 800 });
+      }
       renderizarMarcadoresVisibles();
       const panel = document.querySelector('.mapboxgl-ctrl-directions');
       if (panel) panel.style.display = '';
@@ -2226,23 +2245,31 @@ export default function MapaTuristico() {
       mapContainerRef.current.classList.add('atlan-nav-clean-mode');
     }
 
-    if (coords && coords.length > 0 && mapRef.current) {
-      mapRef.current.flyTo({
-        center: coords[0],
-        zoom: 15.2,
-        pitch: 0,
-        speed: 1.0,
-        curve: 1.15,
-        essential: true,
-      });
-    }
-
     const panel = document.querySelector('.mapboxgl-ctrl-directions');
     if (panel) panel.style.display = 'none';
 
     const destino = lugarDestinoRef.current || 'su destino';
     speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${destino}.`, true);
     lastAnnouncementTimeRef.current = Date.now();
+
+    // Calcular orientación inicial hacia el primer segmento
+    const initialBearing = coords.length > 1 ? calcBearing(coords[0], coords[1]) : 0;
+    currentBearingRef.current = initialBearing;
+
+    // Posicionar el vehículo y cámara 3D de inmediato en la salida
+    handlePositionUpdate(coords[0][0], coords[0][1], initialBearing);
+
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: coords[0],
+        zoom: 15.6,
+        pitch: 50,
+        bearing: initialBearing,
+        speed: 1.1,
+        curve: 1.15,
+        essential: true,
+      });
+    }
 
     let index = 0;
     setTimeout(() => {
@@ -2268,6 +2295,9 @@ export default function MapaTuristico() {
           if (mapContainerRef.current) {
             mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
           }
+          if (mapRef.current) {
+            mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 800 });
+          }
           renderizarMarcadoresVisibles();
           if (panel) panel.style.display = '';
           speakInstruction(t('map.arrived'), true);
@@ -2287,17 +2317,18 @@ export default function MapaTuristico() {
         let target = index + 1;
         while (target < pts.length - 1) {
           const gap = calcDistanceMeters(pts[index], pts[target]);
-          if (gap >= 25) break;
+          if (gap >= 22) break;
           target++;
         }
 
         const bearing = calcBearing(pts[index], pts[target]);
+        currentBearingRef.current = bearing;
         handlePositionUpdate(pts[target][0], pts[target][1], bearing);
         checkDistanceAnnouncements(pts[target][0], pts[target][1]);
 
         index = target;
-      }, 1200);
-    }, 4000);
+      }, 1100);
+    }, 1000);
   };
 
   // Activar modo agregar punto: abre modal selector de opciones (Ubicación actual vs Seleccionar en mapa)
@@ -2735,19 +2766,22 @@ export default function MapaTuristico() {
       }
     };
 
-    const handleMoveStart = (e) => {
-      if (e && e.originalEvent && isNavigatingRef.current) {
+    const handleUserGesture = (e) => {
+      // Solo pausar si el evento proviene de un gesto físico real del usuario (mouse, touch, wheel)
+      // y NUNCA por animaciones programáticas de Mapbox (flyTo, easeTo)
+      if (!isNavigatingRef.current) return;
+      if (e && e.originalEvent) {
         pauseCamera();
       }
     };
 
-    // Escuchar únicamente gestos reales del usuario que indican que desea mover el mapa
-    mapRef.current.on('movestart', handleMoveStart);
-    mapRef.current.on('dragstart', pauseCamera);
-    mapRef.current.on('touchstart', pauseCamera);
-    mapRef.current.on('wheel', pauseCamera);
-    mapRef.current.on('rotatestart', pauseCamera);
-    mapRef.current.on('pitchstart', pauseCamera);
+    // Escuchar únicamente gestos reales del usuario que indican que desea explorar manualmente
+    mapRef.current.on('movestart', handleUserGesture);
+    mapRef.current.on('dragstart', handleUserGesture);
+    mapRef.current.on('touchstart', handleUserGesture);
+    mapRef.current.on('wheel', handleUserGesture);
+    mapRef.current.on('rotatestart', handleUserGesture);
+    mapRef.current.on('pitchstart', handleUserGesture);
 
     // Controles nativos
     const geolocate = new mapboxgl.GeolocateControl({
@@ -2839,6 +2873,9 @@ export default function MapaTuristico() {
       setShowRecenterBtn(false);
       if (mapContainerRef.current) {
         mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
+      }
+      if (mapRef.current) {
+        mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 800 });
       }
       renderizarMarcadoresVisibles();
     });
@@ -3041,9 +3078,10 @@ export default function MapaTuristico() {
     if (mapRef.current) {
       mapRef.current.flyTo({
         center: currentPosRef.current,
-        zoom: 15.2,
-        pitch: 0,
-        speed: 1.0,
+        zoom: 15.6,
+        pitch: 50,
+        bearing: currentBearingRef.current || 0,
+        speed: 1.1,
         curve: 1.15,
         essential: true,
       });
@@ -5383,6 +5421,9 @@ export default function MapaTuristico() {
                   setShowRecenterBtn(false);
                   if (mapContainerRef.current) {
                     mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
+                  }
+                  if (mapRef.current) {
+                    mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 800 });
                   }
                   renderizarMarcadoresVisibles();
                 }}

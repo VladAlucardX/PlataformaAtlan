@@ -1916,8 +1916,14 @@ html body .mapboxgl-ctrl-directions tr {
 /* Animación de pulso para la flecha de navegación del usuario */
 .nav-arrow-pulsing {
   position: relative;
-  filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.55));
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0px 4px 10px rgba(0, 124, 191, 0.6));
   cursor: default;
+  transform-origin: center center;
 }
 
 .nav-arrow-pulsing::before,
@@ -1926,13 +1932,15 @@ html body .mapboxgl-ctrl-directions tr {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 44px;
-  height: 44px;
-  margin-top: -22px;
-  margin-left: -22px;
+  width: 46px;
+  height: 46px;
+  margin-top: -23px;
+  margin-left: -23px;
   border-radius: 50%;
-  background: rgba(0, 124, 191, 0.35);
+  background: rgba(0, 168, 255, 0.4);
+  box-shadow: 0 0 16px rgba(0, 168, 255, 0.65);
   z-index: -1;
+  pointer-events: none;
 }
 
 .nav-arrow-pulsing::before {
@@ -1946,11 +1954,11 @@ html body .mapboxgl-ctrl-directions tr {
 
 @keyframes nav-pulse {
   0% {
-    transform: scale(0.8);
-    opacity: 0.7;
+    transform: scale(0.6);
+    opacity: 0.9;
   }
   100% {
-    transform: scale(3);
+    transform: scale(3.2);
     opacity: 0;
   }
 }
