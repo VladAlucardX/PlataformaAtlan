@@ -45,6 +45,7 @@ export default function MapaTuristico() {
   const rutaCoordenadasRef = useRef([]);
   const demoIntervalRef = useRef(null);
   const userMarkerRef = useRef(null);
+  const destinationMarkerRef = useRef(null);
   const activePopupRef = useRef(null);
   const markersRef = useRef([]);  // Lista de marcadores cargados en el mapa
   const superclusterRef = useRef(null);
@@ -463,6 +464,7 @@ export default function MapaTuristico() {
 
     if (!puntoNorm || puntoNorm.lng === undefined || puntoNorm.lat === undefined || isNaN(puntoNorm.lng) || isNaN(puntoNorm.lat)) {
       setPreviewRouteInfo(null);
+      actualizarMarcadorDestino(null);
       if (mapRef.current && mapRef.current.isStyleLoaded()) {
         const source = mapRef.current.getSource('preview-route');
         if (source) {
@@ -475,6 +477,7 @@ export default function MapaTuristico() {
           });
         }
       }
+      renderizarMarcadoresVisibles();
       return;
     }
 
@@ -482,6 +485,8 @@ export default function MapaTuristico() {
     const fetchPreviewRoute = () => {
       const [oLng, oLat] = currentPosRef.current;
       actualizarPrevisualizacionRuta(oLng, oLat, puntoNorm.lng, puntoNorm.lat, true);
+      actualizarMarcadorDestino(puntoNorm);
+      renderizarMarcadoresVisibles();
     };
 
     const timer = setTimeout(() => {
@@ -1435,11 +1440,84 @@ export default function MapaTuristico() {
     return marker;
   };
 
+  // ── MARCADOR EXCLUSIVO DE DESTINO (PUNTO B) ──
+  const actualizarMarcadorDestino = (punto) => {
+    if (!mapRef.current) return;
+
+    if (!punto || punto.lng === undefined || punto.lat === undefined) {
+      if (destinationMarkerRef.current) {
+        destinationMarkerRef.current.remove();
+        destinationMarkerRef.current = null;
+      }
+      return;
+    }
+
+    const lng = Number(punto.lng);
+    const lat = Number(punto.lat);
+    if (isNaN(lng) || isNaN(lat)) return;
+
+    const config = CATEGORIAS_CONFIG[punto.categoria] || CATEGORIAS_CONFIG.otro;
+
+    if (!destinationMarkerRef.current) {
+      const el = document.createElement('div');
+      el.className = 'atlan-destination-pin-container';
+
+      el.innerHTML = `
+        <div class="atlan-destination-pulse-glow"></div>
+        <div class="atlan-destination-pin">
+          <div class="atlan-destination-pin-inner">
+            ${config.svgFile
+              ? `<img src="${config.svgFile}" alt="" style="width:18px;height:18px;object-fit:contain;filter:brightness(0) invert(1);" />`
+              : '📍'}
+          </div>
+        </div>
+        <div class="atlan-destination-label">
+          <span class="atlan-destination-badge-b">B</span>
+          <span style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">${punto.nombre}</span>
+        </div>
+      `;
+
+      destinationMarkerRef.current = new mapboxgl.Marker({
+        element: el,
+        anchor: 'bottom',
+      })
+        .setLngLat([lng, lat])
+        .addTo(mapRef.current);
+    } else {
+      destinationMarkerRef.current.setLngLat([lng, lat]);
+      const label = destinationMarkerRef.current.getElement().querySelector('.atlan-destination-label');
+      if (label) {
+        label.innerHTML = `
+          <span class="atlan-destination-badge-b">B</span>
+          <span style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">${punto.nombre}</span>
+        `;
+      }
+    }
+  };
+
   // ── RENDERIZADO DIFERENCIAL DE MARCADORES Y CLUSTERS VISIBLES ──
   const renderizarMarcadoresVisibles = () => {
     if (!mapRef.current || !superclusterRef.current) return;
 
     try {
+      // Verificar si hay una ruta o previsualización de viaje activa entre Punto A y Punto B
+      const isRouteActive = Boolean(selectedPointRef.current || routeInfo || previewRouteInfo);
+
+      // Si hay un punto seleccionado / ruta, actualizar el marcador de destino (Punto B)
+      if (selectedPointRef.current) {
+        actualizarMarcadorDestino(selectedPointRef.current);
+      } else {
+        actualizarMarcadorDestino(null);
+      }
+
+      // Si la ruta está activa (Punto A ➔ Punto B), NO mostrar clusters para evitar confusiones
+      if (isRouteActive) {
+        markersOnMapRef.current.forEach((marker) => marker.remove());
+        markersOnMapRef.current.clear();
+        markersRef.current = [];
+        return;
+      }
+
       const bounds = mapRef.current.getBounds();
       const west = Math.max(-180, bounds.getWest());
       const south = Math.max(-85, bounds.getSouth());
