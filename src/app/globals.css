@@ -2570,13 +2570,37 @@ html body .mapboxgl-ctrl-directions tr {
   border-radius: 50%;
   transform-origin: center center;
   transform: translateY(0) scale(var(--marker-zoom-scale, 1));
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
   will-change: transform;
+}
+
+/* En vista alejada (zoom compacto), ocultamos la insignia secundaria para evitar saturación */
+.zoom-level-compact .marker-status-badge {
+  opacity: 0;
+  transform: scale(0.3);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Hover inteligente: cuando el punto está en estado compacto (ciudad), se expande a tamaño completo (38px) con su insignia */
+.marker-custom-container:hover {
+  z-index: 999 !important;
+}
+
+.marker-custom-container:hover .marker-custom {
+  transform: translateY(-5px) scale(1) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 16px rgba(255, 215, 0, 0.4) !important;
+}
+
+.marker-custom-container:hover .marker-status-badge {
+  opacity: 1 !important;
+  transform: scale(1) !important;
 }
 
 /* 3. Cero retraso durante el zoom del mapa */
 .map-zooming .marker-custom,
-.map-zooming .marker-custom-container {
+.map-zooming .marker-custom-container,
+.map-zooming .atlan-cluster-badge {
   transition: none !important;
 }
 
@@ -2587,6 +2611,125 @@ html body .mapboxgl-ctrl-directions tr {
   50% {
     box-shadow: 0 0 24px rgba(249, 115, 22, 0.95), 0 0 12px rgba(249, 115, 22, 0.4);
   }
+}
+
+/* ── CLUSTERS INTELIGENTES DE NEGOCIOS (SUPERCLUSTER ATLAN) ── */
+.atlan-cluster-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  z-index: 30;
+}
+
+.atlan-cluster-badge {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-family: var(--font-outfit), system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  transform-origin: center center;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
+  will-change: transform;
+}
+
+.atlan-cluster-container:hover .atlan-cluster-badge {
+  transform: scale(1.15);
+  z-index: 1000;
+}
+
+/* Tier Pequeño (< 15 lugares) */
+.atlan-cluster-sm {
+  background: radial-gradient(circle at 35% 35%, rgba(14, 116, 144, 0.95), rgba(10, 25, 47, 0.98));
+  border: 2px solid #22d3ee;
+  box-shadow: 0 4px 14px rgba(34, 211, 238, 0.45), inset 0 0 8px rgba(34, 211, 238, 0.25);
+  color: #ffffff;
+}
+
+.atlan-cluster-sm:hover {
+  box-shadow: 0 6px 20px rgba(34, 211, 238, 0.75), inset 0 0 12px rgba(34, 211, 238, 0.4);
+}
+
+/* Tier Mediano (15 - 49 lugares) */
+.atlan-cluster-md {
+  background: radial-gradient(circle at 35% 35%, rgba(217, 119, 6, 0.95), rgba(10, 25, 47, 0.98));
+  border: 2.5px solid #fbbf24;
+  box-shadow: 0 6px 18px rgba(251, 191, 36, 0.5), inset 0 0 10px rgba(251, 191, 36, 0.3);
+  color: #ffffff;
+}
+
+.atlan-cluster-md:hover {
+  box-shadow: 0 8px 24px rgba(251, 191, 36, 0.8), inset 0 0 14px rgba(251, 191, 36, 0.5);
+}
+
+/* Tier Grande (50+ lugares) */
+.atlan-cluster-lg {
+  background: radial-gradient(circle at 35% 35%, #ffd700, #f59e0b 65%, #0a192f 100%);
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 8px 26px rgba(255, 215, 0, 0.65), inset 0 0 14px rgba(255, 255, 255, 0.45);
+  color: #0a192f;
+}
+
+.atlan-cluster-lg:hover {
+  box-shadow: 0 10px 32px rgba(255, 215, 0, 0.95), inset 0 0 18px rgba(255, 255, 255, 0.65);
+}
+
+/* Pulso animado para clusters medianos y grandes */
+.atlan-cluster-pulse-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  opacity: 0.4;
+  animation: cluster-pulse-anim 2.2s infinite ease-out;
+  pointer-events: none;
+}
+
+@keyframes cluster-pulse-anim {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+.atlan-cluster-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.atlan-cluster-count {
+  font-weight: 900;
+  letter-spacing: -0.3px;
+}
+
+.atlan-cluster-sm .atlan-cluster-count {
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.atlan-cluster-md .atlan-cluster-count {
+  font-size: 14.5px;
+  color: #ffffff;
+}
+
+.atlan-cluster-lg .atlan-cluster-count {
+  font-size: 16px;
+  color: #0a192f;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.4);
 }
 
 /* ── RESPONSIVE UTILITIES & NAVBAR ────────────────────────── */

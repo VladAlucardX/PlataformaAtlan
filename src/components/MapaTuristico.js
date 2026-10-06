@@ -7,6 +7,7 @@ import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-direct
 import '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Supercluster from 'supercluster';
 import { supabase } from '../lib/supabase';
 import { obtenerDepartamentoPorCoordenadas } from '../lib/geoUtils';
 import { useTranslation } from '../hooks/useTranslation';
@@ -16,11 +17,10 @@ import BusinessProfileModal from './ui/BusinessProfileModal';
 import { getPointImage, prefetchPointImages, isRealCustomUrl } from '../lib/imageUtils';
 import { uploadMedia } from '../lib/storage';
 import { validarImagenSegura } from '../lib/imageModeration';
+import { CATEGORIAS_CONFIG } from '../lib/categories';
+import { isBusinessOpenNow } from '../lib/businessHours';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-
-// SVG icon helper for map markers (returns HTML string for innerHTML)
-const svgIcon = (path, size = 18) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle">${path}</svg>`;
 
 const formatPriceRange = (rango) => {
   if (!rango) return '';
@@ -32,21 +32,6 @@ const formatPriceRange = (rango) => {
   if (r === '$$$' || r === 'costoso') return 'Costoso C$';
   if (r === '$$$$' || r === 'lujoso') return 'Lujoso C$';
   return `${str} C$`;
-};
-
-// Configuración de categorías (colores e íconos)
-const CATEGORIAS_CONFIG = {
-  comideria: { color: '#ff6b6b', icon: 'utensils', svgFile: '/images/comideria.svg', svg: svgIcon('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>') },
-  restaurante: { color: '#ff9233', icon: 'soup', svgFile: '/images/restaurante.svg', svg: svgIcon('<path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9z"/><path d="M7 21h10"/>') },
-  artesanal: { color: '#8a2be2', icon: 'palette', svgFile: '/images/arte.svg', svg: svgIcon('<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"/>') },
-  playa: { color: '#00bfff', icon: 'umbrella', svgFile: '/images/playa.svg', svg: svgIcon('<path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7"/>') },
-  familiar: { color: '#4caf50', icon: 'family', svgFile: '/images/comunidad.svg', svg: svgIcon('<circle cx="8" cy="5" r="3"/><circle cx="16" cy="5" r="3"/><path d="M3 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"/><path d="M13 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"/>') },
-  hotel: { color: '#e040fb', icon: 'hotel', svgFile: '/images/hotel.svg', svg: svgIcon('<path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path d="M9 22v-4h6v4"/><rect x="8" y="6" width="3" height="3" rx=".5"/><rect x="13" y="6" width="3" height="3" rx=".5"/>') },
-  hostal: { color: '#9c27b0', icon: 'homeAlt', svgFile: '/images/hostal.svg', svg: svgIcon('<path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V10.5z"/><path d="M10 21v-6h4v6"/>') },
-  transporte: { color: '#607d8b', icon: 'car', svgFile: '/images/transporte.svg', svg: svgIcon('<path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a1 1 0 0 0-.8.4L1.74 11l-1.58.86a1 1 0 0 0-.16.99V16h3"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/>') },
-  tour: { color: '#009688', icon: 'mountain', svgFile: '/images/tour.svg', svg: svgIcon('<path d="M8 3l4 8 5-5 5 15H2L8 3z"/>') },
-  tienda: { color: '#795548', icon: 'shoppingBag', svgFile: '/images/tienda.svg', svg: svgIcon('<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>') },
-  otro: { color: '#ffc107', icon: 'mapPin', svgFile: '/images/Ubicacion.svg', svg: svgIcon('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>') }
 };
 
 export default function MapaTuristico() {
@@ -62,6 +47,9 @@ export default function MapaTuristico() {
   const userMarkerRef = useRef(null);
   const activePopupRef = useRef(null);
   const markersRef = useRef([]);  // Lista de marcadores cargados en el mapa
+  const superclusterRef = useRef(null);
+  const markersOnMapRef = useRef(new Map());
+  const allLoadedPointsRef = useRef([]);
   const currentPosRef = useRef([-86.2504, 12.1364]);  // Managua, Nicaragua
   const isNavigatingRef = useRef(false);
   const isInteractionPausedRef = useRef(false);
@@ -921,23 +909,6 @@ export default function MapaTuristico() {
     setSelectedPoint(null);
   };
 
-  const isBusinessOpenNow = (horarios) => {
-    if (!horarios || Object.keys(horarios).length === 0) return null;
-    const daysEnToEs = { 0: 'domingo', 1: 'lunes', 2: 'martes', 3: 'miercoles', 4: 'jueves', 5: 'viernes', 6: 'sabado' };
-    const now = new Date();
-    const currentDay = daysEnToEs[now.getDay()];
-    const diaInfo = horarios[currentDay];
-    if (!diaInfo || !diaInfo.abierto) return false;
-    const [apHour, apMin] = diaInfo.apertura.split(':').map(Number);
-    const [ciHour, ciMin] = diaInfo.cierre.split(':').map(Number);
-    const currentHour = now.getHours();
-    const currentMin = now.getMinutes();
-    const apTime = apHour * 60 + apMin;
-    const ciTime = ciHour * 60 + ciMin;
-    const currTime = currentHour * 60 + currentMin;
-    if (ciTime < apTime) return currTime >= apTime || currTime <= ciTime;
-    return currTime >= apTime && currTime <= ciTime;
-  };
 
   const calculateETA = (durationSeconds) => {
     const now = new Date();
@@ -1073,12 +1044,457 @@ export default function MapaTuristico() {
     setIsMuted(isMutedRef.current);
   };
 
+  // ── ESCALADO DINÁMICO ADAPTATIVO POR ZOOM (OPCIÓN A: 2 ESTADOS NÍTIDOS) ──
+  const actualizarEscalaMarcadores = () => {
+    if (!mapRef.current || !mapContainerRef.current) return;
+    const z = mapRef.current.getZoom();
+    
+    // Transición en 2 Estados Nítidos:
+    // Estado 1: Zoom >= 14 (Barrio/Calle) -> Escala 1.0 (38px completo con iconos e insignias)
+    // Estado 2: Zoom 12 a 13.9 (Ciudad)   -> Escala 0.82 (31px cómodo, icono 100% nítido, sin micro-insignias)
+    // Estado 3: Zoom < 12 (Departamental) -> Pasan a Clusters regionales
+    let scale = 1.0;
+    if (z < 14) {
+      scale = z >= 12 ? 0.82 : 0.74;
+    }
+
+    mapContainerRef.current.style.setProperty('--marker-zoom-scale', scale.toFixed(2));
+    if (z < 14) {
+      mapContainerRef.current.classList.add('zoom-level-compact');
+    } else {
+      mapContainerRef.current.classList.remove('zoom-level-compact');
+    }
+  };
+
+  // ── MARCADOR DE CLUSTER (SUPERCLUSTER ATLAN) ──
+  const crearMarcadorCluster = (feature) => {
+    const count = feature.properties.point_count;
+    const clusterId = feature.properties.cluster_id;
+    const [lng, lat] = feature.geometry.coordinates;
+
+    const el = document.createElement('div');
+    el.className = 'atlan-cluster-container';
+
+    let sizeTier = 'sm';
+    let sizePx = 38;
+    if (count >= 50) {
+      sizeTier = 'lg';
+      sizePx = 52;
+    } else if (count >= 15) {
+      sizeTier = 'md';
+      sizePx = 44;
+    }
+
+    const formattedCount = count > 999 ? (count / 1000).toFixed(1) + 'k' : count;
+
+    el.innerHTML = `
+      <div class="atlan-cluster-badge atlan-cluster-${sizeTier}" style="width:${sizePx}px; height:${sizePx}px;">
+        ${sizeTier !== 'sm' ? '<div class="atlan-cluster-pulse-ring"></div>' : ''}
+        <div class="atlan-cluster-inner">
+          <span class="atlan-cluster-count">${formattedCount}</span>
+        </div>
+      </div>
+    `;
+
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      try {
+        if (!superclusterRef.current || !mapRef.current) return;
+        const expansionZoom = superclusterRef.current.getClusterExpansionZoom(clusterId);
+        mapRef.current.easeTo({
+          center: [lng, lat],
+          zoom: Math.min(Math.max(expansionZoom, 13.5), 17.5),
+          duration: 600,
+          essential: true
+        });
+      } catch (err) {
+        console.warn('[Atlan] Error expandiendo cluster:', err);
+      }
+    });
+
+    const marker = new mapboxgl.Marker({ element: el })
+      .setLngLat([lng, lat]);
+
+    return marker;
+  };
+
+  // ── MARCADOR INDIVIDUAL DE NEGOCIO / PUNTO ──
+  const crearMarcadorPunto = (punto) => {
+    const config = CATEGORIAS_CONFIG[punto.categoria] || CATEGORIAS_CONFIG.otro;
+
+    // 1. Anclaje simétrico fijo en Mapbox (38px × 38px)
+    const el = document.createElement('div');
+    el.className = 'marker-custom-container';
+    el.style.width = '38px';
+    el.style.height = '38px';
+
+    const inner = document.createElement('div');
+    inner.className = 'marker-custom';
+    inner.style.position = 'relative';
+    inner.style.backgroundColor = config.color;
+    inner.style.width = '38px';
+    inner.style.height = '38px';
+    inner.style.borderRadius = '50%';
+    inner.style.display = 'flex';
+    inner.style.justifyContent = 'center';
+    inner.style.alignItems = 'center';
+    inner.style.fontSize = '18px';
+    inner.style.cursor = 'pointer';
+    inner.style.transformOrigin = 'center center';
+    inner.style.transform = 'translateY(0) scale(var(--marker-zoom-scale, 1))';
+    inner.style.transition = 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    inner.innerHTML = config.svgFile
+      ? `<img src="${config.svgFile}" alt="${punto.categoria || 'categoria'}" style="width:20px;height:20px;object-fit:contain;filter:brightness(0) invert(1);" />`
+      : config.svg;
+
+    // Insignia de estado circular en la esquina
+    const badge = document.createElement('div');
+    badge.className = 'marker-status-badge';
+    badge.style.position = 'absolute';
+    badge.style.bottom = '-4px';
+    badge.style.right = '-4px';
+    badge.style.width = '18px';
+    badge.style.height = '18px';
+    badge.style.borderRadius = '50%';
+    badge.style.display = 'flex';
+    badge.style.justifyContent = 'center';
+    badge.style.alignItems = 'center';
+    badge.style.fontSize = '10px';
+    badge.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
+    badge.style.border = '1.5px solid white';
+    badge.style.zIndex = '10';
+
+    if (punto.estado === 'en_verificacion') {
+      badge.style.backgroundColor = '#f97316'; // Naranja
+      badge.innerHTML = '⏳';
+      inner.style.border = '2.5px solid #f97316';
+      inner.style.boxShadow = '0 0 12px rgba(249, 115, 22, 0.6)';
+      inner.classList.add('pulse-marker-orange');
+    } else if (punto.estado === 'aprobado') {
+      badge.style.backgroundColor = '#10b981'; // Verde
+      badge.innerHTML = '✓';
+      badge.style.color = 'white';
+      badge.style.fontWeight = 'bold';
+      inner.style.border = '2.5px solid #10b981';
+      inner.style.boxShadow = '0 0 12px rgba(16, 185, 129, 0.6)';
+    } else {
+      const isClaimed = !!punto.negocio_id;
+      badge.style.backgroundColor = isClaimed ? '#10b981' : '#f59e0b';
+      badge.innerHTML = isClaimed ? '✓' : '❓';
+      badge.style.color = 'white';
+      badge.style.fontWeight = isClaimed ? 'bold' : 'normal';
+      inner.style.border = `2.5px solid ${isClaimed ? '#10b981' : '#f59e0b'}`;
+      inner.style.boxShadow = `0 0 12px ${isClaimed ? 'rgba(16, 185, 129, 0.6)' : 'rgba(245, 158, 11, 0.5)'}`;
+    }
+
+    inner.appendChild(badge);
+    el.appendChild(inner);
+
+    // Elevación vertical directa con escala completa (38px) en hover
+    el.addEventListener('mouseenter', () => {
+      inner.style.transform = 'translateY(-5px) scale(1)';
+      el.style.zIndex = '999';
+    });
+    el.addEventListener('mouseleave', () => {
+      inner.style.transform = 'translateY(0) scale(var(--marker-zoom-scale, 1))';
+      el.style.zIndex = 'auto';
+    });
+
+    // Estructura del Popup Premium
+    const isClaimed = !!punto.negocio_id;
+    const ratingText = punto.negocio_rating ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" style="display:inline-block;vertical-align:middle;color:#fbbf24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> ${punto.negocio_rating}` : '';
+
+    let statusText = '';
+    let statusColor = '';
+
+    if (punto.estado === 'en_verificacion') {
+      statusText = lang === 'en' ? 'Pending Confirmation' : lang === 'zh' ? '待审核确认' : 'Pendiente de Confirmar';
+      statusColor = '#f97316';
+    } else if (punto.estado === 'aprobado') {
+      statusText = lang === 'en' ? 'Confirmed' : lang === 'zh' ? '已确认' : 'Confirmado';
+      statusColor = '#10b981';
+    } else {
+      statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
+      statusColor = isClaimed ? '#10b981' : '#f59e0b';
+    }
+
+    const btnId = `btn-nav-${punto.id}`;
+    const btnInfoId = `btn-info-${punto.id}`;
+    const pointImg = getPointImage(punto);
+
+    const popupHTML = `
+      <div style="color:#FFFFFF; width:100%; font-family:var(--font-outfit), system-ui, sans-serif; box-sizing:border-box; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0; padding:0;">
+        <div id="popup-img-container-${punto.id}" style="width:100%; box-sizing:border-box;">
+          ${pointImg ? `
+            <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15); box-sizing:border-box;">
+              <img src="${pointImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
+              <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
+            </div>
+          ` : `
+            <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:linear-gradient(135deg, rgba(20,109,158,0.22) 0%, rgba(10,25,47,0.85) 100%); border:1.5px dashed rgba(255,215,0,0.35); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; box-sizing:border-box; padding:8px;">
+              <div style="width:34px; height:34px; border-radius:50%; background:rgba(255,215,0,0.12); border:1px solid rgba(255,215,0,0.3); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(255,215,0,0.2);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+              </div>
+              <span style="font-size:10.5px; font-weight:850; color:#FFD700; letter-spacing:0.5px; text-transform:uppercase; background:rgba(255,215,0,0.15); padding:2px 10px; border-radius:8px; border:0.5px solid rgba(255,215,0,0.4);">
+                ${lang === 'en' ? 'Photos Coming Soon' : lang === 'zh' ? '照片即将上线' : 'PRÓXIMAMENTE'}
+              </span>
+            </div>
+          `}
+        </div>
+        <!-- Status & Rating Header (Centered Pill) -->
+        <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.18); padding-bottom:8px; width:100%; box-sizing:border-box;">
+          <span style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-flex; align-items:center; gap:6px; letter-spacing:0.3px; background:rgba(255,255,255,0.08); padding:3px 10px; border-radius:10px;">
+            <span style="width:7px; height:7px; border-radius:50%; background-color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-block; box-shadow:0 0 6px ${statusColor};"></span>
+            ${statusText}
+          </span>
+          ${ratingText ? `<span style="font-size:11.5px; font-weight:800; color:#FFD700; background:rgba(255,215,0,0.18); padding:3px 8px; border-radius:10px; border:0.5px solid rgba(255,215,0,0.4);">${ratingText}</span>` : ''}
+        </div>
+
+        <!-- Title & Category Badge (Centered) -->
+        <div style="margin-bottom:8px; text-align:center; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <h3 style="margin:0 0 5px; font-size:16.5px; font-weight:850; color:#FFFFFF; line-height:1.25; letter-spacing:-0.2px; font-family:var(--font-outfit); text-align:center; width:100%;">
+            ${punto.nombre}
+          </h3>
+          <span style="display:inline-block; font-size:10.5px; font-weight:750; color:#FFD700; text-transform:uppercase; letter-spacing:0.5px; background:rgba(255, 215, 0, 0.12); padding:3px 10px; border-radius:8px; border:1px solid rgba(255, 215, 0, 0.3); margin:0 auto; text-align:center;">
+            ${t(`addPoint.categories.${punto.categoria}`) || punto.categoria || 'Turismo'}
+          </span>
+        </div>
+
+        <!-- Description -->
+        <p style="margin:0 0 10px; font-size:12.5px; color:#E2E8F0; line-height:1.45; text-align:center; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; width:100%;">
+          ${punto.descripcion || ''}
+        </p>
+        
+        ${punto.negocio_rango_precios ? `
+          <div style="margin-bottom:10px; font-size:11px; font-weight:750; color:#2DD4BF; background:rgba(45,212,191,0.15); border:1px solid rgba(45,212,191,0.35); padding:4px 9px; border-radius:8px; display:inline-block; text-align:center; margin:0 auto;">
+            🏷️ ${formatPriceRange(punto.negocio_rango_precios)}
+          </div>
+        ` : ''}
+
+        <!-- Added By Footer -->
+        <div style="font-size:11px; color:rgba(255,255,255,0.7); margin-bottom:12px; border-top:1px dashed rgba(255,255,255,0.18); padding-top:8px; text-align:center; width:100%;">
+          ${t('map.addedBy')}: <span style="font-weight:750; color:#FFD700;">${punto.nombre_creador || 'Equipo Atlan'}</span>
+        </div>
+        
+        <!-- Centered Action Buttons Container -->
+        <div style="display:flex; flex-direction:column; gap:8px; width:100%; box-sizing:border-box; align-items:center; justify-content:center;">
+          <button id="${btnId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:11px 14px; background:#FFD700; color:#0A192F; border:none; border-radius:12px; font-weight:900; font-size:13px; cursor:pointer; box-shadow:0 4px 16px rgba(255,215,0,0.4); transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
+            <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0A192F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              <span style="display:inline-block; text-align:center; line-height:1.2;">${t('map.startNavigation')}</span>
+            </div>
+          </button>
+
+          ${(() => {
+            const puntoServs = punto.servicios || punto.detalles?.servicios || {};
+            const puntoCanBook = Boolean(
+              puntoServs.has_online_booking === true ||
+              punto.has_online_booking === true ||
+              punto.detalles?.has_online_booking === true ||
+              puntoServs.has_reservas === true
+            );
+            const btnLabel = puntoCanBook 
+              ? (lang === 'en' ? 'Details & Booking' : lang === 'zh' ? '详情与预订' : 'Detalles y Reservas')
+              : (lang === 'en' ? 'View Details' : lang === 'zh' ? '查看详情' : 'Ver Detalles');
+            return `
+              <button id="${btnInfoId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:10px 14px; background:rgba(255,255,255,0.12); color:#FFFFFF; border:1px solid rgba(255,255,255,0.25); border-radius:12px; font-weight:800; font-size:12px; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
+                <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  <span style="display:inline-block; text-align:center; line-height:1.2;">${btnLabel}</span>
+                </div>
+              </button>
+            `;
+          })()}
+        </div>
+      </div>
+    `;
+
+    const popup = new mapboxgl.Popup({ offset: [0, -14], anchor: 'bottom', closeButton: false }).setHTML(popupHTML);
+
+    el.addEventListener('click', () => {
+      lugarDestinoRef.current = punto.nombre;
+      if (mapRef.current) {
+        mapRef.current.easeTo({
+          center: [punto.lng, punto.lat],
+          offset: [0, 240],
+          duration: 500,
+          essential: true
+        });
+      }
+    });
+
+    popup.on('open', async () => {
+      activePopupRef.current = popup;
+
+      if (mapRef.current) {
+        mapRef.current.easeTo({
+          center: [punto.lng, punto.lat],
+          offset: [0, 240],
+          duration: 500,
+          essential: true
+        });
+      }
+
+      if (punto.negocio_id && !getPointImage(punto)) {
+        try {
+          const { data: bizData } = await supabase
+            .from('negocios')
+            .select('logo_url, fotos')
+            .eq('id', punto.negocio_id)
+            .maybeSingle();
+
+          if (bizData) {
+            const fetchedImg = (bizData.fotos && bizData.fotos.length > 0 && isRealCustomUrl(bizData.fotos[0]))
+              ? bizData.fotos[0]
+              : (isRealCustomUrl(bizData.logo_url) ? bizData.logo_url : null);
+
+            if (fetchedImg) {
+              punto.logo_url = fetchedImg;
+              punto.imagen_url = fetchedImg;
+
+              const imgContainer = document.getElementById(`popup-img-container-${punto.id}`);
+              if (imgContainer) {
+                imgContainer.innerHTML = `
+                  <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15); box-sizing:border-box;">
+                    <img src="${fetchedImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
+                    <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
+                  </div>
+                `;
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('[Atlan] Error cargando foto/logo de negocio en popup:', e);
+        }
+      }
+
+      const btn = document.getElementById(btnId);
+      if (btn) {
+        btn.onclick = () => {
+          const [currLng, currLat] = currentPosRef.current;
+          const isUserInCA = currLng >= -93.0 && currLng <= -77.0 && currLat >= 7.0 && currLat <= 19.0;
+
+          if (!isUserInCA) {
+            alert(lang === 'en'
+              ? 'You are currently outside Central America. Plan your trip and visit us to use live GPS navigation!'
+              : lang === 'zh'
+              ? '您当前不在中美洲范围内。规划好行程并欢迎光临以使用实时GPS导航！'
+              : 'Te encuentras fuera de Centroamérica. ¡Planifica tu viaje y visítanos para usar la navegación GPS en vivo!');
+            return;
+          }
+
+          lugarDestinoRef.current = punto.nombre;
+
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+          }
+          lastSpokenRef.current = '';
+          speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${punto.nombre}.`, true);
+
+          isNavigatingRef.current = true;
+          isInteractionPausedRef.current = false;
+
+          destinationRef.current = [punto.lng, punto.lat];
+          rutaCoordenadasRef.current = [];
+
+          if (directionsRef.current) {
+            directionsRef.current.setOrigin([currLng, currLat]);
+            directionsRef.current.setDestination([punto.lng, punto.lat]);
+          }
+
+          mapRef.current.flyTo({
+            center: [currLng, currLat],
+            zoom: 16.5,
+            pitch: 0,
+            speed: 0.9,
+            curve: 1.1,
+            essential: true
+          });
+
+          popup.remove();
+        };
+      }
+
+      const btnInfo = document.getElementById(btnInfoId);
+      if (btnInfo) {
+        btnInfo.onclick = () => {
+          setSelectedPoint(punto);
+          popup.remove();
+        };
+      }
+    });
+
+    const marker = new mapboxgl.Marker({ element: el })
+      .setLngLat([punto.lng, punto.lat])
+      .setPopup(popup);
+
+    return marker;
+  };
+
+  // ── RENDERIZADO DIFERENCIAL DE MARCADORES Y CLUSTERS VISIBLES ──
+  const renderizarMarcadoresVisibles = () => {
+    if (!mapRef.current || !superclusterRef.current) return;
+
+    try {
+      const bounds = mapRef.current.getBounds();
+      const west = Math.max(-180, bounds.getWest());
+      const south = Math.max(-85, bounds.getSouth());
+      const east = Math.min(180, bounds.getEast());
+      const north = Math.min(85, bounds.getNorth());
+      const currentZoom = Math.floor(mapRef.current.getZoom());
+
+      const clusters = superclusterRef.current.getClusters([west, south, east, north], currentZoom);
+
+      const currentMarkersMap = markersOnMapRef.current;
+      const nextMarkersMap = new Map();
+
+      clusters.forEach((feature) => {
+        const isCluster = Boolean(feature.properties && feature.properties.cluster);
+        const markerKey = isCluster
+          ? `cluster_${feature.properties.cluster_id}`
+          : `point_${feature.properties.id}`;
+
+        if (currentMarkersMap.has(markerKey)) {
+          nextMarkersMap.set(markerKey, currentMarkersMap.get(markerKey));
+          currentMarkersMap.delete(markerKey);
+          return;
+        }
+
+        if (isCluster) {
+          const clusterMarker = crearMarcadorCluster(feature);
+          clusterMarker.addTo(mapRef.current);
+          nextMarkersMap.set(markerKey, clusterMarker);
+        } else {
+          const punto = feature.properties;
+          const pointMarker = crearMarcadorPunto(punto);
+          pointMarker.addTo(mapRef.current);
+          nextMarkersMap.set(markerKey, pointMarker);
+        }
+      });
+
+      // Limpiar los marcadores que salieron del encuadre
+      currentMarkersMap.forEach((marker) => {
+        marker.remove();
+      });
+
+      markersOnMapRef.current = nextMarkersMap;
+      markersRef.current = Array.from(nextMarkersMap.values());
+    } catch (err) {
+      console.error('[Atlan] Error renderizando marcadores visibles:', err);
+    }
+  };
+
   // Cargar puntos desde Supabase
   const cargarPuntosCercanos = async (lon, lat, categoria = null) => {
     if (!mapRef.current) return;
 
-    // Limpiar marcadores anteriores de puntos turísticos
-    markersRef.current.forEach((marker) => marker.remove());
+    // Limpiar marcadores anteriores
+    markersOnMapRef.current.forEach((marker) => marker.remove());
+    markersOnMapRef.current.clear();
     markersRef.current = [];
 
     try {
@@ -1142,335 +1558,43 @@ export default function MapaTuristico() {
         }
       }
 
-      if (pointsToRender.length === 0) {
-        console.log('[Atlan] No se encontraron puntos.');
+      allLoadedPointsRef.current = pointsToRender;
+
+      const validPoints = pointsToRender.filter((p) => {
+        const lng = Number(p.lng);
+        const lat = Number(p.lat);
+        return !isNaN(lng) && !isNaN(lat) && lng !== 0 && lat !== 0;
+      });
+
+      if (validPoints.length === 0) {
+        console.log('[Atlan] No se encontraron puntos válidos.');
+        superclusterRef.current = null;
         return;
       }
 
-      pointsToRender.forEach((punto) => {
-        const config = CATEGORIAS_CONFIG[punto.categoria] || CATEGORIAS_CONFIG.otro;
+      // Convertir a GeoJSON Features para Supercluster
+      const features = validPoints.map((punto) => ({
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [Number(punto.lng), Number(punto.lat)],
+        },
+        properties: {
+          ...punto,
+          cluster: false,
+        },
+      }));
 
-        // 1. Anclaje simétrico fijo en Mapbox (38px × 38px)
-        const el = document.createElement('div');
-        el.className = 'marker-custom-container';
-        el.style.width = '38px';
-        el.style.height = '38px';
-
-        // Elemento interno visual (evita que las transiciones de CSS interfieran con el posicionamiento transform de Mapbox)
-        const inner = document.createElement('div');
-        inner.className = 'marker-custom';
-        inner.style.position = 'relative';
-        inner.style.backgroundColor = config.color;
-        inner.style.width = '38px';
-        inner.style.height = '38px';
-        inner.style.borderRadius = '50%';
-        inner.style.display = 'flex';
-        inner.style.justifyContent = 'center';
-        inner.style.alignItems = 'center';
-        inner.style.fontSize = '18px';
-        inner.style.cursor = 'pointer';
-        inner.style.transformOrigin = 'center center';
-        inner.style.transform = 'translateY(0) scale(var(--marker-zoom-scale, 1))';
-        inner.style.transition = 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        inner.innerHTML = config.svgFile
-          ? `<img src="${config.svgFile}" alt="${punto.categoria || 'categoria'}" style="width:20px;height:20px;object-fit:contain;filter:brightness(0) invert(1);" />`
-          : config.svg;
-
-        // Crear insignia de estado circular en la esquina
-        const badge = document.createElement('div');
-        badge.style.position = 'absolute';
-        badge.style.bottom = '-4px';
-        badge.style.right = '-4px';
-        badge.style.width = '18px';
-        badge.style.height = '18px';
-        badge.style.borderRadius = '50%';
-        badge.style.display = 'flex';
-        badge.style.justifyContent = 'center';
-        badge.style.alignItems = 'center';
-        badge.style.fontSize = '10px';
-        badge.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
-        badge.style.border = '1.5px solid white';
-        badge.style.zIndex = '10';
-
-        if (punto.estado === 'en_verificacion') {
-          badge.style.backgroundColor = '#f97316'; // Naranja
-          badge.innerHTML = '⏳';
-          inner.style.border = '2.5px solid #f97316';
-          inner.style.boxShadow = '0 0 12px rgba(249, 115, 22, 0.6)';
-          inner.classList.add('pulse-marker-orange');
-        } else if (punto.estado === 'aprobado') {
-          badge.style.backgroundColor = '#10b981'; // Verde
-          badge.innerHTML = '✓';
-          badge.style.color = 'white';
-          badge.style.fontWeight = 'bold';
-          inner.style.border = '2.5px solid #10b981';
-          inner.style.boxShadow = '0 0 12px rgba(16, 185, 129, 0.6)';
-        } else {
-          // Sin reclamar / Estado por defecto
-          const isClaimed = !!punto.negocio_id;
-          badge.style.backgroundColor = isClaimed ? '#10b981' : '#f59e0b'; // Verde / Amber
-          badge.innerHTML = isClaimed ? '✓' : '❓';
-          badge.style.color = 'white';
-          badge.style.fontWeight = isClaimed ? 'bold' : 'normal';
-          inner.style.border = `2.5px solid ${isClaimed ? '#10b981' : '#f59e0b'}`;
-          inner.style.boxShadow = `0 0 12px ${isClaimed ? 'rgba(16, 185, 129, 0.6)' : 'rgba(245, 158, 11, 0.5)'}`;
-        }
-
-        inner.appendChild(badge);
-        el.appendChild(inner);
-
-        // 2. Elevación vertical directa hacia arriba (translateY(-5px))
-        el.addEventListener('mouseenter', () => {
-          inner.style.transform = 'translateY(-5px) scale(calc(var(--marker-zoom-scale, 1) * 1.25))';
-          el.style.zIndex = '999';
-        });
-        el.addEventListener('mouseleave', () => {
-          inner.style.transform = 'translateY(0) scale(var(--marker-zoom-scale, 1))';
-          el.style.zIndex = 'auto';
-        });
-
-        // Estructura del Popup Premium
-        const isClaimed = !!punto.negocio_id;
-        const ratingText = punto.negocio_rating ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" style="display:inline-block;vertical-align:middle;color:#fbbf24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> ${punto.negocio_rating}` : '';
-
-        let statusText = '';
-        let statusColor = '';
-
-        if (punto.estado === 'en_verificacion') {
-          statusText = lang === 'en' ? 'Pending Confirmation' : lang === 'zh' ? '待审核确认' : 'Pendiente de Confirmar';
-          statusColor = '#f97316'; // Naranja
-        } else if (punto.estado === 'aprobado') {
-          statusText = lang === 'en' ? 'Confirmed' : lang === 'zh' ? '已确认' : 'Confirmado';
-          statusColor = '#10b981'; // Verde
-        } else {
-          statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
-          statusColor = isClaimed ? '#10b981' : '#f59e0b';
-        }
-
-        const btnId = `btn-nav-${punto.id}`;
-        const btnInfoId = `btn-info-${punto.id}`;
-        const pointImg = getPointImage(punto);
-
-        const popupHTML = `
-          <div style="color:#FFFFFF; width:100%; font-family:var(--font-outfit), system-ui, sans-serif; box-sizing:border-box; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0; padding:0;">
-            <div id="popup-img-container-${punto.id}" style="width:100%; box-sizing:border-box;">
-              ${pointImg ? `
-                <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15); box-sizing:border-box;">
-                  <img src="${pointImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
-                  <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
-                </div>
-              ` : `
-                <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:linear-gradient(135deg, rgba(20,109,158,0.22) 0%, rgba(10,25,47,0.85) 100%); border:1.5px dashed rgba(255,215,0,0.35); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; box-sizing:border-box; padding:8px;">
-                  <div style="width:34px; height:34px; border-radius:50%; background:rgba(255,215,0,0.12); border:1px solid rgba(255,215,0,0.3); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(255,215,0,0.2);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                      <circle cx="8.5" cy="8.5" r="1.5"/>
-                      <polyline points="21 15 16 10 5 21"/>
-                    </svg>
-                  </div>
-                  <span style="font-size:10.5px; font-weight:850; color:#FFD700; letter-spacing:0.5px; text-transform:uppercase; background:rgba(255,215,0,0.15); padding:2px 10px; border-radius:8px; border:0.5px solid rgba(255,215,0,0.4);">
-                    ${lang === 'en' ? 'Photos Coming Soon' : lang === 'zh' ? '照片即将上线' : 'PRÓXIMAMENTE'}
-                  </span>
-                </div>
-              `}
-            </div>
-            <!-- Status & Rating Header (Centered Pill) -->
-            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.18); padding-bottom:8px; width:100%; box-sizing:border-box;">
-              <span style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-flex; align-items:center; gap:6px; letter-spacing:0.3px; background:rgba(255,255,255,0.08); padding:3px 10px; border-radius:10px;">
-                <span style="width:7px; height:7px; border-radius:50%; background-color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-block; box-shadow:0 0 6px ${statusColor};"></span>
-                ${statusText}
-              </span>
-              ${ratingText ? `<span style="font-size:11.5px; font-weight:800; color:#FFD700; background:rgba(255,215,0,0.18); padding:3px 8px; border-radius:10px; border:0.5px solid rgba(255,215,0,0.4);">${ratingText}</span>` : ''}
-            </div>
-
-            <!-- Title & Category Badge (Centered) -->
-            <div style="margin-bottom:8px; text-align:center; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-              <h3 style="margin:0 0 5px; font-size:16.5px; font-weight:850; color:#FFFFFF; line-height:1.25; letter-spacing:-0.2px; font-family:var(--font-outfit); text-align:center; width:100%;">
-                ${punto.nombre}
-              </h3>
-              <span style="display:inline-block; font-size:10.5px; font-weight:750; color:#FFD700; text-transform:uppercase; letter-spacing:0.5px; background:rgba(255, 215, 0, 0.12); padding:3px 10px; border-radius:8px; border:1px solid rgba(255, 215, 0, 0.3); margin:0 auto; text-align:center;">
-                ${t(`addPoint.categories.${punto.categoria}`) || punto.categoria || 'Turismo'}
-              </span>
-            </div>
-
-            <!-- Description -->
-            <p style="margin:0 0 10px; font-size:12.5px; color:#E2E8F0; line-height:1.45; text-align:center; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; width:100%;">
-              ${punto.descripcion || ''}
-            </p>
-            
-            ${punto.negocio_rango_precios ? `
-              <div style="margin-bottom:10px; font-size:11px; font-weight:750; color:#2DD4BF; background:rgba(45,212,191,0.15); border:1px solid rgba(45,212,191,0.35); padding:4px 9px; border-radius:8px; display:inline-block; text-align:center; margin:0 auto;">
-                🏷️ ${formatPriceRange(punto.negocio_rango_precios)}
-              </div>
-            ` : ''}
-
-            <!-- Added By Footer -->
-            <div style="font-size:11px; color:rgba(255,255,255,0.7); margin-bottom:12px; border-top:1px dashed rgba(255,255,255,0.18); padding-top:8px; text-align:center; width:100%;">
-              ${t('map.addedBy')}: <span style="font-weight:750; color:#FFD700;">${punto.nombre_creador || 'Equipo Atlan'}</span>
-            </div>
-            
-            <!-- Centered Action Buttons Container -->
-            <div style="display:flex; flex-direction:column; gap:8px; width:100%; box-sizing:border-box; align-items:center; justify-content:center;">
-              <button id="${btnId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:11px 14px; background:#FFD700; color:#0A192F; border:none; border-radius:12px; font-weight:900; font-size:13px; cursor:pointer; box-shadow:0 4px 16px rgba(255,215,0,0.4); transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
-                <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0A192F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-                  <span style="display:inline-block; text-align:center; line-height:1.2;">${t('map.startNavigation')}</span>
-                </div>
-              </button>
-
-              ${(() => {
-                const puntoServs = punto.servicios || punto.detalles?.servicios || {};
-                const puntoCanBook = Boolean(
-                  puntoServs.has_online_booking === true ||
-                  punto.has_online_booking === true ||
-                  punto.detalles?.has_online_booking === true ||
-                  puntoServs.has_reservas === true
-                );
-                const btnLabel = puntoCanBook 
-                  ? (lang === 'en' ? 'Details & Booking' : lang === 'zh' ? '详情与预订' : 'Detalles y Reservas')
-                  : (lang === 'en' ? 'View Details' : lang === 'zh' ? '查看详情' : 'Ver Detalles');
-                return `
-                  <button id="${btnInfoId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:10px 14px; background:rgba(255,255,255,0.12); color:#FFFFFF; border:1px solid rgba(255,255,255,0.25); border-radius:12px; font-weight:800; font-size:12px; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
-                    <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                      <span style="display:inline-block; text-align:center; line-height:1.2;">${btnLabel}</span>
-                    </div>
-                  </button>
-                `;
-              })()}
-            </div>
-          </div>
-        `;
-
-        const popup = new mapboxgl.Popup({ offset: [0, -14], anchor: 'bottom', closeButton: false }).setHTML(popupHTML);
-
-        el.addEventListener('click', () => {
-          lugarDestinoRef.current = punto.nombre;
-          if (mapRef.current) {
-            mapRef.current.easeTo({
-              center: [punto.lng, punto.lat],
-              offset: [0, 240],
-              duration: 500,
-              essential: true
-            });
-          }
-        });
-
-        popup.on('open', async () => {
-          activePopupRef.current = popup;
-
-          // Autocentrar la cámara desplazando el punto 240px abajo para ubicar la tarjeta exactamente en el centro de pantalla
-          if (mapRef.current) {
-            mapRef.current.easeTo({
-              center: [punto.lng, punto.lat],
-              offset: [0, 240],
-              duration: 500,
-              essential: true
-            });
-          }
-
-          // Si el punto pertenece a un negocio y aún no tiene foto/logo en el punto, consultar la tabla negocios
-          if (punto.negocio_id && !getPointImage(punto)) {
-            try {
-              const { data: bizData } = await supabase
-                .from('negocios')
-                .select('logo_url, fotos')
-                .eq('id', punto.negocio_id)
-                .maybeSingle();
-
-              if (bizData) {
-                const fetchedImg = (bizData.fotos && bizData.fotos.length > 0 && isRealCustomUrl(bizData.fotos[0]))
-                  ? bizData.fotos[0]
-                  : (isRealCustomUrl(bizData.logo_url) ? bizData.logo_url : null);
-
-                if (fetchedImg) {
-                  punto.logo_url = fetchedImg;
-                  punto.imagen_url = fetchedImg;
-
-                  const imgContainer = document.getElementById(`popup-img-container-${punto.id}`);
-                  if (imgContainer) {
-                    imgContainer.innerHTML = `
-                      <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15); box-sizing:border-box;">
-                        <img src="${fetchedImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
-                        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
-                      </div>
-                    `;
-                  }
-                }
-              }
-            } catch (e) {
-              console.warn('[Atlan] Error cargando foto/logo de negocio en popup:', e);
-            }
-          }
-
-          const btn = document.getElementById(btnId);
-          if (btn) {
-            btn.onclick = () => {
-              const [currLng, currLat] = currentPosRef.current;
-              const isUserInCA = currLng >= -93.0 && currLng <= -77.0 && currLat >= 7.0 && currLat <= 19.0;
-
-              if (!isUserInCA) {
-                alert(lang === 'en'
-                  ? 'You are currently outside Central America. Plan your trip and visit us to use live GPS navigation!'
-                  : lang === 'zh'
-                  ? '您当前不在中美洲范围内。规划好行程并欢迎光临以使用实时GPS导航！'
-                  : 'Te encuentras fuera de Centroamérica. ¡Planifica tu viaje y visítanos para usar la navegación GPS en vivo!');
-                return; // Detener navegación intercontinental
-              }
-
-              lugarDestinoRef.current = punto.nombre;
-
-              if ('speechSynthesis' in window) {
-                window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
-              }
-              lastSpokenRef.current = '';
-              speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${punto.nombre}.`, true);
-
-              isNavigatingRef.current = true;
-              isInteractionPausedRef.current = false;
-
-              destinationRef.current = [punto.lng, punto.lat];
-              rutaCoordenadasRef.current = [];
-
-              if (directionsRef.current) {
-                directionsRef.current.setOrigin([currLng, currLat]);
-                directionsRef.current.setDestination([punto.lng, punto.lat]);
-              }
-
-              mapRef.current.flyTo({
-                center: [currLng, currLat],
-                zoom: 16.5,
-                pitch: 0,
-                speed: 0.9,
-                curve: 1.1,
-                essential: true
-              });
-
-              // Cerrar la notificación (popup) al iniciar la ruta
-              popup.remove();
-            };
-          }
-
-          const btnInfo = document.getElementById(btnInfoId);
-          if (btnInfo) {
-            btnInfo.onclick = () => {
-              setSelectedPoint(punto);
-              popup.remove();
-            };
-          }
-        });
-
-        if (!mapRef.current) return;
-
-        const marker = new mapboxgl.Marker(el)
-          .setLngLat([punto.lng, punto.lat])
-          .setPopup(popup);
-
-        if (mapRef.current) {
-          marker.addTo(mapRef.current);
-          markersRef.current.push(marker);
-        }
+      const sc = new Supercluster({
+        radius: 38,     // Radio fino: solo se agrupan si están casi superpuestos en pantalla
+        maxZoom: 12,    // A partir de zoom 12.5 / 13 todos los puntos se muestran individuales en la ciudad
+        minPoints: 2,   // Agrupar a partir de 2 negocios
       });
+      sc.load(features);
+      superclusterRef.current = sc;
+
+      actualizarEscalaMarcadores();
+      renderizarMarcadoresVisibles();
     } catch (err) {
       console.error('[Atlan] Error inesperado en cargarPuntosCercanos:', err);
     }
@@ -2217,7 +2341,7 @@ export default function MapaTuristico() {
     });
 
     if (mapContainerRef.current) {
-      mapContainerRef.current.style.setProperty('--marker-zoom-scale', '1');
+      actualizarEscalaMarcadores();
     }
 
     mapRef.current.on('dragstart', () => {
@@ -2238,12 +2362,15 @@ export default function MapaTuristico() {
       if (mapContainerRef.current && !mapContainerRef.current.classList.contains('map-zooming')) {
         mapContainerRef.current.classList.add('map-zooming');
       }
+      actualizarEscalaMarcadores();
     });
 
     mapRef.current.on('zoomend', () => {
       if (mapContainerRef.current) {
         mapContainerRef.current.classList.remove('map-zooming');
       }
+      actualizarEscalaMarcadores();
+      renderizarMarcadoresVisibles();
     });
 
     mapRef.current.on('movestart', () => {
@@ -2261,6 +2388,7 @@ export default function MapaTuristico() {
         window.__atlanMapMoving = false;
         window.resetAtlanInactivityTimer?.();
       }
+      renderizarMarcadoresVisibles();
     });
 
     mapRef.current.on('load', () => {
@@ -2673,6 +2801,9 @@ export default function MapaTuristico() {
       if (interactionTimeoutRef.current) clearTimeout(interactionTimeoutRef.current);
       cinematicTimeoutsRef.current.forEach(t => clearTimeout(t));
       if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+      markersOnMapRef.current.forEach((m) => m.remove());
+      markersOnMapRef.current.clear();
+      markersRef.current = [];
       if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
     };
   }, []);

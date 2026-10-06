@@ -136,6 +136,9 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`}>
             <img src="/images/ubic.svg" alt="Mapa" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Explorar Mapa", "Explore Map", "探索地图")}
           </Link>
+          <Link href="/lugares" className={`nav-pill-link ${activePage === "lugares" ? "active" : ""}`}>
+            <img src="/images/Ubicacion.svg" alt="Lugares" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Lugares", "Places", "景点地点")}
+          </Link>
           <Link href="/mas-de-nicaragua" className={`nav-pill-link ${activePage === "mas-de-nicaragua" ? "active" : ""}`}>
             <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Más de Nicaragua", "More of Nicaragua", "探索尼加拉瓜")}
           </Link>
@@ -657,6 +660,9 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           </Link>
           <Link href="/mapa" className={`mobile-menu-item ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
             <img src="/images/ubic.svg" alt="Mapa" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> <span>{tr("Explorar Mapa", "Explore Map", "探索地图")}</span>
+          </Link>
+          <Link href="/lugares" className={`mobile-menu-item ${activePage === "lugares" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
+            <img src="/images/Ubicacion.svg" alt="Lugares" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> <span>{tr("Lugares de Nicaragua", "Places of Nicaragua", "尼加拉瓜地点")}</span>
           </Link>
           <Link href="/mas-de-nicaragua" className={`mobile-menu-item ${activePage === "mas-de-nicaragua" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
             <img src="/images/Nicaragua croquis.svg" alt="Nicaragua" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> <span>{tr("Más de Nicaragua", "More of Nicaragua", "探索尼加拉瓜")}</span>
