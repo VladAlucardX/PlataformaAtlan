@@ -16,6 +16,8 @@ import FollowersModal from "@/components/ui/FollowersModal";
 import Navbar from "@/components/ui/Navbar";
 import { getProfileSlug } from "@/lib/profileUtils";
 import Icon from "@/components/ui/Icon";
+import StoriesBar from "@/components/historias/StoriesBar";
+import { useStories } from "@/hooks/useStories";
 
 // Comunidad Atlan
 
@@ -1023,6 +1025,9 @@ export default function ComunidadPage() {
   const [followersModalTab, setFollowersModalTab] = useState("followers");
   const loaderRef = useRef(null);
 
+  // Historias de 24 horas
+  const { groups: storyGroups, loading: loadingStories, reload: reloadStories, markSeen: markStorySeen } = useStories(session);
+
   const PAGE_SIZE = 50;
 
   // Fetch posts
@@ -1344,6 +1349,18 @@ export default function ComunidadPage() {
               </div>
             )}
           </div>
+
+          {/* Carrusel de Historias Estilo Facebook (24 Horas) */}
+          <StoriesBar
+            session={session}
+            perfil={perfil}
+            lang={lang}
+            groups={storyGroups}
+            loading={loadingStories}
+            reload={reloadStories}
+            markSeen={markStorySeen}
+            onRequireLogin={() => setShowLoginModal(true)}
+          />
 
           {/* Create Post Bar */}
           {session && (
