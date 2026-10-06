@@ -145,10 +145,15 @@ export default function BusinessProfileModal({
           <div className={styles.heroOverlay} />
 
           <div className={styles.heroContent}>
-            {/* Fila Superior: Badges + Botones de Acción */}
+            {/* Fila Superior: Información Principal (Izquierda) + Acciones (Derecha) */}
             <div className={styles.heroTopRow}>
               <div className={styles.heroMainInfo}>
-                {/* Badges de Estado, Categoría y Precio */}
+                {/* Título Principal Cristalino */}
+                <h2 className={styles.placeTitle}>
+                  {point.nombre}
+                </h2>
+
+                {/* Cintillo de Badges, Categoría, Precio, Departamento y Calificación */}
                 <div className={styles.badgesRow}>
                   {(() => {
                     let statusText = '';
@@ -218,101 +223,82 @@ export default function BusinessProfileModal({
                   )}
 
                   {point.departamento && (
-                    <span
-                      style={{
-                        fontSize: '11px',
-                        fontWeight: '800',
-                        padding: '4px 9px',
-                        borderRadius: '8px',
-                        background: 'rgba(15, 23, 42, 0.75)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        color: '#E2E8F0',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                      }}
-                    >
+                    <span className={styles.departmentBadge}>
                       <span>📍</span>
                       <span>{point.departamento}</span>
                     </span>
                   )}
-                </div>
 
-                {/* Título Principal Cristalino */}
-                <h2 className={styles.placeTitle}>
-                  {point.nombre}
-                </h2>
-
-                {/* Calificación y Ubicación */}
-                <div className={styles.heroMetaRow}>
+                  {/* Calificación integrada como Badge elegante */}
                   {avgRating ? (
-                    <div className={styles.ratingSnippet}>
-                      <Icon name="starFilled" size={15} color="#FFD700" />
+                    <span className={styles.ratingBadge}>
+                      <Icon name="starFilled" size={13} color="#FFD700" />
                       <span>{avgRating}</span>
                       <span className={styles.reviewsCount}>
-                        ({reviews.length} {reviews.length === 1 ? tr('reseña', 'review', '条评价') : tr('reseñas', 'reviews', '条评价')})
+                        ({reviews.length})
                       </span>
-                    </div>
+                    </span>
                   ) : (
-                    <span style={{ color: '#94A3B8', fontSize: '12.5px' }}>
-                      ★ {tr('Nuevo en Atlan', 'New on Atlan', '新入驻')}
+                    <span className={styles.ratingBadge} style={{ color: '#CBD5E1', borderColor: 'rgba(255,255,255,0.2)' }}>
+                      ★ {tr('Nuevo', 'New', '新')}
                     </span>
                   )}
 
                   {point.ubicacion && (
-                    <span style={{ opacity: 0.8, fontSize: '12.5px' }}>
+                    <span className={styles.locationSnippet} title={point.ubicacion}>
                       • {point.ubicacion}
                     </span>
                   )}
                 </div>
               </div>
 
-              {/* Botones de Acción (Favorito + Cerrar) */}
-              <div className={styles.heroActionsGroup}>
-                {userSession && (
+              {/* Columna Derecha: Acciones y Botón Iniciar Viaje */}
+              <div className={styles.heroActionsColumn}>
+                <div className={styles.heroTopActions}>
+                  {userSession && (
+                    <button
+                      type="button"
+                      onClick={onToggleFavorite}
+                      title={isFavorite ? tr('Quitar de Favoritos', 'Remove Favorite', '取消收藏') : tr('Guardar Favorito', 'Save Favorite', '收藏')}
+                      className={styles.actionCircleBtn}
+                      style={{
+                        borderColor: isFavorite ? '#FFD700' : 'rgba(255, 255, 255, 0.25)',
+                        color: isFavorite ? '#FFD700' : '#FFFFFF',
+                      }}
+                      aria-label="Favorito"
+                    >
+                      <Icon name={isFavorite ? 'heartFilled' : 'heart'} size={18} color={isFavorite ? '#FFD700' : '#FFFFFF'} />
+                    </button>
+                  )}
+
                   <button
                     type="button"
-                    onClick={onToggleFavorite}
-                    title={isFavorite ? tr('Quitar de Favoritos', 'Remove Favorite', '取消收藏') : tr('Guardar Favorito', 'Save Favorite', '收藏')}
+                    onClick={onClose}
                     className={styles.actionCircleBtn}
-                    style={{
-                      borderColor: isFavorite ? '#FFD700' : 'rgba(255, 255, 255, 0.25)',
-                      color: isFavorite ? '#FFD700' : '#FFFFFF',
-                    }}
-                    aria-label="Favorito"
+                    title={tr('Cerrar', 'Close', '关闭')}
+                    aria-label="Cerrar modal"
                   >
-                    <Icon name={isFavorite ? 'heartFilled' : 'heart'} size={18} color={isFavorite ? '#FFD700' : '#FFFFFF'} />
+                    <Icon name="x" size={18} color="#FFFFFF" />
                   </button>
-                )}
+                </div>
 
                 <button
                   type="button"
-                  onClick={onClose}
-                  className={styles.actionCircleBtn}
-                  title={tr('Cerrar', 'Close', '关闭')}
-                  aria-label="Cerrar modal"
+                  onClick={() => {
+                    if (onIniciarViaje) {
+                      onIniciarViaje(point);
+                      onClose();
+                    }
+                  }}
+                  className={styles.startTripBtn}
                 >
-                  <Icon name="x" size={18} color="#FFFFFF" />
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="3 11 22 2 13 21 11 13 3 11" />
+                  </svg>
+                  <span>{tr('Iniciar Viaje', 'Start Trip', '开始行程')}</span>
                 </button>
               </div>
             </div>
-
-            {/* Botón Iniciar Viaje */}
-            <button
-              type="button"
-              onClick={() => {
-                if (onIniciarViaje) {
-                  onIniciarViaje(point);
-                  onClose();
-                }
-              }}
-              className={styles.startTripBtn}
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="3 11 22 2 13 21 11 13 3 11" />
-              </svg>
-              <span>{tr('Iniciar Viaje', 'Start Trip', '开始行程')}</span>
-            </button>
 
             {/* Pestañas de Navegación de Alto Contraste */}
             <nav className={styles.tabsBar} aria-label="Secciones del perfil">
