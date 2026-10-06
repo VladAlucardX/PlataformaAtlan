@@ -5413,7 +5413,11 @@ export default function MapaTuristico() {
               </span>
               <button
                 onClick={() => {
-                  if (directionsRef.current) directionsRef.current.clean();
+                  if (directionsRef.current) {
+                    try {
+                      directionsRef.current.removeRoutes();
+                    } catch (e) {}
+                  }
                   setRouteInfo(null);
                   setCurrentManeuver(null);
                   isNavigatingRef.current = false;
