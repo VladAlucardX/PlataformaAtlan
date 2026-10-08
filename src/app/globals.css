@@ -1358,6 +1358,28 @@ a:hover {
   animation: fadeInDown 0.5s ease forwards;
 }
 
+.atlan-floating-toast {
+  position: fixed !important;
+  top: 88px;
+  right: 24px;
+  z-index: 99999 !important;
+  width: calc(100% - 32px);
+  max-width: 420px;
+  height: auto !important;
+  max-height: fit-content !important;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .atlan-floating-toast {
+    top: 76px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+    max-width: none;
+  }
+}
+
 .animate-slide-right {
   animation: slideInRight 0.5s ease forwards;
 }

@@ -3494,7 +3494,8 @@ export default function MapaTuristico() {
   };
 
   return (
-    <div className={`map-page-wrapper ${selectedPoint ? 'has-selected-point' : ''}`} style={{ position: 'relative' }}>
+    <>
+      <div className={`map-page-wrapper ${selectedPoint ? 'has-selected-point' : ''}`} style={{ position: 'relative' }}>
       {/* Indicador Offline */}
       {!isOnline && (
         <div style={{
@@ -5807,17 +5808,21 @@ export default function MapaTuristico() {
         </div>
       )}
 
+      </div>
+
       {/* Banner Flotante Premium de Notificaciones con SVGs y Glassmorphism */}
       {notificationBanner && (
         <div
-          className="animate-fade-in-down"
+          className="atlan-floating-toast animate-fade-in-down"
           style={{
             position: 'fixed',
             top: '88px',
-            right: '20px',
-            zIndex: 12000,
-            maxWidth: '430px',
+            right: '24px',
+            zIndex: 99999,
             width: 'calc(100vw - 32px)',
+            maxWidth: '420px',
+            height: 'auto',
+            maxHeight: 'fit-content',
             background: 'linear-gradient(145deg, rgba(10, 25, 47, 0.97) 0%, rgba(15, 23, 42, 0.98) 100%)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
@@ -5828,15 +5833,14 @@ export default function MapaTuristico() {
               : '1.5px solid rgba(239, 68, 68, 0.5)',
             borderRadius: '22px',
             boxShadow: notificationBanner.type === 'success'
-              ? '0 20px 45px -8px rgba(0, 0, 0, 0.75), 0 0 25px rgba(16, 185, 129, 0.25)'
+              ? '0 16px 40px -8px rgba(0, 0, 0, 0.75), 0 0 25px rgba(16, 185, 129, 0.25)'
               : notificationBanner.type === 'warning'
-              ? '0 20px 45px -8px rgba(0, 0, 0, 0.75), 0 0 25px rgba(255, 215, 0, 0.25)'
-              : '0 20px 45px -8px rgba(0, 0, 0, 0.75), 0 0 25px rgba(239, 68, 68, 0.25)',
+              ? '0 16px 40px -8px rgba(0, 0, 0, 0.75), 0 0 25px rgba(255, 215, 0, 0.25)'
+              : '0 16px 40px -8px rgba(0, 0, 0, 0.75), 0 0 25px rgba(239, 68, 68, 0.25)',
             padding: '16px 20px',
             display: 'flex',
             alignItems: 'flex-start',
             gap: '14px',
-            position: 'relative',
             overflow: 'hidden'
           }}
         >
@@ -5977,6 +5981,6 @@ export default function MapaTuristico() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
