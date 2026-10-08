@@ -156,7 +156,8 @@ export function AuthProvider({ children }) {
       if (typeof window !== "undefined") {
         const hash = window.location.hash || "";
         const search = window.location.search || "";
-        if (hash.includes("type=magiclink") || hash.includes("access_token") || search.includes("code=")) {
+        const isEmailLink = hash.includes("type=magiclink") || search.includes("type=magiclink");
+        if (isEmailLink) {
           markUser2FAVerified(session.user.id);
           return;
         }

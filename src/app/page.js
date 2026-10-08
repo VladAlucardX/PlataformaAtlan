@@ -453,7 +453,8 @@ export default function Home() {
     if (typeof window !== "undefined") {
       const hash = window.location.hash || "";
       const search = window.location.search || "";
-      if (hash.includes("type=magiclink") || hash.includes("access_token") || search.includes("code=")) {
+      const isEmailLink = hash.includes("type=magiclink") || search.includes("type=magiclink");
+      if (isEmailLink) {
         supabase.auth.getSession().then(({ data: { session: s } }) => {
           if (s?.user?.id) {
             localStorage.setItem("atlan_2fa_verified_" + s.user.id, "true");
@@ -468,7 +469,8 @@ export default function Home() {
     if (typeof window !== "undefined" && session?.user?.id) {
       const hash = window.location.hash || "";
       const search = window.location.search || "";
-      if (hash.includes("type=magiclink") || hash.includes("access_token") || search.includes("code=")) {
+      const isEmailLink = hash.includes("type=magiclink") || search.includes("type=magiclink");
+      if (isEmailLink) {
         localStorage.setItem("atlan_2fa_verified_" + session.user.id, "true");
         return;
       }
@@ -481,7 +483,9 @@ export default function Home() {
 
   React.useEffect(() => {
     try {
-      const introSeen = sessionStorage.getItem("introSeen") === "true";
+      const introSeen =
+        sessionStorage.getItem("introSeen") === "true" ||
+        localStorage.getItem("introSeen") === "true";
       if (introSeen) {
         requestAnimationFrame(() => setIntroDone(true));
       }
@@ -512,14 +516,20 @@ export default function Home() {
 
 
   const handleLogout = async () => {
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem("introSeen", "true");
+        localStorage.setItem("introSeen", "true");
+      } catch (_) {}
+    }
     await logout();
-    window.location.reload();
   };
 
   const handleIntroComplete = () => {
     if (typeof window !== "undefined") {
       try {
         sessionStorage.setItem("introSeen", "true");
+        localStorage.setItem("introSeen", "true");
       } catch (e) {}
     }
     setIntroDone(true);
