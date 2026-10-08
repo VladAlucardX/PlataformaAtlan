@@ -70,8 +70,10 @@ export async function fetchPlaces({
     query = query.ilike('nombre', `%${search.trim()}%`);
   }
 
-  // Ordenar por más recientes
-  query = query.order('created_at', { ascending: false });
+  // Ordenar por más recientes y desempate determinista por ID para evitar duplicados en paginación
+  query = query
+    .order('created_at', { ascending: false })
+    .order('id', { ascending: false });
 
   // Paginación por rango
   query = query.range(from, to);
