@@ -163,7 +163,13 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
         gap: "12px"
       }}>
         {/* Logo / Home */}
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "9px", textDecoration: "none", flexShrink: 0 }}>
+        <Link
+          href="/"
+          onClick={() => {
+            try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+          }}
+          style={{ display: "flex", alignItems: "center", gap: "9px", textDecoration: "none", flexShrink: 0 }}
+        >
           <img
             src="/mapaicono.png"
             alt="Atlan Logo"
@@ -174,7 +180,13 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
 
         {/* Center Nav Pills */}
         <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "6px", flexWrap: "nowrap", justifyContent: "center", minWidth: 0 }} className="hide-mobile">
-          <Link href="/" className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`}>
+          <Link
+            href="/"
+            onClick={() => {
+              try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+            }}
+            className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`}
+          >
             <img src="/images/home.svg" alt="Inicio" style={{ width: "16px", height: "16px", objectFit: "contain" }} /> {tr("Inicio", "Home", "首页")}
           </Link>
           <Link href="/mapa" className={`nav-pill-link ${activePage === "mapa" ? "active" : ""}`}>
@@ -751,7 +763,14 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
       {/* Mobile Drawer Dropdown Overlay (como elemento de nivel superior para permitir scroll completo) */}
       {menuOpen && (
         <div className="mobile-menu-drawer animate-fade-in-down hide-desktop">
-          <Link href="/" className={`mobile-menu-item ${activePage === "inicio" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>
+          <Link
+            href="/"
+            className={`mobile-menu-item ${activePage === "inicio" ? "active" : ""}`}
+            onClick={() => {
+              try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+              setMenuOpen(false);
+            }}
+          >
             <img src="/images/home.svg" alt="Inicio" style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }} /> <span>{tr("Inicio", "Home", "首页")}</span>
           </Link>
           <Link href="/mapa" className={`mobile-menu-item ${activePage === "mapa" ? "active" : ""}`} onClick={() => setMenuOpen(false)}>

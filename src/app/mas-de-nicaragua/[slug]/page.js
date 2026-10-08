@@ -110,7 +110,15 @@ export default function DepartamentoDetailPage() {
           
           {/* Breadcrumb Navigation */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "rgba(255,255,255,0.6)", marginBottom: "20px", flexWrap: "wrap" }}>
-            <Link href="/" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none" }}>{tr("Inicio", "Home", "首页")}</Link>
+            <Link
+              href="/"
+              onClick={() => {
+                try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+              }}
+              style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
+            >
+              {tr("Inicio", "Home", "首页")}
+            </Link>
             <span>/</span>
             <Link href="/mas-de-nicaragua" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none" }}>{tr("Más de Nicaragua", "More of Nicaragua", "探索尼加拉瓜")}</Link>
             <span>/</span>

@@ -442,13 +442,37 @@ function Footer() {
   );
 }
 
-// Variable en memoria para no repetir el video durante navegación interna o al cerrar sesión
-let hasPlayedIntroInSession = false;
-
 // Componente Principal
 export default function Home() {
-  const [introDone, setIntroDone] = React.useState(hasPlayedIntroInSession);
+  const [introDone, setIntroDone] = React.useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("intro") === "1" || params.get("intro") === "true") {
+          return false;
+        }
+        return sessionStorage.getItem("atlan_intro_seen") === "true";
+      } catch (_) {
+        return false;
+      }
+    }
+    return false;
+  });
   const { session, perfil, logout, is2FAVerified } = useAuth();
+
+  // Si ya se vio el intro en esta sesión o se navega internamente, asegurar que introDone sea true
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("intro") === "1" || params.get("intro") === "true") return;
+        const seen = sessionStorage.getItem("atlan_intro_seen") === "true";
+        if (seen && !introDone) {
+          setIntroDone(true);
+        }
+      } catch (_) {}
+    }
+  }, [introDone]);
 
   // Si el usuario llega desde el enlace del correo (Magic Link), validar automáticamente su 2FA
   React.useEffect(() => {
@@ -510,19 +534,21 @@ export default function Home() {
 
   // Failsafe absoluto: si el intro no terminó en 9s por cualquier razón, forzarlo
   React.useEffect(() => {
-    const failsafe = setTimeout(() => setIntroDone(true), 9000);
+    const failsafe = setTimeout(() => {
+      try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+      setIntroDone(true);
+    }, 9000);
     return () => clearTimeout(failsafe);
   }, []);
 
-
   const handleLogout = async () => {
-    hasPlayedIntroInSession = true;
+    try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
     setIntroDone(true);
     await logout();
   };
 
   const handleIntroComplete = () => {
-    hasPlayedIntroInSession = true;
+    try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
     setIntroDone(true);
   };
 

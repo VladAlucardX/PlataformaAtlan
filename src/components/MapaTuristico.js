@@ -532,6 +532,12 @@ export default function MapaTuristico() {
 
   // --- EFECTOS DE SESIÓN Y DETALLES DEL PUNTO ---
   useEffect(() => {
+    try {
+      sessionStorage.setItem("atlan_intro_seen", "true");
+    } catch (_) {}
+  }, []);
+
+  useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUserSession(session);
       if (session?.user?.user_metadata?.nombre_completo) {
@@ -3706,7 +3712,13 @@ export default function MapaTuristico() {
           boxShadow: '0 16px 40px -4px rgba(0, 0, 0, 0.5), 0 0 25px rgba(20, 109, 158, 0.25)'
         }}>
           {/* Brand Logo igual al Navbar */}
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+          <Link
+            href="/"
+            onClick={() => {
+              try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+            }}
+            style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}
+          >
             <img
               src="/mapaicono.png"
               alt="Logo Atlan"
@@ -3866,6 +3878,9 @@ export default function MapaTuristico() {
           <div className="map-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
             <Link
               href="/"
+              onClick={() => {
+                try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+              }}
               style={{
                 padding: '10px 16px',
                 background: 'rgba(255, 255, 255, 0.08)',

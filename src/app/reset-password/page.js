@@ -93,7 +93,13 @@ export default function ResetPasswordPage() {
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <Link href="/" style={styles.logo}>
+        <Link
+          href="/"
+          onClick={() => {
+            try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+          }}
+          style={styles.logo}
+        >
           <img
             src="/mapaicono.png"
             alt="Logo Atlan"
@@ -176,6 +182,9 @@ export default function ResetPasswordPage() {
 
       <Link
         href="/"
+        onClick={() => {
+          try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+        }}
         style={styles.homeBtn}
         className="clay-tab no-sheen"
       >
