@@ -7,33 +7,12 @@ import { supabase } from "@/lib/supabase";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import Icon from "@/components/ui/Icon";
+import { isUser2FAVerified } from "@/lib/AuthContext";
 
 export default function RegisterPage() {
   const { t, lang } = useTranslation();
   const router = useRouter();
 
-
-  // Redireccionar si ya hay sesión activa
-  useEffect(() => {
-    const checkActiveSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          const { data: perfilData } = await supabase
-            .from("perfiles")
-            .select("rol")
-            .eq("id", session.user.id)
-            .single();
-
-          // Redirigir siempre a la página de bienvenida (/)
-          router.push("/");
-        }
-      } catch (err) {
-        console.error("Session check error:", err);
-      }
-    };
-    checkActiveSession();
-  }, [router]);
 
   // Estados
   const [fullName, setFullName] = useState("");
@@ -48,6 +27,49 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+
+  // Redireccionar si ya hay sesión activa y capturar errores de OAuth sin mismatch de hidratación
+  useEffect(() => {
+    const checkActiveSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const verified = isUser2FAVerified(session.user.id);
+          if (verified) {
+            router.push("/");
+          } else {
+            router.push("/login?step=otp&google_auth=true");
+          }
+        }
+      } catch (err) {
+        console.error("Session check error:", err);
+      }
+    };
+
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const oauthErr = params.get("oauth_error") || params.get("error_code");
+      const errDesc = params.get("error_description");
+      if (oauthErr || errDesc) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+        requestAnimationFrame(() => {
+          if (oauthErr === "expired" || oauthErr === "bad_oauth_state" || errDesc?.includes("OAuth state")) {
+            setErrorMsg(
+              lang === "en"
+                ? "Google login session expired or was interrupted. Please click 'Continue with Google' again."
+                : lang === "zh"
+                ? "Google 登录会话已过期或中断，请再次点击“通过 Google 登录”。"
+                : "La sesión de acceso con Google expiró o se interrumpió. Por favor presiona 'Continuar con Google' nuevamente."
+            );
+          } else {
+            setErrorMsg(errDesc || oauthErr);
+          }
+        });
+      }
+    }
+
+    checkActiveSession();
+  }, [router, lang]);
 
   const handleRegister = async (e) => {
     e.preventDefault();

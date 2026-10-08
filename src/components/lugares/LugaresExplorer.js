@@ -68,10 +68,24 @@ export default function LugaresExplorer() {
       });
 
       if (reset) {
-        setPlaces(result.places);
+        const seen = new Set();
+        const uniquePlaces = (result.places || []).filter((p) => {
+          if (!p?.id || seen.has(p.id)) return false;
+          seen.add(p.id);
+          return true;
+        });
+        setPlaces(uniquePlaces);
         setPage(0);
       } else {
-        setPlaces((prev) => [...prev, ...result.places]);
+        setPlaces((prev) => {
+          const seen = new Set(prev.map((p) => p.id));
+          const newPlaces = (result.places || []).filter((p) => {
+            if (!p?.id || seen.has(p.id)) return false;
+            seen.add(p.id);
+            return true;
+          });
+          return [...prev, ...newPlaces];
+        });
       }
 
       setTotalCount(result.totalCount);
@@ -130,7 +144,15 @@ export default function LugaresExplorer() {
         search: debouncedSearch,
       });
 
-      setPlaces((prev) => [...prev, ...result.places]);
+      setPlaces((prev) => {
+        const seen = new Set(prev.map((p) => p.id));
+        const newPlaces = (result.places || []).filter((p) => {
+          if (!p?.id || seen.has(p.id)) return false;
+          seen.add(p.id);
+          return true;
+        });
+        return [...prev, ...newPlaces];
+      });
       setPage(nextPage);
       setTotalCount(result.totalCount);
       setHasMore(result.hasMore);
@@ -195,9 +217,9 @@ export default function LugaresExplorer() {
             <PlaceCardSkeleton key={`skeleton-${idx}`} />
           ))
         ) : places.length > 0 ? (
-          places.map((place) => (
+          places.map((place, idx) => (
             <PlaceCard
-              key={place.id}
+              key={place.id || `place-${idx}`}
               place={place}
               onSelect={handleSelectPlace}
               onComoLlegar={(pt) => {

@@ -2097,6 +2097,7 @@ html body .mapboxgl-ctrl-directions tr {
 .filter-bar {
   pointer-events: auto;
   display: flex;
+  align-items: center;
   gap: 8px;
   overflow-x: auto;
   overflow-y: hidden;
@@ -2115,6 +2116,57 @@ html body .mapboxgl-ctrl-directions tr {
 }
 .filter-bar::-webkit-scrollbar {
   display: none;
+}
+
+/* Category Pills Base Styles */
+.filter-bar-pill {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8.5px 17px;
+  border-radius: 14px;
+  font-weight: 750;
+  font-size: 13px;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  white-space: nowrap;
+  font-family: var(--font-outfit), sans-serif;
+}
+
+.filter-bar-pill:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.filter-bar-pill:active {
+  transform: translateY(0);
+}
+
+.filter-bar-pill-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.filter-bar-pill-icon,
+svg.filter-bar-pill-icon,
+img.filter-bar-pill-icon {
+  width: 17px !important;
+  height: 17px !important;
+  object-fit: contain;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.filter-bar-pill:hover .filter-bar-pill-icon {
+  transform: scale(1.12);
 }
 
 /* Mostrar botón de Categorías únicamente cuando la pantalla web es más pequeña (Tablet / ventana reducida de 769px a 1200px) */
@@ -2515,7 +2567,39 @@ html body .mapboxgl-ctrl-directions tr {
   }
 }
 
-/* Pantallas Extra Grandes y Televisores (>= 1600px) */
+/* ==========================================================================
+   PANTALLAS GRANDES Y MONITORES DE 20" A 27"+ (Centrado y escala ampliada)
+   ========================================================================== */
+
+/* Escritorio mediano-grande (>= 1400px): Centrado armónico */
+@media (min-width: 1400px) {
+  .filter-bar-wrapper {
+    justify-content: center;
+  }
+
+  .filter-bar {
+    justify-content: center;
+    gap: 9px;
+    padding: 8px 6px;
+    flex: 0 1 auto;
+    max-width: 100%;
+  }
+
+  .filter-bar-pill {
+    padding: 9.5px 19px;
+    font-size: 13.5px;
+    gap: 8px;
+  }
+
+  .filter-bar-pill-icon,
+  svg.filter-bar-pill-icon,
+  img.filter-bar-pill-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+/* Pantallas de 20 pulgadas o escritorio amplio (>= 1600px) */
 @media (min-width: 1600px) {
   .map-header {
     max-width: 1300px !important;
@@ -2524,6 +2608,137 @@ html body .mapboxgl-ctrl-directions tr {
 
   .categories-grid-5 {
     max-width: 1300px !important;
+  }
+
+  .filter-bar-wrapper {
+    top: 104px;
+    justify-content: center;
+  }
+
+  .filter-bar {
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 8px;
+    flex: 0 1 auto;
+    max-width: 100%;
+  }
+
+  .filter-bar-pill {
+    padding: 11px 21px;
+    font-size: 14.5px;
+    font-weight: 800;
+    border-radius: 16px;
+    gap: 8px;
+  }
+
+  .filter-bar-pill-icon,
+  svg.filter-bar-pill-icon,
+  img.filter-bar-pill-icon {
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
+/* Pantallas de 24 a 27 pulgadas Full HD (>= 1900px) */
+@media (min-width: 1900px) {
+  .filter-bar-wrapper {
+    top: 108px;
+    justify-content: center;
+  }
+
+  .filter-bar {
+    justify-content: center;
+    gap: 12px;
+    padding: 12px 10px;
+    flex: 0 1 auto;
+  }
+
+  .filter-bar-pill {
+    padding: 12.5px 24px;
+    font-size: 15.5px;
+    font-weight: 800;
+    border-radius: 17px;
+    gap: 9px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .filter-bar-pill-icon,
+  svg.filter-bar-pill-icon,
+  img.filter-bar-pill-icon {
+    width: 22px !important;
+    height: 22px !important;
+  }
+}
+
+/* Monitores de 27 pulgadas QHD / 2K y superiores (>= 2200px, p.ej. 2544px / 2560px) */
+@media (min-width: 2200px) {
+  .map-header {
+    max-width: 1420px !important;
+    padding: 18px 36px !important;
+  }
+
+  .filter-bar-wrapper {
+    top: 114px;
+    justify-content: center;
+  }
+
+  .filter-bar {
+    justify-content: center;
+    gap: 14px;
+    padding: 14px 12px;
+    flex: 0 1 auto;
+  }
+
+  .filter-bar-pill {
+    padding: 14px 28px;
+    font-size: 16.5px;
+    font-weight: 800;
+    border-radius: 18px;
+    gap: 10px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+  }
+
+  .filter-bar-pill-icon,
+  svg.filter-bar-pill-icon,
+  img.filter-bar-pill-icon {
+    width: 24px !important;
+    height: 24px !important;
+  }
+}
+
+/* Monitores UltraWide y 4K (>= 2800px) */
+@media (min-width: 2800px) {
+  .map-header {
+    max-width: 1600px !important;
+    padding: 22px 42px !important;
+  }
+
+  .filter-bar-wrapper {
+    top: 124px;
+    justify-content: center;
+  }
+
+  .filter-bar {
+    justify-content: center;
+    gap: 16px;
+    padding: 16px 14px;
+    flex: 0 1 auto;
+  }
+
+  .filter-bar-pill {
+    padding: 16px 32px;
+    font-size: 18px;
+    font-weight: 800;
+    border-radius: 20px;
+    gap: 12px;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
+  }
+
+  .filter-bar-pill-icon,
+  svg.filter-bar-pill-icon,
+  img.filter-bar-pill-icon {
+    width: 26px !important;
+    height: 26px !important;
   }
 }
 

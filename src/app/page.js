@@ -446,18 +446,65 @@ function Footer() {
 export default function Home() {
   // En Web de escritorio se mantiene false por defecto para reproducir el video intro completo.
   const [introDone, setIntroDone] = React.useState(false);
-  const { session, perfil, logout } = useAuth();
+  const { session, perfil, logout, is2FAVerified } = useAuth();
+
+  // Si el usuario llega desde el enlace del correo (Magic Link), validar automáticamente su 2FA
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash || "";
+      const search = window.location.search || "";
+      const isEmailLink = hash.includes("type=magiclink") || search.includes("type=magiclink");
+      if (isEmailLink) {
+        supabase.auth.getSession().then(({ data: { session: s } }) => {
+          if (s?.user?.id) {
+            localStorage.setItem("atlan_2fa_verified_" + s.user.id, "true");
+          }
+        });
+      }
+    }
+  }, []);
+
+  // Si hay sesión activa pero el 2FA aún no ha sido verificado, bloquear acceso al mapa y redirigir al código
+  React.useEffect(() => {
+    if (typeof window !== "undefined" && session?.user?.id) {
+      const hash = window.location.hash || "";
+      const search = window.location.search || "";
+      const isEmailLink = hash.includes("type=magiclink") || search.includes("type=magiclink");
+      if (isEmailLink) {
+        localStorage.setItem("atlan_2fa_verified_" + session.user.id, "true");
+        return;
+      }
+      const verified = localStorage.getItem("atlan_2fa_verified_" + session.user.id) === "true";
+      if (!verified) {
+        window.location.href = "/login?step=otp&google_auth=true";
+      }
+    }
+  }, [session]);
+
+  React.useEffect(() => {
+    try {
+      const introSeen =
+        sessionStorage.getItem("introSeen") === "true" ||
+        localStorage.getItem("introSeen") === "true";
+      if (introSeen) {
+        requestAnimationFrame(() => setIntroDone(true));
+      }
+    } catch (_) {}
+  }, []);
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        const introSeen = sessionStorage.getItem("introSeen") === "true";
-        if (introSeen) {
-          setIntroDone(true);
+        const params = new URLSearchParams(window.location.search);
+        const errorCode = params.get("error_code");
+        const errorDesc = params.get("error_description");
+        if (errorCode || errorDesc) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+          if (errorCode === "bad_oauth_state" || errorDesc?.includes("OAuth state")) {
+            window.location.href = "/login?oauth_error=expired";
+          }
         }
-      } catch (e) {
-        // Fallback seguro
-      }
+      } catch (_) {}
     }
   }, []);
 
@@ -469,14 +516,20 @@ export default function Home() {
 
 
   const handleLogout = async () => {
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem("introSeen", "true");
+        localStorage.setItem("introSeen", "true");
+      } catch (_) {}
+    }
     await logout();
-    window.location.reload();
   };
 
   const handleIntroComplete = () => {
     if (typeof window !== "undefined") {
       try {
         sessionStorage.setItem("introSeen", "true");
+        localStorage.setItem("introSeen", "true");
       } catch (e) {}
     }
     setIntroDone(true);

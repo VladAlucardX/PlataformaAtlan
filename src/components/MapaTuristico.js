@@ -464,6 +464,41 @@ export default function MapaTuristico() {
     return () => clearInterval(intervalId);
   }, [showDirectionsPopup]);
 
+  // Limpiar inmediatamente el trazado de rutas de todas las fuentes del mapa
+  const limpiarTrazadoRutas = () => {
+    if (!mapRef.current) return;
+    try {
+      const source = mapRef.current.getSource('preview-route');
+      if (source) {
+        source.setData({
+          type: 'Feature',
+          properties: {},
+          geometry: { type: 'LineString', coordinates: [] }
+        });
+      }
+    } catch (e) {}
+
+    try {
+      const dirSource = mapRef.current.getSource('directions');
+      if (dirSource) {
+        dirSource.setData({
+          type: 'FeatureCollection',
+          features: []
+        });
+      }
+    } catch (e) {}
+
+    try {
+      const dirMarkersSource = mapRef.current.getSource('directions:markers');
+      if (dirMarkersSource) {
+        dirMarkersSource.setData({
+          type: 'FeatureCollection',
+          features: []
+        });
+      }
+    } catch (e) {}
+  };
+
   // Manejar previsualización de ruta al seleccionar punto
   useEffect(() => {
     const puntoNorm = normalizarPunto(selectedPoint);
@@ -473,18 +508,7 @@ export default function MapaTuristico() {
       // Solo limpiar si no hay navegación en vivo ni simulación demo en curso
       if (!isNavigatingRef.current && !isDemoRunningRef.current) {
         actualizarMarcadorDestino(null);
-        if (mapRef.current && mapRef.current.isStyleLoaded()) {
-          const source = mapRef.current.getSource('preview-route');
-          if (source) {
-            source.setData({
-              type: 'Feature',
-              geometry: {
-                type: 'LineString',
-                coordinates: []
-              }
-            });
-          }
-        }
+        limpiarTrazadoRutas();
       }
       renderizarMarcadoresVisibles();
       return;
@@ -1647,6 +1671,7 @@ export default function MapaTuristico() {
 
     const applyPreviewRouteData = () => {
       if (!mapRef.current) return;
+      if (!isNavigatingRef.current && !isDemoRunningRef.current && !selectedPointRef.current && !destinationRef.current) return;
       try {
         const source = mapRef.current.getSource('preview-route');
         if (source) {
@@ -2241,6 +2266,7 @@ export default function MapaTuristico() {
       // Dibujar o actualizar la trayectoria azul en el mapa mediante la capa 'preview-route'
       const applyRouteGeoJson = () => {
         if (mapRef.current) {
+          if (!isNavigatingRef.current && !isDemoRunningRef.current && !selectedPointRef.current && !destinationRef.current) return;
           try {
             const source = mapRef.current.getSource('preview-route');
             if (source) {
@@ -2343,6 +2369,7 @@ export default function MapaTuristico() {
     // Asegurar trazado visible de la línea de ruta en el mapa
     const drawRealRoute = () => {
       if (mapRef.current) {
+        if (!isNavigatingRef.current && !isDemoRunningRef.current && !selectedPointRef.current && !destinationRef.current) return;
         try {
           const source = mapRef.current.getSource('preview-route');
           if (source) {
@@ -2405,7 +2432,12 @@ export default function MapaTuristico() {
     isClearingRoutesRef.current = true;
 
     try {
-      // 1. Detener demo si estuviera corriendo
+      // 1. Detener de inmediato cualquier sintetizador de voz en curso
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        try { window.speechSynthesis.cancel(); } catch (e) {}
+      }
+
+      // 2. Detener demo si estuviera corriendo
       if (demoIntervalRef.current) {
         clearInterval(demoIntervalRef.current);
         demoIntervalRef.current = null;
@@ -2413,22 +2445,11 @@ export default function MapaTuristico() {
       setIsDemoRunning(false);
       isDemoRunningRef.current = false;
 
-      // 2. Limpiar rutas de Mapbox Directions
+      // 3. Limpiar rutas de Mapbox Directions
       if (directionsRef.current) {
         try {
           directionsRef.current.removeRoutes();
         } catch (e) {}
-      }
-
-      // 3. Limpiar capa GeoJSON de previsualización de ruta
-      if (mapRef.current && mapRef.current.isStyleLoaded()) {
-        const source = mapRef.current.getSource('preview-route');
-        if (source) {
-          source.setData({
-            type: 'Feature',
-            geometry: { type: 'LineString', coordinates: [] }
-          });
-        }
       }
 
       // 4. Limpiar datos y referencias de ruta, destino y puntos seleccionados
@@ -2449,10 +2470,15 @@ export default function MapaTuristico() {
       setShowRecenterBtn(false);
       setShowDirectionsPopup(false);
 
-      // 5. Quitar marcador B de destino
+      // 5. Limpiar inmediatamente el trazado de la ruta en el mapa (preview-route y directions)
+      limpiarTrazadoRutas();
+      setTimeout(limpiarTrazadoRutas, 100);
+      setTimeout(limpiarTrazadoRutas, 350);
+
+      // 6. Quitar marcador B de destino
       actualizarMarcadorDestino(null);
 
-      // 6. Restaurar vista limpia y paneles
+      // 7. Restaurar vista limpia y paneles
       if (mapContainerRef.current) {
         mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
       }
@@ -2462,12 +2488,12 @@ export default function MapaTuristico() {
         panel.style.display = 'none';
       }
 
-      // 7. Retornar cámara a plano cenital 2D estándar
+      // 8. Retornar cámara a plano cenital 2D estándar
       if (mapRef.current) {
         mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 800 });
       }
 
-      // 8. Re-renderizar todos los marcadores y clusters normalmente
+      // 9. Re-renderizar todos los marcadores y clusters normalmente
       renderizarMarcadoresVisibles();
     } finally {
       setTimeout(() => {
@@ -4010,31 +4036,20 @@ export default function MapaTuristico() {
             {/* Píldora "Todas" */}
             <button
               onClick={() => aplicarFiltro(null)}
+              className="filter-bar-pill"
               style={{
                 flexShrink: 0,
-                padding: '8px 16px',
                 background: filtroCategoria === null ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : '#0A192F',
                 color: filtroCategoria === null ? '#0A192F' : '#FFFFFF',
                 border: filtroCategoria === null ? '1px solid #FFD700' : '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: '14px',
-                fontWeight: '800',
-                fontSize: '12.5px',
-                cursor: 'pointer',
-                backdropFilter: 'blur(12px)',
                 boxShadow: filtroCategoria === null ? '0 4px 12px rgba(255,215,0,0.3)' : '0 4px 10px rgba(0,0,0,0.25)',
-                transition: 'all 0.2s',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
               }}
             >
               <img
                 src="/images/remolino.svg"
                 alt="Todas"
+                className="filter-bar-pill-icon"
                 style={{
-                  width: '16px',
-                  height: '16px',
-                  objectFit: 'contain',
                   filter: filtroCategoria === null ? 'brightness(0)' : 'brightness(0) invert(1)'
                 }}
               />
@@ -4047,29 +4062,20 @@ export default function MapaTuristico() {
                 <button
                   key={key}
                   onClick={() => aplicarFiltro(key)}
+                  className="filter-bar-pill"
                   style={{
                     flexShrink: 0,
-                    padding: '8px 16px',
                     background: isSelected ? config.color : '#0A192F',
                     color: isSelected ? '#FFFFFF' : '#E2E8F0',
                     border: isSelected ? `1.5px solid ${config.color}` : '1px solid rgba(255, 255, 255, 0.15)',
-                    borderRadius: '14px',
-                    fontWeight: '750',
-                    fontSize: '12.5px',
-                    cursor: 'pointer',
-                    backdropFilter: 'blur(12px)',
                     boxShadow: isSelected ? `0 4px 14px ${config.color}55` : '0 4px 10px rgba(0,0,0,0.25)',
-                    transition: 'all 0.2s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
                   }}
                 >
-                  <span>
+                  <span className="filter-bar-pill-icon-wrap">
                     {config.svgFile ? (
-                      <img src={config.svgFile} alt={key} style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                      <img src={config.svgFile} alt={key} className="filter-bar-pill-icon" style={{ filter: "brightness(0) invert(1)" }} />
                     ) : (
-                      <Icon name={config.icon} size={16} />
+                      <Icon name={config.icon} size={16} className="filter-bar-pill-icon" />
                     )}
                   </span>
                   <span>{t(`addPoint.categories.${key}`)}</span>
