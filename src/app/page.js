@@ -448,9 +448,30 @@ export default function Home() {
   const [introDone, setIntroDone] = React.useState(false);
   const { session, perfil, logout, is2FAVerified } = useAuth();
 
+  // Si el usuario llega desde el enlace del correo (Magic Link), validar automáticamente su 2FA
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash || "";
+      const search = window.location.search || "";
+      if (hash.includes("type=magiclink") || hash.includes("access_token") || search.includes("code=")) {
+        supabase.auth.getSession().then(({ data: { session: s } }) => {
+          if (s?.user?.id) {
+            localStorage.setItem("atlan_2fa_verified_" + s.user.id, "true");
+          }
+        });
+      }
+    }
+  }, []);
+
   // Si hay sesión activa pero el 2FA aún no ha sido verificado, bloquear acceso al mapa y redirigir al código
   React.useEffect(() => {
     if (typeof window !== "undefined" && session?.user?.id) {
+      const hash = window.location.hash || "";
+      const search = window.location.search || "";
+      if (hash.includes("type=magiclink") || hash.includes("access_token") || search.includes("code=")) {
+        localStorage.setItem("atlan_2fa_verified_" + session.user.id, "true");
+        return;
+      }
       const verified = localStorage.getItem("atlan_2fa_verified_" + session.user.id) === "true";
       if (!verified) {
         window.location.href = "/login?step=otp&google_auth=true";

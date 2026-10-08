@@ -153,6 +153,14 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (loading) return;
     if (session?.user?.id) {
+      if (typeof window !== "undefined") {
+        const hash = window.location.hash || "";
+        const search = window.location.search || "";
+        if (hash.includes("type=magiclink") || hash.includes("access_token") || search.includes("code=")) {
+          markUser2FAVerified(session.user.id);
+          return;
+        }
+      }
       const verified = isUser2FAVerified(session.user.id);
       if (!verified && typeof window !== "undefined") {
         const path = window.location.pathname;
