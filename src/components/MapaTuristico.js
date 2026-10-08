@@ -470,17 +470,20 @@ export default function MapaTuristico() {
 
     if (!puntoNorm || puntoNorm.lng === undefined || puntoNorm.lat === undefined || isNaN(puntoNorm.lng) || isNaN(puntoNorm.lat)) {
       setPreviewRouteInfo(null);
-      actualizarMarcadorDestino(null);
-      if (mapRef.current && mapRef.current.isStyleLoaded()) {
-        const source = mapRef.current.getSource('preview-route');
-        if (source) {
-          source.setData({
-            type: 'Feature',
-            geometry: {
-              type: 'LineString',
-              coordinates: []
-            }
-          });
+      // Solo limpiar si no hay navegación en vivo ni simulación demo en curso
+      if (!isNavigatingRef.current && !isDemoRunningRef.current) {
+        actualizarMarcadorDestino(null);
+        if (mapRef.current && mapRef.current.isStyleLoaded()) {
+          const source = mapRef.current.getSource('preview-route');
+          if (source) {
+            source.setData({
+              type: 'Feature',
+              geometry: {
+                type: 'LineString',
+                coordinates: []
+              }
+            });
+          }
         }
       }
       renderizarMarcadoresVisibles();
@@ -2232,19 +2235,28 @@ export default function MapaTuristico() {
       }
 
       // Dibujar o actualizar la trayectoria azul en el mapa mediante la capa 'preview-route'
-      if (mapRef.current && mapRef.current.isStyleLoaded()) {
-        const source = mapRef.current.getSource('preview-route');
-        if (source) {
-          source.setData({
-            type: 'Feature',
-            properties: {},
-            geometry: {
-              type: 'LineString',
-              coordinates: coords
+      const applyRouteGeoJson = () => {
+        if (mapRef.current) {
+          try {
+            const source = mapRef.current.getSource('preview-route');
+            if (source) {
+              source.setData({
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                  type: 'LineString',
+                  coordinates: coords
+                }
+              });
             }
-          });
+          } catch (e) {
+            console.warn('[Atlan] Error aplicando geometría a preview-route:', e);
+          }
         }
-      }
+      };
+      applyRouteGeoJson();
+      setTimeout(applyRouteGeoJson, 200);
+      setTimeout(applyRouteGeoJson, 600);
 
       return coords;
     }
@@ -2480,6 +2492,35 @@ export default function MapaTuristico() {
       return;
     }
     rutaCoordenadasRef.current = coords;
+
+    // Asegurar trazado visible de la línea de ruta en el mapa
+    const drawDemoRoute = () => {
+      if (mapRef.current) {
+        try {
+          const source = mapRef.current.getSource('preview-route');
+          if (source) {
+            source.setData({
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'LineString',
+                coordinates: coords
+              }
+            });
+          }
+        } catch (e) {}
+      }
+    };
+    drawDemoRoute();
+    setTimeout(drawDemoRoute, 300);
+    setTimeout(drawDemoRoute, 800);
+
+    if (directionsRef.current) {
+      try {
+        directionsRef.current.setOrigin([currLng, currLat]);
+        directionsRef.current.setDestination(destinationRef.current);
+      } catch (e) {}
+    }
 
     setIsDemoRunning(true);
     isDemoRunningRef.current = true;
@@ -2934,20 +2975,39 @@ export default function MapaTuristico() {
           }
         });
 
-        mapRef.current.addLayer({
-          id: 'preview-route-layer',
-          type: 'line',
-          source: 'preview-route',
-          layout: {
-            'line-join': 'round',
-            'line-cap': 'round'
-          },
-          paint: {
-            'line-color': '#146D9E', // Color azul océano de Atlan para la ruta
-            'line-width': 6,
-            'line-opacity': 0.85
-          }
-        });
+        if (!mapRef.current.getLayer('preview-route-casing')) {
+          mapRef.current.addLayer({
+            id: 'preview-route-casing',
+            type: 'line',
+            source: 'preview-route',
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round'
+            },
+            paint: {
+              'line-color': '#024b75',
+              'line-width': 10,
+              'line-opacity': 0.95
+            }
+          });
+        }
+
+        if (!mapRef.current.getLayer('preview-route-layer')) {
+          mapRef.current.addLayer({
+            id: 'preview-route-layer',
+            type: 'line',
+            source: 'preview-route',
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round'
+            },
+            paint: {
+              'line-color': '#0ea5e9', // Azul brillante de alta visibilidad para la ruta
+              'line-width': 6.5,
+              'line-opacity': 1
+            }
+          });
+        }
       }
 
       // Cargar puntos inmediatamente al estar listo el mapa
