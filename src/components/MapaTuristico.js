@@ -836,7 +836,7 @@ export default function MapaTuristico() {
   };
 
   const handleIniciarViaje = (puntoParam = null) => {
-    return iniciarViajeCore(puntoParam);
+    return iniciarSimulacionDemo(puntoParam);
   };
 
 
@@ -2432,11 +2432,21 @@ export default function MapaTuristico() {
   };
 
   // Lógica del simulador demo
-  const iniciarSimulacionDemo = async () => {
+  const iniciarSimulacionDemo = async (puntoParam = null) => {
     if (demoIntervalRef.current) {
       cancelarRutaActiva();
       speakInstruction(t('map.demoFinished'), true);
       return;
+    }
+
+    const puntoRaw = puntoParam || selectedPoint || selectedPointRef.current;
+    const punto = normalizarPunto(puntoRaw);
+
+    if (punto && punto.lng !== undefined && punto.lat !== undefined) {
+      destinationRef.current = [Number(punto.lng), Number(punto.lat)];
+      lugarDestinoRef.current = punto.nombre || (lang === 'en' ? 'Destination' : lang === 'zh' ? '目的地' : 'Destino');
+      selectedPointRef.current = punto;
+      actualizarMarcadorDestino(punto);
     }
 
     if (!destinationRef.current) {
@@ -2444,7 +2454,27 @@ export default function MapaTuristico() {
       return;
     }
 
-    let coords = await fetchRouteCoords(currentPosRef.current, destinationRef.current);
+    // 1. Cerrar popup activo en el mapa si lo hay
+    if (activePopupRef.current) {
+      try { activePopupRef.current.remove(); } catch (e) {}
+      activePopupRef.current = null;
+    }
+
+    // 2. Cerrar hojas o modales de detalles
+    setSelectedPoint(null);
+    setShowFullProfileModal(false);
+    setSelectedPointDetails(null);
+
+    // Si la posición actual está fuera de Centroamérica (o aún no cargó), usar Managua para que la prueba funcione siempre
+    let [currLng, currLat] = currentPosRef.current;
+    const isUserInCA = currLng >= -93.0 && currLng <= -77.0 && currLat >= 7.0 && currLat <= 19.0;
+    if (!isUserInCA) {
+      currLng = -86.2504;
+      currLat = 12.1364;
+      currentPosRef.current = [currLng, currLat];
+    }
+
+    let coords = await fetchRouteCoords([currLng, currLat], destinationRef.current);
     if (!coords || coords.length === 0) {
       speakInstruction(t('map.noRoute'), true);
       return;
@@ -2454,6 +2484,7 @@ export default function MapaTuristico() {
     setIsDemoRunning(true);
     isDemoRunningRef.current = true;
     isNavigatingRef.current = true;
+    setIsNavigating(true);
     isInteractionPausedRef.current = false;
     setShowRecenterBtn(false);
     if (mapContainerRef.current) {
@@ -2477,8 +2508,8 @@ export default function MapaTuristico() {
     if (mapRef.current) {
       mapRef.current.flyTo({
         center: coords[0],
-        zoom: 15.6,
-        pitch: 50,
+        zoom: 16.5,
+        pitch: 55,
         bearing: initialBearing,
         speed: 1.1,
         curve: 1.15,
@@ -4546,32 +4577,7 @@ export default function MapaTuristico() {
         aria-hidden="true"
       />
 
-      {/* Botón 🚗 Demo (solo cuando no hay navegación en curso) */}
-      {!selectedPoint && !isNavigating && !routeInfo && (
-        <button
-          className="btn-demo"
-          onClick={iniciarSimulacionDemo}
-        style={{
-          position: 'absolute',
-          bottom: '100px',
-          right: '20px',
-          backgroundColor: isDemoRunning ? '#f59e0b' : '#3b82f6',
-          color: 'white',
-          border: 'none',
-          borderRadius: '25px',
-          padding: '11px 18px',
-          fontWeight: '700',
-          fontSize: '14px',
-          letterSpacing: '0.3px',
-          boxShadow: '0 4px 14px rgba(0,0,0,0.35)',
-          cursor: 'pointer',
-          zIndex: 10,
-          transition: 'all 0.25s ease',
-        }}
-      >
-        🚗 {isDemoRunning ? t('map.demoStop') : t('map.demo')}
-      </button>
-      )}
+
 
       {/* Botón Volver a centrar (Waze-style) */}
       {!selectedPoint && showRecenterBtn && (isDemoRunning || routeInfo || isNavigating) && (

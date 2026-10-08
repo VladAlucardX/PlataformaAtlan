@@ -4247,58 +4247,60 @@ nav .notif-item:hover {
   padding-top: 6px;
 }
 
-/* ── VERSIÓN MÓVIL Y TABLET: HUD ARRIBA Y ULTRA COMPACTO PARA NO OBSTACULIZAR LA VISTA DEL CONDUCTOR ── */
+/* ── VERSIÓN MÓVIL Y TABLET: HUD ARRIBA A LA IZQUIERDA, SUTIL Y ULTRA COMPACTO ── */
 @media (max-width: 1024px) {
   .atlan-nav-hud-card {
     top: 10px !important;
     bottom: auto !important;
     left: 10px !important;
-    right: 10px !important;
-    width: auto !important;
-    max-width: 440px !important;
-    margin: 0 auto !important;
-    border-radius: 16px !important;
-    border: 1.5px solid rgba(255, 215, 0, 0.35) !important;
-    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.7), 0 0 18px rgba(4, 120, 87, 0.25) !important;
+    right: auto !important;
+    width: 220px !important;
+    max-width: calc(100vw - 80px) !important;
+    margin: 0 !important;
+    border-radius: 14px !important;
+    border: 1px solid rgba(255, 215, 0, 0.35) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 14px rgba(4, 120, 87, 0.25) !important;
     z-index: 50 !important;
   }
 
   .atlan-nav-hud-maneuver-main {
-    padding: 7px 10px !important;
-    gap: 10px !important;
+    padding: 6px 8px !important;
+    gap: 8px !important;
   }
 
   .atlan-nav-hud-icon-wrap {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    border-radius: 11px !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    border-radius: 9px !important;
   }
 
   .atlan-nav-hud-icon-wrap svg {
-    max-width: 22px !important;
-    max-height: 22px !important;
+    max-width: 18px !important;
+    max-height: 18px !important;
   }
 
   .atlan-nav-hud-dist {
-    font-size: 14px !important;
-    margin-bottom: 1px !important;
+    font-size: 13px !important;
+    margin-bottom: 0px !important;
+    line-height: 1.1 !important;
   }
 
   .atlan-nav-hud-instr {
-    font-size: 11px !important;
-    line-height: 1.2 !important;
+    font-size: 10px !important;
+    line-height: 1.15 !important;
     -webkit-line-clamp: 1 !important;
+    max-width: 155px !important;
   }
 
   .atlan-nav-hud-next {
-    padding: 3px 10px 4px 10px !important;
-    font-size: 9.5px !important;
-    gap: 6px !important;
+    padding: 2px 8px !important;
+    font-size: 9px !important;
+    gap: 4px !important;
   }
 
   .atlan-nav-hud-body {
-    padding: 5px 10px 6px 10px !important;
+    padding: 4px 8px 6px 8px !important;
   }
 
   .atlan-nav-hud-header {
@@ -4306,50 +4308,53 @@ nav .notif-item:hover {
   }
 
   .atlan-nav-hud-label {
-    font-size: 8.5px !important;
+    display: none !important;
   }
 
   .atlan-nav-hud-close {
-    width: 19px !important;
-    height: 19px !important;
-    font-size: 9.5px !important;
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 9px !important;
   }
 
   .atlan-nav-hud-dest {
-    font-size: 11px !important;
-    margin-bottom: 4px !important;
-    max-width: calc(100% - 24px) !important;
+    font-size: 10.5px !important;
+    margin-bottom: 2px !important;
+    max-width: calc(100% - 22px) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
   .atlan-nav-hud-stats {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    gap: 6px !important;
+    gap: 4px !important;
+    margin-top: 1px !important;
   }
 
   .atlan-nav-hud-stat-box {
-    padding: 3px 8px !important;
+    padding: 2px 5px !important;
     flex: 1 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    gap: 4px !important;
+    gap: 2px !important;
+    border-radius: 6px !important;
   }
 
   .atlan-nav-hud-stat-box .stat-label {
-    font-size: 8px !important;
+    font-size: 7.5px !important;
     margin-bottom: 0 !important;
   }
 
   .atlan-nav-hud-stat-box .stat-val {
-    font-size: 12px !important;
+    font-size: 11px !important;
   }
 
   .atlan-nav-hud-eta {
-    margin-top: 3px !important;
-    font-size: 9px !important;
-    padding-top: 2px !important;
+    display: none !important;
   }
 }
 
