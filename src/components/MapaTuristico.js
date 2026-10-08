@@ -4538,35 +4538,13 @@ export default function MapaTuristico() {
         </div>
       )}
 
-      {/* Botón Flotante Trazar Ruta (solo cuando no hay una ruta activa ni viaje) */}
-      {!selectedPoint && !routeInfo && !isNavigating && (
-        <div
-          onClick={() => setShowDirectionsPopup((prev) => !prev)}
-          style={{
-            position: 'absolute',
-            bottom: '100px',
-            left: '20px',
-            zIndex: 40,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: showDirectionsPopup ? '#EF4444' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-            color: showDirectionsPopup ? '#FFFFFF' : '#0A192F',
-            border: showDirectionsPopup ? '2px solid #EF4444' : '2px solid #FFFFFF',
-            borderRadius: '25px',
-            padding: '10px 18px',
-            fontWeight: '900',
-            fontSize: '13.5px',
-            boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
-            transition: 'all 0.25s ease'
-          }}
-          title={showDirectionsPopup ? (lang === 'en' ? 'Close route panel' : lang === 'zh' ? '关闭路线面板' : 'Cerrar panel de ruta') : (lang === 'en' ? 'Open route planner' : lang === 'zh' ? '路线规划' : 'Trazar o ver ruta')}
-        >
-          <span>🧭</span>
-          <span>{showDirectionsPopup ? (lang === 'en' ? 'Close Route' : lang === 'zh' ? '关闭路线' : 'Cerrar Ruta') : (lang === 'en' ? 'Route A-B' : lang === 'zh' ? '规划路线' : 'Trazar Ruta')}</span>
-        </div>
-      )}
+      {/* Botón Flotante Trazar Ruta (Oculto en web y móvil según preferencia visual, manteniendo funcionalidad interna) */}
+      <div
+        id="btn-trazar-ruta"
+        onClick={() => setShowDirectionsPopup((prev) => !prev)}
+        style={{ display: 'none' }}
+        aria-hidden="true"
+      />
 
       {/* Botón 🚗 Demo (solo cuando no hay navegación en curso) */}
       {!selectedPoint && !isNavigating && !routeInfo && (
