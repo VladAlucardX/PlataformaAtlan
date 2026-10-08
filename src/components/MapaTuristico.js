@@ -839,6 +839,10 @@ export default function MapaTuristico() {
   };
 
   const handleIniciarViaje = (puntoParam = null) => {
+    return iniciarViajeCore(puntoParam);
+  };
+
+  const handleIniciarDemo = (puntoParam = null) => {
     return iniciarSimulacionDemo(puntoParam);
   };
 
@@ -2335,6 +2339,35 @@ export default function MapaTuristico() {
 
     // 9. Consultar la ruta real y pasos a la API de Mapbox
     const coords = await fetchRouteCoords([currLng, currLat], [Number(punto.lng), Number(punto.lat)]);
+
+    // Asegurar trazado visible de la línea de ruta en el mapa
+    const drawRealRoute = () => {
+      if (mapRef.current) {
+        try {
+          const source = mapRef.current.getSource('preview-route');
+          if (source) {
+            source.setData({
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'LineString',
+                coordinates: coords
+              }
+            });
+          }
+        } catch (e) {}
+      }
+    };
+    drawRealRoute();
+    setTimeout(drawRealRoute, 300);
+    setTimeout(drawRealRoute, 800);
+
+    if (directionsRef.current) {
+      try {
+        directionsRef.current.setOrigin([currLng, currLat]);
+        directionsRef.current.setDestination([Number(punto.lng), Number(punto.lat)]);
+      } catch (e) {}
+    }
 
     // 10. Orientar vehículo y cámara 3D hacia la carretera
     if (coords && coords.length > 0) {
@@ -5532,6 +5565,7 @@ export default function MapaTuristico() {
         isFavorite={isFavorite}
         onToggleFavorite={handleToggleFavorite}
         onIniciarViaje={handleIniciarViaje}
+        onIniciarDemo={handleIniciarDemo}
         isBusinessOpenNow={isBusinessOpenNow}
         reservaTipo={reservaTipo}
         setReservaTipo={setReservaTipo}
