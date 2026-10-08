@@ -217,12 +217,17 @@ export default function MapaTuristico() {
   const [visitPromptData, setVisitPromptData] = useState(null);
   const [isSubmittingVisit, setIsSubmittingVisit] = useState(false);
   const [notificationBanner, setNotificationBanner] = useState(null);
+  const notificationTimerRef = useRef(null);
 
-  const showNotification = (type, title, message) => {
-    setNotificationBanner({ type, title, message });
-    setTimeout(() => {
+  const showNotification = (type, title, message, placeName = '') => {
+    if (notificationTimerRef.current) {
+      clearTimeout(notificationTimerRef.current);
+    }
+    const cleanTitle = (title || '').replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim();
+    setNotificationBanner({ type, title: cleanTitle, message, placeName });
+    notificationTimerRef.current = setTimeout(() => {
       setNotificationBanner(null);
-    }, 4500);
+    }, 5000);
   };
 
   const handleConfirmarVisitaGPS = async () => {
@@ -807,7 +812,11 @@ export default function MapaTuristico() {
       setTimeout(() => setReservaSuccess(false), 4000);
     } catch (err) {
       console.error("Error reservando:", err);
-      alert("Error al procesar reserva: " + (err.message || 'Intente nuevamente'));
+      showNotification(
+        'error',
+        lang === 'en' ? 'Booking Error' : lang === 'zh' ? '预订错误' : 'Error en la Reserva',
+        "Error al procesar reserva: " + (err.message || (lang === 'en' ? 'Please try again' : lang === 'zh' ? '请重试' : 'Intente nuevamente'))
+      );
     } finally {
       setIsSubmittingReserva(false);
     }
@@ -2309,11 +2318,15 @@ export default function MapaTuristico() {
     const isUserInCA = currLng >= -93.0 && currLng <= -77.0 && currLat >= 7.0 && currLat <= 19.0;
 
     if (!isUserInCA) {
-      alert(lang === 'en'
-        ? 'You are currently outside Central America. Plan your trip and visit us to use live GPS navigation!'
-        : lang === 'zh'
-        ? '您当前不在中美洲范围内。规划好行程并欢迎光临以使用实时GPS导航！'
-        : 'Te encuentras fuera de Centroamérica. ¡Planifica tu viaje y visítanos para usar la navegación GPS en vivo!');
+      showNotification(
+        'warning',
+        lang === 'en' ? 'Outside Service Region' : lang === 'zh' ? '超出服务区域' : 'Ubicación Fuera de Cobertura',
+        lang === 'en'
+          ? 'You are currently outside Central America. Plan your trip and visit us to use live GPS navigation!'
+          : lang === 'zh'
+          ? '您当前不在中美洲范围内。规划好行程并欢迎光临以使用实时GPS导航！'
+          : 'Te encuentras fuera de Centroamérica. ¡Planifica tu viaje y visítanos para usar la navegación GPS en vivo!'
+      );
       return;
     }
 
@@ -2670,8 +2683,14 @@ export default function MapaTuristico() {
   // Activar modo agregar punto: abre modal selector de opciones (Ubicación actual vs Seleccionar en mapa)
   const activarLevantarPunto = () => {
     if (!userSession) {
-      alert(lang === 'en' ? 'Please log in to add points to the map.' : lang === 'zh' ? '请登录以在地图上添加地点。' : 'Por favor, inicia sesión para levantar un punto en el mapa.');
-      window.location.href = '/login';
+      showNotification(
+        'warning',
+        lang === 'en' ? 'Sign In Required' : lang === 'zh' ? '需要登录' : 'Acceso Requerido',
+        lang === 'en' ? 'Please log in to add points to the map.' : lang === 'zh' ? '请登录以在地图上添加地点。' : 'Por favor, inicia sesión para levantar un punto en el mapa.'
+      );
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1500);
       return;
     }
     if (isAddingPoint) {
@@ -2738,7 +2757,11 @@ export default function MapaTuristico() {
     if (!newPointNombre || !newPointCategoria || !tempPointCoords) return;
 
     if (fotoModerationError) {
-      alert(fotoModerationError);
+      showNotification(
+        'error',
+        lang === 'en' ? 'Photo Moderation Notice' : lang === 'zh' ? '照片审核提示' : 'Aviso de Moderación de Foto',
+        fotoModerationError
+      );
       return;
     }
 
@@ -2770,7 +2793,9 @@ export default function MapaTuristico() {
 
       if (error) {
         console.error('[Atlan] Error insertando punto:', error.message || error);
-        alert(
+        showNotification(
+          'error',
+          lang === 'en' ? 'Could Not Save Place' : lang === 'zh' ? '无法保存地点' : 'Error al Guardar Lugar',
           error.message ||
           (lang === 'en'
             ? 'Could not save the place. Try again.'
@@ -2779,6 +2804,7 @@ export default function MapaTuristico() {
             : 'No se pudo guardar el lugar. Reintente.')
         );
       } else {
+        const savedNombre = newPointNombre;
         setShowAddModal(false);
         setNewPointNombre('');
         setNewPointCreador('');
@@ -2790,7 +2816,12 @@ export default function MapaTuristico() {
         setTempPointCoords(null);
 
         speakInstruction(t('addPoint.success'), true);
-        alert(t('addPoint.success'));
+        showNotification(
+          'success',
+          lang === 'en' ? 'Point Registered!' : lang === 'zh' ? '地点已添加！' : '¡Punto Registrado con Éxito!',
+          t('addPoint.success'),
+          savedNombre
+        );
 
         // Recargar puntos locales
         cargarPuntosCercanos(currentPosRef.current[0], currentPosRef.current[1], filtroCategoria);
@@ -5776,46 +5807,174 @@ export default function MapaTuristico() {
         </div>
       )}
 
-      {/* Banner Flotante 3D Claymórfico de Notificaciones */}
+      {/* Banner Flotante Premium de Notificaciones con SVGs y Glassmorphism */}
       {notificationBanner && (
-        <div style={{
-          position: 'fixed',
-          top: '90px',
-          right: '20px',
-          zIndex: 10000,
-          background: notificationBanner.type === 'success'
-            ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(6, 78, 59, 0.95) 100%)'
-            : notificationBanner.type === 'warning'
-            ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.95) 0%, rgba(120, 53, 15, 0.95) 100%)'
-            : 'linear-gradient(135deg, rgba(239, 68, 68, 0.95) 0%, rgba(127, 29, 29, 0.95) 100%)',
-          color: '#FFFFFF',
-          padding: '16px 22px',
-          borderRadius: '20px',
-          border: '2px solid rgba(255, 255, 255, 0.3)',
-          boxShadow: '0 16px 36px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4)',
-          backdropFilter: 'blur(16px)',
-          maxWidth: '380px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '14px'
-        }}>
-          <div style={{ fontSize: '26px' }}>
-            {notificationBanner.type === 'success' ? '🏆' : notificationBanner.type === 'warning' ? '🔒' : '⚠️'}
+        <div
+          className="animate-fade-in-down"
+          style={{
+            position: 'fixed',
+            top: '88px',
+            right: '20px',
+            zIndex: 12000,
+            maxWidth: '430px',
+            width: 'calc(100vw - 32px)',
+            background: 'linear-gradient(145deg, rgba(10, 25, 47, 0.97) 0%, rgba(15, 23, 42, 0.98) 100%)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: notificationBanner.type === 'success'
+              ? '1.5px solid rgba(16, 185, 129, 0.5)'
+              : notificationBanner.type === 'warning'
+              ? '1.5px solid rgba(255, 215, 0, 0.5)'
+              : '1.5px solid rgba(239, 68, 68, 0.5)',
+            borderRadius: '22px',
+            boxShadow: notificationBanner.type === 'success'
+              ? '0 20px 45px -8px rgba(0, 0, 0, 0.75), 0 0 25px rgba(16, 185, 129, 0.25)'
+              : notificationBanner.type === 'warning'
+              ? '0 20px 45px -8px rgba(0, 0, 0, 0.75), 0 0 25px rgba(255, 215, 0, 0.25)'
+              : '0 20px 45px -8px rgba(0, 0, 0, 0.75), 0 0 25px rgba(239, 68, 68, 0.25)',
+            padding: '16px 20px',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '14px',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+        >
+          {/* Línea superior luminosa */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '2.5px',
+            background: notificationBanner.type === 'success'
+              ? 'linear-gradient(90deg, transparent, #10B981 30%, #34D399 70%, transparent)'
+              : notificationBanner.type === 'warning'
+              ? 'linear-gradient(90deg, transparent, #F59E0B 30%, #FFD700 70%, transparent)'
+              : 'linear-gradient(90deg, transparent, #EF4444 30%, #F87171 70%, transparent)'
+          }} />
+
+          {/* Icono Badge SVG vectorizado */}
+          <div style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '14px',
+            background: notificationBanner.type === 'success'
+              ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.22) 0%, rgba(5, 150, 105, 0.35) 100%)'
+              : notificationBanner.type === 'warning'
+              ? 'linear-gradient(135deg, rgba(255, 215, 0, 0.18) 0%, rgba(245, 158, 11, 0.28) 100%)'
+              : 'linear-gradient(135deg, rgba(239, 68, 68, 0.22) 0%, rgba(220, 38, 38, 0.35) 100%)',
+            border: notificationBanner.type === 'success'
+              ? '1.5px solid rgba(52, 211, 153, 0.5)'
+              : notificationBanner.type === 'warning'
+              ? '1.5px solid rgba(255, 215, 0, 0.5)'
+              : '1.5px solid rgba(248, 113, 113, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            boxShadow: notificationBanner.type === 'success'
+              ? '0 4px 14px rgba(16, 185, 129, 0.35)'
+              : notificationBanner.type === 'warning'
+              ? '0 4px 14px rgba(255, 215, 0, 0.3)'
+              : '0 4px 14px rgba(239, 68, 68, 0.35)'
+          }}>
+            {notificationBanner.type === 'success' ? (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 6L9 17L4 12" stroke="#34D399" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            ) : notificationBanner.type === 'warning' ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="11" width="18" height="11" rx="2" stroke="#FFD700" strokeWidth="2.2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="#FFD700" strokeWidth="2.2" strokeLinecap="round"/>
+                <circle cx="12" cy="16.5" r="1.3" fill="#FFD700"/>
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9.5" stroke="#F87171" strokeWidth="2.2"/>
+                <line x1="12" y1="7.5" x2="12" y2="12.5" stroke="#F87171" strokeWidth="2.4" strokeLinecap="round"/>
+                <circle cx="12" cy="16" r="1.3" fill="#F87171"/>
+              </svg>
+            )}
           </div>
-          <div style={{ flex: 1 }}>
-            <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '900', color: '#FFFFFF' }}>
-              {notificationBanner.title}
-            </h4>
-            <p style={{ margin: '3px 0 0 0', fontSize: '12.5px', color: 'rgba(255, 255, 255, 0.9)', lineHeight: '1.3' }}>
+
+          {/* Contenido textual */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+              <h4 style={{
+                margin: 0,
+                fontSize: '15px',
+                fontWeight: '800',
+                color: '#FFFFFF',
+                letterSpacing: '-0.2px'
+              }}>
+                {notificationBanner.title}
+              </h4>
+              <button
+                type="button"
+                onClick={() => setNotificationBanner(null)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: 'none',
+                  color: 'rgba(255, 255, 255, 0.65)',
+                  cursor: 'pointer',
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s ease',
+                  flexShrink: 0
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#FFFFFF';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.18)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'rgba(255, 255, 255, 0.65)';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                }}
+                aria-label="Cerrar notificación"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+
+            <p style={{
+              margin: '4px 0 0 0',
+              fontSize: '13px',
+              color: '#CBD5E1',
+              lineHeight: '1.45'
+            }}>
               {notificationBanner.message}
             </p>
+
+            {notificationBanner.placeName && (
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                marginTop: '8px',
+                padding: '3px 10px',
+                background: 'rgba(255, 215, 0, 0.12)',
+                border: '1px solid rgba(255, 215, 0, 0.35)',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: '700',
+                color: '#FFD700'
+              }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>{notificationBanner.placeName}</span>
+              </div>
+            )}
           </div>
-          <button
-            onClick={() => setNotificationBanner(null)}
-            style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'pointer', fontSize: '16px', fontWeight: 'bold' }}
-          >
-            ✕
-          </button>
         </div>
       )}
     </div>
