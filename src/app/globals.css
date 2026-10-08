@@ -2130,10 +2130,10 @@ html body .mapboxgl-ctrl-directions tr {
   }
 }
 
-/* Cuando la ventana web es reducida y la cabecera ocupa 2 filas (<= 950px), mover la barra más abajo con espacio holgado (148px) */
-@media (max-width: 950px) {
+/* Cuando la ventana web es reducida o en tablet (<= 1024px), dar espacio holgado a las categorías para no encimarse con la búsqueda */
+@media (max-width: 1024px) {
   .filter-bar-wrapper {
-    top: 148px !important;
+    top: 170px !important;
     left: 10px !important;
     right: 10px !important;
   }
@@ -2201,7 +2201,7 @@ html body .mapboxgl-ctrl-directions tr {
 
   /* Reposicionar y estilizar panel de direcciones Mapbox (Punto A y B) */
   .mapboxgl-ctrl-top-left {
-    top: 148px !important;
+    top: 172px !important;
     left: 10px !important;
     right: 10px !important;
     width: calc(100vw - 20px) !important;
@@ -2220,10 +2220,10 @@ html body .mapboxgl-ctrl-directions tr {
     display: none !important;
   }
 
-  /* Barra de filtros en móvil (Píldoras horizontales deslizables a 148px con espacio perfecto) */
+  /* Barra de filtros en móvil (Píldoras horizontales deslizables con separación holgada y limpia bajo la barra de búsqueda) */
   .filter-bar-wrapper {
     position: absolute !important;
-    top: 148px !important;
+    top: 172px !important;
     bottom: auto !important;
     left: 10px !important;
     right: 10px !important;
@@ -4059,6 +4059,300 @@ nav .notif-item:hover {
 .atlan-nav-clean-mode .atlan-cluster-container {
   display: none !important;
 }
+
+/* ── TARJETA HUD DE NAVEGACIÓN Y MANIOBRAS EN VIVO (WAZE / GOOGLE MAPS STYLE) ── */
+.atlan-nav-hud-card {
+  position: absolute;
+  bottom: 24px;
+  left: 16px;
+  width: 260px;
+  background: linear-gradient(145deg, rgba(10, 18, 35, 0.94) 0%, rgba(8, 14, 28, 0.98) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  border-radius: 18px;
+  padding: 0;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.1);
+  z-index: 25;
+  color: white;
+  overflow: hidden;
+  transition: all 0.25s ease;
+  font-family: var(--font-outfit), sans-serif;
+}
+
+.atlan-nav-hud-maneuver {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(4, 120, 87, 0.3);
+}
+
+.atlan-nav-hud-maneuver-main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+}
+
+.atlan-nav-hud-icon-wrap {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
+}
+
+.atlan-nav-hud-dist {
+  font-size: 15px;
+  font-weight: 900;
+  color: #FFFFFF;
+  letter-spacing: -0.2px;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.atlan-nav-hud-instr {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.atlan-nav-hud-next {
+  padding: 5px 14px 7px 14px;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.atlan-nav-hud-body {
+  padding: 10px 14px 12px;
+}
+
+.atlan-nav-hud-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.atlan-nav-hud-label {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #3b82f6;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.atlan-nav-hud-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.atlan-nav-hud-close:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #EF4444;
+}
+
+.atlan-nav-hud-dest {
+  font-size: 13px;
+  font-weight: 800;
+  color: white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 10px;
+}
+
+.atlan-nav-hud-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.atlan-nav-hud-stat-box {
+  border-radius: 10px;
+  padding: 6px 8px;
+}
+
+.atlan-nav-hud-stat-box.stat-time {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.atlan-nav-hud-stat-box.stat-dist {
+  background: rgba(255, 215, 0, 0.06);
+  border: 1px solid rgba(255, 215, 0, 0.12);
+}
+
+.atlan-nav-hud-stat-box .stat-label {
+  font-size: 9px;
+  color: #64748b;
+  font-weight: 750;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.atlan-nav-hud-stat-box .stat-val {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.val-green {
+  color: #10b981;
+}
+
+.val-gold {
+  color: #FFD700;
+}
+
+.atlan-nav-hud-eta {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #94a3b8;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 6px;
+}
+
+/* ── VERSIÓN MÓVIL Y TABLET: HUD ARRIBA Y ULTRA COMPACTO PARA NO OBSTACULIZAR LA VISTA DEL CONDUCTOR ── */
+@media (max-width: 1024px) {
+  .atlan-nav-hud-card {
+    top: 10px !important;
+    bottom: auto !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+    max-width: 440px !important;
+    margin: 0 auto !important;
+    border-radius: 16px !important;
+    border: 1.5px solid rgba(255, 215, 0, 0.35) !important;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.7), 0 0 18px rgba(4, 120, 87, 0.25) !important;
+    z-index: 50 !important;
+  }
+
+  .atlan-nav-hud-maneuver-main {
+    padding: 7px 10px !important;
+    gap: 10px !important;
+  }
+
+  .atlan-nav-hud-icon-wrap {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    border-radius: 11px !important;
+  }
+
+  .atlan-nav-hud-icon-wrap svg {
+    max-width: 22px !important;
+    max-height: 22px !important;
+  }
+
+  .atlan-nav-hud-dist {
+    font-size: 14px !important;
+    margin-bottom: 1px !important;
+  }
+
+  .atlan-nav-hud-instr {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    -webkit-line-clamp: 1 !important;
+  }
+
+  .atlan-nav-hud-next {
+    padding: 3px 10px 4px 10px !important;
+    font-size: 9.5px !important;
+    gap: 6px !important;
+  }
+
+  .atlan-nav-hud-body {
+    padding: 5px 10px 6px 10px !important;
+  }
+
+  .atlan-nav-hud-header {
+    margin-bottom: 2px !important;
+  }
+
+  .atlan-nav-hud-label {
+    font-size: 8.5px !important;
+  }
+
+  .atlan-nav-hud-close {
+    width: 19px !important;
+    height: 19px !important;
+    font-size: 9.5px !important;
+  }
+
+  .atlan-nav-hud-dest {
+    font-size: 11px !important;
+    margin-bottom: 4px !important;
+    max-width: calc(100% - 24px) !important;
+  }
+
+  .atlan-nav-hud-stats {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+  }
+
+  .atlan-nav-hud-stat-box {
+    padding: 3px 8px !important;
+    flex: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+  }
+
+  .atlan-nav-hud-stat-box .stat-label {
+    font-size: 8px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .atlan-nav-hud-stat-box .stat-val {
+    font-size: 12px !important;
+  }
+
+  .atlan-nav-hud-eta {
+    margin-top: 3px !important;
+    font-size: 9px !important;
+    padding-top: 2px !important;
+  }
+}
+
 
 
 

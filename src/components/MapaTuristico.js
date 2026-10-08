@@ -836,77 +836,7 @@ export default function MapaTuristico() {
   };
 
   const handleIniciarViaje = (puntoParam = null) => {
-    const puntoRaw = puntoParam || selectedPoint;
-    const punto = normalizarPunto(puntoRaw);
-    if (!punto || punto.lng === undefined || punto.lat === undefined || isNaN(punto.lng) || isNaN(punto.lat)) return;
-
-    const [currLng, currLat] = currentPosRef.current;
-    const isUserInCA = currLng >= -93.0 && currLng <= -77.0 && currLat >= 7.0 && currLat <= 19.0;
-
-    if (!isUserInCA) {
-      alert(lang === 'en'
-        ? 'You are currently outside Central America. Plan your trip and visit us to use live GPS navigation!'
-        : lang === 'zh'
-        ? '您当前不在中美洲范围内。规划好行程并欢迎光临以使用实时GPS导航！'
-        : 'Te encuentras fuera de Centroamérica. ¡Planifica tu viaje y visítanos para usar la navegación GPS en vivo!');
-      return;
-    }
-
-    // Limpiar cualquier ruta o previsualización previa para evitar confusión de múltiples líneas
-    if (directionsRef.current) {
-      try {
-        directionsRef.current.removeRoutes();
-      } catch (e) {}
-    }
-    if (mapRef.current && mapRef.current.isStyleLoaded()) {
-      const source = mapRef.current.getSource('preview-route');
-      if (source) {
-        source.setData({
-          type: 'Feature',
-          geometry: {
-            type: 'LineString',
-            coordinates: []
-          }
-        });
-      }
-    }
-    setPreviewRouteInfo(null);
-
-    lugarDestinoRef.current = punto.nombre;
-
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
-    }
-    lastSpokenRef.current = '';
-    speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${punto.nombre}.`, true);
-
-    isNavigatingRef.current = true;
-    setIsNavigating(true);
-    isInteractionPausedRef.current = false;
-    setShowRecenterBtn(false);
-    if (mapContainerRef.current) {
-      mapContainerRef.current.classList.add('atlan-nav-clean-mode');
-    }
-
-    destinationRef.current = [punto.lng, punto.lat];
-    rutaCoordenadasRef.current = [];
-
-    if (directionsRef.current) {
-      directionsRef.current.setOrigin([currLng, currLat]);
-      directionsRef.current.setDestination([punto.lng, punto.lat]);
-    }
-
-    mapRef.current.flyTo({
-      center: [currLng, currLat],
-      zoom: 15.6,
-      pitch: 50,
-      speed: 0.9,
-      curve: 1.1,
-      essential: true
-    });
-
-    // Cerrar la hoja de detalles al iniciar el viaje
-    setSelectedPoint(null);
+    return iniciarViajeCore(puntoParam);
   };
 
 
@@ -1394,52 +1324,8 @@ export default function MapaTuristico() {
       const btn = document.getElementById(btnId);
       if (btn) {
         btn.onclick = () => {
-          const [currLng, currLat] = currentPosRef.current;
-          const isUserInCA = currLng >= -93.0 && currLng <= -77.0 && currLat >= 7.0 && currLat <= 19.0;
-
-          if (!isUserInCA) {
-            alert(lang === 'en'
-              ? 'You are currently outside Central America. Plan your trip and visit us to use live GPS navigation!'
-              : lang === 'zh'
-              ? '您当前不在中美洲范围内。规划好行程并欢迎光临以使用实时GPS导航！'
-              : 'Te encuentras fuera de Centroamérica. ¡Planifica tu viaje y visítanos para usar la navegación GPS en vivo!');
-            return;
-          }
-
-          lugarDestinoRef.current = punto.nombre;
-
-          if ('speechSynthesis' in window) {
-            window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
-          }
-          lastSpokenRef.current = '';
-          speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${punto.nombre}.`, true);
-
-          isNavigatingRef.current = true;
-          setIsNavigating(true);
-          isInteractionPausedRef.current = false;
-          setShowRecenterBtn(false);
-          if (mapContainerRef.current) {
-            mapContainerRef.current.classList.add('atlan-nav-clean-mode');
-          }
-
-          destinationRef.current = [punto.lng, punto.lat];
-          rutaCoordenadasRef.current = [];
-
-          if (directionsRef.current) {
-            directionsRef.current.setOrigin([currLng, currLat]);
-            directionsRef.current.setDestination([punto.lng, punto.lat]);
-          }
-
-          mapRef.current.flyTo({
-            center: [currLng, currLat],
-            zoom: 15.6,
-            pitch: 50,
-            speed: 0.9,
-            curve: 1.1,
-            essential: true
-          });
-
           popup.remove();
+          handleIniciarViaje(punto);
         };
       }
 
@@ -1854,16 +1740,12 @@ export default function MapaTuristico() {
       currentBearingRef.current = bearing;
     }
 
-    if (directionsRef.current && isNavigatingRef.current && !isDemoRunningRef.current) {
-      directionsRef.current.setOrigin([longitude, latitude]);
-    }
-
     if (isNavigatingRef.current && !isInteractionPausedRef.current && mapRef.current) {
       const opts = {
         center: [longitude, latitude],
-        zoom: 15.6,
-        pitch: 50,
-        duration: 1100,
+        zoom: 16.5,
+        pitch: 55,
+        duration: 900,
         essential: true,
       };
       if (bearing !== null && !isNaN(bearing)) {
@@ -1872,23 +1754,45 @@ export default function MapaTuristico() {
       mapRef.current.easeTo(opts);
     }
 
-    // Rediseñar la trayectoria futura en tiempo real si el usuario cambia de ubicación
+    // Rediseñar la trayectoria futura en tiempo real si el usuario cambia de ubicación fuera de navegación
     if (selectedPointRef.current && !isNavigatingRef.current) {
       actualizarPrevisualizacionRuta(longitude, latitude, selectedPointRef.current.lng, selectedPointRef.current.lat, false);
     }
 
-    // Si estamos en viaje (navegación real) y no en demo, verificar si el usuario se desvió para recalcular ruta
-    if (isNavigatingRef.current && !isDemoRunningRef.current && rutaCoordenadasRef.current.length > 0) {
-      const distALaRuta = calcularDistanciaMinimaALaRuta([longitude, latitude], rutaCoordenadasRef.current);
-      const ahora = Date.now();
+    // Si estamos en viaje (navegación real) y no en demo:
+    if (isNavigatingRef.current && !isDemoRunningRef.current) {
+      // 1. Actualizar avisos de maniobras y progreso en el HUD con la posición GPS real
+      checkDistanceAnnouncements(longitude, latitude);
 
-      if (distALaRuta > 65 && (ahora - lastRecalculateTimeRef.current) > 12000) {
-        lastRecalculateTimeRef.current = ahora;
-        speakInstruction(lang === 'en' ? 'Recalculating route' : lang === 'zh' ? '正在重新规划路线' : 'Recalculando ruta', true);
-        
-        if (directionsRef.current && destinationRef.current) {
-          directionsRef.current.setOrigin([longitude, latitude]);
-          directionsRef.current.setDestination(destinationRef.current);
+      // 2. Verificar llegada al destino (< 35 metros)
+      if (destinationRef.current) {
+        const distDestino = calcDistanceMeters([longitude, latitude], destinationRef.current);
+        if (distDestino < 35) {
+          const destinoNombre = lugarDestinoRef.current || 'su destino';
+          speakInstruction(t('map.arrived'), true);
+          cancelarRutaActiva();
+          setVisitPromptData({
+            puntoId: null,
+            puntoNombre: destinoNombre,
+            distanciaKm: Math.round(distDestino / 100) / 10
+          });
+          setShowVisitPrompt(true);
+          return;
+        }
+      }
+
+      // 3. Verificar si el usuario se desvió para recalcular ruta (> 65 metros)
+      if (rutaCoordenadasRef.current.length > 0) {
+        const distALaRuta = calcularDistanciaMinimaALaRuta([longitude, latitude], rutaCoordenadasRef.current);
+        const ahora = Date.now();
+
+        if (distALaRuta > 65 && (ahora - lastRecalculateTimeRef.current) > 12000) {
+          lastRecalculateTimeRef.current = ahora;
+          speakInstruction(lang === 'en' ? 'Recalculating route' : lang === 'zh' ? '正在重新规划路线' : 'Recalculando ruta', true);
+          
+          if (destinationRef.current) {
+            fetchRouteCoords([longitude, latitude], destinationRef.current);
+          }
         }
       }
     }
@@ -2094,7 +1998,7 @@ export default function MapaTuristico() {
     steps.forEach((step, idx) => {
       if (!step.maneuver?.instruction) return;
       const mType = (step.maneuver.type || '').toLowerCase();
-      if (idx === 0 && (mType.includes('depart') || mType.includes('head'))) return;
+      if (idx === 0 && (mType.includes('depart') || mType.includes('head')) && steps.length > 1) return;
 
       const [mLng, mLat] = step.maneuver.location;
       const mModifier = step.maneuver.modifier || '';
@@ -2105,7 +2009,7 @@ export default function MapaTuristico() {
       list.push({
         lng: mLng,
         lat: mLat,
-        instruction: cleanInstr,
+        instruction: cleanInstr || rawInstr,
         type: mType,
         modifier: mModifier,
         iconKey: iconKey,
@@ -2117,6 +2021,32 @@ export default function MapaTuristico() {
         announcedArrive: false,
       });
     });
+
+    if (list.length === 0 && steps.length > 0) {
+      const step = steps[0];
+      if (step.maneuver?.location) {
+        const [mLng, mLat] = step.maneuver.location;
+        const mType = (step.maneuver.type || '').toLowerCase();
+        const mModifier = step.maneuver.modifier || '';
+        const rawInstr = step.maneuver.instruction || '';
+        const cleanInstr = limpiarInstruccion(rawInstr);
+        list.push({
+          lng: mLng,
+          lat: mLat,
+          instruction: cleanInstr || rawInstr,
+          type: mType,
+          modifier: mModifier,
+          iconKey: getManeuverIconKey(mType, mModifier, cleanInstr || rawInstr),
+          icon: getManeuverIcon(mType, mModifier, cleanInstr || rawInstr),
+          segmentDist: step.distance || 0,
+          announcedFar: false,
+          announcedMid: false,
+          announcedClose: false,
+          announcedArrive: false,
+        });
+      }
+    }
+
     return list;
   };
 
@@ -2133,7 +2063,21 @@ export default function MapaTuristico() {
 
   const checkDistanceAnnouncements = (currentLng, currentLat) => {
     const maneuvers = maneuversRef.current;
-    if (!maneuvers || !maneuvers.length) return;
+    if (!maneuvers || !maneuvers.length) {
+      if (destinationRef.current) {
+        const distDestino = calcDistanceMeters([currentLng, currentLat], destinationRef.current);
+        setCurrentManeuver({
+          instruction: lang === 'en' ? 'Continue to destination' : lang === 'zh' ? '继续前往目的地' : 'Continúe hacia el destino',
+          distance: distDestino,
+          distanceFormatted: formatDistanceDisplay(distDestino),
+          iconKey: 'arrive',
+          icon: '🏁',
+          nextNext: null
+        });
+        setRouteInfo(prev => prev ? { ...prev, distance: distDestino } : prev);
+      }
+      return;
+    }
 
     let next = maneuvers[0];
     if (!next) return;
@@ -2174,6 +2118,16 @@ export default function MapaTuristico() {
         iconKey: nextNextIconKey,
       } : null
     });
+
+    if (destinationRef.current) {
+      const distDestino = calcDistanceMeters([currentLng, currentLat], destinationRef.current);
+      setRouteInfo(prev => prev ? {
+        ...prev,
+        distance: distDestino,
+        eta: calculateETA(Math.round((distDestino / 1000) * 120))
+      } : prev);
+    }
+
     if (dist < 300 && !next.announcedClose) {
       next.announcedClose = true;
       const msg = lang === 'en' ? `In ${formatDistance(dist)}, ${next.instruction}` : lang === 'zh' ? `${formatDistance(dist)}后，${next.instruction}` : `En ${formatDistance(dist)}, ${next.instruction.toLowerCase()}`;
@@ -2206,16 +2160,46 @@ export default function MapaTuristico() {
   };
 
   const fetchRouteCoords = async (origin, destination) => {
+    if (!origin || !destination) return [];
     const [oLng, oLat] = origin;
     const [dLng, dLat] = destination;
     const directionsLang = lang === 'en' ? 'en' : lang === 'zh' ? 'zh' : 'es';
-    const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&steps=true&language=${directionsLang}&access_token=${mapboxgl.accessToken}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.routes?.length > 0) {
-      const route = data.routes[0];
-      const coords = route.geometry.coordinates;
-      const steps = route.legs[0]?.steps || [];
+
+    let route = null;
+    let coords = [];
+    let steps = [];
+
+    // 1. Intentar primero con driving-traffic para tener la ruta y tráfico en tiempo real
+    try {
+      const urlTraffic = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&steps=true&language=${directionsLang}&access_token=${mapboxgl.accessToken}`;
+      const resTraffic = await fetch(urlTraffic);
+      const dataTraffic = await resTraffic.json();
+      if (dataTraffic.routes && dataTraffic.routes.length > 0) {
+        route = dataTraffic.routes[0];
+        coords = route.geometry.coordinates;
+        steps = route.legs[0]?.steps || [];
+      }
+    } catch (e) {
+      console.warn('[Atlan] Error al consultar driving-traffic:', e);
+    }
+
+    // 2. Fallback con perfil driving estándar si driving-traffic no devuelve ruta
+    if (!route || coords.length === 0) {
+      try {
+        const urlDriving = `https://api.mapbox.com/directions/v5/mapbox/driving/${oLng},${oLat};${dLng},${dLat}?geometries=geojson&overview=full&steps=true&language=${directionsLang}&access_token=${mapboxgl.accessToken}`;
+        const resDriving = await fetch(urlDriving);
+        const dataDriving = await resDriving.json();
+        if (dataDriving.routes && dataDriving.routes.length > 0) {
+          route = dataDriving.routes[0];
+          coords = route.geometry.coordinates;
+          steps = route.legs[0]?.steps || [];
+        }
+      } catch (e) {
+        console.warn('[Atlan] Error en fallback driving:', e);
+      }
+    }
+
+    if (route && coords.length > 0) {
       rutaCoordenadasRef.current = coords;
       maneuversRef.current = buildManeuverList(steps);
 
@@ -2226,9 +2210,148 @@ export default function MapaTuristico() {
         destinationName: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : lang === 'zh' ? '目的地' : 'Destino')
       });
 
+      // Configurar de inmediato la primera maniobra en el HUD (icono de giro, instrucción y distancia)
+      if (maneuversRef.current && maneuversRef.current.length > 0) {
+        const firstM = maneuversRef.current[0];
+        const nextNextM = maneuversRef.current.length > 1 ? maneuversRef.current[1] : null;
+        const initialDist = firstM.segmentDist || route.distance;
+
+        setCurrentManeuver({
+          type: firstM.type,
+          modifier: firstM.modifier,
+          instruction: firstM.instruction,
+          distance: initialDist,
+          distanceFormatted: formatDistanceDisplay(initialDist),
+          iconKey: firstM.iconKey,
+          icon: firstM.icon,
+          nextNext: nextNextM ? {
+            instruction: nextNextM.instruction,
+            iconKey: nextNextM.iconKey,
+          } : null
+        });
+      }
+
+      // Dibujar o actualizar la trayectoria azul en el mapa mediante la capa 'preview-route'
+      if (mapRef.current && mapRef.current.isStyleLoaded()) {
+        const source = mapRef.current.getSource('preview-route');
+        if (source) {
+          source.setData({
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: coords
+            }
+          });
+        }
+      }
+
       return coords;
     }
     return [];
+  };
+
+  // ── INICIAR VIAJE (GPS REAL + HUD DE NAVEGACIÓN EN VIVO) ──
+  const iniciarViajeCore = async (puntoParam = null) => {
+    const puntoRaw = puntoParam || selectedPoint;
+    const punto = normalizarPunto(puntoRaw);
+    if (!punto || punto.lng === undefined || punto.lat === undefined || isNaN(punto.lng) || isNaN(punto.lat)) return;
+
+    const [currLng, currLat] = currentPosRef.current;
+    const isUserInCA = currLng >= -93.0 && currLng <= -77.0 && currLat >= 7.0 && currLat <= 19.0;
+
+    if (!isUserInCA) {
+      alert(lang === 'en'
+        ? 'You are currently outside Central America. Plan your trip and visit us to use live GPS navigation!'
+        : lang === 'zh'
+        ? '您当前不在中美洲范围内。规划好行程并欢迎光临以使用实时GPS导航！'
+        : 'Te encuentras fuera de Centroamérica. ¡Planifica tu viaje y visítanos para usar la navegación GPS en vivo!');
+      return;
+    }
+
+    // 1. Cerrar popup activo en el mapa si lo hay
+    if (activePopupRef.current) {
+      try { activePopupRef.current.remove(); } catch (e) {}
+      activePopupRef.current = null;
+    }
+
+    // 2. Cerrar hojas o modales de detalles
+    setSelectedPoint(null);
+    setShowFullProfileModal(false);
+    setSelectedPointDetails(null);
+
+    // 3. Detener demo si estuviese corriendo
+    if (demoIntervalRef.current) {
+      clearInterval(demoIntervalRef.current);
+      demoIntervalRef.current = null;
+    }
+    setIsDemoRunning(false);
+    isDemoRunningRef.current = false;
+
+    // 4. Configurar destino y referencias
+    destinationRef.current = [Number(punto.lng), Number(punto.lat)];
+    lugarDestinoRef.current = punto.nombre || (lang === 'en' ? 'Destination' : lang === 'zh' ? '目的地' : 'Destino');
+
+    // 5. Activar estados de navegación limpia y Waze HUD
+    isNavigatingRef.current = true;
+    setIsNavigating(true);
+    isInteractionPausedRef.current = false;
+    setShowRecenterBtn(false);
+
+    if (mapContainerRef.current) {
+      mapContainerRef.current.classList.add('atlan-nav-clean-mode');
+    }
+
+    // 6. Colocar marcador de destino exclusivo (Punto B)
+    actualizarMarcadorDestino(punto);
+
+    // 7. Ocultar panel de direcciones si estuviese abierto
+    setShowDirectionsPopup(false);
+    const directionsPanel = document.querySelector('.mapboxgl-ctrl-directions');
+    if (directionsPanel) {
+      directionsPanel.classList.remove('directions-popup-active');
+      directionsPanel.style.setProperty('display', 'none', 'important');
+    }
+
+    // 8. Síntesis de voz: bienvenida de inicio de viaje
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+    }
+    lastSpokenRef.current = '';
+    speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${punto.nombre}.`, true);
+    lastAnnouncementTimeRef.current = Date.now();
+
+    // 9. Consultar la ruta real y pasos a la API de Mapbox
+    const coords = await fetchRouteCoords([currLng, currLat], [Number(punto.lng), Number(punto.lat)]);
+
+    // 10. Orientar vehículo y cámara 3D hacia la carretera
+    if (coords && coords.length > 0) {
+      const initialBearing = coords.length > 1 ? calcBearing(coords[0], coords[1]) : 0;
+      currentBearingRef.current = initialBearing;
+
+      handlePositionUpdate(currLng, currLat, initialBearing);
+
+      if (mapRef.current) {
+        mapRef.current.flyTo({
+          center: [currLng, currLat],
+          zoom: 16.5,
+          pitch: 55,
+          bearing: initialBearing,
+          speed: 1.1,
+          curve: 1.15,
+          essential: true
+        });
+      }
+    } else {
+      if (mapRef.current) {
+        mapRef.current.flyTo({
+          center: [currLng, currLat],
+          zoom: 16,
+          pitch: 50,
+          essential: true
+        });
+      }
+    }
   };
 
   // ── CANCELAR RUTA ACTIVA Y RESTAURAR ESTADO NORMAL DEL MAPA ──
@@ -2947,6 +3070,7 @@ export default function MapaTuristico() {
 
     // Geolocalización nativa + web y vuelo descendente cinematográfico a los 8.0 segundos
     let watchId = null;
+    let lastGpsCoords = null;
 
     // Registrar puente para recibir coordenadas GPS nativas desde la App Móvil Flutter (Hardware real del teléfono)
     window.updateNativeGPSPosition = (lng, lat, heading = 0) => {
@@ -2959,13 +3083,25 @@ export default function MapaTuristico() {
       watchId = navigator.geolocation.watchPosition(
         (pos) => {
           if (isDemoRunningRef.current) return;
-          const { longitude, latitude } = pos.coords;
-          handlePositionUpdate(longitude, latitude);
+          const { longitude, latitude, heading } = pos.coords;
+
+          let bearing = null;
+          if (heading !== null && heading !== undefined && !isNaN(heading) && heading >= 0) {
+            bearing = heading;
+          } else if (lastGpsCoords) {
+            const distMoved = calcDistanceMeters([lastGpsCoords.lng, lastGpsCoords.lat], [longitude, latitude]);
+            if (distMoved >= 2.5) {
+              bearing = calcBearing([lastGpsCoords.lng, lastGpsCoords.lat], [longitude, latitude]);
+            }
+          }
+          lastGpsCoords = { lng: longitude, lat: latitude };
+
+          handlePositionUpdate(longitude, latitude, bearing);
         },
         (err) => {
           console.warn('[Atlan Web GPS Error]:', err);
         },
-        { enableHighAccuracy: true, maximumAge: 0 }
+        { enableHighAccuracy: true, maximumAge: 1000 }
       );
     }
 
@@ -4402,38 +4538,16 @@ export default function MapaTuristico() {
         </div>
       )}
 
-      {/* Botón Flotante Trazar Ruta (solo cuando no hay una ruta activa) */}
-      {!selectedPoint && !routeInfo && (
-        <div
-          onClick={() => setShowDirectionsPopup((prev) => !prev)}
-          style={{
-            position: 'absolute',
-            bottom: '100px',
-            left: '20px',
-            zIndex: 40,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: showDirectionsPopup ? '#EF4444' : 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-            color: showDirectionsPopup ? '#FFFFFF' : '#0A192F',
-            border: showDirectionsPopup ? '2px solid #EF4444' : '2px solid #FFFFFF',
-            borderRadius: '25px',
-            padding: '10px 18px',
-            fontWeight: '900',
-            fontSize: '13.5px',
-            boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
-            transition: 'all 0.25s ease'
-          }}
-          title={showDirectionsPopup ? (lang === 'en' ? 'Close route panel' : lang === 'zh' ? '关闭路线面板' : 'Cerrar panel de ruta') : (lang === 'en' ? 'Open route planner' : lang === 'zh' ? '路线规划' : 'Trazar o ver ruta')}
-        >
-          <span>🧭</span>
-          <span>{showDirectionsPopup ? (lang === 'en' ? 'Close Route' : lang === 'zh' ? '关闭路线' : 'Cerrar Ruta') : (lang === 'en' ? 'Route A-B' : lang === 'zh' ? '规划路线' : 'Trazar Ruta')}</span>
-        </div>
-      )}
+      {/* Botón Flotante Trazar Ruta (Oculto en web y móvil según preferencia visual, manteniendo funcionalidad interna) */}
+      <div
+        id="btn-trazar-ruta"
+        onClick={() => setShowDirectionsPopup((prev) => !prev)}
+        style={{ display: 'none' }}
+        aria-hidden="true"
+      />
 
-      {/* Botón 🚗 Demo */}
-      {!selectedPoint && (
+      {/* Botón 🚗 Demo (solo cuando no hay navegación en curso) */}
+      {!selectedPoint && !isNavigating && !routeInfo && (
         <button
           className="btn-demo"
           onClick={iniciarSimulacionDemo}
@@ -4460,7 +4574,7 @@ export default function MapaTuristico() {
       )}
 
       {/* Botón Volver a centrar (Waze-style) */}
-      {!selectedPoint && showRecenterBtn && (isDemoRunning || routeInfo) && (
+      {!selectedPoint && showRecenterBtn && (isDemoRunning || routeInfo || isNavigating) && (
         <button
           onClick={handleRecenter}
           style={{
@@ -5375,79 +5489,21 @@ export default function MapaTuristico() {
         handleCrearResena={handleCrearResena}
       />
 
-      {/* HUD Waze de Ruta — Diseño Premium con Maniobra Integrada */}
+      {/* HUD Waze de Ruta — Diseño Premium con Maniobra Integrada y Soporte Responsivo Móvil Arriba */}
       {routeInfo && (
-        <div style={{
-          position: 'absolute',
-          bottom: '24px',
-          left: '16px',
-          background: 'linear-gradient(145deg, rgba(10, 18, 35, 0.92) 0%, rgba(8, 14, 28, 0.96) 100%)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          border: '1px solid rgba(255, 215, 0, 0.25)',
-          borderRadius: '18px',
-          padding: '0',
-          width: '260px',
-          boxShadow: '0 16px 48px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.1)',
-          zIndex: 15,
-          color: 'white',
-          overflow: 'hidden',
-        }}>
+        <div className="atlan-nav-hud-card">
           {/* Cabecera con maniobra actual estilo Waze / Google Maps */}
           {currentManeuver && (
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 4px 16px rgba(4, 120, 87, 0.3)',
-            }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '14px',
-                padding: '12px 14px',
-              }}>
-
-                <div style={{
-                  width: '48px',
-                  height: '48px',
-                  minWidth: '48px',
-                  borderRadius: '14px',
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  border: '1.5px solid rgba(255, 255, 255, 0.4)',
-                  color: '#FFFFFF',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
-                }}>
-                  {renderManeuverIcon(currentManeuver.iconKey, 30, '#FFFFFF')}
+            <div className="atlan-nav-hud-maneuver">
+              <div className="atlan-nav-hud-maneuver-main">
+                <div className="atlan-nav-hud-icon-wrap">
+                  {renderManeuverIcon(currentManeuver.iconKey, 28, '#FFFFFF')}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{
-                    fontSize: '15px',
-                    fontWeight: '900',
-                    color: '#FFFFFF',
-                    letterSpacing: '-0.2px',
-                    marginBottom: '2px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                  }}>
+                  <div className="atlan-nav-hud-dist">
                     <span>{currentManeuver.distanceFormatted || formatDistanceDisplay(routeInfo.distance)}</span>
                   </div>
-                  <div style={{
-                    fontSize: '12.5px',
-                    fontWeight: '700',
-                    color: 'rgba(255, 255, 255, 0.95)',
-                    lineHeight: '1.25',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                  }}>
+                  <div className="atlan-nav-hud-instr">
                     {currentManeuver.instruction || ''}
                   </div>
                 </div>
@@ -5455,17 +5511,7 @@ export default function MapaTuristico() {
 
               {/* Siguiente paso ("Luego...") estilo Waze / Google Maps */}
               {currentManeuver.nextNext && (
-                <div style={{
-                  padding: '5px 14px 7px 14px',
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  fontSize: '11px',
-                  color: 'rgba(255, 255, 255, 0.85)',
-                  fontWeight: '600',
-                  borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-                }}>
+                <div className="atlan-nav-hud-next">
                   <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.5px', opacity: 0.85, fontWeight: '800' }}>
                     {lang === 'en' ? 'Then' : lang === 'zh' ? '然后' : 'Luego'}:
                   </span>
@@ -5481,47 +5527,48 @@ export default function MapaTuristico() {
           )}
 
           {/* Cuerpo del HUD */}
-          <div style={{ padding: '10px 14px 12px' }}>
+          <div className="atlan-nav-hud-body">
             {/* Header: label + botón cerrar */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <span style={{ fontSize: '9.5px', fontWeight: '800', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+            <div className="atlan-nav-hud-header">
+              <span className="atlan-nav-hud-label">
                 🚗 {lang === 'en' ? 'Active Route' : lang === 'zh' ? '导航中路线' : 'Ruta Activa'}
               </span>
               <button
                 onClick={cancelarRutaActiva}
-                style={{ background: 'rgba(255,255,255,0.08)', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold', width: '22px', height: '22px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s ease' }}
+                className="atlan-nav-hud-close"
+                title="Cerrar ruta"
               >
                 ✕
               </button>
             </div>
 
             {/* Nombre del destino */}
-            <div style={{ fontSize: '13px', fontWeight: '800', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '10px' }}>
+            <div className="atlan-nav-hud-dest">
               📍 {routeInfo.destinationName}
             </div>
 
-            {/* Grid: Tiempo / Distancia */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-              <div style={{ background: 'rgba(16, 185, 129, 0.08)', borderRadius: '10px', padding: '6px 8px', border: '1px solid rgba(16, 185, 129, 0.15)' }}>
-                <div style={{ fontSize: '9px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', marginBottom: '2px' }}>
+            {/* Grid / Fila: Tiempo / Distancia */}
+            <div className="atlan-nav-hud-stats">
+              <div className="atlan-nav-hud-stat-box stat-time">
+                <div className="stat-label">
                   {lang === 'en' ? 'Duration' : lang === 'zh' ? '时长' : 'Tiempo'}
                 </div>
-                <div style={{ fontSize: '16px', fontWeight: '900', color: '#10b981' }}>
+                <div className="stat-val val-green">
                   {formatDurationDisplay(routeInfo.duration)}
                 </div>
               </div>
-              <div style={{ background: 'rgba(255, 215, 0, 0.06)', borderRadius: '10px', padding: '6px 8px', border: '1px solid rgba(255, 215, 0, 0.12)' }}>
-                <div style={{ fontSize: '9px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', marginBottom: '2px' }}>
+              <div className="atlan-nav-hud-stat-box stat-dist">
+                <div className="stat-label">
                   {lang === 'en' ? 'Distance' : lang === 'zh' ? '距离' : 'Distancia'}
                 </div>
-                <div style={{ fontSize: '16px', fontWeight: '900', color: '#FFD700' }}>
+                <div className="stat-val val-gold">
                   {formatDistanceDisplay(routeInfo.distance)}
                 </div>
               </div>
             </div>
 
             {/* ETA */}
-            <div style={{ marginTop: '8px', fontSize: '11px', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '6px' }}>
+            <div className="atlan-nav-hud-eta">
               <span>{lang === 'en' ? 'Arrival ETA:' : lang === 'zh' ? '预计到达时间：' : 'Llegada (ETA):'}</span>
               <span style={{ fontWeight: '800', color: 'white' }}>{routeInfo.eta}</span>
             </div>
