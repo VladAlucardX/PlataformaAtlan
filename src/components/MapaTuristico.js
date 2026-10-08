@@ -5489,79 +5489,21 @@ export default function MapaTuristico() {
         handleCrearResena={handleCrearResena}
       />
 
-      {/* HUD Waze de Ruta — Diseño Premium con Maniobra Integrada */}
+      {/* HUD Waze de Ruta — Diseño Premium con Maniobra Integrada y Soporte Responsivo Móvil Arriba */}
       {routeInfo && (
-        <div style={{
-          position: 'absolute',
-          bottom: '24px',
-          left: '16px',
-          background: 'linear-gradient(145deg, rgba(10, 18, 35, 0.92) 0%, rgba(8, 14, 28, 0.96) 100%)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          border: '1px solid rgba(255, 215, 0, 0.25)',
-          borderRadius: '18px',
-          padding: '0',
-          width: '260px',
-          boxShadow: '0 16px 48px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.1)',
-          zIndex: 15,
-          color: 'white',
-          overflow: 'hidden',
-        }}>
+        <div className="atlan-nav-hud-card">
           {/* Cabecera con maniobra actual estilo Waze / Google Maps */}
           {currentManeuver && (
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 4px 16px rgba(4, 120, 87, 0.3)',
-            }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '14px',
-                padding: '12px 14px',
-              }}>
-
-                <div style={{
-                  width: '48px',
-                  height: '48px',
-                  minWidth: '48px',
-                  borderRadius: '14px',
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  border: '1.5px solid rgba(255, 255, 255, 0.4)',
-                  color: '#FFFFFF',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
-                }}>
-                  {renderManeuverIcon(currentManeuver.iconKey, 30, '#FFFFFF')}
+            <div className="atlan-nav-hud-maneuver">
+              <div className="atlan-nav-hud-maneuver-main">
+                <div className="atlan-nav-hud-icon-wrap">
+                  {renderManeuverIcon(currentManeuver.iconKey, 28, '#FFFFFF')}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{
-                    fontSize: '15px',
-                    fontWeight: '900',
-                    color: '#FFFFFF',
-                    letterSpacing: '-0.2px',
-                    marginBottom: '2px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                  }}>
+                  <div className="atlan-nav-hud-dist">
                     <span>{currentManeuver.distanceFormatted || formatDistanceDisplay(routeInfo.distance)}</span>
                   </div>
-                  <div style={{
-                    fontSize: '12.5px',
-                    fontWeight: '700',
-                    color: 'rgba(255, 255, 255, 0.95)',
-                    lineHeight: '1.25',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                  }}>
+                  <div className="atlan-nav-hud-instr">
                     {currentManeuver.instruction || ''}
                   </div>
                 </div>
@@ -5569,17 +5511,7 @@ export default function MapaTuristico() {
 
               {/* Siguiente paso ("Luego...") estilo Waze / Google Maps */}
               {currentManeuver.nextNext && (
-                <div style={{
-                  padding: '5px 14px 7px 14px',
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  fontSize: '11px',
-                  color: 'rgba(255, 255, 255, 0.85)',
-                  fontWeight: '600',
-                  borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-                }}>
+                <div className="atlan-nav-hud-next">
                   <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.5px', opacity: 0.85, fontWeight: '800' }}>
                     {lang === 'en' ? 'Then' : lang === 'zh' ? '然后' : 'Luego'}:
                   </span>
@@ -5595,47 +5527,48 @@ export default function MapaTuristico() {
           )}
 
           {/* Cuerpo del HUD */}
-          <div style={{ padding: '10px 14px 12px' }}>
+          <div className="atlan-nav-hud-body">
             {/* Header: label + botón cerrar */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <span style={{ fontSize: '9.5px', fontWeight: '800', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+            <div className="atlan-nav-hud-header">
+              <span className="atlan-nav-hud-label">
                 🚗 {lang === 'en' ? 'Active Route' : lang === 'zh' ? '导航中路线' : 'Ruta Activa'}
               </span>
               <button
                 onClick={cancelarRutaActiva}
-                style={{ background: 'rgba(255,255,255,0.08)', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold', width: '22px', height: '22px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s ease' }}
+                className="atlan-nav-hud-close"
+                title="Cerrar ruta"
               >
                 ✕
               </button>
             </div>
 
             {/* Nombre del destino */}
-            <div style={{ fontSize: '13px', fontWeight: '800', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '10px' }}>
+            <div className="atlan-nav-hud-dest">
               📍 {routeInfo.destinationName}
             </div>
 
-            {/* Grid: Tiempo / Distancia */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-              <div style={{ background: 'rgba(16, 185, 129, 0.08)', borderRadius: '10px', padding: '6px 8px', border: '1px solid rgba(16, 185, 129, 0.15)' }}>
-                <div style={{ fontSize: '9px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', marginBottom: '2px' }}>
+            {/* Grid / Fila: Tiempo / Distancia */}
+            <div className="atlan-nav-hud-stats">
+              <div className="atlan-nav-hud-stat-box stat-time">
+                <div className="stat-label">
                   {lang === 'en' ? 'Duration' : lang === 'zh' ? '时长' : 'Tiempo'}
                 </div>
-                <div style={{ fontSize: '16px', fontWeight: '900', color: '#10b981' }}>
+                <div className="stat-val val-green">
                   {formatDurationDisplay(routeInfo.duration)}
                 </div>
               </div>
-              <div style={{ background: 'rgba(255, 215, 0, 0.06)', borderRadius: '10px', padding: '6px 8px', border: '1px solid rgba(255, 215, 0, 0.12)' }}>
-                <div style={{ fontSize: '9px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', marginBottom: '2px' }}>
+              <div className="atlan-nav-hud-stat-box stat-dist">
+                <div className="stat-label">
                   {lang === 'en' ? 'Distance' : lang === 'zh' ? '距离' : 'Distancia'}
                 </div>
-                <div style={{ fontSize: '16px', fontWeight: '900', color: '#FFD700' }}>
+                <div className="stat-val val-gold">
                   {formatDistanceDisplay(routeInfo.distance)}
                 </div>
               </div>
             </div>
 
             {/* ETA */}
-            <div style={{ marginTop: '8px', fontSize: '11px', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '6px' }}>
+            <div className="atlan-nav-hud-eta">
               <span>{lang === 'en' ? 'Arrival ETA:' : lang === 'zh' ? '预计到达时间：' : 'Llegada (ETA):'}</span>
               <span style={{ fontWeight: '800', color: 'white' }}>{routeInfo.eta}</span>
             </div>
