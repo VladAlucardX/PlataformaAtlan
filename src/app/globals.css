@@ -2130,10 +2130,10 @@ html body .mapboxgl-ctrl-directions tr {
   }
 }
 
-/* Cuando la ventana web es reducida y la cabecera ocupa 2 filas (<= 950px), mover la barra más abajo con espacio holgado (148px) */
-@media (max-width: 950px) {
+/* Cuando la ventana web es reducida o en tablet (<= 1024px), dar espacio holgado a las categorías para no encimarse con la búsqueda */
+@media (max-width: 1024px) {
   .filter-bar-wrapper {
-    top: 148px !important;
+    top: 170px !important;
     left: 10px !important;
     right: 10px !important;
   }
@@ -2201,7 +2201,7 @@ html body .mapboxgl-ctrl-directions tr {
 
   /* Reposicionar y estilizar panel de direcciones Mapbox (Punto A y B) */
   .mapboxgl-ctrl-top-left {
-    top: 148px !important;
+    top: 172px !important;
     left: 10px !important;
     right: 10px !important;
     width: calc(100vw - 20px) !important;
@@ -2220,10 +2220,10 @@ html body .mapboxgl-ctrl-directions tr {
     display: none !important;
   }
 
-  /* Barra de filtros en móvil (Píldoras horizontales deslizables a 148px con espacio perfecto) */
+  /* Barra de filtros en móvil (Píldoras horizontales deslizables con separación holgada y limpia bajo la barra de búsqueda) */
   .filter-bar-wrapper {
     position: absolute !important;
-    top: 148px !important;
+    top: 172px !important;
     bottom: auto !important;
     left: 10px !important;
     right: 10px !important;
