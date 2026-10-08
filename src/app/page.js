@@ -442,10 +442,12 @@ function Footer() {
   );
 }
 
+// Variable en memoria para no repetir el video durante navegación interna o al cerrar sesión
+let hasPlayedIntroInSession = false;
+
 // Componente Principal
 export default function Home() {
-  // En Web de escritorio se mantiene false por defecto para reproducir el video intro completo.
-  const [introDone, setIntroDone] = React.useState(false);
+  const [introDone, setIntroDone] = React.useState(hasPlayedIntroInSession);
   const { session, perfil, logout, is2FAVerified } = useAuth();
 
   // Si el usuario llega desde el enlace del correo (Magic Link), validar automáticamente su 2FA
@@ -482,14 +484,12 @@ export default function Home() {
   }, [session]);
 
   React.useEffect(() => {
-    try {
-      const introSeen =
-        sessionStorage.getItem("introSeen") === "true" ||
-        localStorage.getItem("introSeen") === "true";
-      if (introSeen) {
-        requestAnimationFrame(() => setIntroDone(true));
-      }
-    } catch (_) {}
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem("introSeen");
+        sessionStorage.removeItem("introSeen");
+      } catch (_) {}
+    }
   }, []);
 
   React.useEffect(() => {
@@ -516,22 +516,13 @@ export default function Home() {
 
 
   const handleLogout = async () => {
-    if (typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem("introSeen", "true");
-        localStorage.setItem("introSeen", "true");
-      } catch (_) {}
-    }
+    hasPlayedIntroInSession = true;
+    setIntroDone(true);
     await logout();
   };
 
   const handleIntroComplete = () => {
-    if (typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem("introSeen", "true");
-        localStorage.setItem("introSeen", "true");
-      } catch (e) {}
-    }
+    hasPlayedIntroInSession = true;
     setIntroDone(true);
   };
 
