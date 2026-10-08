@@ -882,3 +882,21 @@
     gap: 16px;
   }
 }
+
+@media (min-width: 1600px) {
+  .categoryChip {
+    padding: 10px 20px;
+    font-size: 14.5px;
+    border-radius: 14px;
+    gap: 10px;
+  }
+}
+
+@media (min-width: 2200px) {
+  .categoryChip {
+    padding: 12px 24px;
+    font-size: 15.5px;
+    border-radius: 16px;
+    gap: 10px;
+  }
+}

@@ -4010,31 +4010,20 @@ export default function MapaTuristico() {
             {/* Píldora "Todas" */}
             <button
               onClick={() => aplicarFiltro(null)}
+              className="filter-bar-pill"
               style={{
                 flexShrink: 0,
-                padding: '8px 16px',
                 background: filtroCategoria === null ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : '#0A192F',
                 color: filtroCategoria === null ? '#0A192F' : '#FFFFFF',
                 border: filtroCategoria === null ? '1px solid #FFD700' : '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: '14px',
-                fontWeight: '800',
-                fontSize: '12.5px',
-                cursor: 'pointer',
-                backdropFilter: 'blur(12px)',
                 boxShadow: filtroCategoria === null ? '0 4px 12px rgba(255,215,0,0.3)' : '0 4px 10px rgba(0,0,0,0.25)',
-                transition: 'all 0.2s',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
               }}
             >
               <img
                 src="/images/remolino.svg"
                 alt="Todas"
+                className="filter-bar-pill-icon"
                 style={{
-                  width: '16px',
-                  height: '16px',
-                  objectFit: 'contain',
                   filter: filtroCategoria === null ? 'brightness(0)' : 'brightness(0) invert(1)'
                 }}
               />
@@ -4047,29 +4036,20 @@ export default function MapaTuristico() {
                 <button
                   key={key}
                   onClick={() => aplicarFiltro(key)}
+                  className="filter-bar-pill"
                   style={{
                     flexShrink: 0,
-                    padding: '8px 16px',
                     background: isSelected ? config.color : '#0A192F',
                     color: isSelected ? '#FFFFFF' : '#E2E8F0',
                     border: isSelected ? `1.5px solid ${config.color}` : '1px solid rgba(255, 255, 255, 0.15)',
-                    borderRadius: '14px',
-                    fontWeight: '750',
-                    fontSize: '12.5px',
-                    cursor: 'pointer',
-                    backdropFilter: 'blur(12px)',
                     boxShadow: isSelected ? `0 4px 14px ${config.color}55` : '0 4px 10px rgba(0,0,0,0.25)',
-                    transition: 'all 0.2s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
                   }}
                 >
-                  <span>
+                  <span className="filter-bar-pill-icon-wrap">
                     {config.svgFile ? (
-                      <img src={config.svgFile} alt={key} style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
+                      <img src={config.svgFile} alt={key} className="filter-bar-pill-icon" style={{ filter: "brightness(0) invert(1)" }} />
                     ) : (
-                      <Icon name={config.icon} size={16} />
+                      <Icon name={config.icon} size={16} className="filter-bar-pill-icon" />
                     )}
                   </span>
                   <span>{t(`addPoint.categories.${key}`)}</span>
