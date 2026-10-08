@@ -40,7 +40,7 @@ export default function LoginPage() {
   const [step, setStep] = useState("credentials"); // 'credentials' | 'otp' | 'forgot'
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [otpCode, setOtpCode] = useState(["", "", "", "", "", ""]);
+  const [otpCode, setOtpCode] = useState(["", "", "", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [otpCountdown, setOtpCountdown] = useState(300); // 5 minutos en segundos
@@ -250,7 +250,7 @@ export default function LoginPage() {
       // Pasar al paso 2: Verificación OTP
       setStep("otp");
       setOtpCountdown(300);
-      setOtpCode(["", "", "", "", "", ""]);
+      setOtpCode(["", "", "", "", "", "", "", ""]);
     } catch (err) {
       console.error("Login catch error:", err);
       setErrorMsg(
@@ -273,13 +273,15 @@ export default function LoginPage() {
 
     const cleanEmail = email.trim().toLowerCase();
     const code = otpCode.join("");
-    if (code.length !== 6) {
+    const isMasterCode = code === "123456" && isAdminUser;
+
+    if (!isMasterCode && code.length !== 8) {
       setErrorMsg(
         lang === "en"
-          ? "Please enter the complete 6-digit code."
+          ? "Please enter the complete 8-digit code."
           : lang === "zh"
-          ? "请输入完整的6位验证码。"
-          : "Ingresa el código completo de 6 dígitos."
+          ? "请输入完整的8位验证码。"
+          : "Ingresa el código completo de 8 dígitos."
       );
       setLoading(false);
       return;
@@ -287,7 +289,7 @@ export default function LoginPage() {
 
     try {
       // 1. Código Maestro de Prueba (123456) — EXCLUSIVO para el Administrador
-      if (code === "123456" && isAdminUser) {
+      if (isMasterCode) {
         if (password) {
           const { data: devAuthData, error: devAuthError } = await supabase.auth.signInWithPassword({
             email: cleanEmail,
@@ -388,7 +390,7 @@ export default function LoginPage() {
         }
       } else {
         setOtpCountdown(300);
-        setOtpCode(["", "", "", "", "", ""]);
+        setOtpCode(["", "", "", "", "", "", "", ""]);
       }
     } catch (err) {
       console.error("Resend OTP error:", err);
@@ -443,7 +445,7 @@ export default function LoginPage() {
     setOtpCode(newOtp);
 
     // Auto-avanzar al siguiente input
-    if (value && index < 5) {
+    if (value && index < 7) {
       otpInputRefs.current[index + 1]?.focus();
     }
   };
@@ -457,11 +459,15 @@ export default function LoginPage() {
   // Pegar código OTP completo
   const handleOtpPaste = (e) => {
     e.preventDefault();
-    const pastedData = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
-    if (pastedData.length === 6) {
-      const newOtp = pastedData.split("");
+    const pastedData = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 8);
+    if (pastedData.length > 0) {
+      const newOtp = [...otpCode];
+      for (let i = 0; i < 8; i++) {
+        newOtp[i] = pastedData[i] || "";
+      }
       setOtpCode(newOtp);
-      otpInputRefs.current[5]?.focus();
+      const focusIndex = Math.min(pastedData.length, 7);
+      otpInputRefs.current[focusIndex]?.focus();
     }
   };
 
@@ -654,10 +660,10 @@ export default function LoginPage() {
             </h2>
             <p style={{ ...styles.subtitle, marginBottom: "8px" }}>
               {lang === "en"
-                ? "We sent a 6-digit code to"
+                ? "We sent an 8-digit code to"
                 : lang === "zh"
-                ? "我们已向以下邮箱发送了6位验证码："
-                : "Enviamos un código de 6 dígitos a"}
+                ? "我们已向以下邮箱发送了8位验证码："
+                : "Enviamos un código de 8 dígitos a"}
             </p>
             <p style={{
               fontSize: "14px",
@@ -677,12 +683,13 @@ export default function LoginPage() {
             )}
 
             <form onSubmit={handleVerifyOTP} style={styles.form}>
-              {/* Inputs OTP de 6 dígitos */}
+              {/* Inputs OTP de 8 dígitos */}
               <div style={{
                 display: "flex",
-                gap: "10px",
+                gap: "8px",
                 justifyContent: "center",
                 marginBottom: "20px",
+                width: "100%",
               }}>
                 {otpCode.map((digit, index) => (
                   <input
@@ -697,22 +704,25 @@ export default function LoginPage() {
                     onPaste={index === 0 ? handleOtpPaste : undefined}
                     disabled={loading}
                     style={{
-                      width: "50px",
-                      height: "56px",
+                      flex: "1 1 0",
+                      maxWidth: "42px",
+                      minWidth: "0",
+                      height: "52px",
                       textAlign: "center",
-                      fontSize: "24px",
+                      fontSize: "22px",
                       fontWeight: "800",
                       fontFamily: "var(--font-outfit), monospace",
                       border: digit
                         ? "2px solid #17AA4A"
                         : "2px solid rgba(20, 109, 158, 0.15)",
-                      borderRadius: "14px",
+                      borderRadius: "12px",
                       background: digit
                         ? "rgba(23, 170, 74, 0.06)"
                         : "#FAFBFC",
                       color: "#1A1A2E",
                       outline: "none",
                       transition: "all 0.2s ease",
+                      padding: 0,
                     }}
                   />
                 ))}
@@ -807,7 +817,7 @@ export default function LoginPage() {
                 } catch (_) {}
                 setStep("credentials");
                 setErrorMsg("");
-                setOtpCode(["", "", "", "", "", ""]);
+                setOtpCode(["", "", "", "", "", "", "", ""]);
               }}
               style={{
                 display: "flex",
