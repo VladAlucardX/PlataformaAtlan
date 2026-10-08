@@ -445,19 +445,31 @@ function Footer() {
 // Componente Principal
 export default function Home() {
   // En Web de escritorio se mantiene false por defecto para reproducir el video intro completo.
-  const [introDone, setIntroDone] = React.useState(false);
+  const [introDone, setIntroDone] = React.useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        return sessionStorage.getItem("introSeen") === "true";
+      } catch (_) {
+        return false;
+      }
+    }
+    return false;
+  });
   const { session, perfil, logout } = useAuth();
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        const introSeen = sessionStorage.getItem("introSeen") === "true";
-        if (introSeen) {
-          setIntroDone(true);
+        const params = new URLSearchParams(window.location.search);
+        const errorCode = params.get("error_code");
+        const errorDesc = params.get("error_description");
+        if (errorCode || errorDesc) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+          if (errorCode === "bad_oauth_state" || errorDesc?.includes("OAuth state")) {
+            window.location.href = "/login?oauth_error=expired";
+          }
         }
-      } catch (e) {
-        // Fallback seguro
-      }
+      } catch (_) {}
     }
   }, []);
 
