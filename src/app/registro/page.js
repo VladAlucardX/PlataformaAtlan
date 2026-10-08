@@ -8,26 +8,6 @@ import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import Icon from "@/components/ui/Icon";
 
-function getInitialOAuthError(lang) {
-  if (typeof window === "undefined") return "";
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const oauthErr = params.get("oauth_error") || params.get("error_code");
-    const errDesc = params.get("error_description");
-    if (oauthErr || errDesc) {
-      if (oauthErr === "expired" || oauthErr === "bad_oauth_state" || errDesc?.includes("OAuth state")) {
-        return lang === "en"
-          ? "Google login session expired or was interrupted. Please click 'Continue with Google' again."
-          : lang === "zh"
-          ? "Google 登录会话已过期或中断，请再次点击“通过 Google 登录”。"
-          : "La sesión de acceso con Google expiró o se interrumpió. Por favor presiona 'Continuar con Google' nuevamente.";
-      }
-      return errDesc || oauthErr || "";
-    }
-  } catch (_) {}
-  return "";
-}
-
 export default function RegisterPage() {
   const { t, lang } = useTranslation();
   const router = useRouter();
@@ -44,10 +24,10 @@ export default function RegisterPage() {
   const [idiomasGuia, setIdiomasGuia] = useState("Español, Inglés");
   const [telefonoGuia, setTelefonoGuia] = useState("");
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState(() => getInitialOAuthError(lang));
+  const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
-  // Redireccionar si ya hay sesión activa y limpiar URL si vino error de OAuth
+  // Redireccionar si ya hay sesión activa y capturar errores de OAuth sin mismatch de hidratación
   useEffect(() => {
     const checkActiveSession = async () => {
       try {
@@ -62,13 +42,28 @@ export default function RegisterPage() {
 
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("oauth_error") || params.get("error_code") || params.get("error_description")) {
+      const oauthErr = params.get("oauth_error") || params.get("error_code");
+      const errDesc = params.get("error_description");
+      if (oauthErr || errDesc) {
         window.history.replaceState({}, document.title, window.location.pathname);
+        requestAnimationFrame(() => {
+          if (oauthErr === "expired" || oauthErr === "bad_oauth_state" || errDesc?.includes("OAuth state")) {
+            setErrorMsg(
+              lang === "en"
+                ? "Google login session expired or was interrupted. Please click 'Continue with Google' again."
+                : lang === "zh"
+                ? "Google 登录会话已过期或中断，请再次点击“通过 Google 登录”。"
+                : "La sesión de acceso con Google expiró o se interrumpió. Por favor presiona 'Continuar con Google' nuevamente."
+            );
+          } else {
+            setErrorMsg(errDesc || oauthErr);
+          }
+        });
       }
     }
 
     checkActiveSession();
-  }, [router]);
+  }, [router, lang]);
 
   const handleRegister = async (e) => {
     e.preventDefault();

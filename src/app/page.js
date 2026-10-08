@@ -445,17 +445,17 @@ function Footer() {
 // Componente Principal
 export default function Home() {
   // En Web de escritorio se mantiene false por defecto para reproducir el video intro completo.
-  const [introDone, setIntroDone] = React.useState(() => {
-    if (typeof window !== "undefined") {
-      try {
-        return sessionStorage.getItem("introSeen") === "true";
-      } catch (_) {
-        return false;
-      }
-    }
-    return false;
-  });
+  const [introDone, setIntroDone] = React.useState(false);
   const { session, perfil, logout } = useAuth();
+
+  React.useEffect(() => {
+    try {
+      const introSeen = sessionStorage.getItem("introSeen") === "true";
+      if (introSeen) {
+        requestAnimationFrame(() => setIntroDone(true));
+      }
+    } catch (_) {}
+  }, []);
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
