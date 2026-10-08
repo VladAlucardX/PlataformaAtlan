@@ -25,6 +25,8 @@ const MOCK_GUIAS = [
     telefono_contacto: "+505 8899 1122",
     whatsapp: "50588991122",
     instagram: "@carlos_volcano_tours",
+    facebook: "",
+    tiktok: "",
     licencia_intur: "INTUR-LE-2018-941",
     rating_promedio: 4.9,
     total_resenas: 34,
@@ -100,6 +102,8 @@ const MOCK_GUIAS = [
     telefono_contacto: "+505 8765 4321",
     whatsapp: "50587654321",
     instagram: "@maria_granada_heritage",
+    facebook: "",
+    tiktok: "",
     licencia_intur: "INTUR-GR-2016-512",
     rating_promedio: 5.0,
     total_resenas: 42,
@@ -175,6 +179,8 @@ const MOCK_GUIAS = [
     telefono_contacto: "+505 8812 3456",
     whatsapp: "50588123456",
     instagram: "@ometepe_ecotours",
+    facebook: "",
+    tiktok: "",
     licencia_intur: "INTUR-RI-2020-304",
     rating_promedio: 4.9,
     total_resenas: 29,
@@ -251,6 +257,8 @@ const MOCK_GUIAS = [
     telefono_contacto: "+505 8800 0001",
     whatsapp: "50588000001",
     instagram: "@beatriz_birds_test",
+    facebook: "",
+    tiktok: "",
     licencia_intur: "INTUR-MT-2017-819",
     rating_promedio: 4.9,
     total_resenas: 18,
@@ -278,6 +286,8 @@ const MOCK_GUIAS = [
     telefono_contacto: "+505 8800 0002",
     whatsapp: "50588000002",
     instagram: "@gabriel_masaya_test",
+    facebook: "",
+    tiktok: "",
     licencia_intur: "INTUR-MS-2020-411",
     rating_promedio: 4.8,
     total_resenas: 15,
@@ -305,6 +315,8 @@ const MOCK_GUIAS = [
     telefono_contacto: "+505 8800 0003",
     whatsapp: "50588000003",
     instagram: "@valeria_volcano_test",
+    facebook: "",
+    tiktok: "",
     licencia_intur: "INTUR-CH-2019-105",
     rating_promedio: 5.0,
     total_resenas: 22,
@@ -351,6 +363,28 @@ const RANGOS_PRECIO_LIST = [
   "Estándar ($30 - $50)",
   "Premium (> $50)"
 ];
+
+const cleanTarifa = (t, defaultTarifa = "$30 - $50 / día") => {
+  if (!t || typeof t !== "string" || t.trim() === "" || !/\d/.test(t)) {
+    return defaultTarifa;
+  }
+  return t.trim();
+};
+
+const formatSocialUrl = (type, val) => {
+  if (!val || typeof val !== "string" || val.trim() === "") return "#";
+  const clean = val.trim();
+  if (clean.startsWith("http://") || clean.startsWith("https://")) return clean;
+  if (clean.startsWith("www.") || clean.includes("facebook.com") || clean.includes("tiktok.com") || clean.includes("instagram.com") || clean.includes(".com") || clean.includes("/")) {
+    return `https://${clean.replace(/^https?:\/\//, '')}`;
+  }
+  if (type === "instagram") return `https://instagram.com/${clean.replace(/^@/, '')}`;
+  if (type === "facebook") return `https://facebook.com/${clean.replace(/^@/, '')}`;
+  if (type === "tiktok") return `https://tiktok.com/@${clean.replace(/^@/, '')}`;
+  return clean;
+};
+
+const hasVal = (v) => v && typeof v === "string" && v.trim() !== "" && v.trim() !== "#";
 
 export default function GuiasPage() {
   const { lang } = useTranslation();
@@ -402,7 +436,9 @@ export default function GuiasPage() {
         let rawSaved = null;
         try {
           if (typeof window !== "undefined") {
-            const raw = localStorage.getItem("atlan_guia_profile_global") || localStorage.getItem("atlan_guia_profile_carlos");
+            const raw = (session?.user?.id ? localStorage.getItem("atlan_guia_profile_" + session.user.id) : null) ||
+                        localStorage.getItem("atlan_guia_profile_global") ||
+                        localStorage.getItem("atlan_guia_profile_carlos");
             if (raw) rawSaved = JSON.parse(raw);
           }
         } catch (e) {}
@@ -412,7 +448,12 @@ export default function GuiasPage() {
             ...g,
             nombre_completo: g.nombre_completo || g.perfiles?.nombre_completo || "Guía Turístico",
             avatar_url: g.avatar_url || g.perfiles?.avatar_url || "/images/perfil.svg",
+            tarifa_aprox: cleanTarifa(g.tarifa_aprox, "$30 - $50 / día"),
             resenas: g.resenas || [],
+            facebook: g.facebook || "",
+            tiktok: g.tiktok || "",
+            instagram: g.instagram || "",
+            whatsapp: g.whatsapp || "",
             galeria_fotos: g.galeria_fotos && g.galeria_fotos.length > 0 ? g.galeria_fotos : [
               "/images/galeria-departamentos/leon/1.1.jpg",
               "/images/galeria-departamentos/leon/2.jpg"
@@ -424,8 +465,12 @@ export default function GuiasPage() {
           const usedDbIds = new Set();
 
           MOCK_GUIAS.forEach((mockG) => {
-            const isCarlos = mockG.nombre_completo.toLowerCase().includes("carlos");
-            const activeProfile = isCarlos && rawSaved ? rawSaved : null;
+            const isMatch = rawSaved && (
+              rawSaved.id === mockG.id ||
+              (rawSaved.nombre_completo && rawSaved.nombre_completo.toLowerCase().trim() === mockG.nombre_completo.toLowerCase().trim()) ||
+              mockG.nombre_completo.toLowerCase().includes("carlos")
+            );
+            const activeProfile = isMatch ? rawSaved : null;
 
             // Buscar coincidencia exacta en la BD ordenada por actualización reciente
             const dbMatch = formattedDbGuias.find(
@@ -444,11 +489,13 @@ export default function GuiasPage() {
                 departamento_principal: source.departamento_principal || mockG.departamento_principal,
                 departamentos_secundarios: (source.departamentos_secundarios && source.departamentos_secundarios.length > 0) ? source.departamentos_secundarios : mockG.departamentos_secundarios,
                 especialidad: source.especialidad || mockG.especialidad,
-                tarifa_aprox: source.tarifa_aprox || mockG.tarifa_aprox,
+                tarifa_aprox: cleanTarifa(source.tarifa_aprox, mockG.tarifa_aprox || "$30 - $50 / día"),
                 experiencia_anios: source.experiencia_anios || mockG.experiencia_anios,
                 biografia: source.biografia || mockG.biografia,
-                whatsapp: source.whatsapp || mockG.whatsapp,
-                instagram: source.instagram || mockG.instagram,
+                whatsapp: source.whatsapp || activeProfile?.whatsapp || mockG.whatsapp || "",
+                instagram: source.instagram || activeProfile?.instagram || mockG.instagram || "",
+                facebook: source.facebook || activeProfile?.facebook || "",
+                tiktok: source.tiktok || activeProfile?.tiktok || "",
                 telefono_contacto: source.telefono_contacto || mockG.telefono_contacto,
                 licencia_intur: source.licencia_intur || mockG.licencia_intur,
                 idiomas: source.idiomas || mockG.idiomas,
@@ -464,26 +511,34 @@ export default function GuiasPage() {
           // Agregar cualquier guía adicional de la BD que no haya sido emparejada
           formattedDbGuias.forEach((dbG) => {
             if (!usedDbIds.has(dbG.id)) {
-              merged.push(dbG);
+              merged.push({
+                ...dbG,
+                tarifa_aprox: cleanTarifa(dbG.tarifa_aprox, "$30 - $50 / día")
+              });
             }
           });
 
           setGuias(merged);
         } else {
-          // Si BD no tiene registros pero hay localSaved, aplicar localSaved a Carlos Mendoza
+          // Si BD no tiene registros pero hay localSaved, aplicar localSaved al guía correspondiente
           if (rawSaved) {
             const merged = MOCK_GUIAS.map(mockG => {
-              if (mockG.nombre_completo.toLowerCase().includes("carlos")) {
+              const isMatch = (rawSaved.id === mockG.id) || 
+                              (rawSaved.nombre_completo && mockG.nombre_completo && rawSaved.nombre_completo.toLowerCase().trim() === mockG.nombre_completo.toLowerCase().trim()) || 
+                              mockG.nombre_completo.toLowerCase().includes("carlos");
+              if (isMatch) {
                 return {
                   ...mockG,
                   ...rawSaved,
                   departamento_principal: rawSaved.departamento_principal || mockG.departamento_principal,
                   especialidad: rawSaved.especialidad || mockG.especialidad,
-                  tarifa_aprox: rawSaved.tarifa_aprox || mockG.tarifa_aprox,
+                  tarifa_aprox: cleanTarifa(rawSaved.tarifa_aprox, mockG.tarifa_aprox || "$30 - $50 / día"),
                   experiencia_anios: rawSaved.experiencia_anios || mockG.experiencia_anios,
                   biografia: rawSaved.biografia || mockG.biografia,
-                  whatsapp: rawSaved.whatsapp || mockG.whatsapp,
-                  instagram: rawSaved.instagram || mockG.instagram,
+                  whatsapp: rawSaved.whatsapp || mockG.whatsapp || "",
+                  instagram: rawSaved.instagram || mockG.instagram || "",
+                  facebook: rawSaved.facebook || "",
+                  tiktok: rawSaved.tiktok || "",
                   telefono_contacto: rawSaved.telefono_contacto || mockG.telefono_contacto,
                   licencia_intur: rawSaved.licencia_intur || mockG.licencia_intur,
                   idiomas: rawSaved.idiomas || mockG.idiomas,
@@ -719,25 +774,28 @@ export default function GuiasPage() {
       <img
         src="/images/guardabarranco.svg"
         alt=""
+        className="guias-bg-svg"
         style={styles.bgSvgGuardabarranco}
       />
       <img
         src="/images/tortuga.svg"
         alt=""
+        className="guias-bg-svg"
         style={styles.bgSvgTortuga}
       />
       <img
         src="/images/gueguense.svg"
         alt=""
+        className="guias-bg-svg"
         style={styles.bgSvgGueguense}
       />
 
       {/* HERO BANNER DE DISEÑO MODERNO Y ELEGANTE */}
-      <section style={styles.heroSectionCompact}>
+      <section style={styles.heroSectionCompact} className="guias-hero">
         <div style={styles.heroGlowLeft} />
 
         <div style={styles.heroContentWide}>
-          <h1 style={styles.heroTitleMain}>
+          <h1 style={styles.heroTitleMain} className="guias-hero-title">
             {lang === "en" ? (
               <>
                 <span style={styles.whiteTextWithShadow}>Explore</span>{" "}
@@ -767,13 +825,13 @@ export default function GuiasPage() {
       </section>
 
       {/* FILTROS Y CONTENEDOR ANCHO */}
-      <main style={styles.mainContainerWide}>
+      <main style={styles.mainContainerWide} className="guias-main">
         {/* BARRA DE FILTROS ULTRA COMPACTA (1 FILA PRINCIPAL + DESPLEGABLE DE FILTROS AVANZADOS) */}
         <div style={styles.filterPanelProfessional}>
           {/* Fila Principal Unificada y Compacta */}
-          <div style={styles.filterRow1}>
+          <div style={styles.filterRow1} className="guias-filter-row">
             {/* 1. Buscador Slim */}
-            <div style={styles.searchBoxSlim}>
+            <div style={styles.searchBoxSlim} className="guias-search-box">
               <Icon name="search" size={16} color="#0EA5E9" />
               <input
                 type="text"
@@ -862,7 +920,7 @@ export default function GuiasPage() {
           {/* DESPLEGABLE DE FILTROS AVANZADOS (IDIOMAS MÚLTIPLES, PRECIO E INTUR) */}
           {showAdvancedFilters && (
             <div style={styles.advancedFiltersDropdownContainer}>
-              <div style={styles.dualFiltersRow}>
+              <div style={styles.dualFiltersRow} className="guias-adv-filters">
                 {/* Idioma Múltiple */}
                 <div style={{ flex: 1, minWidth: "220px" }}>
                   <span style={styles.filterSectionTitleSlim}>
@@ -941,7 +999,7 @@ export default function GuiasPage() {
 
           {/* CHIPS DE FILTROS ACTIVOS CON BOTÓN PARA ELIMINAR INDIVIDUALMENTE */}
           {hasActiveFilters && (
-            <div style={styles.activeFiltersRow}>
+            <div style={styles.activeFiltersRow} className="guias-active-filters">
               <span style={styles.activeFiltersLabel}>{lang === "en" ? "Active Filters:" : lang === "zh" ? "当前筛选：" : "Filtros Activos:"}</span>
 
               {selectedDept !== "Todos" && (
@@ -1007,7 +1065,7 @@ export default function GuiasPage() {
         </div>
 
         {/* CONTADOR DE RESULTADOS Y CABECERA CON PAGINACIÓN INTEGRADA */}
-        <div style={styles.resultsHeaderGlass}>
+        <div style={styles.resultsHeaderGlass} className="guias-results-header">
           <div style={styles.resultsTitleLeft}>
             <div style={styles.headerIconBox}>
               <Icon name="compass" size={15} color="#38BDF8" />
@@ -1119,12 +1177,12 @@ export default function GuiasPage() {
             </p>
           </div>
         ) : (
-          <div style={styles.guidesGridWide}>
+          <div style={styles.guidesGridWide} className="guias-grid">
             {paginatedGuias.map((guia) => (
               <div
                 key={guia.id}
                 style={styles.guideCardGlass}
-                className="guide-card-hover"
+                className="guide-card-hover guias-card"
               >
                 {/* Columna Izquierda: Información de Guía */}
                 <div style={styles.guideCardMainInfo}>
@@ -1187,11 +1245,11 @@ export default function GuiasPage() {
                   <div style={styles.cardFooterWide}>
                     <div style={styles.pricePillBadge}>
                       <Icon name="dollarSign" size={12} color="#10B981" />
-                      <span style={styles.priceValueSlim}>{guia.tarifa_aprox || "$25/día"}</span>
+                      <span style={styles.priceValueSlim}>{cleanTarifa(guia.tarifa_aprox, "$30 - $50 / día")}</span>
                     </div>
 
                     <div style={styles.actionButtonsGroupSlim}>
-                      {guia.whatsapp && (
+                      {hasVal(guia.whatsapp) && (
                         <a
                           href={`https://wa.me/${guia.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${guia.nombre_completo}! Te vi en Plataforma Atlan y me gustaría consultar tu disponibilidad para un tour en ${guia.departamento_principal}.`)}`}
                           target="_blank"
@@ -1199,7 +1257,74 @@ export default function GuiasPage() {
                           style={styles.whatsappBtnSlim}
                           title="Contactar por WhatsApp"
                         >
-                          <Icon name="whatsapp" size={16} color="#FFFFFF" />
+                          <Icon name="whatsapp" size={15} color="#FFFFFF" />
+                        </a>
+                      )}
+
+                      {hasVal(guia.instagram) && (
+                        <a
+                          href={formatSocialUrl("instagram", guia.instagram)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "32px",
+                            height: "32px",
+                            borderRadius: "9px",
+                            background: "linear-gradient(135deg, #E1306C 0%, #C13584 100%)",
+                            color: "#FFFFFF",
+                            textDecoration: "none"
+                          }}
+                          title={`Instagram: ${guia.instagram}`}
+                        >
+                          <Icon name="instagram" size={15} color="#FFFFFF" />
+                        </a>
+                      )}
+
+                      {hasVal(guia.facebook) && (
+                        <a
+                          href={formatSocialUrl("facebook", guia.facebook)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "32px",
+                            height: "32px",
+                            borderRadius: "9px",
+                            background: "#1877F2",
+                            color: "#FFFFFF",
+                            textDecoration: "none"
+                          }}
+                          title="Facebook"
+                        >
+                          <Icon name="facebook" size={15} color="#FFFFFF" />
+                        </a>
+                      )}
+
+                      {hasVal(guia.tiktok) && (
+                        <a
+                          href={formatSocialUrl("tiktok", guia.tiktok)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "32px",
+                            height: "32px",
+                            borderRadius: "9px",
+                            background: "#000000",
+                            border: "1px solid rgba(255,255,255,0.2)",
+                            color: "#FFFFFF",
+                            textDecoration: "none"
+                          }}
+                          title="TikTok"
+                        >
+                          <Icon name="tiktok" size={15} color="#FFFFFF" />
                         </a>
                       )}
 
@@ -1220,6 +1345,7 @@ export default function GuiasPage() {
                 {/* Columna Derecha: Portada Rectangular de Travesía */}
                 {guia.galeria_fotos && guia.galeria_fotos.length > 0 && (
                   <div
+                    className="guias-card-cover"
                     style={styles.coverPhotoBoxRight}
                     onClick={() => {
                       setSelectedGuiaModal(guia);
@@ -1246,13 +1372,14 @@ export default function GuiasPage() {
 
       {/* MODAL EXTENDIDO DEL GUÍA COMPLETO A LO ANCHO Y 100% UNIFORME */}
       {selectedGuiaModal && (
-        <div style={styles.modalOverlay} onClick={() => setSelectedGuiaModal(null)}>
+        <div style={styles.modalOverlay} className="guias-modal-overlay" onClick={() => setSelectedGuiaModal(null)}>
           <div
+            className="guias-modal-card"
             style={styles.modalCardWide}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Cabecera Unificada de Perfil con Banner Integro */}
-            <div style={styles.modalHeaderCard}>
+            <div style={styles.modalHeaderCard} className="guias-modal-header">
               <button
                 onClick={() => setSelectedGuiaModal(null)}
                 style={styles.closeModalBtn}
@@ -1265,6 +1392,7 @@ export default function GuiasPage() {
                 <img
                   src={selectedGuiaModal.avatar_url}
                   alt={selectedGuiaModal.nombre_completo}
+                  className="guias-modal-avatar"
                   style={styles.modalAvatarWide}
                 />
                 <div style={styles.modalAvatarBadgeVerified} title="Guía INTUR Certificado">
@@ -1411,28 +1539,81 @@ export default function GuiasPage() {
                     </div>
                   )}
 
-                  <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                    {selectedGuiaModal.whatsapp && (
+                  <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "16px" }}>
+                    {hasVal(selectedGuiaModal.whatsapp) && (
                       <a
                         href={`https://wa.me/${selectedGuiaModal.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`¡Hola ${selectedGuiaModal.nombre_completo}! Te encontré en Plataforma Atlan y me gustaría consultar disponibilidad para contratar un tour.`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ ...styles.modalWhatsappBanner, flex: 1, minWidth: "220px" }}
+                        style={{ ...styles.modalWhatsappBanner, flex: 1, minWidth: "200px" }}
                       >
-                        <Icon name="whatsapp" size={20} color="#FFFFFF" />
+                        <Icon name="whatsapp" size={18} color="#FFFFFF" />
                         <span>{lang === "en" ? "Contact via WhatsApp" : lang === "zh" ? "WhatsApp 咨询" : "Contactar por WhatsApp"}</span>
                       </a>
                     )}
 
-                    {selectedGuiaModal.instagram && (
+                    {hasVal(selectedGuiaModal.instagram) && (
                       <a
-                        href={selectedGuiaModal.instagram.startsWith("http") ? selectedGuiaModal.instagram : `https://instagram.com/${selectedGuiaModal.instagram.replace('@', '')}`}
+                        href={formatSocialUrl("instagram", selectedGuiaModal.instagram)}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={styles.modalInstagramBanner}
                       >
-                        <Icon name="instagram" size={20} color="#FFFFFF" />
+                        <Icon name="instagram" size={18} color="#FFFFFF" />
                         <span>{selectedGuiaModal.instagram}</span>
+                      </a>
+                    )}
+
+                    {hasVal(selectedGuiaModal.facebook) && (
+                      <a
+                        href={formatSocialUrl("facebook", selectedGuiaModal.facebook)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          background: "#1877F2",
+                          color: "#FFFFFF",
+                          padding: "12px 18px",
+                          borderRadius: "14px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "8px",
+                          fontWeight: "800",
+                          fontSize: "13.5px",
+                          textDecoration: "none",
+                          boxShadow: "0 6px 20px rgba(24, 119, 242, 0.3)",
+                          transition: "all 0.2s ease"
+                        }}
+                      >
+                        <Icon name="facebook" size={18} color="#FFFFFF" />
+                        <span>Facebook</span>
+                      </a>
+                    )}
+
+                    {hasVal(selectedGuiaModal.tiktok) && (
+                      <a
+                        href={formatSocialUrl("tiktok", selectedGuiaModal.tiktok)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          background: "#000000",
+                          color: "#FFFFFF",
+                          padding: "12px 18px",
+                          borderRadius: "14px",
+                          border: "1px solid rgba(255,255,255,0.2)",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "8px",
+                          fontWeight: "800",
+                          fontSize: "13.5px",
+                          textDecoration: "none",
+                          boxShadow: "0 6px 20px rgba(0, 0, 0, 0.4)",
+                          transition: "all 0.2s ease"
+                        }}
+                      >
+                        <Icon name="tiktok" size={18} color="#FFFFFF" />
+                        <span>TikTok</span>
                       </a>
                     )}
                   </div>
@@ -1681,7 +1862,7 @@ const styles = {
 
   heroSectionCompact: {
     position: "relative",
-    padding: "68px 24px 8px 24px",
+    padding: "76px 24px 8px 24px",
     background: "transparent",
     borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
     zIndex: 2

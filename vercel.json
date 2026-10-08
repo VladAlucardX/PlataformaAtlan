@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/historias/limpiar",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}

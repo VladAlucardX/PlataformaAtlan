@@ -231,6 +231,8 @@ export default function PerfilGuiaPage() {
   const [guiaBiografia, setGuiaBiografia] = useState("");
   const [guiaWhatsapp, setGuiaWhatsapp] = useState("");
   const [guiaInstagram, setGuiaInstagram] = useState("");
+  const [guiaFacebook, setGuiaFacebook] = useState("");
+  const [guiaTiktok, setGuiaTiktok] = useState("");
   const [guiaLicencia, setGuiaLicencia] = useState("");
   const [guiaGaleria, setGuiaGaleria] = useState([]);
   const [guiaDestinosMapa, setGuiaDestinosMapa] = useState([]);
@@ -296,17 +298,30 @@ export default function PerfilGuiaPage() {
           if (rawLocal) savedLocal = JSON.parse(rawLocal);
         } catch (e) {}
 
-        const activeData = gData || savedLocal;
+        const activeData = (gData || savedLocal) ? {
+          ...savedLocal,
+          ...gData,
+          facebook: gData ? (gData.facebook || "") : (savedLocal ? (savedLocal.facebook || "") : ""),
+          tiktok: gData ? (gData.tiktok || "") : (savedLocal ? (savedLocal.tiktok || "") : ""),
+          instagram: gData ? (gData.instagram || "") : (savedLocal ? (savedLocal.instagram || "") : ""),
+          whatsapp: gData ? (gData.whatsapp || gData.telefono_contacto || "") : (savedLocal ? (savedLocal.whatsapp || savedLocal.telefono_contacto || "") : "")
+        } : null;
 
         if (activeData) {
           if (activeData.departamento_principal) setGuiaDeptPrincipal(activeData.departamento_principal);
           if (activeData.especialidad) setGuiaEspecialidad(activeData.especialidad);
           if (activeData.idiomas) setGuiaIdiomas(activeData.idiomas);
           if (activeData.experiencia_anios) setGuiaExperiencia(activeData.experiencia_anios);
-          if (activeData.tarifa_aprox) setGuiaTarifa(activeData.tarifa_aprox);
+          if (activeData.tarifa_aprox && !activeData.tarifa_aprox.includes("- /") && activeData.tarifa_aprox.trim() !== "$ - / día") {
+            setGuiaTarifa(activeData.tarifa_aprox);
+          } else {
+            setGuiaTarifa("$30 - $50 / día");
+          }
           if (activeData.biografia !== undefined) setGuiaBiografia(activeData.biografia);
-          if (activeData.whatsapp || activeData.telefono_contacto) setGuiaWhatsapp(activeData.whatsapp || activeData.telefono_contacto);
-          if (activeData.instagram) setGuiaInstagram(activeData.instagram);
+          setGuiaWhatsapp(activeData.whatsapp || activeData.telefono_contacto || "");
+          setGuiaInstagram(activeData.instagram || "");
+          setGuiaFacebook(activeData.facebook || "");
+          setGuiaTiktok(activeData.tiktok || "");
           if (activeData.licencia_intur) setGuiaLicencia(activeData.licencia_intur);
           if (activeData.galeria_fotos) setGuiaGaleria(activeData.galeria_fotos);
           if (activeData.destinos_mapa) setGuiaDestinosMapa(activeData.destinos_mapa);
@@ -437,6 +452,8 @@ export default function PerfilGuiaPage() {
       telefono_contacto: guiaWhatsapp,
       whatsapp: guiaWhatsapp,
       instagram: guiaInstagram,
+      facebook: guiaFacebook,
+      tiktok: guiaTiktok,
       licencia_intur: guiaLicencia,
       galeria_fotos: guiaGaleria,
       destinos_mapa: guiaDestinosMapa,
@@ -444,14 +461,15 @@ export default function PerfilGuiaPage() {
       updated_at: new Date().toISOString()
     };
 
-    // Guardar en LocalStorage para persistencia inmediata incluso con F5
+    // Guardar en LocalStorage para redundancia inmediata
     try {
-      localStorage.setItem("atlan_guia_profile_global", JSON.stringify(profilePayload));
-      localStorage.setItem("atlan_guia_profile_" + user.id, JSON.stringify(profilePayload));
+      const localPayload = { ...profilePayload, facebook: guiaFacebook, tiktok: guiaTiktok };
+      localStorage.setItem("atlan_guia_profile_global", JSON.stringify(localPayload));
+      localStorage.setItem("atlan_guia_profile_" + user.id, JSON.stringify(localPayload));
     } catch (err) {}
 
     try {
-      // 1. Actualizar perfil principal en 'perfiles' (solo campos existentes en la tabla perfiles)
+      // 1. Actualizar perfil principal en 'perfiles'
       const { error: pError } = await supabase.from("perfiles").upsert({
         id: user.id,
         nombre_completo: perfil?.nombre_completo || user.user_metadata?.nombre_completo || "Carlos Mendoza Silva",
@@ -461,10 +479,10 @@ export default function PerfilGuiaPage() {
         console.warn("Perfiles upsert notice:", pError.message);
       }
 
-      // 2. Actualizar en la tabla de guías en Supabase
-      const { error } = await supabase.from("guias_turisticos").upsert(profilePayload);
+      // 2. Guardar en guias_turisticos en Supabase
+      let { error } = await supabase.from("guias_turisticos").upsert(profilePayload);
       if (error) {
-        console.error("Error al guardar en guias_turisticos:", error);
+        console.error("Error al guardar en guias_turisticos:", error.message || error);
       }
 
       setSaveSuccessAlert(true);
@@ -487,7 +505,7 @@ export default function PerfilGuiaPage() {
   }
 
   return (
-    <div style={{
+    <div className="perfil-guia-wrapper" style={{
       height: "100vh",
       maxHeight: "100vh",
       background: "url('/images/Frame 5.png') center/cover no-repeat fixed, #F8FAFC",
@@ -501,11 +519,11 @@ export default function PerfilGuiaPage() {
       <Navbar activePage="guias" session={session} perfil={perfil} />
 
       {/* CONTENEDOR PRINCIPAL CERO SCROLL (100% SINGLE VIEWPORT) */}
-      <div style={{
+      <div className="perfil-guia-main" style={{
         flex: 1,
         maxWidth: "1400px",
         width: "100%",
-        margin: "56px auto 0",
+        margin: "70px auto 0",
         padding: "6px 14px 10px",
         boxSizing: "border-box",
         display: "flex",
@@ -515,7 +533,7 @@ export default function PerfilGuiaPage() {
       }}>
         
         {/* BANNER + PESTAÑAS INTEGRADAS EN UNA SOLA BARRA COMPACTA */}
-        <div style={{
+        <div className="perfil-guia-banner" style={{
           background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
           borderRadius: "14px",
           padding: "8px 14px",
@@ -556,7 +574,7 @@ export default function PerfilGuiaPage() {
           </div>
 
           {/* CENTRO: PESTAÑAS DENTRO DEL BANNER */}
-          <div style={{
+          <div className="perfil-guia-tabs" style={{
             display: "flex",
             alignItems: "center",
             gap: "4px",
@@ -653,7 +671,7 @@ export default function PerfilGuiaPage() {
           </div>
 
           {/* LADO DERECHO: ENLACES RÁPIDOS */}
-          <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
+          <div className="perfil-guia-links" style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
             <Link
               href="/guias"
               style={{
@@ -704,28 +722,29 @@ export default function PerfilGuiaPage() {
           </div>
         </div>
 
-        {/* ALERTA DE ÉXITO */}
+        {/* ALERTA DE ÉXITO CON ALTO CONTRASTE */}
         {saveSuccessAlert && (
           <div style={{
-            background: "rgba(16, 185, 129, 0.15)",
-            border: "1.5px solid #10B981",
-            color: "#10B981",
-            padding: "6px 12px",
-            borderRadius: "8px",
+            background: "linear-gradient(135deg, #064E3B 0%, #047857 100%)",
+            border: "1.5px solid #34D399",
+            color: "#FFFFFF",
+            padding: "10px 16px",
+            borderRadius: "10px",
             display: "flex",
             alignItems: "center",
-            gap: "6px",
-            fontSize: "11.5px",
-            fontWeight: "800",
+            gap: "8px",
+            fontSize: "13px",
+            fontWeight: "850",
+            boxShadow: "0 6px 20px rgba(6, 78, 59, 0.4)",
             flexShrink: 0
           }}>
-            <Icon name="checkCircle" size={14} color="#10B981" />
+            <Icon name="checkCircle" size={18} color="#34D399" />
             <span>{lang === "en" ? "Tourist guide profile saved and updated successfully!" : lang === "zh" ? "导游资料已成功保存并更新！" : "¡Perfil de Guía Turístico guardado y actualizado con éxito!"}</span>
           </div>
         )}
 
         {/* CONTENEDOR DE 2 COLUMNAS (ALTO EXACTO PARA FITEAR EN 1 SCREEN SIN SCROLL) */}
-        <div style={{
+        <div className="perfil-guia-grid" style={{
           flex: 1,
           minHeight: 0,
           display: "grid",
@@ -734,7 +753,7 @@ export default function PerfilGuiaPage() {
           alignItems: "stretch"
         }}>
           {/* COLUMNA IZQUIERDA: TARJETA RESUMEN GUÍA */}
-          <div style={{
+          <div className="perfil-guia-sidebar" style={{
             background: "rgba(255, 255, 255, 0.94)",
             backdropFilter: "blur(10px)",
             borderRadius: "14px",
@@ -1107,6 +1126,66 @@ export default function PerfilGuiaPage() {
                           outline: "none"
                         }}
                       />
+                    </div>
+                  </div>
+
+                  {/* SECCIÓN DE REDES SOCIALES (INSTAGRAM, FACEBOOK, TIKTOK) */}
+                  <div style={{
+                    background: "linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.85) 100%)",
+                    border: "1.5px solid rgba(226, 232, 240, 0.8)",
+                    borderLeft: "3.5px solid #E1306C",
+                    borderRadius: "10px",
+                    padding: "10px 12px",
+                    marginBottom: "12px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.03)"
+                  }}>
+                    <label style={{ fontSize: "12px", fontWeight: "850", color: "#0F172A", display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                      <Icon name="globe" size={14} color="#E1306C" />
+                      <span>{lang === "en" ? "Social Media Profiles" : lang === "zh" ? "社交媒体" : "Redes Sociales (Instagram, Facebook, TikTok)"}</span>
+                    </label>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "8px" }}>
+                      {/* Instagram */}
+                      <div style={{ background: "#FFFFFF", padding: "6px 9px", borderRadius: "8px", border: "1px solid #E2E8F0" }}>
+                        <span style={{ fontSize: "11px", fontWeight: "800", color: "#E1306C", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
+                          <Icon name="instagram" size={12} color="#E1306C" /> Instagram
+                        </span>
+                        <input
+                          type="text"
+                          value={guiaInstagram}
+                          onChange={(e) => setGuiaInstagram(e.target.value)}
+                          placeholder="@mi_guia_instagram"
+                          style={{ width: "100%", border: "none", outline: "none", fontSize: "12px", color: "#1E293B", fontWeight: "600" }}
+                        />
+                      </div>
+
+                      {/* Facebook */}
+                      <div style={{ background: "#FFFFFF", padding: "6px 9px", borderRadius: "8px", border: "1px solid #E2E8F0" }}>
+                        <span style={{ fontSize: "11px", fontWeight: "800", color: "#1877F2", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
+                          <Icon name="facebook" size={12} color="#1877F2" /> Facebook
+                        </span>
+                        <input
+                          type="text"
+                          value={guiaFacebook}
+                          onChange={(e) => setGuiaFacebook(e.target.value)}
+                          placeholder="facebook.com/pagina"
+                          style={{ width: "100%", border: "none", outline: "none", fontSize: "12px", color: "#1E293B", fontWeight: "600" }}
+                        />
+                      </div>
+
+                      {/* TikTok */}
+                      <div style={{ background: "#FFFFFF", padding: "6px 9px", borderRadius: "8px", border: "1px solid #E2E8F0" }}>
+                        <span style={{ fontSize: "11px", fontWeight: "800", color: "#000000", display: "flex", alignItems: "center", gap: "4px", marginBottom: "2px" }}>
+                          <Icon name="tiktok" size={12} color="#000000" /> TikTok
+                        </span>
+                        <input
+                          type="text"
+                          value={guiaTiktok}
+                          onChange={(e) => setGuiaTiktok(e.target.value)}
+                          placeholder="@mi_guia_tiktok"
+                          style={{ width: "100%", border: "none", outline: "none", fontSize: "12px", color: "#1E293B", fontWeight: "600" }}
+                        />
+                      </div>
                     </div>
                   </div>
 

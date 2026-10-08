@@ -343,10 +343,10 @@ export default function AdminDashboard() {
   return (
     <div className="admin-container" style={{
       minHeight: '100vh',
-      background: 'var(--atlan-bg-primary)',
+      background: '#0A192F',
       color: '#1A1A2E',
       fontFamily: 'var(--font-outfit), sans-serif',
-      padding: '78px 24px 20px 24px',
+      padding: '0 24px 30px 24px',
       position: 'relative',
       overflow: 'hidden'
     }}>
@@ -406,7 +406,7 @@ export default function AdminDashboard() {
       {/* Grid de Estadísticas Compacto estilo Glassmorphism */}
       <div style={{
         maxWidth: '1200px',
-        margin: '0 auto 16px',
+        margin: '78px auto 16px',
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
         gap: '12px',

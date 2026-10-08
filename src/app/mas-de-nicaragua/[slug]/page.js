@@ -103,7 +103,7 @@ export default function DepartamentoDetailPage() {
       {/* Hero Header del Departamento */}
       <div style={{
         background: "linear-gradient(180deg, rgba(20, 109, 158, 0.35) 0%, rgba(10, 25, 47, 1) 100%)",
-        padding: "100px 20px 30px",
+        padding: "80px 20px 30px",
         borderBottom: "1px solid rgba(255, 255, 255, 0.08)"
       }}>
         <div style={{ maxWidth: "1280px", margin: "0 auto" }}>

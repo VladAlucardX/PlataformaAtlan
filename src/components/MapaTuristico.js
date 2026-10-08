@@ -7,6 +7,7 @@ import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-direct
 import '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Supercluster from 'supercluster';
 import { supabase } from '../lib/supabase';
 import { obtenerDepartamentoPorCoordenadas } from '../lib/geoUtils';
 import { useTranslation } from '../hooks/useTranslation';
@@ -16,11 +17,10 @@ import BusinessProfileModal from './ui/BusinessProfileModal';
 import { getPointImage, prefetchPointImages, isRealCustomUrl } from '../lib/imageUtils';
 import { uploadMedia } from '../lib/storage';
 import { validarImagenSegura } from '../lib/imageModeration';
+import { CATEGORIAS_CONFIG } from '../lib/categories';
+import { isBusinessOpenNow } from '../lib/businessHours';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-
-// SVG icon helper for map markers (returns HTML string for innerHTML)
-const svgIcon = (path, size = 18) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle">${path}</svg>`;
 
 const formatPriceRange = (rango) => {
   if (!rango) return '';
@@ -34,21 +34,6 @@ const formatPriceRange = (rango) => {
   return `${str} C$`;
 };
 
-// Configuración de categorías (colores e íconos)
-const CATEGORIAS_CONFIG = {
-  comideria: { color: '#ff6b6b', icon: 'utensils', svgFile: '/images/comideria.svg', svg: svgIcon('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>') },
-  restaurante: { color: '#ff9233', icon: 'soup', svgFile: '/images/restaurante.svg', svg: svgIcon('<path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9z"/><path d="M7 21h10"/>') },
-  artesanal: { color: '#8a2be2', icon: 'palette', svgFile: '/images/arte.svg', svg: svgIcon('<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"/>') },
-  playa: { color: '#00bfff', icon: 'umbrella', svgFile: '/images/playa.svg', svg: svgIcon('<path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7"/>') },
-  familiar: { color: '#4caf50', icon: 'family', svgFile: '/images/comunidad.svg', svg: svgIcon('<circle cx="8" cy="5" r="3"/><circle cx="16" cy="5" r="3"/><path d="M3 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"/><path d="M13 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"/>') },
-  hotel: { color: '#e040fb', icon: 'hotel', svgFile: '/images/hotel.svg', svg: svgIcon('<path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path d="M9 22v-4h6v4"/><rect x="8" y="6" width="3" height="3" rx=".5"/><rect x="13" y="6" width="3" height="3" rx=".5"/>') },
-  hostal: { color: '#9c27b0', icon: 'homeAlt', svgFile: '/images/hostal.svg', svg: svgIcon('<path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V10.5z"/><path d="M10 21v-6h4v6"/>') },
-  transporte: { color: '#607d8b', icon: 'car', svgFile: '/images/transporte.svg', svg: svgIcon('<path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a1 1 0 0 0-.8.4L1.74 11l-1.58.86a1 1 0 0 0-.16.99V16h3"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/>') },
-  tour: { color: '#009688', icon: 'mountain', svgFile: '/images/tour.svg', svg: svgIcon('<path d="M8 3l4 8 5-5 5 15H2L8 3z"/>') },
-  tienda: { color: '#795548', icon: 'shoppingBag', svgFile: '/images/tienda.svg', svg: svgIcon('<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>') },
-  otro: { color: '#ffc107', icon: 'mapPin', svgFile: '/images/Ubicacion.svg', svg: svgIcon('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>') }
-};
-
 export default function MapaTuristico() {
   const { t, lang } = useTranslation();
   const router = useRouter();
@@ -60,8 +45,12 @@ export default function MapaTuristico() {
   const rutaCoordenadasRef = useRef([]);
   const demoIntervalRef = useRef(null);
   const userMarkerRef = useRef(null);
+  const destinationMarkerRef = useRef(null);
   const activePopupRef = useRef(null);
   const markersRef = useRef([]);  // Lista de marcadores cargados en el mapa
+  const superclusterRef = useRef(null);
+  const markersOnMapRef = useRef(new Map());
+  const allLoadedPointsRef = useRef([]);
   const currentPosRef = useRef([-86.2504, 12.1364]);  // Managua, Nicaragua
   const isNavigatingRef = useRef(false);
   const isInteractionPausedRef = useRef(false);
@@ -81,10 +70,13 @@ export default function MapaTuristico() {
   const hasFlownInitialDescentRef = useRef(false);
   const previewRouteBoundsRef = useRef(null);
   const loadedPointIdRef = useRef(null);
+  const currentBearingRef = useRef(0);
+  const isClearingRoutesRef = useRef(false);
 
 
   // --- ESTADO DE REACT ---
   const [isDemoRunning, setIsDemoRunning] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [filtroCategoria, setFiltroCategoria] = useState(null);
@@ -307,7 +299,7 @@ export default function MapaTuristico() {
                 : { top: 100, bottom: 100, left: 80, right: 80 },
               maxZoom: 15.5,
               duration: 0,
-              pitch: 15,
+              pitch: 0,
               essential: true
             });
           }
@@ -346,6 +338,9 @@ export default function MapaTuristico() {
         progress = 100;
         setLoadingProgress(100);
         clearInterval(interval);
+        setTimeout(() => {
+          setIsMapLoading(false);
+        }, 120);
       } else {
         setLoadingProgress(progress);
       }
@@ -475,6 +470,7 @@ export default function MapaTuristico() {
 
     if (!puntoNorm || puntoNorm.lng === undefined || puntoNorm.lat === undefined || isNaN(puntoNorm.lng) || isNaN(puntoNorm.lat)) {
       setPreviewRouteInfo(null);
+      actualizarMarcadorDestino(null);
       if (mapRef.current && mapRef.current.isStyleLoaded()) {
         const source = mapRef.current.getSource('preview-route');
         if (source) {
@@ -487,6 +483,7 @@ export default function MapaTuristico() {
           });
         }
       }
+      renderizarMarcadoresVisibles();
       return;
     }
 
@@ -494,6 +491,8 @@ export default function MapaTuristico() {
     const fetchPreviewRoute = () => {
       const [oLng, oLat] = currentPosRef.current;
       actualizarPrevisualizacionRuta(oLng, oLat, puntoNorm.lng, puntoNorm.lat, true);
+      actualizarMarcadorDestino(puntoNorm);
+      renderizarMarcadoresVisibles();
     };
 
     const timer = setTimeout(() => {
@@ -691,7 +690,9 @@ export default function MapaTuristico() {
 
     if (selectedPoint) {
       prevSelectedPointRef.current = selectedPoint;
-      isInteractionPausedRef.current = false; // Resetear siempre para permitir que la ruta se encuadre al seleccionar punto nuevo
+      if (!isNavigatingRef.current) {
+        isInteractionPausedRef.current = false; // Resetear para permitir que la ruta se encuadre al seleccionar punto nuevo solo fuera de navegación
+      }
 
       if (mapRef.current) {
         mapRef.current.stop(); // Detener de inmediato cualquier vuelo o animación activa
@@ -709,46 +710,28 @@ export default function MapaTuristico() {
       if (wasSelected) {
         const lastPoint = wasSelected;
         prevSelectedPointRef.current = null;
-        isInteractionPausedRef.current = false;
 
-        if (mapRef.current && lastPoint && lastPoint.lng !== undefined && lastPoint.lat !== undefined) {
-          mapRef.current.easeTo({
-            center: [lastPoint.lng, lastPoint.lat],
-            zoom: 12.8,
-            pitch: 25,
-            padding: { top: 0, bottom: 0, left: 0, right: 0 },
-            duration: 1800,
-            essential: true
-          });
-          cargarPuntosCercanos(lastPoint.lng, lastPoint.lat, filtroCategoria);
-        } else if (mapRef.current) {
-          const center = mapRef.current.getCenter();
-          mapRef.current.easeTo({
-            center: [center.lng, center.lat],
-            zoom: 12.8,
-            pitch: 25,
-            padding: { top: 0, bottom: 0, left: 0, right: 0 },
-            duration: 1800,
-            essential: true
-          });
-          cargarPuntosCercanos(center.lng, center.lat, filtroCategoria);
+        // Solo ajustar cámara si NO estamos en navegación ni demo activo
+        if (!isNavigatingRef.current && !isDemoRunningRef.current) {
+          isInteractionPausedRef.current = false;
+          if (mapRef.current && lastPoint && lastPoint.lng !== undefined && lastPoint.lat !== undefined) {
+            mapRef.current.easeTo({
+              center: [lastPoint.lng, lastPoint.lat],
+              zoom: 14.2,
+              pitch: 0,
+              padding: { top: 0, bottom: 0, left: 0, right: 0 },
+              duration: 1200,
+              essential: true
+            });
+          }
         }
       }
 
-      if (isNavigatingRef.current) {
-        // Si se cierra el panel de detalles y estamos en navegación activa,
-        // reanudamos el centrado de la cámara de manera inmediata.
-        isInteractionPausedRef.current = false;
-        if (mapRef.current) {
-          mapRef.current.flyTo({
-            center: currentPosRef.current,
-            zoom: 16.5,
-            pitch: 60,
-            speed: 0.85,  // Velocidad óptima para renderizado
-            curve: 1.1,   // Trayectoria plana para transiciones fluidas
-            essential: true
-          });
-        }
+      // Solo mostrar el botón "Volver a centrar" si realmente hay una navegación o demo activa
+      if ((isDemoRunningRef.current || routeInfo) && isNavigatingRef.current) {
+        setShowRecenterBtn(true);
+      } else {
+        setShowRecenterBtn(false);
       }
     }
   }, [selectedPoint]);
@@ -898,7 +881,12 @@ export default function MapaTuristico() {
     speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${punto.nombre}.`, true);
 
     isNavigatingRef.current = true;
+    setIsNavigating(true);
     isInteractionPausedRef.current = false;
+    setShowRecenterBtn(false);
+    if (mapContainerRef.current) {
+      mapContainerRef.current.classList.add('atlan-nav-clean-mode');
+    }
 
     destinationRef.current = [punto.lng, punto.lat];
     rutaCoordenadasRef.current = [];
@@ -910,8 +898,8 @@ export default function MapaTuristico() {
 
     mapRef.current.flyTo({
       center: [currLng, currLat],
-      zoom: 16.5,
-      pitch: 60,
+      zoom: 15.6,
+      pitch: 50,
       speed: 0.9,
       curve: 1.1,
       essential: true
@@ -921,23 +909,6 @@ export default function MapaTuristico() {
     setSelectedPoint(null);
   };
 
-  const isBusinessOpenNow = (horarios) => {
-    if (!horarios || Object.keys(horarios).length === 0) return null;
-    const daysEnToEs = { 0: 'domingo', 1: 'lunes', 2: 'martes', 3: 'miercoles', 4: 'jueves', 5: 'viernes', 6: 'sabado' };
-    const now = new Date();
-    const currentDay = daysEnToEs[now.getDay()];
-    const diaInfo = horarios[currentDay];
-    if (!diaInfo || !diaInfo.abierto) return false;
-    const [apHour, apMin] = diaInfo.apertura.split(':').map(Number);
-    const [ciHour, ciMin] = diaInfo.cierre.split(':').map(Number);
-    const currentHour = now.getHours();
-    const currentMin = now.getMinutes();
-    const apTime = apHour * 60 + apMin;
-    const ciTime = ciHour * 60 + ciMin;
-    const currTime = currentHour * 60 + currentMin;
-    if (ciTime < apTime) return currTime >= apTime || currTime <= ciTime;
-    return currTime >= apTime && currTime <= ciTime;
-  };
 
   const calculateETA = (durationSeconds) => {
     const now = new Date();
@@ -977,6 +948,21 @@ export default function MapaTuristico() {
       if (match) {
         lng = parseFloat(match[1]);
         lat = parseFloat(match[2]);
+      } else if (/^[0-9a-fA-F]{42,}$/.test(punto.ubicacion.trim())) {
+        try {
+          const hex = punto.ubicacion.trim();
+          const bytesLng = new Uint8Array(8);
+          for (let i = 0; i < 8; i++) {
+            bytesLng[i] = parseInt(hex.substr((9 + i) * 2, 2), 16);
+          }
+          lng = new DataView(bytesLng.buffer).getFloat64(0, true);
+
+          const bytesLat = new Uint8Array(8);
+          for (let i = 0; i < 8; i++) {
+            bytesLat[i] = parseInt(hex.substr((17 + i) * 2, 2), 16);
+          }
+          lat = new DataView(bytesLat.buffer).getFloat64(0, true);
+        } catch (_) {}
       }
     }
 
@@ -1073,12 +1059,555 @@ export default function MapaTuristico() {
     setIsMuted(isMutedRef.current);
   };
 
+  // ── ESCALADO DINÁMICO ADAPTATIVO POR ZOOM (OPCIÓN A: 2 ESTADOS NÍTIDOS) ──
+  const actualizarEscalaMarcadores = () => {
+    if (!mapRef.current || !mapContainerRef.current) return;
+    const z = mapRef.current.getZoom();
+    
+    // Transición en 2 Estados Nítidos:
+    // Estado 1: Zoom >= 14 (Barrio/Calle) -> Escala 1.0 (38px completo con iconos e insignias)
+    // Estado 2: Zoom 12 a 13.9 (Ciudad)   -> Escala 0.82 (31px cómodo, icono 100% nítido, sin micro-insignias)
+    // Estado 3: Zoom < 12 (Departamental) -> Pasan a Clusters regionales
+    let scale = 1.0;
+    if (z < 14) {
+      scale = z >= 12 ? 0.82 : 0.74;
+    }
+
+    mapContainerRef.current.style.setProperty('--marker-zoom-scale', scale.toFixed(2));
+    if (z < 14) {
+      mapContainerRef.current.classList.add('zoom-level-compact');
+    } else {
+      mapContainerRef.current.classList.remove('zoom-level-compact');
+    }
+  };
+
+  // ── MARCADOR DE CLUSTER (SUPERCLUSTER ATLAN) ──
+  const crearMarcadorCluster = (feature) => {
+    const count = feature.properties.point_count;
+    const clusterId = feature.properties.cluster_id;
+    const [lng, lat] = feature.geometry.coordinates;
+
+    const el = document.createElement('div');
+    el.className = 'atlan-cluster-container';
+
+    let sizeTier = 'sm';
+    let sizePx = 38;
+    if (count >= 50) {
+      sizeTier = 'lg';
+      sizePx = 52;
+    } else if (count >= 15) {
+      sizeTier = 'md';
+      sizePx = 44;
+    }
+
+    const formattedCount = count > 999 ? (count / 1000).toFixed(1) + 'k' : count;
+
+    el.innerHTML = `
+      <div class="atlan-cluster-badge atlan-cluster-${sizeTier}" style="width:${sizePx}px; height:${sizePx}px;">
+        ${sizeTier !== 'sm' ? '<div class="atlan-cluster-pulse-ring"></div>' : ''}
+        <div class="atlan-cluster-inner">
+          <span class="atlan-cluster-count">${formattedCount}</span>
+        </div>
+      </div>
+    `;
+
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      try {
+        if (!superclusterRef.current || !mapRef.current) return;
+        const expansionZoom = superclusterRef.current.getClusterExpansionZoom(clusterId);
+        mapRef.current.easeTo({
+          center: [lng, lat],
+          zoom: Math.min(Math.max(expansionZoom, 13.5), 17.5),
+          duration: 600,
+          essential: true
+        });
+      } catch (err) {
+        console.warn('[Atlan] Error expandiendo cluster:', err);
+      }
+    });
+
+    const marker = new mapboxgl.Marker({ element: el })
+      .setLngLat([lng, lat]);
+
+    return marker;
+  };
+
+  // ── MARCADOR INDIVIDUAL DE NEGOCIO / PUNTO ──
+  const crearMarcadorPunto = (punto) => {
+    const config = CATEGORIAS_CONFIG[punto.categoria] || CATEGORIAS_CONFIG.otro;
+
+    // 1. Anclaje simétrico fijo en Mapbox (38px × 38px)
+    const el = document.createElement('div');
+    el.className = 'marker-custom-container';
+    el.style.width = '38px';
+    el.style.height = '38px';
+
+    const inner = document.createElement('div');
+    inner.className = 'marker-custom';
+    inner.style.position = 'relative';
+    inner.style.backgroundColor = config.color;
+    inner.style.width = '38px';
+    inner.style.height = '38px';
+    inner.style.borderRadius = '50%';
+    inner.style.display = 'flex';
+    inner.style.justifyContent = 'center';
+    inner.style.alignItems = 'center';
+    inner.style.fontSize = '18px';
+    inner.style.cursor = 'pointer';
+    inner.style.transformOrigin = 'center center';
+    inner.style.transform = 'translateY(0) scale(var(--marker-zoom-scale, 1))';
+    inner.style.transition = 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    inner.innerHTML = config.svgFile
+      ? `<img src="${config.svgFile}" alt="${punto.categoria || 'categoria'}" style="width:20px;height:20px;object-fit:contain;filter:brightness(0) invert(1);" />`
+      : config.svg;
+
+    // Insignia de estado circular en la esquina
+    const badge = document.createElement('div');
+    badge.className = 'marker-status-badge';
+    badge.style.position = 'absolute';
+    badge.style.bottom = '-4px';
+    badge.style.right = '-4px';
+    badge.style.width = '18px';
+    badge.style.height = '18px';
+    badge.style.borderRadius = '50%';
+    badge.style.display = 'flex';
+    badge.style.justifyContent = 'center';
+    badge.style.alignItems = 'center';
+    badge.style.fontSize = '10px';
+    badge.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
+    badge.style.border = '1.5px solid white';
+    badge.style.zIndex = '10';
+
+    if (punto.estado === 'en_verificacion') {
+      badge.style.backgroundColor = '#f97316'; // Naranja
+      badge.innerHTML = '⏳';
+      inner.style.border = '2.5px solid #f97316';
+      inner.style.boxShadow = '0 0 12px rgba(249, 115, 22, 0.6)';
+      inner.classList.add('pulse-marker-orange');
+    } else if (punto.estado === 'aprobado') {
+      badge.style.backgroundColor = '#10b981'; // Verde
+      badge.innerHTML = '✓';
+      badge.style.color = 'white';
+      badge.style.fontWeight = 'bold';
+      inner.style.border = '2.5px solid #10b981';
+      inner.style.boxShadow = '0 0 12px rgba(16, 185, 129, 0.6)';
+    } else {
+      const isClaimed = !!punto.negocio_id;
+      badge.style.backgroundColor = isClaimed ? '#10b981' : '#f59e0b';
+      badge.innerHTML = isClaimed ? '✓' : '❓';
+      badge.style.color = 'white';
+      badge.style.fontWeight = isClaimed ? 'bold' : 'normal';
+      inner.style.border = `2.5px solid ${isClaimed ? '#10b981' : '#f59e0b'}`;
+      inner.style.boxShadow = `0 0 12px ${isClaimed ? 'rgba(16, 185, 129, 0.6)' : 'rgba(245, 158, 11, 0.5)'}`;
+    }
+
+    inner.appendChild(badge);
+    el.appendChild(inner);
+
+    // Elevación vertical directa con escala completa (38px) en hover
+    el.addEventListener('mouseenter', () => {
+      inner.style.transform = 'translateY(-5px) scale(1)';
+      el.style.zIndex = '999';
+    });
+    el.addEventListener('mouseleave', () => {
+      inner.style.transform = 'translateY(0) scale(var(--marker-zoom-scale, 1))';
+      el.style.zIndex = 'auto';
+    });
+
+    // Estructura del Popup Premium
+    const isClaimed = !!punto.negocio_id;
+    const ratingText = punto.negocio_rating ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" style="display:inline-block;vertical-align:middle;color:#fbbf24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> ${punto.negocio_rating}` : '';
+
+    let statusText = '';
+    let statusColor = '';
+
+    if (punto.estado === 'en_verificacion') {
+      statusText = lang === 'en' ? 'Pending Confirmation' : lang === 'zh' ? '待审核确认' : 'Pendiente de Confirmar';
+      statusColor = '#f97316';
+    } else if (punto.estado === 'aprobado') {
+      statusText = lang === 'en' ? 'Confirmed' : lang === 'zh' ? '已确认' : 'Confirmado';
+      statusColor = '#10b981';
+    } else {
+      statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
+      statusColor = isClaimed ? '#10b981' : '#f59e0b';
+    }
+
+    const btnId = `btn-nav-${punto.id}`;
+    const btnInfoId = `btn-info-${punto.id}`;
+    const pointImg = getPointImage(punto);
+
+    const popupHTML = `
+      <div style="color:#FFFFFF; width:100%; font-family:var(--font-outfit), system-ui, sans-serif; box-sizing:border-box; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0; padding:0;">
+        <div id="popup-img-container-${punto.id}" style="width:100%; box-sizing:border-box;">
+          ${pointImg ? `
+            <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15); box-sizing:border-box;">
+              <img src="${pointImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
+              <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
+            </div>
+          ` : `
+            <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:linear-gradient(135deg, rgba(20,109,158,0.22) 0%, rgba(10,25,47,0.85) 100%); border:1.5px dashed rgba(255,215,0,0.35); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; box-sizing:border-box; padding:8px;">
+              <div style="width:34px; height:34px; border-radius:50%; background:rgba(255,215,0,0.12); border:1px solid rgba(255,215,0,0.3); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(255,215,0,0.2);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+              </div>
+              <span style="font-size:10.5px; font-weight:850; color:#FFD700; letter-spacing:0.5px; text-transform:uppercase; background:rgba(255,215,0,0.15); padding:2px 10px; border-radius:8px; border:0.5px solid rgba(255,215,0,0.4);">
+                ${lang === 'en' ? 'Photos Coming Soon' : lang === 'zh' ? '照片即将上线' : 'PRÓXIMAMENTE'}
+              </span>
+            </div>
+          `}
+        </div>
+        <!-- Status & Rating Header (Centered Pill) -->
+        <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.18); padding-bottom:8px; width:100%; box-sizing:border-box;">
+          <span style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-flex; align-items:center; gap:6px; letter-spacing:0.3px; background:rgba(255,255,255,0.08); padding:3px 10px; border-radius:10px;">
+            <span style="width:7px; height:7px; border-radius:50%; background-color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-block; box-shadow:0 0 6px ${statusColor};"></span>
+            ${statusText}
+          </span>
+          ${ratingText ? `<span style="font-size:11.5px; font-weight:800; color:#FFD700; background:rgba(255,215,0,0.18); padding:3px 8px; border-radius:10px; border:0.5px solid rgba(255,215,0,0.4);">${ratingText}</span>` : ''}
+        </div>
+
+        <!-- Title & Category Badge (Centered) -->
+        <div style="margin-bottom:8px; text-align:center; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <h3 style="margin:0 0 5px; font-size:16.5px; font-weight:850; color:#FFFFFF; line-height:1.25; letter-spacing:-0.2px; font-family:var(--font-outfit); text-align:center; width:100%;">
+            ${punto.nombre}
+          </h3>
+          <span style="display:inline-block; font-size:10.5px; font-weight:750; color:#FFD700; text-transform:uppercase; letter-spacing:0.5px; background:rgba(255, 215, 0, 0.12); padding:3px 10px; border-radius:8px; border:1px solid rgba(255, 215, 0, 0.3); margin:0 auto; text-align:center;">
+            ${t(`addPoint.categories.${punto.categoria}`) || punto.categoria || 'Turismo'}
+          </span>
+        </div>
+
+        <!-- Description -->
+        <p style="margin:0 0 10px; font-size:12.5px; color:#E2E8F0; line-height:1.45; text-align:center; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; width:100%;">
+          ${punto.descripcion || ''}
+        </p>
+        
+        ${punto.negocio_rango_precios ? `
+          <div style="margin-bottom:10px; font-size:11px; font-weight:750; color:#2DD4BF; background:rgba(45,212,191,0.15); border:1px solid rgba(45,212,191,0.35); padding:4px 9px; border-radius:8px; display:inline-block; text-align:center; margin:0 auto;">
+            🏷️ ${formatPriceRange(punto.negocio_rango_precios)}
+          </div>
+        ` : ''}
+
+        <!-- Added By Footer -->
+        <div style="font-size:11px; color:rgba(255,255,255,0.7); margin-bottom:12px; border-top:1px dashed rgba(255,255,255,0.18); padding-top:8px; text-align:center; width:100%;">
+          ${t('map.addedBy')}: <span style="font-weight:750; color:#FFD700;">${punto.nombre_creador || 'Equipo Atlan'}</span>
+        </div>
+        
+        <!-- Centered Action Buttons Container -->
+        <div style="display:flex; flex-direction:column; gap:8px; width:100%; box-sizing:border-box; align-items:center; justify-content:center;">
+          <button id="${btnId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:11px 14px; background:#FFD700; color:#0A192F; border:none; border-radius:12px; font-weight:900; font-size:13px; cursor:pointer; box-shadow:0 4px 16px rgba(255,215,0,0.4); transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
+            <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0A192F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              <span style="display:inline-block; text-align:center; line-height:1.2;">${t('map.startNavigation')}</span>
+            </div>
+          </button>
+
+          ${(() => {
+            const puntoServs = punto.servicios || punto.detalles?.servicios || {};
+            const puntoCanBook = Boolean(
+              puntoServs.has_online_booking === true ||
+              punto.has_online_booking === true ||
+              punto.detalles?.has_online_booking === true ||
+              puntoServs.has_reservas === true
+            );
+            const btnLabel = puntoCanBook 
+              ? (lang === 'en' ? 'Details & Booking' : lang === 'zh' ? '详情与预订' : 'Detalles y Reservas')
+              : (lang === 'en' ? 'View Details' : lang === 'zh' ? '查看详情' : 'Ver Detalles');
+            return `
+              <button id="${btnInfoId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:10px 14px; background:rgba(255,255,255,0.12); color:#FFFFFF; border:1px solid rgba(255,255,255,0.25); border-radius:12px; font-weight:800; font-size:12px; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
+                <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  <span style="display:inline-block; text-align:center; line-height:1.2;">${btnLabel}</span>
+                </div>
+              </button>
+            `;
+          })()}
+        </div>
+      </div>
+    `;
+
+    const popup = new mapboxgl.Popup({ offset: [0, -14], anchor: 'bottom', closeButton: false }).setHTML(popupHTML);
+
+    el.addEventListener('click', () => {
+      lugarDestinoRef.current = punto.nombre;
+      if (isNavigatingRef.current && (isDemoRunningRef.current || routeInfo)) {
+        isInteractionPausedRef.current = true;
+        setShowRecenterBtn(true);
+      }
+      if (mapRef.current) {
+        mapRef.current.easeTo({
+          center: [punto.lng, punto.lat],
+          offset: [0, 240],
+          duration: 500,
+          essential: true
+        });
+      }
+    });
+
+    popup.on('open', async () => {
+      activePopupRef.current = popup;
+
+      if (mapRef.current) {
+        mapRef.current.easeTo({
+          center: [punto.lng, punto.lat],
+          offset: [0, 240],
+          duration: 500,
+          essential: true
+        });
+      }
+
+      if (punto.negocio_id && !getPointImage(punto)) {
+        try {
+          const { data: bizData } = await supabase
+            .from('negocios')
+            .select('logo_url, fotos')
+            .eq('id', punto.negocio_id)
+            .maybeSingle();
+
+          if (bizData) {
+            const fetchedImg = (bizData.fotos && bizData.fotos.length > 0 && isRealCustomUrl(bizData.fotos[0]))
+              ? bizData.fotos[0]
+              : (isRealCustomUrl(bizData.logo_url) ? bizData.logo_url : null);
+
+            if (fetchedImg) {
+              punto.logo_url = fetchedImg;
+              punto.imagen_url = fetchedImg;
+
+              const imgContainer = document.getElementById(`popup-img-container-${punto.id}`);
+              if (imgContainer) {
+                imgContainer.innerHTML = `
+                  <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15); box-sizing:border-box;">
+                    <img src="${fetchedImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
+                    <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
+                  </div>
+                `;
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('[Atlan] Error cargando foto/logo de negocio en popup:', e);
+        }
+      }
+
+      const btn = document.getElementById(btnId);
+      if (btn) {
+        btn.onclick = () => {
+          const [currLng, currLat] = currentPosRef.current;
+          const isUserInCA = currLng >= -93.0 && currLng <= -77.0 && currLat >= 7.0 && currLat <= 19.0;
+
+          if (!isUserInCA) {
+            alert(lang === 'en'
+              ? 'You are currently outside Central America. Plan your trip and visit us to use live GPS navigation!'
+              : lang === 'zh'
+              ? '您当前不在中美洲范围内。规划好行程并欢迎光临以使用实时GPS导航！'
+              : 'Te encuentras fuera de Centroamérica. ¡Planifica tu viaje y visítanos para usar la navegación GPS en vivo!');
+            return;
+          }
+
+          lugarDestinoRef.current = punto.nombre;
+
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+          }
+          lastSpokenRef.current = '';
+          speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${punto.nombre}.`, true);
+
+          isNavigatingRef.current = true;
+          setIsNavigating(true);
+          isInteractionPausedRef.current = false;
+          setShowRecenterBtn(false);
+          if (mapContainerRef.current) {
+            mapContainerRef.current.classList.add('atlan-nav-clean-mode');
+          }
+
+          destinationRef.current = [punto.lng, punto.lat];
+          rutaCoordenadasRef.current = [];
+
+          if (directionsRef.current) {
+            directionsRef.current.setOrigin([currLng, currLat]);
+            directionsRef.current.setDestination([punto.lng, punto.lat]);
+          }
+
+          mapRef.current.flyTo({
+            center: [currLng, currLat],
+            zoom: 15.6,
+            pitch: 50,
+            speed: 0.9,
+            curve: 1.1,
+            essential: true
+          });
+
+          popup.remove();
+        };
+      }
+
+      const btnInfo = document.getElementById(btnInfoId);
+      if (btnInfo) {
+        btnInfo.onclick = () => {
+          if (isNavigatingRef.current && (isDemoRunningRef.current || routeInfo)) {
+            isInteractionPausedRef.current = true;
+            setShowRecenterBtn(true);
+          }
+          setSelectedPoint(punto);
+          popup.remove();
+        };
+      }
+    });
+
+    const marker = new mapboxgl.Marker({ element: el })
+      .setLngLat([punto.lng, punto.lat])
+      .setPopup(popup);
+
+    return marker;
+  };
+
+  // ── MARCADOR EXCLUSIVO DE DESTINO (PUNTO B) ──
+  const actualizarMarcadorDestino = (punto) => {
+    if (!mapRef.current) return;
+
+    if (!punto || punto.lng === undefined || punto.lat === undefined) {
+      if (destinationMarkerRef.current) {
+        destinationMarkerRef.current.remove();
+        destinationMarkerRef.current = null;
+      }
+      return;
+    }
+
+    const lng = Number(punto.lng);
+    const lat = Number(punto.lat);
+    if (isNaN(lng) || isNaN(lat)) return;
+
+    const config = CATEGORIAS_CONFIG[punto.categoria] || CATEGORIAS_CONFIG.otro;
+
+    if (!destinationMarkerRef.current) {
+      const el = document.createElement('div');
+      el.className = 'atlan-destination-pin-container';
+
+      el.innerHTML = `
+        <div class="atlan-destination-pulse-glow"></div>
+        <div class="atlan-destination-pin">
+          <div class="atlan-destination-pin-inner">
+            ${config.svgFile
+              ? `<img src="${config.svgFile}" alt="" style="width:18px;height:18px;object-fit:contain;filter:brightness(0) invert(1);" />`
+              : '📍'}
+          </div>
+        </div>
+        <div class="atlan-destination-label">
+          <span class="atlan-destination-badge-b">B</span>
+          <span style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">${punto.nombre}</span>
+        </div>
+      `;
+
+      destinationMarkerRef.current = new mapboxgl.Marker({
+        element: el,
+        anchor: 'bottom',
+      })
+        .setLngLat([lng, lat])
+        .addTo(mapRef.current);
+    } else {
+      destinationMarkerRef.current.setLngLat([lng, lat]);
+      const label = destinationMarkerRef.current.getElement().querySelector('.atlan-destination-label');
+      if (label) {
+        label.innerHTML = `
+          <span class="atlan-destination-badge-b">B</span>
+          <span style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">${punto.nombre}</span>
+        `;
+      }
+    }
+  };
+
+  // ── RENDERIZADO DIFERENCIAL DE MARCADORES Y CLUSTERS VISIBLES ──
+  const renderizarMarcadoresVisibles = () => {
+    if (!mapRef.current || !superclusterRef.current) return;
+
+    try {
+      // Verificar si hay una ruta o previsualización de viaje activa entre Punto A y Punto B
+      const isRouteActive = Boolean(selectedPointRef.current || routeInfo || previewRouteInfo);
+      const isActivelyNavigating = Boolean(isNavigatingRef.current || isDemoRunningRef.current);
+      const isExploringManually = Boolean(isInteractionPausedRef.current);
+
+      // Si hay un punto seleccionado / ruta, actualizar el marcador de destino (Punto B)
+      const destPoint = selectedPointRef.current || (destinationRef.current ? {
+        lng: destinationRef.current[0],
+        lat: destinationRef.current[1],
+        nombre: lugarDestinoRef.current || (lang === 'en' ? 'Destination' : lang === 'zh' ? '目的地' : 'Destino'),
+        categoria: 'otro'
+      } : null);
+
+      if (destPoint) {
+        actualizarMarcadorDestino(destPoint);
+      } else {
+        actualizarMarcadorDestino(null);
+      }
+
+
+      const bounds = mapRef.current.getBounds();
+      const west = Math.max(-180, bounds.getWest());
+      const south = Math.max(-85, bounds.getSouth());
+      const east = Math.min(180, bounds.getEast());
+      const north = Math.min(85, bounds.getNorth());
+      const currentZoom = Math.floor(mapRef.current.getZoom());
+
+      const clusters = superclusterRef.current.getClusters([west, south, east, north], currentZoom);
+
+      const currentMarkersMap = markersOnMapRef.current;
+      const nextMarkersMap = new Map();
+
+      clusters.forEach((feature) => {
+        const isCluster = Boolean(feature.properties && feature.properties.cluster);
+
+        // Si la ruta está activa (Punto A ➔ Punto B), omitir burbujas de cluster agrupadas,
+        // pero SÍ mantener visibles todos los negocios individuales para que el usuario pueda explorarlos libremente
+        if (isRouteActive && isCluster) return;
+
+        // Si este punto es el destino seleccionado y ya cuenta con el pin distintivo B, evitar duplicado
+        if (destPoint && !isCluster && (feature.properties?.id === destPoint.id || (Number(feature.properties?.lng) === Number(destPoint.lng) && Number(feature.properties?.lat) === Number(destPoint.lat)))) {
+          return;
+        }
+
+        const markerKey = isCluster
+          ? `cluster_${feature.properties.cluster_id}`
+          : `point_${feature.properties.id}`;
+
+        if (currentMarkersMap.has(markerKey)) {
+          nextMarkersMap.set(markerKey, currentMarkersMap.get(markerKey));
+          currentMarkersMap.delete(markerKey);
+          return;
+        }
+
+        if (isCluster) {
+          const clusterMarker = crearMarcadorCluster(feature);
+          clusterMarker.addTo(mapRef.current);
+          nextMarkersMap.set(markerKey, clusterMarker);
+        } else {
+          const punto = feature.properties;
+          const pointMarker = crearMarcadorPunto(punto);
+          pointMarker.addTo(mapRef.current);
+          nextMarkersMap.set(markerKey, pointMarker);
+        }
+      });
+
+      // Limpiar los marcadores que salieron del encuadre
+      currentMarkersMap.forEach((marker) => {
+        marker.remove();
+      });
+
+      markersOnMapRef.current = nextMarkersMap;
+      markersRef.current = Array.from(nextMarkersMap.values());
+    } catch (err) {
+      console.error('[Atlan] Error renderizando marcadores visibles:', err);
+    }
+  };
+
   // Cargar puntos desde Supabase
   const cargarPuntosCercanos = async (lon, lat, categoria = null) => {
     if (!mapRef.current) return;
 
-    // Limpiar marcadores anteriores de puntos turísticos
-    markersRef.current.forEach((marker) => marker.remove());
+    // Limpiar marcadores anteriores
+    markersOnMapRef.current.forEach((marker) => marker.remove());
+    markersOnMapRef.current.clear();
     markersRef.current = [];
 
     try {
@@ -1142,330 +1671,43 @@ export default function MapaTuristico() {
         }
       }
 
-      if (pointsToRender.length === 0) {
-        console.log('[Atlan] No se encontraron puntos.');
+      allLoadedPointsRef.current = pointsToRender;
+
+      const validPoints = pointsToRender.filter((p) => {
+        const lng = Number(p.lng);
+        const lat = Number(p.lat);
+        return !isNaN(lng) && !isNaN(lat) && lng !== 0 && lat !== 0;
+      });
+
+      if (validPoints.length === 0) {
+        console.log('[Atlan] No se encontraron puntos válidos.');
+        superclusterRef.current = null;
         return;
       }
 
-      pointsToRender.forEach((punto) => {
-        const config = CATEGORIAS_CONFIG[punto.categoria] || CATEGORIAS_CONFIG.otro;
+      // Convertir a GeoJSON Features para Supercluster
+      const features = validPoints.map((punto) => ({
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [Number(punto.lng), Number(punto.lat)],
+        },
+        properties: {
+          ...punto,
+          cluster: false,
+        },
+      }));
 
-        // Crear contenedor HTML para el marcador personalizado
-        const el = document.createElement('div');
-        el.className = 'marker-custom-container';
-
-        // Elemento interno visual (evita que las transiciones de CSS interfieran con el posicionamiento transform de Mapbox)
-        const inner = document.createElement('div');
-        inner.className = 'marker-custom';
-        inner.style.backgroundColor = config.color;
-        inner.style.width = '38px';
-        inner.style.height = '38px';
-        inner.style.borderRadius = '50%';
-        inner.style.display = 'flex';
-        inner.style.justifyContent = 'center';
-        inner.style.alignItems = 'center';
-        inner.style.fontSize = '18px';
-        inner.style.cursor = 'pointer';
-        inner.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
-        inner.innerHTML = config.svgFile
-          ? `<img src="${config.svgFile}" alt="${punto.categoria || 'categoria'}" style="width:20px;height:20px;object-fit:contain;filter:brightness(0) invert(1);" />`
-          : config.svg;
-
-        // Crear insignia de estado circular en la esquina
-        const badge = document.createElement('div');
-        badge.style.position = 'absolute';
-        badge.style.bottom = '-4px';
-        badge.style.right = '-4px';
-        badge.style.width = '18px';
-        badge.style.height = '18px';
-        badge.style.borderRadius = '50%';
-        badge.style.display = 'flex';
-        badge.style.justifyContent = 'center';
-        badge.style.alignItems = 'center';
-        badge.style.fontSize = '10px';
-        badge.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
-        badge.style.border = '1.5px solid white';
-        badge.style.zIndex = '10';
-
-        if (punto.estado === 'en_verificacion') {
-          badge.style.backgroundColor = '#f97316'; // Naranja
-          badge.innerHTML = '⏳';
-          inner.style.border = '2.5px solid #f97316';
-          inner.style.boxShadow = '0 0 12px rgba(249, 115, 22, 0.6)';
-          inner.classList.add('pulse-marker-orange');
-        } else if (punto.estado === 'aprobado') {
-          badge.style.backgroundColor = '#10b981'; // Verde
-          badge.innerHTML = '✓';
-          badge.style.color = 'white';
-          badge.style.fontWeight = 'bold';
-          inner.style.border = '2.5px solid #10b981';
-          inner.style.boxShadow = '0 0 12px rgba(16, 185, 129, 0.6)';
-        } else {
-          // Sin reclamar / Estado por defecto
-          const isClaimed = !!punto.negocio_id;
-          badge.style.backgroundColor = isClaimed ? '#10b981' : '#f59e0b'; // Verde / Amber
-          badge.innerHTML = isClaimed ? '✓' : '❓';
-          badge.style.color = 'white';
-          badge.style.fontWeight = isClaimed ? 'bold' : 'normal';
-          inner.style.border = `2.5px solid ${isClaimed ? '#10b981' : '#f59e0b'}`;
-          inner.style.boxShadow = `0 0 12px ${isClaimed ? 'rgba(16, 185, 129, 0.6)' : 'rgba(245, 158, 11, 0.5)'}`;
-        }
-
-        inner.appendChild(badge);
-        el.appendChild(inner);
-
-        // Efectos interactivos al pasar el mouse
-        el.addEventListener('mouseenter', () => {
-          inner.style.transform = 'scale(1.2) translateY(-2px)';
-          el.style.zIndex = '999';
-        });
-        el.addEventListener('mouseleave', () => {
-          inner.style.transform = 'scale(1) translateY(0)';
-          el.style.zIndex = 'auto';
-        });
-
-        // Estructura del Popup Premium
-        const isClaimed = !!punto.negocio_id;
-        const ratingText = punto.negocio_rating ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" style="display:inline-block;vertical-align:middle;color:#fbbf24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> ${punto.negocio_rating}` : '';
-
-        let statusText = '';
-        let statusColor = '';
-
-        if (punto.estado === 'en_verificacion') {
-          statusText = lang === 'en' ? 'Pending Confirmation' : lang === 'zh' ? '待审核确认' : 'Pendiente de Confirmar';
-          statusColor = '#f97316'; // Naranja
-        } else if (punto.estado === 'aprobado') {
-          statusText = lang === 'en' ? 'Confirmed' : lang === 'zh' ? '已确认' : 'Confirmado';
-          statusColor = '#10b981'; // Verde
-        } else {
-          statusText = isClaimed ? t('map.claimed') : t('map.unclaimed');
-          statusColor = isClaimed ? '#10b981' : '#f59e0b';
-        }
-
-        const btnId = `btn-nav-${punto.id}`;
-        const btnInfoId = `btn-info-${punto.id}`;
-        const pointImg = getPointImage(punto);
-
-        const popupHTML = `
-          <div style="color:#FFFFFF; width:100%; font-family:var(--font-outfit), system-ui, sans-serif; box-sizing:border-box; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0; padding:0;">
-            <div id="popup-img-container-${punto.id}" style="width:100%; box-sizing:border-box;">
-              ${pointImg ? `
-                <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15); box-sizing:border-box;">
-                  <img src="${pointImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
-                  <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
-                </div>
-              ` : `
-                <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:linear-gradient(135deg, rgba(20,109,158,0.22) 0%, rgba(10,25,47,0.85) 100%); border:1.5px dashed rgba(255,215,0,0.35); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; box-sizing:border-box; padding:8px;">
-                  <div style="width:34px; height:34px; border-radius:50%; background:rgba(255,215,0,0.12); border:1px solid rgba(255,215,0,0.3); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(255,215,0,0.2);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                      <circle cx="8.5" cy="8.5" r="1.5"/>
-                      <polyline points="21 15 16 10 5 21"/>
-                    </svg>
-                  </div>
-                  <span style="font-size:10.5px; font-weight:850; color:#FFD700; letter-spacing:0.5px; text-transform:uppercase; background:rgba(255,215,0,0.15); padding:2px 10px; border-radius:8px; border:0.5px solid rgba(255,215,0,0.4);">
-                    ${lang === 'en' ? 'Photos Coming Soon' : lang === 'zh' ? '照片即将上线' : 'PRÓXIMAMENTE'}
-                  </span>
-                </div>
-              `}
-            </div>
-            <!-- Status & Rating Header (Centered Pill) -->
-            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.18); padding-bottom:8px; width:100%; box-sizing:border-box;">
-              <span style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-flex; align-items:center; gap:6px; letter-spacing:0.3px; background:rgba(255,255,255,0.08); padding:3px 10px; border-radius:10px;">
-                <span style="width:7px; height:7px; border-radius:50%; background-color:${statusColor === '#10b981' ? '#34D399' : (statusColor === '#f59e0b' ? '#FBBF24' : statusColor)}; display:inline-block; box-shadow:0 0 6px ${statusColor};"></span>
-                ${statusText}
-              </span>
-              ${ratingText ? `<span style="font-size:11.5px; font-weight:800; color:#FFD700; background:rgba(255,215,0,0.18); padding:3px 8px; border-radius:10px; border:0.5px solid rgba(255,215,0,0.4);">${ratingText}</span>` : ''}
-            </div>
-
-            <!-- Title & Category Badge (Centered) -->
-            <div style="margin-bottom:8px; text-align:center; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-              <h3 style="margin:0 0 5px; font-size:16.5px; font-weight:850; color:#FFFFFF; line-height:1.25; letter-spacing:-0.2px; font-family:var(--font-outfit); text-align:center; width:100%;">
-                ${punto.nombre}
-              </h3>
-              <span style="display:inline-block; font-size:10.5px; font-weight:750; color:#FFD700; text-transform:uppercase; letter-spacing:0.5px; background:rgba(255, 215, 0, 0.12); padding:3px 10px; border-radius:8px; border:1px solid rgba(255, 215, 0, 0.3); margin:0 auto; text-align:center;">
-                ${t(`addPoint.categories.${punto.categoria}`) || punto.categoria || 'Turismo'}
-              </span>
-            </div>
-
-            <!-- Description -->
-            <p style="margin:0 0 10px; font-size:12.5px; color:#E2E8F0; line-height:1.45; text-align:center; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; width:100%;">
-              ${punto.descripcion || ''}
-            </p>
-            
-            ${punto.negocio_rango_precios ? `
-              <div style="margin-bottom:10px; font-size:11px; font-weight:750; color:#2DD4BF; background:rgba(45,212,191,0.15); border:1px solid rgba(45,212,191,0.35); padding:4px 9px; border-radius:8px; display:inline-block; text-align:center; margin:0 auto;">
-                🏷️ ${formatPriceRange(punto.negocio_rango_precios)}
-              </div>
-            ` : ''}
-
-            <!-- Added By Footer -->
-            <div style="font-size:11px; color:rgba(255,255,255,0.7); margin-bottom:12px; border-top:1px dashed rgba(255,255,255,0.18); padding-top:8px; text-align:center; width:100%;">
-              ${t('map.addedBy')}: <span style="font-weight:750; color:#FFD700;">${punto.nombre_creador || 'Equipo Atlan'}</span>
-            </div>
-            
-            <!-- Centered Action Buttons Container -->
-            <div style="display:flex; flex-direction:column; gap:8px; width:100%; box-sizing:border-box; align-items:center; justify-content:center;">
-              <button id="${btnId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:11px 14px; background:#FFD700; color:#0A192F; border:none; border-radius:12px; font-weight:900; font-size:13px; cursor:pointer; box-shadow:0 4px 16px rgba(255,215,0,0.4); transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
-                <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0A192F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-                  <span style="display:inline-block; text-align:center; line-height:1.2;">${t('map.startNavigation')}</span>
-                </div>
-              </button>
-
-              ${(() => {
-                const puntoServs = punto.servicios || punto.detalles?.servicios || {};
-                const puntoCanBook = Boolean(
-                  puntoServs.has_online_booking === true ||
-                  punto.has_online_booking === true ||
-                  punto.detalles?.has_online_booking === true ||
-                  puntoServs.has_reservas === true
-                );
-                const btnLabel = puntoCanBook 
-                  ? (lang === 'en' ? 'Details & Booking' : lang === 'zh' ? '详情与预订' : 'Detalles y Reservas')
-                  : (lang === 'en' ? 'View Details' : lang === 'zh' ? '查看详情' : 'Ver Detalles');
-                return `
-                  <button id="${btnInfoId}" style="width:100%; box-sizing:border-box; margin:0 auto; padding:10px 14px; background:rgba(255,255,255,0.12); color:#FFFFFF; border:1px solid rgba(255,255,255,0.25); border-radius:12px; font-weight:800; font-size:12px; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; justify-content:center;">
-                    <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center; margin:0 auto;">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:inline-block; vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                      <span style="display:inline-block; text-align:center; line-height:1.2;">${btnLabel}</span>
-                    </div>
-                  </button>
-                `;
-              })()}
-            </div>
-          </div>
-        `;
-
-        const popup = new mapboxgl.Popup({ offset: [0, -14], anchor: 'bottom', closeButton: false }).setHTML(popupHTML);
-
-        el.addEventListener('click', () => {
-          lugarDestinoRef.current = punto.nombre;
-          if (mapRef.current) {
-            mapRef.current.easeTo({
-              center: [punto.lng, punto.lat],
-              offset: [0, 240],
-              duration: 500,
-              essential: true
-            });
-          }
-        });
-
-        popup.on('open', async () => {
-          activePopupRef.current = popup;
-
-          // Autocentrar la cámara desplazando el punto 240px abajo para ubicar la tarjeta exactamente en el centro de pantalla
-          if (mapRef.current) {
-            mapRef.current.easeTo({
-              center: [punto.lng, punto.lat],
-              offset: [0, 240],
-              duration: 500,
-              essential: true
-            });
-          }
-
-          // Si el punto pertenece a un negocio y aún no tiene foto/logo en el punto, consultar la tabla negocios
-          if (punto.negocio_id && !getPointImage(punto)) {
-            try {
-              const { data: bizData } = await supabase
-                .from('negocios')
-                .select('logo_url, fotos')
-                .eq('id', punto.negocio_id)
-                .maybeSingle();
-
-              if (bizData) {
-                const fetchedImg = (bizData.fotos && bizData.fotos.length > 0 && isRealCustomUrl(bizData.fotos[0]))
-                  ? bizData.fotos[0]
-                  : (isRealCustomUrl(bizData.logo_url) ? bizData.logo_url : null);
-
-                if (fetchedImg) {
-                  punto.logo_url = fetchedImg;
-                  punto.imagen_url = fetchedImg;
-
-                  const imgContainer = document.getElementById(`popup-img-container-${punto.id}`);
-                  if (imgContainer) {
-                    imgContainer.innerHTML = `
-                      <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15); box-sizing:border-box;">
-                        <img src="${fetchedImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
-                        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
-                      </div>
-                    `;
-                  }
-                }
-              }
-            } catch (e) {
-              console.warn('[Atlan] Error cargando foto/logo de negocio en popup:', e);
-            }
-          }
-
-          const btn = document.getElementById(btnId);
-          if (btn) {
-            btn.onclick = () => {
-              const [currLng, currLat] = currentPosRef.current;
-              const isUserInCA = currLng >= -93.0 && currLng <= -77.0 && currLat >= 7.0 && currLat <= 19.0;
-
-              if (!isUserInCA) {
-                alert(lang === 'en'
-                  ? 'You are currently outside Central America. Plan your trip and visit us to use live GPS navigation!'
-                  : lang === 'zh'
-                  ? '您当前不在中美洲范围内。规划好行程并欢迎光临以使用实时GPS导航！'
-                  : 'Te encuentras fuera de Centroamérica. ¡Planifica tu viaje y visítanos para usar la navegación GPS en vivo!');
-                return; // Detener navegación intercontinental
-              }
-
-              lugarDestinoRef.current = punto.nombre;
-
-              if ('speechSynthesis' in window) {
-                window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
-              }
-              lastSpokenRef.current = '';
-              speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${punto.nombre}.`, true);
-
-              isNavigatingRef.current = true;
-              isInteractionPausedRef.current = false;
-
-              destinationRef.current = [punto.lng, punto.lat];
-              rutaCoordenadasRef.current = [];
-
-              if (directionsRef.current) {
-                directionsRef.current.setOrigin([currLng, currLat]);
-                directionsRef.current.setDestination([punto.lng, punto.lat]);
-              }
-
-              mapRef.current.flyTo({
-                center: [currLng, currLat],
-                zoom: 16.5,
-                pitch: 60,
-                speed: 0.9,
-                curve: 1.1,
-                essential: true
-              });
-
-              // Cerrar la notificación (popup) al iniciar la ruta
-              popup.remove();
-            };
-          }
-
-          const btnInfo = document.getElementById(btnInfoId);
-          if (btnInfo) {
-            btnInfo.onclick = () => {
-              setSelectedPoint(punto);
-              popup.remove();
-            };
-          }
-        });
-
-        if (!mapRef.current) return;
-
-        const marker = new mapboxgl.Marker(el)
-          .setLngLat([punto.lng, punto.lat])
-          .setPopup(popup);
-
-        if (mapRef.current) {
-          marker.addTo(mapRef.current);
-          markersRef.current.push(marker);
-        }
+      const sc = new Supercluster({
+        radius: 38,     // Radio fino: solo se agrupan si están casi superpuestos en pantalla
+        maxZoom: 12,    // A partir de zoom 12.5 / 13 todos los puntos se muestran individuales en la ciudad
+        minPoints: 2,   // Agrupar a partir de 2 negocios
       });
+      sc.load(features);
+      superclusterRef.current = sc;
+
+      actualizarEscalaMarcadores();
+      renderizarMarcadoresVisibles();
     } catch (err) {
       console.error('[Atlan] Error inesperado en cargarPuntosCercanos:', err);
     }
@@ -1510,19 +1752,28 @@ export default function MapaTuristico() {
       routeDuration = (routeDistance / 1000) * 120;
     }
 
-    if (mapRef.current && mapRef.current.isStyleLoaded()) {
-      const source = mapRef.current.getSource('preview-route');
-      if (source) {
-        source.setData({
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'LineString',
-            coordinates: coords
-          }
-        });
+    const applyPreviewRouteData = () => {
+      if (!mapRef.current) return;
+      try {
+        const source = mapRef.current.getSource('preview-route');
+        if (source) {
+          source.setData({
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: coords
+            }
+          });
+        }
+      } catch (e) {
+        console.warn('[Atlan] Error aplicando geometría a preview-route:', e);
       }
-    }
+    };
+
+    applyPreviewRouteData();
+    setTimeout(applyPreviewRouteData, 450);
+    setTimeout(applyPreviewRouteData, 1200);
 
     // Ajustar vista del mapa si es el fit inicial (Centrar trayectoria completa)
     if (coords.length > 0) {
@@ -1530,7 +1781,7 @@ export default function MapaTuristico() {
       coords.forEach(coord => bounds.extend(coord));
       previewRouteBoundsRef.current = bounds;
 
-      if ((isInitialFit || selectedPointRef.current) && mapRef.current) {
+      if (isInitialFit && mapRef.current) {
         mapRef.current.stop();
         if (mapRef.current.resize) mapRef.current.resize();
         const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -1540,7 +1791,7 @@ export default function MapaTuristico() {
             : { top: 100, bottom: 100, left: 80, right: 80 },
           maxZoom: 15.5,
           duration: isInitialFit ? 1800 : 0,
-          pitch: 15,
+          pitch: 0,
           essential: true
         });
       }
@@ -1578,32 +1829,46 @@ export default function MapaTuristico() {
         const el = document.createElement('div');
         el.className = 'nav-arrow-pulsing';
         el.innerHTML = `
-          <svg width="46" height="46" viewBox="0 0 24 24" fill="#007cbf" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 0 6px rgba(0,124,191,0.6));">
-            <path d="M12 2L4 20L12 17L20 20L12 2Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/>
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="#0284c7" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 2px 8px rgba(2, 132, 199, 0.7));">
+            <path d="M12 2L4 20L12 17L20 20L12 2Z" fill="#00a8ff" stroke="#ffffff" stroke-width="2" stroke-linejoin="round"/>
           </svg>
         `;
-        userMarkerRef.current = new mapboxgl.Marker({ element: el, rotationAlignment: 'viewport' })
+        userMarkerRef.current = new mapboxgl.Marker({
+          element: el,
+          rotationAlignment: 'map',
+          pitchAlignment: 'map'
+        })
           .setLngLat([longitude, latitude])
           .addTo(mapRef.current);
       } else {
         userMarkerRef.current.setLngLat([longitude, latitude]);
       }
+
+      // Rotar el vehículo en la dirección exacta de la carretera
+      if (userMarkerRef.current && bearing !== null && !isNaN(bearing)) {
+        userMarkerRef.current.setRotation(bearing);
+      }
     }
 
-    if (directionsRef.current && isNavigatingRef.current) {
+    if (bearing !== null && !isNaN(bearing)) {
+      currentBearingRef.current = bearing;
+    }
+
+    if (directionsRef.current && isNavigatingRef.current && !isDemoRunningRef.current) {
       directionsRef.current.setOrigin([longitude, latitude]);
     }
 
     if (isNavigatingRef.current && !isInteractionPausedRef.current && mapRef.current) {
       const opts = {
         center: [longitude, latitude],
-        zoom: 16.5,
-        pitch: 60,
-        duration: 1800,
+        zoom: 15.6,
+        pitch: 50,
+        duration: 1100,
         essential: true,
-        padding: { top: 180 },
       };
-      if (bearing !== null) opts.bearing = bearing;
+      if (bearing !== null && !isNaN(bearing)) {
+        opts.bearing = bearing;
+      }
       mapRef.current.easeTo(opts);
     }
 
@@ -1966,18 +2231,87 @@ export default function MapaTuristico() {
     return [];
   };
 
+  // ── CANCELAR RUTA ACTIVA Y RESTAURAR ESTADO NORMAL DEL MAPA ──
+  const cancelarRutaActiva = () => {
+    if (isClearingRoutesRef.current) return;
+    isClearingRoutesRef.current = true;
+
+    try {
+      // 1. Detener demo si estuviera corriendo
+      if (demoIntervalRef.current) {
+        clearInterval(demoIntervalRef.current);
+        demoIntervalRef.current = null;
+      }
+      setIsDemoRunning(false);
+      isDemoRunningRef.current = false;
+
+      // 2. Limpiar rutas de Mapbox Directions
+      if (directionsRef.current) {
+        try {
+          directionsRef.current.removeRoutes();
+        } catch (e) {}
+      }
+
+      // 3. Limpiar capa GeoJSON de previsualización de ruta
+      if (mapRef.current && mapRef.current.isStyleLoaded()) {
+        const source = mapRef.current.getSource('preview-route');
+        if (source) {
+          source.setData({
+            type: 'Feature',
+            geometry: { type: 'LineString', coordinates: [] }
+          });
+        }
+      }
+
+      // 4. Limpiar datos y referencias de ruta, destino y puntos seleccionados
+      rutaCoordenadasRef.current = [];
+      setRouteInfo(null);
+      setPreviewRouteInfo(null);
+      setCurrentManeuver(null);
+      setSelectedPoint(null);
+      setShowFullProfileModal(false);
+      setSelectedPointDetails(null);
+      selectedPointRef.current = null;
+      prevSelectedPointRef.current = null;
+      destinationRef.current = null;
+      lugarDestinoRef.current = '';
+      isNavigatingRef.current = false;
+      setIsNavigating(false);
+      isInteractionPausedRef.current = false;
+      setShowRecenterBtn(false);
+      setShowDirectionsPopup(false);
+
+      // 5. Quitar marcador B de destino
+      actualizarMarcadorDestino(null);
+
+      // 6. Restaurar vista limpia y paneles
+      if (mapContainerRef.current) {
+        mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
+      }
+      const panel = document.querySelector('.mapboxgl-ctrl-directions');
+      if (panel) {
+        panel.classList.remove('directions-popup-active');
+        panel.style.display = 'none';
+      }
+
+      // 7. Retornar cámara a plano cenital 2D estándar
+      if (mapRef.current) {
+        mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 800 });
+      }
+
+      // 8. Re-renderizar todos los marcadores y clusters normalmente
+      renderizarMarcadoresVisibles();
+    } finally {
+      setTimeout(() => {
+        isClearingRoutesRef.current = false;
+      }, 150);
+    }
+  };
+
   // Lógica del simulador demo
   const iniciarSimulacionDemo = async () => {
     if (demoIntervalRef.current) {
-      clearInterval(demoIntervalRef.current);
-      demoIntervalRef.current = null;
-      isDemoRunningRef.current = false;
-      setIsDemoRunning(false);
-      isNavigatingRef.current = false;
-      setShowRecenterBtn(false);
-      setRouteInfo(null);
-      const panel = document.querySelector('.mapboxgl-ctrl-directions');
-      if (panel) panel.style.display = '';
+      cancelarRutaActiva();
       speakInstruction(t('map.demoFinished'), true);
       return;
     }
@@ -1998,6 +2332,10 @@ export default function MapaTuristico() {
     isDemoRunningRef.current = true;
     isNavigatingRef.current = true;
     isInteractionPausedRef.current = false;
+    setShowRecenterBtn(false);
+    if (mapContainerRef.current) {
+      mapContainerRef.current.classList.add('atlan-nav-clean-mode');
+    }
 
     const panel = document.querySelector('.mapboxgl-ctrl-directions');
     if (panel) panel.style.display = 'none';
@@ -2005,6 +2343,25 @@ export default function MapaTuristico() {
     const destino = lugarDestinoRef.current || 'su destino';
     speakInstruction(`${t('map.welcome')} ${t('map.routeTo')} ${destino}.`, true);
     lastAnnouncementTimeRef.current = Date.now();
+
+    // Calcular orientación inicial hacia el primer segmento
+    const initialBearing = coords.length > 1 ? calcBearing(coords[0], coords[1]) : 0;
+    currentBearingRef.current = initialBearing;
+
+    // Posicionar el vehículo y cámara 3D de inmediato en la salida
+    handlePositionUpdate(coords[0][0], coords[0][1], initialBearing);
+
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: coords[0],
+        zoom: 15.6,
+        pitch: 50,
+        bearing: initialBearing,
+        speed: 1.1,
+        curve: 1.15,
+        essential: true,
+      });
+    }
 
     let index = 0;
     setTimeout(() => {
@@ -2019,18 +2376,10 @@ export default function MapaTuristico() {
         }
 
         if (index >= pts.length - 1) {
-          clearInterval(demoIntervalRef.current);
-          demoIntervalRef.current = null;
-          isDemoRunningRef.current = false;
-          setIsDemoRunning(false);
-          isNavigatingRef.current = false;
-          setShowRecenterBtn(false);
-          setRouteInfo(null);
-          if (panel) panel.style.display = '';
-          speakInstruction(t('map.arrived'), true);
-
           const destinoNombre = lugarDestinoRef.current || selectedPointRef.current?.nombre || 'su destino';
           const puntoId = selectedPointRef.current?.id || null;
+          cancelarRutaActiva();
+          speakInstruction(t('map.arrived'), true);
 
           setVisitPromptData({
             puntoId: puntoId,
@@ -2044,17 +2393,18 @@ export default function MapaTuristico() {
         let target = index + 1;
         while (target < pts.length - 1) {
           const gap = calcDistanceMeters(pts[index], pts[target]);
-          if (gap >= 25) break;
+          if (gap >= 22) break;
           target++;
         }
 
         const bearing = calcBearing(pts[index], pts[target]);
+        currentBearingRef.current = bearing;
         handlePositionUpdate(pts[target][0], pts[target][1], bearing);
         checkDistanceAnnouncements(pts[target][0], pts[target][1]);
 
         index = target;
-      }, 1200);
-    }, 4000);
+      }, 1100);
+    }, 1000);
   };
 
   // Activar modo agregar punto: abre modal selector de opciones (Ubicación actual vs Seleccionar en mapa)
@@ -2089,7 +2439,7 @@ export default function MapaTuristico() {
 
     setTempPointCoords(initialCoords);
     if (mapRef.current) {
-      mapRef.current.flyTo({ center: initialCoords, zoom: 16.5, pitch: 30, essential: true });
+      mapRef.current.flyTo({ center: initialCoords, zoom: 16.5, pitch: 0, essential: true });
     }
     setShowAddModal(true);
 
@@ -2102,7 +2452,7 @@ export default function MapaTuristico() {
           currentPosRef.current = [lng, lat];
           setTempPointCoords([lng, lat]);
           if (mapRef.current) {
-            mapRef.current.flyTo({ center: [lng, lat], zoom: 16.5, pitch: 30, essential: true });
+            mapRef.current.flyTo({ center: [lng, lat], zoom: 16.5, pitch: 0, essential: true });
           }
         },
         (err) => {
@@ -2204,15 +2554,44 @@ export default function MapaTuristico() {
       center: [-85.0, 13.0], // Centro de Centroamérica
       zoom: 5.5,
       pitch: 0,
+      maxPitch: 0,
+      pitchWithRotate: false,
+      touchPitch: false,
       projection: 'mercator',
       maxBounds: CENTRAL_AMERICA_BOUNDS, // Restringir memoria al área estrictamente necesaria
     });
+
+    if (mapContainerRef.current) {
+      actualizarEscalaMarcadores();
+    }
 
     mapRef.current.on('dragstart', () => {
       if (activePopupRef.current) {
         activePopupRef.current.remove();
         activePopupRef.current = null;
       }
+    });
+
+    // 3. Cero retraso durante el zoom del mapa (.map-zooming)
+    mapRef.current.on('zoomstart', () => {
+      if (mapContainerRef.current) {
+        mapContainerRef.current.classList.add('map-zooming');
+      }
+    });
+
+    mapRef.current.on('zoom', () => {
+      if (mapContainerRef.current && !mapContainerRef.current.classList.contains('map-zooming')) {
+        mapContainerRef.current.classList.add('map-zooming');
+      }
+      actualizarEscalaMarcadores();
+    });
+
+    mapRef.current.on('zoomend', () => {
+      if (mapContainerRef.current) {
+        mapContainerRef.current.classList.remove('map-zooming');
+      }
+      actualizarEscalaMarcadores();
+      renderizarMarcadoresVisibles();
     });
 
     mapRef.current.on('movestart', () => {
@@ -2223,10 +2602,14 @@ export default function MapaTuristico() {
     });
 
     mapRef.current.on('moveend', () => {
+      if (mapContainerRef.current) {
+        mapContainerRef.current.classList.remove('map-zooming');
+      }
       if (typeof window !== 'undefined') {
         window.__atlanMapMoving = false;
         window.resetAtlanInactivityTimer?.();
       }
+      renderizarMarcadoresVisibles();
     });
 
     mapRef.current.on('load', () => {
@@ -2442,33 +2825,39 @@ export default function MapaTuristico() {
     };
 
     const pauseCamera = () => {
-      // Cancelar animaciones cinematográficas si el usuario interactúa con el mapa
       clearCinematicTimeouts();
 
       if (!isNavigatingRef.current) return;
 
-      // Si ya está pausada la interacción, no hacemos nada más
-      if (isInteractionPausedRef.current) return;
-
       isInteractionPausedRef.current = true;
       setShowRecenterBtn(true); // Mostrar el botón "Volver a centrar"
+
+      // Al explorar libremente, quitar clase de conducción limpia para mostrar marcadores al instante
+      if (mapContainerRef.current) {
+        mapContainerRef.current.classList.remove('atlan-nav-clean-mode');
+      }
 
       if (interactionTimeoutRef.current) {
         clearTimeout(interactionTimeoutRef.current);
       }
     };
-    const handleMoveStart = (e) => {
-      if (e.originalEvent) {
+
+    const handleUserGesture = (e) => {
+      // Solo pausar si el evento proviene de un gesto físico real del usuario (mouse, touch, wheel)
+      // y NUNCA por animaciones programáticas de Mapbox (flyTo, easeTo)
+      if (!isNavigatingRef.current) return;
+      if (e && e.originalEvent) {
         pauseCamera();
       }
     };
-    mapRef.current.on('mousedown', () => {
-      clearCinematicTimeouts();
-    });
-    mapRef.current.on('movestart', handleMoveStart);
-    mapRef.current.on('dragstart', pauseCamera);
-    mapRef.current.on('touchstart', pauseCamera);
-    mapRef.current.on('wheel', pauseCamera);
+
+    // Escuchar únicamente gestos reales del usuario que indican que desea explorar manualmente
+    mapRef.current.on('movestart', handleUserGesture);
+    mapRef.current.on('dragstart', handleUserGesture);
+    mapRef.current.on('touchstart', handleUserGesture);
+    mapRef.current.on('wheel', handleUserGesture);
+    mapRef.current.on('rotatestart', handleUserGesture);
+    mapRef.current.on('pitchstart', handleUserGesture);
 
     // Controles nativos
     const geolocate = new mapboxgl.GeolocateControl({
@@ -2552,9 +2941,8 @@ export default function MapaTuristico() {
     });
 
     directions.on('clear', () => {
-      rutaCoordenadasRef.current = [];
-      setRouteInfo(null);
-      setCurrentManeuver(null);
+      if (isClearingRoutesRef.current) return;
+      cancelarRutaActiva();
     });
 
     // Geolocalización nativa + web y vuelo descendente cinematográfico a los 8.0 segundos
@@ -2617,7 +3005,7 @@ export default function MapaTuristico() {
         mapRef.current.resize();
 
         // FASE 1: Vuelo descendente 100% vertical y plano (pitch: 0, bearing: 0) desde el espacio hasta la posición GPS
-        // Sin giros de picada hacia la derecha durante el zoom. Súper fluido y liviano para la GPU en móvil.
+        // Sin giros de picada ni inclinaciones. Súper fluido y liviano para la GPU en móvil.
         mapRef.current.flyTo({
           center: targetPos,
           zoom: 16.5,
@@ -2627,29 +3015,20 @@ export default function MapaTuristico() {
           curve: 1.6,
           essential: true,
         });
-
-        // FASE 2: Una vez que aterriza verticalmente sobre el punto GPS, inclinamos suavemente a 60°
-        mapRef.current.once('moveend', () => {
-          if (mapRef.current && !selectedPointRef.current) {
-            mapRef.current.easeTo({
-              pitch: 60,
-              duration: 2000,
-              essential: true,
-            });
-          }
-        });
       }, 150);
 
       cinematicTimeoutsRef.current.push(descentTimer);
     }, 10000); // 10.0 segundos exactos — coincide con la pantalla de carga
 
-    cinematicTimeoutsRef.current.push(cinematicTimer);
-
     return () => {
+      clearTimeout(cinematicTimer);
       if (demoIntervalRef.current) clearInterval(demoIntervalRef.current);
       if (interactionTimeoutRef.current) clearTimeout(interactionTimeoutRef.current);
       cinematicTimeoutsRef.current.forEach(t => clearTimeout(t));
       if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+      markersOnMapRef.current.forEach((m) => m.remove());
+      markersOnMapRef.current.clear();
+      markersRef.current = [];
       if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
     };
   }, []);
@@ -2661,9 +3040,9 @@ export default function MapaTuristico() {
       const puntoId = params.get('id') || params.get('punto');
       const paramLat = params.get('lat');
       const paramLng = params.get('lng');
+      const shouldAutoRoute = params.get('ruta') === '1' || params.get('iniciarRuta') === '1' || params.get('comoLlegar') === '1';
 
       if (puntoId || (paramLat && paramLng)) {
-        setIsMapLoading(false);
         hasFlownInitialDescentRef.current = true;
 
         const cargarPuntoDesdeURL = async () => {
@@ -2672,33 +3051,22 @@ export default function MapaTuristico() {
             let targetLat = paramLat ? parseFloat(paramLat) : null;
 
             if (puntoId) {
+              if (loadedPointIdRef.current === puntoId) return;
+              loadedPointIdRef.current = puntoId;
+
               const { data: punto, error } = await supabase
                 .from('puntos')
                 .select('*')
                 .eq('id', puntoId)
                 .single();
               if (!error && punto) {
-                if (punto.ubicacion) {
-                  const match = punto.ubicacion.match(/POINT\(([-\d.]+) ([-\d.]+)\)/);
-                  if (match) {
-                    targetLng = parseFloat(match[1]);
-                    targetLat = parseFloat(match[2]);
-                  }
-                }
-                if ((targetLng == null || targetLat == null) && punto.lng != null && punto.lat != null) {
-                  targetLng = typeof punto.lng === 'string' ? parseFloat(punto.lng) : punto.lng;
-                  targetLat = typeof punto.lat === 'string' ? parseFloat(punto.lat) : punto.lat;
+                const pNorm = normalizarPunto(punto);
+                if (pNorm && pNorm.lng != null && pNorm.lat != null) {
+                  targetLng = pNorm.lng;
+                  targetLat = pNorm.lat;
                 }
 
                 if (targetLng != null && targetLat != null) {
-                  mapRef.current.flyTo({
-                    center: [targetLng, targetLat],
-                    zoom: 16.5,
-                    pitch: 45,
-                    speed: 0.85,
-                    essential: true
-                  });
-
                   cargarPuntosCercanos(targetLng, targetLat, filtroCategoria);
 
                   const puntoEstructura = {
@@ -2724,7 +3092,7 @@ export default function MapaTuristico() {
               mapRef.current.flyTo({
                 center: [targetLng, targetLat],
                 zoom: 16.5,
-                pitch: 45,
+                pitch: 0,
                 speed: 0.85,
                 essential: true
               });
@@ -2744,6 +3112,29 @@ export default function MapaTuristico() {
     }
   }, [mapRef.current]);
 
+  // Al concluir la pantalla de carga (10s), asegurar encuadre óptimo de la ruta y vista dividida
+  useEffect(() => {
+    if (!isMapLoading && mapRef.current) {
+      if (selectedPointRef.current && previewRouteBoundsRef.current) {
+        const timer = setTimeout(() => {
+          if (!mapRef.current) return;
+          mapRef.current.resize();
+          const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+          mapRef.current.fitBounds(previewRouteBoundsRef.current, {
+            padding: isMobile
+              ? { top: 90, bottom: 250, left: 35, right: 35 }
+              : { top: 100, bottom: 100, left: 80, right: 80 },
+            maxZoom: 15.5,
+            duration: 1200,
+            pitch: 0,
+            essential: true
+          });
+        }, 150);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isMapLoading]);
+
   // Recargar marcadores al cambiar categoría
   const aplicarFiltro = (cat) => {
     setFiltroCategoria(cat);
@@ -2755,16 +3146,21 @@ export default function MapaTuristico() {
     isInteractionPausedRef.current = false;
     setShowRecenterBtn(false);
 
+    // Al volver a centrar en modo navegación/demo, reactivar vista limpia
+    if (mapContainerRef.current) {
+      mapContainerRef.current.classList.add('atlan-nav-clean-mode');
+    }
+
     if (mapRef.current) {
       mapRef.current.flyTo({
         center: currentPosRef.current,
-        zoom: 16.5,
-        pitch: 60,
-        speed: 0.9,
+        zoom: 15.6,
+        pitch: 50,
+        bearing: currentBearingRef.current || 0,
+        speed: 1.1,
         curve: 1.15,
         essential: true,
       });
-      cargarPuntosCercanos(currentPosRef.current[0], currentPosRef.current[1], filtroCategoria);
     }
   };
 
@@ -2960,9 +3356,8 @@ export default function MapaTuristico() {
           <div style={{
             position: 'absolute',
             top: '20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: 'rgba(10, 15, 28, 0.9)',
+            left: '20px',
+            background: 'rgba(10, 15, 28, 0.92)',
             border: '1.5px solid var(--atlan-gold)',
             borderRadius: '16px',
             padding: '10px 18px',
@@ -2998,7 +3393,7 @@ export default function MapaTuristico() {
         )}
 
       {/* Cabecera flotante con identidad visual Atlan ampliada */}
-      {!selectedPoint && (
+      {!selectedPoint && !isDemoRunning && !isNavigating && !routeInfo && (
         <div className="map-header" style={{
           position: 'absolute',
           top: '20px',
@@ -3267,7 +3662,7 @@ export default function MapaTuristico() {
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: '12px',
-          animation: 'fadeInDown 0.3s ease-out'
+          animation: 'fadeInDownCenter 0.3s ease-out'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
             <div style={{
@@ -3317,7 +3712,7 @@ export default function MapaTuristico() {
       )}
 
       {/* Panel de filtros (se oculta si hay punto seleccionado, ruta en curso, demo activa, o si se enfoca/usa el buscador) */}
-      {!selectedPoint && !routeInfo && !isDemoRunning && !isSearchFocused && !searchQuery.trim() && !showResults && (
+      {!selectedPoint && !routeInfo && !isDemoRunning && !isNavigating && !isSearchFocused && !searchQuery.trim() && !showResults && (
         <div className="filter-bar-wrapper">
           <button
             type="button"
@@ -4065,7 +4460,7 @@ export default function MapaTuristico() {
       )}
 
       {/* Botón Volver a centrar (Waze-style) */}
-      {!selectedPoint && showRecenterBtn && (
+      {!selectedPoint && showRecenterBtn && (isDemoRunning || routeInfo) && (
         <button
           onClick={handleRecenter}
           style={{
@@ -5093,11 +5488,7 @@ export default function MapaTuristico() {
                 🚗 {lang === 'en' ? 'Active Route' : lang === 'zh' ? '导航中路线' : 'Ruta Activa'}
               </span>
               <button
-                onClick={() => {
-                  if (directionsRef.current) directionsRef.current.clean();
-                  setRouteInfo(null);
-                  setCurrentManeuver(null);
-                }}
+                onClick={cancelarRutaActiva}
                 style={{ background: 'rgba(255,255,255,0.08)', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold', width: '22px', height: '22px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s ease' }}
               >
                 ✕

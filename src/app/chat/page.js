@@ -722,6 +722,35 @@ function ChatContent() {
                             border: isMine ? "1px solid rgba(255, 255, 255, 0.25)" : "1px solid rgba(255, 255, 255, 0.18)",
                             backdropFilter: isMine ? "none" : "blur(10px)",
                           }}>
+                            {/* Cita si es respuesta a una Historia de 24h */}
+                            {msg.es_respuesta_historia && (
+                              <div style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                                padding: "6px 10px",
+                                background: "rgba(0, 0, 0, 0.3)",
+                                borderRadius: "10px",
+                                marginBottom: "6px",
+                                borderLeft: "3px solid #FFD700",
+                              }}>
+                                {msg.historia_miniatura_url && (
+                                  <img
+                                    src={msg.historia_miniatura_url}
+                                    alt="Historia"
+                                    style={{ width: "32px", height: "46px", objectFit: "cover", borderRadius: "6px" }}
+                                  />
+                                )}
+                                <div>
+                                  <div style={{ fontSize: "11px", fontWeight: "800", color: "#FFD700" }}>
+                                    {lang === "en" ? "Replied to a Story" : lang === "zh" ? "回复了快拍" : "Respondió a una historia"}
+                                  </div>
+                                  <div style={{ fontSize: "10px", color: "rgba(255, 255, 255, 0.65)" }}>
+                                    {lang === "en" ? "24h video" : lang === "zh" ? "24小时视频" : "Video de 24h"}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                             {msg.imagen_url && renderMessageMedia(msg.imagen_url, lang)}
                             {msg.contenido && (
                               <p style={{ margin: 0, fontSize: "14px", lineHeight: "1.5", wordBreak: "break-word", padding: msg.imagen_url ? "4px 10px 6px" : 0 }}>
@@ -985,7 +1014,7 @@ function ChatContent() {
 const chatLayoutStyles = {
   container: {
     maxWidth: "1160px",
-    margin: "84px auto 24px",
+    margin: "76px auto 20px",
     height: "calc(100vh - 120px)",
     maxHeight: "820px",
     minHeight: "540px",

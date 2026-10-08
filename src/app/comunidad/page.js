@@ -16,6 +16,8 @@ import FollowersModal from "@/components/ui/FollowersModal";
 import Navbar from "@/components/ui/Navbar";
 import { getProfileSlug } from "@/lib/profileUtils";
 import Icon from "@/components/ui/Icon";
+import StoriesBar from "@/components/historias/StoriesBar";
+import { useStories } from "@/hooks/useStories";
 
 // Comunidad Atlan
 
@@ -1023,6 +1025,9 @@ export default function ComunidadPage() {
   const [followersModalTab, setFollowersModalTab] = useState("followers");
   const loaderRef = useRef(null);
 
+  // Historias de 24 horas
+  const { groups: storyGroups, loading: loadingStories, reload: reloadStories, markSeen: markStorySeen } = useStories(session);
+
   const PAGE_SIZE = 50;
 
   // Fetch posts
@@ -1345,6 +1350,18 @@ export default function ComunidadPage() {
             )}
           </div>
 
+          {/* Carrusel de Historias Estilo Facebook (24 Horas) */}
+          <StoriesBar
+            session={session}
+            perfil={perfil}
+            lang={lang}
+            groups={storyGroups}
+            loading={loadingStories}
+            reload={reloadStories}
+            markSeen={markStorySeen}
+            onRequireLogin={() => setShowLoginModal(true)}
+          />
+
           {/* Create Post Bar */}
           {session && (
             <div style={pageStyles.createPostBar} onClick={() => setShowCreateModal(true)}>
@@ -1600,14 +1617,14 @@ const pageStyles = {
     width: "100%",
     maxWidth: "1320px",
     margin: "0 auto",
-    padding: "95px 24px 40px 24px",
+    padding: "78px 24px 40px 24px",
     position: "relative"
   },
   sidebarLeft: {
     position: "sticky",
-    top: "95px",
+    top: "78px",
     width: "100%",
-    maxHeight: "calc(100vh - 115px)",
+    maxHeight: "calc(100vh - 98px)",
     overflowY: "auto",
     scrollbarWidth: "none",
     zIndex: 10,
@@ -1623,9 +1640,9 @@ const pageStyles = {
   },
   sidebarRight: {
     position: "sticky",
-    top: "95px",
+    top: "78px",
     width: "100%",
-    maxHeight: "calc(100vh - 115px)",
+    maxHeight: "calc(100vh - 98px)",
     overflowY: "auto",
     scrollbarWidth: "none",
     zIndex: 10,

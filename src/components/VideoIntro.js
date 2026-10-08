@@ -4,18 +4,36 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 
 // Pantalla de bienvenida con video de fondo
 
+// Detecta si es móvil o WebView (incluye Flutter InAppWebView con useWideViewPort)
+function detectMobileOrWebView() {
+  if (typeof window === "undefined") return false;
+  // Método primario: parámetro URL ?platform=mobile enviado por el WebView de Flutter
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('platform') === 'mobile') return true;
+  const ua = navigator.userAgent || "";
+  // Flutter useWideViewPort:true hace innerWidth ~980px aunque sea un teléfono.
+  // Por eso usamos touch detection como señal secundaria.
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const isMobileSize = window.innerWidth <= 900;
+  const isMobileUA = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+  const isWebView = /wv\b/i.test(ua) || /Flutter/i.test(ua) || (/Version\/\d/.test(ua) && /Mobile Safari/.test(ua) && !/Chrome/.test(ua));
+  return isTouch || isMobileSize || isMobileUA || isWebView;
+}
+
 export default function VideoIntro({ onComplete }) {
   const videoRef = useRef(null);
   const [phase, setPhase] = useState("playing"); // "playing" | "fading" | "done"
   const [videoReady, setVideoReady] = useState(false);
   const [progressPercent, setProgressPercent] = useState(0);
 
+  const notifiedRef = useRef(false);
+
   // Fade-out
   const startFadeOut = useCallback(() => {
     setPhase((prev) => (prev === "playing" ? "fading" : prev));
   }, []);
 
-  // Forzar reproducción y fallback rápido para conexiones móviles
+  // Forzar reproducción y manejo de video
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.muted = true;
@@ -29,52 +47,49 @@ export default function VideoIntro({ onComplete }) {
         setVideoReady(true);
       }
     }
-
-    // Fallback rápido: Si el video tarda más de 3s en cargar por red móvil, mostrar la interfaz de Atlan de inmediato
-    const fallbackTimer = setTimeout(() => {
-      setVideoReady(true);
-    }, 3000);
-
-    return () => clearTimeout(fallbackTimer);
   }, []);
 
   // Notificar al terminar fade-out
   useEffect(() => {
-    if (phase === "fading") {
+    if (phase === "fading" && !notifiedRef.current) {
+      notifiedRef.current = true;
+      onComplete?.();
       const timer = setTimeout(() => {
         setPhase("done");
-        onComplete?.();
-      }, 600); // duración acelerada del fade-out CSS
+      }, 500);
       return () => clearTimeout(timer);
     }
   }, [phase, onComplete]);
 
-  const TARGET_DURATION = 8; // Duración objetivo: 8 segundos
-
-  // Timeout de seguridad máximo (8.5s)
+  // Timeout de seguridad máximo de 8.5s (garantiza paso a la app)
   useEffect(() => {
     const safety = setTimeout(() => {
       startFadeOut();
     }, 8500);
+
     return () => clearTimeout(safety);
   }, [startFadeOut]);
 
-  // Actualización ultra-fluida (60 FPS) de la barra de progreso sincronizada a los 8 segundos
+  // Actualización ultra-fluida de la barra de progreso sincronizada a los 8 segundos exactos
   useEffect(() => {
     if (phase !== "playing") return;
 
     let animId;
-    const updateProgress = () => {
-      if (videoRef.current) {
-        const current = videoRef.current.currentTime || 0;
-        const pct = Math.min((current / TARGET_DURATION) * 100, 100);
-        setProgressPercent(pct);
+    let startTime = performance.now();
+    const targetDuration = 8.0;
 
-        if (current >= TARGET_DURATION) {
-          startFadeOut();
-          return;
-        }
+    const updateProgress = (now) => {
+      const elapsed = (now - startTime) / 1000;
+      // Usar tiempo real transcurrido para que siempre dure 8s exactos en cualquier dispositivo
+      const pct = Math.min((elapsed / targetDuration) * 100, 100);
+
+      setProgressPercent(pct);
+
+      if (pct >= 100 || elapsed >= targetDuration) {
+        startFadeOut();
+        return;
       }
+
       animId = requestAnimationFrame(updateProgress);
     };
 
@@ -147,9 +162,10 @@ export default function VideoIntro({ onComplete }) {
         }}
         style={introStyles.video}
       >
-        <source src="/videos/portada2.0.webm" type="video/webm" />
         <source src="/videos/portada2.0-mobile.mp4" type="video/mp4" media="(max-width: 768px)" />
         <source src="/videos/portada2.0-opt.mp4" type="video/mp4" />
+        <source src="/videos/portada2.0.webm" type="video/webm" />
+        <source src="/videos/portada2.0.mp4" type="video/mp4" />
       </video>
 
       {/* Overlay oscuro sutil sobre el video */}
