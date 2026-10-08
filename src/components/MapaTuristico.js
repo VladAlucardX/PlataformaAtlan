@@ -5116,9 +5116,9 @@ export default function MapaTuristico() {
 
                     {/* COLUMNA 2: A LA PAR, LOS DOS BOTONES NEÓN ADAPTADOS CON TEXTO E ICONOS MÁS GRANDES */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', height: '150px' }}>
-                      {/* BOTÓN 1: INICIAR VIAJE */}
+                      {/* BOTÓN 1: INICIAR DEMO */}
                       <button
-                        onClick={() => handleIniciarViaje(selectedPoint)}
+                        onClick={() => handleIniciarDemo(selectedPoint)}
                         className="neon-btn-dark-hero"
                         style={{
                           flex: 1,
@@ -5140,8 +5140,7 @@ export default function MapaTuristico() {
                           strokeLinejoin="round"
                           style={{ flexShrink: 0 }}
                         >
-                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                          <circle cx="12" cy="10" r="3" />
+                          <polygon points="5 3 19 12 5 21 5 3" />
                         </svg>
                         <span
                           style={{
@@ -5152,7 +5151,7 @@ export default function MapaTuristico() {
                             textTransform: 'uppercase'
                           }}
                         >
-                          {lang === 'en' ? 'Start Trip' : lang === 'zh' ? '出发' : 'Iniciar Viaje'}
+                          {lang === 'en' ? 'Start Demo' : lang === 'zh' ? '开始演示' : 'Iniciar Demo'}
                         </span>
                       </button>
 

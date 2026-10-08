@@ -293,30 +293,6 @@ export default function BusinessProfileModal({
                   </button>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onIniciarDemo) {
-                      onIniciarDemo(point);
-                      onClose();
-                    } else if (onIniciarViaje) {
-                      onIniciarViaje(point);
-                      onClose();
-                    }
-                  }}
-                  className={styles.startTripBtn}
-                  style={{
-                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    boxShadow: '0 4px 14px rgba(245, 158, 11, 0.45)',
-                    border: '1px solid rgba(255, 255, 255, 0.35)'
-                  }}
-                  title={tr('Probar recorrido automático (Modo Demo)', 'Test automatic route (Demo Mode)', '自动演示行程')}
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="5 3 19 12 5 21 5 3" />
-                  </svg>
-                  <span>{tr('Iniciar Demo', 'Start Demo', '启动演示')}</span>
-                </button>
               </div>
             </div>
 
