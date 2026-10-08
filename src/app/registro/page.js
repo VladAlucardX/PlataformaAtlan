@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import Icon from "@/components/ui/Icon";
+import { isUser2FAVerified } from "@/lib/AuthContext";
 
 export default function RegisterPage() {
   const { t, lang } = useTranslation();
@@ -33,7 +34,12 @@ export default function RegisterPage() {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
-          router.push("/");
+          const verified = isUser2FAVerified(session.user.id);
+          if (verified) {
+            router.push("/");
+          } else {
+            router.push("/login?step=otp&google_auth=true");
+          }
         }
       } catch (err) {
         console.error("Session check error:", err);

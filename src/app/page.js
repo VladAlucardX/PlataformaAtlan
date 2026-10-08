@@ -446,7 +446,17 @@ function Footer() {
 export default function Home() {
   // En Web de escritorio se mantiene false por defecto para reproducir el video intro completo.
   const [introDone, setIntroDone] = React.useState(false);
-  const { session, perfil, logout } = useAuth();
+  const { session, perfil, logout, is2FAVerified } = useAuth();
+
+  // Si hay sesión activa pero el 2FA aún no ha sido verificado, bloquear acceso al mapa y redirigir al código
+  React.useEffect(() => {
+    if (typeof window !== "undefined" && session?.user?.id) {
+      const verified = localStorage.getItem("atlan_2fa_verified_" + session.user.id) === "true";
+      if (!verified) {
+        window.location.href = "/login?step=otp&google_auth=true";
+      }
+    }
+  }, [session]);
 
   React.useEffect(() => {
     try {

@@ -4,17 +4,53 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { supabase } from "@/lib/supabase";
 import { useInactivityLogout } from "@/hooks/useInactivityLogout";
 
+export const isUser2FAVerified = (userId) => {
+  if (typeof window === "undefined" || !userId) return false;
+  try {
+    return localStorage.getItem("atlan_2fa_verified_" + userId) === "true";
+  } catch (_) {
+    return false;
+  }
+};
+
+export const markUser2FAVerified = (userId) => {
+  if (typeof window === "undefined" || !userId) return;
+  try {
+    localStorage.setItem("atlan_2fa_verified_" + userId, "true");
+  } catch (_) {}
+};
+
+export const clearUser2FAVerified = (userId) => {
+  if (typeof window === "undefined") return;
+  try {
+    if (userId) {
+      localStorage.removeItem("atlan_2fa_verified_" + userId);
+      sessionStorage.removeItem("atlan_otp_sent_" + userId);
+    }
+    Object.keys(localStorage).forEach((k) => {
+      if (k.startsWith("atlan_2fa_verified_")) {
+        localStorage.removeItem(k);
+      }
+    });
+  } catch (_) {}
+};
+
 const AuthContext = createContext({
   session: null,
   perfil: null,
   loading: true,
+  is2FAVerified: false,
   logout: async () => {},
+  markVerified: () => {},
 });
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [perfil, setPerfil] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Derivar verificación 2FA directamente sin provocar cascadas de estado
+  const is2FAVerified = isUser2FAVerified(session?.user?.id);
 
   const fetchUserProfile = async (userId) => {
     try {
@@ -33,19 +69,25 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     try {
+      if (session?.user?.id) {
+        clearUser2FAVerified(session.user.id);
+      }
       await supabase.auth.signOut();
     } catch (err) {
       console.error("[Atlan Auth] Logout error:", err);
     }
     setSession(null);
     setPerfil(null);
-  }, []);
+  }, [session]);
 
   // Cierre de sesión automático por inactividad (15 minutos)
   const handleInactivityLogout = useCallback(() => {
+    if (session?.user?.id) {
+      clearUser2FAVerified(session.user.id);
+    }
     setSession(null);
     setPerfil(null);
-  }, []);
+  }, [session]);
 
   useInactivityLogout(!!session, handleInactivityLogout);
 
@@ -107,6 +149,25 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
+  // 3. Enforcing 2FA global: si hay sesión pero no está verificado en 2FA, redirigir a /login
+  useEffect(() => {
+    if (loading) return;
+    if (session?.user?.id) {
+      const verified = isUser2FAVerified(session.user.id);
+      if (!verified && typeof window !== "undefined") {
+        const path = window.location.pathname;
+        if (path !== "/login" && path !== "/registro" && path !== "/reset-password") {
+          window.location.href = "/login?step=otp&google_auth=true";
+        }
+      }
+    }
+  }, [session, loading]);
+
+  const markVerified = useCallback((userId) => {
+    markUser2FAVerified(userId);
+    setSession((prev) => (prev ? { ...prev } : prev));
+  }, []);
+
   const updatePerfil = useCallback((newFields) => {
     setPerfil((prev) => (prev ? { ...prev, ...newFields } : prev));
   }, []);
@@ -118,7 +179,18 @@ export function AuthProvider({ children }) {
   }, [session]);
 
   return (
-    <AuthContext.Provider value={{ session, perfil, loading, logout, updatePerfil, refreshProfile }}>
+    <AuthContext.Provider
+      value={{
+        session,
+        perfil,
+        loading,
+        is2FAVerified,
+        markVerified,
+        logout,
+        updatePerfil,
+        refreshProfile,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -126,7 +198,7 @@ export function AuthProvider({ children }) {
 
 /**
  * Hook para consumir el contexto de autenticación.
- * Uso: const { session, perfil, loading, logout } = useAuth();
+ * Uso: const { session, perfil, loading, logout, is2FAVerified } = useAuth();
  */
 export function useAuth() {
   return useContext(AuthContext);

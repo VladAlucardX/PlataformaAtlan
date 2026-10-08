@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import Icon from "@/components/ui/Icon";
+import { isUser2FAVerified, markUser2FAVerified } from "@/lib/AuthContext";
 
 function formatAuthError(msg, lang) {
   if (!msg) return "";
@@ -75,7 +76,40 @@ export default function LoginPage() {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
-          router.push("/");
+          const verified = isUser2FAVerified(session.user.id);
+          if (verified) {
+            router.push("/");
+          } else {
+            // Usuario con sesión activa (por ej. recién logueado con Google) pero 2FA pendiente
+            const userEmail = session.user.email || "";
+            setEmail(userEmail);
+            setStep("otp");
+
+            let isUserAdmin = userEmail === "admin@atlan.com";
+            try {
+              const { data: profile } = await supabase
+                .from("perfiles")
+                .select("rol")
+                .eq("id", session.user.id)
+                .maybeSingle();
+              if (profile?.rol === "admin") {
+                isUserAdmin = true;
+              }
+            } catch (_) {}
+            setIsAdminUser(isUserAdmin);
+
+            // Enviar OTP al correo si no se ha enviado en esta carga
+            if (typeof window !== "undefined") {
+              const otpKey = "atlan_otp_sent_" + session.user.id;
+              if (!sessionStorage.getItem(otpKey)) {
+                sessionStorage.setItem(otpKey, "true");
+                await supabase.auth.signInWithOtp({
+                  email: userEmail,
+                  options: { shouldCreateUser: false },
+                });
+              }
+            }
+          }
         }
       } catch (err) {
         console.error("Session check error:", err);
@@ -254,14 +288,31 @@ export default function LoginPage() {
     try {
       // 1. Código Maestro de Prueba (123456) — EXCLUSIVO para el Administrador
       if (code === "123456" && isAdminUser) {
-        const { data: devAuthData, error: devAuthError } = await supabase.auth.signInWithPassword({
-          email: cleanEmail,
-          password,
-        });
+        if (password) {
+          const { data: devAuthData, error: devAuthError } = await supabase.auth.signInWithPassword({
+            email: cleanEmail,
+            password,
+          });
 
-        if (!devAuthError && devAuthData?.user) {
-          router.push("/");
-          return;
+          if (!devAuthError && devAuthData?.user) {
+            markUser2FAVerified(devAuthData.user.id);
+            if (typeof window !== "undefined") {
+              sessionStorage.removeItem("atlan_otp_sent_" + devAuthData.user.id);
+            }
+            router.push("/");
+            return;
+          }
+        } else {
+          // Sesión activa (ej. admin autenticado con Google)
+          const { data: currentSession } = await supabase.auth.getSession();
+          if (currentSession?.session?.user) {
+            markUser2FAVerified(currentSession.session.user.id);
+            if (typeof window !== "undefined") {
+              sessionStorage.removeItem("atlan_otp_sent_" + currentSession.session.user.id);
+            }
+            router.push("/");
+            return;
+          }
         }
       }
 
@@ -285,6 +336,10 @@ export default function LoginPage() {
       }
 
       if (data?.user) {
+        markUser2FAVerified(data.user.id);
+        if (typeof window !== "undefined") {
+          sessionStorage.removeItem("atlan_otp_sent_" + data.user.id);
+        }
         router.push("/");
       }
     } catch (err) {
@@ -743,7 +798,13 @@ export default function LoginPage() {
 
             {/* Volver al paso 1 */}
             <button
-              onClick={() => {
+              onClick={async () => {
+                if (typeof window !== "undefined") {
+                  sessionStorage.clear();
+                }
+                try {
+                  await supabase.auth.signOut();
+                } catch (_) {}
                 setStep("credentials");
                 setErrorMsg("");
                 setOtpCode(["", "", "", "", "", ""]);
