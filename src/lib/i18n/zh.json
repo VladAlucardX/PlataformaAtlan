@@ -144,6 +144,7 @@
     "uploadPhoto": "上传照片",
     "tapMap": "点击地图标记图钉",
     "submit": "发布地点",
+    "saveBtn": "保存地点",
     "success": "谢谢！您标记的地点将显示在地图上。",
     "categories": {
       "comideria": "小吃店",

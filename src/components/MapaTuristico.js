@@ -2759,13 +2759,19 @@ export default function MapaTuristico() {
         ubicacion: `POINT(${lng} ${lat})`,
         departamento: deptDetectado,
         estado: 'sin_reclamar', // por defecto los del usuario están sin reclamar
-        imagen_url: photoUrl || null,
         fotos_comunidad: photoUrl ? [photoUrl] : []
       }]);
 
       if (error) {
-        console.error('[Atlan] Error insertando punto:', error);
-        alert(lang === 'en' ? 'Could not save the place. Try again.' : lang === 'zh' ? '无法保存地点，请重试。' : 'No se pudo guardar el lugar. Reintente.');
+        console.error('[Atlan] Error insertando punto:', error.message || error);
+        alert(
+          error.message ||
+          (lang === 'en'
+            ? 'Could not save the place. Try again.'
+            : lang === 'zh'
+            ? '无法保存地点，请重试。'
+            : 'No se pudo guardar el lugar. Reintente.')
+        );
       } else {
         setShowAddModal(false);
         setNewPointNombre('');
@@ -4657,7 +4663,9 @@ export default function MapaTuristico() {
                     }}
                   >
                     <Icon name="check" size={14} color="#0A192F" />
-                    {isSubmittingPoint ? (lang === 'en' ? 'Saving...' : lang === 'zh' ? '保存中...' : 'Guardando...') : t('addPoint.saveBtn')}
+                    {isSubmittingPoint
+                      ? (lang === 'en' ? 'Saving...' : lang === 'zh' ? '保存中...' : 'Guardando...')
+                      : (t('addPoint.saveBtn') || (lang === 'en' ? 'Save Place' : lang === 'zh' ? '保存地点' : 'Guardar Punto'))}
                   </button>
                 </div>
 

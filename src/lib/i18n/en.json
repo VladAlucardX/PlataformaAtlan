@@ -144,6 +144,7 @@
     "uploadPhoto": "Upload photo",
     "tapMap": "Tap the map to place the pin",
     "submit": "Share Point",
+    "saveBtn": "Save Place",
     "success": "Thanks! Your point will appear on the map.",
     "categories": {
       "comideria": "Eatery",
