@@ -16,17 +16,7 @@ export const metadata = {
 
 function LugaresLoading() {
   return (
-    <div className={styles.pageContainer}>
-      <header className={styles.heroSection}>
-        <div className={styles.heroBadge}>
-          <span>🇳🇮</span>
-          <span>Descubre Nicaragua</span>
-        </div>
-        <h1 className={styles.heroTitle}>Lugares de Nicaragua</h1>
-        <p className={styles.heroSubtitle}>
-          Cargando los mejores destinos y negocios turísticos...
-        </p>
-      </header>
+    <div className={styles.pageContainer} style={{ paddingTop: '76px' }}>
       <main className={styles.placesGrid}>
         {Array.from({ length: 12 }).map((_, idx) => (
           <PlaceCardSkeleton key={`page-skeleton-${idx}`} />

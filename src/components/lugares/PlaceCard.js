@@ -7,7 +7,7 @@ import { CATEGORIAS_CONFIG } from '@/lib/categories';
 import { isBusinessOpenNow } from '@/lib/businessHours';
 import { getPointImage } from '@/lib/imageUtils';
 
-function PlaceCard({ place, onSelect, lang = 'es' }) {
+function PlaceCard({ place, onSelect, onComoLlegar, lang = 'es' }) {
   if (!place) return null;
 
   const negocio = place.negocios || null;
@@ -78,7 +78,9 @@ function PlaceCard({ place, onSelect, lang = 'es' }) {
               />
             )}
             <div className={styles.fallbackBadge}>
-              <span>✨</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z" />
+              </svg>
               <span>{lang === 'en' ? 'Photos Coming Soon' : 'Próximamente'}</span>
             </div>
           </div>
@@ -130,13 +132,18 @@ function PlaceCard({ place, onSelect, lang = 'es' }) {
         {/* ── Badges Inferiores (sobre foto) ── */}
         <div className={styles.mediaBottomBar}>
           <span className={styles.deptPill}>
-            <span>📍</span>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
             <span>{departamento}</span>
           </span>
 
           {ratingValue && Number(ratingValue) > 0 ? (
             <span className={styles.ratingPill}>
-              <span>★</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
               <span>{ratingValue}</span>
               {numReviews > 0 && (
                 <span style={{ opacity: 0.75, fontWeight: 500, fontSize: '10.5px' }}>
@@ -146,7 +153,9 @@ function PlaceCard({ place, onSelect, lang = 'es' }) {
             </span>
           ) : (
             <span className={styles.ratingPill} style={{ color: '#94A3B8', borderColor: 'rgba(255,255,255,0.1)' }}>
-              <span>★</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
               <span style={{ fontSize: '11px', fontWeight: 600 }}>
                 {lang === 'en' ? 'New' : 'Nuevo'}
               </span>
@@ -171,22 +180,43 @@ function PlaceCard({ place, onSelect, lang = 'es' }) {
 
         <div className={styles.cardFooter}>
           <div className={styles.cardFooterMeta}>
-            {priceRange && (
-              <span className={styles.priceRangeBadge} title="Rango de precios">
-                {priceRange}
-              </span>
-            )}
-            {place.total_visitas > 0 && (
-              <span title="Visitas registradas">
-                👁️ {place.total_visitas}
-              </span>
-            )}
+            <span
+              title={lang === 'en' ? 'Registered visits' : 'Visitas registradas'}
+              className={styles.visitasBadge}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <span>{place.total_visitas || 0}</span>
+            </span>
           </div>
 
-          <span className={styles.detailsTrigger}>
-            <span>{lang === 'en' ? 'View details' : 'Ver detalles'}</span>
-            <span>→</span>
-          </span>
+          <div className={styles.cardActions}>
+            <button
+              type="button"
+              className={styles.comoLlegarBtn}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onComoLlegar) {
+                  onComoLlegar(place);
+                } else {
+                  window.location.href = `/mapa?id=${place.id}&ruta=1`;
+                }
+              }}
+              title={lang === 'en' ? 'Get Directions' : 'Cómo llegar'}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <polygon points="3 11 22 2 13 21 11 13 3 11" />
+              </svg>
+              <span>{lang === 'en' ? 'Directions' : 'Cómo llegar'}</span>
+            </button>
+
+            <span className={styles.detailsTrigger}>
+              <span>{lang === 'en' ? 'Details' : 'Ver detalles'}</span>
+              <span>→</span>
+            </span>
+          </div>
         </div>
       </div>
     </article>

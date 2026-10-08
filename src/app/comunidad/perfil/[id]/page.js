@@ -14,6 +14,10 @@ import ShareDropdown from "@/components/ui/ShareDropdown";
 import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
 import { getProfileSlug } from "@/lib/profileUtils";
+import StoriesBar from "@/components/historias/StoriesBar";
+import StoryViewer from "@/components/historias/StoryViewer";
+import StoryComposer from "@/components/historias/StoryComposer";
+import { useUserStories } from "@/hooks/useUserStories";
 
 function timeAgo(dateStr, lang) {
   const now = new Date();
@@ -693,7 +697,11 @@ export default function PerfilPublico() {
   const { session, perfil: myPerfil } = useAuth();
 
   const [targetPerfil, setTargetPerfil] = useState(null);
-  const userId = targetPerfil?.id || rawUserId;
+  const isSlugMatch = myPerfil && (
+    getProfileSlug(myPerfil)?.toLowerCase() === rawUserId?.toLowerCase() ||
+    myPerfil?.nombre_completo?.toLowerCase().replace(/[^a-z0-9]/g, "") === rawUserId?.toLowerCase().replace(/[^a-z0-9]/g, "")
+  );
+  const userId = targetPerfil?.id || (isSlugMatch ? session?.user?.id : rawUserId);
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -707,6 +715,11 @@ export default function PerfilPublico() {
   const [followersModalTab, setFollowersModalTab] = useState("followers");
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Historias de 24 h de este perfil (propias primero + seguidos aleatorios si es perfil propio)
+  const { groups: profileStoryGroups, loading: loadingProfileStories, reload: reloadProfileStories, markSeen: markProfileStorySeen } = useUserStories(session, userId);
+  const [storyViewerOpen, setStoryViewerOpen] = useState(false);
+  const [showStoryComposer, setShowStoryComposer] = useState(false);
 
   const fetchSuggestedUsers = useCallback(async () => {
     try {
@@ -994,6 +1007,20 @@ export default function PerfilPublico() {
 
         {/* ── CENTER COLUMN ── */}
         <main style={{ minWidth: 0, width: "100%" }}>
+          {/* Carrusel de historias en perfil propio (tus historias primero + seguidos aleatorios) */}
+          {isOwnProfile && (
+            <StoriesBar
+              session={session}
+              perfil={myPerfil || targetPerfil}
+              lang={lang}
+              groups={profileStoryGroups}
+              loading={loadingProfileStories}
+              reload={reloadProfileStories}
+              markSeen={markProfileStorySeen}
+              onRequireLogin={() => setShowLoginModal(true)}
+            />
+          )}
+
           {/* Target Profile Card (Solo si ves el perfil de OTRA persona) */}
           {!isOwnProfile && (
             <div style={{
@@ -1034,19 +1061,54 @@ export default function PerfilPublico() {
               </div>
 
               <div style={{ padding: "0 20px 20px", marginTop: "-32px", textAlign: "center", position: "relative", zIndex: 2 }}>
-                {/* Avatar centrado (64px) SOBRE la portada con borde 3px #E2E8F0 */}
-                <div style={{
-                  ...avatarStyle(targetPerfil.avatar_url, 64),
-                  margin: "0 auto 8px",
-                  border: "3px solid #E2E8F0",
-                  boxShadow: "0 4px 12px rgba(15, 23, 42, 0.15)",
-                  position: "relative",
-                  zIndex: 5,
-                  background: targetPerfil.avatar_url ? `url(${targetPerfil.avatar_url}) center/cover` : "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)"
-                }}>
-                  {!targetPerfil.avatar_url && (targetPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
-                </div>
-
+                {/* Avatar centrado (64px) con anillo de historias de 24 h */}
+                {(() => {
+                  const storyGroup = profileStoryGroups[0];
+                  const hasStories = !!storyGroup && storyGroup.historias.length > 0;
+                  const handleAvatarClick = () => {
+                    if (hasStories) setStoryViewerOpen(true);
+                    else if (isOwnProfile) setShowStoryComposer(true);
+                  };
+                  return (
+                    <div style={{ position: "relative", width: "64px", margin: "0 auto 8px", zIndex: 5 }}>
+                      <div
+                        onClick={handleAvatarClick}
+                        title={hasStories ? (lang === "en" ? "View stories" : lang === "zh" ? "查看故事" : "Ver historias") : undefined}
+                        style={{
+                          ...avatarStyle(targetPerfil.avatar_url, 64),
+                          margin: 0,
+                          border: hasStories
+                            ? (storyGroup.tieneNuevas ? "3px solid #FFD700" : "3px solid #94A3B8")
+                            : "3px solid #E2E8F0",
+                          boxShadow: hasStories && storyGroup.tieneNuevas
+                            ? "0 0 0 2px rgba(255, 215, 0, 0.35), 0 4px 12px rgba(15, 23, 42, 0.15)"
+                            : "0 4px 12px rgba(15, 23, 42, 0.15)",
+                          position: "relative",
+                          cursor: hasStories || isOwnProfile ? "pointer" : "default",
+                          background: targetPerfil.avatar_url ? `url(${targetPerfil.avatar_url}) center/cover` : "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)"
+                        }}
+                      >
+                        {!targetPerfil.avatar_url && (targetPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
+                      </div>
+                      {isOwnProfile && (
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); setShowStoryComposer(true); }}
+                          aria-label={lang === "en" ? "Add story" : lang === "zh" ? "添加故事" : "Agregar historia"}
+                          title={lang === "en" ? "Add story" : lang === "zh" ? "添加故事" : "Agregar historia"}
+                          style={{
+                            position: "absolute", right: "-4px", bottom: "-2px", width: "22px", height: "22px",
+                            borderRadius: "50%", border: "2px solid #FFFFFF", background: "#146D9E", color: "#FFFFFF",
+                            fontSize: "14px", fontWeight: "800", lineHeight: "1", cursor: "pointer",
+                            display: "flex", alignItems: "center", justifyContent: "center", padding: 0
+                          }}
+                        >
+                          +
+                        </button>
+                      )}
+                    </div>
+                  );
+                })()}
                 {/* Nombre del Usuario centrado idéntico al muro general */}
                 <h4 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: "800", color: "#1A1A2E", fontFamily: "var(--font-outfit)" }}>
                   {targetPerfil.nombre_completo || "Usuario"}
@@ -1162,6 +1224,28 @@ export default function PerfilPublico() {
           onClose={() => setShowFollowersModal(false)}
         />
       )}
-    </div>
+
+      {/* Visor de historias de este perfil */}
+      <StoryViewer
+        isOpen={storyViewerOpen}
+        onClose={() => setStoryViewerOpen(false)}
+        groups={profileStoryGroups}
+        initialGroupIndex={0}
+        session={session}
+        lang={lang}
+        onStoryDeleted={() => { if (reloadProfileStories) reloadProfileStories(); }}
+        markSeen={markProfileStorySeen}
+      />
+
+      {/* Crear historia (solo en tu propio perfil) */}
+      {isOwnProfile && (
+        <StoryComposer
+          isOpen={showStoryComposer}
+          onClose={() => setShowStoryComposer(false)}
+          session={session}
+          lang={lang}
+          onStoryPublished={() => { if (reloadProfileStories) reloadProfileStories(); }}
+        />
+      )}    </div>
   );
 }

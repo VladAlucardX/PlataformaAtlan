@@ -22,7 +22,7 @@ export function useStories(session) {
       const [{ data: stories, error: storiesError }, { data: follows }] = await Promise.all([
         supabase
           .from('historias')
-          .select('*, perfiles(id, nombre_completo, avatar_url)')
+          .select('*, perfiles!historias_usuario_id_fkey(id, nombre_completo, avatar_url)')
           .gt('expires_at', new Date().toISOString())
           .order('created_at', { ascending: true }),
         supabase.from('seguimientos').select('seguido_id').eq('seguidor_id', userId),

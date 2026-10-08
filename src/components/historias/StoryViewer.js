@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Icon from "@/components/ui/Icon";
 import { supabase } from "@/lib/supabase";
 import { STORY_EMOJIS, storyTimeAgo } from "@/lib/historias";
@@ -15,6 +16,7 @@ export default function StoryViewer({
   onStoryDeleted,
   markSeen,
 }) {
+  const [mounted, setMounted] = useState(false);
   const [groupIndex, setGroupIndex] = useState(initialGroupIndex);
   const [storyIndex, setStoryIndex] = useState(0);
   const [progress, setProgress] = useState(0); // 0 a 100
@@ -25,6 +27,11 @@ export default function StoryViewer({
   const [floatingEmojis, setFloatingEmojis] = useState([]);
   const [deleting, setDeleting] = useState(false);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const overlayRef = useRef(null);
   const videoRef = useRef(null);
   const touchStartRef = useRef(0);
   const holdTimeoutRef = useRef(null);
@@ -37,6 +44,7 @@ export default function StoryViewer({
       setProgress(0);
       setIsPaused(false);
       setReplyText("");
+      setTimeout(() => overlayRef.current?.focus(), 50);
     }
   }, [isOpen, initialGroupIndex, groups.length]);
 
@@ -51,6 +59,14 @@ export default function StoryViewer({
     }
     setProgress(0);
   }, [isOpen, currentStory?.id, markSeen]);
+
+  // Si el visor está abierto pero ya no queda ninguna historia (p. ej. se borró la última
+  // o venció), ciérralo para que no reaparezca solo al publicar otra.
+  useEffect(() => {
+    if (isOpen && (groups.length === 0 || !currentGroup || !currentStory)) {
+      onClose();
+    }
+  }, [isOpen, groups.length, currentGroup, currentStory, onClose]);
 
   // Avanzar a la siguiente historia o siguiente usuario
   const handleNext = useCallback(() => {
@@ -137,7 +153,7 @@ export default function StoryViewer({
     }, 1500);
 
     try {
-      await supabase.from("historias_reacciones").upsert(
+      const { error } = await supabase.from("historias_reacciones").upsert(
         {
           historia_id: currentStory.id,
           usuario_id: session.user.id,
@@ -145,6 +161,7 @@ export default function StoryViewer({
         },
         { onConflict: "historia_id,usuario_id" }
       );
+      if (error) throw error;
     } catch (err) {
       console.warn("[StoryViewer] Error registrando reacción:", err);
     }
@@ -220,7 +237,8 @@ export default function StoryViewer({
 
     setDeleting(true);
     try {
-      await supabase.rpc("eliminar_historia", { p_historia_id: currentStory.id });
+      const { error: delError } = await supabase.rpc("eliminar_historia", { p_historia_id: currentStory.id });
+      if (delError) throw delError;
       showToast(
         lang === "en"
           ? "Story deleted"
@@ -242,21 +260,27 @@ export default function StoryViewer({
     setTimeout(() => setToastMsg(""), 2800);
   };
 
-  if (!isOpen || !currentGroup || !currentStory) return null;
+  if (!isOpen || !currentGroup || !currentStory || !mounted) return null;
 
   const historias = currentGroup.historias || [];
   const autor = currentGroup.usuario || {};
 
-  return (
+  return createPortal(
     <div
+      ref={overlayRef}
       style={{
         position: "fixed",
         inset: 0,
-        zIndex: 10000,
-        background: "#000000",
+        zIndex: 999999,
+        background: "rgba(0, 0, 0, 0.94)",
+        backdropFilter: "blur(10px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        cursor: "pointer",
+      }}
+      onClick={() => {
+        if (onClose) onClose();
       }}
       onKeyDown={(e) => {
         if (e.key === "Escape") onClose();
@@ -278,9 +302,19 @@ export default function StoryViewer({
           flexDirection: "column",
           overflow: "hidden",
           userSelect: "none",
+          cursor: "default",
+          borderRadius: "20px",
+          boxShadow: "0 25px 60px rgba(0, 0, 0, 0.9)",
         }}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
+        onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => {
+          e.stopPropagation();
+          handlePointerDown(e);
+        }}
+        onPointerUp={(e) => {
+          e.stopPropagation();
+          handlePointerUp(e);
+        }}
       >
         {/* Barras de progreso segmentadas en la parte superior */}
         <div
@@ -690,6 +724,7 @@ export default function StoryViewer({
           }
         }
       `}</style>
-    </div>
+    </div>,
+    document.body
   );
 }

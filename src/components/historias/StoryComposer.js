@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Icon from "@/components/ui/Icon";
 import { STORY_MAX_SECONDS, STORY_MAX_MB, readVideoDuration, publishStory } from "@/lib/historias";
 
 export default function StoryComposer({ isOpen, onClose, session, lang, onStoryPublished }) {
+  const [mounted, setMounted] = useState(false);
   const [videoFile, setVideoFile] = useState(null);
   const [videoPreview, setVideoPreview] = useState(null);
   const [duration, setDuration] = useState(null);
@@ -12,10 +14,148 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
   const [uploading, setUploading] = useState(false);
   const [progressMsg, setProgressMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Estados de grabación con cámara
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordSeconds, setRecordSeconds] = useState(0);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
+  const liveVideoRef = useRef(null);
+  const cameraStreamRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const recordedChunksRef = useRef([]);
+  const recordTimerRef = useRef(null);
+  const recordSecondsRef = useRef(0);
 
-  if (!isOpen) return null;
+  // Detener cámara al desmontar o cerrar
+  const stopCamera = () => {
+    if (cameraStreamRef.current) {
+      cameraStreamRef.current.getTracks().forEach((track) => track.stop());
+      cameraStreamRef.current = null;
+    }
+    if (recordTimerRef.current) {
+      clearInterval(recordTimerRef.current);
+      recordTimerRef.current = null;
+    }
+    setIsCameraActive(false);
+    setIsRecording(false);
+    setRecordSeconds(0);
+    recordSecondsRef.current = 0;
+  };
+
+  useEffect(() => {
+    return () => {
+      stopCamera();
+    };
+  }, []);
+
+  if (!isOpen || !mounted) return null;
+
+  // Iniciar cámara en vivo
+  const handleStartCamera = async () => {
+    setErrorMsg("");
+    try {
+      if (!navigator?.mediaDevices?.getUserMedia) {
+        throw new Error("getUserMedia_not_supported");
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 1280 } },
+        audio: true,
+      });
+      cameraStreamRef.current = stream;
+      setIsCameraActive(true);
+      if (liveVideoRef.current) {
+        liveVideoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      console.error("[StoryComposer] Error abriendo cámara:", err);
+      setErrorMsg(
+        lang === "en"
+          ? "Could not access camera/microphone. Please check browser permissions."
+          : lang === "zh"
+          ? "无法访问摄像头或麦克风。请检查浏览器权限。"
+          : "No se pudo acceder a la cámara o micrófono. Revisa los permisos de tu navegador."
+      );
+    }
+  };
+
+  // Iniciar grabación de video
+  const handleStartRecording = () => {
+    if (!cameraStreamRef.current) return;
+    recordedChunksRef.current = [];
+    setErrorMsg("");
+
+    try {
+      const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus")
+        ? "video/webm;codecs=vp9,opus"
+        : MediaRecorder.isTypeSupported("video/webm")
+        ? "video/webm"
+        : MediaRecorder.isTypeSupported("video/mp4")
+        ? "video/mp4"
+        : "";
+
+      const options = mimeType ? { mimeType } : {};
+      const recorder = new MediaRecorder(cameraStreamRef.current, options);
+      mediaRecorderRef.current = recorder;
+
+      recorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          recordedChunksRef.current.push(e.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        const finalMime = recorder.mimeType || "video/webm";
+        const blob = new Blob(recordedChunksRef.current, { type: finalMime });
+        const ext = finalMime.includes("mp4") ? "mp4" : "webm";
+        const recordedFile = new File([blob], `historia_${Date.now()}.${ext}`, { type: finalMime });
+
+        stopCamera();
+
+        const recordedUrl = URL.createObjectURL(blob);
+        setVideoFile(recordedFile);
+        setVideoPreview(recordedUrl);
+        setDuration(recordSecondsRef.current || null);
+      };
+
+      recorder.start(500);
+      setIsRecording(true);
+      setRecordSeconds(0);
+      recordSecondsRef.current = 0;
+
+      recordTimerRef.current = setInterval(() => {
+        setRecordSeconds((prev) => {
+          const next = prev + 1;
+          recordSecondsRef.current = next;
+          if (next >= STORY_MAX_SECONDS) {
+            handleStopRecording();
+          }
+          return next;
+        });
+      }, 1000);
+    } catch (e) {
+      console.error("[StoryComposer] Error en MediaRecorder:", e);
+      setErrorMsg("Error al iniciar la grabación");
+    }
+  };
+
+  // Detener grabación de video
+  const handleStopRecording = () => {
+    if (recordTimerRef.current) {
+      clearInterval(recordTimerRef.current);
+      recordTimerRef.current = null;
+    }
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+    setIsRecording(false);
+  };
 
   const handleSelectFile = async (e) => {
     const file = e.target.files?.[0];
@@ -79,6 +219,7 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
   };
 
   const handleReset = () => {
+    stopCamera();
     if (videoPreview) URL.revokeObjectURL(videoPreview);
     setVideoFile(null);
     setVideoPreview(null);
@@ -124,12 +265,12 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
     }
   };
 
-  return (
+  return createPortal(
     <div
       style={{
         position: "fixed",
         inset: 0,
-        zIndex: 9999,
+        zIndex: 999999,
         background: "rgba(3, 7, 18, 0.88)",
         backdropFilter: "blur(16px)",
         display: "flex",
@@ -182,11 +323,11 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
                 border: "1px solid rgba(212, 175, 55, 0.4)",
               }}
             >
-              📹
+              <Icon name="video" size={20} color="#FFD700" />
             </span>
             <div>
               <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#FFD700" }}>
-                {lang === "en" ? "Create Story (24h)" : lang === "zh" ? "发布快拍 (24小时)" : "Crear Historia (24h)"}
+                {lang === "en" ? "Create Story" : lang === "zh" ? "发布快拍" : "Crear Historia"}
               </h3>
               <p style={{ margin: 0, fontSize: "11px", color: "rgba(255, 255, 255, 0.6)" }}>
                 {lang === "en" ? "Short video up to 30 seconds" : lang === "zh" ? "最长 30 秒的短视频" : "Video corto de hasta 30 segundos"}
@@ -200,6 +341,7 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
               handleReset();
               onClose();
             }}
+            aria-label="Cerrar"
             style={{
               background: "rgba(255, 255, 255, 0.08)",
               border: "none",
@@ -211,16 +353,222 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "14px",
+              transition: "background 0.2s ease",
             }}
           >
-            ✕
+            <Icon name="x" size={16} color="#FFFFFF" />
           </button>
         </div>
 
-        {/* Contenido / Vista previa */}
+        {/* Contenido / Vista previa / Cámara */}
         <div style={{ padding: "20px" }}>
-          {!videoPreview ? (
+          {isCameraActive ? (
+            /* Modo grabación con cámara web / móvil */
+            <div>
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  height: "360px",
+                  borderRadius: "18px",
+                  overflow: "hidden",
+                  background: "#000000",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: isRecording ? "2px solid #EF4444" : "1px solid rgba(212, 175, 55, 0.4)",
+                  boxShadow: isRecording ? "0 0 20px rgba(239, 68, 68, 0.35)" : "none",
+                }}
+              >
+                <video
+                  ref={(el) => {
+                    liveVideoRef.current = el;
+                    if (el && cameraStreamRef.current) {
+                      el.srcObject = cameraStreamRef.current;
+                    }
+                  }}
+                  autoPlay
+                  playsInline
+                  muted
+                  style={{ width: "100%", height: "100%", objectFit: "cover", transform: "scaleX(-1)" }}
+                />
+
+                {/* Badge superior de estado y tiempo */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "12px",
+                    left: "12px",
+                    right: "12px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    zIndex: 2,
+                  }}
+                >
+                  <div
+                    style={{
+                      background: isRecording ? "rgba(239, 68, 68, 0.85)" : "rgba(0, 0, 0, 0.7)",
+                      backdropFilter: "blur(6px)",
+                      borderRadius: "10px",
+                      padding: "4px 10px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      fontSize: "11px",
+                      fontWeight: "700",
+                      color: "#FFFFFF",
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "50%",
+                        background: isRecording ? "#FFFFFF" : "#10B981",
+                        animation: isRecording ? "pulse 1s infinite" : "none",
+                      }}
+                    />
+                    <span>{isRecording ? "REC" : "Cámara activa"}</span>
+                  </div>
+
+                  <div
+                    style={{
+                      background: "rgba(0, 0, 0, 0.7)",
+                      backdropFilter: "blur(6px)",
+                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      borderRadius: "10px",
+                      padding: "4px 10px",
+                      fontSize: "11px",
+                      fontWeight: "800",
+                      color: isRecording ? "#FFD700" : "#FFFFFF",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                    }}
+                  >
+                    <Icon name="clock" size={12} color="#FFD700" />
+                    <span>{recordSeconds}s / {STORY_MAX_SECONDS}s</span>
+                  </div>
+                </div>
+
+                {/* Barra de progreso de grabación */}
+                {isRecording && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: "4px",
+                      background: "rgba(255, 255, 255, 0.2)",
+                      zIndex: 3,
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: "100%",
+                        width: `${(recordSeconds / STORY_MAX_SECONDS) * 100}%`,
+                        background: "#EF4444",
+                        transition: "width 1s linear",
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Botones de control de cámara */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginTop: "16px",
+                  padding: "0 8px",
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={stopCamera}
+                  style={{
+                    background: "rgba(255, 255, 255, 0.08)",
+                    border: "1px solid rgba(255, 255, 255, 0.15)",
+                    borderRadius: "12px",
+                    padding: "8px 14px",
+                    color: "#FFFFFF",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                  }}
+                >
+                  {lang === "en" ? "Back" : lang === "zh" ? "返回" : "Volver"}
+                </button>
+
+                {!isRecording ? (
+                  <button
+                    type="button"
+                    onClick={handleStartRecording}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      background: "linear-gradient(135deg, #EF4444 0%, #DC2626 100%)",
+                      border: "none",
+                      borderRadius: "24px",
+                      padding: "10px 22px",
+                      color: "#FFFFFF",
+                      fontSize: "13px",
+                      fontWeight: "800",
+                      cursor: "pointer",
+                      boxShadow: "0 4px 14px rgba(239, 68, 68, 0.4)",
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: "12px",
+                        height: "12px",
+                        borderRadius: "50%",
+                        background: "#FFFFFF",
+                      }}
+                    />
+                    <span>{lang === "en" ? "Record" : lang === "zh" ? "开始录制" : "Grabar"}</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleStopRecording}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
+                      border: "none",
+                      borderRadius: "24px",
+                      padding: "10px 22px",
+                      color: "#FFFFFF",
+                      fontSize: "13px",
+                      fontWeight: "800",
+                      cursor: "pointer",
+                      boxShadow: "0 4px 14px rgba(16, 185, 129, 0.4)",
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: "10px",
+                        height: "10px",
+                        borderRadius: "2px",
+                        background: "#FFFFFF",
+                      }}
+                    />
+                    <span>{lang === "en" ? "Finish" : lang === "zh" ? "完成" : "Finalizar"}</span>
+                  </button>
+                )}
+
+                <div style={{ width: "60px" }} />
+              </div>
+            </div>
+          ) : !videoPreview ? (
+            /* Selector inicial con Examinar Archivo y Grabar Video */
             <div>
               <input
                 ref={fileInputRef}
@@ -229,19 +577,16 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
                 onChange={handleSelectFile}
                 style={{ display: "none" }}
               />
+
               <div
-                onClick={() => fileInputRef.current?.click()}
                 style={{
                   border: "2px dashed rgba(212, 175, 55, 0.4)",
                   borderRadius: "20px",
-                  padding: "48px 20px",
+                  padding: "36px 20px",
                   textAlign: "center",
                   background: "rgba(255, 255, 255, 0.02)",
-                  cursor: "pointer",
                   transition: "all 0.2s ease",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--atlan-gold)")}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.4)")}
               >
                 <div
                   style={{
@@ -261,32 +606,65 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
                 <h4 style={{ margin: "0 0 6px", fontSize: "16px", fontWeight: "700", color: "#FFFFFF" }}>
                   {lang === "en" ? "Select or record a video" : lang === "zh" ? "选择或录制视频" : "Selecciona o graba un video"}
                 </h4>
-                <p style={{ margin: "0 0 12px", fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
+                <p style={{ margin: "0 0 16px", fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
                   {lang === "en"
                     ? "Max 30s · MP4, WebM, MOV · Max 45MB"
                     : lang === "zh"
                     ? "最长 30 秒 · MP4, WebM, MOV · 最大 45MB"
                     : "Máx 30s · MP4, WebM, MOV · Máx 45MB"}
                 </p>
-                <span
-                  style={{
-                    display: "inline-block",
-                    padding: "8px 18px",
-                    borderRadius: "12px",
-                    background: "rgba(212, 175, 55, 0.15)",
-                    border: "1px solid rgba(212, 175, 55, 0.4)",
-                    color: "var(--atlan-gold)",
-                    fontSize: "12px",
-                    fontWeight: "700",
-                  }}
-                >
-                  {lang === "en" ? "Browse Files" : lang === "zh" ? "选择文件" : "Examinar Archivo"}
-                </span>
+
+                {/* Dos opciones claras: Examinar Archivo y Grabar Video */}
+                <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      padding: "9px 18px",
+                      borderRadius: "12px",
+                      background: "rgba(212, 175, 55, 0.15)",
+                      border: "1px solid rgba(212, 175, 55, 0.4)",
+                      color: "var(--atlan-gold, #FFD700)",
+                      fontSize: "12px",
+                      fontWeight: "700",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <Icon name="film" size={14} color="#FFD700" />
+                    <span>{lang === "en" ? "Browse Files" : lang === "zh" ? "选择文件" : "Examinar Archivo"}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleStartCamera}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      padding: "9px 18px",
+                      borderRadius: "12px",
+                      background: "linear-gradient(135deg, rgba(20, 109, 158, 0.35) 0%, rgba(20, 109, 158, 0.6) 100%)",
+                      border: "1px solid rgba(56, 189, 248, 0.4)",
+                      color: "#FFFFFF",
+                      fontSize: "12px",
+                      fontWeight: "700",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <Icon name="camera" size={14} color="#38BDF8" />
+                    <span>{lang === "en" ? "Record Video" : lang === "zh" ? "录制视频" : "Grabar Video"}</span>
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
+            /* Vista previa del video seleccionado o grabado */
             <div>
-              {/* Reproductor de vista previa */}
               <div
                 style={{
                   position: "relative",
@@ -309,7 +687,7 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
                   style={{ width: "100%", height: "100%", objectFit: "contain" }}
                 />
 
-                {/* Badge de duración */}
+                {/* Badge de duración con icono SVG */}
                 {duration && (
                   <div
                     style={{
@@ -323,14 +701,18 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
                       padding: "4px 8px",
                       fontSize: "11px",
                       fontWeight: "700",
-                      color: "var(--atlan-gold)",
+                      color: "var(--atlan-gold, #FFD700)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
                     }}
                   >
-                    ⏱ {Math.round(duration)}s / {STORY_MAX_SECONDS}s
+                    <Icon name="clock" size={12} color="#FFD700" />
+                    <span>{Math.round(duration)}s / {STORY_MAX_SECONDS}s</span>
                   </div>
                 )}
 
-                {/* Botón cambiar video */}
+                {/* Botón cambiar video con icono SVG */}
                 <button
                   type="button"
                   onClick={handleReset}
@@ -347,9 +729,13 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
                     fontSize: "11px",
                     fontWeight: "600",
                     cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
                   }}
                 >
-                  ↺ {lang === "en" ? "Change" : lang === "zh" ? "更换" : "Cambiar"}
+                  <Icon name="rotateCcw" size={12} color="#FFFFFF" />
+                  <span>{lang === "en" ? "Change" : lang === "zh" ? "更换" : "Cambiar"}</span>
                 </button>
               </div>
 
@@ -389,7 +775,7 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
             </div>
           )}
 
-          {/* Mensajes de progreso / error */}
+          {/* Mensajes de progreso / error con icono SVG */}
           {progressMsg && (
             <div
               style={{
@@ -429,9 +815,13 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
                 borderRadius: "12px",
                 color: "#fca5a5",
                 fontSize: "12px",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
               }}
             >
-              ⚠️ {errorMsg}
+              <Icon name="alertTriangle" size={14} color="#fca5a5" />
+              <span>{errorMsg}</span>
             </div>
           )}
         </div>
@@ -504,13 +894,14 @@ export default function StoryComposer({ isOpen, onClose, session, lang, onStoryP
               </>
             ) : (
               <>
-                <span>🚀</span>
+                <Icon name="send" size={14} color="#0A192F" />
                 <span>{lang === "en" ? "Share Story" : lang === "zh" ? "发布故事" : "Compartir Historia"}</span>
               </>
             )}
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

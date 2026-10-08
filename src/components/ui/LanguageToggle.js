@@ -66,7 +66,7 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
     );
   }
 
-  // Default: pill variant (Claymorphism 3D style)
+  // Default: pill variant (matching .nav-pill-link proportions)
   return (
     <button
       onClick={toggle}
@@ -77,35 +77,41 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: '8px',
-        padding: '6px 8px 6px 12px',
+        gap: '6px',
+        padding: '3px 5px 3px 9px',
+        height: '34px',
         background: '#FFFFFF',
-        border: '2px solid rgba(255, 255, 255, 0.9)',
+        border: '1px solid rgba(226, 232, 240, 0.9)',
         borderRadius: 'var(--atlan-radius-full)',
         color: 'var(--atlan-text-primary)',
-        fontSize: '13px',
-        fontWeight: '700',
+        fontSize: '12.5px',
+        fontWeight: '650',
         cursor: 'pointer',
-        transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        boxShadow: `
-          inset 2px 2px 5px rgba(255, 255, 255, 1),
-          inset -3px -3px 6px rgba(20, 109, 158, 0.08),
-          0 8px 20px -4px rgba(20, 109, 158, 0.12)
-        `,
-        letterSpacing: '0.02em',
+        transition: 'all 0.2s ease',
+        boxShadow: '0 2px 6px rgba(15, 23, 42, 0.04)',
+        letterSpacing: '0.01em',
         fontFamily: 'var(--font-outfit), system-ui, sans-serif',
+        flexShrink: 0,
       }}
-      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)'}
-      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0) scale(1)'}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-1px)';
+        e.currentTarget.style.borderColor = 'rgba(20, 109, 158, 0.3)';
+        e.currentTarget.style.boxShadow = '0 4px 12px rgba(20, 109, 158, 0.1)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.borderColor = 'rgba(226, 232, 240, 0.9)';
+        e.currentTarget.style.boxShadow = '0 2px 6px rgba(15, 23, 42, 0.04)';
+      }}
     >
-      <img src="/images/remolino.svg" alt="Language" style={{ width: '18px', height: '18px', objectFit: 'contain', flexShrink: 0 }} />
+      <img src="/images/remolino.svg" alt="Language" style={{ width: '15px', height: '15px', objectFit: 'contain', flexShrink: 0 }} />
       <span
         style={{
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '2px 8px',
-          height: '28px',
+          padding: '0 7px',
+          height: '22px',
           borderRadius: 'var(--atlan-radius-full)',
           background: lang === 'zh'
             ? 'linear-gradient(135deg, #DE2910 0%, #B22222 100%)'
@@ -114,9 +120,9 @@ export default function LanguageToggle({ variant = 'pill', className = '' }) {
             : 'linear-gradient(135deg, #146D9E 0%, #0F5579 100%)',
           color: '#FFFFFF',
           fontWeight: '800',
-          fontSize: '11px',
-          letterSpacing: '0.05em',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+          fontSize: '10.5px',
+          letterSpacing: '0.04em',
+          boxShadow: '0 1px 4px rgba(0, 0, 0, 0.15)',
         }}
       >
         {getFlagBadge()}

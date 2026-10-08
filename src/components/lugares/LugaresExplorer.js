@@ -173,22 +173,6 @@ export default function LugaresExplorer() {
 
   return (
     <div className={styles.pageContainer}>
-      {/* ── Hero Header ── */}
-      <header className={styles.heroSection}>
-        <div className={styles.heroBadge}>
-          <span>🇳🇮</span>
-          <span>{lang === 'en' ? 'Discover Nicaragua' : 'Descubre Nicaragua'}</span>
-        </div>
-        <h1 className={styles.heroTitle}>
-          {lang === 'en' ? 'Places of Nicaragua' : 'Lugares de Nicaragua'}
-        </h1>
-        <p className={styles.heroSubtitle}>
-          {lang === 'en'
-            ? 'Explore authentic destinations, local gastronomy, hotels, and tourist attractions across all 17 departments of the country.'
-            : 'Explora destinos auténticos, gastronomía típica, hospedajes y atractivos turísticos en los 17 departamentos del país.'}
-        </p>
-      </header>
-
       {/* ── Filtros y Buscador ── */}
       <PlacesFilters
         search={searchInput}
@@ -216,6 +200,9 @@ export default function LugaresExplorer() {
               key={place.id}
               place={place}
               onSelect={handleSelectPlace}
+              onComoLlegar={(pt) => {
+                router.push(`/mapa?id=${pt.id}&ruta=1`);
+              }}
               lang={lang}
             />
           ))

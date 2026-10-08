@@ -338,6 +338,9 @@ export default function MapaTuristico() {
         progress = 100;
         setLoadingProgress(100);
         clearInterval(interval);
+        setTimeout(() => {
+          setIsMapLoading(false);
+        }, 120);
       } else {
         setLoadingProgress(progress);
       }
@@ -945,6 +948,21 @@ export default function MapaTuristico() {
       if (match) {
         lng = parseFloat(match[1]);
         lat = parseFloat(match[2]);
+      } else if (/^[0-9a-fA-F]{42,}$/.test(punto.ubicacion.trim())) {
+        try {
+          const hex = punto.ubicacion.trim();
+          const bytesLng = new Uint8Array(8);
+          for (let i = 0; i < 8; i++) {
+            bytesLng[i] = parseInt(hex.substr((9 + i) * 2, 2), 16);
+          }
+          lng = new DataView(bytesLng.buffer).getFloat64(0, true);
+
+          const bytesLat = new Uint8Array(8);
+          for (let i = 0; i < 8; i++) {
+            bytesLat[i] = parseInt(hex.substr((17 + i) * 2, 2), 16);
+          }
+          lat = new DataView(bytesLat.buffer).getFloat64(0, true);
+        } catch (_) {}
       }
     }
 
@@ -1734,19 +1752,28 @@ export default function MapaTuristico() {
       routeDuration = (routeDistance / 1000) * 120;
     }
 
-    if (mapRef.current && mapRef.current.isStyleLoaded()) {
-      const source = mapRef.current.getSource('preview-route');
-      if (source) {
-        source.setData({
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'LineString',
-            coordinates: coords
-          }
-        });
+    const applyPreviewRouteData = () => {
+      if (!mapRef.current) return;
+      try {
+        const source = mapRef.current.getSource('preview-route');
+        if (source) {
+          source.setData({
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: coords
+            }
+          });
+        }
+      } catch (e) {
+        console.warn('[Atlan] Error aplicando geometría a preview-route:', e);
       }
-    }
+    };
+
+    applyPreviewRouteData();
+    setTimeout(applyPreviewRouteData, 450);
+    setTimeout(applyPreviewRouteData, 1200);
 
     // Ajustar vista del mapa si es el fit inicial (Centrar trayectoria completa)
     if (coords.length > 0) {
@@ -2993,9 +3020,8 @@ export default function MapaTuristico() {
       cinematicTimeoutsRef.current.push(descentTimer);
     }, 10000); // 10.0 segundos exactos — coincide con la pantalla de carga
 
-    cinematicTimeoutsRef.current.push(cinematicTimer);
-
     return () => {
+      clearTimeout(cinematicTimer);
       if (demoIntervalRef.current) clearInterval(demoIntervalRef.current);
       if (interactionTimeoutRef.current) clearTimeout(interactionTimeoutRef.current);
       cinematicTimeoutsRef.current.forEach(t => clearTimeout(t));
@@ -3014,9 +3040,9 @@ export default function MapaTuristico() {
       const puntoId = params.get('id') || params.get('punto');
       const paramLat = params.get('lat');
       const paramLng = params.get('lng');
+      const shouldAutoRoute = params.get('ruta') === '1' || params.get('iniciarRuta') === '1' || params.get('comoLlegar') === '1';
 
       if (puntoId || (paramLat && paramLng)) {
-        setIsMapLoading(false);
         hasFlownInitialDescentRef.current = true;
 
         const cargarPuntoDesdeURL = async () => {
@@ -3025,33 +3051,22 @@ export default function MapaTuristico() {
             let targetLat = paramLat ? parseFloat(paramLat) : null;
 
             if (puntoId) {
+              if (loadedPointIdRef.current === puntoId) return;
+              loadedPointIdRef.current = puntoId;
+
               const { data: punto, error } = await supabase
                 .from('puntos')
                 .select('*')
                 .eq('id', puntoId)
                 .single();
               if (!error && punto) {
-                if (punto.ubicacion) {
-                  const match = punto.ubicacion.match(/POINT\(([-\d.]+) ([-\d.]+)\)/);
-                  if (match) {
-                    targetLng = parseFloat(match[1]);
-                    targetLat = parseFloat(match[2]);
-                  }
-                }
-                if ((targetLng == null || targetLat == null) && punto.lng != null && punto.lat != null) {
-                  targetLng = typeof punto.lng === 'string' ? parseFloat(punto.lng) : punto.lng;
-                  targetLat = typeof punto.lat === 'string' ? parseFloat(punto.lat) : punto.lat;
+                const pNorm = normalizarPunto(punto);
+                if (pNorm && pNorm.lng != null && pNorm.lat != null) {
+                  targetLng = pNorm.lng;
+                  targetLat = pNorm.lat;
                 }
 
                 if (targetLng != null && targetLat != null) {
-                  mapRef.current.flyTo({
-                    center: [targetLng, targetLat],
-                    zoom: 16.5,
-                    pitch: 0,
-                    speed: 0.85,
-                    essential: true
-                  });
-
                   cargarPuntosCercanos(targetLng, targetLat, filtroCategoria);
 
                   const puntoEstructura = {
@@ -3096,6 +3111,29 @@ export default function MapaTuristico() {
       }
     }
   }, [mapRef.current]);
+
+  // Al concluir la pantalla de carga (10s), asegurar encuadre óptimo de la ruta y vista dividida
+  useEffect(() => {
+    if (!isMapLoading && mapRef.current) {
+      if (selectedPointRef.current && previewRouteBoundsRef.current) {
+        const timer = setTimeout(() => {
+          if (!mapRef.current) return;
+          mapRef.current.resize();
+          const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+          mapRef.current.fitBounds(previewRouteBoundsRef.current, {
+            padding: isMobile
+              ? { top: 90, bottom: 250, left: 35, right: 35 }
+              : { top: 100, bottom: 100, left: 80, right: 80 },
+            maxZoom: 15.5,
+            duration: 1200,
+            pitch: 0,
+            essential: true
+          });
+        }, 150);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isMapLoading]);
 
   // Recargar marcadores al cambiar categoría
   const aplicarFiltro = (cat) => {
@@ -3624,7 +3662,7 @@ export default function MapaTuristico() {
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: '12px',
-          animation: 'fadeInDown 0.3s ease-out'
+          animation: 'fadeInDownCenter 0.3s ease-out'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
             <div style={{

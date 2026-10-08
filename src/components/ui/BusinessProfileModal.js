@@ -224,7 +224,10 @@ export default function BusinessProfileModal({
 
                   {point.departamento && (
                     <span className={styles.departmentBadge}>
-                      <span>📍</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                      </svg>
                       <span>{point.departamento}</span>
                     </span>
                   )}
@@ -244,11 +247,18 @@ export default function BusinessProfileModal({
                     </span>
                   )}
 
-                  {point.ubicacion && (
-                    <span className={styles.locationSnippet} title={point.ubicacion}>
-                      • {point.ubicacion}
-                    </span>
-                  )}
+                  {/* Dirección humana legible si existe (filtrando cadenas binarias PostGIS / UUIDs) */}
+                  {(() => {
+                    const rawAddr = details?.direccion || point?.direccion;
+                    if (rawAddr && typeof rawAddr === 'string' && !/^[0-9a-fA-F]{16,}$/.test(rawAddr.trim()) && !rawAddr.startsWith('01010000')) {
+                      return (
+                        <span className={styles.locationSnippet} title={rawAddr}>
+                          • {rawAddr}
+                        </span>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
               </div>
 

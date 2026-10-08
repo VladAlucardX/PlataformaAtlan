@@ -1,7 +1,6 @@
 import "./globals.css";
 import ClientProviders from "../components/ClientProviders";
 import PWARegister from "../components/PWARegister";
-import PWAInstallBanner from "../components/PWAInstallBanner";
 import { Inter, Outfit } from "next/font/google";
 
 const outfit = Outfit({
@@ -19,7 +18,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Atlan — Tu GPS Turístico de Nicaragua",
+  title: "Atlan - Plataforma Turistica Interactiva",
   description:
     "Descubre Nicaragua con Atlan: navegación GPS con voz, destinos verificados por la comunidad y reservas directas con negocios locales. Tu guía turístico digital.",
   keywords: [
@@ -39,7 +38,7 @@ export const metadata = {
   creator: "Atlan",
   metadataBase: new URL("https://atlan.com.ni"),
   openGraph: {
-    title: "Atlan — Tu GPS Turístico de Nicaragua",
+    title: "Atlan - Plataforma Turistica Interactiva",
     description:
       "Navega sin límites. Destinos verificados, navegación con voz y reservas directas.",
     siteName: "Atlan",
@@ -48,7 +47,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Atlan — Tu GPS Turístico de Nicaragua",
+    title: "Atlan - Plataforma Turistica Interactiva",
     description:
       "Descubre Nicaragua con navegación GPS, destinos verificados y reservas directas.",
   },
@@ -57,7 +56,14 @@ export const metadata = {
     follow: true,
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/icon.png", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", type: "image/png" },
+    ],
+    shortcut: "/icon.png",
   },
 };
 
@@ -68,16 +74,17 @@ export default function RootLayout({ children }) {
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#D4AF37" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        <link rel="icon" href="/icon.png" type="image/png" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
         {/* iOS / Safari PWA */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Atlan" />
-        <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
       <body suppressHydrationWarning className={`${outfit.variable} ${inter.variable}`}>
         <ClientProviders>
           <PWARegister />
-          <PWAInstallBanner />
           {children}
         </ClientProviders>
       </body>

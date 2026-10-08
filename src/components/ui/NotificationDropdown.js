@@ -24,8 +24,10 @@ function avatarStyle(url, size) {
     width: `${size}px`, height: `${size}px`, borderRadius: "50%", flexShrink: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
     fontSize: `${Math.floor(size * 0.42)}px`, fontWeight: "600", color: "#FFFFFF",
-    background: url ? `url(${url}) center/cover` : "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+    background: url ? `url("${url}") center/cover no-repeat` : "linear-gradient(135deg, #334155 0%, #1E293B 100%)",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
+    border: "1.5px solid #FFFFFF",
+    overflow: "hidden"
   };
 }
 
@@ -207,6 +209,49 @@ export default function NotificationDropdown({ session }) {
     }
   };
 
+  const renderTypeBadge = (tipo) => {
+    if (tipo === "like") {
+      return (
+        <div style={{
+          position: "absolute", bottom: "-2px", right: "-2px",
+          width: "16px", height: "16px", borderRadius: "50%",
+          background: "#EF4444", color: "#FFFFFF",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          border: "1.5px solid #0B192C", boxShadow: "0 1px 3px rgba(0,0,0,0.4)"
+        }}>
+          <Icon name="heartFilled" size={9} color="#FFFFFF" fill="#FFFFFF" />
+        </div>
+      );
+    }
+    if (tipo === "comment") {
+      return (
+        <div style={{
+          position: "absolute", bottom: "-2px", right: "-2px",
+          width: "16px", height: "16px", borderRadius: "50%",
+          background: "#0284C7", color: "#FFFFFF",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          border: "1.5px solid #0B192C", boxShadow: "0 1px 3px rgba(0,0,0,0.4)"
+        }}>
+          <Icon name="messageCircle" size={9} color="#FFFFFF" />
+        </div>
+      );
+    }
+    if (tipo === "follow") {
+      return (
+        <div style={{
+          position: "absolute", bottom: "-2px", right: "-2px",
+          width: "16px", height: "16px", borderRadius: "50%",
+          background: "#10B981", color: "#FFFFFF",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          border: "1.5px solid #0B192C", boxShadow: "0 1px 3px rgba(0,0,0,0.4)"
+        }}>
+          <Icon name="user" size={9} color="#FFFFFF" />
+        </div>
+      );
+    }
+    return null;
+  };
+
   const renderNotifContent = (notif) => {
     const name = notif.creador?.nombre_completo || (lang === "en" ? "User" : lang === "zh" ? "用户" : "Usuario");
     let actionText = "";
@@ -220,67 +265,110 @@ export default function NotificationDropdown({ session }) {
 
     return (
       <p style={{
-        margin: 0, fontSize: "12.5px", lineHeight: "1.45",
-        fontFamily: "'Delight Static', 'Delight', var(--font-outfit), sans-serif",
-        fontWeight: "400",
+        margin: 0,
+        fontSize: "13.5px",
+        lineHeight: "1.45",
+        fontFamily: "var(--font-outfit), var(--font-inter), 'Inter', sans-serif !important",
         wordBreak: "break-word"
       }}>
-        <span style={{ color: "#1A1A2E", fontWeight: "400" }}>{name}</span>{" "}
-        <span style={{ color: "#4A5568", fontWeight: "300" }}>{actionText}</span>
+        <span style={{ color: "#FFFFFF", fontWeight: "750" }}>{name}</span>{" "}
+        <span style={{ color: "#CBD5E1", fontWeight: "400" }}>{actionText}</span>
       </p>
     );
   };
 
   return (
     <div ref={dropdownRef} style={{ position: "relative", display: "inline-block" }}>
-      {/* Botón Campana */}
+      {/* Botón Campana Blanco */}
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         style={{
-          background: "none", border: "none", cursor: "pointer",
-          fontSize: "18px", color: isOpen ? "var(--atlan-gold)" : "var(--atlan-text-secondary)",
-          padding: "6px", position: "relative", display: "flex", alignItems: "center", justifyContent: "center",
-          transition: "color 0.2s"
+          background: isOpen ? "rgba(255, 255, 255, 0.15)" : "none",
+          border: "none",
+          borderRadius: "10px",
+          cursor: "pointer",
+          color: "#FFFFFF",
+          padding: "7px",
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          transition: "background 0.2s, opacity 0.2s",
+          opacity: isOpen ? 1 : 0.95
         }}
         title={t("notifications.title")}
+        aria-label={t("notifications.title")}
       >
-        <Icon name="bell" size={20} />
+        <Icon name="bell" size={20} color="#FFFFFF" />
         {unreadCount > 0 && (
           <span style={{
-            position: "absolute", top: "1px", right: "1px",
-            background: "#ef4444", color: "white", borderRadius: "50%",
-            width: "16px", height: "16px", fontSize: "10px", fontWeight: "900",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 0 6px rgba(239, 68, 68, 0.6)"
+            position: "absolute",
+            top: "2px",
+            right: "2px",
+            background: "#EF4444",
+            color: "#FFFFFF",
+            borderRadius: "9999px",
+            minWidth: "16px",
+            height: "16px",
+            padding: "0 4px",
+            fontSize: "10px",
+            fontWeight: "750",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 2px 5px rgba(239, 68, 68, 0.5)",
+            border: "1.5px solid #0B192C",
+            lineHeight: 1
           }}>
-            {unreadCount}
+            {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
       </button>
 
-      {/* Dropdown Panel */}
+      {/* Dropdown Panel en Grises y Azul Pizarra (estilo Ranking) */}
       {isOpen && (
-        <div className="clay-dropdown animate-fade-in-up" style={{
-          position: "absolute", right: 0, top: "40px", zIndex: 150,
-          width: "320px",
-          fontFamily: "'Delight', 'Delight Static', var(--font-outfit), sans-serif"
-        }}>
+        <div className="notif-dropdown-panel animate-fade-in-down">
           
           {/* Header del Dropdown */}
           <div style={{
-            display: "flex", justifyContent: "space-between", alignItems: "center",
-            padding: "12px 16px", borderBottom: "1px solid rgba(20, 109, 158, 0.10)",
-            background: "rgba(255,255,255,0.02)"
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "13px 16px",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.10)",
+            background: "rgba(15, 29, 49, 0.85)"
           }}>
-            <span style={{ fontSize: "13.5px", fontWeight: "500", color: "var(--atlan-text-primary)" }}>
+            <span style={{
+              fontSize: "14.5px",
+              fontWeight: "800",
+              color: "#FFFFFF",
+              letterSpacing: "0.2px"
+            }}>
               {t("notifications.title")}
             </span>
             {unreadCount > 0 && (
               <button
+                type="button"
                 onClick={handleMarkAllRead}
                 style={{
-                  background: "none", border: "none", color: "#146D9E",
-                  fontSize: "11px", fontWeight: "400", cursor: "pointer", padding: 0
+                  background: "rgba(56, 189, 248, 0.12)",
+                  border: "1px solid rgba(56, 189, 248, 0.3)",
+                  color: "#38BDF8",
+                  fontSize: "11.5px",
+                  fontWeight: "700",
+                  cursor: "pointer",
+                  padding: "4px 8px",
+                  borderRadius: "6px",
+                  transition: "all 0.15s ease"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(56, 189, 248, 0.22)";
+                  e.currentTarget.style.color = "#7DD3FC";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(56, 189, 248, 0.12)";
+                  e.currentTarget.style.color = "#38BDF8";
                 }}
               >
                 {t("notifications.markAllRead")}
@@ -289,49 +377,106 @@ export default function NotificationDropdown({ session }) {
           </div>
 
           {/* Listado */}
-          <div style={{ maxHeight: "280px", overflowY: "auto" }}>
+          <div style={{ maxHeight: "320px", overflowY: "auto" }}>
             {notifications.length === 0 ? (
-              <div style={{ padding: "30px 16px", textAlign: "center", color: "var(--atlan-text-muted)", fontSize: "13px" }}>
-                <span style={{ fontSize: "28px", display: "block", marginBottom: "8px" }}>📭</span>
-                {t("notifications.empty")}
+              <div style={{
+                padding: "36px 16px",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "10px"
+              }}>
+                <div style={{
+                  width: "44px",
+                  height: "44px",
+                  borderRadius: "50%",
+                  background: "rgba(255, 255, 255, 0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}>
+                  <Icon name="bell" size={22} color="#94A3B8" />
+                </div>
+                <span style={{ fontSize: "13px", fontWeight: "600", color: "#94A3B8" }}>
+                  {t("notifications.empty")}
+                </span>
               </div>
             ) : (
               notifications.map((notif) => (
-                <button
+                <div
                   key={notif.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => handleNotifClick(notif)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleNotifClick(notif);
+                    }
+                  }}
                   style={{
-                    width: "100%", padding: "12px 16px", border: "none",
-                    borderBottom: "1px solid rgba(20, 109, 158, 0.04)",
-                    background: notif.leido ? "transparent" : "rgba(255, 215, 0, 0.04)",
-                    display: "flex", gap: "10px", alignItems: "center",
-                    cursor: "pointer", transition: "background 0.2s",
-                    textAlign: "left",
-                    fontWeight: "300"
+                    width: "100%",
+                    padding: "12px 14px",
+                    borderBottom: "1px solid rgba(255, 255, 255, 0.07)",
+                    borderLeft: notif.leido ? "3px solid transparent" : "3px solid #38BDF8",
+                    background: notif.leido ? "transparent" : "rgba(30, 58, 95, 0.50)",
+                    display: "flex",
+                    gap: "12px",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    boxSizing: "border-box"
                   }}
                   className="notif-item"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = notif.leido
+                      ? "rgba(255, 255, 255, 0.08)"
+                      : "rgba(30, 58, 95, 0.75)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = notif.leido
+                      ? "transparent"
+                      : "rgba(30, 58, 95, 0.50)";
+                  }}
                 >
-                  {/* Creador Avatar */}
-                  <div style={avatarStyle(notif.creador?.avatar_url, 36)}>
-                    {!notif.creador?.avatar_url && (notif.creador?.nombre_completo?.[0]?.toUpperCase() || "U")}
+                  {/* Creador Avatar con Badge de tipo */}
+                  <div style={{ position: "relative", flexShrink: 0 }}>
+                    <div style={avatarStyle(notif.creador?.avatar_url, 38)}>
+                      {!notif.creador?.avatar_url && (notif.creador?.nombre_completo?.[0]?.toUpperCase() || "U")}
+                    </div>
+                    {renderTypeBadge(notif.tipo)}
                   </div>
 
                   {/* Detalle */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     {renderNotifContent(notif)}
-                    <span style={{ fontSize: "10px", color: "var(--atlan-text-muted)", marginTop: "4px", display: "block", fontWeight: "300" }}>
+                    <span style={{
+                      fontSize: "11px",
+                      color: "#94A3B8",
+                      marginTop: "3px",
+                      display: "block",
+                      fontWeight: "500"
+                    }}>
                       {timeAgo(notif.created_at, lang)}
                     </span>
                   </div>
 
                   {/* Indicador de No Leído */}
                   {!notif.leido && (
-                    <div style={{
-                      width: "8px", height: "8px", borderRadius: "50%",
-                      background: "var(--atlan-gold)", flexShrink: 0
-                    }} />
+                    <div
+                      style={{
+                        width: "7px",
+                        height: "7px",
+                        borderRadius: "50%",
+                        background: "#38BDF8",
+                        boxShadow: "0 0 8px rgba(56, 189, 248, 0.85)",
+                        flexShrink: 0
+                      }}
+                      title="No leído"
+                    />
                   )}
-                </button>
+                </div>
               ))
             )}
           </div>
