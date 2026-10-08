@@ -58,8 +58,9 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [otpCountdown, setOtpCountdown] = useState(300); // 5 minutos en segundos
-  const [canResend, setCanResend] = useState(false);
   const [forgotSent, setForgotSent] = useState(false);
+  const [isAdminUser, setIsAdminUser] = useState(false);
+  const canResend = otpCountdown <= 0;
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
@@ -91,20 +92,10 @@ export default function LoginPage() {
 
   // Timer de cuenta regresiva para el OTP
   useEffect(() => {
-    if (step !== "otp") return;
-    if (otpCountdown <= 0) {
-      setCanResend(true);
-      return;
-    }
+    if (step !== "otp" || otpCountdown <= 0) return;
 
     const interval = setInterval(() => {
-      setOtpCountdown((prev) => {
-        if (prev <= 1) {
-          setCanResend(true);
-          return 0;
-        }
-        return prev - 1;
-      });
+      setOtpCountdown((prev) => (prev <= 1 ? 0 : prev - 1));
     }, 1000);
 
     return () => clearInterval(interval);
@@ -145,10 +136,25 @@ export default function LoginPage() {
         return;
       }
 
-      // Credenciales correctas — cerrar sesión temporal para que no entre sin OTP
+      // Verificar rol del usuario en la base de datos ANTES de cerrar sesión
+      let isUserAdmin = cleanEmail === "admin@atlan.com";
+      if (authData?.user) {
+        const { data: profile } = await supabase
+          .from("perfiles")
+          .select("rol")
+          .eq("id", authData.user.id)
+          .maybeSingle();
+
+        if (profile?.rol === "admin") {
+          isUserAdmin = true;
+        }
+      }
+      setIsAdminUser(isUserAdmin);
+
+      // Credenciales correctas — cerrar sesión temporal para exigir 2FA (código OTP)
       await supabase.auth.signOut();
 
-      // Enviar código OTP al correo del usuario
+      // Enviar código OTP real al correo del usuario
       const { error: otpError } = await supabase.auth.signInWithOtp({
         email: cleanEmail,
         options: {
@@ -156,31 +162,38 @@ export default function LoginPage() {
         },
       });
 
-      const isDevOrTestEmail =
-        cleanEmail.endsWith("@atlan.com") ||
-        cleanEmail.endsWith("@demo.com") ||
-        cleanEmail.endsWith("@test.com") ||
-        (typeof window !== "undefined" &&
-          (window.location.hostname === "localhost" ||
-           window.location.hostname === "127.0.0.1" ||
-           window.location.hostname.startsWith("192.168.")));
-
-      if (otpError && !isDevOrTestEmail) {
-        setErrorMsg(
-          lang === "en"
-            ? "Failed to send verification code. Try again."
-            : lang === "zh"
-            ? "发送验证码失败，请重试。"
-            : "Error al enviar el código de verificación. Intenta de nuevo."
-        );
-        setLoading(false);
-        return;
+      if (otpError) {
+        console.warn("[Atlan Auth] Error enviando OTP:", otpError);
+        // Si es el Administrador, se le permite ingresar con el código de prueba maestro (123456)
+        if (isUserAdmin) {
+          console.info("[Atlan Auth] Modo prueba disponible exclusivamente para Administrador.");
+        } else {
+          // Para usuarios regulares (turistas, dueños, Gmail, etc.), NO se permite bypass: se muestra el estado real
+          if (otpError.status === 429 || otpError.code === "over_email_send_rate_limit") {
+            setErrorMsg(
+              lang === "en"
+                ? "Hourly email limit reached in Supabase. Please wait a few minutes before trying again or configure SMTP."
+                : lang === "zh"
+                ? "邮件发送已达频率限制，请稍候几分钟再试。"
+                : "Límite de correos por hora alcanzado en el servidor de correo (Supabase rate limit). Por favor espera unos minutos o revisa la configuración SMTP."
+            );
+          } else {
+            setErrorMsg(
+              lang === "en"
+                ? "Failed to send verification code to your email. Please try again."
+                : lang === "zh"
+                ? "发送验证码到您的邮箱失败，请重试。"
+                : "Error al enviar el código de verificación a tu correo. Por favor intenta de nuevo."
+            );
+          }
+          setLoading(false);
+          return;
+        }
       }
 
-      // Pasar al paso 2
+      // Pasar al paso 2: Verificación OTP
       setStep("otp");
       setOtpCountdown(300);
-      setCanResend(false);
       setOtpCode(["", "", "", "", "", ""]);
     } catch (err) {
       console.error("Login catch error:", err);
@@ -217,17 +230,8 @@ export default function LoginPage() {
     }
 
     try {
-      const isDevOrTestEmail =
-        cleanEmail.endsWith("@atlan.com") ||
-        cleanEmail.endsWith("@demo.com") ||
-        cleanEmail.endsWith("@test.com") ||
-        (typeof window !== "undefined" &&
-          (window.location.hostname === "localhost" ||
-           window.location.hostname === "127.0.0.1" ||
-           window.location.hostname.startsWith("192.168.")));
-
-      // 1. Soporte para Código Maestro de Desarrollo (123456)
-      if (code === "123456" && isDevOrTestEmail) {
+      // 1. Código Maestro de Prueba (123456) — EXCLUSIVO para el Administrador
+      if (code === "123456" && isAdminUser) {
         const { data: devAuthData, error: devAuthError } = await supabase.auth.signInWithPassword({
           email: cleanEmail,
           password,
@@ -239,7 +243,7 @@ export default function LoginPage() {
         }
       }
 
-      // 2. Verificación real con el código OTP recibido en el correo
+      // 2. Verificación real con el código OTP recibido en el correo (para usuarios estándar y administradores)
       const { data, error } = await supabase.auth.verifyOtp({
         email: cleanEmail,
         token: code,
@@ -280,27 +284,44 @@ export default function LoginPage() {
     setLoading(true);
     setErrorMsg("");
 
+    const cleanEmail = email.trim().toLowerCase();
     try {
       const { error } = await supabase.auth.signInWithOtp({
-        email,
+        email: cleanEmail,
         options: { shouldCreateUser: false },
       });
 
       if (error) {
-        setErrorMsg(
-          lang === "en"
-            ? "Failed to resend code."
-            : lang === "zh"
-            ? "重新发送验证码失败。"
-            : "Error al reenviar el código."
-        );
+        if (error.status === 429 || error.code === "over_email_send_rate_limit") {
+          setErrorMsg(
+            lang === "en"
+              ? "Hourly email rate limit reached. Please wait a few minutes."
+              : lang === "zh"
+              ? "发送频率超限，请稍候几分钟再试。"
+              : "Límite de correos por hora alcanzado. Por favor espera unos minutos antes de solicitar otro código."
+          );
+        } else {
+          setErrorMsg(
+            lang === "en"
+              ? "Failed to resend code."
+              : lang === "zh"
+              ? "重新发送验证码失败。"
+              : "Error al reenviar el código."
+          );
+        }
       } else {
         setOtpCountdown(300);
-        setCanResend(false);
         setOtpCode(["", "", "", "", "", ""]);
       }
     } catch (err) {
       console.error("Resend OTP error:", err);
+      setErrorMsg(
+        lang === "en"
+          ? "Error resending code."
+          : lang === "zh"
+          ? "重新发送验证码出错。"
+          : "Error al reenviar el código."
+      );
     } finally {
       setLoading(false);
     }
@@ -620,14 +641,7 @@ export default function LoginPage() {
                 ))}
               </div>
 
-              {typeof window !== "undefined" && (
-                email.endsWith("@atlan.com") ||
-                email.endsWith("@demo.com") ||
-                email.endsWith("@test.com") ||
-                window.location.hostname === "localhost" ||
-                window.location.hostname === "127.0.0.1" ||
-                window.location.hostname.startsWith("192.168.")
-              ) && (
+              {isAdminUser && (
                 <div style={{
                   textAlign: "center",
                   fontSize: "12.5px",
@@ -643,8 +657,15 @@ export default function LoginPage() {
                   justifyContent: "center",
                   gap: "6px"
                 }}>
-                  <Icon name="info" size={14} />
-                  <span>Modo de prueba: el código de verificación es <strong>123456</strong></span>
+                  <Icon name="shield" size={14} color="#146D9E" />
+                  <span>
+                    {lang === "en"
+                      ? "Admin Test Mode: you can use code "
+                      : lang === "zh"
+                      ? "管理员测试模式：您可以使用验证码 "
+                      : "Modo Admin de Prueba: puedes usar el código "}
+                    <strong>123456</strong>
+                  </span>
                 </div>
               )}
 
