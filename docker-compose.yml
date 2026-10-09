@@ -19,17 +19,18 @@ services:
     networks:
       - atlan-network
 
-  # ── PROXY INVERSO SEGURO (NGINX) ──
+  # ── PROXY INVERSO SEGURO (NGINX CON HTTPS / SSL) ──
   proxy:
     image: nginx:alpine
     container_name: atlan-nginx
     restart: unless-stopped
     ports:
-      # Único punto de entrada expuesto públicamente a internet
+      # Puntos de entrada expuestos públicamente a internet
       - "80:80"
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - app
     networks:
