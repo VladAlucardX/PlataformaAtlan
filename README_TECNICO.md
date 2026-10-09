@@ -1,35 +1,60 @@
 # Plataforma Atlan — Documentación Técnica del Sistema
 
-**Plataforma Atlan** es una solución tecnológica integral orientada al turismo, la promoción del comercio local y el fortalecimiento de la comunidad interactiva en Nicaragua. 
+**Plataforma Atlan** es una solución tecnológica integral orientada a la transformación digital del turismo, la dinamización del comercio local y el fortalecimiento de la comunidad interactiva en Nicaragua.
 
-El repositorio está organizado bajo un esquema de monorepo que contiene el código fuente de la aplicación **Web PWA** (desarrollada con Next.js) y la aplicación **Móvil Nativa** (desarrollada con Flutter).
+El repositorio está estructurado bajo un esquema de **Monorepo** que alberga:
+1. **Aplicación Web Progresiva (PWA):** Construida con Next.js 16 (App Router), React 19 y TailwindCSS.
+2. **Aplicación Móvil Nativa:** Desarrollada con Flutter 3.38 para Android e iOS.
+3. **Infraestructura Cloud & DevOps:** Despliegue en Microsoft Azure con Docker, Nginx (Proxy Inverso con SSL Let's Encrypt) y Supabase como Backend as a Service (BaaS).
 
 ---
 
-## 1. Descripción General
+## Índice
 
-El objetivo principal de la plataforma es digitalizar y gamificar la experiencia turística en los 17 departamentos de Nicaragua, conectando a visitantes, propietarios de comercios locales, guías turísticos certificados y residentes comunitarios a través de herramientas de geolocalización en tiempo real.
+1. [Descripción General y Módulos](#1-descripción-general-y-módulos)
+2. [Arquitectura del Sistema](#2-arquitectura-del-sistema)
+3. [Cumplimiento de Estándares de Producción (Rúbrica Técnica)](#3-cumplimiento-de-estándares-de-producción-rúbrica-técnica)
+   - [3.1. Compilación Final y Optimización](#31-compilación-final-y-optimización)
+   - [3.2. Servidor Seguro y Monitoreo (Azure)](#32-servidor-seguro-y-monitoreo-azure)
+   - [3.3. Proxy Inverso Seguro (Nginx)](#33-proxy-inverso-seguro-nginx)
+   - [3.4. Contenedores y Aislamiento (Docker)](#34-contenedores-y-aislamiento-docker)
+   - [3.5. Seguridad, Variables Ocultas y CORS](#35-seguridad-variables-ocultas-y-cors)
+   - [3.6. Rendimiento y Alta Disponibilidad](#36-rendimiento-y-alta-disponibilidad)
+   - [3.7. Seguridad HTTPS y Certificados SSL](#37-seguridad-https-y-certificados-ssl)
+   - [3.8. Flujo Automático y Pantallas de Error Amigables](#38-flujo-automático-y-pantallas-de-error-amigables)
+   - [3.9. Integraciones Complejas (JWT, Supabase, OAuth, Mapbox)](#39-integraciones-complejas-jwt-supabase-oauth-mapbox)
+   - [3.10. Vinculación con GitHub y Despliegue Continuo](#310-vinculación-con-github-y-despliegue-continuo)
+4. [Tecnologías Utilizadas y Dependencias](#4-tecnologías-utilizadas-y-dependencias)
+5. [Estructura Modular del Proyecto](#5-estructura-modular-del-proyecto)
+6. [Variables de Entorno](#6-variables-de-entorno)
+7. [Manual de Instalación y Ejecución Local](#7-manual-de-instalación-y-ejecución-local)
+8. [Manual de Despliegue en Producción (Azure VM)](#8-manual-de-despliegue-en-producción-azure-vm)
+9. [Distribución y Compilación del APK Móvil](#9-distribución-y-compilación-del-apk-móvil)
+10. [Consultas de Ejemplo y Funciones Backend (RPC)](#10-consultas-de-ejemplo-y-funciones-backend-rpc)
+11. [Solución de Problemas (Troubleshooting)](#11-solución-de-problemas-troubleshooting)
 
-### Módulos y Funcionalidades Principales
+---
 
-*   **Mapa Turístico Interactivo (Mapbox GL):** Visualización vectorial de puntos de interés, trazado de rutas terrestres, categorización de establecimientos y distinción del estado de verificación de comercios (verificados, en revisión o no reclamados). Incluye máscaras territoriales y centroides departamentales.
-*   **Verificación de Visitas por GPS:** Algoritmo de cálculo de distancia mediante la fórmula de Haversine (radio < 1 km) que valida la presencia física del usuario en un departamento o destino para desbloquear insignias y actualizar su puntuación en el ranking de exploradores.
-*   **Directorio y Gestión de Guías Turísticos Certificados:** Módulo dedicado (`/guias` y `/perfil-guia`) para la búsqueda, filtrado por especialidad/idioma y contacto directo (vía WhatsApp e Instagram) con guías autorizados por INTUR.
-*   **Panel Multi-Negocio (Propietarios):** Módulo de administración para dueños de comercios (`/dashboard`) donde pueden registrar establecimientos, editar horarios, gestionar imágenes, revisar motivos de rechazo en caso de revisiones administrativas y solicitar la verificación del local.
-*   **Panel de Administración del Sistema:** Módulo restringido (`/admin`) para administradores enfocado en la moderación, aprobación y auditoría de solicitudes de nuevos negocios y registros de guías.
-*   **Enciclopedia Departamental:** Guía informativa estructurada (`/mas-de-nicaragua` y `src/data/departamentos-data.js`) sobre los 17 departamentos con datos sobre historia, economía, puntos turísticos, pasatiempos y eventos culturales.
-*   **Red Social Comunitaria y Chat en Tiempo Real:** Muro interactivo (`/comunidad`), perfiles públicos, seguidores/seguidos, visor de imágenes HD y mensajería privada directa mediante suscripciones WebSockets con Supabase Realtime (`/chat` y `ChatWidget.js`).
-*   **Soporte PWA Offline y Multi-Idioma (i18n):** Service Worker (`public/sw.js`) con estrategia de caché offline para uso en movimiento y sistema de internacionalización (Español / Inglés) vía `src/lib/i18n/`.
-*   **Sistema de Perfiles y Rangos de Usuario:** Gestión de niveles, roles y beneficios del sistema: Turista no registrado, Turista Tuani (registrado), Turista Deacachimba (con membresía activa), Guía Turístico Certificado y Administrador del Sistema.
-*   **Seguridad y Autenticación:** Control de sesión con recuperación de contraseña (`/reset-password`), cierre automático por inactividad (`useInactivityLogout`) y políticas de seguridad por fila (RLS) en Supabase.
+## 1. Descripción General y Módulos
+
+El propósito de Plataforma Atlan es gamificar y digitalizar el descubrimiento de los 17 departamentos de Nicaragua, conectando turistas, negocios locales y guías turísticos oficiales de INTUR.
+
+### Módulos Principales
+
+*   **Mapa Turístico Interactivo (Mapbox GL):** Visualización vectorial fluida de destinos, negocios verificados, trazado de rutas punto a punto, máscaras territoriales y centroides departamentales.
+*   **Verificación por GPS (Fórmula de Haversine):** Algoritmo geoespacial que valida si el usuario está físicamente dentro de un radio < 1 km de un punto turístico para desbloquear insignias y sumar puntos al ranking nacional.
+*   **Directorio de Guías Turísticos Certificados:** Catálogo interactivo (`/guias` y `/perfil-guia`) con filtros por departamento, idiomas y contacto directo vía WhatsApp e Instagram.
+*   **Panel Multi-Negocio para Propietarios (`/dashboard`):** Administración para dueños de comercios con métricas, edición de horarios, carga de fotos/logos y solicitud de verificación.
+*   **Panel de Administración del Sistema (`/admin`):** Auditoría y moderación de establecimientos y solicitudes de guías turísticos.
+*   **Comunidad y Red Social Interactiva (`/comunidad`):** Muro comunitario con historias, posts, seguimiento de usuarios y mensajería en tiempo real mediante WebSockets (`/chat`).
+*   **Sincronización Avanzada de Perfiles:** Autenticación local y Google OAuth con extracción y persistencia automática de nombres, avatares y metadatos.
+*   **PWA con Soporte Offline y Multi-Idioma (i18n):** Service Worker (`public/sw.js`) con almacenamiento en caché e internacionalización dinámica (Español, Inglés y Chino).
 
 ---
 
 ## 2. Arquitectura del Sistema
 
-El sistema implementa una arquitectura basada en **Backend como Servicio (BaaS)**, apoyada en **Supabase** como núcleo central de base de datos y autenticación, sirviendo de manera desacoplada tanto al cliente Web como al cliente Móvil.
-
-### Diagrama de Arquitectura
+El sistema implementa una arquitectura desacoplada basada en **Microservicios Contenerizados** y **Backend como Servicio (BaaS)**:
 
 ```text
                +-------------------------------------------------+
@@ -42,41 +67,121 @@ El sistema implementa una arquitectura basada en **Backend como Servicio (BaaS)*
 |   Cliente Web     |                                     |  Cliente Móvil    |
 |   Next.js 16 PWA  |                                     |  Flutter 3.38     |
 +---------+---------+                                     +---------+---------+
-          |                                                         |
-          |           API REST / WebSockets / RPC (PL/pgSQL)        |
-          +----------------------------+----------------------------+
-                                       |
-                     +-----------------v-----------------+
-                     |           Supabase BaaS           |
-                     |  (PostgreSQL, Auth, Realtime, RLS)|
-                     +-----------------+-----------------+
-                                       |
-                                       v
-                     +-----------------------------------+
-                     |       Servicios Externos          |
-                     | (Mapbox GL Vector Tile Services)  |
-                     +-----------------------------------+
+          | (HTTPS / Port 443)                                      | (API REST / Native)
+          v                                                         |
++-------------------------------------------------------+           |
+|            Servidor Cloud en Microsoft Azure          |           |
+|  +-------------------------------------------------+  |           |
+|  |           Proxy Inverso Seguro (Nginx)          |  |           |
+|  |     (SSL Let's Encrypt, Gzip, Redirección HTTPS) |  |           |
+|  +------------------------+------------------------+  |           |
+|                           | (Red Interna Docker)      |           |
+|  +------------------------v------------------------+  |           |
+|  |        Contenedor App (Next.js Standalone)      |  |           |
+|  |             Usuario No-Root: nextjs (1001)      |  |           |
+|  +-------------------------------------------------+  |           |
++---------------------------+---------------------------+           |
+                            |                                       |
+                            |           API REST / WebSockets / JWT |
+                            +-------------------+-------------------+
+                                                |
+                               +----------------v-----------------+
+                               |           Supabase BaaS           |
+                               |  (PostgreSQL, Auth, Realtime, RLS)|
+                               +----------------+-----------------+
+                                                |
+                                                v
+                               +----------------------------------+
+                               |        Servicios Externos        |
+                               | (Mapbox GL Vector Tile Services) |
+                               +----------------------------------+
 ```
-
-### Componentes y Decisiones de Arquitectura
-
-1.  **Capa de Presentación (Frontend Web & Mobile):**
-    *   **Web (Next.js 16 + React 19):** Aprovecha el App Router para optimizar la carga inicial mediante Server Components y mantener reactividad client-side en mapas, chats y perfiles de guías. Incluye Service Worker (`public/sw.js`), manifiesto PWA y soporte multi-idioma (i18n ES/EN).
-    *   **Mobile (Flutter 3.38):** Construcción nativa multiplataforma. Utiliza **Riverpod** para la gestión de estado reactiva e inyección de dependencias, y **GoRouter** para el manejo de rutas profundas.
-2.  **Capa de Negocio y Datos (Supabase Core):**
-    *   **PostgreSQL Relacional:** Almacenamiento persistente con esquemas estructurados para usuarios, perfiles, guías turísticos, comercios, publicaciones, mensajes y visitas.
-    *   **Funciones Almacenadas (RPC en PL/pgSQL):** Consultas avanzadas ejecutadas en la base de datos (por ejemplo, cálculo de distancia radial de puntos de interés respecto a coordenadas GPS).
-    *   **Seguridad por Filas (RLS - Row Level Security):** Políticas de control de acceso granulares para asegurar que solo los dueños modifiquen su información y que los chats permanezcan estrictamente privados.
-    *   **Realtime Engine:** Motor de WebSockets para notificación instantánea de nuevos mensajes e interacciones sociales.
-    *   **Storage (Bucket `atlan-media`):** Almacenamiento de archivos multimedia optimizados (fotos de negocios, avatares, guías y publicaciones).
-3.  **Capa Geoespacial:**
-    *   Servicios de **Mapbox GL** (JS para Web y Native SDK para Móvil) combinados con archivos GeoJSON locales para límites territoriales (`nicaragua-boundary.json`), centroides departamentales (`nicaragua-department-centroids.json`) y máscara de recorte nacional (`outside-nicaragua-mask.json`).
 
 ---
 
-## 3. Tecnologías Utilizadas y Dependencias Clave
+## 3. Cumplimiento de Estándares de Producción (Rúbrica Técnica)
 
-### Aplicación Web (`package.json`)
+Esta sección detalla cómo el sistema cumple rigurosamente con cada uno de los 10 criterios de producción y seguridad exigidos para la plataforma.
+
+### 3.1. Compilación Final y Optimización
+*   **Web (Next.js Standalone):** En [next.config.mjs](file:///c:/Users/Alucard/plataforma-atlan/next.config.mjs) se configuró `output: 'standalone'`, generando un paquete ultraligero que incluye únicamente las dependencias estrictamente necesarias de `node_modules`.
+*   **Compresión y Caché Agresiva:** Nginx aplica compresión Gzip nivel 6 a todos los recursos de texto, JSON y JS. Los assets inmutables en `/_next/static/` cuentan con cabeceras `Cache-Control: "public, max-age=31536000, immutable"`.
+*   **Móvil (Release APK Optimizado):** El APK para Android (`app-release.apk`, ~112 MB) fue generado con `flutter build apk --release`, aplicando un tree-shaking del 99.7% en icon fonts (`CupertinoIcons` y `MaterialIcons`), eliminando código muerto y reduciendo el footprint de memoria.
+
+### 3.2. Servidor Seguro y Monitoreo (Azure)
+*   **Alojamiento:** Desplegado en una Máquina Virtual de **Microsoft Azure** (Región: Mexico Central) con IP pública dedicada `158.23.164.47` y FQDN `plataforma-atlan.mexicocentral.cloudapp.azure.com`.
+*   **Usuario Estándar No-Root:**
+    - Dentro del contenedor Docker, la aplicación corre bajo el usuario sin privilegios `nextjs:nodejs` (UID/GID 1001), eliminando riesgos de escalada de privilegios.
+    - La administración del servidor host en Azure se realiza mediante un usuario estándar con privilegios `sudo`, bloqueando inicios de sesión directos como `root`.
+*   **Monitoreo Básico del Sistema:**
+    - **Monitoreo en vivo de contenedores:** Comando `docker stats` para auditar uso de CPU, consumo de memoria RAM, operaciones de E/S y tráfico de red por contenedor.
+    - **Auditoría de logs:** Supervisión centralizada mediante `docker compose logs -f proxy` y `docker compose logs -f app`.
+    - **Métricas de Azure Monitor:** Supervisión desde el Portal de Azure con alertas sobre métricas de host (*Percentage CPU*, *Network In/Out*, *Disk Read/Write Bytes*).
+
+### 3.3. Proxy Inverso Seguro (Nginx)
+*   **Aislamiento del Código Fuente:** El puerto `3000` de Next.js **nunca se expone a internet**; permanece cerrado en el firewall del host y solo es accesible dentro de la red privada de Docker mediante la directiva `expose: "3000"`.
+*   **Punto de Acceso Único:** Solo el contenedor Nginx expone los puertos `80` (HTTP) y `443` (HTTPS) hacia la red pública.
+*   **Cabeceras de Protección del Servidor:** Nginx incluye `server_tokens off;` para ocultar la versión instalada y mitigar ataques dirigidos.
+
+### 3.4. Contenedores y Aislamiento (Docker)
+*   **Construcción en 3 Etapas (Multi-Stage Build):**
+    1.  `deps`: Instala únicamente las dependencias de producción y desarrollo necesarias para el empaquetado (`npm ci`).
+    2.  `builder`: Compila el código Next.js inyectando los argumentos de variables de entorno públicas y generando el bundle standalone.
+    3.  `runner`: Imagen mínima basada en Alpine Linux (`node:20-alpine`) que contiene solo los archivos compilados, reduciendo la superficie de ataque y el peso final.
+*   **Orquestación:** Configurada en [docker-compose.yml](file:///c:/Users/Alucard/plataforma-atlan/docker-compose.yml) con una red interna bridge (`atlan-network`), garantizando que la base de datos externa y los servicios se comuniquen de forma aislada.
+
+### 3.5. Seguridad, Variables Ocultas y CORS
+*   **Gestión de Credenciales:** Todas las claves maestras y tokens sensibles residen en el archivo `.env`, excluido estrictamente del control de versiones mediante `.gitignore` y `.dockerignore`.
+*   **Configuración de CORS:**
+    - En [next.config.mjs](file:///c:/Users/Alucard/plataforma-atlan/next.config.mjs) y [nginx/nginx.conf](file:///c:/Users/Alucard/plataforma-atlan/nginx/nginx.conf) para rutas `/api/*`.
+    - Soporte completo de pre-flight requests para solicitudes HTTP `OPTIONS`, retornando status `204 No Content` con cabeceras `Access-Control-Allow-Origin: *` y métodos autorizados (`GET, POST, PUT, DELETE, PATCH, OPTIONS`).
+
+### 3.6. Rendimiento y Alta Disponibilidad
+*   **Dominio en Línea:** Acceso ininterrumpido en `https://plataforma-atlan.mexicocentral.cloudapp.azure.com`.
+*   **Políticas de Auto-Recuperación:** Todos los contenedores cuentan con la directiva `restart: unless-stopped`, garantizando que ante cualquier fallo imprevisto o reinicio del servidor de Azure, la plataforma se restaure automáticamente en segundos.
+*   **Rendimiento SSR + Client:** Optimización de hidratación en la Home (`VideoIntro`), evitando parpadeos de carga y desajustes de estado.
+
+### 3.7. Seguridad HTTPS y Certificados SSL
+*   **Candado de Seguridad Activo:** Certificado SSL/TLS emitido por la autoridad certificadora **Let's Encrypt**.
+*   **Redirección Forzosa:** Redirección automática permanente de cualquier petición HTTP en el puerto 80 hacia el puerto seguro 443:
+    ```nginx
+    server {
+        listen 80;
+        server_name plataforma-atlan.mexicocentral.cloudapp.azure.com;
+        return 301 https://plataforma-atlan.mexicocentral.cloudapp.azure.com$request_uri;
+    }
+    ```
+*   **Cifrado Robusto:** Soporte exclusivo para protocolos TLSv1.2 y TLSv1.3 con suites de cifrado de alta seguridad (`HIGH:!aNULL:!MD5`).
+
+### 3.8. Flujo Automático y Pantallas de Error Amigables
+El sistema guía al usuario de inicio a fin sin exponer fallos técnicos, códigos de excepción ni volcados de base de datos:
+*   **Error 404 (Destino No Encontrado):** Implementado en [src/app/not-found.js](file:///c:/Users/Alucard/plataforma-atlan/src/app/not-found.js). Muestra un diseño oscuro con detalles dorados, el logo de Atlan, un mensaje cálido (*"¡Ups! Este rincón aún no está en el mapa"*) y botones para regresar al inicio o explorar el mapa.
+*   **Error 500 / Runtime:** Implementado en [src/app/error.js](file:///c:/Users/Alucard/plataforma-atlan/src/app/error.js). Captura excepciones de React de forma amigable (*"Ocurrió una pausa en el camino"*), ofreciendo reintentar la acción o volver al inicio sin revelar stack traces.
+*   **Error 50X en Proxy Nginx:** Implementado en [nginx/50x.html](file:///c:/Users/Alucard/plataforma-atlan/nginx/50x.html) y montado en el contenedor Nginx para presentar una pantalla de mantenimiento institucional si la aplicación se encuentra reiniciándose.
+
+### 3.9. Integraciones Complejas (JWT, Supabase, OAuth, Mapbox)
+*   **Tokens JWT & RLS:** Gestión de sesiones autenticadas mediante tokens firmados por Supabase Auth, evaluados dinámicamente mediante políticas RLS en PostgreSQL.
+*   **Google OAuth:** Extracción transparente de nombre, apellido y avatar de `user_metadata` con sincronización inmediata a la tabla de `perfiles`.
+*   **Mapbox GL Native & JS:** Carga de mapas vectoriales interactivos con cálculo de direcciones y rutas en tiempo real.
+*   **WebSockets Realtime:** Canal de chat privado y notificaciones en vivo mediante suscripciones reactivas a PostgreSQL.
+
+### 3.10. Vinculación con GitHub y Despliegue Continuo
+*   **Repositorio Oficial:** `https://github.com/VladAlucardX/PlataformaAtlan.git`
+*   **Estrategia de Ramas:**
+    - `develop`: Rama activa de integración continua y desarrollo de funcionalidades.
+    - `main`: Rama de producción estable. El código ejecutándose en la máquina de Azure es una réplica exacta de esta rama.
+*   **Procedimiento de Actualización en Servidor:**
+    ```bash
+    cd /home/azureuser/plataforma-atlan
+    git pull origin main
+    docker compose up -d --build
+    ```
+
+---
+
+## 4. Tecnologías Utilizadas y Dependencias
+
+### Pila Web (`package.json`)
 
 ```json
 {
@@ -86,7 +191,8 @@ El sistema implementa una arquitectura basada en **Backend como Servicio (BaaS)*
     "react-dom": "19.2.4",
     "@supabase/supabase-js": "^2.105.4",
     "mapbox-gl": "^3.23.1",
-    "@mapbox/mapbox-gl-directions": "^4.3.1"
+    "@mapbox/mapbox-gl-directions": "^4.3.1",
+    "supercluster": "^9.1.0"
   },
   "devDependencies": {
     "tailwindcss": "^4.0.0",
@@ -97,7 +203,7 @@ El sistema implementa una arquitectura basada en **Backend como Servicio (BaaS)*
 }
 ```
 
-### Aplicación Móvil (`mobile/pubspec.yaml`)
+### Pila Móvil (`mobile/pubspec.yaml`)
 
 ```yaml
 dependencies:
@@ -110,292 +216,239 @@ dependencies:
   geolocator: ^13.0.2
   geocoding: ^3.0.0
   flutter_dotenv: ^5.2.1
+  flutter_inappwebview: ^6.1.5
   cached_network_image: ^3.4.1
   flutter_animate: ^4.5.2
-  flutter_inappwebview: ^6.1.5
-```
-
----
-
-## 4. Variables de Entorno
-
-### Configuración Web (`.env.local`)
-
-Crea un archivo `.env.local` en la raíz del proyecto web:
-
-```env
-# URL del proyecto Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://<tu-proyecto>.supabase.co
-
-# Clave pública de acceso (Anon / Publishable Key)
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-# Token público de Mapbox GL JS
-NEXT_PUBLIC_MAPBOX_TOKEN=pk.eyJ1IjoibWFwYm94dXNlciIsImEiOiJjb...
-```
-
-### Configuración Móvil (`mobile/.env`)
-
-Crea un archivo `.env` dentro del directorio `mobile/`:
-
-```env
-# Credenciales Supabase para el cliente móvil
-SUPABASE_URL=https://<tu-proyecto>.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-# Access Token para Mapbox Maps SDK Nativo
-MAPBOX_ACCESS_TOKEN=pk.eyJ1IjoibWFwYm94dXNlciIsImEiOiJjb...
+  video_player: ^2.9.5
+  image_picker: ^1.1.2
 ```
 
 ---
 
 ## 5. Estructura Modular del Proyecto
 
-El código está organizado modularmente para separar las responsabilidades de la plataforma Web, la App Móvil y los recursos estáticos geoespaciales:
-
 ```text
 plataforma-atlan/
-├── public/                               # Recursos estáticos, GeoJSON y PWA
-│   ├── manifest.json                     # Manifiesto Web App e iconos instalables
+├── Dockerfile                            # Multi-stage build optimizado (deps, builder, runner)
+├── docker-compose.yml                    # Orquestación de app y proxy Nginx en red privada
+├── .dockerignore                         # Exclusiones de contexto para builds de Docker
+├── .gitignore                            # Exclusión de credenciales (.env) y cachés
+├── next.config.mjs                       # Configuración Next.js (output standalone, CORS, headers)
+├── package.json                          # Scripts y dependencias del ecosistema Web
+│
+├── nginx/                                # CONFIGURACIÓN DE PROXY INVERSO
+│   ├── nginx.conf                        # Proxy SSL Let's Encrypt, CORS, WebSockets y Gzip
+│   └── 50x.html                          # Pantalla amigable de error 50X para usuarios
+│
+├── public/                               # RECURSOS ESTÁTICOS, GEOJSON Y PWA
+│   ├── icon.png & icon-512.png           # Isotipo oficial de la plataforma Atlan
+│   ├── manifest.json                     # Manifiesto Web App e íconos instalables
 │   ├── sw.js                             # Service Worker para caché offline
 │   ├── nicaragua-departments.json        # Polígonos GeoJSON de los 17 departamentos
-│   ├── nicaragua-department-centroids.json # Centroides para centrado de cámara y etiquetas
-│   ├── nicaragua-boundary.json           # Contorno fronterizo nacional
-│   ├── outside-nicaragua-mask.json       # Máscara visual para enfocar el territorio nacional
-│   └── videos/                           # Video multimedia introductorio
+│   ├── nicaragua-department-centroids.json # Centroides departamentales para zoom y etiquetas
+│   └── outside-nicaragua-mask.json       # Máscara visual de delimitación territorial
 │
 ├── src/                                  # APLICACIÓN WEB (NEXT.JS 16)
-│   ├── app/                              # Rutas principales del App Router
+│   ├── app/                              # Rutas del App Router
 │   │   ├── admin/                        # Panel de aprobación de negocios y guías
 │   │   ├── chat/                         # Mensajería directa entre usuarios (Realtime)
-│   │   ├── comunidad/                    # Feed social, publicaciones y perfiles comunitarios
+│   │   ├── comunidad/                    # Feed social, publicaciones y perfiles
 │   │   ├── dashboard/                    # Gestión multi-negocio para propietarios
 │   │   ├── departamentos/                # Ranking de exploradores y validación GPS
-│   │   ├── guias/                        # Catálogo de Guías Turísticos certificados
-│   │   ├── mas-de-nicaragua/             # Enciclopedia turística departamental
-│   │   ├── mapa/                         # Vista interactiva del mapa a pantalla completa
-│   │   ├── perfil/                       # Perfil de usuario, favoritos y ajustes
-│   │   ├── perfil-guia/                  # Vista detallada y contacto directo del guía
-│   │   ├── login/ & registro/            # Flujos de autenticación de usuarios
-│   │   ├── reset-password/               # Restablecimiento seguro de credenciales
-│   │   ├── globals.css                   # Estilos globales y efectos visuales neón/glassmorphism
-│   │   └── page.js                       # Landing Page de bienvenida
+│   │   ├── guias/ & perfil-guia/         # Catálogo y contacto de Guías INTUR
+│   │   ├── login/ & registro/            # Flujos de autenticación local y Google OAuth
+│   │   ├── mapa/                         # Vista de mapa turístico a pantalla completa
+│   │   ├── not-found.js                  # Pantalla de error 404 personalizada y amigable
+│   │   ├── error.js                      # Error Boundary para excepciones en tiempo de ejecución
+│   │   ├── globals.css                   # Estilos visuales neón, glassmorphism y paleta oro
+│   │   └── page.js                       # Portada y landing page principal
 │   │
 │   ├── components/                       # Componentes React reutilizables
-│   │   ├── MapaTuristico.js              # Integración cliente de Mapbox GL JS
-│   │   ├── VideoIntro.js                 # Introducción audiovisual de la plataforma
-│   │   ├── PWARegister.js                # Registro del Service Worker PWA
-│   │   ├── ClientProviders.js            # Contenedor de proveedores de contexto client-side
-│   │   └── ui/                           # Modales (BusinessProfileModal, ImageViewerModal, FollowersModal), Navbar, ChatWidget, NeonSigns, Icon.js
+│   │   ├── MapaTuristico.js              # Integración de mapas vectoriales Mapbox GL
+│   │   ├── VideoIntro.js                 # Introducción audiovisual interactiva
+│   │   └── ui/                           # Modales, Navbar, ChatWidget y Signs
 │   │
-│   ├── data/                             # Datos estructurados del sistema
-│   │   └── departamentos-data.js         # Enciclopedia estática de los 17 departamentos
-│   │
-│   ├── hooks/                            # Custom Hooks de React
-│   │   ├── useInactivityLogout.js        # Cierre automático de sesión por inactividad
-│   │   └── useTranslation.js             # Hook de traducción i18n dinámico
-│   │
-│   └── lib/                              # Servicios, utilidades y contexto
-│       ├── AuthContext.js                # Provider del estado global de autenticación
-│       ├── geoUtils.js                   # Algoritmo de validación geográfica Haversine
-│       ├── imageUtils.js                 # Procesamiento y compresión de imágenes
-│       ├── profileUtils.js               # Utilidades de formateo de perfiles
-│       ├── storage.js                    # Conector de carga a Supabase Storage
-│       ├── supabase.js                   # Inicialización del cliente Supabase JS
-│       └── i18n/                         # Diccionarios de traducción (ES / EN)
+│   ├── hooks/                            # Custom Hooks (useInactivityLogout, useStories)
+│   └── lib/                              # Servicios auxiliares (AuthContext, i18n, Supabase)
 │
 ├── mobile/                               # APLICACIÓN MÓVIL (FLUTTER MONOREPO)
-│   ├── assets/                           # Recursos gráficos y GeoJSON nativos
-│   ├── lib/                              # Código de la aplicación en Dart
-│   │   ├── config/                       # Constantes, tema visual y rutas GoRouter
-│   │   ├── l10n/                         # Archivos de localización nativa
-│   │   ├── models/                       # Modelos de datos (Perfil, Negocio, Punto, Guía)
-│   │   ├── providers/                    # Controladores de estado Riverpod
-│   │   ├── screens/                      # Pantallas (Home, Mapa, Perfil, Chat, Admin, Dashboard, WebView)
-│   │   ├── services/                     # Clientes de API, Supabase y ubicación GPS
-│   │   ├── utils/                        # Utilidades y formateadores auxiliares
-│   │   └── widgets/                      # Componentes gráficos reutilizables
-│   └── pubspec.yaml                      # Configuración y dependencias de Flutter
+│   ├── android/                          # Proyecto nativo Android
+│   │   └── app/src/main/res/             # Íconos oficiales de la app (mdpi a xxxhdpi y round)
+│   ├── assets/                           # Recursos gráficos nativos
+│   │   └── images/logo_atlan.png         # Emblema heráldico de la aplicación
+│   ├── build/app/outputs/flutter-apk/    # Binarios APK de producción (app-release.apk)
+│   ├── lib/                              # Código Dart (Riverpod, GoRouter, Mapbox, WebView)
+│   └── pubspec.yaml                      # Configuración y dependencias nativas
 │
-├── supabase_guias_turisticos.sql         # Esquema SQL y políticas RLS para guías turísticos
-├── .env.local                            # Variables de entorno local Web
-├── README_TECNICO.md                     # Documentación técnica completa del sistema
-└── package.json                          # Scripts y dependencias Web
+└── README_TECNICO.md                     # Documentación técnica completa del sistema
 ```
 
 ---
 
-## 6. Instalación Básica y Ejecución del Sistema
+## 6. Variables de Entorno
 
-### 6.1. Requisitos Previos
+### Configuración Web (`.env` / `.env.local`)
 
-Asegúrate de contar con el siguiente software instalado en tu entorno de desarrollo:
+```env
+# Conexión con Supabase BaaS
+NEXT_PUBLIC_SUPABASE_URL=https://<tu-proyecto>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-*   **Node.js:** v18.0.0 o superior (recomendado v20 LTS).
-*   **npm:** v9.0.0 o superior.
-*   **Flutter SDK:** v3.10.0 o superior (requerido únicamente si vas a ejecutar la aplicación móvil).
-*   **Git:** Para control de versiones.
+# Clave pública de Mapbox GL JS
+NEXT_PUBLIC_MAPBOX_TOKEN=pk.eyJ1IjoibWFwYm94dXNlciIsImEiOiJjb...
+```
 
----
+### Configuración Móvil (`mobile/.env`)
 
-### 6.2. Ejecución de la Aplicación Web (Next.js)
+```env
+# Supabase para Flutter
+SUPABASE_URL=https://<tu-proyecto>.supabase.co
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone https://github.com/VladAlucardX/PlataformaAtlan.git
-    cd plataforma-atlan
-    ```
+# Mapbox Native SDK
+MAPBOX_ACCESS_TOKEN=pk.eyJ1IjoibWFwYm94dXNlciIsImEiOiJjb...
 
-2.  **Instalar dependencias:**
-    ```bash
-    npm install
-    ```
-
-3.  **Iniciar el servidor de desarrollo:**
-    ```bash
-    npm run dev
-    ```
-    *La aplicación estará disponible en `http://localhost:3000`.*
-
-4.  **Compilar y probar la build de producción (Opcional):**
-    ```bash
-    npm run build
-    npm run start
-    ```
+# URL del servidor en producción para navegación y WebView
+WEB_APP_URL=https://plataforma-atlan.mexicocentral.cloudapp.azure.com
+```
 
 ---
 
-### 6.3. Ejecución de la Aplicación Móvil (Flutter)
+## 7. Manual de Instalación y Ejecución Local
 
-1.  **Navegar al directorio móvil:**
-    ```bash
-    cd mobile
-    ```
+### Requisitos
+*   Node.js v20 LTS o superior.
+*   npm v9 o superior.
+*   Flutter SDK v3.10 o superior (si se desea ejecutar el cliente móvil).
 
-2.  **Obtener dependencias:**
-    ```bash
-    flutter pub get
-    ```
+### Pasos para la Aplicación Web
 
-3.  **Verificar dispositivos o emuladores disponibles:**
-    ```bash
-    flutter devices
-    ```
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/VladAlucardX/PlataformaAtlan.git
+cd plataforma-atlan
 
-4.  **Ejecutar en emulador o dispositivo físico:**
-    ```bash
-    flutter run
-    ```
+# 2. Instalar dependencias
+npm install
 
----
-
-## 7. Scripts Disponibles
-
-### Scripts Web (npm)
-
-| Comando | Descripción |
-| :--- | :--- |
-| `npm run dev` | Inicia el entorno de desarrollo en `localhost:3000` ejecutando previamente una limpieza de caché de `.next`. |
-| `npm run build` | Compila y optimiza la aplicación Next.js para producción. |
-| `npm run start` | Inicia el servidor Node.js en modo producción utilizando el compilado generado en `npm run build`. |
-| `npm run lint` | Ejecuta ESLint para analizar la calidad y consistencia del código. |
-| `npm run clean` | Fuerza la eliminación de la carpeta de caché `.next`. |
-
-### Scripts Móviles (Flutter)
-
-| Comando | Descripción |
-| :--- | :--- |
-| `flutter pub get` | Descarga las dependencias declaradas en `pubspec.yaml`. |
-| `flutter run` | Inicia la app en modo debug en un dispositivo conectado. |
-| `flutter build apk --release` | Compila el instalador APK optimizado para Android. |
-| `flutter build appbundle` | Genera el paquete Android App Bundle (AAB) para Google Play. |
-| `flutter build ipa` | Prepara el ejecutable de iOS para distribución en TestFlight o App Store. |
+# 3. Iniciar el servidor de desarrollo local
+npm run dev
+```
+La aplicación web se ejecutará en `http://localhost:3000`.
 
 ---
 
-## 8. Ejemplos de Endpoints y Consultas (Supabase & RPC)
+## 8. Manual de Despliegue en Producción (Azure VM)
 
-La comunicación con el backend se realiza mediante la librería oficial de Supabase. A continuación se presentan ejemplos reales de cómo interactúa la aplicación con la base de datos:
+Para desplegar o actualizar el sistema en la máquina virtual de Azure con Docker y Nginx:
 
-### 8.1. Autenticación de Usuarios (Auth API)
+### 1. Conexión SSH al Servidor
+```bash
+ssh azureuser@plataforma-atlan.mexicocentral.cloudapp.azure.com
+```
+
+### 2. Clonación o Actualización del Repositorio
+```bash
+cd /home/azureuser/plataforma-atlan
+git checkout main
+git pull origin main
+```
+
+### 3. Configurar Variables de Entorno
+Asegurarse de que el archivo `.env` contenga las claves de producción:
+```bash
+nano .env
+```
+
+### 4. Construcción y Lanzamiento con Docker Compose
+```bash
+# Compilar imágenes y levantar contenedores en segundo plano
+docker compose up -d --build
+```
+
+### 5. Verificación y Monitoreo
+```bash
+# Verificar estado de los contenedores
+docker compose ps
+
+# Monitorear consumo de recursos en tiempo real
+docker stats
+
+# Inspeccionar logs en vivo de Nginx
+docker compose logs -f proxy
+
+# Inspeccionar logs de la aplicación Next.js
+docker compose logs -f app
+```
+
+---
+
+## 9. Distribución y Compilación del APK Móvil
+
+La aplicación móvil nativa de Atlan cuenta con su instalador de producción optimizado para Android con el isotipo oficial adaptativo.
+
+### Compilar el APK de Producción
+
+1. Ingresar a la carpeta móvil:
+   ```bash
+   cd mobile
+   ```
+2. Asegurar dependencias actualizadas:
+   ```bash
+   flutter pub get
+   ```
+3. Ejecutar la compilación release:
+   ```bash
+   flutter build apk --release
+   ```
+
+### Ubicación del Archivo Generado
+
+El instalador final compilado se genera en:
+```text
+mobile/build/app/outputs/flutter-apk/app-release.apk
+```
+*   **Peso aproximado:** ~112 MB.
+*   **Compatibilidad:** Android 6.0 (API 23) en adelante.
+*   **Resoluciones de ícono soportadas:** `mipmap-mdpi` (48px), `hdpi` (72px), `xhdpi` (96px), `xxhdpi` (144px), `xxxhdpi` (192px) e íconos circulares (`android:roundIcon`).
+
+---
+
+## 10. Consultas de Ejemplo y Funciones Backend (RPC)
+
+### 10.1. Cálculo Geoespacial Haversine (RPC en Supabase)
+
+Llamada a la función PL/pgSQL en base de datos para recuperar destinos turísticos en un radio dinámico:
 
 ```javascript
 import { supabase } from '@/lib/supabase';
 
-// Inicio de sesión con correo y contraseña
-const { data, error } = await supabase.auth.signInWithPassword({
-  email: 'turista@atlan.ni',
-  password: 'Password123!',
-});
-
-if (error) {
-  console.error('Error de autenticación:', error.message);
-} else {
-  console.log('Sesión iniciada:', data.user);
-}
-```
-
-### 8.2. Búsqueda Geoespacial con Función RPC (`PL/pgSQL`)
-
-Consulta para calcular dinámicamente los lugares de interés dentro de un radio en kilómetros a partir de las coordenadas del dispositivo:
-
-```javascript
-// Obtener lugares turísticos en un radio de 50 km desde Managua
-const { data: puntosCercanos, error } = await supabase.rpc('buscar_puntos_cercanos', {
+const { data: lugaresCercanos, error } = await supabase.rpc('buscar_puntos_cercanos', {
   lat_usuario: 12.136389,
   lng_usuario: -86.251389,
-  radio_km: 50
+  radio_km: 25
 });
-
-if (error) console.error('Error al ejecutar RPC:', error);
 ```
 
-### 8.3. Consulta y Filtrado de Guías Turísticos Certificados
+### 10.2. Registro de Visita Validada por GPS (Check-In)
 
 ```javascript
-// Consultar guías activos por departamento
-const { data: guias, error } = await supabase
-  .from('guias_turisticos')
-  .select('id, nombre_completo, especialidad, idiomas, tarifa_aprox, departamento_principal, whatsapp')
-  .eq('activo', true)
-  .eq('departamento_principal', 'León');
-
-if (error) console.error('Error al consultar guías:', error);
-```
-
-### 8.4. Filtrado de Negocios Verificados por Categoría
-
-```javascript
-// Consulta de establecimientos activos y verificados en la categoría de Restaurantes
-const { data: restaurantes, error } = await supabase
-  .from('negocios')
-  .select('id, nombre, descripcion, departamento, estado_verificacion, latitud, longitud')
-  .eq('categoria', 'Restaurantes')
-  .eq('estado_verificacion', 'activo')
-  .order('nombre', { ascending: true });
-```
-
-### 8.5. Registro de Visita Validada por GPS (Check-In)
-
-```javascript
-// Inserción de visita una vez validado que la distancia Haversine es < 1 km
-const { data: checkIn, error } = await supabase
+const { data: visita, error } = await supabase
   .from('visitas_puntos')
   .insert([
     {
       usuario_id: user.id,
-      departamento: 'Granada',
-      punto_id: 12,
+      departamento: 'Rivas',
+      punto_id: 8,
       fecha_visita: new Date().toISOString()
     }
   ]);
 ```
 
-### 8.6. Suscripción a Chat en Tiempo Real (WebSockets Realtime)
+### 10.3. Mensajería en Tiempo Real (WebSockets Realtime)
 
 ```javascript
-// Suscripción reactiva a la llegada de mensajes en una conversación privada
-const chatChannel = supabase
+const canalChat = supabase
   .channel(`chat_${conversacionId}`)
   .on(
     'postgres_changes',
@@ -406,7 +459,7 @@ const chatChannel = supabase
       filter: `conversacion_id=eq.${conversacionId}`
     },
     (payload) => {
-      console.log('Nuevo mensaje recibido en vivo:', payload.new);
+      console.log('Mensaje recibido instantáneamente:', payload.new);
     }
   )
   .subscribe();
@@ -414,17 +467,14 @@ const chatChannel = supabase
 
 ---
 
-## 9. Solución de Problemas Comunes (Troubleshooting) & Notas Técnicas
+## 11. Solución de Problemas (Troubleshooting)
 
-### Permisos de Geolocalización
-*   **En Web:** Asegúrate de que el navegador tenga autorizada la lectura de ubicación (`navigator.geolocation`). Si estás probando en entorno local sin HTTPS, algunos navegadores bloquean la geolocalización a menos que accedas explícitamente vía `localhost`.
-*   **En Android/iOS:** Verifica que la app móvil incluya los permisos `ACCESS_FINE_LOCATION` y `ACCESS_COARSE_LOCATION` configurados en `AndroidManifest.xml` e `Info.plist`.
-
-### Visualización del Mapa (Mapbox)
-*   Si los mapas no cargan o muestran un lienzo en blanco, confirma que la variable `NEXT_PUBLIC_MAPBOX_TOKEN` en `.env.local` (o `MAPBOX_ACCESS_TOKEN` en la app móvil) tenga un token válido activo asignado a tu cuenta de Mapbox.
-
-### Caché y Service Worker en PWA
-*   Si notas cambios que no se reflejan en la PWA Web, desregistra el Service Worker desde DevTools (`Application > Service Workers`) o ejecuta `npm run clean` para forzar la recreación de los paquetes estáticos.
-
-### Seguridad y RLS en Supabase
-*   Todas las tablas críticas del sistema (`mensajes`, `negocios`, `visitas_puntos`, `perfiles`, `guias_turisticos`) cuentan con políticas de **Row Level Security (RLS)** activadas. Los intentos de modificación directa sin un token JWT válido de usuario autenticado serán rechazados por la base de datos.
+*   **Error de Certificado SSL / Puerto 443:** Confirmar que los certificados de Let's Encrypt existan en `/etc/letsencrypt/live/plataforma-atlan.mexicocentral.cloudapp.azure.com/` en el host de Azure y que el puerto 443 esté abierto en el grupo de seguridad de red (NSG) de Azure.
+*   **Fallo al conectar con la base de datos:** Revisar que la variable `NEXT_PUBLIC_SUPABASE_URL` en `.env` coincida exactamente con la URL del proyecto activo de Supabase.
+*   **Permisos de GPS en el Móvil:** Si la validación de check-in falla en Android, asegurarse de que el usuario haya otorgado permisos de ubicación precisa (`ACCESS_FINE_LOCATION`) desde los ajustes del sistema operativo.
+*   **Refresco de Caché en Contenedores:** Para forzar una recreación limpia de la imagen Docker en Azure:
+    ```bash
+    docker compose down
+    docker compose build --no-cache
+    docker compose up -d
+    ```
