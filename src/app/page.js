@@ -449,6 +449,18 @@ let clientHasNavigated = false;
 export default function Home() {
   const [introDone, setIntroDone] = React.useState(() => {
     if (typeof window !== "undefined") {
+      const hash = window.location.hash || "";
+      const search = window.location.search || "";
+      // Si el usuario regresa de autenticación (Google OAuth o Magic Link), saltar el intro directamente
+      if (
+        hash.includes("access_token") ||
+        hash.includes("refresh_token") ||
+        search.includes("code=") ||
+        hash.includes("type=magiclink") ||
+        search.includes("type=magiclink")
+      ) {
+        return true;
+      }
       const params = new URLSearchParams(window.location.search);
       if (params.get("intro") === "1" || params.get("intro") === "true") {
         return false;
@@ -459,11 +471,20 @@ export default function Home() {
   });
   const { session, perfil, logout, is2FAVerified } = useAuth();
 
-  // Si el usuario llega desde el enlace del correo (Magic Link), validar automáticamente su 2FA
+  // Si el usuario llega desde autenticación (OAuth/Magic Link), saltar intro y validar 2FA
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       const hash = window.location.hash || "";
       const search = window.location.search || "";
+      if (
+        hash.includes("access_token") ||
+        hash.includes("refresh_token") ||
+        search.includes("code=") ||
+        hash.includes("type=magiclink") ||
+        search.includes("type=magiclink")
+      ) {
+        setIntroDone(true);
+      }
       const isEmailLink = hash.includes("type=magiclink") || search.includes("type=magiclink");
       if (isEmailLink) {
         supabase.auth.getSession().then(({ data: { session: s } }) => {
