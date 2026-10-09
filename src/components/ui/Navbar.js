@@ -166,7 +166,9 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
         <Link
           href="/"
           onClick={() => {
-            try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+            if (typeof window !== "undefined") {
+              window.__atlanNavigatedInternally = true;
+            }
           }}
           style={{ display: "flex", alignItems: "center", gap: "9px", textDecoration: "none", flexShrink: 0 }}
         >
@@ -183,7 +185,9 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
           <Link
             href="/"
             onClick={() => {
-              try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+              if (typeof window !== "undefined") {
+                window.__atlanNavigatedInternally = true;
+              }
             }}
             className={`nav-pill-link ${activePage === "inicio" ? "active" : ""}`}
           >
@@ -767,7 +771,9 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
             href="/"
             className={`mobile-menu-item ${activePage === "inicio" ? "active" : ""}`}
             onClick={() => {
-              try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+              if (typeof window !== "undefined") {
+                window.__atlanNavigatedInternally = true;
+              }
               setMenuOpen(false);
             }}
           >

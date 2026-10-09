@@ -442,26 +442,22 @@ function Footer() {
   );
 }
 
-// Hook isomorfo para sincronizar antes del primer pintado en el cliente sin causar mismatch en SSR
-const useIsomorphicLayoutEffect = typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+// Variable en memoria a nivel de cliente para navegación interna SPA
+let clientHasNavigated = false;
 
 // Componente Principal
 export default function Home() {
-  // Inicializado en true para coincidir de forma idéntica entre SSR e hidratación inicial
-  const [introDone, setIntroDone] = React.useState(true);
-  const { session, perfil, logout, is2FAVerified } = useAuth();
-
-  // Evaluar en el cliente antes del pintado si corresponde reproducir el video intro
-  useIsomorphicLayoutEffect(() => {
-    try {
+  const [introDone, setIntroDone] = React.useState(() => {
+    if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      const forceIntro = params.get("intro") === "1" || params.get("intro") === "true";
-      const seen = sessionStorage.getItem("atlan_intro_seen") === "true";
-      if (!seen || forceIntro) {
-        setIntroDone(false);
+      if (params.get("intro") === "1" || params.get("intro") === "true") {
+        return false;
       }
-    } catch (_) {}
-  }, []);
+      return clientHasNavigated || Boolean(window.__atlanNavigatedInternally);
+    }
+    return false;
+  });
+  const { session, perfil, logout, is2FAVerified } = useAuth();
 
   // Si el usuario llega desde el enlace del correo (Magic Link), validar automáticamente su 2FA
   React.useEffect(() => {
@@ -501,6 +497,7 @@ export default function Home() {
       try {
         localStorage.removeItem("introSeen");
         sessionStorage.removeItem("introSeen");
+        sessionStorage.removeItem("atlan_intro_seen");
       } catch (_) {}
     }
   }, []);
@@ -531,13 +528,19 @@ export default function Home() {
   }, []);
 
   const handleLogout = async () => {
-    try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+    clientHasNavigated = true;
+    if (typeof window !== "undefined") {
+      window.__atlanNavigatedInternally = true;
+    }
     setIntroDone(true);
     await logout();
   };
 
   const handleIntroComplete = () => {
-    try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+    clientHasNavigated = true;
+    if (typeof window !== "undefined") {
+      window.__atlanNavigatedInternally = true;
+    }
     setIntroDone(true);
   };
 
