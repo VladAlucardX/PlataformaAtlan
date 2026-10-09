@@ -3,6 +3,7 @@ const nextConfig = {
   // Genera un bundle independiente ultra-ligero optimizado para contenedores Docker
   output: 'standalone',
 
+
   // Permitir acceso al servidor de desarrollo desde la IP local (para pruebas en móvil/red local)
   allowedDevOrigins: [
     'localhost',

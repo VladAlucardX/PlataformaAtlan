@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { resolveUserDisplayName, resolveUserAvatar } from '@/lib/profileUtils';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -50,7 +51,14 @@ export function useUserStories(session, ownerId) {
             .select('id, nombre_completo, avatar_url')
             .eq('id', ownerId)
             .maybeSingle();
-          myProfile = prof || { id: ownerId, nombre_completo: session?.user?.user_metadata?.nombre_completo || '' };
+          myProfile = prof || { id: ownerId, nombre_completo: resolveUserDisplayName(null, session?.user), avatar_url: resolveUserAvatar(null, session?.user) };
+        }
+        if (myProfile) {
+          myProfile = {
+            ...myProfile,
+            nombre_completo: resolveUserDisplayName(myProfile, session?.user),
+            avatar_url: resolveUserAvatar(myProfile, session?.user),
+          };
         }
 
         const myHistorias = (myStoriesData || []).map((s) => ({ ...s, visto: true }));

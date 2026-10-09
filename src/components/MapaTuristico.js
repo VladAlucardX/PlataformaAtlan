@@ -19,6 +19,7 @@ import { uploadMedia } from '../lib/storage';
 import { validarImagenSegura } from '../lib/imageModeration';
 import { CATEGORIAS_CONFIG } from '../lib/categories';
 import { isBusinessOpenNow } from '../lib/businessHours';
+import { resolveUserDisplayName } from '../lib/profileUtils';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -545,8 +546,11 @@ export default function MapaTuristico() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUserSession(session);
-      if (session?.user?.user_metadata?.nombre_completo) {
-        setNewReviewNombre(session.user.user_metadata.nombre_completo);
+      if (session?.user) {
+        const name = resolveUserDisplayName(null, session.user);
+        if (name && name !== "Usuario") {
+          setNewReviewNombre(name);
+        }
       }
     }).catch(async (err) => {
       console.warn("[Atlan] Fallo al recuperar sesión (token inválido). Limpiando almacenamiento:", err);
@@ -561,8 +565,11 @@ export default function MapaTuristico() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUserSession(session);
-      if (session?.user?.user_metadata?.nombre_completo) {
-        setNewReviewNombre(session.user.user_metadata.nombre_completo);
+      if (session?.user) {
+        const name = resolveUserDisplayName(null, session.user);
+        if (name && name !== "Usuario") {
+          setNewReviewNombre(name);
+        }
       }
     });
 
@@ -2793,10 +2800,11 @@ export default function MapaTuristico() {
         }
       }
 
+      const creatorName = resolveUserDisplayName(null, userSession?.user);
       const { error } = await supabase.from('puntos').insert([{
         nombre: newPointNombre,
         descripcion: newPointDesc,
-        nombre_creador: userSession?.user?.user_metadata?.nombre_completo || newPointCreador || (lang === 'en' ? 'Registered Tourist' : lang === 'zh' ? '注册游客' : 'Turista Registrado'),
+        nombre_creador: (creatorName && creatorName !== "Usuario" ? creatorName : null) || newPointCreador || (lang === 'en' ? 'Registered Tourist' : lang === 'zh' ? '注册游客' : 'Turista Registrado'),
         categoria: newPointCategoria,
         ubicacion: `POINT(${lng} ${lat})`,
         departamento: deptDetectado,

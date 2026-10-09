@@ -6,7 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import Navbar from '../../components/ui/Navbar';
 import Icon from '../../components/ui/Icon';
 import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../lib/AuthContext';
+import { useAuth, resolveUserDisplayName } from '../../lib/AuthContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { obtenerDepartamentoPorCoordenadas } from '../../lib/geoUtils';
 import Link from 'next/link';
@@ -542,7 +542,7 @@ export default function DepartamentosPage() {
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <img src="/images/gueguense.svg" alt="Güegüense" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                 <span style={{ fontSize: "12.5px", fontWeight: "800", color: "#FFFFFF" }}>
-                  <span>{perfil?.nombre_completo || perfil?.nombre || userSession?.user?.user_metadata?.nombre_completo || tr('Turista', 'Tourist', '游客')}</span>: <span style={{ color: "#38BDF8" }}>{userVisitsCount}</span> {userVisitsCount === 1 ? tr('visita', 'visit', '次访问') : tr('visitas', 'visits', '次访问')}
+                  <span>{resolveUserDisplayName(perfil, userSession?.user) || tr('Turista', 'Tourist', '游客')}</span>: <span style={{ color: "#38BDF8" }}>{userVisitsCount}</span> {userVisitsCount === 1 ? tr('visita', 'visit', '次访问') : tr('visitas', 'visits', '次访问')}
                 </span>
               </div>
 

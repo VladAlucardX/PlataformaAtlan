@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
+import { resolveUserDisplayName } from '@/lib/profileUtils';
 
 /**
  * Hook reutilizable para gestionar los detalles completos de un punto:
@@ -34,8 +35,11 @@ export function usePointDetail(point, userSession = null, lang = 'es') {
 
   // Prefill nombre de usuario en reseña si hay sesión
   useEffect(() => {
-    if (userSession?.user?.user_metadata?.nombre_completo) {
-      setNewReviewNombre(userSession.user.user_metadata.nombre_completo);
+    if (userSession?.user) {
+      const name = resolveUserDisplayName(null, userSession.user);
+      if (name && name !== "Usuario") {
+        setNewReviewNombre(name);
+      }
     }
   }, [userSession]);
 

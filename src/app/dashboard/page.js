@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/lib/AuthContext";
+import { useAuth, resolveUserDisplayName } from "@/lib/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
 import NotificationDropdown from "@/components/ui/NotificationDropdown";
@@ -490,7 +490,7 @@ export default function DashboardPage() {
       return;
     }
     setClaimTargetPunto(punto);
-    setSolicitanteNombre(perfil?.nombre_completo || "");
+    setSolicitanteNombre(resolveUserDisplayName(perfil, user) || "");
     setSolicitanteCedula("");
     setSolicitanteTelefono(perfil?.telefono || "");
     setDocumentoCedulaUrl("");
@@ -579,7 +579,7 @@ export default function DashboardPage() {
                   ubicacion: `POINT(${longitude} ${latitude})`,
                   departamento: deptDetectado,
                   estado: "en_verificacion",
-                  nombre_creador: perfil?.nombre_completo || "Propietario"
+                  nombre_creador: resolveUserDisplayName(perfil, user) || "Propietario"
                 }]);
 
               if (puntoError) throw puntoError;
@@ -653,7 +653,7 @@ export default function DashboardPage() {
               nombre: nuevoNegocio.nombre,
               categoria: nuevoNegocio.tipo || "otro",
               estado: "en_verificacion",
-              nombre_creador: perfil?.nombre_completo || solicitanteNombre || "Propietario"
+              nombre_creador: resolveUserDisplayName(perfil, user) || solicitanteNombre || "Propietario"
             }]);
 
           if (puntoError) console.warn("Error al crear punto:", puntoError);
@@ -1253,9 +1253,13 @@ export default function DashboardPage() {
                       fontSize: "10.5px",
                       fontWeight: "850",
                       textTransform: "uppercase",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px"
                     }}>
-                      🏷️ {n.tipo || "Comercial"}
+                      <Icon name="tag" size={11} color="#146D9E" />
+                      <span>{n.tipo || "Comercial"}</span>
                     </div>
                   </div>
 
@@ -1281,9 +1285,19 @@ export default function DashboardPage() {
                       )}
                     </div>
 
-                    <div style={{ fontSize: "11.5px", color: "#94A3B8", display: "flex", flexDirection: "column", gap: "3px" }}>
-                      {n.telefono && <span>📞 Tel: {n.telefono}</span>}
-                      {n.rango_precios && <span>💵 Precios: {n.rango_precios}</span>}
+                    <div style={{ fontSize: "11.5px", color: "#94A3B8", display: "flex", flexDirection: "column", gap: "5px" }}>
+                      {n.telefono && (
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                          <Icon name="smartphone" size={12} color="#94A3B8" />
+                          <span>Tel: {n.telefono}</span>
+                        </span>
+                      )}
+                      {n.rango_precios && (
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                          <Icon name="dollarSign" size={12} color="#94A3B8" />
+                          <span>Precios: {n.rango_precios}</span>
+                        </span>
+                      )}
                     </div>
 
                     <button
@@ -1295,14 +1309,22 @@ export default function DashboardPage() {
                       className="clay-btn-blue"
                       style={{
                         width: "100%",
-                        padding: "9px 14px",
+                        minHeight: "40px",
+                        height: "auto",
+                        padding: "9px 12px",
                         fontSize: "12.5px",
+                        lineHeight: "1.3",
                         justifyContent: "center",
                         borderRadius: "12px",
-                        marginTop: "6px"
+                        marginTop: "6px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        textAlign: "center"
                       }}
                     >
-                      ⚙️ {lang === "en" ? "Manage This Business" : lang === "zh" ? "管理此商户" : "Administrar este Negocio"}
+                      <Icon name="edit" size={14} color="#FFFFFF" />
+                      <span>{lang === "en" ? "Manage This Business" : lang === "zh" ? "管理此商户" : "Administrar este Negocio"}</span>
                     </button>
                   </div>
                 </div>
@@ -1336,11 +1358,9 @@ export default function DashboardPage() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "22px",
-                fontWeight: "900",
                 boxShadow: "0 6px 16px rgba(23, 170, 74, 0.35)"
               }}>
-                ➕
+                <Icon name="plus" size={24} color="#FFFFFF" strokeWidth={2.8} />
               </div>
 
               <div>
@@ -1363,30 +1383,33 @@ export default function DashboardPage() {
                     setClaimSearchTerm("");
                     setShowSearchClaimModal(true);
                   }}
-                  className="clay-btn-gold"
-                  style={{ width: "100%", height: "40px", padding: "0 14px", fontSize: "12px", justifyContent: "center", borderRadius: "12px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
+                  className="clay-btn-gold claim-action-btn"
+                  style={{ width: "100%", minHeight: "42px", height: "auto", padding: "8px 12px", fontSize: "12px", lineHeight: "1.3", justifyContent: "center", borderRadius: "12px", display: "inline-flex", alignItems: "center", boxSizing: "border-box", gap: "8px", textAlign: "center" }}
                 >
-                  🔍 {lang === "en" ? "Search Unclaimed Point" : lang === "zh" ? "搜索现有未认领地点" : "Buscar Punto Existente a Reclamar"}
+                  <img src="/images/lupa.svg" alt="" style={{ width: "16px", height: "16px", display: "inline-block", flexShrink: 0 }} />
+                  <span>{lang === "en" ? "Search Unclaimed Point" : lang === "zh" ? "搜索现有未认领地点" : "Buscar Punto Existente a Reclamar"}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleInitiateClaim("gps")}
                   disabled={isClaiming}
-                  className="clay-btn-green"
-                  style={{ width: "100%", height: "40px", padding: "0 14px", fontSize: "12px", justifyContent: "center", borderRadius: "12px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
+                  className="clay-btn-green claim-action-btn"
+                  style={{ width: "100%", minHeight: "42px", height: "auto", padding: "8px 12px", fontSize: "12px", lineHeight: "1.3", justifyContent: "center", borderRadius: "12px", display: "inline-flex", alignItems: "center", boxSizing: "border-box", gap: "8px", textAlign: "center" }}
                 >
-                  📍 {lang === "en" ? "Register with GPS" : lang === "zh" ? "使用我的 GPS 位置登记" : "Registrar con mi ubicación GPS"}
+                  <img src="/images/ubic.svg" alt="" style={{ width: "16px", height: "16px", display: "inline-block", flexShrink: 0 }} />
+                  <span>{lang === "en" ? "Register with GPS" : lang === "zh" ? "使用我的 GPS 位置登记" : "Registrar con mi ubicación GPS"}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleIrAlMapaParaMarcar}
                   disabled={isClaiming}
-                  className="clay-btn-blue"
-                  style={{ width: "100%", height: "40px", padding: "0 14px", fontSize: "12px", justifyContent: "center", borderRadius: "12px", display: "inline-flex", alignItems: "center", boxSizing: "border-box" }}
+                  className="clay-btn-blue claim-action-btn"
+                  style={{ width: "100%", minHeight: "42px", height: "auto", padding: "8px 12px", fontSize: "12px", lineHeight: "1.3", justifyContent: "center", borderRadius: "12px", display: "inline-flex", alignItems: "center", boxSizing: "border-box", gap: "8px", textAlign: "center" }}
                 >
-                  🗺️ {lang === "en" ? "Mark on Map Manually" : lang === "zh" ? "在地图上手动标注" : "Marcar punto en el mapa"}
+                  <img src="/images/mapa.svg" alt="" style={{ width: "18px", height: "18px", display: "inline-block", flexShrink: 0 }} />
+                  <span>{lang === "en" ? "Mark on Map Manually" : lang === "zh" ? "在地图上手动标注" : "Marcar punto en el mapa"}</span>
                 </button>
               </div>
             </div>
@@ -1550,7 +1573,7 @@ export default function DashboardPage() {
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                     <h2 style={{ fontSize: "26px", fontWeight: "900", color: "#FFFFFF", margin: 0, fontFamily: "'LC Mogi', var(--font-outfit), sans-serif", letterSpacing: "-0.02em", display: "flex", alignItems: "center", gap: "8px" }}>
-                      <span>{lang === "en" ? "Welcome," : lang === "zh" ? "欢迎，" : "Bienvenido,"} <span style={{ color: "#FFD700" }}>{perfil?.nombre_completo || "Propietario"}</span></span>
+                      <span>{lang === "en" ? "Welcome," : lang === "zh" ? "欢迎，" : "Bienvenido,"} <span style={{ color: "#FFD700" }}>{resolveUserDisplayName(perfil, user) || "Propietario"}</span></span>
                       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" style={{ display: "inline-block", flexShrink: 0 }}>
                         <path d="M12.5 11.5V5.5C12.5 4.67 11.83 4 11 4C10.17 4 9.5 4.67 9.5 5.5V11.5M9.5 9.5V3.5C9.5 2.67 8.83 2 8 2C7.17 2 6.5 2.67 6.5 3.5V11.5M6.5 11.5V5.5C6.5 4.67 5.83 4 5 4C4.17 4 3.5 4.67 3.5 5.5V13.5M3.5 12V10.5C3.5 9.67 2.83 9 2 9C1.17 9 0.5 9.67 0.5 10.5V15.5C0.5 19.09 3.41 22 7 22H11.5C14.81 22 17.5 19.31 17.5 16V13.5C17.5 12.67 16.83 12 16 12C15.17 12 14.5 12.67 14.5 13.5V11.5C14.5 10.67 13.83 10 13 10C12.17 10 11.5 10.67 11.5 11.5" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
@@ -3045,10 +3068,28 @@ export default function DashboardPage() {
           }} className="clay-modal animate-scale-up">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
               <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "850", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "8px" }}>
-                📋 {lang === "en" ? "Claim Verification Request" : lang === "zh" ? "认领产权核验申请" : "Solicitud de Verificación de Propiedad"}
+                <Icon name="shield" size={20} color="#146D9E" />
+                <span>{lang === "en" ? "Claim Verification Request" : lang === "zh" ? "认领产权核验申请" : "Solicitud de Verificación de Propiedad"}</span>
               </h3>
-              <button onClick={() => setShowClaimModal(false)} style={{ background: "none", border: "none", fontSize: "20px", cursor: "pointer", color: "#9CA3AF" }}>
-                ✕
+              <button
+                type="button"
+                onClick={() => setShowClaimModal(false)}
+                style={{
+                  width: "34px",
+                  height: "34px",
+                  borderRadius: "50%",
+                  border: "1px solid rgba(148, 163, 184, 0.3)",
+                  background: "#F1F5F9",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  color: "#64748B",
+                  transition: "all 0.2s ease"
+                }}
+                aria-label="Cerrar modal"
+              >
+                <Icon name="x" size={18} color="#64748B" strokeWidth={2.5} />
               </button>
             </div>
 
@@ -3103,12 +3144,23 @@ export default function DashboardPage() {
                 <label style={styles.label}>{lang === "en" ? "ID Document (Photo / PDF) *" : lang === "zh" ? "身份证件 (照片 / PDF) *" : "Foto o PDF de Cédula de Identidad *"}</label>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
                   <label className="clay-btn-blue" style={{ padding: "8px 14px", fontSize: "12px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}>
-                    {uploadingCedulaDoc ? "..." : (documentoCedulaUrl ? (lang === "en" ? "✅ ID Attached" : lang === "zh" ? "✅ 证件已附加" : "✅ Cédula Adjuntada") : (lang === "en" ? "📄 Attach ID" : lang === "zh" ? "📄 上传证件" : "📄 Adjuntar Cédula"))}
+                    {uploadingCedulaDoc ? "..." : (documentoCedulaUrl ? (
+                      <>
+                        <Icon name="check" size={14} color="#FFFFFF" strokeWidth={2.5} />
+                        <span>{lang === "en" ? "ID Attached" : lang === "zh" ? "证件已附加" : "Cédula Adjuntada"}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Icon name="fileText" size={14} color="#FFFFFF" />
+                        <span>{lang === "en" ? "Attach ID" : lang === "zh" ? "上传证件" : "Adjuntar Cédula"}</span>
+                      </>
+                    ))}
                     <input type="file" accept="image/*,.pdf" onChange={(e) => handleDocUpload(e, "cedula")} style={{ display: "none" }} />
                   </label>
                   {documentoCedulaUrl && (
-                    <a href={documentoCedulaUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "#146D9E", fontWeight: "700" }}>
-                      🔗 {lang === "en" ? "View Document" : lang === "zh" ? "查看文件" : "Ver Documento"}
+                    <a href={documentoCedulaUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "#146D9E", fontWeight: "700", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                      <Icon name="link" size={13} color="#146D9E" />
+                      <span>{lang === "en" ? "View Document" : lang === "zh" ? "查看文件" : "Ver Documento"}</span>
                     </a>
                   )}
                 </div>
@@ -3119,12 +3171,23 @@ export default function DashboardPage() {
                 <label style={styles.label}>{lang === "en" ? "Business Permit / Property Proof (Optional)" : lang === "zh" ? "营业执照 / 产权证明 (选填)" : "Comprobante de Propiedad / Licencia Comercial (Opcional)"}</label>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "6px" }}>
                   <label className="clay-btn-gold" style={{ padding: "8px 14px", fontSize: "12px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}>
-                    {uploadingPropiedadDoc ? "..." : (documentoPropiedadUrl ? (lang === "en" ? "✅ Proof Attached" : lang === "zh" ? "✅ 凭证已附加" : "✅ Comprobante Adjuntado") : (lang === "en" ? "📄 Attach Proof" : lang === "zh" ? "📄 上传证明" : "📄 Adjuntar Comprobante"))}
+                    {uploadingPropiedadDoc ? "..." : (documentoPropiedadUrl ? (
+                      <>
+                        <Icon name="check" size={14} color="#FFFFFF" strokeWidth={2.5} />
+                        <span>{lang === "en" ? "Proof Attached" : lang === "zh" ? "凭证已附加" : "Comprobante Adjuntado"}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Icon name="fileText" size={14} color="#FFFFFF" />
+                        <span>{lang === "en" ? "Attach Proof" : lang === "zh" ? "上传证明" : "Adjuntar Comprobante"}</span>
+                      </>
+                    ))}
                     <input type="file" accept="image/*,.pdf" onChange={(e) => handleDocUpload(e, "propiedad")} style={{ display: "none" }} />
                   </label>
                   {documentoPropiedadUrl && (
-                    <a href={documentoPropiedadUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "#B8960E", fontWeight: "700" }}>
-                      🔗 {lang === "en" ? "View Document" : lang === "zh" ? "查看文件" : "Ver Documento"}
+                    <a href={documentoPropiedadUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "12px", color: "#B8960E", fontWeight: "700", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                      <Icon name="link" size={13} color="#B8960E" />
+                      <span>{lang === "en" ? "View Document" : lang === "zh" ? "查看文件" : "Ver Documento"}</span>
                     </a>
                   )}
                 </div>
@@ -3155,7 +3218,12 @@ export default function DashboardPage() {
                   className="clay-btn-green"
                   style={{ padding: "10px 22px", fontSize: "13px" }}
                 >
-                  {isClaiming ? "..." : `🚀 ${lang === "en" ? "Submit Verification Claim" : lang === "zh" ? "提交认领核验申请" : "Enviar Solicitud de Verificación"}`}
+                  {isClaiming ? "..." : (
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                      <Icon name="send" size={14} color="#FFFFFF" />
+                      <span>{lang === "en" ? "Submit Verification Claim" : lang === "zh" ? "提交认领核验申请" : "Enviar Solicitud de Verificación"}</span>
+                    </span>
+                  )}
                 </button>
               </div>
             </form>
@@ -3234,69 +3302,183 @@ export default function DashboardPage() {
 
       {/* MODAL DE BÚSQUEDA DE PUNTOS LIBRES PARA RECLAMAR */}
       {showSearchClaimModal && (
-        <div style={{
-          position: "fixed", top: 0, left: 0, width: "100%", height: "100vh",
-          background: "rgba(10, 15, 28, 0.65)", backdropFilter: "blur(8px)",
-          WebkitBackdropFilter: "blur(8px)", zIndex: 1050, display: "flex",
-          alignItems: "center", justifyContent: "center", padding: "20px"
-        }} className="animate-fade-in">
-          <div style={{
-            maxWidth: "520px", width: "100%", background: "#FFFFFF",
-            border: "2px solid rgba(255, 255, 255, 0.95)",
-            boxShadow: "inset 4px 4px 10px rgba(255, 255, 255, 1), inset -6px -6px 14px rgba(20, 109, 158, 0.10), 0 24px 60px -10px rgba(20, 109, 158, 0.25)",
-            borderRadius: "28px", padding: "28px", display: "flex", flexDirection: "column", gap: "16px"
-          }} className="clay-modal animate-scale-up">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "850", color: "#1A1A2E" }}>
-                🔍 {lang === "en" ? "Search Unclaimed Business Point" : lang === "zh" ? "查找待认领商户点" : "Buscar Punto Turístico Libre"}
-              </h3>
-              <button
-                type="button"
-                onClick={() => setShowSearchClaimModal(false)}
-                style={{ background: "none", border: "none", fontSize: "16px", cursor: "pointer", color: "#94A3B8" }}
-              >
-                ✖
-              </button>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100vh",
+            background: "rgba(10, 15, 28, 0.72)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            zIndex: 1050,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "16px"
+          }}
+          className="animate-fade-in"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowSearchClaimModal(false);
+          }}
+        >
+          <div
+            className="clay-modal claim-modal-container animate-scale-up"
+          >
+            {/* Encabezado con identidad Atlan */}
+            <div className="claim-modal-header">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0, flex: 1 }}>
+                  <div style={{
+                    width: "44px",
+                    height: "44px",
+                    borderRadius: "14px",
+                    background: "linear-gradient(135deg, rgba(20, 109, 158, 0.12) 0%, rgba(255, 215, 0, 0.20) 100%)",
+                    border: "1.5px solid rgba(20, 109, 158, 0.22)",
+                    boxShadow: "0 6px 16px rgba(20, 109, 158, 0.12)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0
+                  }}>
+                    <img src="/images/lupa.svg" alt="Buscar" style={{ width: "22px", height: "22px", objectFit: "contain" }} />
+                  </div>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      background: "rgba(20, 109, 158, 0.08)",
+                      color: "#146D9E",
+                      padding: "2px 7px",
+                      borderRadius: "6px",
+                      fontSize: "10px",
+                      fontWeight: "850",
+                      letterSpacing: "0.5px",
+                      textTransform: "uppercase"
+                    }}>
+                      <Icon name="tag" size={10} color="#146D9E" />
+                      <span>{lang === "en" ? "Community Points" : lang === "zh" ? "社区点位" : "Puntos Comunitarios"}</span>
+                    </div>
+                    <h3 style={{ margin: "3px 0 0", fontSize: "clamp(16px, 4vw, 19px)", fontWeight: "850", color: "#0F172A", letterSpacing: "-0.01em", lineHeight: "1.25", wordBreak: "break-word" }}>
+                      {lang === "en" ? "Search Unclaimed Tourist Point" : lang === "zh" ? "查找待认领商户点" : "Buscar Punto Turístico Libre"}
+                    </h3>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setShowSearchClaimModal(false)}
+                  style={{
+                    width: "34px",
+                    height: "34px",
+                    borderRadius: "50%",
+                    border: "1px solid rgba(148, 163, 184, 0.3)",
+                    background: "#F1F5F9",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    color: "#64748B",
+                    transition: "all 0.2s ease",
+                    flexShrink: 0
+                  }}
+                  className="hover:scale-105"
+                  aria-label="Cerrar modal"
+                >
+                  <Icon name="x" size={17} color="#64748B" strokeWidth={2.5} />
+                </button>
+              </div>
+
+              <p style={{ margin: "10px 0 0", fontSize: "12px", color: "#475569", lineHeight: "1.4" }}>
+                {lang === "en"
+                  ? "Explore places added by tourists on the map and claim official ownership for your business:"
+                  : lang === "zh"
+                  ? "浏览游客在地图上添加的地标，为您的商户申请官方所有权认领："
+                  : "Encuentra lugares registrados por visitantes en el mapa y reclama la titularidad oficial de tu negocio:"}
+              </p>
             </div>
 
-            <p style={{ margin: 0, fontSize: "13px", color: "#4A5568" }}>
-              {lang === "en"
-                ? "Enter the business name or category to find points added by tourists."
-                : lang === "zh"
-                ? "输入商户名称或分类，查找游客在地图上添加的点位："
-                : "Ingresa el nombre o categoría del negocio para encontrar puntos agregados por turistas en el mapa:"}
-            </p>
+            {/* Buscador interactivo con icono SVG */}
+            <div className="claim-modal-search-box">
+              <div style={{ position: "relative", width: "100%" }}>
+                <img
+                  src="/images/lupa.svg"
+                  alt=""
+                  style={{
+                    position: "absolute",
+                    left: "14px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: "17px",
+                    height: "17px",
+                    pointerEvents: "none",
+                    opacity: 0.65
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder={lang === "en" ? "Search by name, category or department..." : lang === "zh" ? "按商户名、分类或部门搜索..." : "Buscar por nombre, categoría o departamento..."}
+                  value={claimSearchTerm}
+                  onChange={(e) => {
+                    setClaimSearchTerm(e.target.value);
+                    setClaimSearchPage(1);
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "11px 36px 11px 40px",
+                    borderRadius: "14px",
+                    border: "1.5px solid rgba(20, 109, 158, 0.22)",
+                    background: "#F8FAFC",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    color: "#0F172A",
+                    outline: "none",
+                    boxShadow: "inset 2px 2px 5px rgba(0, 0, 0, 0.03)",
+                    boxSizing: "border-box"
+                  }}
+                  autoFocus
+                />
+                {claimSearchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setClaimSearchTerm("");
+                      setClaimSearchPage(1);
+                    }}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      background: "rgba(100, 116, 139, 0.15)",
+                      border: "none",
+                      borderRadius: "50%",
+                      width: "22px",
+                      height: "22px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer"
+                    }}
+                  >
+                    <Icon name="x" size={13} color="#475569" strokeWidth={2.5} />
+                  </button>
+                )}
+              </div>
+            </div>
 
-            <input
-              type="text"
-              placeholder={lang === "en" ? "🔍 Type business name or category..." : lang === "zh" ? "🔍 按名称或分类搜索..." : "🔍 Buscar por nombre o categoría..."}
-              value={claimSearchTerm}
-              onChange={(e) => {
-                setClaimSearchTerm(e.target.value);
-                setClaimSearchPage(1);
-              }}
-              style={{
-                width: "100%",
-                padding: "12px 16px",
-                borderRadius: "14px",
-                border: "1.5px solid rgba(20, 109, 158, 0.2)",
-                background: "#F8FAFC",
-                fontSize: "13.5px",
-                fontWeight: "600",
-                color: "#1A1A2E",
-                outline: "none"
-              }}
-              autoFocus
-            />
-
-            {/* Contador de resultados */}
+            {/* Listado y resultados */}
             {(() => {
               const filtered = puntosDisponibles.filter((p) => {
                 if (!claimSearchTerm.trim()) return true;
                 const term = claimSearchTerm.toLowerCase();
                 return (
                   p.nombre?.toLowerCase().includes(term) ||
-                  p.categoria?.toLowerCase().includes(term)
+                  p.categoria?.toLowerCase().includes(term) ||
+                  p.departamento?.toLowerCase().includes(term) ||
+                  p.direccion?.toLowerCase().includes(term)
                 );
               });
               const perPage = 5;
@@ -3307,85 +3489,269 @@ export default function DashboardPage() {
               );
 
               return (
-                <>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", color: "#4A5568", fontWeight: "700", padding: "0 4px" }}>
-                    <span>🏷️ {filtered.length} {lang === "en" ? "unclaimed points found" : lang === "zh" ? "个待认领地点" : "puntos libres encontrados"}</span>
+                <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
+                  {/* Barra de metadatos de resultados */}
+                  <div className="claim-modal-meta-bar">
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                      <img src="/images/ubic.svg" alt="" style={{ width: "13px", height: "13px" }} />
+                      <span>
+                        {filtered.length} {lang === "en" ? (filtered.length === 1 ? "point available" : "points available") : lang === "zh" ? "个可用点位" : (filtered.length === 1 ? "punto libre encontrado" : "puntos libres encontrados")}
+                      </span>
+                    </span>
                     {totalPages > 1 && (
-                      <span>{lang === "en" ? "Page" : lang === "zh" ? "第" : "Pág"} {claimSearchPage} {lang === "en" ? "of" : lang === "zh" ? "/" : "de"} {totalPages}{lang === "zh" ? "页" : ""}</span>
+                      <span style={{
+                        fontSize: "11px",
+                        color: "#146D9E",
+                        fontWeight: "800",
+                        background: "rgba(20, 109, 158, 0.08)",
+                        padding: "2px 8px",
+                        borderRadius: "8px"
+                      }}>
+                        {lang === "en" ? "Page" : lang === "zh" ? "第" : "Pág"} {claimSearchPage} {lang === "en" ? "of" : lang === "zh" ? "/" : "de"} {totalPages}{lang === "zh" ? "页" : ""}
+                      </span>
                     )}
                   </div>
 
-                  <div style={{
-                    maxHeight: "260px",
-                    overflowY: "auto",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                    marginTop: "2px"
-                  }}>
-                    {currentItems.map((p) => (
-                      <div
-                        key={p.id}
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          padding: "12px 16px",
-                          background: "rgba(20, 109, 158, 0.03)",
-                          border: "1.5px solid rgba(20, 109, 158, 0.08)",
-                          borderRadius: "14px"
-                        }}
-                      >
-                        <div>
-                          <div style={{ fontWeight: "800", fontSize: "14px", color: "#1A1A2E" }}>{p.nombre}</div>
-                          <div style={{ fontSize: "11.5px", color: "#4A5568", textTransform: "capitalize" }}>🏷️ {p.categoria}</div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setShowSearchClaimModal(false);
-                            handleInitiateClaim(p);
-                          }}
-                          className="clay-btn-green"
-                          style={{ padding: "6px 14px", fontSize: "12px", borderRadius: "10px" }}
+                  {/* Contenedor scrollable de resultados */}
+                  <div className="claim-modal-list">
+                    {currentItems.map((p) => {
+                      const categorySvg = getCategorySvg(p);
+                      return (
+                        <div
+                          key={p.id}
+                          className="claim-point-card"
                         >
-                          {lang === "en" ? "Claim" : lang === "zh" ? "认领" : "Reclamar"}
-                        </button>
-                      </div>
-                    ))}
+                          <div className="claim-point-card-main">
+                            {/* Icono temático de categoría Atlan */}
+                            <div style={{
+                              width: "40px",
+                              height: "40px",
+                              borderRadius: "12px",
+                              background: "linear-gradient(135deg, rgba(20, 109, 158, 0.08) 0%, rgba(255, 215, 0, 0.10) 100%)",
+                              border: "1px solid rgba(20, 109, 158, 0.15)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              flexShrink: 0
+                            }}>
+                              <img
+                                src={categorySvg}
+                                alt={p.categoria || "Punto"}
+                                style={{ width: "22px", height: "22px", objectFit: "contain" }}
+                              />
+                            </div>
+
+                            {/* Información del punto */}
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                              <div style={{
+                                fontWeight: "850",
+                                fontSize: "14px",
+                                color: "#0F172A",
+                                lineHeight: "1.3",
+                                wordBreak: "break-word"
+                              }}>
+                                {p.nombre}
+                              </div>
+                              <div style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                marginTop: "3px",
+                                flexWrap: "wrap"
+                              }}>
+                                <span style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "3px",
+                                  background: "rgba(20, 109, 158, 0.08)",
+                                  color: "#146D9E",
+                                  padding: "1px 7px",
+                                  borderRadius: "6px",
+                                  fontSize: "11px",
+                                  fontWeight: "750",
+                                  textTransform: "capitalize"
+                                }}>
+                                  <Icon name="tag" size={10} color="#146D9E" />
+                                  <span>{p.categoria || "Turismo"}</span>
+                                </span>
+
+                                {(p.departamento || p.direccion) && (
+                                  <span style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "3px",
+                                    color: "#64748B",
+                                    fontSize: "11px",
+                                    fontWeight: "600"
+                                  }}>
+                                    <img src="/images/ubic.svg" alt="" style={{ width: "11px", height: "11px" }} />
+                                    <span>{p.departamento || p.direccion}</span>
+                                  </span>
+                                )}
+
+                                <span style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "4px",
+                                  color: "#059669",
+                                  fontSize: "10.5px",
+                                  fontWeight: "750"
+                                }}>
+                                  <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10B981", boxShadow: "0 0 6px #10B981" }} />
+                                  <span>{lang === "en" ? "Available" : lang === "zh" ? "可认领" : "Libre"}</span>
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Botón Reclamar con estilo Claymórfico Atlan */}
+                          <div className="claim-point-card-action">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowSearchClaimModal(false);
+                                handleInitiateClaim(p);
+                              }}
+                              className="clay-btn-green"
+                              style={{
+                                height: "36px",
+                                padding: "0 14px",
+                                fontSize: "12px",
+                                fontWeight: "800",
+                                borderRadius: "10px",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                flexShrink: 0
+                              }}
+                            >
+                              <Icon name="claim" size={14} color="#FFFFFF" strokeWidth={2.2} />
+                              <span>{lang === "en" ? "Claim" : lang === "zh" ? "认领" : "Reclamar"}</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
 
                     {filtered.length === 0 && (
-                      <div style={{ textAlign: "center", padding: "20px 0", color: "#94A3B8", fontSize: "13px" }}>
-                        {lang === "en" ? "No unclaimed points match your search." : lang === "zh" ? "未找到符合搜索条件的待认领地点。" : "No se encontraron puntos sin reclamar con ese nombre."}
+                      <div style={{
+                        padding: "24px 14px",
+                        textAlign: "center",
+                        borderRadius: "18px",
+                        background: "rgba(20, 109, 158, 0.03)",
+                        border: "1.5px dashed rgba(20, 109, 158, 0.20)",
+                        margin: "4px 0"
+                      }}>
+                        <img
+                          src="/images/lupa.svg"
+                          alt=""
+                          style={{ width: "38px", height: "38px", margin: "0 auto 8px", opacity: 0.55, display: "block" }}
+                        />
+                        <div style={{ fontSize: "14px", fontWeight: "850", color: "#0F172A" }}>
+                          {lang === "en" ? "No unclaimed points match your search" : lang === "zh" ? "未找到符合搜索条件的待认领地点" : "No se encontraron puntos sin reclamar"}
+                        </div>
+                        <p style={{ fontSize: "11.5px", color: "#64748B", margin: "4px auto 12px", maxWidth: "360px", lineHeight: "1.4" }}>
+                          {lang === "en"
+                            ? "Can't find your location? You can register it right now with GPS or mark it on the map:"
+                            : lang === "zh"
+                            ? "找不到您的商户位置？您可以立即通过 GPS 登记或在地图上手动标注："
+                            : "¿Tu negocio aún no aparece? ¡Puedes registrarlo directamente usando tu GPS o marcarlo en el mapa!"}
+                        </p>
+                        <div style={{ display: "flex", justifyContent: "center", gap: "8px", flexWrap: "wrap" }}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowSearchClaimModal(false);
+                              handleInitiateClaim("gps");
+                            }}
+                            className="clay-btn-green"
+                            style={{ height: "34px", padding: "0 12px", fontSize: "11.5px", borderRadius: "10px", display: "inline-flex", alignItems: "center", gap: "6px" }}
+                          >
+                            <img src="/images/ubic.svg" alt="" style={{ width: "13px", height: "13px" }} />
+                            <span>{lang === "en" ? "Register with GPS" : lang === "zh" ? "GPS登记" : "Registrar con GPS"}</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowSearchClaimModal(false);
+                              handleIrAlMapaParaMarcar();
+                            }}
+                            className="clay-btn-blue"
+                            style={{ height: "34px", padding: "0 12px", fontSize: "11.5px", borderRadius: "10px", display: "inline-flex", alignItems: "center", gap: "6px" }}
+                          >
+                            <img src="/images/mapa.svg" alt="" style={{ width: "14px", height: "14px" }} />
+                            <span>{lang === "en" ? "Mark on Map" : lang === "zh" ? "地图标注" : "Marcar en el mapa"}</span>
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
 
                   {/* Paginación interna del Modal */}
                   {totalPages > 1 && (
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px", borderTop: "1px solid rgba(20,109,158,0.1)", marginTop: "4px" }}>
+                    <div style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "10px 18px 14px",
+                      borderTop: "1px solid rgba(20, 109, 158, 0.10)",
+                      background: "rgba(248, 250, 252, 0.6)"
+                    }}>
                       <button
+                        type="button"
                         disabled={claimSearchPage === 1}
                         onClick={() => setClaimSearchPage(p => Math.max(p - 1, 1))}
                         className="clay-btn-blue"
-                        style={{ padding: "5px 12px", fontSize: "11.5px", borderRadius: "8px", opacity: claimSearchPage === 1 ? 0.5 : 1 }}
+                        style={{
+                          height: "32px",
+                          padding: "0 10px",
+                          fontSize: "11.5px",
+                          borderRadius: "8px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          opacity: claimSearchPage === 1 ? 0.45 : 1,
+                          cursor: claimSearchPage === 1 ? "not-allowed" : "pointer"
+                        }}
                       >
-                        ◀ {lang === "en" ? "Prev" : lang === "zh" ? "上一页" : "Ant"}
+                        <Icon name="chevronLeft" size={14} color="#FFFFFF" strokeWidth={2.5} />
+                        <span>{lang === "en" ? "Prev" : lang === "zh" ? "上一页" : "Ant"}</span>
                       </button>
-                      <span style={{ fontSize: "12px", fontWeight: "800", color: "#1A1A2E" }}>
+
+                      <span style={{
+                        fontSize: "11.5px",
+                        fontWeight: "800",
+                        color: "#0F172A",
+                        background: "rgba(20, 109, 158, 0.06)",
+                        padding: "3px 10px",
+                        borderRadius: "20px"
+                      }}>
                         {claimSearchPage} / {totalPages}
                       </span>
+
                       <button
+                        type="button"
                         disabled={claimSearchPage === totalPages}
                         onClick={() => setClaimSearchPage(p => Math.min(p + 1, totalPages))}
                         className="clay-btn-blue"
-                        style={{ padding: "5px 12px", fontSize: "11.5px", borderRadius: "8px", opacity: claimSearchPage === totalPages ? 0.5 : 1 }}
+                        style={{
+                          height: "32px",
+                          padding: "0 10px",
+                          fontSize: "11.5px",
+                          borderRadius: "8px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          opacity: claimSearchPage === totalPages ? 0.45 : 1,
+                          cursor: claimSearchPage === totalPages ? "not-allowed" : "pointer"
+                        }}
                       >
-                        {lang === "en" ? "Next" : lang === "zh" ? "下一页" : "Sig"} ▶
+                        <span>{lang === "en" ? "Next" : lang === "zh" ? "下一页" : "Sig"}</span>
+                        <Icon name="chevronRight" size={14} color="#FFFFFF" strokeWidth={2.5} />
                       </button>
                     </div>
                   )}
-                </>
+                </div>
               );
             })()}
           </div>

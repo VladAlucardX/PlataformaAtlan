@@ -14,7 +14,7 @@ import ImageViewerModal from "@/components/ui/ImageViewerModal";
 import ChatWidget from "@/components/ui/ChatWidget";
 import FollowersModal from "@/components/ui/FollowersModal";
 import Navbar from "@/components/ui/Navbar";
-import { getProfileSlug } from "@/lib/profileUtils";
+import { getProfileSlug, resolveUserDisplayName, resolveUserAvatar } from "@/lib/profileUtils";
 import Icon from "@/components/ui/Icon";
 import StoriesBar from "@/components/historias/StoriesBar";
 import { useStories } from "@/hooks/useStories";
@@ -227,23 +227,29 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
         </div>
 
         {/* Author info */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px", background: "rgba(255, 255, 255, 0.04)", padding: "10px 14px", borderRadius: "14px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
-          <div style={{ ...avatarStyle(perfil?.avatar_url, 42), border: "2px solid rgba(255, 215, 0, 0.4)", boxShadow: "0 0 12px rgba(255, 215, 0, 0.15)" }}>
-            {!perfil?.avatar_url && (perfil?.nombre_completo?.[0]?.toUpperCase() || "U")}
-          </div>
-          <div>
-            <span style={{ fontWeight: "700", fontSize: "14.5px", color: "#FFFFFF", display: "block" }}>{perfil?.nombre_completo || "Usuario"}</span>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11px", fontWeight: "700", color: "#38BDF8", background: "rgba(56, 189, 248, 0.12)", padding: "2px 8px", borderRadius: "6px", border: "1px solid rgba(56, 189, 248, 0.25)", marginTop: "2px" }}>
-              {perfil?.rol === "dueno"
-                ? <><Icon name="building" size={11} color="#38BDF8" /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
-                : perfil?.rol === "admin"
-                ? <><Icon name="zap" size={11} color="#FFD700" /> {lang === "en" ? "Administrator" : lang === "zh" ? "管理员" : "Administrador"}</>
-                : (perfil?.es_premium || perfil?.suscripcion_activa || perfil?.rol === "turista_deacachimba")
-                ? <><Icon name="star" size={11} color="#FFD700" /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
-                : <><Icon name="luggage" size={11} color="#38BDF8" /> {lang === "en" ? "Tourist" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
-            </span>
-          </div>
-        </div>
+        {(() => {
+          const authorName = resolveUserDisplayName(perfil, session?.user);
+          const authorAvatar = resolveUserAvatar(perfil, session?.user);
+          return (
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px", background: "rgba(255, 255, 255, 0.04)", padding: "10px 14px", borderRadius: "14px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
+              <div style={{ ...avatarStyle(authorAvatar, 42), border: "2px solid rgba(255, 215, 0, 0.4)", boxShadow: "0 0 12px rgba(255, 215, 0, 0.15)" }}>
+                {!authorAvatar && (authorName?.[0]?.toUpperCase() || "U")}
+              </div>
+              <div>
+                <span style={{ fontWeight: "700", fontSize: "14.5px", color: "#FFFFFF", display: "block" }}>{authorName}</span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11px", fontWeight: "700", color: "#38BDF8", background: "rgba(56, 189, 248, 0.12)", padding: "2px 8px", borderRadius: "6px", border: "1px solid rgba(56, 189, 248, 0.25)", marginTop: "2px" }}>
+                  {perfil?.rol === "dueno"
+                    ? <><Icon name="building" size={11} color="#38BDF8" /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
+                    : perfil?.rol === "admin"
+                    ? <><Icon name="zap" size={11} color="#FFD700" /> {lang === "en" ? "Administrator" : lang === "zh" ? "管理员" : "Administrador"}</>
+                    : (perfil?.es_premium || perfil?.suscripcion_activa || perfil?.rol === "turista_deacachimba")
+                    ? <><Icon name="star" size={11} color="#FFD700" /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
+                    : <><Icon name="luggage" size={11} color="#38BDF8" /> {lang === "en" ? "Tourist" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
+                </span>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Textarea */}
         <textarea
@@ -605,21 +611,27 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
 
       {/* Header */}
       <div style={cardStyles.header}>
-        <Link href={`/comunidad/perfil/${post.autor_id}`} style={{ display: "flex", alignItems: "center", gap: "12px", textDecoration: "none" }}>
-          <div style={avatarStyle(autor.avatar_url, 44)}>
-            {!autor.avatar_url && (autor.nombre_completo?.[0]?.toUpperCase() || "U")}
-          </div>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ fontWeight: "800", fontSize: "14px", color: "var(--atlan-text-primary)" }}>{autor.nombre_completo || "Usuario"}</span>
-              {autor.rol === "dueno" && <span style={cardStyles.roleBadge}><Icon name="building" size={12} /></span>}
-              {autor.rol === "admin" && <span style={{ ...cardStyles.roleBadge, background: "rgba(239,68,68,0.15)", color: "#ef4444" }}><Icon name="zap" size={12} /></span>}
-            </div>
-            <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)" }}>
-              {timeAgo(post.created_at, lang)} {isEdited && <span style={{ fontStyle: "italic", marginLeft: "4px", opacity: 0.8 }}>({lang === "en" ? "edited" : lang === "zh" ? "已编辑" : "editado"})</span>}
-            </span>
-          </div>
-        </Link>
+        {(() => {
+          const authorName = isOwner ? resolveUserDisplayName(autor, session?.user) : resolveUserDisplayName(autor);
+          const authorAvatar = isOwner ? resolveUserAvatar(autor, session?.user) : resolveUserAvatar(autor);
+          return (
+            <Link href={`/comunidad/perfil/${post.autor_id}`} style={{ display: "flex", alignItems: "center", gap: "12px", textDecoration: "none" }}>
+              <div style={avatarStyle(authorAvatar, 44)}>
+                {!authorAvatar && (authorName?.[0]?.toUpperCase() || "U")}
+              </div>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span style={{ fontWeight: "800", fontSize: "14px", color: "var(--atlan-text-primary)" }}>{authorName}</span>
+                  {autor.rol === "dueno" && <span style={cardStyles.roleBadge}><Icon name="building" size={12} /></span>}
+                  {autor.rol === "admin" && <span style={{ ...cardStyles.roleBadge, background: "rgba(239,68,68,0.15)", color: "#ef4444" }}><Icon name="zap" size={12} /></span>}
+                </div>
+                <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)" }}>
+                  {timeAgo(post.created_at, lang)} {isEdited && <span style={{ fontStyle: "italic", marginLeft: "4px", opacity: 0.8 }}>({lang === "en" ? "edited" : lang === "zh" ? "已编辑" : "editado"})</span>}
+                </span>
+              </div>
+            </Link>
+          );
+        })()}
 
         {/* Menu */}
         {(isOwner || isAdmin) && (
@@ -867,18 +879,21 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
             <>
               {comments.map((comment) => {
                 const cAutor = comment.perfiles || {};
-                const canDeleteComment = session?.user?.id === comment.autor_id || isOwner || isAdmin;
+                const isCommentMine = session?.user?.id === comment.autor_id;
+                const cAuthorName = isCommentMine ? resolveUserDisplayName(cAutor, session?.user) : resolveUserDisplayName(cAutor);
+                const cAuthorAvatar = isCommentMine ? resolveUserAvatar(cAutor, session?.user) : resolveUserAvatar(cAutor);
+                const canDeleteComment = isCommentMine || isOwner || isAdmin;
                 return (
                   <div key={comment.id} style={cardStyles.commentItem}>
                     <Link href={`/comunidad/perfil/${comment.autor_id}`} style={{ textDecoration: "none" }}>
-                      <div style={avatarStyle(cAutor.avatar_url, 32)}>
-                        {!cAutor.avatar_url && (cAutor.nombre_completo?.[0]?.toUpperCase() || "U")}
+                      <div style={avatarStyle(cAuthorAvatar, 32)}>
+                        {!cAuthorAvatar && (cAuthorName?.[0]?.toUpperCase() || "U")}
                       </div>
                     </Link>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={cardStyles.commentBubble}>
                         <span style={{ fontWeight: "700", fontSize: "12px", color: "var(--atlan-text-primary)" }}>
-                          {cAutor.nombre_completo || "Usuario"}
+                          {cAuthorName}
                         </span>
                         <p style={{ margin: "2px 0 0", fontSize: "13px", color: "var(--atlan-text-secondary)", lineHeight: "1.4", wordBreak: "break-word" }}>
                           {comment.contenido}
@@ -899,26 +914,32 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
 
               {/* New comment input */}
               {session ? (
-                <div style={cardStyles.commentInput}>
-                  <div style={avatarStyle(perfil?.avatar_url, 32)}>
-                    {!perfil?.avatar_url && (perfil?.nombre_completo?.[0]?.toUpperCase() || "U")}
-                  </div>
-                  <input
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value.slice(0, 500))}
-                    onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmitComment(); } }}
-                    placeholder={lang === "en" ? "Write a comment..." : lang === "zh" ? "写下您的评论..." : "Escribe un comentario..."}
-                    style={cardStyles.commentTextField}
-                    disabled={submittingComment}
-                  />
-                  <button
-                    onClick={handleSubmitComment}
-                    disabled={!newComment.trim() || submittingComment}
-                    style={{ ...cardStyles.sendBtn, opacity: !newComment.trim() ? 0.4 : 1 }}
-                  >
-                    ➤
-                  </button>
-                </div>
+                (() => {
+                  const myCommentName = resolveUserDisplayName(perfil, session.user);
+                  const myCommentAvatar = resolveUserAvatar(perfil, session.user);
+                  return (
+                    <div style={cardStyles.commentInput}>
+                      <div style={avatarStyle(myCommentAvatar, 32)}>
+                        {!myCommentAvatar && (myCommentName?.[0]?.toUpperCase() || "U")}
+                      </div>
+                      <input
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value.slice(0, 500))}
+                        onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmitComment(); } }}
+                        placeholder={lang === "en" ? "Write a comment..." : lang === "zh" ? "写下您的评论..." : "Escribe un comentario..."}
+                        style={cardStyles.commentTextField}
+                        disabled={submittingComment}
+                      />
+                      <button
+                        onClick={handleSubmitComment}
+                        disabled={!newComment.trim() || submittingComment}
+                        style={{ ...cardStyles.sendBtn, opacity: !newComment.trim() ? 0.4 : 1 }}
+                      >
+                        ➤
+                      </button>
+                    </div>
+                  );
+                })()
               ) : (
                 <button onClick={onRequireLogin} style={{ ...cardStyles.actionBtn, width: "100%", justifyContent: "center", marginTop: "8px", color: "var(--atlan-gold)" }}>
                   <Icon name="lock" size={14} /> {lang === "en" ? "Sign in to comment" : lang === "zh" ? "登录后发表评论" : "Inicia sesión para comentar"}
@@ -963,17 +984,18 @@ function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChang
     finally { setLoading(false); }
   };
 
-  if (session?.user?.id === user.id) return null;
+  const uName = resolveUserDisplayName(user, session?.user?.id === user.id ? session?.user : null);
+  const uAvatar = resolveUserAvatar(user, session?.user?.id === user.id ? session?.user : null);
 
   return (
     <div style={sidebarStyles.userCard}>
       <Link href={`/comunidad/perfil/${user.id}`} style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", flex: 1, minWidth: 0 }}>
-        <div style={avatarStyle(user.avatar_url, 38)}>
-          {!user.avatar_url && (user.nombre_completo?.[0]?.toUpperCase() || "U")}
+        <div style={avatarStyle(uAvatar, 38)}>
+          {!uAvatar && (uName?.[0]?.toUpperCase() || "U")}
         </div>
         <div style={{ minWidth: 0 }}>
           <div style={{ fontWeight: "700", fontSize: "13px", color: "var(--atlan-text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {user.nombre_completo || "Usuario"}
+            {uName}
           </div>
           <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>
             {user.rol === "dueno"
@@ -993,6 +1015,103 @@ function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChang
           color: isFollowing ? "#64748B" : "#FFFFFF",
           border: isFollowing ? "1px solid rgba(148, 163, 184, 0.25)" : "1px solid rgba(20, 109, 158, 0.25)",
           boxShadow: isFollowing ? "none" : "0 2px 8px rgba(20, 109, 158, 0.2)",
+        }}
+      >
+        {isFollowing ? (lang === "en" ? "Following" : lang === "zh" ? "已关注" : "Siguiendo") : (lang === "en" ? "Follow" : lang === "zh" ? "关注" : "Seguir")}
+      </button>
+    </div>
+  );
+}
+
+// ── USER SUGGESTION CARD (COMPACT PARA MÓVIL Y TABLET) ───────────────────
+function SuggestedUserCardCompact({ user, session, lang, onRequireLogin, onFollowChange }) {
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!session) return;
+    supabase.from("seguimientos")
+      .select("id")
+      .eq("seguidor_id", session.user.id)
+      .eq("seguido_id", user.id)
+      .maybeSingle()
+      .then(({ data }) => { if (data) setIsFollowing(true); });
+  }, [session, user.id]);
+
+  const handleFollow = async () => {
+    if (!session) { onRequireLogin(); return; }
+    setLoading(true);
+    try {
+      if (isFollowing) {
+        await supabase.from("seguimientos").delete().eq("seguidor_id", session.user.id).eq("seguido_id", user.id);
+        setIsFollowing(false);
+      } else {
+        await supabase.from("seguimientos").insert({ seguidor_id: session.user.id, seguido_id: user.id });
+        setIsFollowing(true);
+      }
+      if (onFollowChange) onFollowChange();
+    } catch (err) { console.error("Follow error:", err); }
+    finally { setLoading(false); }
+  };
+
+  if (session?.user?.id === user.id) return null;
+
+  return (
+    <div
+      style={{
+        flex: "0 0 140px",
+        width: "140px",
+        scrollSnapAlign: "start",
+        background: "var(--atlan-bg-card)",
+        border: "1px solid rgba(20, 109, 158, 0.12)",
+        borderRadius: "16px",
+        padding: "14px 10px 12px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
+        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.04)",
+        boxSizing: "border-box"
+      }}
+    >
+      <Link href={`/comunidad/perfil/${user.id}`} style={{ textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
+        {(() => {
+          const compName = resolveUserDisplayName(user, session?.user?.id === user.id ? session?.user : null);
+          const compAvatar = resolveUserAvatar(user, session?.user?.id === user.id ? session?.user : null);
+          return (
+            <>
+              <div style={{ ...avatarStyle(compAvatar, 48), marginBottom: "8px", border: "2px solid #FFD700" }}>
+                {!compAvatar && (compName?.[0]?.toUpperCase() || "U")}
+              </div>
+              <div style={{ fontWeight: "700", fontSize: "12.5px", color: "var(--atlan-text-primary)", width: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {compName}
+              </div>
+            </>
+          );
+        })()}
+        <div style={{ fontSize: "10.5px", color: "var(--atlan-text-muted)", marginTop: "2px", width: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          {user.rol === "dueno"
+            ? (lang === "en" ? "Business" : lang === "zh" ? "店主" : "Propietario")
+            : (user.es_premium || user.suscripcion_activa || user.rol === "turista_deacachimba")
+            ? (lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Deacachimba")
+            : (lang === "en" ? "Tourist" : lang === "zh" ? "游客" : "Turista")}
+        </div>
+      </Link>
+      <button
+        onClick={handleFollow}
+        disabled={loading}
+        style={{
+          marginTop: "10px",
+          width: "100%",
+          padding: "6px 0",
+          borderRadius: "8px",
+          fontSize: "11px",
+          fontWeight: "700",
+          cursor: "pointer",
+          border: isFollowing ? "1px solid rgba(148, 163, 184, 0.3)" : "1px solid rgba(20, 109, 158, 0.3)",
+          background: isFollowing ? "rgba(100, 116, 139, 0.08)" : "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)",
+          color: isFollowing ? "#64748B" : "#FFFFFF",
+          transition: "all 0.15s ease"
         }}
       >
         {isFollowing ? (lang === "en" ? "Following" : lang === "zh" ? "已关注" : "Siguiendo") : (lang === "en" ? "Follow" : lang === "zh" ? "关注" : "Seguir")}
@@ -1178,36 +1297,19 @@ export default function ComunidadPage() {
       minHeight: "100vh",
       background: "var(--atlan-bg-primary)",
       fontFamily: "var(--font-outfit), system-ui, sans-serif",
-      position: "relative",
-      overflow: "hidden"
+      position: "relative"
     }}>
-      {/* Fondos decorativos SVG */}
-      <img
-        src="/images/masaaya.svg"
-        alt=""
+      {/* Fondo decorativo Patrón Cultural de Nicaragua */}
+      <div
         style={{
           position: "fixed",
-          top: "80px",
-          left: "10px",
-          width: "340px",
-          height: "calc(100vh - 90px)",
-          objectFit: "contain",
-          opacity: 0.16,
-          pointerEvents: "none",
-          zIndex: 0
-        }}
-      />
-      <img
-        src="/images/machoraton.svg"
-        alt=""
-        style={{
-          position: "fixed",
-          top: "80px",
-          right: "10px",
-          width: "340px",
-          height: "calc(100vh - 90px)",
-          objectFit: "contain",
-          opacity: 0.16,
+          inset: 0,
+          backgroundImage: "url('/images/patron.png')",
+          backgroundRepeat: "repeat",
+          backgroundSize: "440px",
+          filter: "grayscale(100%) brightness(0) invert(0.18)",
+          opacity: 0.65,
+          mixBlendMode: "multiply",
           pointerEvents: "none",
           zIndex: 0
         }}
@@ -1220,35 +1322,41 @@ export default function ComunidadPage() {
 
         {/* ── SIDEBAR LEFT (Desktop) ── */}
         <aside style={pageStyles.sidebarLeft} className="hide-mobile community-sidebar">
-          {session && perfil ? (
-            <div style={sidebarStyles.profileCard}>
-              <div style={sidebarStyles.profileBanner} />
-              <div style={{ padding: "0 20px 20px", marginTop: "-32px", textAlign: "center" }}>
-                <Link href={`/comunidad/perfil/${getProfileSlug(perfil) || session.user.id}`} style={{ textDecoration: "none" }}>
-                  <div style={{ ...avatarStyle(perfil.avatar_url, 64), margin: "0 auto 8px", border: "3px solid var(--atlan-bg-primary)" }}>
-                    {!perfil.avatar_url && (perfil.nombre_completo?.[0]?.toUpperCase() || "U")}
+          {session ? (
+            (() => {
+              const mySidebarName = resolveUserDisplayName(perfil, session.user);
+              const mySidebarAvatar = resolveUserAvatar(perfil, session.user);
+              return (
+                <div style={sidebarStyles.profileCard}>
+                  <div style={sidebarStyles.profileBanner} />
+                  <div style={{ padding: "0 20px 20px", marginTop: "-32px", textAlign: "center" }}>
+                    <Link href={`/comunidad/perfil/${getProfileSlug(perfil, session.user) || session.user.id}`} style={{ textDecoration: "none" }}>
+                      <div style={{ ...avatarStyle(mySidebarAvatar, 64), margin: "0 auto 8px", border: "3px solid var(--atlan-bg-primary)" }}>
+                        {!mySidebarAvatar && (mySidebarName?.[0]?.toUpperCase() || "U")}
+                      </div>
+                    </Link>
+                    <h4 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{mySidebarName}</h4>
+                    <p style={{ margin: "0 0 12px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>
+                      {perfil?.rol === "dueno"
+                        ? <><Icon name="building" size={11} /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
+                        : (perfil?.es_premium || perfil?.suscripcion_activa || perfil?.rol === "turista_deacachimba")
+                        ? <><Icon name="star" size={11} /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
+                        : <><Icon name="luggage" size={11} /> {lang === "en" ? "Tourist" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
+                    </p>
+                    <div style={{ display: "flex", justifyContent: "center", gap: "24px" }}>
+                      <button onClick={() => { setFollowersModalTab("followers"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px", borderRadius: "8px", transition: "background 0.15s" }}>
+                        <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{perfil?.seguidores_count || 0}</div>
+                        <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Followers" : lang === "zh" ? "粉丝" : "Seguidores"}</div>
+                      </button>
+                      <button onClick={() => { setFollowersModalTab("following"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px", borderRadius: "8px", transition: "background 0.15s" }}>
+                        <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{perfil?.siguiendo_count || 0}</div>
+                        <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Following" : lang === "zh" ? "已关注" : "Siguiendo"}</div>
+                      </button>
+                    </div>
                   </div>
-                </Link>
-                <h4 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{perfil.nombre_completo}</h4>
-                <p style={{ margin: "0 0 12px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>
-                  {perfil.rol === "dueno"
-                    ? <><Icon name="building" size={11} /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
-                    : (perfil.es_premium || perfil.suscripcion_activa || perfil.rol === "turista_deacachimba")
-                    ? <><Icon name="star" size={11} /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
-                    : <><Icon name="luggage" size={11} /> {lang === "en" ? "Tourist" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
-                </p>
-                <div style={{ display: "flex", justifyContent: "center", gap: "24px" }}>
-                  <button onClick={() => { setFollowersModalTab("followers"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px", borderRadius: "8px", transition: "background 0.15s" }}>
-                    <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{perfil.seguidores_count || 0}</div>
-                    <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Followers" : lang === "zh" ? "粉丝" : "Seguidores"}</div>
-                  </button>
-                  <button onClick={() => { setFollowersModalTab("following"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px", borderRadius: "8px", transition: "background 0.15s" }}>
-                    <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{perfil.siguiendo_count || 0}</div>
-                    <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Following" : lang === "zh" ? "已关注" : "Siguiendo"}</div>
-                  </button>
                 </div>
-              </div>
-            </div>
+              );
+            })()
           ) : (
             <div style={sidebarStyles.loginCard}>
               <span style={{ display: "block", marginBottom: "12px" }}>
@@ -1362,12 +1470,66 @@ export default function ComunidadPage() {
             onRequireLogin={() => setShowLoginModal(true)}
           />
 
+          {/* Sugerencias para Móvil y Tablet (Debajo de las Historias) */}
+          {suggestedUsers && suggestedUsers.length > 0 && (
+            <div
+              className="hide-desktop"
+              style={{
+                flexDirection: "column",
+                background: "var(--atlan-bg-card)",
+                border: "1px solid rgba(20, 109, 158, 0.08)",
+                borderRadius: "18px",
+                padding: "14px 16px",
+                marginBottom: "16px",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.04)"
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>
+                  <img src="/images/tortuga.svg" alt="" style={{ width: "16px", height: "16px", objectFit: "contain", filter: "brightness(0)" }} />
+                  <span>{lang === "en" ? "Suggested for you" : lang === "zh" ? "为你推荐" : "Personas sugeridas"}</span>
+                </div>
+                <span style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>
+                  {lang === "en" ? "Connect" : lang === "zh" ? "关注他们" : "Conectá"}
+                </span>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  overflowX: "auto",
+                  paddingBottom: "4px",
+                  scrollSnapType: "x mandatory",
+                  scrollbarWidth: "none",
+                  WebkitOverflowScrolling: "touch"
+                }}
+              >
+                {suggestedUsers.map((u) => (
+                  <SuggestedUserCardCompact
+                    key={u.id}
+                    user={u}
+                    session={session}
+                    lang={lang}
+                    onRequireLogin={() => setShowLoginModal(true)}
+                    onFollowChange={fetchSuggestedUsers}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Create Post Bar */}
           {session && (
             <div style={pageStyles.createPostBar} onClick={() => setShowCreateModal(true)}>
-              <div style={avatarStyle(perfil?.avatar_url, 40)}>
-                {!perfil?.avatar_url && (perfil?.nombre_completo?.[0]?.toUpperCase() || "U")}
-              </div>
+              {(() => {
+                const barAvatar = resolveUserAvatar(perfil, session?.user);
+                const barName = resolveUserDisplayName(perfil, session?.user);
+                return (
+                  <div style={avatarStyle(barAvatar, 40)}>
+                    {!barAvatar && (barName?.[0]?.toUpperCase() || "U")}
+                  </div>
+                );
+              })()}
               <div style={pageStyles.createPostInput}>
                 {lang === "en" ? "What's on your mind?" : lang === "zh" ? "分享您的新鲜事..." : "¿Qué estás pensando?"}
               </div>
@@ -1622,9 +1784,10 @@ const pageStyles = {
   },
   sidebarLeft: {
     position: "sticky",
-    top: "78px",
+    top: "84px",
+    alignSelf: "start",
     width: "100%",
-    maxHeight: "calc(100vh - 98px)",
+    maxHeight: "calc(100vh - 100px)",
     overflowY: "auto",
     scrollbarWidth: "none",
     zIndex: 10,
@@ -1640,9 +1803,10 @@ const pageStyles = {
   },
   sidebarRight: {
     position: "sticky",
-    top: "78px",
+    top: "84px",
+    alignSelf: "start",
     width: "100%",
-    maxHeight: "calc(100vh - 98px)",
+    maxHeight: "calc(100vh - 100px)",
     overflowY: "auto",
     scrollbarWidth: "none",
     zIndex: 10,

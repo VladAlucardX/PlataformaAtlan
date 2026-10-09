@@ -12,7 +12,7 @@ import Icon from "@/components/ui/Icon";
 import InstallAppModal from "@/components/InstallAppModal";
 import CombinedAuthButton from "@/components/ui/CombinedAuthButton";
 
-import { getProfileSlug } from "@/lib/profileUtils";
+import { getProfileSlug, resolveUserDisplayName, resolveUserAvatar } from "@/lib/profileUtils";
 
 export default function Navbar({ activePage = "inicio", session: sessionProp, perfil: perfilProp, onLogout }) {
   // Obtener sesión del contexto global (fuente de verdad)
@@ -123,32 +123,15 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
   };
 
   const getProfileLabel = () => {
-    if (perfil?.nombre_completo && perfil.nombre_completo.trim()) {
-      return perfil.nombre_completo.trim();
-    }
-    if (perfil?.nombre && perfil.nombre.trim()) {
-      return perfil.nombre.trim();
-    }
-    if (perfil?.full_name && perfil.full_name.trim()) {
-      return perfil.full_name.trim();
-    }
-    if (session?.user?.user_metadata?.nombre_completo && session.user.user_metadata.nombre_completo.trim()) {
-      return session.user.user_metadata.nombre_completo.trim();
-    }
-    if (session?.user?.user_metadata?.full_name && session.user.user_metadata.full_name.trim()) {
-      return session.user.user_metadata.full_name.trim();
-    }
-    if (session?.user?.user_metadata?.name && session.user.user_metadata.name.trim()) {
-      return session.user.user_metadata.name.trim();
-    }
-    if (perfil?.email || session?.user?.email) {
-      const email = perfil?.email || session?.user?.email;
-      return email.split("@")[0];
+    const resolved = resolveUserDisplayName(perfil, session?.user);
+    if (resolved && resolved !== "Usuario" && resolved !== "Usuario Atlan") {
+      return resolved;
     }
     return tr("Perfil", "Profile", "个人中心");
   };
 
-  const communityProfileUrl = perfil ? `/comunidad/perfil/${getProfileSlug(perfil)}` : (session?.user?.id ? `/comunidad/perfil/${session.user.id}` : "/comunidad");
+  const navAvatarUrl = resolveUserAvatar(perfil, session?.user);
+  const communityProfileUrl = perfil || session?.user ? `/comunidad/perfil/${getProfileSlug(perfil, session?.user)}` : "/comunidad";
 
   return (
     <>
@@ -249,8 +232,8 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                   width: "38px",
                   height: "38px",
                   borderRadius: "50%",
-                  background: perfil?.avatar_url
-                    ? `url("${perfil.avatar_url}") center/cover no-repeat`
+                  background: navAvatarUrl
+                    ? `url("${navAvatarUrl}") center/cover no-repeat`
                     : "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
                   border: "2px solid rgba(255, 255, 255, 0.35)",
                   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.25)",
@@ -262,7 +245,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                   fontWeight: "750",
                   flexShrink: 0
                 }}>
-                  {!perfil?.avatar_url && (getProfileLabel()?.[0]?.toUpperCase() || "U")}
+                  {!navAvatarUrl && (getProfileLabel()?.[0]?.toUpperCase() || "U")}
                 </div>
 
                 {/* Flecha Integrada en la esquina inferior derecha */}
@@ -327,8 +310,8 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                       width: "42px",
                       height: "42px",
                       borderRadius: "50%",
-                      background: perfil?.avatar_url
-                        ? `url("${perfil.avatar_url}") center/cover no-repeat`
+                      background: navAvatarUrl
+                        ? `url("${navAvatarUrl}") center/cover no-repeat`
                         : "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
                       border: "1.5px solid rgba(255, 255, 255, 0.25)",
                       display: "flex",
@@ -339,7 +322,7 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                       fontWeight: "750",
                       flexShrink: 0
                     }}>
-                      {!perfil?.avatar_url && (getProfileLabel()?.[0]?.toUpperCase() || "U")}
+                      {!navAvatarUrl && (getProfileLabel()?.[0]?.toUpperCase() || "U")}
                     </div>
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <div style={{
@@ -729,6 +712,30 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
 
         {/* Mobile Hamburger Button */}
         <div className="hide-desktop" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <button
+            type="button"
+            onClick={handleInstallClick}
+            aria-label="Instalar App"
+            title={tr("Instalar App Atlan", "Install Atlan App", "安装应用")}
+            style={{
+              background: "linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(212, 175, 55, 0.08) 100%)",
+              border: "1.5px solid rgba(255, 215, 0, 0.45)",
+              borderRadius: "12px",
+              color: "#FFD700",
+              cursor: "pointer",
+              padding: "7px 9px",
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
+              fontSize: "11.5px",
+              fontWeight: "700",
+              touchAction: "manipulation"
+            }}
+          >
+            <Icon name="download" size={13} color="#FFD700" />
+            <span>App</span>
+          </button>
           <LanguageToggle />
           {session && <NotificationDropdown session={session} />}
           <button
