@@ -3,6 +3,9 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useInactivityLogout } from "@/hooks/useInactivityLogout";
+import { resolveUserDisplayName, resolveUserAvatar, getProfileSlug } from "@/lib/profileUtils";
+
+export { resolveUserDisplayName, resolveUserAvatar, getProfileSlug };
 
 export const isUser2FAVerified = (userId) => {
   if (typeof window === "undefined" || !userId) return false;
@@ -52,15 +55,84 @@ export function AuthProvider({ children }) {
   // Derivar verificación 2FA directamente sin provocar cascadas de estado
   const is2FAVerified = isUser2FAVerified(session?.user?.id);
 
-  const fetchUserProfile = async (userId) => {
+  const fetchUserProfile = async (userId, userObj = null) => {
     try {
       const { data, error } = await supabase
         .from("perfiles")
         .select("*")
         .eq("id", userId)
-        .single();
-      if (!error && data) {
-        setPerfil(data);
+        .maybeSingle();
+
+      const user = userObj || session?.user;
+      const resolvedName = resolveUserDisplayName(data, user);
+      const resolvedAvatar = resolveUserAvatar(data, user);
+
+      if (!data) {
+        // El perfil aún no existe en perfiles (común en login directo con Google OAuth)
+        const newProfile = {
+          id: userId,
+          nombre_completo: resolvedName,
+          avatar_url: resolvedAvatar,
+          rol: user?.user_metadata?.rol || "turista",
+          email: user?.email || null,
+        };
+
+        setPerfil(newProfile);
+
+        try {
+          const { data: upserted } = await supabase
+            .from("perfiles")
+            .upsert(newProfile)
+            .select()
+            .maybeSingle();
+
+          if (upserted) {
+            setPerfil(upserted);
+          }
+        } catch (dbErr) {
+          console.warn("[Atlan Auth] Error upserting new profile:", dbErr);
+        }
+      } else {
+        // El perfil ya existe, verificar si requiere enriquecerse con el nombre de Google
+        const currentName = data.nombre_completo ? data.nombre_completo.trim() : "";
+        const isGenericName =
+          !currentName ||
+          currentName.toLowerCase() === "usuario" ||
+          currentName.toLowerCase() === "usuario atlan";
+
+        const hasRealGoogleName =
+          resolvedName &&
+          resolvedName.toLowerCase() !== "usuario" &&
+          resolvedName.toLowerCase() !== "usuario atlan";
+
+        const needsNameFix = isGenericName && hasRealGoogleName;
+        const needsAvatarFix = !data.avatar_url && resolvedAvatar;
+
+        if (needsNameFix || needsAvatarFix) {
+          const updates = {};
+          if (needsNameFix) updates.nombre_completo = resolvedName;
+          if (needsAvatarFix) updates.avatar_url = resolvedAvatar;
+
+          const updatedLocal = { ...data, ...updates };
+          setPerfil(updatedLocal);
+
+          try {
+            const { data: updatedDb } = await supabase
+              .from("perfiles")
+              .update(updates)
+              .eq("id", userId)
+              .select()
+              .maybeSingle();
+
+            if (updatedDb) {
+              setPerfil(updatedDb);
+            }
+          } catch (updateErr) {
+            console.warn("[Atlan Auth] Error syncing Google user data to perfiles:", updateErr);
+          }
+        } else {
+          setPerfil(data);
+        }
       }
     } catch (err) {
       console.error("[Atlan Auth] Error fetching user profile:", err);
@@ -98,7 +170,7 @@ export function AuthProvider({ children }) {
       .then(({ data: { session: currentSession } }) => {
         setSession(currentSession);
         if (currentSession?.user) {
-          fetchUserProfile(currentSession.user.id);
+          fetchUserProfile(currentSession.user.id, currentSession.user);
         }
         setLoading(false);
       })
@@ -133,12 +205,7 @@ export function AuthProvider({ children }) {
       });
 
       if (currentSession?.user) {
-        setPerfil((prevPerfil) => {
-          if (!prevPerfil || prevPerfil.id !== currentSession.user.id) {
-            fetchUserProfile(currentSession.user.id);
-          }
-          return prevPerfil;
-        });
+        fetchUserProfile(currentSession.user.id, currentSession.user);
       } else {
         setPerfil(null);
       }
@@ -183,7 +250,7 @@ export function AuthProvider({ children }) {
 
   const refreshProfile = useCallback(async () => {
     if (session?.user) {
-      await fetchUserProfile(session.user.id);
+      await fetchUserProfile(session.user.id, session.user);
     }
   }, [session]);
 

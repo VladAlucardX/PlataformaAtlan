@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/lib/AuthContext";
+import { useAuth, resolveUserDisplayName, resolveUserAvatar } from "@/lib/AuthContext";
 import { uploadMedia } from "@/lib/storage";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageToggle from "@/components/ui/LanguageToggle";
@@ -623,22 +623,28 @@ function ChatContent() {
                         if (!isActive) e.currentTarget.style.background = "transparent";
                       }}
                     >
-                      <div style={{ position: "relative" }}>
-                        <div style={avatarStyle(ou?.avatar_url, 44)}>
-                          {!ou?.avatar_url && (ou?.nombre_completo?.[0]?.toUpperCase() || "U")}
-                        </div>
-                        {unread > 0 && (
-                          <div style={{
-                            position: "absolute", top: "-2px", right: "-2px", width: "12px", height: "12px",
-                            borderRadius: "50%", background: "#FFD700", border: "2px solid #0A192F",
-                            boxShadow: "0 0 8px rgba(255, 215, 0, 0.8)"
-                          }} />
-                        )}
-                      </div>
+                      {(() => {
+                        const ouName = resolveUserDisplayName(ou);
+                        const ouAvatar = resolveUserAvatar(ou);
+                        return (
+                          <div style={{ position: "relative" }}>
+                            <div style={avatarStyle(ouAvatar, 44)}>
+                              {!ouAvatar && (ouName?.[0]?.toUpperCase() || "U")}
+                            </div>
+                            {unread > 0 && (
+                              <div style={{
+                                position: "absolute", top: "-2px", right: "-2px", width: "12px", height: "12px",
+                                borderRadius: "50%", background: "#FFD700", border: "2px solid #0A192F",
+                                boxShadow: "0 0 8px rgba(255, 215, 0, 0.8)"
+                              }} />
+                            )}
+                          </div>
+                        );
+                      })()}
                       <div style={{ flex: 1, minWidth: 0, textAlign: "left" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                           <span style={{ fontWeight: unread > 0 ? "900" : "700", fontSize: "14px", color: "#FFFFFF", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                            {ou?.nombre_completo || "Usuario"}
+                            {resolveUserDisplayName(ou)}
                           </span>
                           <span style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.5)", flexShrink: 0, marginLeft: "8px" }}>
                             {conv.lastMessage ? timeAgo(conv.lastMessage.created_at, lang) : ""}
@@ -668,15 +674,19 @@ function ChatContent() {
                   >
                     ←
                   </button>
-                  <Link href={`/comunidad/perfil/${activeOtherUser.id}`} style={{ display: "flex", alignItems: "center", gap: "12px", textDecoration: "none", flex: 1 }}>
-                    <div style={avatarStyle(activeOtherUser.avatar_url, 40)}>
-                      {!activeOtherUser.avatar_url && (activeOtherUser.nombre_completo?.[0]?.toUpperCase() || "U")}
-                    </div>
-                    <div>
-                      <div style={{ fontWeight: "900", fontSize: "15px", color: "#FFFFFF" }}>
-                        {activeOtherUser.nombre_completo || "Usuario"}
-                      </div>
-                      <div style={{ fontSize: "11.5px", color: "rgba(255, 255, 255, 0.8)", display: "flex", alignItems: "center", gap: "5px", marginTop: "2px" }}>
+                  {(() => {
+                    const activeName = resolveUserDisplayName(activeOtherUser);
+                    const activeAvatar = resolveUserAvatar(activeOtherUser);
+                    return (
+                      <Link href={`/comunidad/perfil/${activeOtherUser.id}`} style={{ display: "flex", alignItems: "center", gap: "12px", textDecoration: "none", flex: 1 }}>
+                        <div style={avatarStyle(activeAvatar, 40)}>
+                          {!activeAvatar && (activeName?.[0]?.toUpperCase() || "U")}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: "900", fontSize: "15px", color: "#FFFFFF" }}>
+                            {activeName}
+                          </div>
+                          <div style={{ fontSize: "11.5px", color: "rgba(255, 255, 255, 0.8)", display: "flex", alignItems: "center", gap: "5px", marginTop: "2px" }}>
                         <img src="/images/perfil.svg" alt="Perfil" style={{ width: "13px", height: "13px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                         <span>
                           {activeOtherUser.rol === "dueno"
@@ -688,7 +698,9 @@ function ChatContent() {
                       </div>
                     </div>
                   </Link>
-                </div>
+                );
+              })()}
+            </div>
 
                 {/* Messages */}
                 <div ref={messagesContainerRef} style={chatLayoutStyles.messagesContainer}>
@@ -981,12 +993,17 @@ function ChatContent() {
                       onMouseOver={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)"}
                       onMouseOut={(e) => e.currentTarget.style.background = "none"}
                     >
-                      <div style={avatarStyle(u.avatar_url, 40)}>
-                        {!u.avatar_url && (u.nombre_completo?.[0]?.toUpperCase() || "U")}
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: "800", fontSize: "14px", color: "#FFFFFF" }}>{u.nombre_completo}</div>
-                        <div style={{ fontSize: "11.5px", color: "rgba(255, 255, 255, 0.7)", display: "flex", alignItems: "center", gap: "5px", marginTop: "2px" }}>
+                      {(() => {
+                        const uName = resolveUserDisplayName(u);
+                        const uAvatar = resolveUserAvatar(u);
+                        return (
+                          <>
+                            <div style={avatarStyle(uAvatar, 40)}>
+                              {!uAvatar && (uName?.[0]?.toUpperCase() || "U")}
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontWeight: "800", fontSize: "14px", color: "#FFFFFF" }}>{uName}</div>
+                              <div style={{ fontSize: "11.5px", color: "rgba(255, 255, 255, 0.7)", display: "flex", alignItems: "center", gap: "5px", marginTop: "2px" }}>
                           <img src="/images/perfil.svg" alt="Perfil" style={{ width: "12px", height: "12px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                           <span>
                             {u.rol === "dueno"
@@ -998,7 +1015,10 @@ function ChatContent() {
                         </div>
                       </div>
                       <img src="/images/comentarios.svg" alt="Chat" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(84%) sepia(54%) saturate(988%) hue-rotate(359deg) brightness(104%) contrast(104%)" }} />
-                    </button>
+                    </>
+                  );
+                })()}
+              </button>
                   ))
                 )}
               </div>

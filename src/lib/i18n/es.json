@@ -144,6 +144,7 @@
     "uploadPhoto": "Subir foto",
     "tapMap": "Toca el mapa para colocar el pin",
     "submit": "Compartir Punto",
+    "saveBtn": "Guardar Punto",
     "success": "¡Gracias! Tu punto aparecerá en el mapa.",
     "categories": {
       "comideria": "Comidería",

@@ -6,34 +6,34 @@ import { useTranslation } from "@/hooks/useTranslation";
 
 export default function InstallAppModal({ isOpen, onClose }) {
   const { lang, tr } = useTranslation();
-  const [platform, setPlatform] = useState("android");
-  const [canPrompt, setCanPrompt] = useState(false);
-  const [isInstalled, setIsInstalled] = useState(false);
+  const [platform, setPlatform] = useState(() => {
+    if (typeof window === "undefined") return "android";
+    const ua = navigator.userAgent;
+    const isiOS = /iPhone|iPad|iPod/.test(ua) && !/CriOS|FxiOS/.test(ua);
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+    return isiOS ? "ios" : isMobile ? "android" : "desktop";
+  });
+  const [canPrompt, setCanPrompt] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return Boolean(window.__pwaInstallPrompt);
+  });
+  const [isInstalled, setIsInstalled] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return Boolean(window.matchMedia("(display-mode: standalone)").matches || window.__pwaIsInstalled);
+  });
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || typeof window === "undefined") return;
 
-    if (typeof window !== "undefined") {
-      // Verificar si ya está instalada como PWA
-      if (window.matchMedia("(display-mode: standalone)").matches || window.__pwaIsInstalled) {
-        setIsInstalled(true);
-      }
+    const updatePrompt = () => setCanPrompt(Boolean(window.__pwaInstallPrompt));
+    const onInstalled = () => setIsInstalled(true);
+    window.addEventListener("pwa-prompt-available", updatePrompt);
+    window.addEventListener("pwa-installed", onInstalled);
 
-      // Detectar plataforma inicial
-      const ua = navigator.userAgent;
-      const isiOS = /iPhone|iPad|iPod/.test(ua) && !/CriOS|FxiOS/.test(ua);
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-
-      if (isiOS) {
-        setPlatform("ios");
-      } else if (isMobile) {
-        setPlatform("android");
-      } else {
-        setPlatform("desktop");
-      }
-
-      setCanPrompt(Boolean(window.__pwaInstallPrompt));
-    }
+    return () => {
+      window.removeEventListener("pwa-prompt-available", updatePrompt);
+      window.removeEventListener("pwa-installed", onInstalled);
+    };
   }, [isOpen]);
 
   if (!isOpen) return null;

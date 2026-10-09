@@ -30,6 +30,9 @@ export default function VideoIntro({ onComplete }) {
 
   // Fade-out
   const startFadeOut = useCallback(() => {
+    try {
+      sessionStorage.setItem("atlan_intro_seen", "true");
+    } catch (_) {}
     setPhase((prev) => (prev === "playing" ? "fading" : prev));
   }, []);
 

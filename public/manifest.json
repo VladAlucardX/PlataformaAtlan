@@ -4,7 +4,7 @@
   "description": "Descubrí lo tuyo, viví lo nuestro. GPS turístico interactivo con destinos verificados, mapas offline y reservas directas en Nicaragua.",
   "start_url": "/",
   "scope": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#070b14",
   "theme_color": "#D4AF37",
   "orientation": "portrait-primary",

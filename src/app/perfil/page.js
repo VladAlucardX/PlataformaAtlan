@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/lib/AuthContext";
+import { resolveUserDisplayName, resolveUserAvatar } from "@/lib/profileUtils";
 import { useTranslation } from "@/hooks/useTranslation";
 import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
@@ -50,6 +51,10 @@ export default function PerfilPage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [savingPass, setSavingPass] = useState(false);
+
+  // Derivar nombre y avatar visibles (Google OAuth / Auth / Perfiles)
+  const displayName = resolveUserDisplayName(perfil, user);
+  const displayAvatar = resolveUserAvatar(perfil, user);
 
   // Confirm Modal State
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: "", message: "", confirmText: "", onConfirm: null, loading: false });
@@ -182,8 +187,8 @@ export default function PerfilPage() {
     try {
       const { error } = await supabase.from("guias_turisticos").upsert({
         id: user.id,
-        nombre_completo: perfil?.nombre_completo,
-        avatar_url: perfil?.avatar_url,
+        nombre_completo: displayName || perfil?.nombre_completo,
+        avatar_url: displayAvatar || perfil?.avatar_url,
         departamento_principal: guiaDeptPrincipal,
         especialidad: guiaEspecialidad,
         idiomas: guiaIdiomas,
@@ -287,8 +292,27 @@ export default function PerfilPage() {
             .from("perfiles")
             .select("*")
             .eq("id", currentUser.id)
-            .single();
+            .maybeSingle();
           perfilData = data;
+        }
+
+        const resolvedName = resolveUserDisplayName(perfilData, currentUser);
+        const resolvedAvatar = resolveUserAvatar(perfilData, currentUser);
+        if (perfilData) {
+          if ((!perfilData.nombre_completo || perfilData.nombre_completo.toLowerCase() === "usuario" || perfilData.nombre_completo.toLowerCase() === "usuario atlan") && resolvedName) {
+            perfilData = { ...perfilData, nombre_completo: resolvedName };
+          }
+          if (!perfilData.avatar_url && resolvedAvatar) {
+            perfilData = { ...perfilData, avatar_url: resolvedAvatar };
+          }
+        } else {
+          perfilData = {
+            id: currentUser.id,
+            nombre_completo: resolvedName,
+            avatar_url: resolvedAvatar,
+            rol: currentUser?.user_metadata?.rol || "turista",
+            email: currentUser?.email
+          };
         }
         setPerfil(perfilData);
 
@@ -553,9 +577,24 @@ export default function PerfilPage() {
       color: "var(--atlan-text-primary)",
       paddingBottom: "40px",
       fontFamily: "var(--font-outfit), sans-serif",
-      position: "relative",
-      overflow: "hidden"
+      position: "relative"
     }}>
+      {/* Fondo decorativo Patrón Cultural de Nicaragua */}
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          backgroundImage: "url('/images/patron.png')",
+          backgroundRepeat: "repeat",
+          backgroundSize: "440px",
+          filter: "grayscale(100%) brightness(0) invert(0.18)",
+          opacity: 0.65,
+          mixBlendMode: "multiply",
+          pointerEvents: "none",
+          zIndex: 0
+        }}
+      />
+
       {/* Keyframe animación de fundido suave para cambio de pestañas */}
       <style jsx global>{`
         @keyframes fadeInTab {
@@ -565,44 +604,243 @@ export default function PerfilPage() {
         .tab-content-anim {
           animation: fadeInTab 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+
+        /* ── RESPONSIVE COMPLETO PARA MI PERFIL PERSONAL ── */
+        .profile-main-container {
+          max-width: 1380px;
+          margin: 78px auto 0;
+          padding: 0 24px;
+          position: relative;
+          z-index: 1;
+        }
+
+        .profile-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 16px;
+          margin-bottom: 24px;
+        }
+
+        .profile-stat-card {
+          border-radius: 20px;
+          padding: 18px 20px;
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          cursor: pointer;
+          transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+        }
+
+        .profile-stat-card:hover {
+          transform: translateY(-2px);
+        }
+
+        .profile-layout-grid {
+          display: grid;
+          grid-template-columns: 310px 1fr;
+          gap: 28px;
+          align-items: start;
+        }
+
+        .profile-tab-header {
+          background: linear-gradient(135deg, #0A192F 0%, #102A45 100%);
+          border-radius: 20px;
+          padding: 14px 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+          box-shadow: 0 8px 24px rgba(10, 25, 47, 0.25);
+          color: #FFFFFF;
+        }
+
+        .profile-tab-header-left {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          flex-wrap: wrap;
+        }
+
+        .profile-tab-btns {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          background: rgba(255, 255, 255, 0.10);
+          padding: 5px;
+          border-radius: 14px;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .profile-cards-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
+        }
+
+        /* Tablet (≤ 1024px) */
+        @media (max-width: 1024px) {
+          .profile-stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 14px !important;
+          }
+
+          .profile-layout-grid {
+            grid-template-columns: 280px 1fr !important;
+            gap: 20px !important;
+          }
+        }
+
+        /* Tablet Vertical / Móvil Grande (≤ 860px) */
+        @media (max-width: 860px) {
+          .profile-main-container {
+            margin-top: 72px !important;
+            padding: 0 16px !important;
+          }
+
+          .profile-layout-grid {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+          }
+
+          .profile-sidebar-wrapper {
+            max-width: 520px;
+            margin: 0 auto;
+            width: 100%;
+          }
+        }
+
+        /* Móvil Estándar (≤ 640px) */
+        @media (max-width: 640px) {
+          .profile-main-container {
+            margin-top: 66px !important;
+            padding: 0 12px !important;
+          }
+
+          .profile-stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+            margin-bottom: 16px !important;
+          }
+
+          .profile-stat-card {
+            padding: 12px 14px !important;
+            gap: 10px !important;
+            border-radius: 16px !important;
+          }
+
+          .profile-stat-icon {
+            width: 38px !important;
+            height: 38px !important;
+            border-radius: 12px !important;
+            flex-shrink: 0 !important;
+          }
+
+          .profile-stat-icon img {
+            width: 20px !important;
+            height: 20px !important;
+          }
+
+          .profile-stat-number {
+            font-size: 18px !important;
+            line-height: 1.2 !important;
+          }
+
+          .profile-stat-label {
+            font-size: 11px !important;
+            line-height: 1.2 !important;
+          }
+
+          /* Cabecera de pestañas en móvil */
+          .profile-tab-header {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 12px !important;
+            padding: 12px !important;
+            border-radius: 16px !important;
+          }
+
+          .profile-tab-header-left {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 10px !important;
+          }
+
+          .profile-tab-btns {
+            width: 100% !important;
+            justify-content: space-between !important;
+          }
+
+          .profile-tab-btns button {
+            flex: 1 !important;
+            justify-content: center !important;
+            padding: 8px 4px !important;
+          }
+
+          .profile-tab-title {
+            font-size: 15px !important;
+            text-align: center !important;
+          }
+
+          .profile-tab-badge {
+            text-align: center !important;
+            align-self: center !important;
+            font-size: 11.5px !important;
+            padding: 4px 12px !important;
+          }
+
+          /* Tarjetas en 1 Columna en móvil */
+          .profile-cards-grid {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+          }
+
+          .profile-sidebar-wrapper {
+            max-width: 100% !important;
+          }
+
+          .profile-modal-content {
+            padding: 22px 18px !important;
+            border-radius: 20px !important;
+          }
+        }
+
+        /* Pantallas muy pequeñas (≤ 380px) */
+        @media (max-width: 380px) {
+          .profile-stats-grid {
+            grid-template-columns: 1fr !important;
+            gap: 8px !important;
+          }
+
+          .profile-tab-btns span {
+            display: none !important;
+          }
+
+          .profile-modal-content {
+            padding: 18px 14px !important;
+          }
+        }
       `}</style>
 
 
 
       <Navbar activePage="perfil" session={session} perfil={perfil} onLogout={handleCerrarSesion} />
 
-      {/* CONTENEDOR PRINCIPAL WIDESCREEN (CERO SCROLL SINGLE VIEW) */}
-      <div style={{
-        maxWidth: "1380px",
-        margin: "78px auto 0",
-        padding: "0 24px",
-        position: "relative",
-        zIndex: 1
-      }}>
+      {/* CONTENEDOR PRINCIPAL WIDESCREEN */}
+      <div className="profile-main-container">
         
         {/* BANNER DASHBOARD SUPERIOR DE 4 ESTADÍSTICAS DEL USUARIO */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: "16px",
-          marginBottom: "24px"
-        }}>
+        <div className="profile-stats-grid">
           {/* Card 1: Reservas */}
           <div 
             onClick={() => setActiveTab("reservas")}
+            className="profile-stat-card"
             style={{
               background: "#FFFFFF",
               border: activeTab === "reservas" ? "2px solid #17AA4A" : "2px solid rgba(255, 255, 255, 0.95)",
-              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.05)",
-              borderRadius: "20px",
-              padding: "18px 22px",
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              cursor: "pointer"
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.05)"
             }}
           >
-            <div style={{
+            <div className="profile-stat-icon" style={{
               width: "48px", height: "48px", borderRadius: "14px",
               background: "linear-gradient(135deg, rgba(20,109,158,0.12) 0%, rgba(20,109,158,0.04) 100%)",
               display: "flex", alignItems: "center", justifyContent: "center"
@@ -610,27 +848,22 @@ export default function PerfilPage() {
               <img src="/images/edificio.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain" }} />
             </div>
             <div>
-              <div style={{ fontSize: "22px", fontWeight: "900", color: "#0A192F" }}>{reservas.length}</div>
-              <div style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Direct Reservations" : lang === "zh" ? "有效预订" : "Reservas Activas"}</div>
+              <div className="profile-stat-number" style={{ fontSize: "22px", fontWeight: "900", color: "#0A192F" }}>{reservas.length}</div>
+              <div className="profile-stat-label" style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Direct Reservations" : lang === "zh" ? "有效预订" : "Reservas Activas"}</div>
             </div>
           </div>
 
           {/* Card 2: Destinos Guardados */}
           <div 
             onClick={() => setActiveTab("destinos")}
+            className="profile-stat-card"
             style={{
               background: "#FFFFFF",
               border: activeTab === "destinos" ? "2px solid #17AA4A" : "2px solid rgba(255, 255, 255, 0.95)",
-              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.05)",
-              borderRadius: "20px",
-              padding: "18px 22px",
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              cursor: "pointer"
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.05)"
             }}
           >
-            <div style={{
+            <div className="profile-stat-icon" style={{
               width: "48px", height: "48px", borderRadius: "14px",
               background: "linear-gradient(135deg, rgba(23,170,74,0.12) 0%, rgba(23,170,74,0.04) 100%)",
               display: "flex", alignItems: "center", justifyContent: "center"
@@ -638,27 +871,22 @@ export default function PerfilPage() {
               <img src="/images/tortuga.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain" }} />
             </div>
             <div>
-              <div style={{ fontSize: "22px", fontWeight: "900", color: "#17AA4A" }}>{favoritos.length}</div>
-              <div style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Saved Places" : lang === "zh" ? "已收藏目的地" : "Destinos Guardados"}</div>
+              <div className="profile-stat-number" style={{ fontSize: "22px", fontWeight: "900", color: "#17AA4A" }}>{favoritos.length}</div>
+              <div className="profile-stat-label" style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Saved Places" : lang === "zh" ? "已收藏目的地" : "Destinos Guardados"}</div>
             </div>
           </div>
 
           {/* Card 3: Reseñas Publicadas */}
           <div 
             onClick={() => setActiveTab("resenas")}
+            className="profile-stat-card"
             style={{
               background: "#FFFFFF",
               border: activeTab === "resenas" ? "2px solid #17AA4A" : "2px solid rgba(255, 255, 255, 0.95)",
-              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.05)",
-              borderRadius: "20px",
-              padding: "18px 22px",
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              cursor: "pointer"
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.05)"
             }}
           >
-            <div style={{
+            <div className="profile-stat-icon" style={{
               width: "48px", height: "48px", borderRadius: "14px",
               background: "linear-gradient(135deg, rgba(255,215,0,0.20) 0%, rgba(255,215,0,0.05) 100%)",
               display: "flex", alignItems: "center", justifyContent: "center"
@@ -666,23 +894,18 @@ export default function PerfilPage() {
               <img src="/images/comentarios.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain", filter: "brightness(0)" }} />
             </div>
             <div>
-              <div style={{ fontSize: "22px", fontWeight: "900", color: "#E6C200" }}>{resenas.length}</div>
-              <div style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Published Reviews" : lang === "zh" ? "已发表评价" : "Reseñas Publicadas"}</div>
+              <div className="profile-stat-number" style={{ fontSize: "22px", fontWeight: "900", color: "#E6C200" }}>{resenas.length}</div>
+              <div className="profile-stat-label" style={{ fontSize: "12px", fontWeight: "700", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Published Reviews" : lang === "zh" ? "已发表评价" : "Reseñas Publicadas"}</div>
             </div>
           </div>
 
           {/* Card 4: Nivel de Turista (Azul Navbar #0A192F) */}
-          <div style={{
+          <div className="profile-stat-card" style={{
             background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
-            borderRadius: "20px",
-            padding: "18px 22px",
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
             color: "#FFFFFF",
             boxShadow: "0 10px 25px rgba(10, 25, 47, 0.25)"
           }}>
-            <div style={{
+            <div className="profile-stat-icon" style={{
               width: "48px", height: "48px", borderRadius: "14px",
               background: "rgba(255, 255, 255, 0.12)",
               display: "flex", alignItems: "center", justifyContent: "center"
@@ -690,22 +913,17 @@ export default function PerfilPage() {
               <img src="/images/perfil.svg" alt="" style={{ width: "24px", height: "24px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
             </div>
             <div>
-              <div style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700" }}>{rolText}</div>
-              <div style={{ fontSize: "11px", opacity: 0.85, color: "#FFFFFF" }}>{lang === "en" ? "Active Status" : lang === "zh" ? "Atlan 旅游状态" : "Estado Turístico en Atlan"}</div>
+              <div className="profile-stat-number" style={{ fontSize: "14px", fontWeight: "900", color: "#FFD700" }}>{rolText}</div>
+              <div className="profile-stat-label" style={{ fontSize: "11px", opacity: 0.85, color: "#FFFFFF" }}>{lang === "en" ? "Active Status" : lang === "zh" ? "Atlan 旅游状态" : "Estado Turístico en Atlan"}</div>
             </div>
           </div>
         </div>
 
         {/* LAYOUT PRINCIPAL DE 2 COLUMNAS (SIDEBAR 310px + CONTENEDOR CON SELECTOR INTERACTIVO EN CABECERA) */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "310px 1fr",
-          gap: "32px",
-          alignItems: "start"
-        }} className="profile-grid">
+        <div className="profile-layout-grid">
           
-          {/* SIDEBAR IZQUIERDO CON CABECERA AZUL MENÚ (#0A192F) */}
-          <div>
+          {/* SIDEBAR IZQUIERDO */}
+          <div className="profile-sidebar-wrapper">
             <div style={{
               background: "#FFFFFF",
               border: "2px solid rgba(255, 255, 255, 0.95)",
@@ -737,8 +955,8 @@ export default function PerfilPage() {
                   style={{
                     width: "88px",
                     height: "88px",
-                    background: perfil?.avatar_url 
-                      ? `url(${perfil.avatar_url}) center/cover` 
+                    background: displayAvatar 
+                      ? `url(${displayAvatar}) center/cover` 
                       : "linear-gradient(135deg, #FFD700 0%, #E6C200 100%)",
                     borderRadius: "50%",
                     margin: "0 auto 14px",
@@ -762,7 +980,7 @@ export default function PerfilPage() {
                     </div>
                   ) : (
                     <>
-                      {!perfil?.avatar_url && (perfil?.nombre_completo ? perfil.nombre_completo.charAt(0).toUpperCase() : "U")}
+                      {!displayAvatar && (displayName ? displayName.charAt(0).toUpperCase() : "U")}
                       <div style={{
                         position: "absolute",
                         inset: 0,
@@ -782,7 +1000,7 @@ export default function PerfilPage() {
                 </div>
 
                 <h3 style={{ margin: "0 0 4px", fontSize: "19px", fontWeight: "900", color: "#1A1A2E" }}>
-                  {perfil?.nombre_completo || "Usuario Atlan"}
+                  {displayName || "Usuario Atlan"}
                 </h3>
 
                 <p style={{ margin: "0 0 16px", fontSize: "12.5px", color: "var(--atlan-text-muted)", fontWeight: "600" }}>
@@ -819,7 +1037,8 @@ export default function PerfilPage() {
                 <button
                   type="button"
                   onClick={() => {
-                    setEditNombre(perfil?.nombre_completo || "");
+                    const currentValidName = (displayName && displayName !== "Usuario" && displayName !== "Usuario Atlan") ? displayName : (perfil?.nombre_completo || "");
+                    setEditNombre(currentValidName);
                     setEditBio(perfil?.bio || "");
                     setIsEditing(true);
                   }}
@@ -932,33 +1151,15 @@ export default function PerfilPage() {
           </div>
 
           {/* COLUMNA DERECHA: SECTOR DYNAMIC TAB CON CABECERA MULTI-SVG INTERACTIVA */}
-          <div>
+          <div style={{ minWidth: 0 }}>
             
             {/* CABECERA PRINCIPAL CON LOS 3 SVGs ALINEADOS INTERACTIVOS */}
-            <div style={{
-              background: "linear-gradient(135deg, #0A192F 0%, #102A45 100%)",
-              borderRadius: "20px",
-              padding: "14px 20px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "20px",
-              boxShadow: "0 8px 24px rgba(10, 25, 47, 0.25)",
-              color: "#FFFFFF"
-            }}>
+            <div className="profile-tab-header">
               {/* Bloque con los 3 SVGs interactivos ordenados + Título */}
-              <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+              <div className="profile-tab-header-left">
                 
                 {/* Selector de los 3 SVGs alineados */}
-                <div style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  background: "rgba(255, 255, 255, 0.10)",
-                  padding: "5px",
-                  borderRadius: "14px",
-                  border: "1px solid rgba(255, 255, 255, 0.15)"
-                }}>
+                <div className="profile-tab-btns">
                   {/* SVG 1: Destinos (tortuga.svg) */}
                   <button
                     type="button"
@@ -1063,7 +1264,7 @@ export default function PerfilPage() {
                 </div>
 
                 {/* Título de la Sección Activa */}
-                <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "900", color: "#FFFFFF" }}>
+                <h2 className="profile-tab-title" style={{ margin: 0, fontSize: "18px", fontWeight: "900", color: "#FFFFFF" }}>
                   {activeTab === "destinos" && (lang === "en" ? "My Saved Places" : lang === "zh" ? "我的收藏目的地" : "Mis Destinos Guardados")}
                   {activeTab === "reservas" && (lang === "en" ? "My Direct Reservations" : lang === "zh" ? "我的直接预订" : "Mis Reservas Directas")}
                   {activeTab === "resenas" && (lang === "en" ? "My Published Reviews" : lang === "zh" ? "我发布的评价" : "Reseñas Publicadas")}
@@ -1071,7 +1272,7 @@ export default function PerfilPage() {
               </div>
 
               {/* Insignia de conteo de la sección activa */}
-              <span style={{ fontSize: "12px", fontWeight: "800", background: "rgba(255, 215, 0, 0.2)", padding: "5px 14px", borderRadius: "12px", color: "#FFD700" }}>
+              <span className="profile-tab-badge" style={{ fontSize: "12px", fontWeight: "800", background: "rgba(255, 215, 0, 0.2)", padding: "5px 14px", borderRadius: "12px", color: "#FFD700" }}>
                 {activeTab === "destinos" && `${favoritos.length} ${lang === "en" ? (favoritos.length === 1 ? "place" : "places") : lang === "zh" ? "个目的地" : (favoritos.length === 1 ? "destino" : "destinos")}`}
                 {activeTab === "reservas" && `${reservas.length} ${lang === "en" ? (reservas.length === 1 ? "reservation" : "reservations") : lang === "zh" ? "个预订" : (reservas.length === 1 ? "reserva" : "reservas")}`}
                 {activeTab === "resenas" && `${resenas.length} ${lang === "en" ? (resenas.length === 1 ? "review" : "reviews") : lang === "zh" ? "条评价" : (resenas.length === 1 ? "reseña" : "reseñas")}`}
@@ -1081,7 +1282,7 @@ export default function PerfilPage() {
             {/* VISTA 1: MIS RESERVAS DIRECTAS */}
             {activeTab === "reservas" && (
               <div className="tab-content-anim">
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+                <div className="profile-cards-grid">
                   {paginatedReservas.map((res) => {
                     const lugarNombre = res.negocios?.nombre || res.lugares?.nombre || (lang === "en" ? "Local Place" : lang === "zh" ? "当地景点" : "Lugar Turístico");
                     const fechaFormatted = new Date(res.fecha_hora).toLocaleDateString(lang === "en" ? "en-US" : lang === "zh" ? "zh-CN" : "es-ES", {
@@ -1132,7 +1333,7 @@ export default function PerfilPage() {
             {/* VISTA 2: MIS DESTINOS GUARDADOS (con ubic.svg en el botón Ver en mapa) */}
             {activeTab === "destinos" && (
               <div className="tab-content-anim">
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+                <div className="profile-cards-grid">
                   {paginatedFavoritos.map((fav) => {
                     const punto = fav.puntos;
                     if (!punto) return null;
@@ -1185,7 +1386,7 @@ export default function PerfilPage() {
             {/* VISTA 3: RESEÑAS PUBLICADAS (con comentarios.svg en la tarjeta) */}
             {activeTab === "resenas" && (
               <div className="tab-content-anim">
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+                <div className="profile-cards-grid">
                   {paginatedResenas.map((rev) => {
                     const destinoNombre = rev.negocios?.nombre || rev.puntos?.nombre || (lang === "en" ? "Local Destination" : lang === "zh" ? "本地目的地" : "Destino");
                     return (
@@ -1221,7 +1422,7 @@ export default function PerfilPage() {
       {/* MODAL 1: EDITAR PERFIL */}
       {isEditing && (
         <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }} onClick={() => setIsEditing(false)}>
-          <div style={{ background: "#FFFFFF", width: "100%", maxWidth: "450px", borderRadius: "24px", padding: "28px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
+          <div className="profile-modal-content" style={{ background: "#FFFFFF", width: "100%", maxWidth: "450px", borderRadius: "24px", padding: "28px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
             <h3 style={{ margin: "0 0 16px", fontSize: "20px", fontWeight: "900", color: "#1A1A2E" }}>
               {lang === "en" ? "Edit Profile" : lang === "zh" ? "编辑个人资料" : "Editar Perfil"}
             </h3>
@@ -1265,7 +1466,7 @@ export default function PerfilPage() {
       {/* MODAL 2: CAMBIAR CONTRASEÑA */}
       {isChangingPass && (
         <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }} onClick={() => setIsChangingPass(false)}>
-          <div style={{ background: "#FFFFFF", width: "100%", maxWidth: "450px", borderRadius: "24px", padding: "28px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
+          <div className="profile-modal-content" style={{ background: "#FFFFFF", width: "100%", maxWidth: "450px", borderRadius: "24px", padding: "28px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
             <h3 style={{ margin: "0 0 16px", fontSize: "20px", fontWeight: "900", color: "#1A1A2E" }}>
               {lang === "en" ? "Change Password" : lang === "zh" ? "修改密码" : "Cambiar Contraseña"}
             </h3>
@@ -1310,7 +1511,7 @@ export default function PerfilPage() {
       {/* MODAL 2.5: EDITAR PERFIL DE GUÍA TURÍSTICO Y GALERÍA DE TRAVESÍAS (Solo para Guías) */}
       {isEditingGuia && perfil?.rol === "guia_turistico" && (
         <div style={{ position: "fixed", inset: 0, zIndex: 1100, background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
-          <div style={{ background: "#FFFFFF", width: "100%", maxWidth: "600px", maxHeight: "90vh", overflowY: "auto", borderRadius: "24px", padding: "28px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 25px 60px rgba(0,0,0,0.25)" }}>
+          <div className="profile-modal-content" style={{ background: "#FFFFFF", width: "100%", maxWidth: "600px", maxHeight: "90vh", overflowY: "auto", borderRadius: "24px", padding: "28px", border: "2px solid rgba(255,255,255,0.95)", boxShadow: "0 25px 60px rgba(0,0,0,0.25)" }}>
             <h3 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "900", color: "#1A1A2E", display: "flex", alignItems: "center", gap: "8px" }}>
               <Icon name="compass" size={22} color="#0EA5E9" />
               {lang === "en" ? "Manage Guide Profile & Tour Photos" : lang === "zh" ? "管理向导资料与行程照片" : "Configurar mi Perfil de Guía y Fotos"}
@@ -1690,6 +1891,7 @@ export default function PerfilPage() {
           onClick={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
         >
           <div 
+            className="profile-modal-content"
             style={{ 
               background: "#FFFFFF", 
               width: "100%", 

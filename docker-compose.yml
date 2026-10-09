@@ -1,0 +1,41 @@
+services:
+  # ── SERVICIO DE APLICACIÓN (NEXT.JS AISLADO) ──
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_MAPBOX_TOKEN: ${NEXT_PUBLIC_MAPBOX_TOKEN}
+    container_name: atlan-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    # ⚠️ IMPORTANTE: El puerto 3000 NO se expone a internet.
+    # Solo es accesible internamente por Nginx a través de la red privada de Docker.
+    expose:
+      - "3000"
+    networks:
+      - atlan-network
+
+  # ── PROXY INVERSO SEGURO (NGINX CON HTTPS / SSL) ──
+  proxy:
+    image: nginx:alpine
+    container_name: atlan-nginx
+    restart: unless-stopped
+    ports:
+      # Puntos de entrada expuestos públicamente a internet
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - app
+    networks:
+      - atlan-network
+
+networks:
+  atlan-network:
+    driver: bridge

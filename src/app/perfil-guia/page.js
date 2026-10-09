@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/lib/AuthContext";
+import { useAuth, resolveUserDisplayName, resolveUserAvatar } from "@/lib/AuthContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
@@ -327,7 +327,8 @@ export default function PerfilGuiaPage() {
           if (activeData.destinos_mapa) setGuiaDestinosMapa(activeData.destinos_mapa);
         } else {
           // Prepopulado inicial si coincide con guía de prueba (ej: Carlos Mendoza Silva)
-          const nameLower = (perfilData?.nombre_completo || currentUser.user_metadata?.nombre_completo || "").toLowerCase();
+          const resolvedGuiaName = resolveUserDisplayName(perfilData, currentUser);
+          const nameLower = (resolvedGuiaName || "").toLowerCase();
           if (nameLower.includes("carlos") && nameLower.includes("mendoza")) {
             setGuiaDeptPrincipal("León");
             setGuiaEspecialidad("Senderismo y Volcanes");
@@ -441,8 +442,8 @@ export default function PerfilGuiaPage() {
 
     const profilePayload = {
       id: user.id,
-      nombre_completo: perfil?.nombre_completo || user.user_metadata?.nombre_completo || "Carlos Mendoza Silva",
-      avatar_url: perfil?.avatar_url || user.user_metadata?.avatar_url || "/images/perfil.svg",
+      nombre_completo: resolveUserDisplayName(perfil, user) || "Guía Turístico",
+      avatar_url: resolveUserAvatar(perfil, user) || "/images/perfil.svg",
       departamento_principal: guiaDeptPrincipal,
       especialidad: guiaEspecialidad,
       idiomas: guiaIdiomas,
@@ -472,7 +473,7 @@ export default function PerfilGuiaPage() {
       // 1. Actualizar perfil principal en 'perfiles'
       const { error: pError } = await supabase.from("perfiles").upsert({
         id: user.id,
-        nombre_completo: perfil?.nombre_completo || user.user_metadata?.nombre_completo || "Carlos Mendoza Silva",
+        nombre_completo: resolveUserDisplayName(perfil, user) || "Guía Turístico",
         rol: "guia_turistico"
       });
       if (pError) {

@@ -213,7 +213,13 @@ export default function RegisterPage() {
       />
 
       <header style={styles.header}>
-        <Link href="/" style={styles.logo}>
+        <Link
+          href="/"
+          onClick={() => {
+            try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+          }}
+          style={styles.logo}
+        >
           <img
             src="/mapaicono.png"
             alt="Logo Atlan"
@@ -532,6 +538,9 @@ export default function RegisterPage() {
       {/* Botón de Inicio en la esquina inferior derecha */}
       <Link
         href="/"
+        onClick={() => {
+          try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+        }}
         style={{
           position: "fixed",
           bottom: "24px",

@@ -422,20 +422,14 @@ export default function MasDeNicaraguaPage() {
                     {tr("Nicaragua Viva", "Vibrant Nicaragua", "生机勃勃的尼加拉瓜")}
                   </span>
                 </div>
-                <span className="mdn-header-title" style={{ fontSize: "17.5px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "0.4px" }}>
-                  {tr("Conoce más sobre los Departamentos de", "Learn more about the Departments of", "深入探索省份 —")}{" "}
-                  <span style={{
-                    fontSize: "18.5px",
-                    fontWeight: "900",
-                    background: "linear-gradient(180deg, #0055D4 0%, #0066FF 33%, #FFFFFF 33%, #FFFFFF 66%, #0066FF 66%, #0055D4 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    display: "inline-block",
-                    letterSpacing: "0.8px",
-                    filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.9))"
-                  }}>
-                    {tr("Nicaragua", "Nicaragua", "尼加拉瓜")}
-                  </span>
+                <span className="mdn-header-title" style={{
+                  fontSize: "17.5px",
+                  fontWeight: "800",
+                  color: "#FFFFFF",
+                  letterSpacing: "0.4px",
+                  textShadow: "0 1px 3px rgba(0, 0, 0, 0.45)"
+                }}>
+                  {tr("Conoce más sobre los Departamentos de Nicaragua", "Learn more about the Departments of Nicaragua", "深入探索尼加拉瓜省份")}
                 </span>
               </div>
 

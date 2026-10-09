@@ -22,7 +22,7 @@ export default function NeonBusinessSign({ session }) {
         {/* SVG de emprendimiento.svg (public/images/emprendimiento.svg) */}
         <div className="neon-map-wrapper">
           <svg
-            width="150"
+            width="160"
             height="150"
             viewBox="0 0 79 86"
             fill="none"

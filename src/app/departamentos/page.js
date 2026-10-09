@@ -6,7 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import Navbar from '../../components/ui/Navbar';
 import Icon from '../../components/ui/Icon';
 import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../lib/AuthContext';
+import { useAuth, resolveUserDisplayName } from '../../lib/AuthContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { obtenerDepartamentoPorCoordenadas } from '../../lib/geoUtils';
 import Link from 'next/link';
@@ -527,22 +527,11 @@ export default function DepartamentosPage() {
               display: "flex", 
               alignItems: "center", 
               gap: "8px",
-              flexWrap: "wrap"
+              flexWrap: "wrap",
+              textShadow: "0 1px 3px rgba(0, 0, 0, 0.45)"
             }}>
-              <span style={{ textShadow: "0 2px 10px rgba(0,0,0,0.95), 0 0 20px rgba(0,0,0,0.8)" }}>
-                {tr("Ranking de Lugares más visitados en", "Ranking of Most Visited Places in", "热门访问地排行榜 —")}
-              </span>
-              <span style={{
-                background: "linear-gradient(180deg, #0072CE 0%, #0072CE 33%, #FFFFFF 34%, #FFFFFF 66%, #0072CE 67%, #0072CE 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                fontWeight: "900",
-                fontSize: "1.3em",
-                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.9)) drop-shadow(0 0 2px rgba(0,0,0,0.8))",
-                padding: "0 2px",
-                display: "inline-block"
-              }}>
-                {tr("Nicaragua", "Nicaragua", "尼加拉瓜")}
+              <span>
+                {tr("Ranking de Lugares más visitados en", "Ranking of Most Visited Places in", "热门访问地排行榜 —")} {tr("Nicaragua", "Nicaragua", "尼加拉瓜")}
               </span>
             </h1>
           </div>
@@ -553,7 +542,7 @@ export default function DepartamentosPage() {
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <img src="/images/gueguense.svg" alt="Güegüense" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) invert(1)" }} />
                 <span style={{ fontSize: "12.5px", fontWeight: "800", color: "#FFFFFF" }}>
-                  <span>{perfil?.nombre_completo || perfil?.nombre || userSession?.user?.user_metadata?.nombre_completo || tr('Turista', 'Tourist', '游客')}</span>: <span style={{ color: "#38BDF8" }}>{userVisitsCount}</span> {userVisitsCount === 1 ? tr('visita', 'visit', '次访问') : tr('visitas', 'visits', '次访问')}
+                  <span>{resolveUserDisplayName(perfil, userSession?.user) || tr('Turista', 'Tourist', '游客')}</span>: <span style={{ color: "#38BDF8" }}>{userVisitsCount}</span> {userVisitsCount === 1 ? tr('visita', 'visit', '次访问') : tr('visitas', 'visits', '次访问')}
                 </span>
               </div>
 

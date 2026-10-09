@@ -16,7 +16,7 @@ class AppConstants {
     final envUrl = dotenv.env['WEB_APP_URL'];
     final base = (envUrl != null && envUrl.trim().isNotEmpty)
         ? envUrl.trim()
-        : 'https://plataforma-atlan.vercel.app';
+        : 'https://plataforma-atlan.mexicocentral.cloudapp.azure.com';
     // Agregar ?platform=mobile para que Next.js salte el video intro siempre en Flutter
     final separator = base.contains('?') ? '&' : '?';
     return '$base${separator}platform=mobile';

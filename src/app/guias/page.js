@@ -796,30 +796,11 @@ export default function GuiasPage() {
 
         <div style={styles.heroContentWide}>
           <h1 style={styles.heroTitleMain} className="guias-hero-title">
-            {lang === "en" ? (
-              <>
-                <span style={styles.whiteTextWithShadow}>Explore</span>{" "}
-                <span style={styles.flagShadowWrapper}>
-                  <span className="text-flag-nicaragua" style={styles.flagSpan}>Nicaragua</span>
-                </span>{" "}
-                <span style={styles.whiteTextWithShadow}>with Expert Local Guides</span>
-              </>
-            ) : lang === "zh" ? (
-              <>
-                <span style={styles.whiteTextWithShadow}>与本地专业导游探索</span>{" "}
-                <span style={styles.flagShadowWrapper}>
-                  <span className="text-flag-nicaragua" style={styles.flagSpan}>尼加拉瓜</span>
-                </span>
-              </>
-            ) : (
-              <>
-                <span style={styles.whiteTextWithShadow}>Explora</span>{" "}
-                <span style={styles.flagShadowWrapper}>
-                  <span className="text-flag-nicaragua" style={styles.flagSpan}>Nicaragua</span>
-                </span>{" "}
-                <span style={styles.whiteTextWithShadow}>con Guías Turísticos Locales</span>
-              </>
-            )}
+            {lang === "en"
+              ? "Explore Nicaragua with Expert Local Guides"
+              : lang === "zh"
+              ? "与本地专业导游探索 尼加拉瓜"
+              : "Explora Nicaragua con Guías Turísticos Locales"}
           </h1>
         </div>
       </section>
@@ -1942,25 +1923,19 @@ const styles = {
     letterSpacing: "-0.4px",
     margin: "4px 0 6px 0",
     lineHeight: "1.25",
-    textAlign: "center"
+    textAlign: "center",
+    textShadow: "0 1px 3px rgba(0, 0, 0, 0.45)"
   },
   whiteTextWithShadow: {
     color: "#FFFFFF",
-    textShadow: "0 4px 16px rgba(0, 0, 0, 0.95), 0 2px 4px rgba(0, 0, 0, 0.95)",
-    filter: "drop-shadow(0 4px 10px rgba(0, 0, 0, 0.95))"
+    textShadow: "0 1px 3px rgba(0, 0, 0, 0.45)"
   },
   flagShadowWrapper: {
-    display: "inline-block",
-    filter: "drop-shadow(0 6px 10px rgba(0, 0, 0, 0.95))"
+    display: "inline-block"
   },
   flagSpan: {
-    fontFamily: "'LC Mogi', 'LC Mogi A', 'LC Mogi B', 'LC Mogi C', var(--font-display), sans-serif",
-    background: "linear-gradient(180deg, #0072CE 0%, #0072CE 33%, #FFFFFF 33%, #FFFFFF 67%, #0072CE 67%, #0072CE 100%)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    letterSpacing: "0.02em",
-    display: "inline-block",
-    padding: "0 4px"
+    color: "#FFFFFF",
+    display: "inline-block"
   },
 
   mainContainerWide: {

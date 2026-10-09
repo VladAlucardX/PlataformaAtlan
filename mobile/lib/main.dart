@@ -9,7 +9,7 @@ import 'services/supabase_service.dart';
 /// Punto de entrada de la app Plataforma Atlan Mobile
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  GoogleFonts.config.allowRuntimeFetching = false;
+  GoogleFonts.config.allowRuntimeFetching = true;
 
   try {
     await SystemChrome.setPreferredOrientations([

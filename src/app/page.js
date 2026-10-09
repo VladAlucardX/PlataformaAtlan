@@ -442,17 +442,49 @@ function Footer() {
   );
 }
 
+// Variable en memoria a nivel de cliente para navegación interna SPA
+let clientHasNavigated = false;
+
 // Componente Principal
 export default function Home() {
-  // En Web de escritorio se mantiene false por defecto para reproducir el video intro completo.
-  const [introDone, setIntroDone] = React.useState(false);
+  const [introDone, setIntroDone] = React.useState(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash || "";
+      const search = window.location.search || "";
+      // Si el usuario regresa de autenticación (Google OAuth o Magic Link), saltar el intro directamente
+      if (
+        hash.includes("access_token") ||
+        hash.includes("refresh_token") ||
+        search.includes("code=") ||
+        hash.includes("type=magiclink") ||
+        search.includes("type=magiclink")
+      ) {
+        return true;
+      }
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("intro") === "1" || params.get("intro") === "true") {
+        return false;
+      }
+      return clientHasNavigated || Boolean(window.__atlanNavigatedInternally);
+    }
+    return false;
+  });
   const { session, perfil, logout, is2FAVerified } = useAuth();
 
-  // Si el usuario llega desde el enlace del correo (Magic Link), validar automáticamente su 2FA
+  // Si el usuario llega desde autenticación (OAuth/Magic Link), saltar intro y validar 2FA
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       const hash = window.location.hash || "";
       const search = window.location.search || "";
+      if (
+        hash.includes("access_token") ||
+        hash.includes("refresh_token") ||
+        search.includes("code=") ||
+        hash.includes("type=magiclink") ||
+        search.includes("type=magiclink")
+      ) {
+        setIntroDone(true);
+      }
       const isEmailLink = hash.includes("type=magiclink") || search.includes("type=magiclink");
       if (isEmailLink) {
         supabase.auth.getSession().then(({ data: { session: s } }) => {
@@ -482,14 +514,13 @@ export default function Home() {
   }, [session]);
 
   React.useEffect(() => {
-    try {
-      const introSeen =
-        sessionStorage.getItem("introSeen") === "true" ||
-        localStorage.getItem("introSeen") === "true";
-      if (introSeen) {
-        requestAnimationFrame(() => setIntroDone(true));
-      }
-    } catch (_) {}
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem("introSeen");
+        sessionStorage.removeItem("introSeen");
+        sessionStorage.removeItem("atlan_intro_seen");
+      } catch (_) {}
+    }
   }, []);
 
   React.useEffect(() => {
@@ -510,27 +541,26 @@ export default function Home() {
 
   // Failsafe absoluto: si el intro no terminó en 9s por cualquier razón, forzarlo
   React.useEffect(() => {
-    const failsafe = setTimeout(() => setIntroDone(true), 9000);
+    const failsafe = setTimeout(() => {
+      try { sessionStorage.setItem("atlan_intro_seen", "true"); } catch (_) {}
+      setIntroDone(true);
+    }, 9000);
     return () => clearTimeout(failsafe);
   }, []);
 
-
   const handleLogout = async () => {
+    clientHasNavigated = true;
     if (typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem("introSeen", "true");
-        localStorage.setItem("introSeen", "true");
-      } catch (_) {}
+      window.__atlanNavigatedInternally = true;
     }
+    setIntroDone(true);
     await logout();
   };
 
   const handleIntroComplete = () => {
+    clientHasNavigated = true;
     if (typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem("introSeen", "true");
-        localStorage.setItem("introSeen", "true");
-      } catch (e) {}
+      window.__atlanNavigatedInternally = true;
     }
     setIntroDone(true);
   };

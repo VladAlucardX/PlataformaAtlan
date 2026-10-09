@@ -13,7 +13,7 @@ import ImageViewerModal from "@/components/ui/ImageViewerModal";
 import ShareDropdown from "@/components/ui/ShareDropdown";
 import Navbar from "@/components/ui/Navbar";
 import Icon from "@/components/ui/Icon";
-import { getProfileSlug } from "@/lib/profileUtils";
+import { getProfileSlug, resolveUserDisplayName, resolveUserAvatar } from "@/lib/profileUtils";
 import StoriesBar from "@/components/historias/StoriesBar";
 import StoryViewer from "@/components/historias/StoryViewer";
 import StoryComposer from "@/components/historias/StoryComposer";
@@ -254,21 +254,27 @@ function PostCard({ post, session, perfil, lang, onDelete, onRequireLogin, onIma
       )}
 
       <div style={cardStyles.header}>
-        <Link href={`/comunidad/perfil/${post.autor_id}`} style={{ display: "flex", alignItems: "center", gap: "12px", textDecoration: "none" }}>
-          <div style={avatarStyle(autor.avatar_url, 44)}>
-            {!autor.avatar_url && (autor.nombre_completo?.[0]?.toUpperCase() || "U")}
-          </div>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ fontWeight: "800", fontSize: "14px", color: "var(--atlan-text-primary)" }}>{autor.nombre_completo || "Usuario"}</span>
-              {autor.rol === "dueno" && <span style={cardStyles.roleBadge}><Icon name="building" size={12} /></span>}
-              {autor.rol === "admin" && <span style={{ ...cardStyles.roleBadge, background: "rgba(239,68,68,0.15)", color: "#ef4444" }}><Icon name="zap" size={12} /></span>}
-            </div>
-            <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)" }}>
-              {timeAgo(post.created_at, lang)} {isEdited && <span style={{ fontStyle: "italic", marginLeft: "4px", opacity: 0.8 }}>({lang === "en" ? "edited" : lang === "zh" ? "已编辑" : "editado"})</span>}
-            </span>
-          </div>
-        </Link>
+        {(() => {
+          const authorName = isOwner ? resolveUserDisplayName(autor, session?.user) : resolveUserDisplayName(autor);
+          const authorAvatar = isOwner ? resolveUserAvatar(autor, session?.user) : resolveUserAvatar(autor);
+          return (
+            <Link href={`/comunidad/perfil/${post.autor_id}`} style={{ display: "flex", alignItems: "center", gap: "12px", textDecoration: "none" }}>
+              <div style={avatarStyle(authorAvatar, 44)}>
+                {!authorAvatar && (authorName?.[0]?.toUpperCase() || "U")}
+              </div>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span style={{ fontWeight: "800", fontSize: "14px", color: "var(--atlan-text-primary)" }}>{authorName}</span>
+                  {autor.rol === "dueno" && <span style={cardStyles.roleBadge}><Icon name="building" size={12} /></span>}
+                  {autor.rol === "admin" && <span style={{ ...cardStyles.roleBadge, background: "rgba(239,68,68,0.15)", color: "#ef4444" }}><Icon name="zap" size={12} /></span>}
+                </div>
+                <span style={{ fontSize: "12px", color: "var(--atlan-text-muted)" }}>
+                  {timeAgo(post.created_at, lang)} {isEdited && <span style={{ fontStyle: "italic", marginLeft: "4px", opacity: 0.8 }}>({lang === "en" ? "edited" : lang === "zh" ? "已编辑" : "editado"})</span>}
+                </span>
+              </div>
+            </Link>
+          );
+        })()}
 
         {(isOwner || isAdmin) && (
           <div style={{ position: "relative" }}>
@@ -667,15 +673,18 @@ function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChang
 
   if (session?.user?.id === user.id) return null;
 
+  const uName = resolveUserDisplayName(user, session?.user?.id === user.id ? session?.user : null);
+  const uAvatar = resolveUserAvatar(user, session?.user?.id === user.id ? session?.user : null);
+
   return (
     <div style={sidebarStyles.userCard}>
       <Link href={`/comunidad/perfil/${user.id}`} style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", flex: 1, minWidth: 0 }}>
-        <div style={avatarStyle(user.avatar_url, 38)}>
-          {!user.avatar_url && (user.nombre_completo?.[0]?.toUpperCase() || "U")}
+        <div style={avatarStyle(uAvatar, 38)}>
+          {!uAvatar && (uName?.[0]?.toUpperCase() || "U")}
         </div>
         <div style={{ minWidth: 0 }}>
           <div style={{ fontWeight: "700", fontSize: "13px", color: "var(--atlan-text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {user.nombre_completo || "Usuario"}
+            {uName}
           </div>
           <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>
             {user.rol === "dueno" ? <><Icon name="building" size={11} /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</> : <><Icon name="luggage" size={11} /> {lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
@@ -842,13 +851,23 @@ export default function PerfilPublico() {
           }
         }
 
-        // 5. Último fallback para el usuario en sesión activa
-        if (!pData && session?.user) {
-          pData = myPerfil || {
+        // 5. Si es el usuario en sesión activa o si pData necesita resolución
+        if (pData) {
+          const isOwn = session?.user?.id === pData.id;
+          const resolvedPName = resolveUserDisplayName(pData, isOwn ? session?.user : null);
+          const resolvedPAvatar = resolveUserAvatar(pData, isOwn ? session?.user : null);
+          if (resolvedPName && (!pData.nombre_completo || pData.nombre_completo.toLowerCase() === "usuario" || pData.nombre_completo.toLowerCase() === "usuario atlan")) {
+            pData = { ...pData, nombre_completo: resolvedPName };
+          }
+          if (resolvedPAvatar && !pData.avatar_url) {
+            pData = { ...pData, avatar_url: resolvedPAvatar };
+          }
+        } else if (session?.user) {
+          pData = {
             id: session.user.id,
-            nombre_completo: session.user.user_metadata?.nombre_completo || session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "Usuario Atlan",
-            avatar_url: session.user.user_metadata?.avatar_url || null,
-            rol: session.user.user_metadata?.rol || "guia_turistico"
+            nombre_completo: resolveUserDisplayName(myPerfil, session.user),
+            avatar_url: resolveUserAvatar(myPerfil, session.user),
+            rol: session.user.user_metadata?.rol || "turista"
           };
         }
 
@@ -939,10 +958,22 @@ export default function PerfilPublico() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif", position: "relative", overflow: "hidden" }}>
-      {/* SVGs */}
-      <img src="/images/masaaya.svg" alt="" style={{ position: "fixed", top: "80px", left: "10px", width: "340px", height: "calc(100vh - 90px)", objectFit: "contain", opacity: 0.16, pointerEvents: "none", zIndex: 0 }} />
-      <img src="/images/machoraton.svg" alt="" style={{ position: "fixed", top: "80px", right: "10px", width: "340px", height: "calc(100vh - 90px)", objectFit: "contain", opacity: 0.16, pointerEvents: "none", zIndex: 0 }} />
+    <div style={{ minHeight: "100vh", background: "var(--atlan-bg-primary)", fontFamily: "var(--font-outfit), system-ui, sans-serif", position: "relative" }}>
+      {/* Fondo decorativo Patrón Cultural de Nicaragua */}
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          backgroundImage: "url('/images/patron.png')",
+          backgroundRepeat: "repeat",
+          backgroundSize: "440px",
+          filter: "grayscale(100%) brightness(0) invert(0.18)",
+          opacity: 0.65,
+          mixBlendMode: "multiply",
+          pointerEvents: "none",
+          zIndex: 0
+        }}
+      />
 
       <Navbar activePage="comunidad" session={session} perfil={myPerfil} />
 
@@ -951,31 +982,37 @@ export default function PerfilPublico() {
 
         {/* ── SIDEBAR LEFT ── */}
         <aside className="hide-mobile community-sidebar">
-          {session && myPerfil ? (
-            <div style={sidebarStyles.profileCard}>
-              <div style={sidebarStyles.profileBanner} />
-              <div style={{ padding: "0 20px 20px", marginTop: "-32px", textAlign: "center" }}>
-                <Link href={`/comunidad/perfil/${getProfileSlug(myPerfil) || session.user.id}`} style={{ textDecoration: "none" }}>
-                  <div style={{ ...avatarStyle(myPerfil.avatar_url, 64), margin: "0 auto 8px", border: "3px solid var(--atlan-bg-primary)" }}>
-                    {!myPerfil.avatar_url && (myPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
+          {session ? (
+            (() => {
+              const mySideName = resolveUserDisplayName(myPerfil, session.user);
+              const mySideAvatar = resolveUserAvatar(myPerfil, session.user);
+              return (
+                <div style={sidebarStyles.profileCard}>
+                  <div style={sidebarStyles.profileBanner} />
+                  <div style={{ padding: "0 20px 20px", marginTop: "-32px", textAlign: "center" }}>
+                    <Link href={`/comunidad/perfil/${getProfileSlug(myPerfil, session.user) || session.user.id}`} style={{ textDecoration: "none" }}>
+                      <div style={{ ...avatarStyle(mySideAvatar, 64), margin: "0 auto 8px", border: "3px solid var(--atlan-bg-primary)" }}>
+                        {!mySideAvatar && (mySideName?.[0]?.toUpperCase() || "U")}
+                      </div>
+                    </Link>
+                    <h4 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{mySideName}</h4>
+                    <p style={{ margin: "0 0 12px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>
+                      {myPerfil?.rol === "dueno" ? <><Icon name="building" size={11} /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</> : <><Icon name="luggage" size={11} /> {lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
+                    </p>
+                    <div style={{ display: "flex", justifyContent: "center", gap: "24px" }}>
+                      <button onClick={() => { setFollowersModalTab("followers"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px" }}>
+                        <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{myPerfil?.seguidores_count || 0}</div>
+                        <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Followers" : lang === "zh" ? "粉丝" : "Seguidores"}</div>
+                      </button>
+                      <button onClick={() => { setFollowersModalTab("following"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px" }}>
+                        <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{myPerfil?.siguiendo_count || 0}</div>
+                        <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Following" : lang === "zh" ? "已关注" : "Siguiendo"}</div>
+                      </button>
+                    </div>
                   </div>
-                </Link>
-                <h4 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{myPerfil.nombre_completo}</h4>
-                <p style={{ margin: "0 0 12px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>
-                  {myPerfil.rol === "dueno" ? <><Icon name="building" size={11} /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</> : <><Icon name="luggage" size={11} /> {lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
-                </p>
-                <div style={{ display: "flex", justifyContent: "center", gap: "24px" }}>
-                  <button onClick={() => { setFollowersModalTab("followers"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px" }}>
-                    <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{myPerfil.seguidores_count || 0}</div>
-                    <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Followers" : lang === "zh" ? "粉丝" : "Seguidores"}</div>
-                  </button>
-                  <button onClick={() => { setFollowersModalTab("following"); setShowFollowersModal(true); }} style={{ textAlign: "center", background: "none", border: "none", cursor: "pointer", padding: "4px 8px" }}>
-                    <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--atlan-text-primary)" }}>{myPerfil.siguiendo_count || 0}</div>
-                    <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>{lang === "en" ? "Following" : lang === "zh" ? "已关注" : "Siguiendo"}</div>
-                  </button>
                 </div>
-              </div>
-            </div>
+              );
+            })()
           ) : (
             <div style={sidebarStyles.loginCard}>
               <span style={{ display: "block", marginBottom: "12px" }}>
@@ -1069,26 +1106,23 @@ export default function PerfilPublico() {
                     if (hasStories) setStoryViewerOpen(true);
                     else if (isOwnProfile) setShowStoryComposer(true);
                   };
+                  const targetDisplayName = (isOwnProfile ? resolveUserDisplayName(targetPerfil, session?.user) : resolveUserDisplayName(targetPerfil)) || "Usuario";
+                  const targetDisplayAvatar = isOwnProfile ? resolveUserAvatar(targetPerfil, session?.user) : resolveUserAvatar(targetPerfil);
                   return (
                     <div style={{ position: "relative", width: "64px", margin: "0 auto 8px", zIndex: 5 }}>
                       <div
                         onClick={handleAvatarClick}
                         title={hasStories ? (lang === "en" ? "View stories" : lang === "zh" ? "查看故事" : "Ver historias") : undefined}
                         style={{
-                          ...avatarStyle(targetPerfil.avatar_url, 64),
+                          ...avatarStyle(targetDisplayAvatar, 64),
                           margin: 0,
                           border: hasStories
                             ? (storyGroup.tieneNuevas ? "3px solid #FFD700" : "3px solid #94A3B8")
                             : "3px solid #E2E8F0",
-                          boxShadow: hasStories && storyGroup.tieneNuevas
-                            ? "0 0 0 2px rgba(255, 215, 0, 0.35), 0 4px 12px rgba(15, 23, 42, 0.15)"
-                            : "0 4px 12px rgba(15, 23, 42, 0.15)",
-                          position: "relative",
-                          cursor: hasStories || isOwnProfile ? "pointer" : "default",
-                          background: targetPerfil.avatar_url ? `url(${targetPerfil.avatar_url}) center/cover` : "linear-gradient(135deg, #146D9E 0%, #0F5579 100%)"
+                          cursor: hasStories || isOwnProfile ? "pointer" : "default"
                         }}
                       >
-                        {!targetPerfil.avatar_url && (targetPerfil.nombre_completo?.[0]?.toUpperCase() || "U")}
+                        {!targetDisplayAvatar && (targetDisplayName?.[0]?.toUpperCase() || "U")}
                       </div>
                       {isOwnProfile && (
                         <button
@@ -1111,7 +1145,7 @@ export default function PerfilPublico() {
                 })()}
                 {/* Nombre del Usuario centrado idéntico al muro general */}
                 <h4 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: "800", color: "#1A1A2E", fontFamily: "var(--font-outfit)" }}>
-                  {targetPerfil.nombre_completo || "Usuario"}
+                  {(isOwnProfile ? resolveUserDisplayName(targetPerfil, session?.user) : resolveUserDisplayName(targetPerfil)) || "Usuario"}
                 </h4>
 
                 {/* Subtítulo de Rol centrado */}
