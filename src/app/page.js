@@ -442,37 +442,26 @@ function Footer() {
   );
 }
 
+// Hook isomorfo para sincronizar antes del primer pintado en el cliente sin causar mismatch en SSR
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
 // Componente Principal
 export default function Home() {
-  const [introDone, setIntroDone] = React.useState(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get("intro") === "1" || params.get("intro") === "true") {
-          return false;
-        }
-        return sessionStorage.getItem("atlan_intro_seen") === "true";
-      } catch (_) {
-        return false;
-      }
-    }
-    return false;
-  });
+  // Inicializado en true para coincidir de forma idéntica entre SSR e hidratación inicial
+  const [introDone, setIntroDone] = React.useState(true);
   const { session, perfil, logout, is2FAVerified } = useAuth();
 
-  // Si ya se vio el intro en esta sesión o se navega internamente, asegurar que introDone sea true
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get("intro") === "1" || params.get("intro") === "true") return;
-        const seen = sessionStorage.getItem("atlan_intro_seen") === "true";
-        if (seen && !introDone) {
-          setIntroDone(true);
-        }
-      } catch (_) {}
-    }
-  }, [introDone]);
+  // Evaluar en el cliente antes del pintado si corresponde reproducir el video intro
+  useIsomorphicLayoutEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const forceIntro = params.get("intro") === "1" || params.get("intro") === "true";
+      const seen = sessionStorage.getItem("atlan_intro_seen") === "true";
+      if (!seen || forceIntro) {
+        setIntroDone(false);
+      }
+    } catch (_) {}
+  }, []);
 
   // Si el usuario llega desde el enlace del correo (Magic Link), validar automáticamente su 2FA
   React.useEffect(() => {
