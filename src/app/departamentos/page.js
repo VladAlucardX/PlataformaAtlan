@@ -527,22 +527,11 @@ export default function DepartamentosPage() {
               display: "flex", 
               alignItems: "center", 
               gap: "8px",
-              flexWrap: "wrap"
+              flexWrap: "wrap",
+              textShadow: "0 1px 3px rgba(0, 0, 0, 0.45)"
             }}>
-              <span style={{ textShadow: "0 2px 10px rgba(0,0,0,0.95), 0 0 20px rgba(0,0,0,0.8)" }}>
-                {tr("Ranking de Lugares más visitados en", "Ranking of Most Visited Places in", "热门访问地排行榜 —")}
-              </span>
-              <span style={{
-                background: "linear-gradient(180deg, #0072CE 0%, #0072CE 33%, #FFFFFF 34%, #FFFFFF 66%, #0072CE 67%, #0072CE 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                fontWeight: "900",
-                fontSize: "1.3em",
-                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.9)) drop-shadow(0 0 2px rgba(0,0,0,0.8))",
-                padding: "0 2px",
-                display: "inline-block"
-              }}>
-                {tr("Nicaragua", "Nicaragua", "尼加拉瓜")}
+              <span>
+                {tr("Ranking de Lugares más visitados en", "Ranking of Most Visited Places in", "热门访问地排行榜 —")} {tr("Nicaragua", "Nicaragua", "尼加拉瓜")}
               </span>
             </h1>
           </div>
