@@ -719,6 +719,34 @@ export default function DashboardPage() {
 
       if (error) throw error;
       
+      // Sincronizar automáticamente con la tabla de puntos para que el mapa y tarjetas reflejen los cambios al instante
+      const puntoPayload = {};
+      if (nombre) puntoPayload.nombre = nombre;
+      if (descripcion) puntoPayload.descripcion = descripcion;
+      if (Array.isArray(fotos) && fotos.length > 0) puntoPayload.fotos_comunidad = fotos;
+
+      if (Object.keys(puntoPayload).length > 0) {
+        try {
+          await supabase
+            .from("puntos")
+            .update(puntoPayload)
+            .eq("negocio_id", negocio.id);
+        } catch (puntoErr) {
+          console.warn("[Atlan] Error sincronizando puntos desde perfil de negocio:", puntoErr);
+        }
+      }
+
+      // Limpiar cachés locales del mapa y detalles para evitar lecturas obsoletas
+      try {
+        localStorage.removeItem("atlan_puntos_cercanos");
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const k = localStorage.key(i);
+          if (k && (k.startsWith("atlan_point_details_") || k.startsWith("atlan_place_") || k.startsWith("atlan_pts_"))) {
+            localStorage.removeItem(k);
+          }
+        }
+      } catch (_) {}
+
       setNegocio(prev => (prev ? { ...prev, ...payload } : prev));
       setSaveSuccess(true);
       showToast(lang === "en" ? "Profile saved successfully!" : lang === "zh" ? "商户资料保存成功！" : "¡Perfil guardado exitosamente!", "success");

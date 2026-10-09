@@ -166,12 +166,12 @@ function PlaceCard({ place, onSelect, onComoLlegar, lang = 'es' }) {
 
       {/* ── Contenido de la Tarjeta ── */}
       <div className={styles.cardContent}>
-        <h3 className={styles.cardTitle} title={place.nombre}>
-          {place.nombre}
+        <h3 className={styles.cardTitle} title={negocio?.nombre || place.nombre}>
+          {negocio?.nombre || place.nombre}
         </h3>
 
-        {place.descripcion ? (
-          <p className={styles.cardDescription}>{place.descripcion}</p>
+        {(negocio?.descripcion || place.descripcion) ? (
+          <p className={styles.cardDescription}>{negocio?.descripcion || place.descripcion}</p>
         ) : (
           <p className={styles.cardDescription} style={{ fontStyle: 'italic', opacity: 0.6 }}>
             {lang === 'en' ? 'Explore this authentic destination in Nicaragua.' : 'Descubre este auténtico destino en Nicaragua.'}

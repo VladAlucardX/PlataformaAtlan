@@ -151,7 +151,7 @@ export default function BusinessProfileModal({
               <div className={styles.heroMainInfo}>
                 {/* Título Principal Cristalino */}
                 <h2 className={styles.placeTitle}>
-                  {point.nombre}
+                  {details?.nombre || point.nombre}
                 </h2>
 
                 {/* Cintillo de Badges, Categoría, Precio, Departamento y Calificación */}
@@ -390,7 +390,7 @@ export default function BusinessProfileModal({
                     <span>{tr('Acerca de este Destino', 'About this Destination', '关于此目的地')}</span>
                   </h4>
                   <p className={styles.cardDescription}>
-                    {point.descripcion || tr(
+                    {details?.descripcion || point.descripcion || tr(
                       'Este destino cuenta con gran reconocimiento en la región. Visítalo para disfrutar de su atención, gastronomía y ambiente característico.',
                       'A notable local destination in Nicaragua. Visit to experience its distinct service, hospitality, and offerings.',
                       '这是尼加拉瓜当地深受欢迎的目的地，欢迎前往体验独特的文化、美食与服务。'

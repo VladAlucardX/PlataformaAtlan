@@ -1247,7 +1247,7 @@ export default function MapaTuristico() {
 
         <!-- Title & Category Badge (Centered) -->
         <div style="margin-bottom:8px; text-align:center; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-          <h3 style="margin:0 0 5px; font-size:16.5px; font-weight:850; color:#FFFFFF; line-height:1.25; letter-spacing:-0.2px; font-family:var(--font-outfit); text-align:center; width:100%;">
+          <h3 id="popup-title-${punto.id}" style="margin:0 0 5px; font-size:16.5px; font-weight:850; color:#FFFFFF; line-height:1.25; letter-spacing:-0.2px; font-family:var(--font-outfit); text-align:center; width:100%;">
             ${punto.nombre}
           </h3>
           <span style="display:inline-block; font-size:10.5px; font-weight:750; color:#FFD700; text-transform:uppercase; letter-spacing:0.5px; background:rgba(255, 215, 0, 0.12); padding:3px 10px; border-radius:8px; border:1px solid rgba(255, 215, 0, 0.3); margin:0 auto; text-align:center;">
@@ -1256,7 +1256,7 @@ export default function MapaTuristico() {
         </div>
 
         <!-- Description -->
-        <p style="margin:0 0 10px; font-size:12.5px; color:#E2E8F0; line-height:1.45; text-align:center; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; width:100%;">
+        <p id="popup-desc-${punto.id}" style="margin:0 0 10px; font-size:12.5px; color:#E2E8F0; line-height:1.45; text-align:center; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; width:100%;">
           ${punto.descripcion || ''}
         </p>
         
@@ -1334,36 +1334,49 @@ export default function MapaTuristico() {
         });
       }
 
-      if (punto.negocio_id && !getPointImage(punto)) {
+      if (punto.negocio_id) {
         try {
           const { data: bizData } = await supabase
             .from('negocios')
-            .select('logo_url, fotos')
+            .select('nombre, descripcion, logo_url, fotos')
             .eq('id', punto.negocio_id)
             .maybeSingle();
 
           if (bizData) {
-            const fetchedImg = (bizData.fotos && bizData.fotos.length > 0 && isRealCustomUrl(bizData.fotos[0]))
-              ? bizData.fotos[0]
-              : (isRealCustomUrl(bizData.logo_url) ? bizData.logo_url : null);
+            if (bizData.nombre && bizData.nombre !== punto.nombre) {
+              punto.nombre = bizData.nombre;
+              const titleEl = document.getElementById(`popup-title-${punto.id}`);
+              if (titleEl) titleEl.textContent = bizData.nombre;
+            }
+            if (bizData.descripcion && bizData.descripcion !== punto.descripcion) {
+              punto.descripcion = bizData.descripcion;
+              const descEl = document.getElementById(`popup-desc-${punto.id}`);
+              if (descEl) descEl.textContent = bizData.descripcion;
+            }
 
-            if (fetchedImg) {
-              punto.logo_url = fetchedImg;
-              punto.imagen_url = fetchedImg;
+            if (!getPointImage(punto)) {
+              const fetchedImg = (bizData.fotos && bizData.fotos.length > 0 && isRealCustomUrl(bizData.fotos[0]))
+                ? bizData.fotos[0]
+                : (isRealCustomUrl(bizData.logo_url) ? bizData.logo_url : null);
 
-              const imgContainer = document.getElementById(`popup-img-container-${punto.id}`);
-              if (imgContainer) {
-                imgContainer.innerHTML = `
-                  <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15); box-sizing:border-box;">
-                    <img src="${fetchedImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
-                    <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
-                  </div>
-                `;
+              if (fetchedImg) {
+                punto.logo_url = fetchedImg;
+                punto.imagen_url = fetchedImg;
+
+                const imgContainer = document.getElementById(`popup-img-container-${punto.id}`);
+                if (imgContainer) {
+                  imgContainer.innerHTML = `
+                    <div style="width:100%; height:110px; border-radius:12px; overflow:hidden; margin-bottom:10px; position:relative; background:#0a192f; border:1px solid rgba(255,255,255,0.15); box-sizing:border-box;">
+                      <img src="${fetchedImg}" alt="${punto.nombre}" style="width:100%; height:100%; object-fit:cover; display:block;" loading="eager" />
+                      <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(10,25,47,0.75) 100%);"></div>
+                    </div>
+                  `;
+                }
               }
             }
           }
         } catch (e) {
-          console.warn('[Atlan] Error cargando foto/logo de negocio en popup:', e);
+          console.warn('[Atlan] Error cargando datos de negocio en popup:', e);
         }
       }
 
@@ -4919,7 +4932,7 @@ export default function MapaTuristico() {
                         textShadow: '0 2px 6px rgba(0, 0, 0, 0.25)'
                       }}
                     >
-                      {selectedPoint.nombre}
+                      {selectedPointDetails?.nombre || selectedPoint.nombre}
                     </h2>
                   </div>
 
@@ -5307,7 +5320,7 @@ export default function MapaTuristico() {
                         WebkitBoxOrient: 'vertical',
                         overflow: 'hidden'
                       }}>
-                        {selectedPoint.descripcion || (lang === 'en' ? 'No description available.' : lang === 'zh' ? '暂无简介。' : 'Sin descripción disponible.')}
+                        {selectedPointDetails?.descripcion || selectedPoint.descripcion || (lang === 'en' ? 'No description available.' : lang === 'zh' ? '暂无简介。' : 'Sin descripción disponible.')}
                       </p>
                     </div>
 
