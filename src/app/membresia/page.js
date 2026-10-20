@@ -180,10 +180,6 @@ export default function MembresiaPage() {
         <div style={styles.mainContainer} className="mem-container">
           {/* 1. CABECERA INTEGRADA */}
           <header style={styles.integratedHeader} className="mem-header">
-            <div style={styles.heroBadge} className="mem-hero-badge">
-              <Icon name="star" size={14} color="#FFD700" />
-              <span>{tr("MEMBRESÍA EXCLUSIVA PARA NEGOCIOS", "EXCLUSIVE BUSINESS MEMBERSHIP", "商户专属尊享会员")}</span>
-            </div>
             <h1 style={styles.h1} className="mem-h1">
               {tr("Haz crecer tu negocio con ", "Grow your business with ", "用 ")}
               <span style={styles.goldText}>Tuani Pro</span>

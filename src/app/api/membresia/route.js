@@ -209,35 +209,67 @@ export async function POST(request) {
       });
     }
 
-    // Búsqueda inteligente de usuarios para modal selector
+    // Búsqueda inteligente de usuarios para modal selector (SOLO DUEÑOS DE NEGOCIO)
     if (action === "buscar_usuarios") {
       const q = (body.q || "").toString().trim().toLowerCase();
-      const rolFiltro = (body.rol || "todos").toString().trim();
+      const filtro = (body.rol || "todos").toString().trim();
 
       const { data: authData } = await supabaseAdmin.auth.admin.listUsers();
       const authUsers = authData?.users || [];
       const emailMap = Object.fromEntries(authUsers.map((u) => [u.id, u.email]));
 
+      // 1. Obtener todos los negocios para saber qué usuarios tienen establecimientos
+      const { data: negocios } = await supabaseAdmin
+        .from("negocios")
+        .select("id, nombre, dueno_id, categoria");
+
+      const negociosPorDueno = {};
+      (negocios || []).forEach((n) => {
+        if (!n.dueno_id) return;
+        if (!negociosPorDueno[n.dueno_id]) negociosPorDueno[n.dueno_id] = [];
+        negociosPorDueno[n.dueno_id].push({
+          id: n.id,
+          nombre: n.nombre || "Local sin nombre",
+          categoria: n.categoria || "",
+        });
+      });
+
+      // 2. Obtener perfiles de usuarios
       const { data: perfiles, error: perfErr } = await supabaseAdmin
         .from("perfiles")
         .select("id, nombre_completo, rol, avatar_url, membresia_vence_en, created_at")
         .order("created_at", { ascending: false });
       if (perfErr) throw perfErr;
 
-      let merged = (perfiles || []).map((p) => ({
-        ...p,
-        email: emailMap[p.id] || "",
-      }));
+      // 3. Filtrar estrictamente solo usuarios que tienen negocios o rol dueno
+      let merged = (perfiles || [])
+        .map((p) => {
+          const userNegocios = negociosPorDueno[p.id] || [];
+          const esDueno = p.rol === "dueno" || userNegocios.length > 0;
+          return {
+            ...p,
+            email: emailMap[p.id] || "",
+            negocios: userNegocios,
+            esDueno,
+          };
+        })
+        .filter((u) => u.esDueno);
 
-      if (rolFiltro && rolFiltro !== "todos") {
-        merged = merged.filter((u) => u.rol === rolFiltro);
+      // Filtros rápidos por estado de membresía
+      const now = new Date();
+      if (filtro === "con_pro") {
+        merged = merged.filter((u) => u.membresia_vence_en && new Date(u.membresia_vence_en) > now);
+      } else if (filtro === "sin_pro") {
+        merged = merged.filter((u) => !u.membresia_vence_en || new Date(u.membresia_vence_en) <= now);
       }
 
+      // Búsqueda en nombre, email o cualquiera de sus negocios
       if (q) {
         merged = merged.filter(
           (u) =>
             (u.nombre_completo && u.nombre_completo.toLowerCase().includes(q)) ||
-            (u.email && u.email.toLowerCase().includes(q))
+            (u.email && u.email.toLowerCase().includes(q)) ||
+            (u.negocios && u.negocios.some((n) => n.nombre.toLowerCase().includes(q)))
         );
       }
 
