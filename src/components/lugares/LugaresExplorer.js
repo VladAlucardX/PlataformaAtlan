@@ -37,6 +37,7 @@ export default function LugaresExplorer() {
   // Estado para el modal de detalle
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalTab, setModalTab] = useState('info');
 
   // Hook centralizado para el perfil completo del punto
   const pointDetail = usePointDetail(selectedPoint, session, lang);
@@ -106,9 +107,11 @@ export default function LugaresExplorer() {
     loadPlaces(true);
   }, [selectedDept, selectedCat, debouncedSearch]);
 
-  // Manejar deep link desde URL (?lugar=ID o ?id=ID)
+  // Manejar deep link desde URL (?lugar=ID o ?id=ID, con soporte de tab=menu)
   useEffect(() => {
     const lugarId = searchParams.get('lugar') || searchParams.get('id');
+    const tabParam = searchParams.get('tab');
+    if (tabParam) setModalTab(tabParam);
     if (!lugarId) return;
 
     let isMounted = true;
@@ -117,6 +120,7 @@ export default function LugaresExplorer() {
         const place = await fetchPlaceById(lugarId);
         if (isMounted && place) {
           setSelectedPoint(place);
+          if (tabParam) setModalTab(tabParam);
           setModalOpen(true);
         }
       } catch (err) {
@@ -167,6 +171,7 @@ export default function LugaresExplorer() {
   // Abrir modal de detalle
   const handleSelectPlace = (place) => {
     setSelectedPoint(place);
+    setModalTab('info');
     setModalOpen(true);
     // Actualizar URL de manera limpia sin recargar la página
     window.history.replaceState(null, '', `/lugares?lugar=${place.id}`);
@@ -176,6 +181,7 @@ export default function LugaresExplorer() {
   const handleCloseModal = () => {
     setModalOpen(false);
     setSelectedPoint(null);
+    setModalTab('info');
     window.history.replaceState(null, '', '/lugares');
   };
 
@@ -311,6 +317,7 @@ export default function LugaresExplorer() {
           details={pointDetail.details}
           reviews={pointDetail.reviews}
           menu={pointDetail.menu}
+          initialTab={modalTab}
           userSession={session}
           lang={lang}
           t={t}

@@ -98,7 +98,8 @@ export async function fetchPlaces({
 export async function fetchPlaceById(id) {
   if (!id) return null;
 
-  const { data, error } = await supabase
+  // 1. Intentar buscar por id de punto en el mapa
+  let { data, error } = await supabase
     .from('puntos')
     .select(`
       id,
@@ -128,9 +129,67 @@ export async function fetchPlaceById(id) {
     .eq('id', id)
     .maybeSingle();
 
-  if (error) {
-    console.error('[placesApi] Error fetching place by id:', error);
-    return null;
+  // 2. Si no se encontró por ID de punto, buscar si el ID corresponde a negocio_id vinculado a un punto
+  if (!data) {
+    const { data: dataByNegocio } = await supabase
+      .from('puntos')
+      .select(`
+        id,
+        nombre,
+        descripcion,
+        categoria,
+        estado,
+        departamento,
+        ubicacion,
+        negocio_id,
+        fotos_comunidad,
+        total_visitas,
+        created_at,
+        negocios (
+          id,
+          nombre,
+          logo_url,
+          fotos,
+          rating,
+          num_reviews,
+          horarios,
+          rango_precios,
+          servicios,
+          activo
+        )
+      `)
+      .eq('negocio_id', id)
+      .maybeSingle();
+
+    if (dataByNegocio) {
+      data = dataByNegocio;
+    }
+  }
+
+  // 3. Fallback: si el negocio no tiene punto en el mapa todavía, cargarlo directamente desde 'negocios'
+  if (!data) {
+    const { data: bizData } = await supabase
+      .from('negocios')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (bizData) {
+      data = {
+        id: bizData.id,
+        nombre: bizData.nombre,
+        descripcion: bizData.descripcion || '',
+        categoria: bizData.categoria || 'restaurante',
+        estado: 'aprobado',
+        departamento: bizData.departamento || 'Nicaragua',
+        ubicacion: bizData.ubicacion || null,
+        negocio_id: bizData.id,
+        fotos_comunidad: [],
+        total_visitas: 0,
+        created_at: bizData.created_at || new Date().toISOString(),
+        negocios: bizData,
+      };
+    }
   }
 
   return data;
