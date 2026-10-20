@@ -57,12 +57,19 @@ export default function BusinessProfileModal({
   setNewReviewComment,
   isSubmittingReview,
   reviewErrorMsg,
-  handleCrearResena
+  handleCrearResena,
+  initialTab = 'info',
 }) {
   const { tr: hookTr } = useTranslation();
   const tr = propTr || hookTr;
-  const [activeTab, setActiveTab] = useState('info'); // 'info' | 'menu' | 'reservas' | 'reseñas'
+  const [activeTab, setActiveTab] = useState(initialTab || 'info'); // 'info' | 'menu' | 'reservas' | 'reseñas'
   const [previewPhoto, setPreviewPhoto] = useState(null);
+
+  React.useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab, isOpen]);
 
   if (!isOpen || !point) return null;
 

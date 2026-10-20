@@ -140,9 +140,9 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
   const getDestinationUrl = useCallback(() => {
     if (!negocio?.id) return "";
     if (typeof window !== "undefined") {
-      return `${window.location.origin}/lugares?lugar=${negocio.id}`;
+      return `${window.location.origin}/lugares?lugar=${negocio.id}&tab=menu`;
     }
-    return `https://plataforma-atlan.mexicocentral.cloudapp.azure.com/lugares?lugar=${negocio.id}`;
+    return `https://plataforma-atlan.mexicocentral.cloudapp.azure.com/lugares?lugar=${negocio.id}&tab=menu`;
   }, [negocio]);
 
   // Generar QR al abrir o cambiar de tema

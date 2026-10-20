@@ -75,21 +75,28 @@ export function usePointDetail(point, userSession = null, lang = 'es') {
         if (revData) loadedReviews = revData;
 
         // 2. Cargar negocio asociado si existe
-        if (point.negocio_id) {
-          const { data: bizData } = await supabase
-            .from('negocios')
-            .select('*')
-            .eq('id', point.negocio_id)
-            .maybeSingle();
+        const bizId = point.negocio_id || (point.negocios ? point.negocios.id : null) || point.id;
+        if (bizId) {
+          let bizData = point.negocios || null;
+          if (!bizData) {
+            const { data } = await supabase
+              .from('negocios')
+              .select('*')
+              .eq('id', bizId)
+              .maybeSingle();
+            bizData = data;
+          }
 
           if (bizData) {
             loadedBiz = bizData;
-            if (bizData?.servicios?.has_menu) {
-              const { data: menuData } = await supabase
-                .from('menu_items')
-                .select('*')
-                .eq('negocio_id', point.negocio_id);
-              if (menuData) loadedMenu = menuData;
+            const { data: menuData } = await supabase
+              .from('menu_items')
+              .select('*')
+              .eq('negocio_id', bizId)
+              .order('orden', { ascending: true });
+
+            if (menuData && menuData.length > 0) {
+              loadedMenu = menuData;
             }
           }
         }
