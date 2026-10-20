@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlan — Mantenimiento Preventivo</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #070b14;
+            background-image: radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.08) 0%, transparent 65%);
+            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+        }
+        .card {
+            max-width: 460px;
+            width: 100%;
+            padding: 40px 24px;
+            background: rgba(13, 20, 36, 0.85);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+        }
+        .icon-badge {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.15);
+            border: 2px solid #D4AF37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+        .tag {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #D4AF37;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            padding: 4px 12px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+        p {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #94a3b8;
+            margin-bottom: 24px;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+            color: #070b14;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon-badge">🧭</div>
+        <span class="tag">Estado 50X • Mantenimiento</span>
+        <h1>Estamos optimizando la ruta</h1>
+        <p>Los servidores de Atlan están recibiendo una actualización programada o experimentando una pausa breve. Tu experiencia turística se reanudará en breves momentos.</p>
+        <button class="btn" onclick="window.location.reload()">Reintentar Conexión</button>
+    </div>
+</body>
+</html>

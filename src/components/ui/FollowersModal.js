@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { isMember } from "@/lib/membership";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import Icon from "@/components/ui/Icon";
@@ -198,7 +199,7 @@ export default function FollowersModal({ userId, session, lang, initialTab = "fo
                       ? <span style={styles.badgeDueno}><Icon name="building" size={10} /> {tr("Propietario", "Owner", "店主")}</span>
                       : user.rol === "admin"
                       ? <span style={styles.badgeAdmin}><Icon name="zap" size={10} /> Admin</span>
-                      : (user.es_premium || user.suscripcion_activa || user.rol === "turista_deacachimba")
+                      : (isMember(user))
                       ? <span style={styles.badgePremium}><Icon name="star" size={10} /> {tr("Turista Deacachimba", "Premium Tourist", "尊享游客")}</span>
                       : <span style={styles.badgeTurista}><Icon name="luggage" size={10} /> {tr("Turista Tuani", "Cool Tourist", "酷游达人")}</span>}
                   </div>

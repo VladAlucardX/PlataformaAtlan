@@ -547,6 +547,87 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
                     </Link>
                   )}
 
+                  {/* Opción: Membresía Tuani Pro (dueños y admin) */}
+                  {(perfil?.rol === "dueno" || perfil?.rol === "admin" || hasBusinesses) && (
+                    <Link
+                      href="/membresia"
+                      onClick={() => setUserDropdownOpen(false)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "9px 12px",
+                        borderRadius: "12px",
+                        color: "#F1F5F9",
+                        textDecoration: "none",
+                        transition: "all 0.15s ease"
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        <div style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "50%",
+                          background: "rgba(255, 215, 0, 0.15)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0
+                        }}>
+                          <Icon name="star" size={16} color="#FFD700" />
+                        </div>
+                        <span style={{ fontSize: "13.5px", fontWeight: "600" }}>
+                          {tr("Membresía Tuani Pro", "Tuani Pro Membership", "Tuani Pro 会员")}
+                        </span>
+                      </div>
+                      <Icon name="chevronRight" size={14} color="#64748B" />
+                    </Link>
+                  )}
+
+                  {/* Opción: Gestionar Membresías (Exclusivo Admin) */}
+                  {perfil?.rol === "admin" && (
+                    <Link
+                      href="/admin/membresias"
+                      onClick={() => setUserDropdownOpen(false)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "9px 12px",
+                        borderRadius: "12px",
+                        color: "#FFD700",
+                        textDecoration: "none",
+                        transition: "all 0.15s ease",
+                        background: "rgba(255, 215, 0, 0.08)",
+                        border: "1px solid rgba(255, 215, 0, 0.22)",
+                        marginTop: "4px"
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255, 215, 0, 0.16)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255, 215, 0, 0.08)")}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        <div style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "50%",
+                          background: "rgba(255, 215, 0, 0.22)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0
+                        }}>
+                          <Icon name="shield" size={16} color="#FFD700" />
+                        </div>
+                        <span style={{ fontSize: "13.5px", fontWeight: "700" }}>
+                          {tr("Gestionar Membresías (Admin)", "Manage Memberships (Admin)", "管理商户会员")}
+                        </span>
+                      </div>
+                      <Icon name="chevronRight" size={14} color="#FFD700" />
+                    </Link>
+                  )}
+
                   <div style={{ height: "1px", background: "rgba(255, 255, 255, 0.08)", margin: "4px" }} />
 
                   {/* Opción: Descargar App */}
@@ -827,6 +908,16 @@ export default function Navbar({ activePage = "inicio", session: sessionProp, pe
               {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
                 <Link href="/dashboard" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
                   <Icon name="briefcase" size={18} color="#FFFFFF" /> <span>{tr("Mi Negocio", "My Business", "我的商家")}</span>
+                </Link>
+              )}
+              {(perfil?.rol === "dueno" || perfil?.rol === "admin") && (
+                <Link href="/membresia" className="mobile-menu-item" onClick={() => setMenuOpen(false)}>
+                  <Icon name="star" size={18} color="#FFD700" /> <span>{tr("Membresía Tuani Pro", "Tuani Pro Membership", "Tuani Pro 会员")}</span>
+                </Link>
+              )}
+              {perfil?.rol === "admin" && (
+                <Link href="/admin/membresias" className="mobile-menu-item" style={{ borderColor: "rgba(255,215,0,0.4)", color: "#FFD700", background: "rgba(255,215,0,0.08)" }} onClick={() => setMenuOpen(false)}>
+                  <Icon name="shield" size={18} color="#FFD700" /> <span>{tr("Gestionar Membresías (Admin)", "Manage Memberships (Admin)", "管理商户会员")}</span>
                 </Link>
               )}
               <button

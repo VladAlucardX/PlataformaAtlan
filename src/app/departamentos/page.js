@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
+import { isMember } from "@/lib/membership";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Navbar from '../../components/ui/Navbar';
@@ -98,7 +99,7 @@ export default function DepartamentosPage() {
   // Obtener nombre del rango de turista
   const getTouristBadgeLabel = () => {
     if (!userSession) return tr("Turista", "Tourist", "游客");
-    if (perfil?.es_premium || perfil?.suscripcion_activa || perfil?.rol === "turista_deacachimba" || perfil?.es_pago) {
+    if (isMember(perfil)) {
       return tr("Turista Deacachimba", "Top Tourist", "骨灰级旅行家");
     }
     return tr("Turista Tuani", "Cool Tourist", "达人旅行家");
@@ -201,16 +202,38 @@ export default function DepartamentosPage() {
   useEffect(() => {
     if (mapRef.current) return;
 
+    const isMobileInitial = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+
+    const fitNicaraguaBounds = (m) => {
+      if (!m) return;
+      const isNarrow = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+      if (isNarrow) {
+        m.fitBounds(
+          [
+            [-87.72, 10.70], // Suroeste (Cosigüina / Rivas)
+            [-83.05, 15.05]  // Noreste (RACCN / Caribe)
+          ],
+          {
+            padding: { top: 6, bottom: 6, left: 6, right: 6 },
+            duration: 0
+          }
+        );
+      } else {
+        m.setCenter([-85.10, 12.75]);
+        m.setZoom(6.25);
+      }
+    };
+
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/outdoors-v12?optimize=true',
-      center: [-85.10, 12.75],
-      zoom: 6.25,
-      minZoom: 5.8,
+      center: isMobileInitial ? [-85.15, 12.85] : [-85.10, 12.75],
+      zoom: isMobileInitial ? 5.45 : 6.25,
+      minZoom: 4.5,
       maxZoom: 7.8,
       pitch: 0,
       projection: 'mercator',
-      maxBounds: [[-88.5, 9.8], [-81.5, 15.5]],
+      maxBounds: [[-89.8, 9.2], [-80.2, 16.2]],
       scrollZoom: false,
       doubleClickZoom: false,
       boxZoom: false,
@@ -225,6 +248,7 @@ export default function DepartamentosPage() {
     const resizeObserver = new ResizeObserver(() => {
       if (mapRef.current) {
         mapRef.current.resize();
+        fitNicaraguaBounds(mapRef.current);
       }
     });
     if (mapContainerRef.current) {
@@ -406,7 +430,9 @@ export default function DepartamentosPage() {
             'interpolate',
             ['linear'],
             ['zoom'],
-            5, 11,
+            4.8, 9,
+            5.4, 10.5,
+            6.2, 11.8,
             8, 14.5,
             12, 17.5
           ],
@@ -420,6 +446,7 @@ export default function DepartamentosPage() {
         }
       });
 
+      fitNicaraguaBounds(map);
       actualizarCapasSeleccion(map, selectedDeptRef.current);
 
       // ESTRATEGIA ANTI-PARPADEO DEFINITIVA:
@@ -644,32 +671,55 @@ export default function DepartamentosPage() {
               />
             </div>
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "8px", flexShrink: 0, position: "relative", zIndex: 1 }}>
-              <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#FFFFFF", textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}>
-                {selectedDept === "Todos" 
-                  ? (rankingMode === 'global' ? tr('Lugares Más Visitados', 'Most Visited Places', '最受欢迎目的地') : tr('Mis Lugares Más Visitados', 'My Most Visited Places', '我的足迹排行'))
-                  : (rankingMode === 'global' ? `${tr('Más Visitados en', 'Most Visited in', '热门访问 —')} ${selectedDept}` : `${tr('Mis Visitas en', 'My Visits in', '我的足迹 —')} ${selectedDept}`)}
-              </h2>
-              <span style={{ fontSize: "11.5px", fontWeight: "700", color: "#CBD5E1", background: "rgba(255,255,255,0.08)", padding: "2px 8px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.15)", backdropFilter: "blur(6px)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", gap: "10px", flexShrink: 0, position: "relative", zIndex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0, flex: 1 }}>
+                <h2 style={{ 
+                  margin: 0, 
+                  fontSize: "15.5px", 
+                  fontWeight: "800", 
+                  color: "#FFFFFF", 
+                  textShadow: "0 1px 3px rgba(0,0,0,0.8)", 
+                  whiteSpace: "nowrap", 
+                  overflow: "hidden", 
+                  textOverflow: "ellipsis",
+                  letterSpacing: "0.2px"
+                }}>
+                  {selectedDept === "Todos" 
+                    ? (rankingMode === 'global' ? tr('Lugares Más Visitados', 'Most Visited Places', '最受欢迎目的地') : tr('Mis Lugares Más Visitados', 'My Most Visited Places', '我的足迹排行'))
+                    : (rankingMode === 'global' ? `${tr('Más Visitados en', 'Most Visited in', '热门访问 —')} ${selectedDept}` : `${tr('Mis Visitas en', 'My Visits in', '我的足迹 —')} ${selectedDept}`)}
+                </h2>
+              </div>
+              <span style={{ 
+                fontSize: "11px", 
+                fontWeight: "800", 
+                color: "#38BDF8", 
+                background: "rgba(56, 189, 248, 0.15)", 
+                padding: "3px 9px", 
+                borderRadius: "8px", 
+                border: "1px solid rgba(56, 189, 248, 0.35)", 
+                backdropFilter: "blur(6px)", 
+                flexShrink: 0,
+                whiteSpace: "nowrap"
+              }}>
                 {rankingData.length} {tr('Destinos', 'Destinations', '个目的地')}
               </span>
             </div>
 
-            {/* Selector de Modo con SVGs Personalizados: Clic en Ranking Global resetea departamento a Todos */}
+            {/* Selector de Modo con SVGs Personalizados y Cápsula Glassmorphic */}
             <div style={{ 
               display: "flex", 
-              gap: "8px", 
-              marginBottom: "8px", 
+              gap: "6px", 
+              marginBottom: "10px", 
               flexShrink: 0, 
               position: "relative", 
               zIndex: 1,
-              background: "rgba(3, 14, 33, 0.95)",
-              padding: "4px 6px",
-              borderRadius: "14px",
-              border: "2px solid #000000",
+              background: "rgba(8, 18, 36, 0.85)",
+              padding: "4px",
+              borderRadius: "12px",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
               backdropFilter: "blur(14px)",
               WebkitBackdropFilter: "blur(14px)",
-              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.15)"
+              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08)"
             }}>
               {/* Botón Ranking Global */}
               <button
@@ -680,23 +730,23 @@ export default function DepartamentosPage() {
                 }}
                 style={{
                   flex: 1,
-                  padding: "8px 12px",
-                  borderRadius: "10px",
-                  border: rankingMode === 'global' ? "2px solid #FFFFFF" : "1.5px solid rgba(255, 255, 255, 0.3)",
+                  padding: "8px 10px",
+                  borderRadius: "9px",
+                  border: rankingMode === 'global' ? "1px solid rgba(255, 255, 255, 0.35)" : "1px solid transparent",
                   background: rankingMode === 'global' 
                     ? "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)" 
-                    : "rgba(15, 23, 42, 0.80)",
-                  color: "#FFFFFF",
+                    : "transparent",
+                  color: rankingMode === 'global' ? "#FFFFFF" : "#94A3B8",
                   fontWeight: rankingMode === 'global' ? "800" : "700",
-                  fontSize: "14px",
-                  letterSpacing: "0.3px",
+                  fontSize: "13px",
+                  letterSpacing: "0.2px",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "7px",
-                  textShadow: "0 1px 3px #000000, 0 0 3px #000000",
-                  boxShadow: rankingMode === 'global' ? "0 4px 16px rgba(14, 165, 233, 0.5), inset 0 0 0 1px #000000" : "none",
+                  textShadow: rankingMode === 'global' ? "0 1px 2px rgba(0,0,0,0.6)" : "none",
+                  boxShadow: rankingMode === 'global' ? "0 3px 12px rgba(14, 165, 233, 0.4)" : "none",
                   transition: "all 0.2s ease"
                 }}
               >
@@ -704,10 +754,10 @@ export default function DepartamentosPage() {
                   src="/images/croquisnicaragua.svg" 
                   alt="Ranking Global" 
                   style={{ 
-                    width: "19px", 
-                    height: "19px", 
+                    width: "18px", 
+                    height: "18px", 
                     objectFit: "contain", 
-                    filter: rankingMode === 'global' ? "brightness(0) invert(1) drop-shadow(0 1px 2px #000)" : "brightness(0) invert(0.95) drop-shadow(0 1px 2px #000)" 
+                    filter: rankingMode === 'global' ? "brightness(0) invert(1)" : "brightness(0) invert(0.75)" 
                   }} 
                 />
                 <span>{tr("Ranking Global", "Global Ranking", "全境总榜")}</span>
@@ -718,23 +768,23 @@ export default function DepartamentosPage() {
                 onClick={() => setRankingMode('propio')}
                 style={{
                   flex: 1,
-                  padding: "8px 12px",
-                  borderRadius: "10px",
-                  border: rankingMode === 'propio' ? "2px solid #FFFFFF" : "1.5px solid rgba(255, 255, 255, 0.3)",
+                  padding: "8px 10px",
+                  borderRadius: "9px",
+                  border: rankingMode === 'propio' ? "1px solid rgba(255, 255, 255, 0.35)" : "1px solid transparent",
                   background: rankingMode === 'propio' 
                     ? "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)" 
-                    : "rgba(15, 23, 42, 0.80)",
-                  color: "#FFFFFF",
+                    : "transparent",
+                  color: rankingMode === 'propio' ? "#FFFFFF" : "#94A3B8",
                   fontWeight: rankingMode === 'propio' ? "800" : "700",
-                  fontSize: "14px",
-                  letterSpacing: "0.3px",
+                  fontSize: "13px",
+                  letterSpacing: "0.2px",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "7px",
-                  textShadow: "0 1px 3px #000000, 0 0 3px #000000",
-                  boxShadow: rankingMode === 'propio' ? "0 4px 16px rgba(14, 165, 233, 0.5), inset 0 0 0 1px #000000" : "none",
+                  textShadow: rankingMode === 'propio' ? "0 1px 2px rgba(0,0,0,0.6)" : "none",
+                  boxShadow: rankingMode === 'propio' ? "0 3px 12px rgba(14, 165, 233, 0.4)" : "none",
                   transition: "all 0.2s ease"
                 }}
               >
@@ -742,10 +792,10 @@ export default function DepartamentosPage() {
                   src="/images/perfil.svg" 
                   alt="Ranking Personal" 
                   style={{ 
-                    width: "17px", 
-                    height: "17px", 
+                    width: "16px", 
+                    height: "16px", 
                     objectFit: "contain", 
-                    filter: rankingMode === 'propio' ? "brightness(0) invert(1) drop-shadow(0 1px 2px #000)" : "brightness(0) invert(0.95) drop-shadow(0 1px 2px #000)" 
+                    filter: rankingMode === 'propio' ? "brightness(0) invert(1)" : "brightness(0) invert(0.75)" 
                   }} 
                 />
                 <span>{tr("Ranking Personal", "My Ranking", "个人足迹榜")}</span>
@@ -795,12 +845,10 @@ export default function DepartamentosPage() {
                 </div>
               ) : (
                 <>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                     {rankingData.slice(0, visibleCount).map((lugar, idx) => {
                       const pos = idx + 1;
                       const countVisits = rankingMode === 'propio' ? (lugar.mis_visitas || 1) : (lugar.total_visitas || 0);
-
-                      // Formato estándar a 1 decimal para todas las calificaciones (ej. 5.0)
                       const formattedRating = (lugar.negocio_rating != null && !isNaN(parseFloat(lugar.negocio_rating)))
                         ? parseFloat(lugar.negocio_rating).toFixed(1)
                         : '5.0';
@@ -810,155 +858,179 @@ export default function DepartamentosPage() {
                           key={lugar.id}
                           style={{ 
                             background: pos === 1 
-                              ? "linear-gradient(135deg, rgba(22, 48, 82, 0.78) 0%, rgba(10, 26, 50, 0.82) 100%)"
-                              : "rgba(10, 25, 47, 0.65)", 
-                            backdropFilter: "blur(8px)",
-                            WebkitBackdropFilter: "blur(8px)",
-                            border: pos === 1 ? "1px solid rgba(255, 215, 0, 0.55)" : "1px solid rgba(255, 255, 255, 0.18)",
+                              ? "linear-gradient(135deg, rgba(24, 48, 80, 0.88) 0%, rgba(12, 26, 48, 0.94) 100%)"
+                              : pos === 2
+                              ? "linear-gradient(135deg, rgba(20, 40, 68, 0.85) 0%, rgba(10, 22, 42, 0.90) 100%)"
+                              : pos === 3
+                              ? "linear-gradient(135deg, rgba(26, 36, 54, 0.85) 0%, rgba(12, 20, 36, 0.90) 100%)"
+                              : "rgba(10, 25, 47, 0.72)", 
+                            backdropFilter: "blur(12px)",
+                            WebkitBackdropFilter: "blur(12px)",
+                            border: pos === 1 
+                              ? "1px solid rgba(255, 215, 0, 0.55)" 
+                              : pos === 2
+                              ? "1px solid rgba(226, 232, 240, 0.4)"
+                              : pos === 3
+                              ? "1px solid rgba(249, 115, 22, 0.45)"
+                              : "1px solid rgba(255, 255, 255, 0.14)",
                             borderRadius: "14px",
-                            padding: "8px 12px",
+                            padding: "11px 13px",
                             display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            gap: "10px",
-                            boxShadow: pos === 1 ? "0 6px 20px rgba(255, 215, 0, 0.15)" : "0 3px 8px rgba(0,0,0,0.3)",
+                            flexDirection: "column",
+                            gap: "5px",
+                            boxShadow: pos === 1 
+                              ? "0 6px 20px rgba(255, 215, 0, 0.16), 0 2px 6px rgba(0,0,0,0.4)" 
+                              : "0 3px 12px rgba(0,0,0,0.35)",
                             transition: "all 0.2s ease"
                           }}
                         >
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
-                            {/* Píldora de Posición: Lugar 1 (Oro), Lugar 2 (Plata), Lugar 3 (Cobre) */}
-                            <div style={{ 
-                              minWidth: "66px", 
-                              padding: "6px 9px", 
-                              borderRadius: "8px", 
-                              background: pos === 1 
-                                ? "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)" 
-                                : pos === 2 
-                                ? "linear-gradient(135deg, rgba(226, 232, 240, 0.35) 0%, rgba(148, 163, 184, 0.25) 100%)" 
-                                : pos === 3 
-                                ? "linear-gradient(135deg, rgba(217, 119, 6, 0.5) 0%, rgba(180, 83, 9, 0.35) 100%)" 
-                                : "rgba(255, 255, 255, 0.10)", 
-                              display: "flex", 
-                              alignItems: "center", 
-                              justifyContent: "center", 
-                              fontSize: "12.5px", 
-                              fontWeight: "900", 
-                              color: pos === 1 ? "#FFFFFF" : pos === 2 ? "#F8FAFC" : pos === 3 ? "#FDBA74" : "#FFFFFF", 
-                              border: pos === 1 
-                                ? "1px solid rgba(255, 255, 255, 0.6)" 
-                                : pos === 2 
-                                ? "1px solid rgba(226, 232, 240, 0.5)" 
-                                : pos === 3 
-                                ? "1px solid rgba(249, 115, 22, 0.55)" 
-                                : "1px solid rgba(255, 255, 255, 0.22)",
-                              flexShrink: 0,
-                              boxShadow: pos === 1 
-                                ? "0 2px 8px rgba(245, 158, 11, 0.35)" 
-                                : "none"
-                            }}>
-                              {lang === "zh" ? `第 ${pos} 名` : `${tr("Lugar", "Rank", "第")} ${pos}`}
+                          {/* Fila 1 (Metadatos): Posición + Categoría + Departamento + Visitas */}
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", width: "100%", flexWrap: "wrap" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "7px", flexWrap: "wrap", minWidth: 0 }}>
+                              {/* Badge de Posición */}
+                              <span style={{ 
+                                padding: "2px 8px", 
+                                borderRadius: "6px", 
+                                background: pos === 1 
+                                  ? "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)" 
+                                  : pos === 2 
+                                  ? "linear-gradient(135deg, #94A3B8 0%, #64748B 100%)" 
+                                  : pos === 3 
+                                  ? "linear-gradient(135deg, #D97706 0%, #B45309 100%)" 
+                                  : "rgba(255, 255, 255, 0.12)", 
+                                fontSize: "11px", 
+                                fontWeight: "900", 
+                                color: pos === 1 ? "#FFFFFF" : pos === 2 ? "#FFFFFF" : pos === 3 ? "#FED7AA" : "#CBD5E1", 
+                                border: pos === 1 
+                                  ? "1px solid rgba(255, 255, 255, 0.6)" 
+                                  : pos === 2 
+                                  ? "1px solid rgba(226, 232, 240, 0.5)" 
+                                  : pos === 3 
+                                  ? "1px solid rgba(249, 115, 22, 0.55)" 
+                                  : "1px solid rgba(255, 255, 255, 0.22)",
+                                flexShrink: 0,
+                                boxShadow: pos === 1 ? "0 2px 8px rgba(245, 158, 11, 0.35)" : "none",
+                                letterSpacing: "0.2px"
+                              }}>
+                                {lang === "zh" ? `第 ${pos} 名` : `${tr("Lugar", "Rank", "第")} ${pos}`}
+                              </span>
+
+                              {/* Categoría */}
+                              <span style={{ 
+                                fontSize: "10px", 
+                                fontWeight: "850", 
+                                textTransform: "uppercase", 
+                                background: "rgba(56, 189, 248, 0.16)", 
+                                color: "#7DD3FC", 
+                                border: "1px solid rgba(56, 189, 248, 0.35)", 
+                                padding: "2px 7px", 
+                                borderRadius: "6px", 
+                                letterSpacing: "0.3px", 
+                                flexShrink: 0 
+                              }}>
+                                {lugar.categoria}
+                              </span>
+
+                              {/* Departamento con Ubicacion.svg */}
+                              <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11.5px", color: "#CBD5E1", fontWeight: "700" }}>
+                                <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "12px", height: "12px", filter: "brightness(0) invert(0.85)", flexShrink: 0 }} />
+                                <span>{lugar.departamento || 'Nicaragua'}</span>
+                              </span>
                             </div>
 
-                            {/* Info del Lugar */}
-                            <div style={{ minWidth: 0 }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "nowrap", overflow: "hidden" }}>
-                                <h3 style={{ 
-                                  margin: 0, 
-                                  fontSize: "16px", 
-                                  fontWeight: "800", 
-                                  fontFamily: "var(--font-outfit), 'Inter', sans-serif !important",
-                                  textTransform: "capitalize",
-                                  color: "#FFFFFF", 
-                                  whiteSpace: "nowrap", 
-                                  overflow: "hidden", 
-                                  textOverflow: "ellipsis",
-                                  letterSpacing: "0.2px",
-                                  textShadow: "0 1px 3px rgba(0, 0, 0, 0.7)"
-                                }}>
-                                  {lugar.nombre}
-                                </h3>
-                                <span style={{ 
-                                  fontSize: "10.5px", 
-                                  fontWeight: "800", 
-                                  textTransform: "uppercase", 
-                                  background: "rgba(56, 189, 248, 0.25)", 
-                                  color: "#7DD3FC", 
-                                  border: "1px solid rgba(56, 189, 248, 0.4)",
-                                  padding: "2px 7px", 
-                                  borderRadius: "6px", 
-                                  flexShrink: 0 
-                                }}>
-                                  {lugar.categoria}
-                                </span>
-                              </div>
-
-                              {/* Departamento con Ubicacion.svg y Rating estandarizado a 1 decimal (ej. 5.0) */}
-                              <p style={{ margin: "3px 0 0 0", fontSize: "12.5px", color: "#F8FAFC", fontWeight: "700", display: "flex", alignItems: "center", gap: "10px" }}>
-                                <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                                  <img src="/images/Ubicacion.svg" alt="Ubicación" style={{ width: "14px", height: "14px", filter: "brightness(0) invert(0.95)", flexShrink: 0 }} />
-                                  <span>{lugar.departamento || 'Nicaragua'}</span>
-                                </span>
-
-                                <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                                  <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                                    <img 
-                                      src="/images/flor.svg" 
-                                      alt="Rating Flor" 
-                                      style={{ 
-                                        width: "16px", 
-                                        height: "16px", 
-                                        objectFit: "contain",
-                                        filter: "drop-shadow(0 0 3px rgba(255, 215, 0, 0.95)) drop-shadow(0 0 1px #000)" 
-                                      }} 
-                                    />
-                                  </span>
-                                  <span style={{ fontWeight: "900", color: "#FBBF24" }}>{formattedRating}</span>
-                                </span>
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Contador de Visitas con perfil.svg y Acción */}
-                          <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px", flexShrink: 0 }}>
+                            {/* Contador de Visitas */}
                             <div style={{
-                              background: rankingMode === 'propio' ? "rgba(56, 189, 248, 0.28)" : "rgba(255, 255, 255, 0.20)",
-                              border: rankingMode === 'propio' ? "1px solid rgba(56, 189, 248, 0.5)" : "1px solid rgba(255, 255, 255, 0.3)",
-                              padding: "5px 10px",
-                              borderRadius: "8px",
+                              background: rankingMode === 'propio' ? "rgba(56, 189, 248, 0.25)" : "rgba(255, 255, 255, 0.14)",
+                              border: rankingMode === 'propio' ? "1px solid rgba(56, 189, 248, 0.5)" : "1px solid rgba(255, 255, 255, 0.22)",
+                              padding: "2px 8px",
+                              borderRadius: "7px",
                               color: rankingMode === 'propio' ? "#7DD3FC" : "#FFFFFF",
                               fontWeight: "900",
-                              fontSize: "12px",
+                              fontSize: "11px",
                               display: "inline-flex",
                               alignItems: "center",
-                              gap: "5px"
+                              gap: "4px",
+                              flexShrink: 0,
+                              marginLeft: "auto"
                             }}>
                               <img 
                                 src="/images/perfil.svg" 
                                 alt="Visitas" 
                                 style={{ 
-                                  width: "14px", 
-                                  height: "14px", 
+                                  width: "12px", 
+                                  height: "12px", 
                                   filter: rankingMode === 'propio' 
                                     ? "brightness(0) saturate(100%) invert(67%) sepia(85%) saturate(1800%) hue-rotate(170deg)" 
                                     : "brightness(0) invert(1)" 
                                 }} 
                               />
-                              <span>{countVisits} {countVisits === 1 ? tr('visita', 'visit', '次访问') : tr('visitas', 'visits', '次访问')}</span>
+                              <span>{countVisits} {countVisits === 1 ? tr('visita', 'visit', '次') : tr('visitas', 'visits', '次')}</span>
                             </div>
+                          </div>
+
+                          {/* Fila 2 (Protagonista): Nombre del Lugar en ancho completo sin recortes ni solapamientos */}
+                          <h3 style={{ 
+                            margin: "4px 0 2px 0", 
+                            fontSize: "15.5px", 
+                            fontWeight: "850", 
+                            fontFamily: "var(--font-outfit), 'Inter', sans-serif !important",
+                            color: "#FFFFFF", 
+                            lineHeight: "1.3",
+                            letterSpacing: "0.2px",
+                            textShadow: "0 1px 3px rgba(0, 0, 0, 0.8)",
+                            wordBreak: "break-word"
+                          }}>
+                            {lugar.nombre}
+                          </h3>
+
+                          {/* Fila 3: Rating a la izquierda + Botón Ir al Mapa a la derecha */}
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px", width: "100%", marginTop: "2px", paddingTop: "2px" }}>
+                            {/* Rating estandarizado a 1 decimal */}
+                            <span style={{ 
+                              display: "inline-flex", 
+                              alignItems: "center", 
+                              gap: "5px", 
+                              background: "rgba(255, 215, 0, 0.12)", 
+                              border: "1px solid rgba(255, 215, 0, 0.32)", 
+                              padding: "2px 7px", 
+                              borderRadius: "6px" 
+                            }}>
+                              <img 
+                                src="/images/flor.svg" 
+                                alt="Rating Flor" 
+                                style={{ 
+                                  width: "13px", 
+                                  height: "13px", 
+                                  objectFit: "contain",
+                                  filter: "drop-shadow(0 0 3px rgba(255, 215, 0, 0.95))" 
+                                }} 
+                              />
+                              <span style={{ fontWeight: "900", color: "#FFD700", fontSize: "12px" }}>{formattedRating}</span>
+                            </span>
+
+                            {/* Enlace Ir al Mapa independiente sin solaparse */}
                             <Link 
                               href={`/mapa?id=${lugar.id}&lat=${lugar.lat}&lng=${lugar.lng}`}
                               style={{ 
-                                fontSize: "11px", 
-                                fontWeight: "800", 
+                                fontSize: "11.5px", 
+                                fontWeight: "850", 
                                 color: "#38BDF8", 
                                 textDecoration: "none",
-                                textShadow: "0 1px 2px rgba(0,0,0,0.6)",
                                 display: "inline-flex",
                                 alignItems: "center",
-                                gap: "2px"
+                                gap: "5px",
+                                background: "linear-gradient(135deg, rgba(56, 189, 248, 0.16) 0%, rgba(2, 132, 199, 0.28) 100%)",
+                                padding: "4px 10px",
+                                borderRadius: "7px",
+                                border: "1px solid rgba(56, 189, 248, 0.38)",
+                                boxShadow: "0 2px 8px rgba(56, 189, 248, 0.18)",
+                                marginLeft: "auto",
+                                flexShrink: 0,
+                                transition: "all 0.2s ease"
                               }}
                             >
-                              {tr("Ir al Mapa ➔", "Go to Map ➔", "前往地图 ➔")}
+                              <span>{tr("Ir al Mapa", "Go to Map", "前往地图")}</span>
+                              <span style={{ fontSize: "12px" }}>➔</span>
                             </Link>
                           </div>
                         </div>

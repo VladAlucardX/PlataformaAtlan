@@ -85,7 +85,7 @@ export default function LoginPage() {
             setEmail(userEmail);
             setStep("otp");
 
-            let isUserAdmin = userEmail === "admin@atlan.com";
+            let isUserAdmin = userEmail === "admin@atlan.com" || userEmail === "turista@atlan.com";
             try {
               const { data: profile } = await supabase
                 .from("perfiles")
@@ -192,8 +192,8 @@ export default function LoginPage() {
         return;
       }
 
-      // Verificar rol del usuario en la base de datos ANTES de cerrar sesión
-      let isUserAdmin = cleanEmail === "admin@atlan.com";
+      // Verificar rol del usuario en la base de datos ANTES de cerrar sesión (o cuenta de prueba)
+      let isUserAdmin = cleanEmail === "admin@atlan.com" || cleanEmail === "turista@atlan.com";
       if (authData?.user) {
         const { data: profile } = await supabase
           .from("perfiles")
@@ -753,10 +753,10 @@ export default function LoginPage() {
                   <Icon name="shield" size={14} color="#146D9E" />
                   <span>
                     {lang === "en"
-                      ? "Admin Test Mode: you can use code "
+                      ? "Test Mode: you can use code "
                       : lang === "zh"
-                      ? "管理员测试模式：您可以使用验证码 "
-                      : "Modo Admin de Prueba: puedes usar el código "}
+                      ? "测试模式：您可以使用验证码 "
+                      : "Modo de Prueba: puedes usar el código "}
                     <strong>123456</strong>
                   </span>
                 </div>
