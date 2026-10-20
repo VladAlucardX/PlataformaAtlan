@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
+import { isMember } from "@/lib/membership";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -472,7 +473,7 @@ export default function PerfilPage() {
     ? (lang === "en" ? "Business Owner" : lang === "zh" ? "商家店主" : "Propietario de Negocio")
     : perfil?.rol === "admin"
     ? (lang === "en" ? "Admin" : lang === "zh" ? "管理员" : "Administrador")
-    : (perfil?.es_premium || perfil?.suscripcion_activa || perfil?.rol === "turista_deacachimba")
+    : (isMember(perfil))
     ? (lang === "en" ? "Deacachimba Tourist" : lang === "zh" ? "超级游客" : "Turista Deacachimba")
     : (lang === "en" ? "Tuani Tourist" : lang === "zh" ? "优质游客" : "Turista Tuani");
 

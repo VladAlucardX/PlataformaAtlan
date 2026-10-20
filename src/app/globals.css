@@ -3757,11 +3757,13 @@ nav .notif-item:hover {
   .ranking-header {
     flex-direction: column !important;
     align-items: flex-start !important;
-    gap: 10px !important;
+    gap: 8px !important;
+    margin-bottom: 8px !important;
   }
 
   .ranking-header h1 {
-    font-size: 18px !important;
+    font-size: 17px !important;
+    line-height: 1.3 !important;
   }
 
   .ranking-grid {
@@ -3774,10 +3776,12 @@ nav .notif-item:hover {
   }
 
   .ranking-map-panel {
-    height: 45vh !important;
-    min-height: 300px !important;
-    max-height: 45vh !important;
+    height: 330px !important;
+    min-height: 310px !important;
+    max-height: 350px !important;
     overflow: hidden !important;
+    padding: 12px !important;
+    border-radius: 18px !important;
   }
 
   .ranking-list-panel {
@@ -3785,6 +3789,12 @@ nav .notif-item:hover {
     min-height: auto !important;
     max-height: none !important;
     overflow: visible !important;
+  }
+
+  .ranking-list-panel .dept-tabs-scroll {
+    max-height: none !important;
+    overflow: visible !important;
+    overflow-y: visible !important;
   }
 
   .ranking-items-list {
@@ -4122,9 +4132,10 @@ nav .notif-item:hover {
   }
 
   .ranking-map-panel {
-    height: 40vh !important;
-    min-height: 250px !important;
-    max-height: 40vh !important;
+    height: 285px !important;
+    min-height: 265px !important;
+    max-height: 300px !important;
+    padding: 10px !important;
   }
 
   .guias-modal-header {

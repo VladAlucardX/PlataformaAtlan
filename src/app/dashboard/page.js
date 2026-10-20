@@ -13,6 +13,7 @@ import Icon from "@/components/ui/Icon";
 import { uploadMedia } from "@/lib/storage";
 import { obtenerDepartamentoPorCoordenadas } from "@/lib/geoUtils";
 import { getCategorySvg } from "@/lib/imageUtils";
+import { getPlanLimits, PLAN_LIMITS } from "@/lib/membership";
 
 // Helper para obtener imagen por defecto según la categoría del negocio
 const getCategoryFallbackImage = (categoria) => {
@@ -33,7 +34,7 @@ const getCategoryFallbackImage = (categoria) => {
 };
 
 export default function DashboardPage() {
-  const { t, lang } = useTranslation();
+  const { t, tr, lang } = useTranslation();
   const router = useRouter();
 
   // Autenticación centralizada desde AuthContext
@@ -129,6 +130,31 @@ export default function DashboardPage() {
   const showToast = (message, type = "success") => {
     setToastBanner({ message, type });
     setTimeout(() => setToastBanner(null), 4000);
+  };
+
+  // Límites del plan (Gratis vs Tuani Pro). El contenido existente se conserva; solo se bloquea agregar más.
+  const limits = getPlanLimits(perfil || authPerfil);
+  const isPro = limits === PLAN_LIMITS.pro;
+
+  const promptUpgrade = (msg) => {
+    const invite = tr(
+      "¿Quieres ver la membresía Tuani Pro?",
+      "Would you like to see the Tuani Pro membership?",
+      "是否查看 Tuani Pro 会员？"
+    );
+    if (confirm(`${msg}\n\n${invite}`)) router.push("/membresia");
+  };
+
+  const ensureCanAddNegocio = () => {
+    if ((misNegocios || []).length >= limits.negocios) {
+      promptUpgrade(tr(
+        `Tu plan gratuito permite ${limits.negocios} negocio. Con Tuani Pro puedes tener hasta ${PLAN_LIMITS.pro.negocios}.`,
+        `Your free plan allows ${limits.negocios} business. With Tuani Pro you can have up to ${PLAN_LIMITS.pro.negocios}.`,
+        `免费版最多可管理 ${limits.negocios} 个商户，升级 Tuani Pro 最多 ${PLAN_LIMITS.pro.negocios} 个。`
+      ));
+      return false;
+    }
+    return true;
   };
 
   // Reclamar punto
@@ -481,6 +507,7 @@ export default function DashboardPage() {
 
   // Reclamar un punto geográfico
   const handleInitiateClaim = (punto) => {
+    if (!ensureCanAddNegocio()) return;
     if (punto && punto !== "gps" && (punto.estado === "en_verificacion" || punto.negocio_id)) {
       showToast(lang === "en" 
         ? "⏳ This location already has a pending claim request under admin review." 
@@ -854,6 +881,14 @@ export default function DashboardPage() {
   const handleFotoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if ((fotos || []).length >= limits.fotosGaleria) {
+      promptUpgrade(tr(
+        `Tu plan gratuito permite ${limits.fotosGaleria} fotos de galería. Con Tuani Pro puedes subir hasta ${PLAN_LIMITS.pro.fotosGaleria}.`,
+        `Your free plan allows ${limits.fotosGaleria} gallery photos. With Tuani Pro you can upload up to ${PLAN_LIMITS.pro.fotosGaleria}.`,
+        `免费版最多 ${limits.fotosGaleria} 张图库照片，升级 Tuani Pro 最多 ${PLAN_LIMITS.pro.fotosGaleria} 张。`
+      ));
+      return;
+    }
     setUploadingFoto(true);
     try {
       const url = await uploadMedia(file, "negocios/fotos");
@@ -903,6 +938,14 @@ export default function DashboardPage() {
   const handleAddPlato = async (e) => {
     e.preventDefault();
     if (!newPlatoNombre || !newPlatoPrecio) return;
+    if ((menuItems || []).length >= limits.platosMenu) {
+      promptUpgrade(tr(
+        `Tu plan gratuito permite ${limits.platosMenu} platos en el menú. Con Tuani Pro son ilimitados.`,
+        `Your free plan allows ${limits.platosMenu} menu dishes. With Tuani Pro it is unlimited.`,
+        `免费版最多 ${limits.platosMenu} 道菜品，Tuani Pro 无限制。`
+      ));
+      return;
+    }
     setIsAddingPlato(true);
 
     try {
@@ -1380,6 +1423,7 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => {
+                    if (!ensureCanAddNegocio()) return;
                     setClaimSearchTerm("");
                     setShowSearchClaimModal(true);
                   }}
@@ -2408,11 +2452,16 @@ export default function DashboardPage() {
                                 <button type="button" onClick={() => handleRemoveFoto(url)} style={{ position: "absolute", top: "-4px", right: "-4px", background: "#ef4444", color: "white", border: "none", borderRadius: "50%", width: "15px", height: "15px", fontSize: "8px", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center" }}>✕</button>
                               </div>
                             ))}
-                            {(fotos || []).length < 6 && (
+                            {(fotos || []).length < limits.fotosGaleria && (
                               <label style={{ width: "44px", height: "44px", borderRadius: "8px", border: "1.5px dashed rgba(20, 109, 158, 0.25)", background: "#FFFFFF", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "16px", cursor: "pointer", color: "var(--atlan-gold)" }}>
                                 {uploadingFoto ? "..." : "+"}
                                 <input type="file" accept="image/*" onChange={handleFotoUpload} style={{ display: "none" }} />
                               </label>
+                            )}
+                            {!isPro && (fotos || []).length >= limits.fotosGaleria && (
+                              <Link href="/membresia" title={tr("Desbloquea hasta 15 fotos con Tuani Pro", "Unlock up to 15 photos with Tuani Pro", "升级 Tuani Pro 解锁最多 15 张照片")} style={{ width: "44px", height: "44px", borderRadius: "8px", border: "1.5px dashed rgba(255, 215, 0, 0.6)", background: "rgba(255, 215, 0, 0.1)", display: "flex", justifyContent: "center", alignItems: "center", textDecoration: "none" }}>
+                                <Icon name="lock" size={16} color="#B8960E" />
+                              </Link>
                             )}
                           </div>
                         </div>

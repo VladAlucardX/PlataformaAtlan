@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { isMember } from "@/lib/membership";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -1152,7 +1153,7 @@ export default function PerfilPublico() {
                 <p style={{ margin: "0 0 10px", fontSize: "12px", color: "#64748B", display: "flex", alignItems: "center", justifyContent: "center", gap: "5px" }}>
                   {targetPerfil.rol === "dueno"
                     ? <><Icon name="building" size={11} color="#146D9E" /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
-                    : (targetPerfil.es_premium || targetPerfil.suscripcion_activa || targetPerfil.rol === "turista_deacachimba")
+                    : (isMember(targetPerfil))
                     ? <><Icon name="star" size={11} color="#D97706" /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
                     : <><Icon name="luggage" size={11} color="#146D9E" /> {lang === "en" ? "Turista Tuani" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
                 </p>

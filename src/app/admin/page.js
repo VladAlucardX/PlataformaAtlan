@@ -1,46 +1,52 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../lib/AuthContext';
-import { useTranslation } from '../../hooks/useTranslation';
-import LanguageToggle from '../../components/ui/LanguageToggle';
-import Navbar from '../../components/ui/Navbar';
+import React, { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/lib/AuthContext";
+import { useTranslation } from "@/hooks/useTranslation";
+import Navbar from "@/components/ui/Navbar";
+import Icon from "@/components/ui/Icon";
 
 export default function AdminDashboard() {
-  const { t, lang } = useTranslation();
+  const { t, tr, lang } = useTranslation();
   const router = useRouter();
 
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loadingAuth, setLoadingAuth] = useState(true);
+  // Sesión centralizada desde AuthContext
+  const { session, perfil, loading: authLoading } = useAuth();
+  const isAdmin = perfil?.rol === "admin";
+
   const [loadingData, setLoadingData] = useState(true);
-  const [userSession, setUserSession] = useState(null);
-  const [userPerfil, setUserPerfil] = useState(null);
 
   // Datos
   const [reclamos, setReclamos] = useState([]);
   const [stats, setStats] = useState({
     pendientes: 0,
     aprobados: 0,
-    totalPuntos: 0
+    totalPuntos: 0,
   });
 
-  const [activeTab, setActiveTab] = useState('pending'); // 'pending', 'all'
+  const [activeTab, setActiveTab] = useState("pending"); // 'pending' | 'all'
   const [todosLosPuntos, setTodosLosPuntos] = useState([]);
 
   // Buscador y Paginación
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 8;
 
-  // Reiniciar página al cambiar tab o búsqueda
-  useEffect(() => {
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
     setCurrentPage(1);
-  }, [activeTab, searchTerm]);
+  };
+
+  const handleSearchChange = (val) => {
+    setSearchTerm(val);
+    setCurrentPage(1);
+  };
 
   // Filtrado de items
-  const rawItems = activeTab === 'pending' ? reclamos : todosLosPuntos;
+  const rawItems = activeTab === "pending" ? reclamos : todosLosPuntos;
   const filteredItems = rawItems.filter((item) => {
     if (!searchTerm.trim()) return true;
     const term = searchTerm.toLowerCase();
@@ -61,196 +67,179 @@ export default function AdminDashboard() {
 
   // Estados para modal de rechazo interactivo
   const [rejectionTarget, setRejectionTarget] = useState(null); // { puntoId, negocioId, nombreNegocio }
-  const [rejectionType, setRejectionType] = useState('correction'); // 'correction' | 'release'
-  const [rejectionReason, setRejectionReason] = useState('');
+  const [rejectionType, setRejectionType] = useState("correction"); // 'correction' | 'release'
+  const [rejectionReason, setRejectionReason] = useState("");
   const [submittingRejection, setSubmittingRejection] = useState(false);
 
-  // Toast Banner 3D
+  // Toast Banner
   const [toastBanner, setToastBanner] = useState(null);
-  const showToast = (message, type = 'success') => {
+  const showToast = (message, type = "success") => {
     setToastBanner({ message, type });
     setTimeout(() => setToastBanner(null), 4000);
   };
-  
-  // Sesión centralizada desde AuthContext
-  const { session: authSession, perfil: authPerfil, loading: authLoading } = useAuth();
 
   // Verificar rol de admin
   useEffect(() => {
     if (authLoading) return;
-
-    if (!authSession) {
-      router.replace('/login');
-      return;
+    if (!session) {
+      router.replace("/login");
+    } else if (perfil && perfil.rol !== "admin") {
+      console.warn("[Atlan Admin] Acceso denegado. Rol insuficiente.");
+      router.replace("/mapa");
     }
+  }, [authLoading, session, perfil, router]);
 
-    setUserSession(authSession);
+  // Recarga de datos
+  const [reloadKey, setReloadKey] = useState(0);
+  const reloadAdminData = useCallback(() => setReloadKey((k) => k + 1), []);
 
-    const verifyRole = async () => {
-      let profile = authPerfil;
-      if (!profile) {
-        const { data } = await supabase
-          .from('perfiles')
-          .select('*')
-          .eq('id', authSession.user.id)
-          .single();
-        profile = data;
-      }
-
-      if (!profile || profile.rol !== 'admin') {
-        console.warn('[Atlan Admin] Acceso denegado. Rol insuficiente.');
-        router.replace('/mapa');
-        return;
-      }
-
-      setUserPerfil(profile);
-      setIsAdmin(true);
-      setLoadingAuth(false);
-    };
-
-    verifyRole();
-  }, [authLoading, authSession, authPerfil, router]);
-
-  // Cargar datos cuando isAdmin cambia a true
   useEffect(() => {
-    if (isAdmin) {
-      loadAdminData();
-    }
-  }, [isAdmin]);
+    if (!isAdmin) return;
+    let cancelled = false;
 
-  // Cargar reclamos y estadísticas
-  const loadAdminData = async () => {
-    setLoadingData(true);
-
-    try {
-      // 1. Cargar reclamos pendientes (puntos con estado 'en_verificacion')
-      let { data: puntosPendientes, error: errorPuntos } = await supabase
-        .from('puntos')
-        .select(`
-          id,
-          nombre,
-          descripcion,
-          categoria,
-          estado,
-          negocio_id,
-          nombre_creador,
-          negocios (
+    (async () => {
+      try {
+        // 1. Cargar reclamos pendientes (puntos con estado 'en_verificacion')
+        let { data: puntosPendientes, error: errorPuntos } = await supabase
+          .from("puntos")
+          .select(`
             id,
             nombre,
-            tipo,
             descripcion,
-            telefono,
-            whatsapp,
-            rango_precios,
-            servicios,
-            datos_verificacion,
-            dueno_id
-          )
-        `)
-        .eq('estado', 'en_verificacion');
+            categoria,
+            estado,
+            negocio_id,
+            nombre_creador,
+            negocios (
+              id,
+              nombre,
+              tipo,
+              descripcion,
+              telefono,
+              whatsapp,
+              rango_precios,
+              servicios,
+              datos_verificacion,
+              dueno_id
+            )
+          `)
+          .eq("estado", "en_verificacion");
 
-      if (errorPuntos) {
-        console.warn('[Atlan Admin] Intentando consulta alternativa para reclamos:', errorPuntos);
-        const { data: rawPuntos } = await supabase
-          .from('puntos')
-          .select('*')
-          .eq('estado', 'en_verificacion');
-        puntosPendientes = rawPuntos || [];
-      }
+        if (errorPuntos) {
+          console.warn("[Atlan Admin] Intentando consulta alternativa para reclamos:", errorPuntos);
+          const { data: rawPuntos } = await supabase
+            .from("puntos")
+            .select("*")
+            .eq("estado", "en_verificacion");
+          puntosPendientes = rawPuntos || [];
+        }
 
-      // Enriquecer con datos de perfil si dueno_id está presente
-      if (puntosPendientes && puntosPendientes.length > 0) {
-        const duenoIds = puntosPendientes
-          .map(p => p.negocios?.dueno_id)
-          .filter(Boolean);
+        // Enriquecer con datos de perfil si dueno_id está presente
+        if (puntosPendientes && puntosPendientes.length > 0) {
+          const duenoIds = puntosPendientes
+            .map((p) => p.negocios?.dueno_id)
+            .filter(Boolean);
 
-        if (duenoIds.length > 0) {
-          const { data: perfilesData } = await supabase
-            .from('perfiles')
-            .select('id, nombre_completo, email')
-            .in('id', duenoIds);
+          if (duenoIds.length > 0) {
+            const { data: perfilesData } = await supabase
+              .from("perfiles")
+              .select("id, nombre_completo, email")
+              .in("id", duenoIds);
 
-          if (perfilesData) {
-            const profileMap = new Map(perfilesData.map(p => [p.id, p]));
-            puntosPendientes.forEach(p => {
-              if (p.negocios && p.negocios.dueno_id) {
-                p.negocios.perfiles = profileMap.get(p.negocios.dueno_id) || null;
-              }
-            });
+            if (perfilesData) {
+              const profileMap = new Map(perfilesData.map((p) => [p.id, p]));
+              puntosPendientes.forEach((p) => {
+                if (p.negocios && p.negocios.dueno_id) {
+                  p.negocios.perfiles = profileMap.get(p.negocios.dueno_id) || null;
+                }
+              });
+            }
           }
         }
+
+        // 2. Cargar todos los puntos para la segunda pestaña
+        const { data: todosPuntos } = await supabase
+          .from("puntos")
+          .select("*")
+          .order("nombre", { ascending: true });
+
+        if (cancelled) return;
+
+        setReclamos(puntosPendientes || []);
+        setTodosLosPuntos(todosPuntos || []);
+
+        // 3. Calcular estadísticas
+        const totalPuntos = todosPuntos?.length || 0;
+        const pendientes = puntosPendientes?.length || 0;
+        const aprobados = todosPuntos?.filter((p) => p.estado === "aprobado").length || 0;
+
+        setStats({
+          pendientes,
+          aprobados,
+          totalPuntos,
+        });
+      } catch (err) {
+        console.error("[Atlan Admin] Error cargando datos:", err);
+      } finally {
+        if (!cancelled) {
+          setLoadingData(false);
+        }
       }
+    })();
 
-      setReclamos(puntosPendientes || []);
-
-      // 2. Cargar todos los puntos para la segunda pestaña
-      const { data: todosPuntos } = await supabase
-        .from('puntos')
-        .select('*')
-        .order('nombre', { ascending: true });
-      setTodosLosPuntos(todosPuntos || []);
-
-      // 3. Calcular estadísticas
-      const totalPuntos = todosPuntos?.length || 0;
-      const pendientes = puntosPendientes?.length || 0;
-      const aprobados = todosPuntos?.filter(p => p.estado === 'aprobado').length || 0;
-
-      setStats({
-        pendientes,
-        aprobados,
-        totalPuntos
-      });
-
-    } catch (err) {
-      console.error('[Atlan Admin] Error cargando reclamos:', err);
-    } finally {
-      setLoadingData(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isAdmin) {
-      loadAdminData();
-    }
-  }, [isAdmin]);
+    return () => {
+      cancelled = true;
+    };
+  }, [isAdmin, reloadKey]);
 
   // Aprobar un negocio reclamado
   const handleAprobarReclamo = async (puntoId, negocioId) => {
-    if (!confirm(lang === 'en' ? 'Are you sure you want to approve this business claim?' : lang === 'zh' ? '您确定要批准此商户认领申请吗？' : '¿Está seguro de aprobar este reclamo de negocio?')) return;
+    const confirmMsg = tr(
+      "¿Está seguro de aprobar este reclamo de negocio?",
+      "Are you sure you want to approve this business claim?",
+      "您确定要批准此商户认领申请吗？"
+    );
+    if (!confirm(confirmMsg)) return;
 
     try {
       // 1. Actualizar estado del punto a 'aprobado'
       const { error: errPunto } = await supabase
-        .from('puntos')
-        .update({ estado: 'aprobado' })
-        .eq('id', puntoId);
+        .from("puntos")
+        .update({ estado: "aprobado" })
+        .eq("id", puntoId);
 
       if (errPunto) throw errPunto;
 
       // 2. Activar el negocio en negocios (activo = true) y actualizar el rol del dueño a 'dueno'
       if (negocioId) {
         const { data: negData, error: errNegocio } = await supabase
-          .from('negocios')
+          .from("negocios")
           .update({ activo: true })
-          .eq('id', negocioId)
-          .select('dueno_id')
+          .eq("id", negocioId)
+          .select("dueno_id")
           .single();
 
         if (errNegocio) throw errNegocio;
 
         if (negData?.dueno_id) {
           await supabase
-            .from('perfiles')
-            .update({ rol: 'dueno' })
-            .eq('id', negData.dueno_id);
+            .from("perfiles")
+            .update({ rol: "dueno" })
+            .eq("id", negData.dueno_id);
         }
       }
 
-      showToast(lang === 'en' ? 'Claim approved successfully!' : lang === 'zh' ? '认领申请批准成功！' : '¡Reclamo aprobado con éxito!', 'success');
-      loadAdminData();
+      showToast(
+        tr("¡Reclamo aprobado con éxito!", "Claim approved successfully!", "认领申请批准成功！"),
+        "success"
+      );
+      reloadAdminData();
     } catch (err) {
-      console.error('Error aprobando reclamo:', err);
-      showToast(lang === 'en' ? 'Error approving claim.' : lang === 'zh' ? '批准认领时出错。' : 'Error al aprobar el reclamo.', 'error');
+      console.error("Error aprobando reclamo:", err);
+      showToast(
+        tr("Error al aprobar el reclamo.", "Error approving claim.", "批准认领时出错。"),
+        "error"
+      );
     }
   };
 
@@ -258,7 +247,14 @@ export default function AdminDashboard() {
   const handleConfirmarRechazo = async () => {
     if (!rejectionTarget) return;
     if (!rejectionReason.trim()) {
-      showToast(lang === 'en' ? 'Please enter a reason for the rejection.' : lang === 'zh' ? '请输入驳回原因。' : 'Por favor, ingrese un motivo para el rechazo.', 'error');
+      showToast(
+        tr(
+          "Por favor, ingrese un motivo para el rechazo.",
+          "Please enter a reason for the rejection.",
+          "请输入驳回原因。"
+        ),
+        "error"
+      );
       return;
     }
 
@@ -266,73 +262,90 @@ export default function AdminDashboard() {
     const { puntoId, negocioId } = rejectionTarget;
 
     try {
-      if (rejectionType === 'correction' || rejectionType === 'observations') {
+      if (rejectionType === "correction" || rejectionType === "observations") {
         // 1. Cambiar estado de punto a 'rechazado' (mantiene la vinculación para que el dueño corrija)
         const { error: errPunto } = await supabase
-          .from('puntos')
-          .update({ estado: 'rechazado' })
-          .eq('id', puntoId);
+          .from("puntos")
+          .update({ estado: "rechazado" })
+          .eq("id", puntoId);
 
         if (errPunto) throw errPunto;
 
         // 2. Guardar el motivo de rechazo en negocios y marcar como inactivo
         if (negocioId) {
           const { error: errNegocio } = await supabase
-            .from('negocios')
-            .update({ 
+            .from("negocios")
+            .update({
               activo: false,
-              motivo_rechazo: rejectionReason 
+              motivo_rechazo: rejectionReason,
             })
-            .eq('id', negocioId);
+            .eq("id", negocioId);
 
           if (errNegocio) throw errNegocio;
         }
 
-        showToast(lang === 'en' ? 'Claim rejected with observations successfully.' : lang === 'zh' ? '已成功附带修改意见驳回申请。' : '¡Reclamo rechazado con observaciones con éxito!', 'info');
+        showToast(
+          tr(
+            "¡Reclamo rechazado con observaciones con éxito!",
+            "Claim rejected with observations successfully.",
+            "已成功附带修改意见驳回申请。"
+          ),
+          "info"
+        );
       } else {
         // 1. Devolver el punto a estado 'sin_reclamar' y desvincular el negocio_id para liberar el reclamo
         const { error: errPunto } = await supabase
-          .from('puntos')
-          .update({ 
-            estado: 'sin_reclamar',
-            negocio_id: null 
+          .from("puntos")
+          .update({
+            estado: "sin_reclamar",
+            negocio_id: null,
           })
-          .eq('id', puntoId);
+          .eq("id", puntoId);
 
         if (errPunto) throw errPunto;
 
         // 2. Registrar el motivo en el negocio y marcar como inactivo
         if (negocioId) {
           const { error: errNegocio } = await supabase
-            .from('negocios')
-            .update({ 
+            .from("negocios")
+            .update({
               activo: false,
-              motivo_rechazo: `[LIBERADO] ${rejectionReason}` 
+              motivo_rechazo: `[LIBERADO] ${rejectionReason}`,
             })
-            .eq('id', negocioId);
+            .eq("id", negocioId);
 
           if (errNegocio) throw errNegocio;
         }
 
-        showToast(lang === 'en' ? 'Point released and claim rejected.' : lang === 'zh' ? '地点已释放并成功驳回申请！' : '¡Punto liberado y reclamo rechazado con éxito!', 'success');
+        showToast(
+          tr(
+            "¡Punto liberado y reclamo rechazado con éxito!",
+            "Point released and claim rejected.",
+            "地点已释放并成功驳回申请！"
+          ),
+          "success"
+        );
       }
 
       setRejectionTarget(null);
-      loadAdminData();
+      reloadAdminData();
     } catch (err) {
-      console.error('Error procesando rechazo:', err);
-      showToast(lang === 'en' ? 'Error processing rejection.' : lang === 'zh' ? '处理驳回申请时出错。' : 'Error al procesar el rechazo.', 'error');
+      console.error("Error procesando rechazo:", err);
+      showToast(
+        tr("Error al procesar el rechazo.", "Error processing rejection.", "处理驳回申请时出错。"),
+        "error"
+      );
     } finally {
       setSubmittingRejection(false);
     }
   };
 
-  if (loadingAuth) {
+  if (authLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#FFFFFF', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#1A1A2E', fontFamily: 'var(--font-outfit), sans-serif' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ width: '40px', height: '40px', border: '3px solid rgba(20, 109, 158, 0.12)', borderTopColor: '#FFD700', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }}></div>
-          <p style={{ fontSize: '15px', color: '#4A5568', fontWeight: '600' }}>{t('common.loading')}</p>
+      <div style={styles.loadingContainer}>
+        <div style={{ textAlign: "center" }}>
+          <div style={styles.spinner}></div>
+          <p style={styles.loadingText}>{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -341,833 +354,1651 @@ export default function AdminDashboard() {
   if (!isAdmin) return null;
 
   return (
-    <div className="admin-container" style={{
-      minHeight: '100vh',
-      background: '#0A192F',
-      color: '#1A1A2E',
-      fontFamily: 'var(--font-outfit), sans-serif',
-      padding: '0 24px 30px 24px',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      {/* Fondo de pantalla unificado con fondohracio.png */}
-      <div style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: "linear-gradient(rgba(10, 15, 28, 0.25), rgba(10, 15, 28, 0.25)), url('/images/fondohracio.png') center / cover no-repeat fixed",
-        zIndex: 0,
-        pointerEvents: "none"
-      }} />
-      
-      {/* Navbar Global Unificada */}
-      <Navbar activePage="admin" session={userSession} perfil={userPerfil} />
+    <div style={styles.page}>
+      <Navbar activePage="admin" session={session} perfil={perfil} />
 
-      {/* TOAST NOTIFICATION BANNER 3D CLAYMORFISMO */}
+      {/* TOAST NOTIFICATION BANNER */}
       {toastBanner && (
-        <div style={{
-          position: "fixed",
-          top: "84px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 1100,
-          background: toastBanner.type === "success" 
-            ? "linear-gradient(135deg, #10B981 0%, #059669 100%)" 
-            : toastBanner.type === "error"
-            ? "linear-gradient(135deg, #EF4444 0%, #DC2626 100%)"
-            : "linear-gradient(135deg, #146D9E 0%, #0D4E72 100%)",
-          color: "#FFFFFF",
-          padding: "14px 28px",
-          borderRadius: "20px",
-          fontWeight: "800",
-          fontSize: "14px",
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          boxShadow: "0 14px 35px rgba(0, 0, 0, 0.25), inset 2px 2px 4px rgba(255, 255, 255, 0.4)",
-          border: "2px solid rgba(255, 255, 255, 0.8)",
-          pointerEvents: "none"
-        }} className="animate-fade-in-down">
-          <span>
+        <div
+          style={{
+            ...styles.toastBanner,
+            background:
+              toastBanner.type === "success"
+                ? "linear-gradient(135deg, #10B981 0%, #059669 100%)"
+                : toastBanner.type === "error"
+                ? "linear-gradient(135deg, #EF4444 0%, #DC2626 100%)"
+                : "linear-gradient(135deg, #146D9E 0%, #0D4E72 100%)",
+          }}
+          className="admin-toast-fade"
+        >
+          <span style={{ display: "flex", alignItems: "center" }}>
             {toastBanner.type === "success" ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <Icon name="check" size={17} color="#FFFFFF" />
             ) : toastBanner.type === "error" ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <Icon name="x" size={17} color="#FFFFFF" />
             ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <Icon name="clock" size={17} color="#FFFFFF" />
             )}
           </span>
           <span>{toastBanner.message}</span>
         </div>
       )}
 
-      {/* Grid de Estadísticas Compacto estilo Glassmorphism */}
-      <div style={{
-        maxWidth: '1200px',
-        margin: '78px auto 16px',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-        gap: '12px',
-        position: 'relative',
-        zIndex: 1
-      }}>
-        <div style={{
-          padding: '12px 18px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: 'rgba(10, 25, 47, 0.75)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          borderRadius: '16px',
-          border: '1.5px solid rgba(255, 215, 0, 0.25)',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)'
-        }}>
-          <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#E2E8F0', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span>{lang === 'en' ? 'Claims in Verification' : lang === 'zh' ? '审核中认领' : 'Reclamos en Verificación'}</span>
-          </span>
-          <span style={{ fontSize: '20px', fontWeight: '900', color: '#FFD700', background: 'rgba(255, 215, 0, 0.18)', padding: '2px 12px', borderRadius: '10px', border: '1px solid rgba(255, 215, 0, 0.35)' }}>
-            {stats.pendientes}
-          </span>
-        </div>
+      <main style={styles.main} className="admin-main">
+        {/* CONTENEDOR GENERAL UNIFICADO */}
+        <div style={styles.mainContainer} className="admin-container">
+          {/* 1. CABECERA INTEGRADA */}
+          <header style={styles.integratedHeader} className="admin-header">
+            <div style={styles.topRow} className="admin-top-row">
+              <Link
+                href="/admin/membresias"
+                style={styles.membershipBtn}
+                className="admin-membership-btn"
+              >
+                <Icon name="star" size={14} color="#0A192F" />
+                <span>
+                  {tr(
+                    "⭐ Membresías Tuani Pro",
+                    "⭐ Tuani Pro Memberships",
+                    "⭐ Tuani Pro 会员管理"
+                  )}
+                </span>
+              </Link>
 
-        <div style={{
-          padding: '12px 18px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: 'rgba(10, 25, 47, 0.75)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          borderRadius: '16px',
-          border: '1.5px solid rgba(16, 185, 129, 0.25)',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)'
-        }}>
-          <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#E2E8F0', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>{lang === 'en' ? 'Approved Points' : lang === 'zh' ? '已批准地点' : 'Puntos Aprobados'}</span>
-          </span>
-          <span style={{ fontSize: '20px', fontWeight: '900', color: '#10B981', background: 'rgba(16, 185, 129, 0.18)', padding: '2px 12px', borderRadius: '10px', border: '1px solid rgba(16, 185, 129, 0.35)' }}>
-            {stats.aprobados}
-          </span>
-        </div>
+              <button
+                type="button"
+                onClick={reloadAdminData}
+                style={styles.refreshBtn}
+                className="admin-refresh-btn"
+                title="Recargar datos"
+              >
+                <Icon name="refresh" size={13} style={{ marginRight: 6 }} />
+                <span>{tr("Refrescar", "Refresh", "刷新")}</span>
+              </button>
+            </div>
 
-        <div style={{
-          padding: '12px 18px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: 'rgba(10, 25, 47, 0.75)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          borderRadius: '16px',
-          border: '1.5px solid rgba(56, 189, 248, 0.25)',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)'
-        }}>
-          <span style={{ fontSize: '11.5px', fontWeight: '800', color: '#E2E8F0', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-            <span>{lang === 'en' ? 'Total Points' : lang === 'zh' ? '地点总计' : 'Total de Puntos'}</span>
-          </span>
-          <span style={{ fontSize: '20px', fontWeight: '900', color: '#38BDF8', background: 'rgba(56, 189, 248, 0.18)', padding: '2px 12px', borderRadius: '10px', border: '1px solid rgba(56, 189, 248, 0.35)' }}>
-            {stats.totalPuntos}
-          </span>
-        </div>
-      </div>
+            <div style={{ marginTop: 12 }}>
+              <div style={styles.heroBadge} className="admin-hero-badge">
+                <Icon name="shield" size={13} color="#FFD700" />
+                <span>
+                  {tr(
+                    "PANEL DE CONTROL ADMINISTRATIVO",
+                    "ADMIN CONTROL HUB",
+                    "管理控制中心"
+                  )}
+                </span>
+              </div>
+              <h1 style={styles.h1} className="admin-h1">
+                {tr("Administración General de ", "General Administration of ", "总管理中心 ")}
+                <span style={styles.goldText}>Atlan</span>
+              </h1>
+              <p style={styles.sub} className="admin-sub">
+                {tr(
+                  "Supervisa reclamos de propiedad comercial, aprueba o rechaza solicitudes y gestiona el directorio de puntos turísticos.",
+                  "Review business ownership claims, approve or reject applications and manage the platform's point directory.",
+                  "审核商户认领申请、批准或驳回所有权申请，并全面管理平台旅游地点目录。"
+                )}
+              </p>
+            </div>
+          </header>
 
-      {/* Tabs, Buscador y Paginación en una sola fila continua */}
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto 16px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        flexWrap: 'wrap',
-        position: 'relative',
-        zIndex: 1
-      }}>
-        <button
-          onClick={() => { setActiveTab('pending'); setCurrentPage(1); }}
-          style={{
-            padding: '10px 18px',
-            borderRadius: '14px',
-            fontWeight: '800',
-            fontSize: '13px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-            background: activeTab === 'pending' ? 'linear-gradient(135deg, #146D9E 0%, #0D4E72 100%)' : 'rgba(10, 25, 47, 0.75)',
-            color: activeTab === 'pending' ? '#FFD700' : '#94A3B8',
-            border: activeTab === 'pending' ? '1.5px solid rgba(255, 215, 0, 0.5)' : '1.5px solid rgba(255, 255, 255, 0.12)',
-            backdropFilter: 'blur(16px)',
-            boxShadow: activeTab === 'pending' ? '0 8px 20px rgba(20, 109, 158, 0.35)' : '0 4px 12px rgba(0, 0, 0, 0.2)'
-          }}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span>{lang === 'en' ? 'Pending Claims' : lang === 'zh' ? '待审核认领' : 'Reclamos Pendientes'} ({reclamos.length})</span>
-        </button>
-        <button
-          onClick={() => { setActiveTab('all'); setCurrentPage(1); }}
-          style={{
-            padding: '10px 18px',
-            borderRadius: '14px',
-            fontWeight: '800',
-            fontSize: '13px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-            background: activeTab === 'all' ? 'linear-gradient(135deg, #146D9E 0%, #0D4E72 100%)' : 'rgba(10, 25, 47, 0.75)',
-            color: activeTab === 'all' ? '#FFD700' : '#94A3B8',
-            border: activeTab === 'all' ? '1.5px solid rgba(255, 215, 0, 0.5)' : '1.5px solid rgba(255, 255, 255, 0.12)',
-            backdropFilter: 'blur(16px)',
-            boxShadow: activeTab === 'all' ? '0 8px 20px rgba(20, 109, 158, 0.35)' : '0 4px 12px rgba(0, 0, 0, 0.2)'
-          }}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          <span>{lang === 'en' ? 'All Points' : lang === 'zh' ? '所有地点' : 'Todos los Puntos'} ({todosLosPuntos.length})</span>
-        </button>
-
-        {/* Buscador estilizado estilo Glassmorphism */}
-        <div style={{ position: 'relative', minWidth: '240px', flex: '1', maxWidth: '400px', marginLeft: 'auto' }}>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#94A3B8"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
-          >
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-          <input
-            type="text"
-            placeholder={lang === 'en' ? 'Search point, category...' : lang === 'zh' ? '按名称、分类搜索地点...' : 'Buscar punto por nombre, categoría...'}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '10px 16px 10px 40px',
-              borderRadius: '14px',
-              border: '1.5px solid rgba(255, 255, 255, 0.15)',
-              background: 'rgba(10, 25, 47, 0.75)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.25)',
-              fontSize: '13px',
-              fontWeight: '600',
-              color: '#FFFFFF',
-              outline: 'none',
-            }}
-          />
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm('')}
-              style={{
-                position: 'absolute',
-                right: '12px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: '#94A3B8',
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-          )}
-        </div>
-
-        {/* Paginación empujada al borde derecho */}
-        {totalPages > 1 && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px'
-          }}>
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
-              style={{
-                padding: '8px 12px',
-                fontSize: '12px',
-                fontWeight: '750',
-                borderRadius: '10px',
-                background: 'rgba(10, 25, 47, 0.75)',
-                border: '1.5px solid rgba(255, 255, 255, 0.15)',
-                color: '#FFFFFF',
-                backdropFilter: 'blur(16px)',
-                opacity: currentPage === 1 ? 0.4 : 1,
-                cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-              <span>{lang === 'en' ? 'Prev' : lang === 'zh' ? '上一页' : 'Ant'}</span>
-            </button>
-
-            <span style={{
-              fontSize: '12px',
-              fontWeight: '800',
-              color: '#FFD700',
-              background: 'rgba(10, 25, 47, 0.75)',
-              border: '1.5px solid rgba(255, 215, 0, 0.3)',
-              padding: '6px 12px',
-              borderRadius: '10px',
-              backdropFilter: 'blur(16px)'
-            }}>
-              {currentPage}/{totalPages}
-            </span>
-
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
-              style={{
-                padding: '8px 12px',
-                fontSize: '12px',
-                fontWeight: '750',
-                borderRadius: '10px',
-                background: 'rgba(10, 25, 47, 0.75)',
-                border: '1.5px solid rgba(255, 255, 255, 0.15)',
-                color: '#FFFFFF',
-                backdropFilter: 'blur(16px)',
-                opacity: currentPage === totalPages ? 0.4 : 1,
-                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}
-            >
-              <span>{lang === 'en' ? 'Next' : lang === 'zh' ? '下一页' : 'Sig'}</span>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Contenido Principal con Scroll Interno */}
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        position: 'relative',
-        zIndex: 1,
-        maxHeight: 'calc(100vh - 220px)',
-        overflowY: 'auto',
-        paddingRight: '6px'
-      }}>
-        {loadingData ? (
-          <div style={{ padding: '60px 0', textAlign: 'center', color: '#94A3B8', fontWeight: '700' }}>
-            {t('common.loading')}
-          </div>
-        ) : filteredItems.length === 0 ? (
-          <div style={{
-            padding: '60px 20px',
-            textAlign: 'center',
-            color: '#E2E8F0',
-            background: 'rgba(10, 25, 47, 0.75)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            borderRadius: '20px',
-            border: '1.5px solid rgba(255, 255, 255, 0.12)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '12px'
-          }}>
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <span style={{ fontSize: '15px', fontWeight: '700' }}>
-              {searchTerm
-                ? (lang === 'en' ? 'No points match your search criteria.' : lang === 'zh' ? '未找到符合搜索条件的地点。' : 'No se encontraron puntos que coincidan con la búsqueda.')
-                : (lang === 'en' ? 'No items in this section.' : lang === 'zh' ? '此栏目暂无数据。' : 'No hay registros en esta sección.')
-              }
-            </span>
-          </div>
-        ) : activeTab === 'pending' ? (
-          <div style={{ display: 'grid', gap: '20px' }}>
-            {paginatedItems.map((item) => (
-              <div key={item.id} style={{
-                padding: '24px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '16px',
-                background: 'rgba(10, 25, 47, 0.78)',
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
-                borderRadius: '20px',
-                border: '1.5px solid rgba(255, 255, 255, 0.15)',
-                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.35)'
-              }}>
-                {/* Fila superior */}
-                <div className="admin-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: '12px' }}>
-                  <div>
-                    <span style={{ fontSize: '11px', fontWeight: '800', background: 'rgba(255, 215, 0,0.18)', color: '#FFD700', border: '1px solid rgba(255, 215, 0,0.3)', padding: '4px 10px', borderRadius: '8px', textTransform: 'uppercase', display: 'inline-block', marginBottom: '8px' }}>
-                      {item.categoria}
-                    </span>
-                    <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '850', color: '#FFFFFF' }}>
-                      {item.nombre}
-                    </h3>
-                    <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#94A3B8' }}>
-                      {lang === 'en' ? 'Point creator:' : lang === 'zh' ? '地点创建者：' : 'Creador del punto:'} <span style={{ fontWeight: '700', color: '#E2E8F0' }}>{item.nombre_creador || (lang === 'en' ? 'Community' : lang === 'zh' ? '社区' : 'Comunidad')}</span>
-                    </p>
-                  </div>
-
-                  {/* Botones de Acción */}
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <button
-                      onClick={() => handleAprobarReclamo(item.id, item.negocio_id)}
-                      style={{
-                        padding: '10px 18px',
-                        background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '12px',
-                        fontWeight: '800',
-                        fontSize: '12.5px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)'
-                      }}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                      <span>{lang === 'en' ? 'Approve Claim' : lang === 'zh' ? '批准认领' : 'Aprobar Reclamo'}</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setRejectionTarget({ puntoId: item.id, negocioId: item.negocio_id, nombreNegocio: item.nombre });
-                        setRejectionType('observations');
-                        setRejectionReason('');
-                      }}
-                      style={{
-                        padding: '10px 18px',
-                        background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '12px',
-                        fontWeight: '800',
-                        fontSize: '12.5px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        boxShadow: '0 4px 14px rgba(239, 68, 68, 0.35)'
-                      }}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                      <span>{lang === 'en' ? 'Reject' : lang === 'zh' ? '驳回' : 'Rechazar'}</span>
-                    </button>
-                  </div>
+          {/* 2. CINTA DE MÉTRICAS KPI (INTEGRADA) */}
+          <section style={styles.metricsRibbon} className="admin-ribbon">
+            <div style={styles.metricItem} className="admin-ribbon-item">
+              <div
+                style={{
+                  ...styles.metricIconBox,
+                  background: "rgba(251, 191, 36, 0.16)",
+                  color: "#FBBF24",
+                }}
+              >
+                <Icon name="clock" size={19} color="#FBBF24" />
+              </div>
+              <div>
+                <div style={{ ...styles.metricNum, color: "#FBBF24" }}>{stats.pendientes}</div>
+                <div style={styles.metricLabel}>
+                  {tr("Reclamos en Verificación", "Claims in Verification", "待审核认领申请")}
                 </div>
+              </div>
+            </div>
 
-                {/* Detalles del Negocio comercial */}
-                {item.negocios && (
-                  <div style={{
-                    padding: '18px',
-                    marginTop: '4px',
-                    background: 'rgba(15, 23, 42, 0.65)',
-                    borderRadius: '16px',
-                    border: '1.5px solid rgba(255, 255, 255, 0.1)'
-                  }}>
-                    <h4 style={{ margin: '0 0 12px', fontSize: '13.5px', fontWeight: '800', color: '#FFD700', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                      <span>{lang === 'en' ? 'Claiming Business Info' : lang === 'zh' ? '申请认领商户信息' : 'Información Comercial del Reclamante'}</span>
-                    </h4>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', fontSize: '13px', color: '#CBD5E1' }}>
+            <div style={styles.metricItem} className="admin-ribbon-item">
+              <div
+                style={{
+                  ...styles.metricIconBox,
+                  background: "rgba(16, 185, 129, 0.16)",
+                  color: "#10B981",
+                }}
+              >
+                <Icon name="check" size={19} color="#10B981" />
+              </div>
+              <div>
+                <div style={{ ...styles.metricNum, color: "#10B981" }}>{stats.aprobados}</div>
+                <div style={styles.metricLabel}>
+                  {tr("Puntos Aprobados", "Approved Points", "已批准商户/地点")}
+                </div>
+              </div>
+            </div>
+
+            <div style={styles.metricItem} className="admin-ribbon-item">
+              <div
+                style={{
+                  ...styles.metricIconBox,
+                  background: "rgba(56, 189, 248, 0.16)",
+                  color: "#38BDF8",
+                }}
+              >
+                <Icon name="globe" size={19} color="#38BDF8" />
+              </div>
+              <div>
+                <div style={{ ...styles.metricNum, color: "#38BDF8" }}>{stats.totalPuntos}</div>
+                <div style={styles.metricLabel}>
+                  {tr("Total de Puntos Registrados", "Total Points Registered", "系统登记地点总计")}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 3. BARRA DE HERRAMIENTAS Y PESTAÑAS INTEGRADA */}
+          <div style={styles.toolbar} className="admin-toolbar">
+            <div style={styles.tabsGroup} className="admin-tabs">
+              <button
+                type="button"
+                onClick={() => handleTabChange("pending")}
+                style={{
+                  ...styles.tabBtn,
+                  background:
+                    activeTab === "pending"
+                      ? "linear-gradient(135deg, #146D9E 0%, #0D4E72 100%)"
+                      : "rgba(255, 255, 255, 0.04)",
+                  color: activeTab === "pending" ? "#FFD700" : "#94A3B8",
+                  borderColor:
+                    activeTab === "pending"
+                      ? "rgba(255, 215, 0, 0.5)"
+                      : "rgba(255, 255, 255, 0.1)",
+                }}
+                className="admin-tab-btn"
+              >
+                <Icon name="clock" size={14} style={{ marginRight: 6 }} />
+                <span>
+                  {tr("Reclamos Pendientes", "Pending Claims", "待审核认领")} ({reclamos.length})
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleTabChange("all")}
+                style={{
+                  ...styles.tabBtn,
+                  background:
+                    activeTab === "all"
+                      ? "linear-gradient(135deg, #146D9E 0%, #0D4E72 100%)"
+                      : "rgba(255, 255, 255, 0.04)",
+                  color: activeTab === "all" ? "#FFD700" : "#94A3B8",
+                  borderColor:
+                    activeTab === "all"
+                      ? "rgba(255, 215, 0, 0.5)"
+                      : "rgba(255, 255, 255, 0.1)",
+                }}
+                className="admin-tab-btn"
+              >
+                <Icon name="globe" size={14} style={{ marginRight: 6 }} />
+                <span>
+                  {tr("Todos los Puntos", "All Points", "所有地点")} ({todosLosPuntos.length})
+                </span>
+              </button>
+            </div>
+
+            {/* Buscador Integrado */}
+            <div style={styles.searchBox} className="admin-search-box">
+              <span style={styles.searchIcon}>
+                <Icon name="search" size={15} color="#94A3B8" />
+              </span>
+              <input
+                type="text"
+                placeholder={tr(
+                  "Buscar punto por nombre, categoría...",
+                  "Search point, category...",
+                  "按名称、分类搜索地点..."
+                )}
+                value={searchTerm}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                style={styles.searchInput}
+                className="admin-search-input"
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => handleSearchChange("")}
+                  style={styles.searchClearBtn}
+                  title="Limpiar búsqueda"
+                >
+                  <Icon name="x" size={13} />
+                </button>
+              )}
+            </div>
+
+            {/* Paginación */}
+            {totalPages > 1 && (
+              <div style={styles.pagination} className="admin-pagination">
+                <button
+                  type="button"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  style={{
+                    ...styles.pageBtn,
+                    opacity: currentPage === 1 ? 0.35 : 1,
+                    cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                  }}
+                  className="admin-page-btn"
+                >
+                  <Icon name="chevronLeft" size={13} style={{ marginRight: 2 }} />
+                  <span>{tr("Ant", "Prev", "上一页")}</span>
+                </button>
+
+                <span style={styles.pageIndicator} className="admin-page-indicator">
+                  {currentPage} / {totalPages}
+                </span>
+
+                <button
+                  type="button"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                  style={{
+                    ...styles.pageBtn,
+                    opacity: currentPage === totalPages ? 0.35 : 1,
+                    cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                  }}
+                  className="admin-page-btn"
+                >
+                  <span>{tr("Sig", "Next", "下一页")}</span>
+                  <Icon name="chevronRight" size={13} style={{ marginLeft: 2 }} />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* 4. ÁREA DE CONTENIDO */}
+          <div style={styles.contentArea} className="admin-content-area">
+            {loadingData ? (
+              <div style={styles.emptyState}>
+                <div style={styles.spinner}></div>
+                <p style={{ marginTop: 14, color: "#94A3B8", fontWeight: 700 }}>
+                  {t("common.loading")}
+                </p>
+              </div>
+            ) : filteredItems.length === 0 ? (
+              <div style={styles.emptyCard} className="admin-empty-card">
+                <div style={styles.emptyIconBox}>
+                  <Icon name="search" size={32} color="#FFD700" />
+                </div>
+                <h3 style={{ margin: "10px 0 4px", fontSize: 16, color: "#FFFFFF" }}>
+                  {searchTerm
+                    ? tr(
+                        "No se encontraron resultados",
+                        "No matching points found",
+                        "未找到符合条件的地点"
+                      )
+                    : tr("No hay registros en esta sección", "No items in this section", "此栏目暂无数据")}
+                </h3>
+                <p style={{ margin: 0, fontSize: 13, color: "#94A3B8", maxWidth: 420 }}>
+                  {searchTerm
+                    ? tr(
+                        "Intenta cambiar los términos de búsqueda o limpiar el filtro actual.",
+                        "Try different search terms or clear the current search.",
+                        "请尝试更换搜索关键词或清除筛选条件。"
+                      )
+                    : tr(
+                        "Cuando haya nuevos puntos o reclamos, aparecerán listados aquí.",
+                        "When new points or claims are registered, they will appear here.",
+                        "当有新的地点或认领申请时，将在此处列出。"
+                      )}
+                </p>
+              </div>
+            ) : activeTab === "pending" ? (
+              /* TAB RECLAMOS PENDIENTES */
+              <div style={styles.claimsStack} className="admin-claims-stack">
+                {paginatedItems.map((item) => (
+                  <div key={item.id} style={styles.claimCard} className="admin-claim-card">
+                    {/* Header de la tarjeta */}
+                    <div style={styles.claimHeader} className="admin-claim-header">
                       <div>
-                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Owner Name:' : lang === 'zh' ? '业主姓名：' : 'Nombre del Dueño:'}</strong> {item.negocios.perfiles?.nombre_completo || 'N/A'}</p>
-                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Business Type:' : lang === 'zh' ? '商户类型：' : 'Tipo de Negocio:'}</strong> {item.negocios.tipo}</p>
-                        <p style={{ margin: '0' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Price Range:' : lang === 'zh' ? '价格区间：' : 'Rango de Precios:'}</strong> {item.negocios.rango_precios || 'N/A'}</p>
+                        <div style={styles.claimCategoryBadge}>
+                          {item.categoria || tr("Negocio", "Business", "商户")}
+                        </div>
+                        <h3 style={styles.claimTitle} className="admin-claim-title">
+                          {item.nombre}
+                        </h3>
+                        <p style={styles.claimSubtitle} className="admin-claim-subtitle">
+                          {tr("Creador del punto:", "Point creator:", "地点创建者：")}{" "}
+                          <span style={{ fontWeight: 800, color: "#E2E8F0" }}>
+                            {item.nombre_creador ||
+                              tr("Comunidad", "Community", "社区")}
+                          </span>
+                        </p>
                       </div>
-                      <div>
-                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Telephone:' : lang === 'zh' ? '固定电话：' : 'Teléfono:'}</strong> {item.negocios.telefono || 'N/A'}</p>
-                        <p style={{ margin: '0 0 6px' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'WhatsApp:' : lang === 'zh' ? 'WhatsApp：' : 'WhatsApp:'}</strong> {item.negocios.whatsapp || 'N/A'}</p>
-                        <p style={{ margin: '0' }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Services:' : lang === 'zh' ? '提供服务：' : 'Servicios:'}</strong> {item.negocios.servicios ? Object.keys(item.negocios.servicios).filter(k => item.negocios.servicios[k]).join(', ') : 'N/A'}</p>
+
+                      {/* Botones de Acción */}
+                      <div style={styles.claimActions} className="admin-claim-actions">
+                        <button
+                          type="button"
+                          onClick={() => handleAprobarReclamo(item.id, item.negocio_id)}
+                          style={styles.approveBtn}
+                          className="admin-approve-btn"
+                        >
+                          <Icon name="check" size={14} style={{ marginRight: 6 }} />
+                          <span>
+                            {tr("Aprobar Reclamo", "Approve Claim", "批准认领")}
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setRejectionTarget({
+                              puntoId: item.id,
+                              negocioId: item.negocio_id,
+                              nombreNegocio: item.nombre,
+                            });
+                            setRejectionType("correction");
+                            setRejectionReason("");
+                          }}
+                          style={styles.rejectBtn}
+                          className="admin-reject-btn"
+                        >
+                          <Icon name="x" size={14} style={{ marginRight: 6 }} />
+                          <span>{tr("Rechazar", "Reject", "驳回")}</span>
+                        </button>
                       </div>
                     </div>
-                    {item.negocios.descripcion && (
-                      <p style={{ margin: '14px 0 0', fontSize: '13px', color: '#CBD5E1', borderTop: '1px dashed rgba(255, 255, 255, 0.12)', paddingTop: '10px' }}>
-                        <strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Commercial Description:' : lang === 'zh' ? '商业描述：' : 'Descripción Comercial:'}</strong> {item.negocios.descripcion}
-                      </p>
-                    )}
 
-                    {/* Documentos y Verificación de Propiedad */}
-                    {item.negocios?.datos_verificacion && (
-                      <div style={{
-                        marginTop: '14px',
-                        padding: '16px',
-                        background: 'rgba(20, 109, 158, 0.15)',
-                        border: '1.5px solid rgba(56, 189, 248, 0.25)',
-                        borderRadius: '16px'
-                      }}>
-                        <h5 style={{ margin: '0 0 12px', fontSize: '13.5px', fontWeight: '850', color: '#38BDF8', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                          <span>{lang === 'en' ? 'Verification Documents Submitted by Applicant' : lang === 'zh' ? '申请人提交的验证文件' : 'Documentos de Verificación Presentados por el Solicitante'}</span>
-                        </h5>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', fontSize: '13px', color: '#E2E8F0' }}>
-                          <p style={{ margin: 0 }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Applicant Owner:' : lang === 'zh' ? '申请业主：' : 'Propietario Solicitante:'}</strong> {item.negocios.datos_verificacion.solicitante_nombre || 'N/A'}</p>
-                          <p style={{ margin: 0 }}><strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'ID / Cedula / RUC:' : lang === 'zh' ? '身份证/税号：' : 'N° Cédula / ID / RUC:'}</strong> {item.negocios.datos_verificacion.solicitante_cedula || 'N/A'}</p>
-                          <p style={{ margin: 0 }}>
-                            <strong style={{ color: '#FFFFFF' }}>{lang === 'en' ? 'Contact Phone:' : lang === 'zh' ? '联系电话：' : 'Teléfono Contacto:'}</strong> {item.negocios.datos_verificacion.solicitante_telefono || 'N/A'}{' '}
-                            {item.negocios.datos_verificacion.solicitante_telefono && (
-                              <a
-                                href={`https://wa.me/${item.negocios.datos_verificacion.solicitante_telefono.replace(/\D/g, '')}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ color: '#10B981', fontWeight: '800', textDecoration: 'none', marginLeft: '8px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                              >
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                                <span>WhatsApp</span>
-                              </a>
+                    {/* Detalles comerciales del negocio */}
+                    {item.negocios && (
+                      <div style={styles.commercialBox} className="admin-commercial-box">
+                        <h4 style={styles.commercialBoxTitle}>
+                          <Icon name="briefcase" size={15} color="#FFD700" style={{ marginRight: 6 }} />
+                          <span>
+                            {tr(
+                              "Información Comercial del Reclamante",
+                              "Claiming Business Info",
+                              "申请认领商户信息"
                             )}
-                          </p>
+                          </span>
+                        </h4>
+
+                        <div style={styles.commercialGrid} className="admin-commercial-grid">
+                          <div style={styles.commercialCol}>
+                            <p style={styles.detailRow}>
+                              <strong style={{ color: "#FFFFFF" }}>
+                                {tr("Nombre del Dueño:", "Owner Name:", "业主姓名：")}
+                              </strong>{" "}
+                              {item.negocios.perfiles?.nombre_completo || "N/A"}
+                            </p>
+                            <p style={styles.detailRow}>
+                              <strong style={{ color: "#FFFFFF" }}>
+                                {tr("Tipo de Negocio:", "Business Type:", "商户类型：")}
+                              </strong>{" "}
+                              {item.negocios.tipo || "N/A"}
+                            </p>
+                            <p style={styles.detailRow}>
+                              <strong style={{ color: "#FFFFFF" }}>
+                                {tr("Rango de Precios:", "Price Range:", "价格区间：")}
+                              </strong>{" "}
+                              {item.negocios.rango_precios || "N/A"}
+                            </p>
+                          </div>
+
+                          <div style={styles.commercialCol}>
+                            <p style={styles.detailRow}>
+                              <strong style={{ color: "#FFFFFF" }}>
+                                {tr("Teléfono:", "Telephone:", "固定电话：")}
+                              </strong>{" "}
+                              {item.negocios.telefono || "N/A"}
+                            </p>
+                            <p style={styles.detailRow}>
+                              <strong style={{ color: "#FFFFFF" }}>WhatsApp:</strong>{" "}
+                              {item.negocios.whatsapp ? (
+                                <a
+                                  href={`https://wa.me/${item.negocios.whatsapp.replace(/\D/g, "")}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={styles.waLink}
+                                >
+                                  {item.negocios.whatsapp} ↗
+                                </a>
+                              ) : (
+                                "N/A"
+                              )}
+                            </p>
+                            <p style={styles.detailRow}>
+                              <strong style={{ color: "#FFFFFF" }}>
+                                {tr("Servicios:", "Services:", "提供服务：")}
+                              </strong>{" "}
+                              {item.negocios.servicios
+                                ? Object.keys(item.negocios.servicios)
+                                    .filter((k) => item.negocios.servicios[k])
+                                    .join(", ") || "N/A"
+                                : "N/A"}
+                            </p>
+                          </div>
                         </div>
 
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '14px' }}>
-                          {item.negocios.datos_verificacion.documento_cedula_url ? (
-                            <a
-                              href={item.negocios.datos_verificacion.documento_cedula_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{
-                                padding: '8px 16px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                fontWeight: '750',
-                                color: '#FFFFFF',
-                                background: 'linear-gradient(135deg, #146D9E 0%, #0D4E72 100%)',
-                                borderRadius: '10px',
-                                border: '1px solid rgba(56, 189, 248, 0.4)',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '6px'
-                              }}
-                            >
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                              <span>{lang === 'en' ? 'View ID Card (PDF/Image)' : lang === 'zh' ? '查看身份证件 (PDF/图片)' : 'Ver Cédula de Identidad (PDF/Imagen)'}</span>
-                            </a>
-                          ) : (
-                            <span style={{ fontSize: '12px', color: '#EF4444', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                              <span>{lang === 'en' ? 'No ID photo' : lang === 'zh' ? '无证件照片' : 'Sin foto de cédula'}</span>
-                            </span>
-                          )}
-
-                          {item.negocios.datos_verificacion.documento_propiedad_url && (
-                            <a
-                              href={item.negocios.datos_verificacion.documento_propiedad_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{
-                                padding: '8px 16px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                fontWeight: '750',
-                                color: '#FFD700',
-                                background: 'rgba(255, 215, 0, 0.15)',
-                                borderRadius: '10px',
-                                border: '1px solid rgba(255, 215, 0, 0.4)',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '6px'
-                              }}
-                            >
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                              <span>{lang === 'en' ? 'View Property Proof / License' : lang === 'zh' ? '查看产权证明 / 许可证' : 'Ver Comprobante de Propiedad / Licencia'}</span>
-                            </a>
-                          )}
-                        </div>
-
-                        {item.negocios.datos_verificacion.solicitud_notas && (
-                          <p style={{ margin: '12px 0 0', fontSize: '12.5px', color: '#94A3B8', fontStyle: 'italic', borderTop: '1px dashed rgba(255,255,255,0.12)', paddingTop: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                            <span><strong>{lang === 'en' ? 'Applicant Notes:' : lang === 'zh' ? '申请人留言：' : 'Notas del Solicitante:'}</strong> "{item.negocios.datos_verificacion.solicitud_notas}"</span>
+                        {item.negocios.descripcion && (
+                          <p style={styles.commercialDesc} className="admin-commercial-desc">
+                            <strong style={{ color: "#FFFFFF" }}>
+                              {tr("Descripción Comercial:", "Commercial Description:", "商业描述：")}
+                            </strong>{" "}
+                            {item.negocios.descripcion}
                           </p>
+                        )}
+
+                        {/* Documentos de Verificación de Propiedad */}
+                        {item.negocios?.datos_verificacion && (
+                          <div style={styles.verifBox} className="admin-verif-box">
+                            <h5 style={styles.verifTitle}>
+                              <Icon name="shield" size={15} color="#38BDF8" style={{ marginRight: 6 }} />
+                              <span>
+                                {tr(
+                                  "Documentos de Verificación Presentados por el Solicitante",
+                                  "Verification Documents Submitted by Applicant",
+                                  "申请人提交的验证文件"
+                                )}
+                              </span>
+                            </h5>
+
+                            <div style={styles.verifGrid} className="admin-verif-grid">
+                              <p style={styles.detailRow}>
+                                <strong style={{ color: "#FFFFFF" }}>
+                                  {tr("Propietario Solicitante:", "Applicant Owner:", "申请业主：")}
+                                </strong>{" "}
+                                {item.negocios.datos_verificacion.solicitante_nombre || "N/A"}
+                              </p>
+                              <p style={styles.detailRow}>
+                                <strong style={{ color: "#FFFFFF" }}>
+                                  {tr("N° Cédula / ID / RUC:", "ID / Cedula / RUC:", "身份证/税号：")}
+                                </strong>{" "}
+                                {item.negocios.datos_verificacion.solicitante_cedula || "N/A"}
+                              </p>
+                              <p style={styles.detailRow}>
+                                <strong style={{ color: "#FFFFFF" }}>
+                                  {tr("Teléfono Contacto:", "Contact Phone:", "联系电话：")}
+                                </strong>{" "}
+                                {item.negocios.datos_verificacion.solicitante_telefono || "N/A"}{" "}
+                                {item.negocios.datos_verificacion.solicitante_telefono && (
+                                  <a
+                                    href={`https://wa.me/${item.negocios.datos_verificacion.solicitante_telefono.replace(/\D/g, "")}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={styles.waBadge}
+                                  >
+                                    WhatsApp ↗
+                                  </a>
+                                )}
+                              </p>
+                            </div>
+
+                            {/* Botones de descarga / vista previa de archivos */}
+                            <div style={styles.verifFilesRow} className="admin-verif-files-row">
+                              {item.negocios.datos_verificacion.documento_cedula_url ? (
+                                <a
+                                  href={item.negocios.datos_verificacion.documento_cedula_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={styles.docBtn}
+                                  className="admin-doc-btn"
+                                >
+                                  <Icon name="fileText" size={14} style={{ marginRight: 6 }} />
+                                  <span>
+                                    {tr(
+                                      "Ver Cédula de Identidad (PDF/Imagen)",
+                                      "View ID Card (PDF/Image)",
+                                      "查看身份证件 (PDF/图片)"
+                                    )}
+                                  </span>
+                                </a>
+                              ) : (
+                                <span style={styles.noDocText}>
+                                  <Icon name="alertTriangle" size={13} style={{ marginRight: 4 }} />
+                                  <span>
+                                    {tr("Sin foto de cédula", "No ID photo", "无证件照片")}
+                                  </span>
+                                </span>
+                              )}
+
+                              {item.negocios.datos_verificacion.documento_propiedad_url && (
+                                <a
+                                  href={item.negocios.datos_verificacion.documento_propiedad_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={styles.propertyDocBtn}
+                                  className="admin-property-doc-btn"
+                                >
+                                  <Icon name="fileText" size={14} style={{ marginRight: 6 }} />
+                                  <span>
+                                    {tr(
+                                      "Ver Comprobante de Propiedad / Licencia",
+                                      "View Property Proof / License",
+                                      "查看产权证明 / 许可证"
+                                    )}
+                                  </span>
+                                </a>
+                              )}
+                            </div>
+
+                            {item.negocios.datos_verificacion.solicitud_notas && (
+                              <p style={styles.notesBox} className="admin-notes-box">
+                                <Icon name="clipboard" size={14} color="#FFD700" style={{ marginRight: 6, flexShrink: 0 }} />
+                                <span>
+                                  <strong>{tr("Notas del Solicitante:", "Applicant Notes:", "申请人留言：")}</strong>{" "}
+                                  &ldquo;{item.negocios.datos_verificacion.solicitud_notas}&rdquo;
+                                </span>
+                              </p>
+                            )}
+                          </div>
                         )}
                       </div>
                     )}
                   </div>
-                )}
+                ))}
               </div>
-            ))}
-          </div>
-        ) : (
-          /* Lista de todos los puntos */
-          <div style={{
-            background: 'rgba(10, 25, 47, 0.78)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            borderRadius: '20px',
-            border: '1.5px solid rgba(255, 255, 255, 0.15)',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.35)',
-            overflow: 'hidden'
-          }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13.5px' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.12)', color: '#94A3B8' }}>
-                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Name' : lang === 'zh' ? '名称' : 'Nombre'}</th>
-                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Category' : lang === 'zh' ? '分类' : 'Categoría'}</th>
-                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Creator' : lang === 'zh' ? '创建者' : 'Creador'}</th>
-                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Status' : lang === 'zh' ? '状态' : 'Estado'}</th>
-                  <th style={{ padding: '14px 16px', fontWeight: '800' }}>{lang === 'en' ? 'Created At' : lang === 'zh' ? '创建日期' : 'Creado el'}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedItems.map((p) => {
-                  const statusColors = {
-                    aprobado: '#10B981',
-                    en_verificacion: '#FFD700',
-                    sin_reclamar: '#94A3B8',
-                    rechazado: '#EF4444'
-                  };
-                  return (
-                    <tr key={p.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                      <td style={{ padding: '14px 16px', fontWeight: '750', color: '#FFFFFF' }}>{p.nombre}</td>
-                      <td style={{ padding: '14px 16px', color: '#E2E8F0' }}>{p.categoria}</td>
-                      <td style={{ padding: '14px 16px', color: '#94A3B8' }}>{p.nombre_creador || (lang === 'en' ? 'Community' : lang === 'zh' ? '社区' : 'Comunidad')}</td>
-                      <td style={{ padding: '14px 16px' }}>
-                        <span style={{
-                          fontSize: '11px',
-                          fontWeight: '800',
-                          textTransform: 'uppercase',
-                          color: statusColors[p.estado] || '#FFFFFF',
-                          background: `${statusColors[p.estado]}20`,
-                          border: `1px solid ${statusColors[p.estado]}40`,
-                          padding: '4px 10px',
-                          borderRadius: '8px'
-                        }}>
-                          {p.estado === 'aprobado' ? (lang === 'en' ? 'Approved' : lang === 'zh' ? '已批准' : 'Aprobado')
-                            : p.estado === 'en_verificacion' ? (lang === 'en' ? 'In Verification' : lang === 'zh' ? '审核中' : 'En Verificación')
-                            : p.estado === 'sin_reclamar' ? (lang === 'en' ? 'Unclaimed' : lang === 'zh' ? '未认领' : 'Sin Reclamar')
-                            : p.estado === 'rechazado' ? (lang === 'en' ? 'Rejected' : lang === 'zh' ? '已拒绝' : 'Rechazado')
-                            : p.estado}
-                        </span>
-                      </td>
-                      <td style={{ padding: '14px 16px', color: '#94A3B8' }}>
-                        {new Date(p.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : lang === 'zh' ? 'zh-CN' : 'es-ES')}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+            ) : (
+              /* TAB TODOS LOS PUNTOS (TABLA UNIFICADA CON SCROLL RESPONSIVE) */
+              <div style={styles.tableCard} className="admin-table-card">
+                <div style={styles.tableScroll} className="admin-table-scroll">
+                  <table style={styles.table} className="admin-table">
+                    <thead>
+                      <tr style={styles.tableHeadRow}>
+                        <th style={styles.th}>{tr("Nombre", "Name", "名称")}</th>
+                        <th style={styles.th}>{tr("Categoría", "Category", "分类")}</th>
+                        <th style={styles.th}>{tr("Creador", "Creator", "创建者")}</th>
+                        <th style={styles.th}>{tr("Estado", "Status", "状态")}</th>
+                        <th style={styles.th}>{tr("Creado el", "Created At", "创建日期")}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paginatedItems.map((p) => {
+                        const statusColors = {
+                          aprobado: "#10B981",
+                          en_verificacion: "#FBBF24",
+                          sin_reclamar: "#94A3B8",
+                          rechazado: "#EF4444",
+                        };
+                        const statusColor = statusColors[p.estado] || "#CBD5E1";
 
-      {/* Animación Keyframes */}
-      <style jsx global>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-        @keyframes slideInRight {
-          from { transform: translateX(100%); }
-          to { transform: translateX(0); }
-        }
-      `}</style>
+                        return (
+                          <tr key={p.id} style={styles.tableRow} className="admin-tr-hover">
+                            <td style={{ ...styles.td, fontWeight: 750, color: "#FFFFFF" }}>
+                              {p.nombre}
+                            </td>
+                            <td style={{ ...styles.td, color: "#E2E8F0" }}>{p.categoria || "—"}</td>
+                            <td style={{ ...styles.td, color: "#94A3B8" }}>
+                              {p.nombre_creador || tr("Comunidad", "Community", "社区")}
+                            </td>
+                            <td style={styles.td}>
+                              <span
+                                style={{
+                                  ...styles.statusBadge,
+                                  color: statusColor,
+                                  background: `${statusColor}22`,
+                                  borderColor: `${statusColor}55`,
+                                }}
+                              >
+                                {p.estado === "aprobado"
+                                  ? tr("Aprobado", "Approved", "已批准")
+                                  : p.estado === "en_verificacion"
+                                  ? tr("En Verificación", "In Verification", "审核中")
+                                  : p.estado === "sin_reclamar"
+                                  ? tr("Sin Reclamar", "Unclaimed", "未认领")
+                                  : p.estado === "rechazado"
+                                  ? tr("Rechazado", "Rejected", "已拒绝")
+                                  : p.estado}
+                              </span>
+                            </td>
+                            <td style={{ ...styles.td, color: "#94A3B8" }}>
+                              {p.created_at
+                                ? new Date(p.created_at).toLocaleDateString(
+                                    lang === "en" ? "en-US" : lang === "zh" ? "zh-CN" : "es-ES"
+                                  )
+                                : "—"}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
 
-      {/* Modal interactivo de Rechazo estilo Glassmorphism */}
+      {/* MODAL INTERACTIVO DE RECHAZO */}
       {rejectionTarget && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.75)',
-          backdropFilter: 'blur(8px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1200,
-          padding: '20px'
-        }}>
-          <div style={{
-            maxWidth: '520px',
-            width: '100%',
-            background: 'rgba(10, 25, 47, 0.95)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderRadius: '24px',
-            border: '1.5px solid rgba(255, 215, 0, 0.35)',
-            padding: '28px',
-            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px'
-          }}>
-            <h2 style={{
-              margin: 0,
-              fontSize: '22px',
-              fontWeight: '850',
-              color: '#FFD700',
-              letterSpacing: '0.04em',
-              fontFamily: "'LC Mogi', var(--font-outfit), sans-serif"
-            }}>
-              {lang === 'en' ? 'Reject Business Claim' : lang === 'zh' ? '驳回商户认领申请' : 'Rechazar Reclamo de Negocio'}
-            </h2>
-            <p style={{ margin: 0, fontSize: '13.5px', color: '#94A3B8', lineHeight: 1.5 }}>
-              {lang === 'en' 
-                ? `Specify why you are rejecting the claim for ${rejectionTarget.nombreNegocio}:`
-                : lang === 'zh'
-                ? `请说明驳回 ${rejectionTarget.nombreNegocio} 认领申请的具体原因：`
-                : `Especifica por qué estás rechazando el reclamo para ${rejectionTarget.nombreNegocio}:`}
+        <div style={styles.modalOverlay} className="admin-modal-overlay">
+          <div style={styles.modalCard} className="admin-modal-card">
+            <div style={styles.modalHeader}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={styles.modalAlertIcon}>
+                  <Icon name="alertTriangle" size={20} color="#FFD700" />
+                </div>
+                <h2 style={styles.modalTitle}>
+                  {tr(
+                    "Rechazar Reclamo de Negocio",
+                    "Reject Business Claim",
+                    "驳回商户认领申请"
+                  )}
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setRejectionTarget(null)}
+                style={styles.modalCloseBtn}
+                title="Cerrar modal"
+              >
+                <Icon name="x" size={18} />
+              </button>
+            </div>
+
+            <p style={styles.modalDesc}>
+              {tr(
+                `Especifica por qué estás rechazando el reclamo para "${rejectionTarget.nombreNegocio}":`,
+                `Specify why you are rejecting the claim for "${rejectionTarget.nombreNegocio}":`,
+                `请说明驳回 "${rejectionTarget.nombreNegocio}" 认领申请的具体原因：`
+              )}
             </p>
 
             {/* Opciones de tipo de rechazo */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {/* Radio 1: Corrección */}
-              <label style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '12px',
-                padding: '14px 16px',
-                background: rejectionType === 'correction' ? 'rgba(255, 215, 0, 0.12)' : 'rgba(255, 255, 255, 0.04)',
-                border: `1.5px solid ${rejectionType === 'correction' ? 'rgba(255, 215, 0, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
-                borderRadius: '16px',
-                cursor: 'pointer'
-              }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {/* Opción 1: Corrección */}
+              <label
+                style={{
+                  ...styles.radioOption,
+                  background:
+                    rejectionType === "correction"
+                      ? "rgba(255, 215, 0, 0.12)"
+                      : "rgba(255, 255, 255, 0.04)",
+                  borderColor:
+                    rejectionType === "correction"
+                      ? "rgba(255, 215, 0, 0.45)"
+                      : "rgba(255, 255, 255, 0.1)",
+                }}
+              >
                 <input
                   type="radio"
                   name="rejectionType"
                   value="correction"
-                  checked={rejectionType === 'correction'}
-                  onChange={() => setRejectionType('correction')}
-                  style={{ marginTop: '3px', accentColor: '#FFD700' }}
+                  checked={rejectionType === "correction"}
+                  onChange={() => setRejectionType("correction")}
+                  style={styles.radioInput}
                 />
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: '750', color: '#FFFFFF' }}>
-                    {lang === 'en' ? 'Request Correction (Keep pending claim)' : lang === 'zh' ? '请求修改（保持申请处于待处理）' : 'Solicitar Corrección (Mantener reclamo pendiente)'}
+                  <div style={{ fontSize: 13.5, fontWeight: 750, color: "#FFFFFF" }}>
+                    {tr(
+                      "Solicitar Corrección (Mantener reclamo pendiente)",
+                      "Request Correction (Keep pending claim)",
+                      "请求修改（保持申请处于待处理）"
+                    )}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#94A3B8', marginTop: '2px', lineHeight: 1.4 }}>
-                    {lang === 'en' 
-                      ? 'The owner will see your observations on their dashboard so they can fix their information.'
-                      : lang === 'zh'
-                      ? '申请业主将在控制台中查看到修改意见以便更正资料。'
-                      : 'El solicitante verá tus observaciones en su panel para que pueda corregir sus datos.'}
+                  <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 2, lineHeight: 1.4 }}>
+                    {tr(
+                      "El solicitante verá tus observaciones en su panel para que pueda corregir sus datos sin perder su solicitud.",
+                      "The applicant will see your observations on their dashboard so they can fix their information.",
+                      "申请业主将在控制台中查看到修改意见以便更正资料。"
+                    )}
                   </div>
                 </div>
               </label>
 
-              {/* Radio 2: Liberar Punto */}
-              <label style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '12px',
-                padding: '14px 16px',
-                background: rejectionType === 'release' ? 'rgba(239, 68, 68, 0.12)' : 'rgba(255, 255, 255, 0.04)',
-                border: `1.5px solid ${rejectionType === 'release' ? 'rgba(239, 68, 68, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
-                borderRadius: '16px',
-                cursor: 'pointer'
-              }}>
+              {/* Opción 2: Liberar Punto */}
+              <label
+                style={{
+                  ...styles.radioOption,
+                  background:
+                    rejectionType === "release"
+                      ? "rgba(239, 68, 68, 0.12)"
+                      : "rgba(255, 255, 255, 0.04)",
+                  borderColor:
+                    rejectionType === "release"
+                      ? "rgba(239, 68, 68, 0.45)"
+                      : "rgba(255, 255, 255, 0.1)",
+                }}
+              >
                 <input
                   type="radio"
                   name="rejectionType"
                   value="release"
-                  checked={rejectionType === 'release'}
-                  onChange={() => setRejectionType('release')}
-                  style={{ marginTop: '3px', accentColor: '#EF4444' }}
+                  checked={rejectionType === "release"}
+                  onChange={() => setRejectionType("release")}
+                  style={{ ...styles.radioInput, accentColor: "#EF4444" }}
                 />
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: '750', color: '#EF4444' }}>
-                    {lang === 'en' ? 'Release point (Fraud / Delete claim)' : lang === 'zh' ? '释放地点（欺诈/彻底取消申请）' : 'Liberar punto (Fraude / Cancelar reclamo)'}
+                  <div style={{ fontSize: 13.5, fontWeight: 750, color: "#EF4444" }}>
+                    {tr(
+                      "Liberar punto (Fraude / Cancelar reclamo)",
+                      "Release point (Fraud / Delete claim)",
+                      "释放地点（欺诈/彻底取消申请）"
+                    )}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#94A3B8', marginTop: '2px', lineHeight: 1.4 }}>
-                    {lang === 'en' 
-                      ? 'Desassociates the point immediately, returning it to unclaimed status. The business is marked inactive.'
-                      : lang === 'zh'
-                      ? '立即解绑地点，将其恢复为地图上的“未认领”状态，商户将被标记为停用。'
-                      : 'Desvincula el punto de inmediato, devolviéndolo a estado "sin reclamar" en el mapa. El negocio queda inactivo.'}
+                  <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 2, lineHeight: 1.4 }}>
+                    {tr(
+                      "Desvincula el punto de inmediato, devolviéndolo a estado 'sin reclamar' en el mapa. El negocio queda inactivo.",
+                      "Immediately unlinks the point, returning it to unclaimed status on the map. Business is marked inactive.",
+                      "立即解绑地点，将其恢复为地图上的“未认领”状态，商户将被标记为停用。"
+                    )}
                   </div>
                 </div>
               </label>
             </div>
 
             {/* Input del motivo */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
-              <label style={{ fontSize: '13px', fontWeight: '800', color: '#FFFFFF' }}>
-                {lang === 'en' ? 'Reason for Rejection:' : lang === 'zh' ? '驳回原因：' : 'Motivo del Rechazo:'}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 4 }}>
+              <label style={{ fontSize: 12.5, fontWeight: 800, color: "#FFFFFF" }}>
+                {tr("Motivo del Rechazo:", "Reason for Rejection:", "驳回原因：")}
               </label>
               <textarea
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder={lang === 'en' ? 'e.g. Please provide a clear profile photo and a valid phone number.' : lang === 'zh' ? '例如：请上传清晰的身份证件照片并提供有效的联系电话。' : 'Ej: Por favor, adjunte un documento de cédula legible y proporcione un número de WhatsApp de contacto válido.'}
+                placeholder={tr(
+                  "Ej: Por favor, adjunte un documento de cédula legible y proporcione un número de WhatsApp de contacto válido.",
+                  "e.g. Please provide a clear ID photo and a valid contact WhatsApp number.",
+                  "例如：请上传清晰的身份证件照片并提供有效的联系电话。"
+                )}
                 rows={4}
-                style={{
-                  width: '100%',
-                  background: 'rgba(15, 23, 42, 0.8)',
-                  border: '1.5px solid rgba(255, 255, 255, 0.15)',
-                  borderRadius: '14px',
-                  padding: '14px',
-                  color: '#FFFFFF',
-                  fontSize: '13.5px',
-                  fontWeight: '500',
-                  outline: 'none',
-                  resize: 'none'
-                }}
+                style={styles.modalTextarea}
+                className="admin-modal-textarea"
               />
             </div>
 
-            {/* Botones de acción */}
-            <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+            {/* Botones de acción del Modal */}
+            <div style={styles.modalActions} className="admin-modal-actions">
               <button
+                type="button"
                 onClick={() => setRejectionTarget(null)}
                 disabled={submittingRejection}
-                style={{
-                  flex: 1,
-                  padding: '12px',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  borderRadius: '14px',
-                  color: '#FFFFFF',
-                  fontSize: '13px',
-                  fontWeight: '750',
-                  cursor: 'pointer'
-                }}
+                style={styles.modalCancelBtn}
+                className="admin-modal-cancel"
               >
-                {lang === 'en' ? 'Cancel' : lang === 'zh' ? '取消' : 'Cancelar'}
+                {tr("Cancelar", "Cancel", "取消")}
               </button>
+
               <button
+                type="button"
                 onClick={handleConfirmarRechazo}
                 disabled={submittingRejection}
                 style={{
-                  flex: 1,
-                  padding: '12px',
-                  background: rejectionType === 'release' 
-                    ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)' 
-                    : 'linear-gradient(135deg, #FFD700 0%, #E6C200 100%)',
-                  color: rejectionType === 'release' ? 'white' : '#1A1A2E',
-                  border: 'none',
-                  borderRadius: '14px',
-                  fontSize: '13px',
-                  fontWeight: '800',
-                  cursor: 'pointer',
-                  boxShadow: rejectionType === 'release' 
-                    ? '0 4px 14px rgba(239, 68, 68, 0.35)' 
-                    : '0 4px 14px rgba(255, 215, 0, 0.35)'
+                  ...styles.modalConfirmBtn,
+                  background:
+                    rejectionType === "release"
+                      ? "linear-gradient(135deg, #EF4444 0%, #DC2626 100%)"
+                      : "linear-gradient(135deg, #FFD700 0%, #F59E0B 100%)",
+                  color: rejectionType === "release" ? "#FFFFFF" : "#0A192F",
                 }}
+                className="admin-modal-confirm"
               >
-                {submittingRejection 
-                  ? (lang === 'en' ? 'Processing...' : lang === 'zh' ? '处理中...' : 'Procesando...') 
-                  : (lang === 'en' ? 'Confirm Rejection' : lang === 'zh' ? '确认驳回' : 'Confirmar Rechazo')}
+                {submittingRejection
+                  ? tr("Procesando...", "Processing...", "处理中...")
+                  : tr("Confirmar Rechazo", "Confirm Rejection", "确认驳回")}
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* ESTILOS Y MEDIA QUERIES RESPONSIVOS (SAMSUNG GALAXY S24 ULTRA & MODERN MOBILES) */}
+      <style jsx global>{`
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translate(-50%, -12px);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, 0);
+          }
+        }
+        .admin-toast-fade {
+          animation: fadeInDown 0.25s ease-out forwards;
+        }
+
+        .admin-tr-hover:hover {
+          background: rgba(255, 255, 255, 0.035);
+        }
+
+        /* Tablets y pantallas intermedias */
+        @media (max-width: 900px) {
+          .admin-ribbon {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+          }
+          .admin-toolbar {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 12px !important;
+          }
+          .admin-search-box {
+            max-width: 100% !important;
+            width: 100% !important;
+          }
+          .admin-pagination {
+            justify-content: flex-end !important;
+          }
+        }
+
+        /* Celulares modernos (Samsung Galaxy S24 Ultra ~384-412px, iPhone 15/16 Pro Max, Pixel) */
+        @media (max-width: 640px) {
+          .admin-main {
+            padding: 82px 12px 36px !important;
+            gap: 16px !important;
+          }
+          .admin-container {
+            border-radius: 18px !important;
+          }
+          .admin-header {
+            padding: 20px 14px 16px !important;
+          }
+          .admin-top-row {
+            flex-wrap: wrap !important;
+            gap: 10px !important;
+          }
+          .admin-membership-btn,
+          .admin-refresh-btn {
+            min-height: 42px !important;
+            padding: 8px 12px !important;
+            font-size: 12px !important;
+          }
+          .admin-h1 {
+            font-size: 23px !important;
+            line-height: 1.25 !important;
+            margin: 10px 0 6px !important;
+          }
+          .admin-sub {
+            font-size: 13px !important;
+            line-height: 1.45 !important;
+          }
+          .admin-ribbon {
+            grid-template-columns: 1fr !important;
+            padding: 12px 14px !important;
+            gap: 10px !important;
+          }
+          .admin-ribbon-item {
+            padding: 4px 0 !important;
+          }
+          .admin-toolbar {
+            padding: 12px 14px !important;
+            gap: 12px !important;
+          }
+          .admin-tabs {
+            flex-direction: column !important;
+            width: 100% !important;
+            gap: 8px !important;
+          }
+          .admin-tab-btn {
+            width: 100% !important;
+            justify-content: center !important;
+            min-height: 44px !important;
+            font-size: 13px !important;
+          }
+          .admin-search-box {
+            width: 100% !important;
+            min-height: 44px !important;
+          }
+          .admin-search-input {
+            font-size: 13.5px !important;
+            padding: 11px 36px 11px 36px !important;
+          }
+          .admin-pagination {
+            justify-content: center !important;
+            width: 100% !important;
+            margin-top: 4px !important;
+          }
+          .admin-page-btn {
+            min-height: 40px !important;
+            padding: 8px 14px !important;
+          }
+          .admin-content-area {
+            padding: 14px 12px 20px !important;
+          }
+          .admin-claim-card {
+            padding: 16px 14px !important;
+            border-radius: 16px !important;
+          }
+          .admin-claim-header {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 14px !important;
+          }
+          .admin-claim-actions {
+            width: 100% !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+          }
+          .admin-approve-btn,
+          .admin-reject-btn {
+            width: 100% !important;
+            min-height: 44px !important;
+            justify-content: center !important;
+            font-size: 13.5px !important;
+          }
+          .admin-commercial-box {
+            padding: 14px !important;
+            border-radius: 14px !important;
+          }
+          .admin-commercial-grid {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+          }
+          .admin-verif-box {
+            padding: 12px !important;
+            border-radius: 12px !important;
+          }
+          .admin-verif-grid {
+            grid-template-columns: 1fr !important;
+            gap: 6px !important;
+          }
+          .admin-verif-files-row {
+            flex-direction: column !important;
+            gap: 8px !important;
+          }
+          .admin-doc-btn,
+          .admin-property-doc-btn {
+            width: 100% !important;
+            justify-content: center !important;
+            min-height: 42px !important;
+          }
+          .admin-table-scroll {
+            margin: 0 -4px;
+            padding-bottom: 6px;
+            -webkit-overflow-scrolling: touch;
+          }
+          .admin-table {
+            min-width: 520px;
+          }
+          .admin-table th,
+          .admin-table td {
+            padding: 10px 8px !important;
+            font-size: 12px !important;
+          }
+          .admin-modal-card {
+            padding: 20px 16px !important;
+            border-radius: 18px !important;
+          }
+          .admin-modal-actions {
+            flex-direction: column !important;
+          }
+          .admin-modal-cancel,
+          .admin-modal-confirm {
+            width: 100% !important;
+            min-height: 44px !important;
+          }
+        }
+
+        /* Celulares ultra-compactos (≤ 380px) */
+        @media (max-width: 380px) {
+          .admin-main {
+            padding: 76px 8px 30px !important;
+          }
+          .admin-h1 {
+            font-size: 21px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
+
+const styles = {
+  page: {
+    minHeight: "100vh",
+    background: "#070E18",
+    color: "#E2E8F0",
+    fontFamily: "var(--font-outfit), sans-serif",
+    position: "relative",
+  },
+  loadingContainer: {
+    minHeight: "100vh",
+    background: "#070E18",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    color: "#E2E8F0",
+    fontFamily: "var(--font-outfit), sans-serif",
+  },
+  spinner: {
+    width: 40,
+    height: 40,
+    border: "3px solid rgba(20, 109, 158, 0.25)",
+    borderTopColor: "#FFD700",
+    borderRadius: "50%",
+    animation: "spin 0.9s linear infinite",
+    margin: "0 auto 16px",
+  },
+  loadingText: {
+    fontSize: 14,
+    color: "#94A3B8",
+    fontWeight: 700,
+  },
+  toastBanner: {
+    position: "fixed",
+    top: 84,
+    left: "50%",
+    transform: "translateX(-50%)",
+    zIndex: 1100,
+    color: "#FFFFFF",
+    padding: "12px 24px",
+    borderRadius: 16,
+    fontWeight: 800,
+    fontSize: 13.5,
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    boxShadow: "0 14px 35px rgba(0, 0, 0, 0.35)",
+    border: "1px solid rgba(255, 255, 255, 0.25)",
+    backdropFilter: "blur(12px)",
+    maxWidth: "90%",
+  },
+  main: {
+    position: "relative",
+    zIndex: 1,
+    maxWidth: 1240,
+    margin: "0 auto",
+    padding: "116px 20px 60px",
+    display: "flex",
+    flexDirection: "column",
+    gap: 22,
+  },
+  mainContainer: {
+    background: "#0C1524",
+    borderRadius: 22,
+    border: "1px solid rgba(255, 255, 255, 0.09)",
+    boxShadow: "0 20px 50px rgba(0, 0, 0, 0.55)",
+    overflow: "hidden",
+  },
+  integratedHeader: {
+    padding: "28px 28px 22px",
+    background:
+      "linear-gradient(180deg, rgba(20, 109, 158, 0.16) 0%, rgba(12, 21, 36, 0.8) 100%)",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+  },
+  topRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 12,
+  },
+  membershipBtn: {
+    padding: "9px 18px",
+    borderRadius: 12,
+    fontWeight: 900,
+    fontSize: 12.5,
+    textDecoration: "none",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    background: "linear-gradient(135deg, #FFD700 0%, #F59E0B 100%)",
+    color: "#0A192F",
+    boxShadow: "0 6px 18px rgba(245, 158, 11, 0.35)",
+    border: "1.5px solid rgba(255, 215, 0, 0.7)",
+  },
+  refreshBtn: {
+    display: "inline-flex",
+    alignItems: "center",
+    padding: "8px 14px",
+    borderRadius: 12,
+    background: "rgba(255, 255, 255, 0.05)",
+    border: "1px solid rgba(255, 255, 255, 0.12)",
+    color: "#CBD5E1",
+    fontSize: 12.5,
+    fontWeight: 750,
+    cursor: "pointer",
+  },
+  heroBadge: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "5px 14px",
+    borderRadius: 999,
+    background: "rgba(255, 215, 0, 0.12)",
+    border: "1px solid rgba(255, 215, 0, 0.35)",
+    fontSize: 11,
+    fontWeight: 850,
+    letterSpacing: "0.08em",
+    color: "#FFD700",
+    marginBottom: 8,
+  },
+  h1: {
+    margin: "6px 0",
+    fontSize: 28,
+    fontWeight: 900,
+    letterSpacing: "-0.02em",
+    color: "#FFFFFF",
+  },
+  goldText: {
+    color: "#FFD700",
+  },
+  sub: {
+    margin: 0,
+    fontSize: 14,
+    color: "#94A3B8",
+    maxWidth: 780,
+    lineHeight: 1.5,
+  },
+  metricsRibbon: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: 16,
+    padding: "16px 28px",
+    background: "rgba(255, 255, 255, 0.02)",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+  },
+  metricItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: 14,
+  },
+  metricIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 13,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  metricNum: {
+    fontSize: 22,
+    fontWeight: 900,
+    lineHeight: 1.15,
+  },
+  metricLabel: {
+    fontSize: 12,
+    fontWeight: 750,
+    color: "#94A3B8",
+    marginTop: 2,
+  },
+  toolbar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 14,
+    padding: "14px 24px",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+    flexWrap: "wrap",
+  },
+  tabsGroup: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    flexWrap: "wrap",
+  },
+  tabBtn: {
+    padding: "9px 16px",
+    borderRadius: 12,
+    fontWeight: 800,
+    fontSize: 12.5,
+    cursor: "pointer",
+    display: "inline-flex",
+    alignItems: "center",
+    border: "1.5px solid",
+    transition: "all 0.15s ease",
+  },
+  searchBox: {
+    position: "relative",
+    flex: 1,
+    minWidth: 220,
+    maxWidth: 380,
+  },
+  searchIcon: {
+    position: "absolute",
+    left: 12,
+    top: "50%",
+    transform: "translateY(-50%)",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+  },
+  searchInput: {
+    width: "100%",
+    padding: "9px 34px 9px 36px",
+    borderRadius: 12,
+    border: "1.5px solid rgba(255, 255, 255, 0.12)",
+    background: "rgba(255, 255, 255, 0.04)",
+    fontSize: 13,
+    fontWeight: 600,
+    color: "#FFFFFF",
+    outline: "none",
+    boxSizing: "border-box",
+  },
+  searchClearBtn: {
+    position: "absolute",
+    right: 10,
+    top: "50%",
+    transform: "translateY(-50%)",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    color: "#94A3B8",
+    display: "flex",
+    alignItems: "center",
+    padding: 3,
+  },
+  pagination: {
+    display: "flex",
+    alignItems: "center",
+    gap: 6,
+  },
+  pageBtn: {
+    padding: "7px 12px",
+    fontSize: 12,
+    fontWeight: 750,
+    borderRadius: 10,
+    background: "rgba(255, 255, 255, 0.05)",
+    border: "1px solid rgba(255, 255, 255, 0.12)",
+    color: "#FFFFFF",
+    display: "inline-flex",
+    alignItems: "center",
+  },
+  pageIndicator: {
+    fontSize: 12,
+    fontWeight: 800,
+    color: "#FFD700",
+    background: "rgba(255, 215, 0, 0.1)",
+    border: "1px solid rgba(255, 215, 0, 0.25)",
+    padding: "6px 12px",
+    borderRadius: 10,
+  },
+  contentArea: {
+    padding: "24px 28px 30px",
+  },
+  emptyState: {
+    padding: "60px 0",
+    textAlign: "center",
+  },
+  emptyCard: {
+    padding: "50px 20px",
+    textAlign: "center",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    background: "rgba(255, 255, 255, 0.02)",
+    borderRadius: 18,
+    border: "1px dashed rgba(255, 255, 255, 0.1)",
+  },
+  emptyIconBox: {
+    width: 60,
+    height: 60,
+    borderRadius: 18,
+    background: "rgba(255, 215, 0, 0.12)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  claimsStack: {
+    display: "grid",
+    gap: 18,
+  },
+  claimCard: {
+    padding: "22px 24px",
+    background: "rgba(255, 255, 255, 0.025)",
+    borderRadius: 18,
+    border: "1.5px solid rgba(255, 255, 255, 0.08)",
+    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.25)",
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+  },
+  claimHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    flexWrap: "wrap",
+    gap: 14,
+  },
+  claimCategoryBadge: {
+    fontSize: 11,
+    fontWeight: 850,
+    background: "rgba(255, 215, 0, 0.15)",
+    color: "#FFD700",
+    border: "1px solid rgba(255, 215, 0, 0.3)",
+    padding: "3px 10px",
+    borderRadius: 8,
+    textTransform: "uppercase",
+    display: "inline-block",
+    marginBottom: 6,
+  },
+  claimTitle: {
+    margin: 0,
+    fontSize: 20,
+    fontWeight: 850,
+    color: "#FFFFFF",
+    letterSpacing: "-0.01em",
+  },
+  claimSubtitle: {
+    margin: "4px 0 0",
+    fontSize: 13,
+    color: "#94A3B8",
+  },
+  claimActions: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+  },
+  approveBtn: {
+    padding: "10px 18px",
+    background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
+    color: "#FFFFFF",
+    border: "none",
+    borderRadius: 12,
+    fontWeight: 800,
+    fontSize: 12.5,
+    cursor: "pointer",
+    display: "inline-flex",
+    alignItems: "center",
+    boxShadow: "0 4px 14px rgba(16, 185, 129, 0.3)",
+  },
+  rejectBtn: {
+    padding: "10px 18px",
+    background: "linear-gradient(135deg, #EF4444 0%, #DC2626 100%)",
+    color: "#FFFFFF",
+    border: "none",
+    borderRadius: 12,
+    fontWeight: 800,
+    fontSize: 12.5,
+    cursor: "pointer",
+    display: "inline-flex",
+    alignItems: "center",
+    boxShadow: "0 4px 14px rgba(239, 68, 68, 0.3)",
+  },
+  commercialBox: {
+    padding: 18,
+    background: "rgba(10, 25, 47, 0.65)",
+    borderRadius: 16,
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+  },
+  commercialBoxTitle: {
+    margin: "0 0 12px",
+    fontSize: 13.5,
+    fontWeight: 850,
+    color: "#FFD700",
+    display: "flex",
+    alignItems: "center",
+  },
+  commercialGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: 14,
+    fontSize: 13,
+    color: "#CBD5E1",
+  },
+  commercialCol: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
+  },
+  detailRow: {
+    margin: 0,
+    fontSize: 13,
+    lineHeight: 1.5,
+  },
+  waLink: {
+    color: "#10B981",
+    fontWeight: 800,
+    textDecoration: "none",
+    marginLeft: 4,
+  },
+  waBadge: {
+    color: "#10B981",
+    fontWeight: 800,
+    textDecoration: "none",
+    marginLeft: 6,
+    fontSize: 11.5,
+    background: "rgba(16, 185, 129, 0.15)",
+    padding: "2px 8px",
+    borderRadius: 6,
+    border: "1px solid rgba(16, 185, 129, 0.3)",
+    display: "inline-block",
+  },
+  commercialDesc: {
+    margin: "12px 0 0",
+    fontSize: 13,
+    color: "#CBD5E1",
+    borderTop: "1px dashed rgba(255, 255, 255, 0.1)",
+    paddingTop: 10,
+    lineHeight: 1.5,
+  },
+  verifBox: {
+    marginTop: 14,
+    padding: 16,
+    background: "rgba(20, 109, 158, 0.12)",
+    border: "1.5px solid rgba(56, 189, 248, 0.22)",
+    borderRadius: 14,
+  },
+  verifTitle: {
+    margin: "0 0 10px",
+    fontSize: 13,
+    fontWeight: 850,
+    color: "#38BDF8",
+    display: "flex",
+    alignItems: "center",
+  },
+  verifGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gap: 8,
+    fontSize: 12.5,
+    color: "#E2E8F0",
+  },
+  verifFilesRow: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 10,
+    marginTop: 12,
+  },
+  docBtn: {
+    padding: "8px 14px",
+    fontSize: 12,
+    textDecoration: "none",
+    fontWeight: 800,
+    color: "#FFFFFF",
+    background: "linear-gradient(135deg, #146D9E 0%, #0D4E72 100%)",
+    borderRadius: 10,
+    border: "1px solid rgba(56, 189, 248, 0.4)",
+    display: "inline-flex",
+    alignItems: "center",
+  },
+  propertyDocBtn: {
+    padding: "8px 14px",
+    fontSize: 12,
+    textDecoration: "none",
+    fontWeight: 800,
+    color: "#FFD700",
+    background: "rgba(255, 215, 0, 0.15)",
+    borderRadius: 10,
+    border: "1px solid rgba(255, 215, 0, 0.35)",
+    display: "inline-flex",
+    alignItems: "center",
+  },
+  noDocText: {
+    fontSize: 12,
+    color: "#EF4444",
+    fontWeight: 750,
+    display: "inline-flex",
+    alignItems: "center",
+  },
+  notesBox: {
+    margin: "12px 0 0",
+    fontSize: 12.5,
+    color: "#94A3B8",
+    fontStyle: "italic",
+    borderTop: "1px dashed rgba(255, 255, 255, 0.1)",
+    paddingTop: 8,
+    display: "flex",
+    alignItems: "flex-start",
+    lineHeight: 1.45,
+  },
+  tableCard: {
+    background: "rgba(255, 255, 255, 0.02)",
+    borderRadius: 16,
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+    overflow: "hidden",
+  },
+  tableScroll: {
+    width: "100%",
+    overflowX: "auto",
+  },
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    textAlign: "left",
+    fontSize: 13,
+  },
+  tableHeadRow: {
+    borderBottom: "1px solid rgba(255, 255, 255, 0.09)",
+    background: "rgba(255, 255, 255, 0.02)",
+  },
+  th: {
+    padding: "14px 18px",
+    fontWeight: 850,
+    color: "#94A3B8",
+    fontSize: 12,
+    textTransform: "uppercase",
+    letterSpacing: "0.04em",
+    whiteSpace: "nowrap",
+  },
+  tableRow: {
+    borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+    transition: "background 0.15s ease",
+  },
+  td: {
+    padding: "14px 18px",
+    fontSize: 13,
+    whiteSpace: "nowrap",
+  },
+  statusBadge: {
+    fontSize: 11,
+    fontWeight: 850,
+    textTransform: "uppercase",
+    padding: "3px 10px",
+    borderRadius: 8,
+    border: "1px solid",
+    display: "inline-block",
+  },
+  modalOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: "rgba(0, 0, 0, 0.78)",
+    backdropFilter: "blur(10px)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1200,
+    padding: 20,
+  },
+  modalCard: {
+    maxWidth: 520,
+    width: "100%",
+    background: "#0D1828",
+    borderRadius: 22,
+    border: "1.5px solid rgba(255, 215, 0, 0.35)",
+    padding: 26,
+    boxShadow: "0 24px 60px rgba(0, 0, 0, 0.65)",
+    display: "flex",
+    flexDirection: "column",
+    gap: 14,
+  },
+  modalHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  modalAlertIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    background: "rgba(255, 215, 0, 0.15)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  modalTitle: {
+    margin: 0,
+    fontSize: 20,
+    fontWeight: 850,
+    color: "#FFD700",
+  },
+  modalCloseBtn: {
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    color: "#94A3B8",
+    display: "flex",
+    alignItems: "center",
+    padding: 4,
+  },
+  modalDesc: {
+    margin: 0,
+    fontSize: 13,
+    color: "#94A3B8",
+    lineHeight: 1.5,
+  },
+  radioOption: {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: 12,
+    padding: "12px 14px",
+    border: "1.5px solid",
+    borderRadius: 14,
+    cursor: "pointer",
+  },
+  radioInput: {
+    marginTop: 3,
+    accentColor: "#FFD700",
+  },
+  modalTextarea: {
+    width: "100%",
+    background: "rgba(10, 25, 47, 0.8)",
+    border: "1.5px solid rgba(255, 255, 255, 0.15)",
+    borderRadius: 12,
+    padding: 12,
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: 500,
+    outline: "none",
+    resize: "none",
+    boxSizing: "border-box",
+  },
+  modalActions: {
+    display: "flex",
+    gap: 12,
+    marginTop: 6,
+  },
+  modalCancelBtn: {
+    flex: 1,
+    padding: "12px 14px",
+    background: "rgba(255, 255, 255, 0.06)",
+    border: "1px solid rgba(255, 255, 255, 0.12)",
+    borderRadius: 12,
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: 750,
+    cursor: "pointer",
+  },
+  modalConfirmBtn: {
+    flex: 1,
+    padding: "12px 14px",
+    border: "none",
+    borderRadius: 12,
+    fontSize: 13,
+    fontWeight: 850,
+    cursor: "pointer",
+  },
+};

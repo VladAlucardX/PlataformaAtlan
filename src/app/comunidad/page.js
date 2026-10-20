@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { isMember } from "@/lib/membership";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -242,7 +243,7 @@ function CreatePostModal({ onClose, session, perfil, lang, onPostCreated }) {
                     ? <><Icon name="building" size={11} color="#38BDF8" /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
                     : perfil?.rol === "admin"
                     ? <><Icon name="zap" size={11} color="#FFD700" /> {lang === "en" ? "Administrator" : lang === "zh" ? "管理员" : "Administrador"}</>
-                    : (perfil?.es_premium || perfil?.suscripcion_activa || perfil?.rol === "turista_deacachimba")
+                    : (isMember(perfil))
                     ? <><Icon name="star" size={11} color="#FFD700" /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
                     : <><Icon name="luggage" size={11} color="#38BDF8" /> {lang === "en" ? "Tourist" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
                 </span>
@@ -1000,7 +1001,7 @@ function UserSuggestionCard({ user, session, lang, onRequireLogin, onFollowChang
           <div style={{ fontSize: "11px", color: "var(--atlan-text-muted)" }}>
             {user.rol === "dueno"
               ? <><Icon name="building" size={11} /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
-              : (user.es_premium || user.suscripcion_activa || user.rol === "turista_deacachimba")
+              : (isMember(user))
               ? <><Icon name="star" size={11} /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
               : <><Icon name="luggage" size={11} /> {lang === "en" ? "Tourist" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
           </div>
@@ -1092,7 +1093,7 @@ function SuggestedUserCardCompact({ user, session, lang, onRequireLogin, onFollo
         <div style={{ fontSize: "10.5px", color: "var(--atlan-text-muted)", marginTop: "2px", width: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {user.rol === "dueno"
             ? (lang === "en" ? "Business" : lang === "zh" ? "店主" : "Propietario")
-            : (user.es_premium || user.suscripcion_activa || user.rol === "turista_deacachimba")
+            : (isMember(user))
             ? (lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Deacachimba")
             : (lang === "en" ? "Tourist" : lang === "zh" ? "游客" : "Turista")}
         </div>
@@ -1339,7 +1340,7 @@ export default function ComunidadPage() {
                     <p style={{ margin: "0 0 12px", fontSize: "12px", color: "var(--atlan-text-muted)" }}>
                       {perfil?.rol === "dueno"
                         ? <><Icon name="building" size={11} /> {lang === "en" ? "Business Owner" : lang === "zh" ? "店主 / 企业主" : "Propietario"}</>
-                        : (perfil?.es_premium || perfil?.suscripcion_activa || perfil?.rol === "turista_deacachimba")
+                        : (isMember(perfil))
                         ? <><Icon name="star" size={11} /> {lang === "en" ? "VIP Tourist" : lang === "zh" ? "资深游客" : "Turista Deacachimba"}</>
                         : <><Icon name="luggage" size={11} /> {lang === "en" ? "Tourist" : lang === "zh" ? "尊贵游客" : "Turista Tuani"}</>}
                     </p>
