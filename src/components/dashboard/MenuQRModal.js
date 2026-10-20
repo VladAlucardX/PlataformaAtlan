@@ -27,10 +27,10 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
     if (!url) return;
 
     QRCode.toDataURL(url, {
-      width: 480,
+      width: 520,
       margin: 1,
       color: {
-        dark: tema === "light" ? "#0F172A" : "#000000",
+        dark: "#0F172A",
         light: "#FFFFFF",
       },
       errorCorrectionLevel: "H",
@@ -47,7 +47,6 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
   const ubicacion = negocio.departamento || "Nicaragua";
   const logoUrl = negocio.foto_url || negocio.logo_url || null;
 
-  // Copiar link al portapapeles
   const handleCopiarEnlace = async () => {
     try {
       await navigator.clipboard.writeText(urlDestino);
@@ -58,181 +57,265 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
     }
   };
 
-  // Imprimir directo con estilos específicos
   const handleImprimir = () => {
     window.print();
   };
 
-  // Generar y descargar la tarjeta en PNG de Alta Resolución (1200 x 1650 px ~ 300 DPI para impresión física)
+  // Generar y descargar la tarjeta en PNG de Alta Resolución (1200 x 1750 px ~ 300 DPI)
   const handleDescargarPng = async () => {
     setGenerandoPng(true);
     try {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       const width = 1200;
-      const height = 1650;
+      const height = 1750;
       canvas.width = width;
       canvas.height = height;
 
       const isLight = tema === "light";
-      const bgCard = isLight ? "#FFFFFF" : "#0A192F";
-      const borderCol = isLight ? "#CBD5E1" : "rgba(255, 215, 0, 0.4)";
-      const titleCol = isLight ? "#0F172A" : "#FFFFFF";
+      const bgCard = isLight ? "#FFFFFF" : "#08101E";
+      const primaryCol = isLight ? "#0F172A" : "#F8FAFC";
       const subCol = isLight ? "#475569" : "#94A3B8";
       const goldCol = "#D97706";
-      const atlanTextCol = isLight ? "#64748B" : "#94A3B8";
+      const goldLight = isLight ? "#F59E0B" : "#FBBF24";
 
-      // 1. Fondo general de la tarjeta
+      // 1. Fondo principal
       ctx.fillStyle = bgCard;
       ctx.fillRect(0, 0, width, height);
 
-      // 2. Marco exterior elegante
-      ctx.strokeStyle = borderCol;
-      ctx.lineWidth = 6;
-      ctx.strokeRect(36, 36, width - 72, height - 72);
+      // 2. Marco perimetral con doble filete dorado
+      ctx.strokeStyle = isLight ? "#E2E8F0" : "rgba(255, 215, 0, 0.35)";
+      ctx.lineWidth = 8;
+      ctx.strokeRect(30, 30, width - 60, height - 60);
 
-      // Marco interior sutil
-      ctx.strokeStyle = isLight ? "rgba(217, 119, 6, 0.25)" : "rgba(255, 215, 0, 0.2)";
+      ctx.strokeStyle = isLight ? "rgba(217, 119, 6, 0.4)" : "rgba(255, 215, 0, 0.6)";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(44, 44, width - 88, height - 88);
+
+      // Decoración en las 4 esquinas del marco
+      const cornerSize = 24;
+      const corners = [
+        [44, 44],
+        [width - 44, 44],
+        [44, height - 44],
+        [width - 44, height - 44],
+      ];
+      ctx.fillStyle = goldLight;
+      corners.forEach(([cx, cy]) => {
+        ctx.beginPath();
+        ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 3. Encabezado de la tarjeta
+      let y = 110;
+
+      // Banner superior decorativo
+      ctx.fillStyle = isLight ? "rgba(245, 158, 11, 0.12)" : "rgba(255, 215, 0, 0.15)";
+      const topBadgeW = 440;
+      const topBadgeH = 46;
+      ctx.beginPath();
+      ctx.roundRect((width - topBadgeW) / 2, y, topBadgeW, topBadgeH, 23);
+      ctx.fill();
+      ctx.strokeStyle = goldLight;
       ctx.lineWidth = 2;
-      ctx.strokeRect(48, 48, width - 96, height - 96);
+      ctx.stroke();
 
-      // 3. Cabecera - Negocio Protagonista
-      let yCursor = 130;
+      ctx.fillStyle = isLight ? "#B45309" : "#FCD34D";
+      ctx.font = "bold 20px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("★ MENÚ DIGITAL & PROMOCIONES ★", width / 2, y + topBadgeH / 2 + 1);
 
-      // Cargar logo si existe o dibujar ícono de establecimiento
+      y += topBadgeH + 45;
+
+      // Logo circular o emblema
       if (logoUrl) {
         try {
           const img = new Image();
           img.crossOrigin = "anonymous";
-          await new Promise((resolve, reject) => {
-            img.onload = resolve;
-            img.onerror = reject;
+          await new Promise((res, rej) => {
+            img.onload = res;
+            img.onerror = rej;
             img.src = logoUrl;
           });
           const imgSize = 130;
-          const imgX = (width - imgSize) / 2;
           ctx.save();
           ctx.beginPath();
-          ctx.arc(width / 2, yCursor + imgSize / 2, imgSize / 2, 0, Math.PI * 2);
+          ctx.arc(width / 2, y + imgSize / 2, imgSize / 2, 0, Math.PI * 2);
           ctx.closePath();
           ctx.clip();
-          ctx.drawImage(img, imgX, yCursor, imgSize, imgSize);
+          ctx.drawImage(img, (width - imgSize) / 2, y, imgSize, imgSize);
           ctx.restore();
 
-          // Borde del logo
-          ctx.strokeStyle = goldCol;
-          ctx.lineWidth = 4;
+          ctx.strokeStyle = goldLight;
+          ctx.lineWidth = 5;
           ctx.beginPath();
-          ctx.arc(width / 2, yCursor + imgSize / 2, imgSize / 2, 0, Math.PI * 2);
+          ctx.arc(width / 2, y + imgSize / 2, imgSize / 2, 0, Math.PI * 2);
           ctx.stroke();
-          yCursor += imgSize + 30;
+          y += imgSize + 30;
         } catch {
-          yCursor += 20;
+          y += 10;
         }
-      } else {
-        yCursor += 30;
       }
 
-      // Nombre del negocio en grande y destacado
-      ctx.fillStyle = titleCol;
-      ctx.font = "bold 64px sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
-      // Ajustar texto si es muy largo
-      let fontSize = 64;
-      while (ctx.measureText(nombreNegocio).width > width - 180 && fontSize > 36) {
-        fontSize -= 4;
-        ctx.font = `bold ${fontSize}px sans-serif`;
+      // Nombre del negocio (Protagonista absoluto en grande)
+      ctx.fillStyle = primaryCol;
+      ctx.font = "900 60px sans-serif";
+      let fontSize = 60;
+      while (ctx.measureText(nombreNegocio).width > width - 160 && fontSize > 36) {
+        fontSize -= 3;
+        ctx.font = `900 ${fontSize}px sans-serif`;
       }
-      ctx.fillText(nombreNegocio, width / 2, yCursor);
-      yCursor += 55;
+      ctx.fillText(nombreNegocio, width / 2, y);
+      y += 52;
 
-      // Categoría y Ubicación
+      // Categoría y Ciudad
       ctx.fillStyle = subCol;
-      ctx.font = "600 28px sans-serif";
-      ctx.fillText(`${categoria.toUpperCase()} • ${ubicacion.toUpperCase()}`, width / 2, yCursor);
-      yCursor += 55;
-
-      // Insignia Oficial
-      ctx.fillStyle = isLight ? "#FEF3C7" : "rgba(255, 215, 0, 0.15)";
-      const badgeW = 320;
-      const badgeH = 46;
-      ctx.beginPath();
-      ctx.roundRect((width - badgeW) / 2, yCursor - badgeH / 2, badgeW, badgeH, 23);
-      ctx.fill();
-      ctx.strokeStyle = isLight ? "#F59E0B" : "#FFD700";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      ctx.fillStyle = isLight ? "#B45309" : "#FFD700";
-      ctx.font = "bold 20px sans-serif";
-      ctx.fillText("★ MENÚ DIGITAL OFICIAL ★", width / 2, yCursor + 1);
-      yCursor += 65;
+      ctx.font = "bold 26px sans-serif";
+      ctx.fillText(`${categoria.toUpperCase()} • ${ubicacion.toUpperCase()}`, width / 2, y);
+      y += 45;
 
       // Línea divisoria elegante
-      ctx.strokeStyle = isLight ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.12)";
+      ctx.strokeStyle = isLight ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.15)";
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(140, yCursor);
-      ctx.lineTo(width - 140, yCursor);
+      ctx.moveTo(120, y);
+      ctx.lineTo(width - 120, y);
       ctx.stroke();
-      yCursor += 55;
+      y += 50;
 
-      // Llamado a la acción
+      // 4. Instrucción clara para el cliente de la mesa
       ctx.fillStyle = isLight ? "#0F172A" : "#FFFFFF";
-      ctx.font = "bold 34px sans-serif";
-      ctx.fillText("ESCANEA CON TU CELULAR", width / 2, yCursor);
-      yCursor += 42;
+      ctx.font = "900 36px sans-serif";
+      ctx.fillText("ESCANEA CON TU CELULAR", width / 2, y);
+      y += 40;
 
       ctx.fillStyle = subCol;
-      ctx.font = "500 24px sans-serif";
-      ctx.fillText("Para ver nuestros platillos, fotos y precios actualizados", width / 2, yCursor);
-      yCursor += 60;
+      ctx.font = "600 24px sans-serif";
+      ctx.fillText("Apunta con tu cámara para ver fotos, platillos y precios", width / 2, y);
+      y += 55;
 
-      // 4. Dibujar Código QR en el centro
-      const qrImg = new Image();
-      await new Promise((resolve, reject) => {
-        qrImg.onload = resolve;
-        qrImg.onerror = reject;
-        qrImg.src = qrDataUrl;
-      });
-
+      // 5. Marco del Código QR con esquinas tipo visor de cámara
       const qrSize = 520;
       const qrX = (width - qrSize) / 2;
-      // Contenedor blanco para el QR para máximo contraste al escanear
+      const qrY = y;
+
+      // Fondo blanco del QR para lectura instantánea
       ctx.fillStyle = "#FFFFFF";
       ctx.beginPath();
-      ctx.roundRect(qrX - 20, yCursor - 20, qrSize + 40, qrSize + 40, 24);
+      ctx.roundRect(qrX - 24, qrY - 24, qrSize + 48, qrSize + 48, 28);
       ctx.fill();
-      ctx.strokeStyle = isLight ? "#E2E8F0" : "#FFD700";
+      ctx.strokeStyle = isLight ? "#CBD5E1" : goldLight;
       ctx.lineWidth = 3;
       ctx.stroke();
 
-      ctx.drawImage(qrImg, qrX, yCursor, qrSize, qrSize);
-      yCursor += qrSize + 55;
+      // Esquinas estilo visor
+      const bracketLen = 36;
+      const bracketThick = 6;
+      ctx.strokeStyle = goldLight;
+      ctx.lineWidth = bracketThick;
 
-      // Subtexto de comodidad
-      ctx.fillStyle = subCol;
-      ctx.font = "500 22px sans-serif";
-      ctx.fillText("Sin descargar aplicaciones • Rápido, higiénico y directo", width / 2, yCursor);
-      yCursor += 65;
+      // Arriba-Izquierda
+      ctx.beginPath();
+      ctx.moveTo(qrX - 34, qrY - 34 + bracketLen);
+      ctx.lineTo(qrX - 34, qrY - 34);
+      ctx.lineTo(qrX - 34 + bracketLen, qrY - 34);
+      ctx.stroke();
 
-      // Línea divisoria inferior
+      // Arriba-Derecha
+      ctx.beginPath();
+      ctx.moveTo(qrX + qrSize + 34 - bracketLen, qrY - 34);
+      ctx.lineTo(qrX + qrSize + 34, qrY - 34);
+      ctx.lineTo(qrX + qrSize + 34, qrY - 34 + bracketLen);
+      ctx.stroke();
+
+      // Abajo-Izquierda
+      ctx.beginPath();
+      ctx.moveTo(qrX - 34, qrY + qrSize + 34 - bracketLen);
+      ctx.lineTo(qrX - 34, qrY + qrSize + 34);
+      ctx.lineTo(qrX - 34 + bracketLen, qrY + qrSize + 34);
+      ctx.stroke();
+
+      // Abajo-Derecha
+      ctx.beginPath();
+      ctx.moveTo(qrX + qrSize + 34 - bracketLen, qrY + qrSize + 34);
+      ctx.lineTo(qrX + qrSize + 34, qrY + qrSize + 34);
+      ctx.lineTo(qrX + qrSize + 34, qrY + qrSize + 34 - bracketLen);
+      ctx.stroke();
+
+      // Dibujar imagen del QR
+      const qrImg = new Image();
+      await new Promise((res, rej) => {
+        qrImg.onload = res;
+        qrImg.onerror = rej;
+        qrImg.src = qrDataUrl;
+      });
+      ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+
+      y += qrSize + 65;
+
+      // 6. Guía visual de 3 pasos rápidos
+      const stepsY = y;
+      const stepBoxW = 320;
+      const stepGap = 20;
+      const totalStepsW = stepBoxW * 3 + stepGap * 2;
+      const startX = (width - totalStepsW) / 2;
+
+      const steps = [
+        { num: "1", tit: "Abre la Cámara", sub: "Desde tu teléfono" },
+        { num: "2", tit: "Apunta al QR", sub: "Sin descargar apps" },
+        { num: "3", tit: "Mira el Menú", sub: "Con fotos y precios" },
+      ];
+
+      steps.forEach((s, idx) => {
+        const sx = startX + idx * (stepBoxW + stepGap);
+        ctx.fillStyle = isLight ? "#F8FAFC" : "rgba(255, 255, 255, 0.04)";
+        ctx.beginPath();
+        ctx.roundRect(sx, stepsY, stepBoxW, 70, 14);
+        ctx.fill();
+        ctx.strokeStyle = isLight ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Número en círculo dorado
+        ctx.fillStyle = goldLight;
+        ctx.beginPath();
+        ctx.arc(sx + 32, stepsY + 35, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#0F172A";
+        ctx.font = "bold 18px sans-serif";
+        ctx.fillText(s.num, sx + 32, stepsY + 36);
+
+        // Texto del paso
+        ctx.textAlign = "left";
+        ctx.fillStyle = primaryCol;
+        ctx.font = "bold 18px sans-serif";
+        ctx.fillText(s.tit, sx + 62, stepsY + 28);
+
+        ctx.fillStyle = subCol;
+        ctx.font = "500 15px sans-serif";
+        ctx.fillText(s.sub, sx + 62, stepsY + 50);
+      });
+
+      y += 110;
+
+      // Línea divisoria
       ctx.strokeStyle = isLight ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.12)";
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(180, yCursor);
-      ctx.lineTo(width - 180, yCursor);
+      ctx.moveTo(140, y);
+      ctx.lineTo(width - 140, y);
       ctx.stroke();
-      yCursor += 50;
+      y += 45;
 
-      // 5. Pie de página - Atlan pequeñito y sutil como respaldo tecnológico
-      ctx.fillStyle = atlanTextCol;
+      // 7. Pie de página - Atlan como referencia pequeña
+      ctx.textAlign = "center";
+      ctx.fillStyle = subCol;
       ctx.font = "600 20px sans-serif";
-      ctx.fillText("Menú interactivo impulsado por Plataforma Atlan • Turismo Nicaragua", width / 2, yCursor);
+      ctx.fillText("Menú Digital impulsado por Plataforma Atlan • www.plataforma-atlan.com", width / 2, y);
 
-      // Disparar descarga del PNG generado
+      // Disparar descarga del PNG
       const cleanName = nombreNegocio.toLowerCase().replace(/[^a-z0-9]/g, "_").replace(/_+/g, "_");
       const a = document.createElement("a");
       a.href = canvas.toDataURL("image/png");
@@ -251,16 +334,16 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
   return (
     <div style={styles.backdrop} onClick={onClose} className="qr-modal-backdrop">
       <div style={styles.cardModal} onClick={(e) => e.stopPropagation()} className="qr-modal-card">
-        {/* Cabecera del modal */}
+        {/* CABECERA DEL MODAL */}
         <div style={styles.modalHeader}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={styles.iconBox}>
               <Icon name="qrCode" size={20} color="#FFD700" />
             </div>
             <div>
-              <h3 style={styles.title}>Tarjeta QR de Mesa</h3>
+              <h3 style={styles.title}>Exhibidor QR para Mesas</h3>
               <p style={styles.subtitle}>
-                Imprime o descarga la tarjeta para colocar en los acrílicos de tus mesas
+                Diseño optimizado para soportes acrílicos de restaurante (10x15 cm) o stickers de mesa
               </p>
             </div>
           </div>
@@ -269,9 +352,9 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
           </button>
         </div>
 
-        {/* Barra de opciones de tema */}
+        {/* SELECTOR DE ESTILO */}
         <div style={styles.themeBar}>
-          <span style={styles.themeLabel}>Estilo de la tarjeta:</span>
+          <span style={styles.themeLabel}>Estilo de la tarjeta para imprimir:</span>
           <div style={styles.themeButtons}>
             <button
               type="button"
@@ -282,19 +365,21 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
                 color: isLight ? "#0F172A" : "#94A3B8",
                 borderColor: isLight ? "#F59E0B" : "rgba(255,255,255,0.12)",
                 fontWeight: isLight ? "800" : "600",
+                boxShadow: isLight ? "0 2px 8px rgba(0,0,0,0.12)" : "none",
               }}
             >
-              ☀️ Blanco Elegante (Ideal para Imprimir)
+              ☀️ Blanco Elegante (Ahorra Tinta y Recomendado)
             </button>
             <button
               type="button"
               onClick={() => setTema("dark")}
               style={{
                 ...styles.themeBtn,
-                background: !isLight ? "#0A192F" : "rgba(255,255,255,0.06)",
+                background: !isLight ? "#0B192C" : "rgba(255,255,255,0.06)",
                 color: !isLight ? "#FFD700" : "#94A3B8",
                 borderColor: !isLight ? "#FFD700" : "rgba(255,255,255,0.12)",
                 fontWeight: !isLight ? "800" : "600",
+                boxShadow: !isLight ? "0 2px 8px rgba(255,215,0,0.2)" : "none",
               }}
             >
               🌙 Modo Noche / Lounge
@@ -302,89 +387,120 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
           </div>
         </div>
 
-        {/* Vista previa en vivo de la Tarjeta de Mesa */}
+        {/* VISTA PREVIA DEL EXHIBIDOR DE MESA (SIN CORTARSE Y CON DISEÑO PROFESIONAL) */}
         <div style={styles.previewContainer}>
-          <div
-            ref={printCardRef}
-            id="print-qr-card"
-            style={{
-              ...styles.tableCard,
-              background: isLight ? "#FFFFFF" : "#0A192F",
-              color: isLight ? "#0F172A" : "#FFFFFF",
-              borderColor: isLight ? "#E2E8F0" : "rgba(255, 215, 0, 0.4)",
-              boxShadow: isLight
-                ? "0 18px 40px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.2)"
-                : "0 22px 50px rgba(0,0,0,0.6), 0 0 25px rgba(255, 215, 0, 0.15)",
-            }}
-          >
-            {/* Cabecera del comercio (Protagonista en grande) */}
-            <div style={styles.cardHeader}>
-              {logoUrl ? (
-                <div style={{ width: 56, height: 56, borderRadius: "50%", overflow: "hidden", margin: "0 auto 10px", border: "2px solid #F59E0B" }}>
-                  <img src={logoUrl} alt={nombreNegocio} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-              ) : (
-                <div style={{ width: 50, height: 50, borderRadius: "50%", background: "rgba(245, 158, 11, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 8px", color: "#F59E0B" }}>
-                  <Icon name="utensils" size={24} color="#F59E0B" />
-                </div>
-              )}
-
-              {/* Nombre grande del negocio */}
-              <h2 style={{ ...styles.businessTitle, color: isLight ? "#0F172A" : "#FFFFFF" }}>
-                {nombreNegocio}
-              </h2>
-
-              <p style={{ ...styles.businessMeta, color: isLight ? "#64748B" : "#94A3B8" }}>
-                {categoria.toUpperCase()} • {ubicacion.toUpperCase()}
-              </p>
-
-              <div style={{ ...styles.cardBadge, background: isLight ? "#FEF3C7" : "rgba(255,215,0,0.15)", color: isLight ? "#B45309" : "#FFD700", borderColor: isLight ? "#F59E0B" : "rgba(255,215,0,0.4)" }}>
-                ★ MENÚ DIGITAL OFICIAL ★
-              </div>
-            </div>
-
-            <div style={{ ...styles.divider, background: isLight ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.1)" }} />
-
-            {/* Código QR y llamada a la acción */}
-            <div style={styles.cardBody}>
-              <div style={{ ...styles.scanTitle, color: isLight ? "#0F172A" : "#FFFFFF" }}>
-                ESCANEA CON TU CELULAR
-              </div>
-              <div style={{ ...styles.scanSubtitle, color: isLight ? "#64748B" : "#94A3B8" }}>
-                Para consultar platillos, fotos y precios actualizados
+          {/* MOCKUP VISUAL DE SOPORTE ACRÍLICO */}
+          <div style={styles.standMockupWrapper}>
+            <div
+              ref={printCardRef}
+              id="print-qr-card"
+              style={{
+                ...styles.tableCard,
+                background: isLight ? "#FFFFFF" : "#0A192F",
+                color: isLight ? "#0F172A" : "#FFFFFF",
+                borderColor: isLight ? "#CBD5E1" : "rgba(255, 215, 0, 0.45)",
+                boxShadow: isLight
+                  ? "0 20px 45px rgba(0,0,0,0.16), 0 2px 6px rgba(0,0,0,0.08)"
+                  : "0 24px 55px rgba(0,0,0,0.7), 0 0 25px rgba(255, 215, 0, 0.18)",
+              }}
+            >
+              {/* Franja superior decorativa */}
+              <div style={styles.cardTopBanner}>
+                <span style={{ ...styles.cardBadge, background: isLight ? "#FEF3C7" : "rgba(255,215,0,0.18)", color: isLight ? "#B45309" : "#FFD700", borderColor: isLight ? "#F59E0B" : "rgba(255,215,0,0.4)" }}>
+                  ★ MENÚ DIGITAL & PROMOCIONES ★
+                </span>
               </div>
 
-              {/* Marco blanco del QR para lectura óptima */}
-              <div style={styles.qrWrapper}>
-                {qrDataUrl ? (
-                  <img src={qrDataUrl} alt="Código QR del Menú" style={styles.qrImage} />
+              {/* Encabezado con Nombre Grande del Negocio */}
+              <div style={styles.cardHeader}>
+                {logoUrl ? (
+                  <div style={{ width: 52, height: 52, borderRadius: "50%", overflow: "hidden", margin: "0 auto 8px", border: "2.5px solid #F59E0B", boxShadow: "0 4px 10px rgba(0,0,0,0.1)" }}>
+                    <img src={logoUrl} alt={nombreNegocio} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  </div>
                 ) : (
-                  <div style={{ width: 170, height: 170, display: "flex", alignItems: "center", justifyContent: "center", color: "#64748B" }}>
-                    Generando QR…
+                  <div style={{ width: 46, height: 46, borderRadius: "50%", background: "rgba(245, 158, 11, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 8px", border: "2px solid #F59E0B" }}>
+                    <Icon name="utensils" size={22} color="#F59E0B" />
                   </div>
                 )}
+
+                <h2 style={{ ...styles.businessTitle, color: isLight ? "#0F172A" : "#FFFFFF" }}>
+                  {nombreNegocio}
+                </h2>
+
+                <p style={{ ...styles.businessMeta, color: isLight ? "#475569" : "#94A3B8" }}>
+                  {categoria.toUpperCase()} • {ubicacion.toUpperCase()}
+                </p>
               </div>
 
-              <div style={{ ...styles.noAppsNote, color: isLight ? "#64748B" : "#94A3B8" }}>
-                Sin descargar apps • Rápido, higiénico y directo
+              <div style={{ ...styles.divider, background: isLight ? "rgba(0,0,0,0.09)" : "rgba(255,255,255,0.12)" }} />
+
+              {/* Sección central con el llamado y el código QR */}
+              <div style={styles.cardBody}>
+                <div style={{ ...styles.scanTitle, color: isLight ? "#0F172A" : "#FFFFFF" }}>
+                  ESCANEA CON TU CELULAR
+                </div>
+                <div style={{ ...styles.scanSubtitle, color: isLight ? "#64748B" : "#94A3B8" }}>
+                  Apunta con tu cámara para ver fotos, platillos y precios
+                </div>
+
+                {/* Contenedor del código QR con esquinas estilo visor */}
+                <div style={styles.qrContainerBox}>
+                  <div style={styles.qrFrameCornerTL} />
+                  <div style={styles.qrFrameCornerTR} />
+                  <div style={styles.qrFrameCornerBL} />
+                  <div style={styles.qrFrameCornerBR} />
+
+                  <div style={styles.qrWhitePlate}>
+                    {qrDataUrl ? (
+                      <img src={qrDataUrl} alt="Código QR del Menú" style={styles.qrImage} />
+                    ) : (
+                      <div style={{ width: 150, height: 150, display: "flex", alignItems: "center", justifyContent: "center", color: "#64748B", fontSize: 12 }}>
+                        Generando QR…
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Guía gráfica de 3 pasos rápidos */}
+                <div style={styles.stepsRow}>
+                  <div style={{ ...styles.stepBadge, background: isLight ? "#F1F5F9" : "rgba(255,255,255,0.06)", borderColor: isLight ? "#E2E8F0" : "rgba(255,255,255,0.1)" }}>
+                    <span style={styles.stepNum}>1</span>
+                    <span style={{ ...styles.stepText, color: isLight ? "#334155" : "#E2E8F0" }}>Abre Cámara</span>
+                  </div>
+                  <div style={{ ...styles.stepBadge, background: isLight ? "#F1F5F9" : "rgba(255,255,255,0.06)", borderColor: isLight ? "#E2E8F0" : "rgba(255,255,255,0.1)" }}>
+                    <span style={styles.stepNum}>2</span>
+                    <span style={{ ...styles.stepText, color: isLight ? "#334155" : "#E2E8F0" }}>Apunta al QR</span>
+                  </div>
+                  <div style={{ ...styles.stepBadge, background: isLight ? "#F1F5F9" : "rgba(255,255,255,0.06)", borderColor: isLight ? "#E2E8F0" : "rgba(255,255,255,0.1)" }}>
+                    <span style={styles.stepNum}>3</span>
+                    <span style={{ ...styles.stepText, color: isLight ? "#334155" : "#E2E8F0" }}>Mira el Menú</span>
+                  </div>
+                </div>
+
+                <div style={{ ...styles.noAppsNote, color: isLight ? "#64748B" : "#94A3B8" }}>
+                  Sin descargar aplicaciones • Rápido y seguro
+                </div>
+              </div>
+
+              <div style={{ ...styles.divider, background: isLight ? "rgba(0,0,0,0.09)" : "rgba(255,255,255,0.12)" }} />
+
+              {/* Pie de página sutil con Atlan como respaldo */}
+              <div style={styles.cardFooter}>
+                <span style={{ ...styles.atlanFooterText, color: isLight ? "#64748B" : "#94A3B8" }}>
+                  Menú Digital en <strong>Plataforma Atlan</strong> • Turismo Nicaragua
+                </span>
               </div>
             </div>
 
-            <div style={{ ...styles.divider, background: isLight ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.1)" }} />
-
-            {/* Pie de página con Atlan pequeño como referencia */}
-            <div style={styles.cardFooter}>
-              <span style={{ ...styles.atlanFooterText, color: isLight ? "#94A3B8" : "#64748B" }}>
-                Menú interactivo en Plataforma Atlan • Turismo Nicaragua
-              </span>
-            </div>
+            {/* Base física simulada del acrílico */}
+            <div style={styles.acrylicStandBase} />
           </div>
         </div>
 
-        {/* Barra de Acciones del modal */}
+        {/* BARRA DE ACCIONES */}
         <div style={styles.modalActions}>
           <div style={styles.linkInfoBox}>
-            <span style={{ fontSize: 11.5, color: "#94A3B8" }}>Enlace del QR:</span>
+            <span style={{ fontSize: 11.5, color: "#94A3B8", fontWeight: "700" }}>Destino:</span>
             <span style={styles.linkUrl} title={urlDestino}>
               {urlDestino}
             </span>
@@ -398,7 +514,7 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
               title="Copiar enlace"
             >
               <Icon name={copiado ? "check" : "copy"} size={14} />
-              <span>{copiado ? "¡Enlace Copiado!" : "Copiar Enlace"}</span>
+              <span>{copiado ? "¡Copiado!" : "Copiar Enlace"}</span>
             </button>
 
             <button
@@ -418,7 +534,7 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
               style={styles.actionBtnPrimary}
             >
               <Icon name="download" size={15} />
-              <span>{generandoPng ? "Generando PNG…" : "Descargar Tarjeta (PNG Alta Calidad)"}</span>
+              <span>{generandoPng ? "Generando PNG…" : "Descargar Tarjeta en Alta Resolución (PNG)"}</span>
             </button>
           </div>
         </div>
@@ -438,12 +554,12 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
             left: 50% !important;
             top: 50% !important;
             transform: translate(-50%, -50%) !important;
-            width: 100mm !important;
-            max-width: 100mm !important;
+            width: 105mm !important;
+            max-width: 105mm !important;
             border: 1px solid #CBD5E1 !important;
             box-shadow: none !important;
             margin: 0 !important;
-            padding: 16mm 10mm !important;
+            padding: 14mm 10mm !important;
             background: #FFFFFF !important;
             color: #0F172A !important;
           }
@@ -457,9 +573,9 @@ const styles = {
   backdrop: {
     position: "fixed",
     inset: 0,
-    background: "rgba(3, 7, 18, 0.85)",
-    backdropFilter: "blur(10px)",
-    WebkitBackdropFilter: "blur(10px)",
+    background: "rgba(3, 7, 18, 0.88)",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -469,8 +585,8 @@ const styles = {
   },
   cardModal: {
     width: "100%",
-    maxWidth: 620,
-    maxHeight: "min(92vh, 760px)",
+    maxWidth: 640,
+    maxHeight: "min(92vh, 840px)",
     background: "#070E18",
     borderRadius: 22,
     border: "1.5px solid rgba(255,215,0,0.35)",
@@ -486,6 +602,7 @@ const styles = {
     alignItems: "center",
     padding: "16px 22px",
     borderBottom: "1px solid rgba(255,255,255,0.08)",
+    background: "rgba(255,255,255,0.02)",
     flexShrink: 0,
   },
   iconBox: {
@@ -525,7 +642,7 @@ const styles = {
     alignItems: "center",
     justifyContent: "space-between",
     padding: "10px 22px",
-    background: "rgba(255,255,255,0.02)",
+    background: "rgba(255,255,255,0.03)",
     borderBottom: "1px solid rgba(255,255,255,0.06)",
     flexWrap: "wrap",
     gap: 8,
@@ -534,16 +651,17 @@ const styles = {
   themeLabel: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#94A3B8",
+    color: "#CBD5E1",
   },
   themeButtons: {
     display: "flex",
     gap: 8,
+    flexWrap: "wrap",
   },
   themeBtn: {
-    padding: "6px 12px",
+    padding: "6px 14px",
     borderRadius: 10,
-    border: "1px solid",
+    border: "1.5px solid",
     cursor: "pointer",
     fontSize: 11.5,
     transition: "all 0.15s ease",
@@ -551,20 +669,38 @@ const styles = {
   previewContainer: {
     flex: 1,
     overflowY: "auto",
-    padding: "20px 22px",
+    padding: "24px 20px 28px",
     display: "flex",
-    alignItems: "center",
     justifyContent: "center",
-    background: "radial-gradient(circle at center, rgba(14, 116, 144, 0.08) 0%, transparent 70%)",
+    background: "radial-gradient(circle at center, rgba(14, 116, 144, 0.12) 0%, transparent 70%)",
+  },
+  standMockupWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    maxWidth: 350,
+    width: "100%",
   },
   tableCard: {
     width: "100%",
-    maxWidth: 340,
-    borderRadius: 18,
+    borderRadius: "18px 18px 4px 4px",
     border: "2px solid",
-    padding: "22px 20px",
+    padding: "18px 18px 16px",
     textAlign: "center",
     transition: "all 0.2s ease",
+    position: "relative",
+  },
+  cardTopBanner: {
+    marginBottom: 8,
+  },
+  cardBadge: {
+    fontSize: 9.5,
+    fontWeight: "800",
+    padding: "3px 12px",
+    borderRadius: 12,
+    border: "1px solid",
+    letterSpacing: "0.06em",
+    display: "inline-block",
   },
   cardHeader: {
     display: "flex",
@@ -572,29 +708,21 @@ const styles = {
     alignItems: "center",
   },
   businessTitle: {
-    margin: "0 0 4px",
-    fontSize: 20,
+    margin: "0 0 3px",
+    fontSize: 21,
     fontWeight: "900",
     letterSpacing: "-0.01em",
     lineHeight: 1.2,
   },
   businessMeta: {
-    margin: "0 0 10px",
+    margin: "0",
     fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: "0.04em",
-  },
-  cardBadge: {
-    fontSize: 10,
     fontWeight: "800",
-    padding: "3px 10px",
-    borderRadius: 12,
-    border: "1px solid",
-    letterSpacing: "0.06em",
+    letterSpacing: "0.04em",
   },
   divider: {
     height: 1,
-    margin: "14px 0",
+    margin: "12px 0",
     width: "100%",
   },
   cardBody: {
@@ -603,35 +731,115 @@ const styles = {
     alignItems: "center",
   },
   scanTitle: {
-    fontSize: 13,
+    fontSize: 13.5,
     fontWeight: "900",
-    letterSpacing: "0.04em",
-    marginBottom: 3,
+    letterSpacing: "0.05em",
+    marginBottom: 2,
   },
   scanSubtitle: {
     fontSize: 11,
     maxWidth: 240,
     lineHeight: 1.35,
-    marginBottom: 12,
+    marginBottom: 10,
   },
-  qrWrapper: {
-    background: "#FFFFFF",
-    padding: 10,
-    borderRadius: 14,
-    border: "1.5px solid rgba(0,0,0,0.08)",
-    boxShadow: "0 4px 14px rgba(0,0,0,0.06)",
+  qrContainerBox: {
+    position: "relative",
+    padding: 8,
+    margin: "0 auto 12px",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
   },
+  qrFrameCornerTL: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: 14,
+    height: 14,
+    borderTop: "3px solid #D97706",
+    borderLeft: "3px solid #D97706",
+    borderRadius: "3px 0 0 0",
+  },
+  qrFrameCornerTR: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    width: 14,
+    height: 14,
+    borderTop: "3px solid #D97706",
+    borderRight: "3px solid #D97706",
+    borderRadius: "0 3px 0 0",
+  },
+  qrFrameCornerBL: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    width: 14,
+    height: 14,
+    borderBottom: "3px solid #D97706",
+    borderLeft: "3px solid #D97706",
+    borderRadius: "0 0 0 3px",
+  },
+  qrFrameCornerBR: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: 14,
+    height: 14,
+    borderBottom: "3px solid #D97706",
+    borderRight: "3px solid #D97706",
+    borderRadius: "0 0 3px 0",
+  },
+  qrWhitePlate: {
+    background: "#FFFFFF",
+    padding: 8,
+    borderRadius: 14,
+    border: "1.5px solid rgba(0,0,0,0.1)",
+    boxShadow: "0 4px 14px rgba(0,0,0,0.08)",
+    display: "inline-flex",
+  },
   qrImage: {
-    width: 170,
-    height: 170,
+    width: 160,
+    height: 160,
     display: "block",
   },
+  stepsRow: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr 1fr",
+    gap: 6,
+    width: "100%",
+    marginBottom: 8,
+  },
+  stepBadge: {
+    display: "flex",
+    alignItems: "center",
+    gap: 5,
+    padding: "5px 6px",
+    borderRadius: 8,
+    border: "1px solid",
+  },
+  stepNum: {
+    width: 16,
+    height: 16,
+    borderRadius: "50%",
+    background: "#F59E0B",
+    color: "#0F172A",
+    fontSize: 10,
+    fontWeight: "900",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  stepText: {
+    fontSize: 9.5,
+    fontWeight: "800",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
   noAppsNote: {
-    fontSize: 10.5,
-    marginTop: 10,
+    fontSize: 10,
     fontWeight: "600",
   },
   cardFooter: {
@@ -640,13 +848,21 @@ const styles = {
     alignItems: "center",
   },
   atlanFooterText: {
-    fontSize: 9.5,
-    fontWeight: "600",
+    fontSize: 10,
     letterSpacing: "0.02em",
+  },
+  acrylicStandBase: {
+    width: "104%",
+    height: 10,
+    background: "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(203, 213, 225, 0.9) 100%)",
+    borderRadius: "0 0 10px 10px",
+    boxShadow: "0 8px 16px rgba(0,0,0,0.25)",
+    border: "1px solid rgba(148, 163, 184, 0.4)",
+    marginTop: -2,
   },
   modalActions: {
     padding: "14px 22px",
-    background: "rgba(0,0,0,0.3)",
+    background: "rgba(0,0,0,0.35)",
     borderTop: "1px solid rgba(255,255,255,0.08)",
     display: "flex",
     flexDirection: "column",
