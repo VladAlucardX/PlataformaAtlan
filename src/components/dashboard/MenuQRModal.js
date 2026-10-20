@@ -2,8 +2,133 @@
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import QRCode from "qrcode";
-import Icon from "@/components/ui/Icon";
 
+/* ─── COMPONENTES SVG VECTORIALES DE ALTA DEFINICIÓN (SIN EMOJIS) ─── */
+function SunSvg({ size = 20, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="4.5" />
+      <path d="M12 2v2.5M12 19.5V22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M2 12h2.5M19.5 12H22M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77" />
+    </svg>
+  );
+}
+
+function MoonSvg({ size = 19, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+
+function BulbSvg({ size = 16, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18h6" />
+      <path d="M10 22h4" />
+      <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14" />
+    </svg>
+  );
+}
+
+function StarSvg({ size = 10, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke="none">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+
+function DownloadSvg({ size = 16, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  );
+}
+
+function PrinterSvg({ size = 16, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6 9 6 2 18 2 18 9" />
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+      <rect x="6" y="14" width="12" height="8" rx="1" />
+    </svg>
+  );
+}
+
+function CopySvg({ size = 13, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  );
+}
+
+function CheckSvg({ size = 13, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+function QrHeaderSvg({ size = 18, color = "#FFD700" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+    </svg>
+  );
+}
+
+function CloseSvg({ size = 15, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
+function CameraSvg({ size = 9, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+      <circle cx="12" cy="13" r="4" />
+    </svg>
+  );
+}
+
+function ScanSvg({ size = 9, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+      <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+      <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+      <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+      <line x1="7" y1="12" x2="17" y2="12" />
+    </svg>
+  );
+}
+
+function UtensilsSvg({ size = 16, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 2v6a3 3 0 0 1-3 3 3 3 0 0 1-3-3V2" />
+      <path d="M15 11v11" />
+      <path d="M5 2v20" />
+      <path d="M2 2h6" />
+    </svg>
+  );
+}
+
+/* ─── COMPONENTE PRINCIPAL DEL MODAL ─── */
 export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
   const [tema, setTema] = useState("light"); // 'light' (para imprimir) | 'dark' (lounge/noche)
   const [qrDataUrl, setQrDataUrl] = useState("");
@@ -324,28 +449,28 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
     <div style={styles.backdrop} onClick={onClose} className="qr-modal-backdrop">
       <div style={styles.cardModal} onClick={(e) => e.stopPropagation()} className="qr-modal-card">
         {/* CABECERA SUPERIOR */}
-        <div style={styles.modalHeader}>
+        <div style={styles.modalHeader} className="qr-modal-header">
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={styles.iconBox}>
-              <Icon name="qrCode" size={18} color="#FFD700" />
+              <QrHeaderSvg size={18} color="#FFD700" />
             </div>
             <div>
               <h3 style={styles.title}>Generador de Tarjeta QR para Mesas</h3>
               <p style={styles.subtitle}>
-                Diseño para soportes acrílicos (10x15 cm) o stickers de mesa
+                Diseño optimizado para soportes acrílicos (10×15 cm) o adhesivos de mesa
               </p>
             </div>
           </div>
-          <button type="button" onClick={onClose} style={styles.closeBtn} title="Cerrar">
-            <Icon name="x" size={16} />
+          <button type="button" onClick={onClose} style={styles.closeBtn} title="Cerrar modal">
+            <CloseSvg size={15} color="#CBD5E1" />
           </button>
         </div>
 
-        {/* CUERPO DEL MODAL: DISEÑO EN 2 COLUMNAS (TODO EN UNA VISTA NORMAL) */}
+        {/* CUERPO DEL MODAL: DISEÑO EN 2 COLUMNAS SIN SCROLLBAR */}
         <div style={styles.modalBodyGrid} className="qr-modal-grid">
-          {/* COLUMNA IZQUIERDA: VISTA PREVIA COMPLETA DE LA TARJETA (100% VISIBLE SIN SCROLL) */}
-          <div style={styles.previewColumn}>
-            <div style={styles.standMockupWrapper}>
+          {/* COLUMNA IZQUIERDA: VISTA PREVIA COMPLETA DE LA TARJETA */}
+          <div style={styles.previewColumn} className="qr-preview-col">
+            <div style={styles.standMockupWrapper} className="qr-stand-wrapper">
               <div
                 ref={printCardRef}
                 id="print-qr-card"
@@ -355,26 +480,35 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
                   color: isLight ? "#0F172A" : "#FFFFFF",
                   borderColor: isLight ? "#CBD5E1" : "rgba(255, 215, 0, 0.45)",
                   boxShadow: isLight
-                    ? "0 16px 36px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.06)"
-                    : "0 20px 45px rgba(0,0,0,0.7), 0 0 20px rgba(255, 215, 0, 0.16)",
+                    ? "0 12px 30px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.06)"
+                    : "0 16px 36px rgba(0,0,0,0.7), 0 0 18px rgba(255, 215, 0, 0.16)",
                 }}
               >
                 {/* Banner superior de la tarjeta */}
                 <div style={{ marginBottom: 6 }}>
-                  <span style={{ ...styles.cardBadge, background: isLight ? "#FEF3C7" : "rgba(255,215,0,0.18)", color: isLight ? "#B45309" : "#FFD700", borderColor: isLight ? "#F59E0B" : "rgba(255,215,0,0.4)" }}>
-                    ★ MENÚ DIGITAL OFICIAL ★
+                  <span
+                    style={{
+                      ...styles.cardBadge,
+                      background: isLight ? "#FEF3C7" : "rgba(255,215,0,0.18)",
+                      color: isLight ? "#B45309" : "#FFD700",
+                      borderColor: isLight ? "#F59E0B" : "rgba(255,215,0,0.4)",
+                    }}
+                  >
+                    <StarSvg size={8} color={isLight ? "#B45309" : "#FFD700"} />
+                    <span style={{ margin: "0 4px" }}>MENÚ DIGITAL OFICIAL</span>
+                    <StarSvg size={8} color={isLight ? "#B45309" : "#FFD700"} />
                   </span>
                 </div>
 
                 {/* Logo y Nombre del Negocio (Protagonista) */}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                   {logoUrl ? (
-                    <div style={{ width: 44, height: 44, borderRadius: "50%", overflow: "hidden", margin: "0 auto 5px", border: "2px solid #F59E0B" }}>
+                    <div style={{ width: 40, height: 40, borderRadius: "50%", overflow: "hidden", margin: "0 auto 4px", border: "2px solid #F59E0B" }}>
                       <img src={logoUrl} alt={nombreNegocio} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     </div>
                   ) : (
-                    <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(245, 158, 11, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 5px", border: "1.5px solid #F59E0B" }}>
-                      <Icon name="utensils" size={18} color="#F59E0B" />
+                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(245, 158, 11, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 4px", border: "1.5px solid #F59E0B" }}>
+                      <UtensilsSvg size={16} color="#F59E0B" />
                     </div>
                   )}
 
@@ -406,25 +540,25 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
                     {qrDataUrl ? (
                       <img src={qrDataUrl} alt="Código QR del Menú" style={styles.qrImage} />
                     ) : (
-                      <div style={{ width: 130, height: 130, display: "flex", alignItems: "center", justifyContent: "center", color: "#64748B", fontSize: 11 }}>
+                      <div style={{ width: 110, height: 110, display: "flex", alignItems: "center", justifyContent: "center", color: "#64748B", fontSize: 11 }}>
                         Generando QR…
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* 3 Pasos amigables */}
+                {/* 3 Pasos amigables con SVGs */}
                 <div style={styles.stepsRow}>
                   <div style={{ ...styles.stepBadge, background: isLight ? "#F1F5F9" : "rgba(255,255,255,0.06)", borderColor: isLight ? "#E2E8F0" : "rgba(255,255,255,0.1)" }}>
-                    <span style={styles.stepNum}>1</span>
+                    <CameraSvg size={9} color="#F59E0B" />
                     <span style={{ ...styles.stepText, color: isLight ? "#334155" : "#E2E8F0" }}>Cámara</span>
                   </div>
                   <div style={{ ...styles.stepBadge, background: isLight ? "#F1F5F9" : "rgba(255,255,255,0.06)", borderColor: isLight ? "#E2E8F0" : "rgba(255,255,255,0.1)" }}>
-                    <span style={styles.stepNum}>2</span>
+                    <ScanSvg size={9} color="#F59E0B" />
                     <span style={{ ...styles.stepText, color: isLight ? "#334155" : "#E2E8F0" }}>Apunta QR</span>
                   </div>
                   <div style={{ ...styles.stepBadge, background: isLight ? "#F1F5F9" : "rgba(255,255,255,0.06)", borderColor: isLight ? "#E2E8F0" : "rgba(255,255,255,0.1)" }}>
-                    <span style={styles.stepNum}>3</span>
+                    <UtensilsSvg size={9} color="#F59E0B" />
                     <span style={{ ...styles.stepText, color: isLight ? "#334155" : "#E2E8F0" }}>Mira Menú</span>
                   </div>
                 </div>
@@ -437,17 +571,17 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
                 </div>
               </div>
 
-              {/* Base de acrílico simulada */}
+              {/* Base de acrílico simulada (ancho 100% sin desborde) */}
               <div style={styles.acrylicStandBase} />
             </div>
           </div>
 
           {/* COLUMNA DERECHA: PANEL DE CONTROL Y ACCIONES */}
-          <div style={styles.controlsColumn}>
-            {/* 1. Selector de estilo de impresión */}
+          <div style={styles.controlsColumn} className="qr-controls-col">
+            {/* 1. Selector de estilo de impresión con SVGs */}
             <div style={styles.controlSection}>
-              <label style={styles.controlLabel}>1. Elige el estilo para imprimir:</label>
-              <div style={styles.themeSelectorGrid}>
+              <label style={styles.controlLabel}>1. Estilo para imprimir:</label>
+              <div style={styles.themeSelectorGrid} className="qr-theme-grid">
                 <button
                   type="button"
                   onClick={() => setTema("light")}
@@ -458,9 +592,15 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
                     color: isLight ? "#F59E0B" : "#94A3B8",
                   }}
                 >
-                  <div style={{ fontSize: 18, marginBottom: 2 }}>☀️</div>
-                  <div style={{ fontWeight: "800", fontSize: 12 }}>Blanco Clásico</div>
-                  <div style={{ fontSize: 10, color: isLight ? "#D97706" : "#64748B" }}>Ahorra tinta • Ideal acrílico</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div style={{ color: isLight ? "#F59E0B" : "#64748B", display: "flex", alignItems: "center" }}>
+                      <SunSvg size={22} color={isLight ? "#F59E0B" : "#64748B"} />
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: "800", fontSize: 12.5, color: isLight ? "#F59E0B" : "#E2E8F0" }}>Blanco Clásico</div>
+                      <div style={{ fontSize: 10, color: isLight ? "#D97706" : "#64748B" }}>Ahorra tinta • Ideal acrílico</div>
+                    </div>
+                  </div>
                 </button>
 
                 <button
@@ -473,9 +613,15 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
                     color: !isLight ? "#FFD700" : "#94A3B8",
                   }}
                 >
-                  <div style={{ fontSize: 18, marginBottom: 2 }}>🌙</div>
-                  <div style={{ fontWeight: "800", fontSize: 12 }}>Modo Noche</div>
-                  <div style={{ fontSize: 10, color: !isLight ? "#FFD700" : "#64748B" }}>Bares y ambientes lounge</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div style={{ color: !isLight ? "#FFD700" : "#64748B", display: "flex", alignItems: "center" }}>
+                      <MoonSvg size={20} color={!isLight ? "#FFD700" : "#64748B"} />
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: "800", fontSize: 12.5, color: !isLight ? "#FFD700" : "#E2E8F0" }}>Modo Noche</div>
+                      <div style={{ fontSize: 10, color: !isLight ? "#FFD700" : "#64748B" }}>Bares y ambientes lounge</div>
+                    </div>
+                  </div>
                 </button>
               </div>
             </div>
@@ -493,24 +639,24 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
                   style={styles.copySmallBtn}
                   title="Copiar enlace"
                 >
-                  <Icon name={copiado ? "check" : "copy"} size={13} />
-                  <span>{copiado ? "¡Listo!" : "Copiar"}</span>
+                  {copiado ? <CheckSvg size={13} color="#10B981" /> : <CopySvg size={13} color="#FFFFFF" />}
+                  <span>{copiado ? "¡Copiado!" : "Copiar"}</span>
                 </button>
               </div>
             </div>
 
-            {/* 3. Botones de acción directa */}
-            <div style={{ ...styles.controlSection, marginTop: 4 }}>
+            {/* 3. Botones de acción (Distribuidos horizontalmente en escritorio para no generar scroll) */}
+            <div style={styles.controlSection}>
               <label style={styles.controlLabel}>3. Descargar o Imprimir:</label>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={styles.actionsRow} className="qr-actions-row">
                 <button
                   type="button"
                   onClick={handleDescargarPng}
                   disabled={generandoPng || !qrDataUrl}
                   style={styles.downloadBigBtn}
                 >
-                  <Icon name="download" size={17} />
-                  <span>{generandoPng ? "Generando imagen…" : "Descargar Tarjeta (PNG Alta Calidad)"}</span>
+                  <DownloadSvg size={17} color="#0A192F" />
+                  <span>{generandoPng ? "Generando…" : "Descargar PNG (Alta Resolución)"}</span>
                 </button>
 
                 <button
@@ -518,17 +664,19 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
                   onClick={handleImprimir}
                   style={styles.printBigBtn}
                 >
-                  <Icon name="printer" size={16} />
-                  <span>Imprimir Tarjeta Directamente</span>
+                  <PrinterSvg size={16} color="#E2E8F0" />
+                  <span>Imprimir Tarjeta</span>
                 </button>
               </div>
             </div>
 
-            {/* Tip de uso para el negocio */}
+            {/* Tip de uso para el negocio con SVG */}
             <div style={styles.tipBox}>
-              <span style={{ fontSize: 14 }}>💡</span>
-              <p style={{ margin: 0, fontSize: 11, color: "#94A3B8", lineHeight: 1.4 }}>
-                <strong>Tip para tu local:</strong> Puedes llevar la imagen PNG a cualquier imprenta para imprimir en tamaño <strong>10x15 cm</strong> (soporte acrílico) o colocarla como adhesivo en tus mesas.
+              <div style={{ color: "#FFD700", flexShrink: 0, display: "flex", alignItems: "center", marginTop: 1 }}>
+                <BulbSvg size={16} color="#FFD700" />
+              </div>
+              <p style={{ margin: 0, fontSize: 11, color: "#94A3B8", lineHeight: 1.45 }}>
+                <strong>Formato estándar:</strong> El PNG está optimizado a proporción <strong>10 × 15 cm</strong> (300 DPI) para soportes acrílicos verticales de restaurante o stickers adhesivos.
               </p>
             </div>
           </div>
@@ -560,14 +708,57 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
           }
         }
 
-        /* Adaptabilidad móvil en pantallas menores a 720px */
-        @media (max-width: 720px) {
+        /* TABLET (entre 641px y 940px) */
+        @media (min-width: 641px) and (max-width: 940px) {
           .qr-modal-card {
-            max-height: 94vh !important;
+            max-width: 700px !important;
+          }
+          .qr-modal-grid {
+            grid-template-columns: 250px 1fr !important;
+            gap: 18px !important;
+            padding: 14px 18px !important;
+          }
+          .qr-actions-row {
+            grid-template-columns: 1fr !important;
+            gap: 8px !important;
+          }
+        }
+
+        /* CELULAR (pantallas de 640px o menos) */
+        @media (max-width: 640px) {
+          .qr-modal-backdrop {
+            padding: 10px 8px !important;
+          }
+          .qr-modal-card {
+            max-height: 92vh !important;
+            max-width: 95vw !important;
+            border-radius: 18px !important;
+          }
+          .qr-modal-header {
+            padding: 12px 14px !important;
           }
           .qr-modal-grid {
             grid-template-columns: 1fr !important;
+            gap: 16px !important;
+            padding: 14px !important;
             overflow-y: auto !important;
+            overflow-x: hidden !important;
+          }
+          .qr-preview-col {
+            width: 100% !important;
+          }
+          .qr-stand-wrapper {
+            width: 100% !important;
+            max-width: 260px !important;
+            margin: 0 auto !important;
+          }
+          .qr-theme-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+          }
+          .qr-actions-row {
+            grid-template-columns: 1fr !important;
+            gap: 8px !important;
           }
         }
       `}</style>
@@ -588,11 +779,11 @@ const styles = {
     zIndex: 1300,
     padding: "20px 16px",
     overflowY: "auto",
+    overflowX: "hidden",
   },
   cardModal: {
     width: "100%",
-    maxWidth: 780,
-    maxHeight: "min(94vh, 640px)",
+    maxWidth: 940,
     background: "#070E18",
     borderRadius: 22,
     border: "1.5px solid rgba(255,215,0,0.35)",
@@ -601,12 +792,13 @@ const styles = {
     flexDirection: "column",
     overflow: "hidden",
     margin: "auto",
+    boxSizing: "border-box",
   },
   modalHeader: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "12px 20px",
+    padding: "14px 22px",
     borderBottom: "1px solid rgba(255,255,255,0.08)",
     background: "rgba(255,255,255,0.02)",
     flexShrink: 0,
@@ -619,56 +811,65 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    flexShrink: 0,
   },
   title: {
     margin: 0,
-    fontSize: 15.5,
+    fontSize: 16,
     fontWeight: "900",
     color: "#FFFFFF",
   },
   subtitle: {
     margin: "2px 0 0",
-    fontSize: 11,
+    fontSize: 11.5,
     color: "#94A3B8",
   },
   closeBtn: {
     background: "rgba(255,255,255,0.06)",
     border: "1px solid rgba(255,255,255,0.12)",
     color: "#CBD5E1",
-    width: 30,
-    height: 30,
+    width: 32,
+    height: 32,
     borderRadius: 8,
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    flexShrink: 0,
+    transition: "background 0.15s ease",
   },
   modalBodyGrid: {
     display: "grid",
-    gridTemplateColumns: "290px 1fr",
-    gap: 20,
-    padding: "16px 20px",
+    gridTemplateColumns: "280px 1fr",
+    gap: 28,
+    padding: "18px 24px",
     alignItems: "center",
-    overflowY: "auto",
+    overflowX: "hidden",
+    boxSizing: "border-box",
   },
   previewColumn: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    minWidth: 0,
   },
   standMockupWrapper: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    width: 260,
+    width: 255,
+    maxWidth: "100%",
+    boxSizing: "border-box",
   },
   tableCard: {
     width: "100%",
-    borderRadius: "16px 16px 3px 3px",
+    borderRadius: "14px 14px 2px 2px",
     border: "1.5px solid",
-    padding: "12px 12px 10px",
+    padding: "11px 12px 9px",
     textAlign: "center",
     position: "relative",
+    boxSizing: "border-box",
+    overflow: "hidden",
   },
   cardBadge: {
     fontSize: 8,
@@ -677,15 +878,16 @@ const styles = {
     borderRadius: 10,
     border: "1px solid",
     letterSpacing: "0.04em",
-    display: "inline-block",
+    display: "inline-flex",
+    alignItems: "center",
   },
   businessTitle: {
     margin: "0 0 2px",
-    fontSize: 15.5,
+    fontSize: 15,
     fontWeight: "900",
     letterSpacing: "-0.01em",
     lineHeight: 1.2,
-    maxWidth: 236,
+    maxWidth: 230,
     overflow: "hidden",
     textOverflow: "ellipsis",
     display: "-webkit-box",
@@ -700,25 +902,25 @@ const styles = {
   },
   divider: {
     height: 1,
-    margin: "8px 0",
+    margin: "7px 0",
     width: "100%",
   },
   scanTitle: {
-    fontSize: 11,
+    fontSize: 10.5,
     fontWeight: "900",
     letterSpacing: "0.04em",
     marginBottom: 1,
   },
   scanSubtitle: {
-    fontSize: 9,
-    maxWidth: 200,
-    margin: "0 auto 6px",
+    fontSize: 8.5,
+    maxWidth: 195,
+    margin: "0 auto 5px",
     lineHeight: 1.3,
   },
   qrContainerBox: {
     position: "relative",
     padding: 5,
-    margin: "0 auto 6px",
+    margin: "0 auto 5px",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
@@ -772,8 +974,8 @@ const styles = {
     display: "inline-flex",
   },
   qrImage: {
-    width: 115,
-    height: 115,
+    width: 108,
+    height: 108,
     display: "block",
   },
   stepsRow: {
@@ -785,51 +987,41 @@ const styles = {
   stepBadge: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
     gap: 4,
-    padding: "3px 4px",
+    padding: "3px 2px",
     borderRadius: 6,
     border: "1px solid",
   },
-  stepNum: {
-    width: 13,
-    height: 13,
-    borderRadius: "50%",
-    background: "#F59E0B",
-    color: "#0F172A",
-    fontSize: 8.5,
-    fontWeight: "900",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-  },
   stepText: {
-    fontSize: 8,
+    fontSize: 7.8,
     fontWeight: "800",
     whiteSpace: "nowrap",
   },
   atlanFooterText: {
-    fontSize: 8.5,
+    fontSize: 8,
     letterSpacing: "0.02em",
   },
   acrylicStandBase: {
-    width: "104%",
-    height: 8,
+    width: "100%",
+    height: 7,
     background: "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(203, 213, 225, 0.95) 100%)",
     borderRadius: "0 0 8px 8px",
-    boxShadow: "0 6px 14px rgba(0,0,0,0.3)",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
     border: "1px solid rgba(148, 163, 184, 0.4)",
-    marginTop: -2,
+    boxSizing: "border-box",
   },
   controlsColumn: {
     display: "flex",
     flexDirection: "column",
-    gap: 14,
+    gap: 12,
+    minWidth: 0,
+    boxSizing: "border-box",
   },
   controlSection: {
     display: "flex",
     flexDirection: "column",
-    gap: 6,
+    gap: 5,
   },
   controlLabel: {
     fontSize: 12,
@@ -839,10 +1031,10 @@ const styles = {
   themeSelectorGrid: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
-    gap: 10,
+    gap: 12,
   },
   themeCardBtn: {
-    padding: "10px 12px",
+    padding: "10px 14px",
     borderRadius: 12,
     border: "1.5px solid",
     cursor: "pointer",
@@ -854,12 +1046,12 @@ const styles = {
     alignItems: "center",
     gap: 8,
     background: "rgba(255,255,255,0.03)",
-    padding: "6px 10px",
+    padding: "7px 12px",
     borderRadius: 10,
     border: "1px solid rgba(255,255,255,0.08)",
   },
   linkText: {
-    fontSize: 11,
+    fontSize: 11.5,
     color: "#38BDF8",
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -867,8 +1059,8 @@ const styles = {
     flex: 1,
   },
   copySmallBtn: {
-    padding: "4px 8px",
-    borderRadius: 6,
+    padding: "5px 10px",
+    borderRadius: 7,
     border: "1px solid rgba(255,255,255,0.15)",
     background: "rgba(255,255,255,0.06)",
     color: "#FFFFFF",
@@ -877,17 +1069,23 @@ const styles = {
     cursor: "pointer",
     display: "inline-flex",
     alignItems: "center",
-    gap: 4,
+    gap: 5,
     flexShrink: 0,
+    transition: "background 0.15s ease",
+  },
+  actionsRow: {
+    display: "grid",
+    gridTemplateColumns: "1.4fr 1fr",
+    gap: 10,
   },
   downloadBigBtn: {
     width: "100%",
-    padding: "11px 16px",
+    padding: "10px 16px",
     borderRadius: 12,
     border: "none",
     background: "linear-gradient(135deg, #FFD700 0%, #D97706 100%)",
     color: "#0A192F",
-    fontSize: 13,
+    fontSize: 12.5,
     fontWeight: "900",
     cursor: "pointer",
     display: "inline-flex",
@@ -899,12 +1097,12 @@ const styles = {
   },
   printBigBtn: {
     width: "100%",
-    padding: "9px 16px",
+    padding: "10px 16px",
     borderRadius: 12,
     border: "1px solid rgba(255,255,255,0.15)",
     background: "rgba(255,255,255,0.05)",
     color: "#E2E8F0",
-    fontSize: 12.5,
+    fontSize: 12,
     fontWeight: "800",
     cursor: "pointer",
     display: "inline-flex",
@@ -916,10 +1114,10 @@ const styles = {
   tipBox: {
     display: "flex",
     alignItems: "flex-start",
-    gap: 8,
+    gap: 10,
     background: "rgba(255, 215, 0, 0.05)",
     border: "1px solid rgba(255, 215, 0, 0.15)",
     borderRadius: 10,
-    padding: "9px 12px",
+    padding: "8px 12px",
   },
 };
