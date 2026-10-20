@@ -1,0 +1,6 @@
+# Ignorar carpetas pesadas no relacionadas con la web de Next.js
+mobile/
+nginx/
+.agents/
+*.md
+*.log
