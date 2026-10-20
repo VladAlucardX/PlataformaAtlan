@@ -4,3 +4,4 @@ nginx/
 .agents/
 *.md
 *.log
+# Despliegue verificado y optimizado para Plataforma Atlan (Vercel)
