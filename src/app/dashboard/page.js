@@ -14,6 +14,7 @@ import { uploadMedia } from "@/lib/storage";
 import { obtenerDepartamentoPorCoordenadas } from "@/lib/geoUtils";
 import { getCategorySvg } from "@/lib/imageUtils";
 import { getPlanLimits, PLAN_LIMITS } from "@/lib/membership";
+import MenuQRModal from "@/components/dashboard/MenuQRModal";
 
 // Helper para obtener imagen por defecto según la categoría del negocio
 const getCategoryFallbackImage = (categoria) => {
@@ -165,6 +166,7 @@ export default function DashboardPage() {
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
   const [showSearchClaimModal, setShowSearchClaimModal] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
   const [claimSearchTerm, setClaimSearchTerm] = useState("");
   const [claimSearchPage, setClaimSearchPage] = useState(1);
   const [claimTargetPunto, setClaimTargetPunto] = useState(null); // punto objeto o 'gps'
@@ -2690,14 +2692,41 @@ export default function DashboardPage() {
               {/* PESTAÑA 4: MENÚ Y PRODUCTOS */}
               {activeTab === "menu" && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px", borderBottom: "2px solid rgba(2, 132, 199, 0.15)", paddingBottom: "8px", flexShrink: 0 }}>
-                    <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "#0284C7", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: "0 4px 12px rgba(2, 132, 199, 0.3)" }}>
-                      <Icon name="utensils" size={20} color="#FFFFFF" />
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px", borderBottom: "2px solid rgba(2, 132, 199, 0.15)", paddingBottom: "8px", flexShrink: 0, flexWrap: "wrap", gap: "10px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                      <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "#0284C7", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: "0 4px 12px rgba(2, 132, 199, 0.3)" }}>
+                        <Icon name="utensils" size={20} color="#FFFFFF" />
+                      </div>
+                      <div>
+                        <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Menu & Catalog" : lang === "zh" ? "菜单与商品目录" : "Menú y Productos del Local"}</h3>
+                        <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Manage dishes, services and prices offered" : lang === "zh" ? "管理店内供应的菜品、服务与价格" : "Administra tus platos, productos, precios y disponibilidades"}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 style={{ margin: 0, fontSize: "19px", fontWeight: "900", color: "#FFFFFF", letterSpacing: "-0.01em" }}>{lang === "en" ? "Menu & Catalog" : lang === "zh" ? "菜单与商品目录" : "Menú y Productos del Local"}</h3>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#E2E8F0" }}>{lang === "en" ? "Manage dishes, services and prices offered" : lang === "zh" ? "管理店内供应的菜品、服务与价格" : "Administra tus platos, productos, precios y disponibilidades"}</p>
-                    </div>
+
+                    {/* BOTÓN GENERAR CÓDIGO QR PARA MESAS */}
+                    <button
+                      type="button"
+                      onClick={() => setShowQRModal(true)}
+                      style={{
+                        padding: "8px 16px",
+                        background: "linear-gradient(135deg, rgba(255, 215, 0, 0.18) 0%, rgba(217, 119, 6, 0.22) 100%)",
+                        border: "1.5px solid #FFD700",
+                        borderRadius: "10px",
+                        color: "#FFD700",
+                        fontSize: "13px",
+                        fontWeight: "800",
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        boxShadow: "0 4px 14px rgba(255, 215, 0, 0.15)",
+                        transition: "all 0.15s ease",
+                      }}
+                      title={lang === "en" ? "Generate Table QR Code Card" : lang === "zh" ? "生成桌台二维码" : "Generar tarjeta y código QR para mesas"}
+                    >
+                      <Icon name="qrCode" size={16} color="#FFD700" />
+                      <span>{lang === "en" ? "Table QR Card" : lang === "zh" ? "桌台二维码卡片" : "📱 Tarjeta QR de Mesa"}</span>
+                    </button>
                   </div>
 
                   <div style={{ flex: 1, display: "grid", gridTemplateColumns: "320px 1fr", gap: "16px", overflow: "hidden" }}>
@@ -3806,6 +3835,14 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* MODAL GENERADOR DE CÓDIGO QR PARA MESAS */}
+      <MenuQRModal
+        negocio={negocio}
+        isOpen={showQRModal}
+        onClose={() => setShowQRModal(false)}
+        lang={lang}
+      />
     </div>
   );
 }

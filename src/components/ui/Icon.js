@@ -348,6 +348,12 @@ const icons = {
   arrowLeft: (p) => (
     <svg {...p}><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
   ),
+  printer: (p) => (
+    <svg {...p}><polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><rect x="6" y="14" width="12" height="8" /></svg>
+  ),
+  qrCode: (p) => (
+    <svg {...p}><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>
+  ),
 };
 
 export default function Icon({ name, size = 18, color = "currentColor", strokeWidth = 2, className = "", style = {}, fill }) {
