@@ -652,14 +652,14 @@ export default function AdminMembresiasPage() {
             <div style={styles.modalHeader} className="admin-mem-modal-header">
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={styles.modalHeaderIcon}>
-                  <Icon name="user" size={18} color="#FFD700" />
+                  <Icon name="shop" size={18} color="#FFD700" />
                 </div>
                 <div>
                   <h3 style={styles.modalTitle}>
-                    {tr("Seleccionar Usuario Destinatario", "Select Recipient User", "选择目标用户")}
+                    {tr("Seleccionar Negocio Destinatario", "Select Recipient Business", "选择目标商户")}
                   </h3>
                   <p style={styles.modalSubtitle}>
-                    {tr("Busca por nombre, correo electrónico o filtra por tipo de cuenta", "Search by name, email or filter by account type", "按姓名、邮箱搜索或按账户类型筛选")}
+                    {tr("Solo dueños de negocios registrados en la plataforma Atlan", "Only verified business owners on Atlan platform", "仅限在Atlan平台注册的商户所有者")}
                   </p>
                 </div>
               </div>
@@ -679,7 +679,7 @@ export default function AdminMembresiasPage() {
               <input
                 autoFocus
                 style={styles.modalSearchInput}
-                placeholder={tr("Buscar por nombre de negocio o correo…", "Search by business name or email…", "按商家名称或邮箱搜索…")}
+                placeholder={tr("Buscar por nombre de negocio, dueño o correo…", "Search by business name, owner or email…", "按商家名称、所有者或邮箱搜索…")}
                 value={busquedaModal}
                 onChange={(e) => handleCambiarBusqueda(e.target.value)}
               />
@@ -694,13 +694,12 @@ export default function AdminMembresiasPage() {
               )}
             </div>
 
-            {/* Chips de filtro por rol */}
+            {/* Chips de filtro por estado de membresía en negocios */}
             <div style={styles.modalFiltersRow} className="admin-mem-modal-filters">
               {[
-                { id: "todos", label: tr("Todos", "All", "全部"), icon: null },
-                { id: "dueno", label: tr("Dueños de Negocio", "Business Owners", "商户所有者"), icon: "star" },
-                { id: "turista", label: tr("Turistas", "Tourists", "普通游客"), icon: "compass" },
-                { id: "guia_turistico", label: tr("Guías", "Guides", "导游"), icon: "briefcase" },
+                { id: "todos", label: tr("Todos los Negocios", "All Businesses", "全部商户"), icon: "shop" },
+                { id: "sin_pro", label: tr("Sin Tuani Pro", "Without Tuani Pro", "未开通Pro"), icon: "clock" },
+                { id: "con_pro", label: tr("Con Tuani Pro Activo", "Active Tuani Pro", "Pro有效"), icon: "star" },
               ].map((f) => {
                 const activo = filtroRol === f.id;
                 return (
@@ -726,30 +725,32 @@ export default function AdminMembresiasPage() {
               })}
             </div>
 
-            {/* Lista de usuarios */}
+            {/* Lista de usuarios con negocios */}
             <div style={styles.modalListContainer} className="admin-mem-modal-list">
               {cargandoUsuarios ? (
                 <div style={styles.modalEmptyState}>
                   <Icon name="hourglass" size={26} color="#94A3B8" style={{ marginBottom: 8 }} />
                   <p style={{ margin: 0, color: "#94A3B8", fontSize: 13 }}>
-                    {tr("Buscando usuarios…", "Searching users…", "正在检索用户…")}
+                    {tr("Buscando negocios registrados…", "Searching registered businesses…", "正在检索已登记商户…")}
                   </p>
                 </div>
               ) : usuariosModal.length === 0 ? (
                 <div style={styles.modalEmptyState}>
-                  <Icon name="search" size={26} color="#64748B" style={{ marginBottom: 8 }} />
+                  <Icon name="shop" size={28} color="#64748B" style={{ marginBottom: 8 }} />
                   <p style={{ margin: 0, color: "#FFFFFF", fontWeight: "700", fontSize: 14 }}>
-                    {tr("No se encontraron usuarios", "No users found", "未找到用户")}
+                    {tr("No se encontraron negocios", "No businesses found", "未找到商户")}
                   </p>
                   <p style={{ margin: "4px 0 0", color: "#94A3B8", fontSize: 12 }}>
-                    {tr("Intenta con otro nombre, correo o cambia de filtro", "Try another name, email or filter", "请尝试其他名称、邮箱或更改筛选条件")}
+                    {tr("Intenta con otro nombre de local, dueño o correo", "Try another business name, owner or email", "请尝试其他店铺名称、所有者或邮箱")}
                   </p>
                 </div>
               ) : (
                 usuariosModal.map((u) => {
                   const dias = calcDiasRestantes(u.membresia_vence_en);
                   const tienePro = dias > 0;
-                  const esDueno = u.rol === "dueno";
+                  const nombresNegocios = u.negocios && u.negocios.length > 0
+                    ? u.negocios.map((n) => n.nombre).join(" • ")
+                    : null;
                   return (
                     <div
                       key={u.id}
@@ -757,14 +758,14 @@ export default function AdminMembresiasPage() {
                       className="admin-mem-user-item"
                       onClick={() => seleccionarUsuario(u)}
                     >
-                      <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0, flex: 1 }}>
                         <div
                           style={{
-                            width: 42,
-                            height: 42,
-                            borderRadius: "50%",
+                            width: 44,
+                            height: 44,
+                            borderRadius: 12,
                             background: u.avatar_url ? `url(${u.avatar_url}) center/cover` : "linear-gradient(135deg, #1E3A5F 0%, #0A192F 100%)",
-                            border: esDueno ? "2px solid #FFD700" : "2px solid rgba(255,255,255,0.18)",
+                            border: "2px solid #FFD700",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
@@ -774,12 +775,12 @@ export default function AdminMembresiasPage() {
                             flexShrink: 0,
                           }}
                         >
-                          {!u.avatar_url && (u.nombre_completo || u.email || "U")[0].toUpperCase()}
+                          {!u.avatar_url && (u.nombre_completo || u.email || "N")[0].toUpperCase()}
                         </div>
-                        <div style={{ minWidth: 0 }}>
+                        <div style={{ minWidth: 0, flex: 1 }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                             <span style={{ fontSize: 14, fontWeight: "800", color: "#FFFFFF" }}>
-                              {u.nombre_completo || tr("Sin nombre registrado", "Unnamed", "未登记姓名")}
+                              {u.nombre_completo || tr("Dueño sin nombre registrado", "Unnamed owner", "未登记姓名所有者")}
                             </span>
                             <span
                               style={{
@@ -787,35 +788,44 @@ export default function AdminMembresiasPage() {
                                 padding: "2px 7px",
                                 borderRadius: 8,
                                 fontWeight: "800",
-                                background: esDueno ? "rgba(255,215,0,0.2)" : "rgba(255,255,255,0.08)",
-                                color: esDueno ? "#FFD700" : "#94A3B8",
-                                border: `1px solid ${esDueno ? "rgba(255,215,0,0.35)" : "rgba(255,255,255,0.15)"}`,
+                                background: "rgba(255,215,0,0.18)",
+                                color: "#FFD700",
+                                border: "1px solid rgba(255,215,0,0.35)",
                                 display: "inline-flex",
                                 alignItems: "center",
                                 gap: 3
                               }}
                             >
-                              {esDueno ? (
-                                <>
-                                  <Icon name="star" size={9} color="#FFD700" />
-                                  <span>DUEÑO</span>
-                                </>
-                              ) : (
-                                (u.rol || "turista").toUpperCase()
-                              )}
+                              <Icon name="shop" size={9} color="#FFD700" />
+                              <span>{tr("NEGOCIO", "BUSINESS", "商户")}</span>
                             </span>
                           </div>
-                          <div style={{ fontSize: 12, color: "#94A3B8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+
+                          {/* Nombre del local / locales */}
+                          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2, flexWrap: "wrap" }}>
+                            <Icon name="tag" size={11} color="#FFD700" />
+                            <span style={{ fontSize: 12, color: "#E2E8F0", fontWeight: "700" }}>
+                              {nombresNegocios || tr("Local comercial registrado", "Registered commercial spot", "已登记营业网点")}
+                            </span>
+                            {u.negocios && u.negocios.length > 1 && (
+                              <span style={{ fontSize: 9, background: "rgba(255,215,0,0.16)", color: "#FFD700", padding: "1px 6px", borderRadius: 6, fontWeight: "800" }}>
+                                {u.negocios.length} locales
+                              </span>
+                            )}
+                          </div>
+
+                          <div style={{ fontSize: 11, color: "#94A3B8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 2 }}>
                             {u.email || tr("Sin correo visible", "No visible email", "无可见邮箱")}
                           </div>
+
                           {tienePro ? (
-                            <div style={{ fontSize: 11, color: "#10B981", fontWeight: "700", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+                            <div style={{ fontSize: 11, color: "#10B981", fontWeight: "700", marginTop: 3, display: "flex", alignItems: "center", gap: 4 }}>
                               <Icon name="star" size={10} color="#10B981" />
-                              <span>{tr("Membresía activa:", "Active membership:", "会员有效：")} {dias} {tr("días restantes", "days left", "天剩余")}</span>
+                              <span>{tr("Tuani Pro activo:", "Active Tuani Pro:", "Tuani Pro 有效：")} {dias} {tr("días restantes", "days left", "天剩余")}</span>
                             </div>
                           ) : (
-                            <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>
-                              {tr("Plan Estándar (Sin membresía activa)", "Standard Plan (No active membership)", "标准免费方案")}
+                            <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>
+                              {tr("Plan Estándar Gratuito (Sin Tuani Pro)", "Free Standard Plan (No Tuani Pro)", "免费标准版（未开通）")}
                             </div>
                           )}
                         </div>
@@ -843,7 +853,7 @@ export default function AdminMembresiasPage() {
             {/* Pie del modal */}
             <div style={styles.modalFooter} className="admin-mem-modal-footer">
               <span style={{ fontSize: 12, color: "#94A3B8" }}>
-                {usuariosModal.length} {tr("usuario(s) disponible(s)", "user(s) available", "位可用用户")}
+                {usuariosModal.length} {tr("negocio(s) disponible(s)", "business(es) available", "家可用商户")}
               </span>
               <button
                 type="button"
@@ -960,32 +970,35 @@ export default function AdminMembresiasPage() {
           
           /* Modal de selección interactivo en móvil */
           .admin-mem-modal-backdrop {
-            padding: 8px !important;
+            padding: 20px 14px !important;
           }
           .admin-mem-modal-card {
-            border-radius: 16px !important;
-            max-height: 92vh !important;
+            border-radius: 20px !important;
+            max-height: 84vh !important;
+            margin: auto !important;
+            width: 100% !important;
           }
           .admin-mem-modal-header {
-            padding: 14px 14px !important;
+            padding: 14px 16px !important;
           }
           .admin-mem-modal-search {
             padding: 10px 14px !important;
           }
           .admin-mem-modal-filters {
-            padding: 8px 12px !important;
+            padding: 8px 14px !important;
             -webkit-overflow-scrolling: touch;
           }
           .admin-mem-modal-list {
-            padding: 10px 12px !important;
-            max-height: 46vh !important;
+            padding: 10px 14px !important;
+            max-height: none !important;
+            flex: 1 !important;
           }
           .admin-mem-user-item {
-            padding: 8px 10px !important;
-            gap: 8px !important;
+            padding: 10px 12px !important;
+            gap: 10px !important;
           }
           .admin-mem-modal-footer {
-            padding: 10px 14px !important;
+            padding: 12px 16px !important;
           }
         }
 
@@ -1304,32 +1317,36 @@ const styles = {
   modalBackdrop: {
     position: "fixed",
     inset: 0,
-    background: "rgba(3, 7, 18, 0.78)",
-    backdropFilter: "blur(8px)",
-    WebkitBackdropFilter: "blur(8px)",
+    background: "rgba(3, 7, 18, 0.82)",
+    backdropFilter: "blur(10px)",
+    WebkitBackdropFilter: "blur(10px)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1200,
-    padding: 16,
+    padding: "32px 20px",
+    overflowY: "auto",
   },
   modalCard: {
     width: "100%",
-    maxWidth: 620,
+    maxWidth: 580,
+    maxHeight: "min(80vh, 560px)",
     background: "#0A192F",
-    borderRadius: 20,
-    border: "1.5px solid rgba(255,215,0,0.35)",
-    boxShadow: "0 24px 60px rgba(0,0,0,0.65), 0 0 30px rgba(255,215,0,0.12)",
+    borderRadius: 22,
+    border: "1.5px solid rgba(255,215,0,0.4)",
+    boxShadow: "0 24px 70px rgba(0,0,0,0.85), 0 0 35px rgba(255,215,0,0.14)",
     display: "flex",
     flexDirection: "column",
     overflow: "hidden",
+    margin: "auto",
   },
   modalHeader: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "18px 22px",
+    padding: "16px 20px",
     borderBottom: "1px solid rgba(255,255,255,0.08)",
+    flexShrink: 0,
   },
   modalHeaderIcon: {
     width: 38,
@@ -1404,8 +1421,8 @@ const styles = {
     transition: "all 0.15s ease",
   },
   modalListContainer: {
-    maxHeight: 360,
-    minHeight: 180,
+    flex: 1,
+    minHeight: 140,
     overflowY: "auto",
     padding: "12px 18px",
     display: "flex",
@@ -1450,7 +1467,8 @@ const styles = {
     alignItems: "center",
     padding: "12px 20px",
     borderTop: "1px solid rgba(255,255,255,0.08)",
-    background: "rgba(0,0,0,0.2)",
+    background: "rgba(0,0,0,0.25)",
+    flexShrink: 0,
   },
   closeModalBottomBtn: {
     padding: "7px 16px",
