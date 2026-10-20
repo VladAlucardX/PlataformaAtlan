@@ -131,21 +131,23 @@ function UtensilsSvg({ size = 16, color = "currentColor" }) {
 /* ─── COMPONENTE PRINCIPAL DEL MODAL ─── */
 export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
   const [tema, setTema] = useState("light"); // 'light' (para imprimir) | 'dark' (lounge/noche)
+  const [servidor, setServidor] = useState("vercel"); // 'vercel' | 'azure'
   const [qrDataUrl, setQrDataUrl] = useState("");
   const [generandoPng, setGenerandoPng] = useState(false);
   const [copiado, setCopiado] = useState(false);
   const printCardRef = useRef(null);
 
-  // Determinar URL de destino para el cliente
+  // Determinar URL de destino pública para el cliente (nunca localhost para garantizar funcionamiento en móviles)
   const getDestinationUrl = useCallback(() => {
     if (!negocio?.id) return "";
-    if (typeof window !== "undefined") {
-      return `${window.location.origin}/lugares?lugar=${negocio.id}&tab=menu`;
-    }
-    return `https://plataforma-atlan.mexicocentral.cloudapp.azure.com/lugares?lugar=${negocio.id}&tab=menu`;
-  }, [negocio]);
+    const base = servidor === "azure"
+      ? "https://plataforma-atlan.mexicocentral.cloudapp.azure.com"
+      : "https://plataforma-atlan.vercel.app";
 
-  // Generar QR al abrir o cambiar de tema
+    return `${base}/lugares?lugar=${negocio.id}&tab=menu`;
+  }, [negocio, servidor]);
+
+  // Generar QR al abrir o cambiar de tema o servidor
   useEffect(() => {
     if (!isOpen || !negocio) return;
     const url = getDestinationUrl();
@@ -162,7 +164,7 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
     })
       .then((dataUri) => setQrDataUrl(dataUri))
       .catch((err) => console.error("Error generando QR:", err));
-  }, [isOpen, negocio, tema, getDestinationUrl]);
+  }, [isOpen, negocio, tema, servidor, getDestinationUrl]);
 
   if (!isOpen || !negocio) return null;
 
@@ -626,9 +628,39 @@ export default function MenuQRModal({ negocio, isOpen, onClose, lang = "es" }) {
               </div>
             </div>
 
-            {/* 2. Enlace directo del menú */}
+            {/* 2. Enlace público del menú y selector de servidor */}
             <div style={styles.controlSection}>
-              <label style={styles.controlLabel}>2. Enlace web del menú:</label>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
+                <label style={styles.controlLabel}>2. Enlace público del menú:</label>
+                <div style={styles.serverPillGroup}>
+                  <button
+                    type="button"
+                    onClick={() => setServidor("vercel")}
+                    style={{
+                      ...styles.serverPillBtn,
+                      background: servidor === "vercel" ? "rgba(255,215,0,0.18)" : "transparent",
+                      borderColor: servidor === "vercel" ? "#FFD700" : "rgba(255,255,255,0.1)",
+                      color: servidor === "vercel" ? "#FFD700" : "#94A3B8",
+                    }}
+                    title="Usar dominio de Vercel"
+                  >
+                    Vercel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setServidor("azure")}
+                    style={{
+                      ...styles.serverPillBtn,
+                      background: servidor === "azure" ? "rgba(56,189,248,0.18)" : "transparent",
+                      borderColor: servidor === "azure" ? "#38BDF8" : "rgba(255,255,255,0.1)",
+                      color: servidor === "azure" ? "#38BDF8" : "#94A3B8",
+                    }}
+                    title="Usar dominio de Azure VM"
+                  >
+                    Azure VM
+                  </button>
+                </div>
+              </div>
               <div style={styles.linkRow}>
                 <span style={styles.linkText} title={urlDestino}>
                   {urlDestino}
@@ -1039,6 +1071,24 @@ const styles = {
     border: "1.5px solid",
     cursor: "pointer",
     textAlign: "left",
+    transition: "all 0.15s ease",
+  },
+  serverPillGroup: {
+    display: "flex",
+    alignItems: "center",
+    gap: 4,
+    background: "rgba(255,255,255,0.04)",
+    padding: "2px 4px",
+    borderRadius: 8,
+    border: "1px solid rgba(255,255,255,0.08)",
+  },
+  serverPillBtn: {
+    padding: "3px 8px",
+    borderRadius: 6,
+    border: "1px solid transparent",
+    fontSize: 10.5,
+    fontWeight: "800",
+    cursor: "pointer",
     transition: "all 0.15s ease",
   },
   linkRow: {
